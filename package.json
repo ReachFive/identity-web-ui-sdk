@@ -1,0 +1,14 @@
+{
+    "name": "identity-web-ui-sdk",
+    "version": "1.0.0",
+    "description": "Reach5 Identity Web UI SDK",
+    "author": "ReachFive",
+    "license": "MIT",
+    "main": "index.js",
+    "scripts": {},
+    "peerDependencies": {
+        "@reachfive/identity-core": "1.6.0"
+    },
+    "dependencies": {},
+    "devDependencies": {}
+}
