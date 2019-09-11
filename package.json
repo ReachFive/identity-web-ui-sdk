@@ -4,11 +4,28 @@
     "description": "Reach5 Identity Web UI SDK",
     "author": "ReachFive",
     "license": "MIT",
-    "main": "index.js",
-    "scripts": {},
+    "main": "build/main.cjs.js",
+    "module": "build/main.es.js",
+    "scripts": {
+        "build": "npx rollup --config",
+        "watch": "npm run build -- --watch"
+    },
     "peerDependencies": {
         "@reachfive/identity-core": "1.6.0"
     },
-    "dependencies": {},
-    "devDependencies": {}
+    "dependencies": {
+        "lodash-es": "4.17.10",
+        "react": "16.8.2"
+    },
+    "devDependencies": {
+        "rollup": "0.65.2",
+        "rollup-plugin-commonjs": "9.1.6",
+        "rollup-plugin-node-resolve": "3.4.0",
+        "rollup-watch": "4.3.1"
+    },
+    "files": [
+        "cjs",
+        "es",
+        "umd"
+    ]
 }
