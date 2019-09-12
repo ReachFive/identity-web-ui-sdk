@@ -1,13 +1,17 @@
 import { createClient } from '@reachfive/identity-core';
 
+import authWidget from './widgets/auth/authWidget';
+
 export class UiClient {
-    constructor (config, urlParser) {
+    constructor(config, urlParser) {
         this.config = config;
         this.urlParser = urlParser;
         this.client = createClient(config);
     }
 
-    showAuth(options) {}
+    showAuth(options) {
+        this._ssoCheck(authWidget, options);
+    }
 
     async _showWidget(widget, options = {}, props = {}) {
         const container = typeof options.container === 'string'
@@ -30,11 +34,11 @@ export class UiClient {
                 apiClient: this.apiClient
             });
 
-            const { onReady = () => {} } = options;
+            const { onReady = () => { } } = options;
 
             container.innerHTML = '';
 
-            ReactDOM.render(result, container);
+            ReactDOM.render(result, container);
 
             const instance = {
                 destroy() { ReactDOM.unmountComponentAtNode(container) }
@@ -80,7 +84,7 @@ export class UiClient {
                             showAuthWidget();
                         });
                 }),
-            0);
+                0);
         } else {
             showAuthWidget();
         }
