@@ -2,6 +2,10 @@ import { deepDefaults } from '../../helpers/deepDefaults';
 import { UserError } from '../../helpers/errors';
 import { createMultiViewWidget } from '../../components/widget/widget';
 import LoginView from './views/loginViewComponent'
+import SignupView from './views/signupViewComponent'
+import { ForgotPasswordView, ForgotPasswordSuccessView } from './views/forgotPasswordViewComponent'
+import QuickLoginView from './views/quickLoginViewComponent'
+import ReauthView from './views/reauthViewComponent'
 
 export default createMultiViewWidget({
     initialView({ initialScreen, allowLogin, allowQuickLogin, allowSignup, socialProviders, session = {} }) {
@@ -17,7 +21,12 @@ export default createMultiViewWidget({
             || 'forgot-password';
     },
     views: {
-        'login': LoginView
+        'login': LoginView,
+        'signup': SignupView,
+        'forgot-password': ForgotPasswordView,
+        'forgot-password-success': ForgotPasswordSuccessView,
+        'quick-login': QuickLoginView,
+        'reauth': ReauthView
     },
     prepare: (options, { config }) => {
         // TODO: update the server

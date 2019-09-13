@@ -8,7 +8,7 @@ import { Heading, Link, Alternative, Separator } from '../../../components/miscC
 import { withTheme } from '../../../components/widget/widgetContext';
 
 import SocialButtons from '../../../components/form/socialButtonsComponent';
-import { createForm } from '../../../components/form/formsComponent';
+import { createForm } from '../../../components/form/formComponent';
 import { simpleField } from '../../../components/form/fields/simpleField';
 import { simplePasswordField } from '../../../components/form/fields/simplePasswordField';
 import checkboxField from '../../../components/form/fields/checkboxField';
