@@ -3,58 +3,68 @@ import * as fs from 'fs'
 import alias from 'rollup-plugin-alias'
 import babel from 'rollup-plugin-babel'
 import commonjs from 'rollup-plugin-commonjs'
-import nodeResolve from 'rollup-plugin-node-resolve'
+import resolve from 'rollup-plugin-node-resolve'
+import svg from 'rollup-plugin-react-svg'
 
 import project from './package.json'
 
-const plugins = [
-    nodeResolve(),
-    babel({
-        exclude: 'node_modules/**',
-        presets: ['@babel/env', '@babel/preset-react']
-    }),
-    commonjs({
-        include: 'node_modules/**',
-        namedExports: {
-            'node_modules/react/index.js': ['Component', 'PureComponent', 'Fragment', 'Children', 'createElement']
-        }
-    })
-]
+const dependencies = Object.keys(project.dependencies)
+const peerDependencies = Object.keys(project.peerDependencies)
 
-const externalDependencies = Object.keys(project.dependencies)
-const i18nFolder = path.join(__dirname, 'src/i18n');
-const locales = fs.readdirSync(i18nFolder).map(filename => path.parse(filename).name)
+const config = {
+    input: 'src/main.js',
+    plugins: [
+        resolve({ extensions: ['.jsx', '.js', '.json'] }),
+        commonjs(),
+        babel(),
+        svg()
+    ],
+    external: peerDependencies,
+    onwarn: console.warn
+}
+
+const locales = fs
+    .readdirSync(path.join(__dirname, 'src/i18n'))
+    .map(filename => path.parse(filename).name)
 
 let bundles
 
-function isNpmDependency(name) {
-    if (externalDependencies.includes(name)) return true
+function createBundle(locale) {
+    const plugins = [
+        ...config.plugins,
+        alias({
+            entries: [
+                { find: 'i18n', replacement: path.join(__dirname, `src/i18n/${locale}.js`) }
+            ]
+        })
+    ];
 
-    return /lodash-es/.test(name)
-}
-
-function createBundle({ file, format, locale, name, external }) {
-    return {
-        input: 'src/main.js',
-        output: { file, format, name },
-        plugins: [
-            ...plugins,
-            alias({
-                entries: [
-                    { find: 'i18n', replacement: path.join(__dirname, `src/i18n/${locale}.js`) }
-                ]
-            })
-        ],
-        external,
-        onwarn: console.warn
-    }
-}
-
-function createLocaleBundles(locale) {
     return [
-        createBundle({ file: `build/main.${locale}.umd.js`, locale, format: 'umd', name: 'reach5' }),
-        createBundle({ file: `build/main.${locale}.cjs.js`, locale, format: 'cjs', external: isNpmDependency }),
-        createBundle({ file: `build/main.${locale}.es.js`, locale, format: 'es', external: isNpmDependency })
+        {
+            ...config,
+            plugins,
+            output: { file: `build/main.${locale}.es.js`, format: 'es' },
+            external: peerDependencies.concat(dependencies)
+        },
+        {
+            ...config,
+            plugins,
+            output: { file: `build/main.${locale}.cjs.js`, format: 'cjs' },
+            external: peerDependencies.concat(dependencies)
+        },
+        // {
+        //     ...config,
+        //     plugins,
+        //     output: {
+        //         file: `build/main.${locale}.umd.js`,
+        //         format: 'umd',
+        //         name: 'reach5Widgets',
+        //         globals: {
+        //             '@reachfive/identity-core': 'reach5'
+        //         }
+        //     },
+        //     external: peerDependencies
+        // }
     ]
 }
 
@@ -65,9 +75,9 @@ if (process.env.LOCALE) {
         throw new Error(`Invalid locale "${locale}" provided. The "LOCALE" environment variable must be one of: ${locales.join(', ')}.`)
     }
 
-    bundles = createLocaleBundles(locale)
+    bundles = createBundle(locale)
 } else {
-    bundles = locales.reduce((bundles, locale) => [...bundles, ...createLocaleBundles(locale)], [])
+    bundles = locales.reduce((bundles, locale) => [...bundles, ...createBundle(locale)], [])
 }
 
 export default bundles

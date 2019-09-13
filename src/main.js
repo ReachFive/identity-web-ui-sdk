@@ -1,7 +1,10 @@
+import 'regenerator-runtime/runtime';
+
 import { rawRequest } from './helpers/httpClient';
 import { UiClient } from './client';
 import { createUrlParser } from './core/urlParser';
 import { createEventManager } from './core/identityEventManager';
+import { toQueryString } from './helpers/queryString';
 
 export function createClient(creationConfig) {
     const eventManager = createEventManager();
@@ -12,6 +15,6 @@ export function createClient(creationConfig) {
         .then(remoteConfig => new UiClient({ ...creationConfig, ...remoteConfig }, urlParser));
 
     return {
-        showAuth: client.then(client => client.showAuth())
+        showAuth: options => client.then(client => client.showAuth(options))
     };
 }

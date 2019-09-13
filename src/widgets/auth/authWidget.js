@@ -1,6 +1,7 @@
 import { deepDefaults } from '../../helpers/deepDefaults';
 import { UserError } from '../../helpers/errors';
-import { createMultiViewWidget } from '../../components/widget/widget.jsx';
+import { createMultiViewWidget } from '../../components/widget/widget';
+import LoginView from './views/loginViewComponent'
 
 export default createMultiViewWidget({
     initialView({ initialScreen, allowLogin, allowQuickLogin, allowSignup, socialProviders, session = {} }) {
@@ -19,9 +20,10 @@ export default createMultiViewWidget({
         'login': LoginView
     },
     prepare: (options, { config }) => {
-        if (!config.passwordPolicy) {
-            throw new UserError('This feature is not available on your account.');
-        }
+        // TODO: update the server
+        // if (!config.passwordPolicy) {
+        //     throw new UserError('This feature is not available on your account.');
+        // }
 
         return deepDefaults(
             {},

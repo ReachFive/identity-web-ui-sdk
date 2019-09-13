@@ -1,6 +1,9 @@
+import ReactDOM from 'react-dom'
+
 import { createClient } from '@reachfive/identity-core';
 
 import authWidget from './widgets/auth/authWidget';
+import { logError } from './helpers/logger';
 
 export class UiClient {
     constructor(config, urlParser) {
@@ -31,7 +34,7 @@ export class UiClient {
             const result = await widget(options, {
                 ...props,
                 config,
-                apiClient: this.apiClient
+                apiClient: this.client
             });
 
             const { onReady = () => { } } = options;
@@ -62,7 +65,7 @@ export class UiClient {
         const { auth = {} } = options;
         const showAuthWidget = session => this._showWidget(widget, options, { session });
 
-        if (creationConfig.sso || auth.idTokenHint || auth.loginHint) {
+        if (this.config.sso || auth.idTokenHint || auth.loginHint) {
             setTimeout(() =>
                 Promise.resolve(this.urlParser.parseUrlFragment(window.location.href)).then(authResult => {
                     // Avoid authentication triggering when an authentication response is present
