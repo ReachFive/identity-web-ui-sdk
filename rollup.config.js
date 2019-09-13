@@ -26,6 +26,8 @@ const config = {
 const locales = fs
     .readdirSync(path.join(__dirname, 'src/i18n'))
     .map(filename => path.parse(filename).name)
+    // Don't create a bundle for all locales in a development environment
+    .filter(locale => process.env.NODE_ENV === 'development' ? locale === 'en' : true)
 
 let bundles
 

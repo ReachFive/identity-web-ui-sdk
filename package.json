@@ -12,7 +12,8 @@
     "module": "build/main.en.es.js",
     "scripts": {
         "build": "npx rollup --config",
-        "watch": "npm run build -- --watch"
+        "watch": "npm run build -- --watch",
+        "dev": "NODE_ENV=development npm run build"
     },
     "peerDependencies": {
         "@reachfive/identity-core": "1.x"
