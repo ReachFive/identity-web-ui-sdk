@@ -29,10 +29,9 @@ export default createMultiViewWidget({
         'reauth': ReauthView
     },
     prepare: (options, { config }) => {
-        // TODO: update the server
-        // if (!config.passwordPolicy) {
-        //     throw new UserError('This feature is not available on your account.');
-        // }
+        if (!config.passwordPolicy) {
+            throw new UserError('This feature is not available on your account.');
+        }
 
         return deepDefaults(
             {},
