@@ -13,6 +13,7 @@ export function createClient(creationConfig) {
         .then(remoteConfig => new UiClient({ ...creationConfig, ...remoteConfig }, urlParser));
 
     return {
-        showAuth: options => client.then(client => client.showAuth(options))
+        showAuth: options => client.then(client => client.showAuth(options)),
+        showEmailEditor: options => client.then(client => client.showEmailEditor(options))
     };
 }

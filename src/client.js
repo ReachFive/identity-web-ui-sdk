@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom'
 import { createClient } from '@reachfive/identity-core';
 
 import authWidget from './widgets/auth/authWidget';
+import emailEditorWidget from './widgets/emailEditor/emailEditorWidget';
 import { logError } from './helpers/logger';
 
 export class UiClient {
@@ -14,6 +15,10 @@ export class UiClient {
 
     showAuth(options) {
         this._ssoCheck(authWidget, options);
+    }
+
+    showEmailEditor(options) {
+        this._showWidget(emailEditorWidget, options);
     }
 
     async _showWidget(widget, options = {}, props = {}) {
