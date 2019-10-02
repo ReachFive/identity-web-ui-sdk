@@ -15,6 +15,7 @@ export function createClient(creationConfig) {
     return {
         showAuth: options => client.then(client => client.showAuth(options)),
         showEmailEditor: options => client.then(client => client.showEmailEditor(options)),
-        showPasswordEditor: options => client.then(client => client.showPasswordEditor(options))
+        showPasswordEditor: options => client.then(client => client.showPasswordEditor(options)),
+        showPhoneNumberEditor: options => client.then(client => client.showPhoneNumberEditor(options))
     };
 }

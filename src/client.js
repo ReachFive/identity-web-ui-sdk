@@ -5,6 +5,7 @@ import { createClient } from '@reachfive/identity-core';
 import authWidget from './widgets/auth/authWidget';
 import emailEditorWidget from './widgets/emailEditor/emailEditorWidget';
 import passwordEditorWidget from './widgets/passwordEditor/passwordEditorWidget';
+import phoneNumberEditorWidget from './widgets/phoneNumbereditor/phoneNumberEditorWidget';
 import { logError } from './helpers/logger';
 
 export class UiClient {
@@ -24,6 +25,10 @@ export class UiClient {
 
     showPasswordEditor(options) {
         this._showWidget(passwordEditorWidget, options);
+    }
+
+    showPhoneNumberEditor(options) {
+        this._showWidget(phoneNumberEditorWidget, options);
     }
 
     async _showWidget(widget, options = {}, props = {}) {
