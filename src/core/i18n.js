@@ -1,5 +1,5 @@
 import isPlainObject from 'lodash-es/isPlainObject';
-import defaultMessages from 'i18n';
+import defaultMessages from '@reachfive/i18n';
 
 export default function resolveI18n(messages = {}) {
     const mergedMessages = {

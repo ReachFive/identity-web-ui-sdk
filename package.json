@@ -13,12 +13,16 @@
     "scripts": {
         "build": "npx rollup --config",
         "watch": "npm run build -- --watch",
-        "dev": "NODE_ENV=development npm run build"
+        "dev": "NODE_ENV=development npm run build",
+        "test": "npx jest",
+        "test:update": "npm run test -- --update-snapshot"
     },
     "peerDependencies": {
         "@reachfive/identity-core": "1.x"
     },
     "dependencies": {
+        "babel-plugin-dynamic-import-node": "^2.3.0",
+        "cheerio": "1.0.0-rc.3",
         "classnames": "2.2.6",
         "libphonenumber-js": "1.0.24",
         "lodash-es": "4.17.10",
@@ -28,6 +32,7 @@
         "react-dom": "16.8.2",
         "react-transition-group": "2.2.1",
         "recompose": "0.26.0",
+        "regenerator-runtime": "0.13.2",
         "remarkable": "1.7.1",
         "styled-components": "3.1.4",
         "validator": "9.4.0",
@@ -39,7 +44,13 @@
         "@babel/plugin-proposal-class-properties": "7.5.5",
         "@babel/preset-env": "7.6.0",
         "@babel/preset-react": "7.0.0",
+        "babel-preset-jest": "24.9.0",
         "core-js": "3.2.1",
+        "enzyme": "3.9.0",
+        "enzyme-adapter-react-16": "1.9.1",
+        "jest": "24.9.0",
+        "jest-styled-components": "5.0.0",
+        "react-test-renderer": "16.8.2",
         "rollup": "1.21.2",
         "rollup-plugin-alias": "2.0.0",
         "rollup-plugin-babel": "4.3.3",
@@ -51,5 +62,8 @@
     },
     "files": [
         "build"
-    ]
+    ],
+    "resolutions": {
+        "core-js": "2.5.2"
+    }
 }

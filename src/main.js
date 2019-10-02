@@ -1,5 +1,3 @@
-import 'regenerator-runtime/runtime';
-
 import { rawRequest } from './helpers/httpClient';
 import { UiClient } from './client';
 import { createUrlParser } from './core/urlParser';

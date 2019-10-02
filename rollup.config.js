@@ -12,7 +12,7 @@ const dependencies = Object.keys(project.dependencies)
 const peerDependencies = Object.keys(project.peerDependencies)
 
 const config = {
-    input: 'src/main.js',
+    input: 'src/index.js',
     plugins: [
         resolve({ extensions: ['.jsx', '.js', '.json'] }),
         commonjs(),
@@ -36,7 +36,7 @@ function createBundle(locale) {
         ...config.plugins,
         alias({
             entries: [
-                { find: 'i18n', replacement: path.join(__dirname, `src/i18n/${locale}.js`) }
+                { find: '@reachfive/i18n', replacement: path.join(__dirname, `src/i18n/${locale}.js`) }
             ]
         })
     ];

@@ -1,0 +1,5685 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Snapshot forgot password view default 1`] = `
+.c1 {
+  margin-bottom: 15px;
+  text-align: center;
+  color: #212529;
+  font-weight: bold;
+  font-size: 16.8px;
+}
+
+.c2 {
+  text-align: center;
+  margin-bottom: 10px;
+  color: #495057;
+}
+
+.c8 {
+  text-align: center;
+  margin-top: 15px;
+  color: #495057;
+}
+
+.c9 {
+  color: #229955;
+  -webkit-text-decoration: none;
+  text-decoration: none;
+}
+
+.c9:hover {
+  color: #145a32;
+  -webkit-text-decoration: none;
+  text-decoration: none;
+}
+
+.c0 {
+  font-size: 14px;
+  -webkit-transition: -webkit-transform 400ms ease, opacity 400ms ease;
+  -webkit-transition: transform 400ms ease, opacity 400ms ease;
+  transition: transform 400ms ease, opacity 400ms ease;
+  opacity: 0;
+  padding: 20px;
+  border-radius: 3px;
+  background-color: #ffffff;
+  max-width: 400px;
+  box-sizing: border-box;
+  margin: 0 auto;
+}
+
+.c7 {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: center;
+  font-weight: bold;
+  white-space: nowrap;
+  vertical-align: middle;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  touch-action: manipulation;
+  cursor: pointer;
+  color: #ffffff;
+  background-color: #229955;
+  border: 1px solid #229955;
+  padding: 9px 12px;
+  font-size: 14px;
+  line-height: 1.428571429;
+  border-radius: 3px;
+  -webkit-transition: all .15s ease-in-out;
+  transition: all .15s ease-in-out;
+}
+
+.c7:focus {
+  outline: 0;
+  box-shadow: 0 0 0 3px rgba(34,153,85,0.5);
+}
+
+.c7:hover,
+.c7:active {
+  background-color: #1b7842;
+  border-color: #1b7842;
+}
+
+.c7[disabled] {
+  opacity: .65;
+}
+
+.c3 {
+  position: relative;
+}
+
+.c5 {
+  color: #495057;
+  margin-bottom: 5px;
+  display: none;
+}
+
+.c4 {
+  margin-bottom: 10px;
+}
+
+.c6 {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  font-size: 14px;
+  line-height: 1.428571429;
+  color: #495057;
+  border-radius: 3px;
+  border-width: 1px;
+  border-style: solid;
+  border-color: #ced4da;
+  background-color: #fff;
+  background-image: none;
+  padding: 9px 12px;
+  -webkit-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+  transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+  box-shadow: none;
+  -webkit-appearance: none;
+}
+
+.c6:focus {
+  border-color: #5fdb94;
+  box-shadow: 0 0 0 3px rgba(95,219,148,0.5);
+  outline: 0;
+}
+
+.c6:disabled,
+.c6[readonly] {
+  background-color: #e9ecef;
+}
+
+.c6::-webkit-input-placeholder {
+  color: #868e96;
+}
+
+.c6::-moz-placeholder {
+  color: #868e96;
+}
+
+.c6:-ms-input-placeholder {
+  color: #868e96;
+}
+
+.c6::placeholder {
+  color: #868e96;
+}
+
+<div
+  className="c0"
+>
+  <div>
+    <div
+      className="c1"
+    >
+      Forgot password
+    </div>
+    <div
+      className="c2"
+    >
+      Enter the email address associated with your account, and we’ll email you a link to reset your password.
+    </div>
+    <form
+      className="c3"
+      noValidate={true}
+      onSubmit={[Function]}
+    >
+      <div
+        className="c4"
+      >
+        <label
+          className="c5"
+          htmlFor="email"
+        >
+          Email address
+        </label>
+        <input
+          className="c6"
+          id="email"
+          name="email"
+          onBlur={[Function]}
+          onChange={[Function]}
+          placeholder="Email address"
+          required={true}
+          title="Email address"
+          type="email"
+          value=""
+        />
+      </div>
+      <button
+        className="c7"
+        disabled={false}
+        type="submit"
+      >
+        Send reset link
+      </button>
+    </form>
+    <div
+      className="c8"
+    >
+      <a
+        className="c9"
+        href="javascript:{}"
+        onClick={[Function]}
+      >
+        Back to Login
+      </a>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Snapshot login view default 1`] = `
+.c1 {
+  margin-bottom: 15px;
+  text-align: center;
+  color: #212529;
+  font-weight: bold;
+  font-size: 16.8px;
+}
+
+.c6 {
+  color: #adb5bd;
+  display: block;
+  text-align: center;
+  overflow: hidden;
+  white-space: nowrap;
+  margin: 10px 0;
+}
+
+.c6 > span {
+  position: relative;
+  display: inline-block;
+}
+
+.c6 > span:before,
+.c6 > span:after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 9999px;
+  height: 1px;
+  background: #ced4da;
+}
+
+.c6 > span:before {
+  right: 100%;
+  margin-right: 14px;
+}
+
+.c6 > span:after {
+  left: 100%;
+  margin-left: 14px;
+}
+
+.c14 {
+  text-align: center;
+  margin-top: 15px;
+  color: #495057;
+}
+
+.c12 {
+  color: #229955;
+  -webkit-text-decoration: none;
+  text-decoration: none;
+}
+
+.c12:hover {
+  color: #145a32;
+  -webkit-text-decoration: none;
+  text-decoration: none;
+}
+
+.c0 {
+  font-size: 14px;
+  -webkit-transition: -webkit-transform 400ms ease, opacity 400ms ease;
+  -webkit-transition: transform 400ms ease, opacity 400ms ease;
+  transition: transform 400ms ease, opacity 400ms ease;
+  opacity: 0;
+  padding: 20px;
+  border-radius: 3px;
+  background-color: #ffffff;
+  max-width: 400px;
+  box-sizing: border-box;
+  margin: 0 auto;
+}
+
+.c13 {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: center;
+  font-weight: bold;
+  white-space: nowrap;
+  vertical-align: middle;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  touch-action: manipulation;
+  cursor: pointer;
+  color: #ffffff;
+  background-color: #229955;
+  border: 1px solid #229955;
+  padding: 9px 12px;
+  font-size: 14px;
+  line-height: 1.428571429;
+  border-radius: 3px;
+  -webkit-transition: all .15s ease-in-out;
+  transition: all .15s ease-in-out;
+}
+
+.c13:focus {
+  outline: 0;
+  box-shadow: 0 0 0 3px rgba(34,153,85,0.5);
+}
+
+.c13:hover,
+.c13:active {
+  background-color: #1b7842;
+  border-color: #1b7842;
+}
+
+.c13[disabled] {
+  opacity: .65;
+}
+
+.c4 {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 38.000000006px;
+  box-sizing: border-box;
+  border-radius: 2px;
+  background-image: url(svg);
+  background-repeat: no-repeat;
+  background-size: 20.000000003px 20.000000003px;
+  background-position: center center;
+}
+
+.c3 {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: center;
+  font-weight: bold;
+  white-space: nowrap;
+  vertical-align: middle;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  touch-action: manipulation;
+  cursor: pointer;
+  color: #ffffff;
+  background-color: #3b5998;
+  border: 1px solid #3b5998;
+  padding: 9px 12px;
+  font-size: 14px;
+  line-height: 1.428571429;
+  border-radius: 3px;
+  -webkit-transition: all .15s ease-in-out;
+  transition: all .15s ease-in-out;
+  margin-bottom: 10px;
+  position: relative;
+  width: 100%;
+  height: 40.000000006px;
+}
+
+.c3:focus {
+  outline: 0;
+}
+
+.c3:hover,
+.c3:active {
+  color: #ffffff;
+  background-color: #30487b;
+  border-color: #30487b;
+}
+
+.c3[disabled] {
+  opacity: .65;
+}
+
+.c5 {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: center;
+  font-weight: bold;
+  white-space: nowrap;
+  vertical-align: middle;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  touch-action: manipulation;
+  cursor: pointer;
+  color: #58666e;
+  background-color: #ffffff;
+  border: 1px solid rgba(0,0,0,.15);
+  padding: 9px 12px;
+  font-size: 14px;
+  line-height: 1.428571429;
+  border-radius: 3px;
+  -webkit-transition: all .15s ease-in-out;
+  transition: all .15s ease-in-out;
+  margin-bottom: 10px;
+  position: relative;
+  width: 100%;
+  height: 40.000000006px;
+}
+
+.c5:focus {
+  outline: 0;
+}
+
+.c5:hover,
+.c5:active {
+  color: #58666e;
+  background-color: #ebebeb;
+  border-color: rgba(0,0,0,0.15);
+}
+
+.c5[disabled] {
+  opacity: .65;
+}
+
+.c2 {
+  text-align: center;
+}
+
+.c7 {
+  position: relative;
+}
+
+.c9 {
+  color: #495057;
+  margin-bottom: 5px;
+  display: none;
+}
+
+.c8 {
+  margin-bottom: 10px;
+}
+
+.c10 {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  font-size: 14px;
+  line-height: 1.428571429;
+  color: #495057;
+  border-radius: 3px;
+  border-width: 1px;
+  border-style: solid;
+  border-color: #ced4da;
+  background-color: #fff;
+  background-image: none;
+  padding: 9px 12px;
+  -webkit-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+  transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+  box-shadow: none;
+  -webkit-appearance: none;
+}
+
+.c10:focus {
+  border-color: #5fdb94;
+  box-shadow: 0 0 0 3px rgba(95,219,148,0.5);
+  outline: 0;
+}
+
+.c10:disabled,
+.c10[readonly] {
+  background-color: #e9ecef;
+}
+
+.c10::-webkit-input-placeholder {
+  color: #868e96;
+}
+
+.c10::-moz-placeholder {
+  color: #868e96;
+}
+
+.c10:-ms-input-placeholder {
+  color: #868e96;
+}
+
+.c10::placeholder {
+  color: #868e96;
+}
+
+.c11 {
+  margin-bottom: 10px;
+  text-align: right;
+}
+
+<div
+  className="c0"
+>
+  <div>
+    <div
+      className="c1"
+    >
+      Log in
+    </div>
+    <div
+      className="r5-social-buttons c2"
+    >
+      <div
+        className="r5-btn-social r5-btn-social-facebook c3"
+        onClick={[Function]}
+      >
+        <span
+          className="r5-btn-social-icon c4"
+        />
+        <span
+          className="r5-btn-social-text"
+        >
+          Facebook
+        </span>
+      </div>
+      <div
+        className="r5-btn-social r5-btn-social-google c5"
+        onClick={[Function]}
+      >
+        <span
+          className="r5-btn-social-icon c4"
+        />
+        <span
+          className="r5-btn-social-text"
+        >
+          Google
+        </span>
+      </div>
+    </div>
+    <div
+      className="c6"
+    >
+      <span>
+        or
+      </span>
+    </div>
+    <form
+      className="c7"
+      noValidate={true}
+      onSubmit={[Function]}
+    >
+      <div
+        className="c8"
+      >
+        <label
+          className="c9"
+          htmlFor="email"
+        >
+          Email address
+        </label>
+        <input
+          autoComplete="email"
+          className="c10"
+          id="email"
+          name="email"
+          onBlur={[Function]}
+          onChange={[Function]}
+          placeholder="Email address"
+          required={true}
+          title="Email address"
+          type="email"
+          value=""
+        />
+      </div>
+      <div
+        className="c8"
+      >
+        <label
+          className="c9"
+          htmlFor="password"
+        >
+          Password
+        </label>
+        <div
+          style={
+            Object {
+              "position": "relative",
+            }
+          }
+        >
+          <input
+            autoComplete="current-password"
+            className="c10"
+            id="password"
+            name="password"
+            onBlur={[Function]}
+            onChange={[Function]}
+            placeholder="Password"
+            required={true}
+            title="Password"
+            type="password"
+            value=""
+          />
+        </div>
+      </div>
+      <div
+        className="c11"
+      >
+        <a
+          className="c12"
+          href="javascript:{}"
+          onClick={[Function]}
+        >
+          Don't remember your password?
+        </a>
+      </div>
+      <button
+        className="c13"
+        disabled={false}
+        type="submit"
+      >
+        Log in
+      </button>
+    </form>
+    <div
+      className="c14"
+    >
+      <span>
+        Do not have an account?
+      </span>
+       
+      <a
+        className="c12"
+        href="javascript:{}"
+        onClick={[Function]}
+      >
+        Sign up
+      </a>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Snapshot login view inline social buttons 1`] = `
+.c1 {
+  margin-bottom: 15px;
+  text-align: center;
+  color: #212529;
+  font-weight: bold;
+  font-size: 16.8px;
+}
+
+.c6 {
+  color: #adb5bd;
+  display: block;
+  text-align: center;
+  overflow: hidden;
+  white-space: nowrap;
+  margin: 10px 0;
+}
+
+.c6 > span {
+  position: relative;
+  display: inline-block;
+}
+
+.c6 > span:before,
+.c6 > span:after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 9999px;
+  height: 1px;
+  background: #ced4da;
+}
+
+.c6 > span:before {
+  right: 100%;
+  margin-right: 14px;
+}
+
+.c6 > span:after {
+  left: 100%;
+  margin-left: 14px;
+}
+
+.c14 {
+  text-align: center;
+  margin-top: 15px;
+  color: #495057;
+}
+
+.c12 {
+  color: #229955;
+  -webkit-text-decoration: none;
+  text-decoration: none;
+}
+
+.c12:hover {
+  color: #145a32;
+  -webkit-text-decoration: none;
+  text-decoration: none;
+}
+
+.c0 {
+  font-size: 14px;
+  -webkit-transition: -webkit-transform 400ms ease, opacity 400ms ease;
+  -webkit-transition: transform 400ms ease, opacity 400ms ease;
+  transition: transform 400ms ease, opacity 400ms ease;
+  opacity: 0;
+  padding: 20px;
+  border-radius: 3px;
+  background-color: #ffffff;
+  max-width: 400px;
+  box-sizing: border-box;
+  margin: 0 auto;
+}
+
+.c13 {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: center;
+  font-weight: bold;
+  white-space: nowrap;
+  vertical-align: middle;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  touch-action: manipulation;
+  cursor: pointer;
+  color: #ffffff;
+  background-color: #229955;
+  border: 1px solid #229955;
+  padding: 9px 12px;
+  font-size: 14px;
+  line-height: 1.428571429;
+  border-radius: 3px;
+  -webkit-transition: all .15s ease-in-out;
+  transition: all .15s ease-in-out;
+}
+
+.c13:focus {
+  outline: 0;
+  box-shadow: 0 0 0 3px rgba(34,153,85,0.5);
+}
+
+.c13:hover,
+.c13:active {
+  background-color: #1b7842;
+  border-color: #1b7842;
+}
+
+.c13[disabled] {
+  opacity: .65;
+}
+
+.c4 {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 100%;
+  box-sizing: border-box;
+  border-radius: 2px;
+  background-image: url(svg);
+  background-repeat: no-repeat;
+  background-size: 20.000000003px 20.000000003px;
+  background-position: center center;
+  height: 100%;
+}
+
+.c3 {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: center;
+  font-weight: bold;
+  white-space: nowrap;
+  vertical-align: middle;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  touch-action: manipulation;
+  cursor: pointer;
+  color: #ffffff;
+  background-color: #3b5998;
+  border: 1px solid #3b5998;
+  padding: 9px 12px;
+  font-size: 14px;
+  line-height: 1.428571429;
+  border-radius: 3px;
+  -webkit-transition: all .15s ease-in-out;
+  transition: all .15s ease-in-out;
+  margin-bottom: 10px;
+  position: relative;
+  width: 40.000000006px;
+  height: 40.000000006px;
+  display: inline-block;
+  margin: 0 4px;
+}
+
+.c3:focus {
+  outline: 0;
+}
+
+.c3:hover,
+.c3:active {
+  color: #ffffff;
+  background-color: #30487b;
+  border-color: #30487b;
+}
+
+.c3[disabled] {
+  opacity: .65;
+}
+
+.c5 {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: center;
+  font-weight: bold;
+  white-space: nowrap;
+  vertical-align: middle;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  touch-action: manipulation;
+  cursor: pointer;
+  color: #58666e;
+  background-color: #ffffff;
+  border: 1px solid rgba(0,0,0,.15);
+  padding: 9px 12px;
+  font-size: 14px;
+  line-height: 1.428571429;
+  border-radius: 3px;
+  -webkit-transition: all .15s ease-in-out;
+  transition: all .15s ease-in-out;
+  margin-bottom: 10px;
+  position: relative;
+  width: 40.000000006px;
+  height: 40.000000006px;
+  display: inline-block;
+  margin: 0 4px;
+}
+
+.c5:focus {
+  outline: 0;
+}
+
+.c5:hover,
+.c5:active {
+  color: #58666e;
+  background-color: #ebebeb;
+  border-color: rgba(0,0,0,0.15);
+}
+
+.c5[disabled] {
+  opacity: .65;
+}
+
+.c2 {
+  text-align: center;
+  margin: 0 -4px;
+}
+
+.c7 {
+  position: relative;
+}
+
+.c9 {
+  color: #495057;
+  margin-bottom: 5px;
+  display: none;
+}
+
+.c8 {
+  margin-bottom: 10px;
+}
+
+.c10 {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  font-size: 14px;
+  line-height: 1.428571429;
+  color: #495057;
+  border-radius: 3px;
+  border-width: 1px;
+  border-style: solid;
+  border-color: #ced4da;
+  background-color: #fff;
+  background-image: none;
+  padding: 9px 12px;
+  -webkit-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+  transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+  box-shadow: none;
+  -webkit-appearance: none;
+}
+
+.c10:focus {
+  border-color: #5fdb94;
+  box-shadow: 0 0 0 3px rgba(95,219,148,0.5);
+  outline: 0;
+}
+
+.c10:disabled,
+.c10[readonly] {
+  background-color: #e9ecef;
+}
+
+.c10::-webkit-input-placeholder {
+  color: #868e96;
+}
+
+.c10::-moz-placeholder {
+  color: #868e96;
+}
+
+.c10:-ms-input-placeholder {
+  color: #868e96;
+}
+
+.c10::placeholder {
+  color: #868e96;
+}
+
+.c11 {
+  margin-bottom: 10px;
+  text-align: right;
+}
+
+<div
+  className="c0"
+>
+  <div>
+    <div
+      className="c1"
+    >
+      Log in
+    </div>
+    <div
+      className="r5-social-buttons c2"
+    >
+      <div
+        className="r5-btn-social r5-btn-social-facebook c3"
+        onClick={[Function]}
+        title="Facebook"
+      >
+        <span
+          className="r5-btn-social-icon c4"
+        />
+      </div>
+      <div
+        className="r5-btn-social r5-btn-social-google c5"
+        onClick={[Function]}
+        title="Google"
+      >
+        <span
+          className="r5-btn-social-icon c4"
+        />
+      </div>
+    </div>
+    <div
+      className="c6"
+    >
+      <span>
+        or
+      </span>
+    </div>
+    <form
+      className="c7"
+      noValidate={true}
+      onSubmit={[Function]}
+    >
+      <div
+        className="c8"
+      >
+        <label
+          className="c9"
+          htmlFor="email"
+        >
+          Email address
+        </label>
+        <input
+          autoComplete="email"
+          className="c10"
+          id="email"
+          name="email"
+          onBlur={[Function]}
+          onChange={[Function]}
+          placeholder="Email address"
+          required={true}
+          title="Email address"
+          type="email"
+          value=""
+        />
+      </div>
+      <div
+        className="c8"
+      >
+        <label
+          className="c9"
+          htmlFor="password"
+        >
+          Password
+        </label>
+        <div
+          style={
+            Object {
+              "position": "relative",
+            }
+          }
+        >
+          <input
+            autoComplete="current-password"
+            className="c10"
+            id="password"
+            name="password"
+            onBlur={[Function]}
+            onChange={[Function]}
+            placeholder="Password"
+            required={true}
+            title="Password"
+            type="password"
+            value=""
+          />
+        </div>
+      </div>
+      <div
+        className="c11"
+      >
+        <a
+          className="c12"
+          href="javascript:{}"
+          onClick={[Function]}
+        >
+          Don't remember your password?
+        </a>
+      </div>
+      <button
+        className="c13"
+        disabled={false}
+        type="submit"
+      >
+        Log in
+      </button>
+    </form>
+    <div
+      className="c14"
+    >
+      <span>
+        Do not have an account?
+      </span>
+       
+      <a
+        className="c12"
+        href="javascript:{}"
+        onClick={[Function]}
+      >
+        Sign up
+      </a>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Snapshot login view no forgot password 1`] = `
+.c1 {
+  margin-bottom: 15px;
+  text-align: center;
+  color: #212529;
+  font-weight: bold;
+  font-size: 16.8px;
+}
+
+.c6 {
+  color: #adb5bd;
+  display: block;
+  text-align: center;
+  overflow: hidden;
+  white-space: nowrap;
+  margin: 10px 0;
+}
+
+.c6 > span {
+  position: relative;
+  display: inline-block;
+}
+
+.c6 > span:before,
+.c6 > span:after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 9999px;
+  height: 1px;
+  background: #ced4da;
+}
+
+.c6 > span:before {
+  right: 100%;
+  margin-right: 14px;
+}
+
+.c6 > span:after {
+  left: 100%;
+  margin-left: 14px;
+}
+
+.c12 {
+  text-align: center;
+  margin-top: 15px;
+  color: #495057;
+}
+
+.c13 {
+  color: #229955;
+  -webkit-text-decoration: none;
+  text-decoration: none;
+}
+
+.c13:hover {
+  color: #145a32;
+  -webkit-text-decoration: none;
+  text-decoration: none;
+}
+
+.c0 {
+  font-size: 14px;
+  -webkit-transition: -webkit-transform 400ms ease, opacity 400ms ease;
+  -webkit-transition: transform 400ms ease, opacity 400ms ease;
+  transition: transform 400ms ease, opacity 400ms ease;
+  opacity: 0;
+  padding: 20px;
+  border-radius: 3px;
+  background-color: #ffffff;
+  max-width: 400px;
+  box-sizing: border-box;
+  margin: 0 auto;
+}
+
+.c11 {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: center;
+  font-weight: bold;
+  white-space: nowrap;
+  vertical-align: middle;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  touch-action: manipulation;
+  cursor: pointer;
+  color: #ffffff;
+  background-color: #229955;
+  border: 1px solid #229955;
+  padding: 9px 12px;
+  font-size: 14px;
+  line-height: 1.428571429;
+  border-radius: 3px;
+  -webkit-transition: all .15s ease-in-out;
+  transition: all .15s ease-in-out;
+}
+
+.c11:focus {
+  outline: 0;
+  box-shadow: 0 0 0 3px rgba(34,153,85,0.5);
+}
+
+.c11:hover,
+.c11:active {
+  background-color: #1b7842;
+  border-color: #1b7842;
+}
+
+.c11[disabled] {
+  opacity: .65;
+}
+
+.c4 {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 38.000000006px;
+  box-sizing: border-box;
+  border-radius: 2px;
+  background-image: url(svg);
+  background-repeat: no-repeat;
+  background-size: 20.000000003px 20.000000003px;
+  background-position: center center;
+}
+
+.c3 {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: center;
+  font-weight: bold;
+  white-space: nowrap;
+  vertical-align: middle;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  touch-action: manipulation;
+  cursor: pointer;
+  color: #ffffff;
+  background-color: #3b5998;
+  border: 1px solid #3b5998;
+  padding: 9px 12px;
+  font-size: 14px;
+  line-height: 1.428571429;
+  border-radius: 3px;
+  -webkit-transition: all .15s ease-in-out;
+  transition: all .15s ease-in-out;
+  margin-bottom: 10px;
+  position: relative;
+  width: 100%;
+  height: 40.000000006px;
+}
+
+.c3:focus {
+  outline: 0;
+}
+
+.c3:hover,
+.c3:active {
+  color: #ffffff;
+  background-color: #30487b;
+  border-color: #30487b;
+}
+
+.c3[disabled] {
+  opacity: .65;
+}
+
+.c5 {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: center;
+  font-weight: bold;
+  white-space: nowrap;
+  vertical-align: middle;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  touch-action: manipulation;
+  cursor: pointer;
+  color: #58666e;
+  background-color: #ffffff;
+  border: 1px solid rgba(0,0,0,.15);
+  padding: 9px 12px;
+  font-size: 14px;
+  line-height: 1.428571429;
+  border-radius: 3px;
+  -webkit-transition: all .15s ease-in-out;
+  transition: all .15s ease-in-out;
+  margin-bottom: 10px;
+  position: relative;
+  width: 100%;
+  height: 40.000000006px;
+}
+
+.c5:focus {
+  outline: 0;
+}
+
+.c5:hover,
+.c5:active {
+  color: #58666e;
+  background-color: #ebebeb;
+  border-color: rgba(0,0,0,0.15);
+}
+
+.c5[disabled] {
+  opacity: .65;
+}
+
+.c2 {
+  text-align: center;
+}
+
+.c7 {
+  position: relative;
+}
+
+.c9 {
+  color: #495057;
+  margin-bottom: 5px;
+  display: none;
+}
+
+.c8 {
+  margin-bottom: 10px;
+}
+
+.c10 {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  font-size: 14px;
+  line-height: 1.428571429;
+  color: #495057;
+  border-radius: 3px;
+  border-width: 1px;
+  border-style: solid;
+  border-color: #ced4da;
+  background-color: #fff;
+  background-image: none;
+  padding: 9px 12px;
+  -webkit-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+  transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+  box-shadow: none;
+  -webkit-appearance: none;
+}
+
+.c10:focus {
+  border-color: #5fdb94;
+  box-shadow: 0 0 0 3px rgba(95,219,148,0.5);
+  outline: 0;
+}
+
+.c10:disabled,
+.c10[readonly] {
+  background-color: #e9ecef;
+}
+
+.c10::-webkit-input-placeholder {
+  color: #868e96;
+}
+
+.c10::-moz-placeholder {
+  color: #868e96;
+}
+
+.c10:-ms-input-placeholder {
+  color: #868e96;
+}
+
+.c10::placeholder {
+  color: #868e96;
+}
+
+<div
+  className="c0"
+>
+  <div>
+    <div
+      className="c1"
+    >
+      Log in
+    </div>
+    <div
+      className="r5-social-buttons c2"
+    >
+      <div
+        className="r5-btn-social r5-btn-social-facebook c3"
+        onClick={[Function]}
+      >
+        <span
+          className="r5-btn-social-icon c4"
+        />
+        <span
+          className="r5-btn-social-text"
+        >
+          Facebook
+        </span>
+      </div>
+      <div
+        className="r5-btn-social r5-btn-social-google c5"
+        onClick={[Function]}
+      >
+        <span
+          className="r5-btn-social-icon c4"
+        />
+        <span
+          className="r5-btn-social-text"
+        >
+          Google
+        </span>
+      </div>
+    </div>
+    <div
+      className="c6"
+    >
+      <span>
+        or
+      </span>
+    </div>
+    <form
+      className="c7"
+      noValidate={true}
+      onSubmit={[Function]}
+    >
+      <div
+        className="c8"
+      >
+        <label
+          className="c9"
+          htmlFor="email"
+        >
+          Email address
+        </label>
+        <input
+          autoComplete="email"
+          className="c10"
+          id="email"
+          name="email"
+          onBlur={[Function]}
+          onChange={[Function]}
+          placeholder="Email address"
+          required={true}
+          title="Email address"
+          type="email"
+          value=""
+        />
+      </div>
+      <div
+        className="c8"
+      >
+        <label
+          className="c9"
+          htmlFor="password"
+        >
+          Password
+        </label>
+        <div
+          style={
+            Object {
+              "position": "relative",
+            }
+          }
+        >
+          <input
+            autoComplete="current-password"
+            className="c10"
+            id="password"
+            name="password"
+            onBlur={[Function]}
+            onChange={[Function]}
+            placeholder="Password"
+            required={true}
+            title="Password"
+            type="password"
+            value=""
+          />
+        </div>
+      </div>
+      <button
+        className="c11"
+        disabled={false}
+        type="submit"
+      >
+        Log in
+      </button>
+    </form>
+    <div
+      className="c12"
+    >
+      <span>
+        Do not have an account?
+      </span>
+       
+      <a
+        className="c13"
+        href="javascript:{}"
+        onClick={[Function]}
+      >
+        Sign up
+      </a>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Snapshot login view no signup 1`] = `
+.c1 {
+  margin-bottom: 15px;
+  text-align: center;
+  color: #212529;
+  font-weight: bold;
+  font-size: 16.8px;
+}
+
+.c6 {
+  color: #adb5bd;
+  display: block;
+  text-align: center;
+  overflow: hidden;
+  white-space: nowrap;
+  margin: 10px 0;
+}
+
+.c6 > span {
+  position: relative;
+  display: inline-block;
+}
+
+.c6 > span:before,
+.c6 > span:after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 9999px;
+  height: 1px;
+  background: #ced4da;
+}
+
+.c6 > span:before {
+  right: 100%;
+  margin-right: 14px;
+}
+
+.c6 > span:after {
+  left: 100%;
+  margin-left: 14px;
+}
+
+.c12 {
+  color: #229955;
+  -webkit-text-decoration: none;
+  text-decoration: none;
+}
+
+.c12:hover {
+  color: #145a32;
+  -webkit-text-decoration: none;
+  text-decoration: none;
+}
+
+.c0 {
+  font-size: 14px;
+  -webkit-transition: -webkit-transform 400ms ease, opacity 400ms ease;
+  -webkit-transition: transform 400ms ease, opacity 400ms ease;
+  transition: transform 400ms ease, opacity 400ms ease;
+  opacity: 0;
+  padding: 20px;
+  border-radius: 3px;
+  background-color: #ffffff;
+  max-width: 400px;
+  box-sizing: border-box;
+  margin: 0 auto;
+}
+
+.c13 {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: center;
+  font-weight: bold;
+  white-space: nowrap;
+  vertical-align: middle;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  touch-action: manipulation;
+  cursor: pointer;
+  color: #ffffff;
+  background-color: #229955;
+  border: 1px solid #229955;
+  padding: 9px 12px;
+  font-size: 14px;
+  line-height: 1.428571429;
+  border-radius: 3px;
+  -webkit-transition: all .15s ease-in-out;
+  transition: all .15s ease-in-out;
+}
+
+.c13:focus {
+  outline: 0;
+  box-shadow: 0 0 0 3px rgba(34,153,85,0.5);
+}
+
+.c13:hover,
+.c13:active {
+  background-color: #1b7842;
+  border-color: #1b7842;
+}
+
+.c13[disabled] {
+  opacity: .65;
+}
+
+.c4 {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 38.000000006px;
+  box-sizing: border-box;
+  border-radius: 2px;
+  background-image: url(svg);
+  background-repeat: no-repeat;
+  background-size: 20.000000003px 20.000000003px;
+  background-position: center center;
+}
+
+.c3 {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: center;
+  font-weight: bold;
+  white-space: nowrap;
+  vertical-align: middle;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  touch-action: manipulation;
+  cursor: pointer;
+  color: #ffffff;
+  background-color: #3b5998;
+  border: 1px solid #3b5998;
+  padding: 9px 12px;
+  font-size: 14px;
+  line-height: 1.428571429;
+  border-radius: 3px;
+  -webkit-transition: all .15s ease-in-out;
+  transition: all .15s ease-in-out;
+  margin-bottom: 10px;
+  position: relative;
+  width: 100%;
+  height: 40.000000006px;
+}
+
+.c3:focus {
+  outline: 0;
+}
+
+.c3:hover,
+.c3:active {
+  color: #ffffff;
+  background-color: #30487b;
+  border-color: #30487b;
+}
+
+.c3[disabled] {
+  opacity: .65;
+}
+
+.c5 {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: center;
+  font-weight: bold;
+  white-space: nowrap;
+  vertical-align: middle;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  touch-action: manipulation;
+  cursor: pointer;
+  color: #58666e;
+  background-color: #ffffff;
+  border: 1px solid rgba(0,0,0,.15);
+  padding: 9px 12px;
+  font-size: 14px;
+  line-height: 1.428571429;
+  border-radius: 3px;
+  -webkit-transition: all .15s ease-in-out;
+  transition: all .15s ease-in-out;
+  margin-bottom: 10px;
+  position: relative;
+  width: 100%;
+  height: 40.000000006px;
+}
+
+.c5:focus {
+  outline: 0;
+}
+
+.c5:hover,
+.c5:active {
+  color: #58666e;
+  background-color: #ebebeb;
+  border-color: rgba(0,0,0,0.15);
+}
+
+.c5[disabled] {
+  opacity: .65;
+}
+
+.c2 {
+  text-align: center;
+}
+
+.c7 {
+  position: relative;
+}
+
+.c9 {
+  color: #495057;
+  margin-bottom: 5px;
+  display: none;
+}
+
+.c8 {
+  margin-bottom: 10px;
+}
+
+.c10 {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  font-size: 14px;
+  line-height: 1.428571429;
+  color: #495057;
+  border-radius: 3px;
+  border-width: 1px;
+  border-style: solid;
+  border-color: #ced4da;
+  background-color: #fff;
+  background-image: none;
+  padding: 9px 12px;
+  -webkit-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+  transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+  box-shadow: none;
+  -webkit-appearance: none;
+}
+
+.c10:focus {
+  border-color: #5fdb94;
+  box-shadow: 0 0 0 3px rgba(95,219,148,0.5);
+  outline: 0;
+}
+
+.c10:disabled,
+.c10[readonly] {
+  background-color: #e9ecef;
+}
+
+.c10::-webkit-input-placeholder {
+  color: #868e96;
+}
+
+.c10::-moz-placeholder {
+  color: #868e96;
+}
+
+.c10:-ms-input-placeholder {
+  color: #868e96;
+}
+
+.c10::placeholder {
+  color: #868e96;
+}
+
+.c11 {
+  margin-bottom: 10px;
+  text-align: right;
+}
+
+<div
+  className="c0"
+>
+  <div>
+    <div
+      className="c1"
+    >
+      Log in
+    </div>
+    <div
+      className="r5-social-buttons c2"
+    >
+      <div
+        className="r5-btn-social r5-btn-social-facebook c3"
+        onClick={[Function]}
+      >
+        <span
+          className="r5-btn-social-icon c4"
+        />
+        <span
+          className="r5-btn-social-text"
+        >
+          Facebook
+        </span>
+      </div>
+      <div
+        className="r5-btn-social r5-btn-social-google c5"
+        onClick={[Function]}
+      >
+        <span
+          className="r5-btn-social-icon c4"
+        />
+        <span
+          className="r5-btn-social-text"
+        >
+          Google
+        </span>
+      </div>
+    </div>
+    <div
+      className="c6"
+    >
+      <span>
+        or
+      </span>
+    </div>
+    <form
+      className="c7"
+      noValidate={true}
+      onSubmit={[Function]}
+    >
+      <div
+        className="c8"
+      >
+        <label
+          className="c9"
+          htmlFor="email"
+        >
+          Email address
+        </label>
+        <input
+          autoComplete="email"
+          className="c10"
+          id="email"
+          name="email"
+          onBlur={[Function]}
+          onChange={[Function]}
+          placeholder="Email address"
+          required={true}
+          title="Email address"
+          type="email"
+          value=""
+        />
+      </div>
+      <div
+        className="c8"
+      >
+        <label
+          className="c9"
+          htmlFor="password"
+        >
+          Password
+        </label>
+        <div
+          style={
+            Object {
+              "position": "relative",
+            }
+          }
+        >
+          <input
+            autoComplete="current-password"
+            className="c10"
+            id="password"
+            name="password"
+            onBlur={[Function]}
+            onChange={[Function]}
+            placeholder="Password"
+            required={true}
+            title="Password"
+            type="password"
+            value=""
+          />
+        </div>
+      </div>
+      <div
+        className="c11"
+      >
+        <a
+          className="c12"
+          href="javascript:{}"
+          onClick={[Function]}
+        >
+          Don't remember your password?
+        </a>
+      </div>
+      <button
+        className="c13"
+        disabled={false}
+        type="submit"
+      >
+        Log in
+      </button>
+    </form>
+  </div>
+</div>
+`;
+
+exports[`Snapshot login view with canShowPassword 1`] = `
+.c1 {
+  margin-bottom: 15px;
+  text-align: center;
+  color: #212529;
+  font-weight: bold;
+  font-size: 16.8px;
+}
+
+.c6 {
+  color: #adb5bd;
+  display: block;
+  text-align: center;
+  overflow: hidden;
+  white-space: nowrap;
+  margin: 10px 0;
+}
+
+.c6 > span {
+  position: relative;
+  display: inline-block;
+}
+
+.c6 > span:before,
+.c6 > span:after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 9999px;
+  height: 1px;
+  background: #ced4da;
+}
+
+.c6 > span:before {
+  right: 100%;
+  margin-right: 14px;
+}
+
+.c6 > span:after {
+  left: 100%;
+  margin-left: 14px;
+}
+
+.c15 {
+  text-align: center;
+  margin-top: 15px;
+  color: #495057;
+}
+
+.c13 {
+  color: #229955;
+  -webkit-text-decoration: none;
+  text-decoration: none;
+}
+
+.c13:hover {
+  color: #145a32;
+  -webkit-text-decoration: none;
+  text-decoration: none;
+}
+
+.c0 {
+  font-size: 14px;
+  -webkit-transition: -webkit-transform 400ms ease, opacity 400ms ease;
+  -webkit-transition: transform 400ms ease, opacity 400ms ease;
+  transition: transform 400ms ease, opacity 400ms ease;
+  opacity: 0;
+  padding: 20px;
+  border-radius: 3px;
+  background-color: #ffffff;
+  max-width: 400px;
+  box-sizing: border-box;
+  margin: 0 auto;
+}
+
+.c14 {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: center;
+  font-weight: bold;
+  white-space: nowrap;
+  vertical-align: middle;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  touch-action: manipulation;
+  cursor: pointer;
+  color: #ffffff;
+  background-color: #229955;
+  border: 1px solid #229955;
+  padding: 9px 12px;
+  font-size: 14px;
+  line-height: 1.428571429;
+  border-radius: 3px;
+  -webkit-transition: all .15s ease-in-out;
+  transition: all .15s ease-in-out;
+}
+
+.c14:focus {
+  outline: 0;
+  box-shadow: 0 0 0 3px rgba(34,153,85,0.5);
+}
+
+.c14:hover,
+.c14:active {
+  background-color: #1b7842;
+  border-color: #1b7842;
+}
+
+.c14[disabled] {
+  opacity: .65;
+}
+
+.c4 {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 38.000000006px;
+  box-sizing: border-box;
+  border-radius: 2px;
+  background-image: url(svg);
+  background-repeat: no-repeat;
+  background-size: 20.000000003px 20.000000003px;
+  background-position: center center;
+}
+
+.c3 {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: center;
+  font-weight: bold;
+  white-space: nowrap;
+  vertical-align: middle;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  touch-action: manipulation;
+  cursor: pointer;
+  color: #ffffff;
+  background-color: #3b5998;
+  border: 1px solid #3b5998;
+  padding: 9px 12px;
+  font-size: 14px;
+  line-height: 1.428571429;
+  border-radius: 3px;
+  -webkit-transition: all .15s ease-in-out;
+  transition: all .15s ease-in-out;
+  margin-bottom: 10px;
+  position: relative;
+  width: 100%;
+  height: 40.000000006px;
+}
+
+.c3:focus {
+  outline: 0;
+}
+
+.c3:hover,
+.c3:active {
+  color: #ffffff;
+  background-color: #30487b;
+  border-color: #30487b;
+}
+
+.c3[disabled] {
+  opacity: .65;
+}
+
+.c5 {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: center;
+  font-weight: bold;
+  white-space: nowrap;
+  vertical-align: middle;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  touch-action: manipulation;
+  cursor: pointer;
+  color: #58666e;
+  background-color: #ffffff;
+  border: 1px solid rgba(0,0,0,.15);
+  padding: 9px 12px;
+  font-size: 14px;
+  line-height: 1.428571429;
+  border-radius: 3px;
+  -webkit-transition: all .15s ease-in-out;
+  transition: all .15s ease-in-out;
+  margin-bottom: 10px;
+  position: relative;
+  width: 100%;
+  height: 40.000000006px;
+}
+
+.c5:focus {
+  outline: 0;
+}
+
+.c5:hover,
+.c5:active {
+  color: #58666e;
+  background-color: #ebebeb;
+  border-color: rgba(0,0,0,0.15);
+}
+
+.c5[disabled] {
+  opacity: .65;
+}
+
+.c2 {
+  text-align: center;
+}
+
+.c7 {
+  position: relative;
+}
+
+.c9 {
+  color: #495057;
+  margin-bottom: 5px;
+  display: none;
+}
+
+.c8 {
+  margin-bottom: 10px;
+}
+
+.c10 {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  font-size: 14px;
+  line-height: 1.428571429;
+  color: #495057;
+  border-radius: 3px;
+  border-width: 1px;
+  border-style: solid;
+  border-color: #ced4da;
+  background-color: #fff;
+  background-image: none;
+  padding: 9px 12px;
+  -webkit-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+  transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+  box-shadow: none;
+  -webkit-appearance: none;
+}
+
+.c10:focus {
+  border-color: #5fdb94;
+  box-shadow: 0 0 0 3px rgba(95,219,148,0.5);
+  outline: 0;
+}
+
+.c10:disabled,
+.c10[readonly] {
+  background-color: #e9ecef;
+}
+
+.c10::-webkit-input-placeholder {
+  color: #868e96;
+}
+
+.c10::-moz-placeholder {
+  color: #868e96;
+}
+
+.c10:-ms-input-placeholder {
+  color: #868e96;
+}
+
+.c10::placeholder {
+  color: #868e96;
+}
+
+.c11 {
+  position: absolute;
+  top: 13px;
+  right: 10px;
+  cursor: pointer;
+  opacity: 0.6;
+  fill: #495057;
+  width: 14px;
+  height: 14px;
+}
+
+.c12 {
+  margin-bottom: 10px;
+  text-align: right;
+}
+
+<div
+  className="c0"
+>
+  <div>
+    <div
+      className="c1"
+    >
+      Log in
+    </div>
+    <div
+      className="r5-social-buttons c2"
+    >
+      <div
+        className="r5-btn-social r5-btn-social-facebook c3"
+        onClick={[Function]}
+      >
+        <span
+          className="r5-btn-social-icon c4"
+        />
+        <span
+          className="r5-btn-social-text"
+        >
+          Facebook
+        </span>
+      </div>
+      <div
+        className="r5-btn-social r5-btn-social-google c5"
+        onClick={[Function]}
+      >
+        <span
+          className="r5-btn-social-icon c4"
+        />
+        <span
+          className="r5-btn-social-text"
+        >
+          Google
+        </span>
+      </div>
+    </div>
+    <div
+      className="c6"
+    >
+      <span>
+        or
+      </span>
+    </div>
+    <form
+      className="c7"
+      noValidate={true}
+      onSubmit={[Function]}
+    >
+      <div
+        className="c8"
+      >
+        <label
+          className="c9"
+          htmlFor="email"
+        >
+          Email address
+        </label>
+        <input
+          autoComplete="email"
+          className="c10"
+          id="email"
+          name="email"
+          onBlur={[Function]}
+          onChange={[Function]}
+          placeholder="Email address"
+          required={true}
+          title="Email address"
+          type="email"
+          value=""
+        />
+      </div>
+      <div
+        className="c8"
+      >
+        <label
+          className="c9"
+          htmlFor="password"
+        >
+          Password
+        </label>
+        <div
+          style={
+            Object {
+              "position": "relative",
+            }
+          }
+        >
+          <input
+            autoComplete="current-password"
+            className="c10"
+            id="password"
+            name="password"
+            onBlur={[Function]}
+            onChange={[Function]}
+            placeholder="Password"
+            required={true}
+            title="Password"
+            type="password"
+            value=""
+          />
+          <svg
+            className="c11"
+            onClick={[Function]}
+          />
+        </div>
+      </div>
+      <div
+        className="c12"
+      >
+        <a
+          className="c13"
+          href="javascript:{}"
+          onClick={[Function]}
+        >
+          Don't remember your password?
+        </a>
+      </div>
+      <button
+        className="c14"
+        disabled={false}
+        type="submit"
+      >
+        Log in
+      </button>
+    </form>
+    <div
+      className="c15"
+    >
+      <span>
+        Do not have an account?
+      </span>
+       
+      <a
+        className="c13"
+        href="javascript:{}"
+        onClick={[Function]}
+      >
+        Sign up
+      </a>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Snapshot login view with remember me 1`] = `
+.c1 {
+  margin-bottom: 15px;
+  text-align: center;
+  color: #212529;
+  font-weight: bold;
+  font-size: 16.8px;
+}
+
+.c6 {
+  color: #adb5bd;
+  display: block;
+  text-align: center;
+  overflow: hidden;
+  white-space: nowrap;
+  margin: 10px 0;
+}
+
+.c6 > span {
+  position: relative;
+  display: inline-block;
+}
+
+.c6 > span:before,
+.c6 > span:after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 9999px;
+  height: 1px;
+  background: #ced4da;
+}
+
+.c6 > span:before {
+  right: 100%;
+  margin-right: 14px;
+}
+
+.c6 > span:after {
+  left: 100%;
+  margin-left: 14px;
+}
+
+.c16 {
+  text-align: center;
+  margin-top: 15px;
+  color: #495057;
+}
+
+.c12 {
+  color: #229955;
+  -webkit-text-decoration: none;
+  text-decoration: none;
+}
+
+.c12:hover {
+  color: #145a32;
+  -webkit-text-decoration: none;
+  text-decoration: none;
+}
+
+.c0 {
+  font-size: 14px;
+  -webkit-transition: -webkit-transform 400ms ease, opacity 400ms ease;
+  -webkit-transition: transform 400ms ease, opacity 400ms ease;
+  transition: transform 400ms ease, opacity 400ms ease;
+  opacity: 0;
+  padding: 20px;
+  border-radius: 3px;
+  background-color: #ffffff;
+  max-width: 400px;
+  box-sizing: border-box;
+  margin: 0 auto;
+}
+
+.c15 {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: center;
+  font-weight: bold;
+  white-space: nowrap;
+  vertical-align: middle;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  touch-action: manipulation;
+  cursor: pointer;
+  color: #ffffff;
+  background-color: #229955;
+  border: 1px solid #229955;
+  padding: 9px 12px;
+  font-size: 14px;
+  line-height: 1.428571429;
+  border-radius: 3px;
+  -webkit-transition: all .15s ease-in-out;
+  transition: all .15s ease-in-out;
+}
+
+.c15:focus {
+  outline: 0;
+  box-shadow: 0 0 0 3px rgba(34,153,85,0.5);
+}
+
+.c15:hover,
+.c15:active {
+  background-color: #1b7842;
+  border-color: #1b7842;
+}
+
+.c15[disabled] {
+  opacity: .65;
+}
+
+.c4 {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 38.000000006px;
+  box-sizing: border-box;
+  border-radius: 2px;
+  background-image: url(svg);
+  background-repeat: no-repeat;
+  background-size: 20.000000003px 20.000000003px;
+  background-position: center center;
+}
+
+.c3 {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: center;
+  font-weight: bold;
+  white-space: nowrap;
+  vertical-align: middle;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  touch-action: manipulation;
+  cursor: pointer;
+  color: #ffffff;
+  background-color: #3b5998;
+  border: 1px solid #3b5998;
+  padding: 9px 12px;
+  font-size: 14px;
+  line-height: 1.428571429;
+  border-radius: 3px;
+  -webkit-transition: all .15s ease-in-out;
+  transition: all .15s ease-in-out;
+  margin-bottom: 10px;
+  position: relative;
+  width: 100%;
+  height: 40.000000006px;
+}
+
+.c3:focus {
+  outline: 0;
+}
+
+.c3:hover,
+.c3:active {
+  color: #ffffff;
+  background-color: #30487b;
+  border-color: #30487b;
+}
+
+.c3[disabled] {
+  opacity: .65;
+}
+
+.c5 {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: center;
+  font-weight: bold;
+  white-space: nowrap;
+  vertical-align: middle;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  touch-action: manipulation;
+  cursor: pointer;
+  color: #58666e;
+  background-color: #ffffff;
+  border: 1px solid rgba(0,0,0,.15);
+  padding: 9px 12px;
+  font-size: 14px;
+  line-height: 1.428571429;
+  border-radius: 3px;
+  -webkit-transition: all .15s ease-in-out;
+  transition: all .15s ease-in-out;
+  margin-bottom: 10px;
+  position: relative;
+  width: 100%;
+  height: 40.000000006px;
+}
+
+.c5:focus {
+  outline: 0;
+}
+
+.c5:hover,
+.c5:active {
+  color: #58666e;
+  background-color: #ebebeb;
+  border-color: rgba(0,0,0,0.15);
+}
+
+.c5[disabled] {
+  opacity: .65;
+}
+
+.c2 {
+  text-align: center;
+}
+
+.c7 {
+  position: relative;
+}
+
+.c9 {
+  color: #495057;
+  margin-bottom: 5px;
+  display: none;
+}
+
+.c8 {
+  margin-bottom: 10px;
+}
+
+.c10 {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  font-size: 14px;
+  line-height: 1.428571429;
+  color: #495057;
+  border-radius: 3px;
+  border-width: 1px;
+  border-style: solid;
+  border-color: #ced4da;
+  background-color: #fff;
+  background-image: none;
+  padding: 9px 12px;
+  -webkit-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+  transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+  box-shadow: none;
+  -webkit-appearance: none;
+}
+
+.c10:focus {
+  border-color: #5fdb94;
+  box-shadow: 0 0 0 3px rgba(95,219,148,0.5);
+  outline: 0;
+}
+
+.c10:disabled,
+.c10[readonly] {
+  background-color: #e9ecef;
+}
+
+.c10::-webkit-input-placeholder {
+  color: #868e96;
+}
+
+.c10::-moz-placeholder {
+  color: #868e96;
+}
+
+.c10:-ms-input-placeholder {
+  color: #868e96;
+}
+
+.c10::placeholder {
+  color: #868e96;
+}
+
+.c14 {
+  padding-left: 20px;
+  margin-bottom: 0;
+  cursor: pointer;
+  font-weight: normal;
+}
+
+.c14 > input {
+  position: absolute;
+  margin-left: -20px;
+  margin-top: 2px;
+  line-height: normal;
+}
+
+.c13 {
+  margin-bottom: 10px;
+}
+
+.c11 {
+  margin-bottom: 10px;
+  text-align: right;
+  position: absolute;
+  right: 0;
+}
+
+<div
+  className="c0"
+>
+  <div>
+    <div
+      className="c1"
+    >
+      Log in
+    </div>
+    <div
+      className="r5-social-buttons c2"
+    >
+      <div
+        className="r5-btn-social r5-btn-social-facebook c3"
+        onClick={[Function]}
+      >
+        <span
+          className="r5-btn-social-icon c4"
+        />
+        <span
+          className="r5-btn-social-text"
+        >
+          Facebook
+        </span>
+      </div>
+      <div
+        className="r5-btn-social r5-btn-social-google c5"
+        onClick={[Function]}
+      >
+        <span
+          className="r5-btn-social-icon c4"
+        />
+        <span
+          className="r5-btn-social-text"
+        >
+          Google
+        </span>
+      </div>
+    </div>
+    <div
+      className="c6"
+    >
+      <span>
+        or
+      </span>
+    </div>
+    <form
+      className="c7"
+      noValidate={true}
+      onSubmit={[Function]}
+    >
+      <div
+        className="c8"
+      >
+        <label
+          className="c9"
+          htmlFor="email"
+        >
+          Email address
+        </label>
+        <input
+          autoComplete="email"
+          className="c10"
+          id="email"
+          name="email"
+          onBlur={[Function]}
+          onChange={[Function]}
+          placeholder="Email address"
+          required={true}
+          title="Email address"
+          type="email"
+          value=""
+        />
+      </div>
+      <div
+        className="c8"
+      >
+        <label
+          className="c9"
+          htmlFor="password"
+        >
+          Password
+        </label>
+        <div
+          style={
+            Object {
+              "position": "relative",
+            }
+          }
+        >
+          <input
+            autoComplete="current-password"
+            className="c10"
+            id="password"
+            name="password"
+            onBlur={[Function]}
+            onChange={[Function]}
+            placeholder="Password"
+            required={true}
+            title="Password"
+            type="password"
+            value=""
+          />
+        </div>
+      </div>
+      <div
+        className="c11"
+      >
+        <a
+          className="c12"
+          href="javascript:{}"
+          onClick={[Function]}
+        >
+          Don't remember your password?
+        </a>
+      </div>
+      <div
+        className="c13"
+      >
+        <label
+          className="c14"
+        >
+          <input
+            checked={true}
+            name="persistent"
+            onChange={[Function]}
+            required={true}
+            type="checkbox"
+          />
+          Remember me
+        </label>
+      </div>
+      <button
+        className="c15"
+        disabled={false}
+        type="submit"
+      >
+        Log in
+      </button>
+    </form>
+    <div
+      className="c16"
+    >
+      <span>
+        Do not have an account?
+      </span>
+       
+      <a
+        className="c12"
+        href="javascript:{}"
+        onClick={[Function]}
+      >
+        Sign up
+      </a>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Snapshot signup view default 1`] = `
+.c1 {
+  margin-bottom: 15px;
+  text-align: center;
+  color: #212529;
+  font-weight: bold;
+  font-size: 16.8px;
+}
+
+.c6 {
+  color: #adb5bd;
+  display: block;
+  text-align: center;
+  overflow: hidden;
+  white-space: nowrap;
+  margin: 10px 0;
+}
+
+.c6 > span {
+  position: relative;
+  display: inline-block;
+}
+
+.c6 > span:before,
+.c6 > span:after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 9999px;
+  height: 1px;
+  background: #ced4da;
+}
+
+.c6 > span:before {
+  right: 100%;
+  margin-right: 14px;
+}
+
+.c6 > span:after {
+  left: 100%;
+  margin-left: 14px;
+}
+
+.c12 {
+  text-align: center;
+  margin-top: 15px;
+  color: #495057;
+}
+
+.c13 {
+  color: #229955;
+  -webkit-text-decoration: none;
+  text-decoration: none;
+}
+
+.c13:hover {
+  color: #145a32;
+  -webkit-text-decoration: none;
+  text-decoration: none;
+}
+
+.c0 {
+  font-size: 14px;
+  -webkit-transition: -webkit-transform 400ms ease, opacity 400ms ease;
+  -webkit-transition: transform 400ms ease, opacity 400ms ease;
+  transition: transform 400ms ease, opacity 400ms ease;
+  opacity: 0;
+  padding: 20px;
+  border-radius: 3px;
+  background-color: #ffffff;
+  max-width: 400px;
+  box-sizing: border-box;
+  margin: 0 auto;
+}
+
+.c11 {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: center;
+  font-weight: bold;
+  white-space: nowrap;
+  vertical-align: middle;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  touch-action: manipulation;
+  cursor: pointer;
+  color: #ffffff;
+  background-color: #229955;
+  border: 1px solid #229955;
+  padding: 9px 12px;
+  font-size: 14px;
+  line-height: 1.428571429;
+  border-radius: 3px;
+  -webkit-transition: all .15s ease-in-out;
+  transition: all .15s ease-in-out;
+}
+
+.c11:focus {
+  outline: 0;
+  box-shadow: 0 0 0 3px rgba(34,153,85,0.5);
+}
+
+.c11:hover,
+.c11:active {
+  background-color: #1b7842;
+  border-color: #1b7842;
+}
+
+.c11[disabled] {
+  opacity: .65;
+}
+
+.c4 {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 38.000000006px;
+  box-sizing: border-box;
+  border-radius: 2px;
+  background-image: url(svg);
+  background-repeat: no-repeat;
+  background-size: 20.000000003px 20.000000003px;
+  background-position: center center;
+}
+
+.c3 {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: center;
+  font-weight: bold;
+  white-space: nowrap;
+  vertical-align: middle;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  touch-action: manipulation;
+  cursor: pointer;
+  color: #ffffff;
+  background-color: #3b5998;
+  border: 1px solid #3b5998;
+  padding: 9px 12px;
+  font-size: 14px;
+  line-height: 1.428571429;
+  border-radius: 3px;
+  -webkit-transition: all .15s ease-in-out;
+  transition: all .15s ease-in-out;
+  margin-bottom: 10px;
+  position: relative;
+  width: 100%;
+  height: 40.000000006px;
+}
+
+.c3:focus {
+  outline: 0;
+}
+
+.c3:hover,
+.c3:active {
+  color: #ffffff;
+  background-color: #30487b;
+  border-color: #30487b;
+}
+
+.c3[disabled] {
+  opacity: .65;
+}
+
+.c5 {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: center;
+  font-weight: bold;
+  white-space: nowrap;
+  vertical-align: middle;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  touch-action: manipulation;
+  cursor: pointer;
+  color: #58666e;
+  background-color: #ffffff;
+  border: 1px solid rgba(0,0,0,.15);
+  padding: 9px 12px;
+  font-size: 14px;
+  line-height: 1.428571429;
+  border-radius: 3px;
+  -webkit-transition: all .15s ease-in-out;
+  transition: all .15s ease-in-out;
+  margin-bottom: 10px;
+  position: relative;
+  width: 100%;
+  height: 40.000000006px;
+}
+
+.c5:focus {
+  outline: 0;
+}
+
+.c5:hover,
+.c5:active {
+  color: #58666e;
+  background-color: #ebebeb;
+  border-color: rgba(0,0,0,0.15);
+}
+
+.c5[disabled] {
+  opacity: .65;
+}
+
+.c2 {
+  text-align: center;
+}
+
+.c7 {
+  position: relative;
+}
+
+.c9 {
+  color: #495057;
+  margin-bottom: 5px;
+  display: none;
+}
+
+.c8 {
+  margin-bottom: 10px;
+}
+
+.c10 {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  font-size: 14px;
+  line-height: 1.428571429;
+  color: #495057;
+  border-radius: 3px;
+  border-width: 1px;
+  border-style: solid;
+  border-color: #ced4da;
+  background-color: #fff;
+  background-image: none;
+  padding: 9px 12px;
+  -webkit-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+  transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+  box-shadow: none;
+  -webkit-appearance: none;
+}
+
+.c10:focus {
+  border-color: #5fdb94;
+  box-shadow: 0 0 0 3px rgba(95,219,148,0.5);
+  outline: 0;
+}
+
+.c10:disabled,
+.c10[readonly] {
+  background-color: #e9ecef;
+}
+
+.c10::-webkit-input-placeholder {
+  color: #868e96;
+}
+
+.c10::-moz-placeholder {
+  color: #868e96;
+}
+
+.c10:-ms-input-placeholder {
+  color: #868e96;
+}
+
+.c10::placeholder {
+  color: #868e96;
+}
+
+<div
+  className="c0"
+>
+  <div>
+    <div
+      className="c1"
+    >
+      Sign up
+    </div>
+    <div
+      className="r5-social-buttons c2"
+    >
+      <div
+        className="r5-btn-social r5-btn-social-facebook c3"
+        onClick={[Function]}
+      >
+        <span
+          className="r5-btn-social-icon c4"
+        />
+        <span
+          className="r5-btn-social-text"
+        >
+          Facebook
+        </span>
+      </div>
+      <div
+        className="r5-btn-social r5-btn-social-google c5"
+        onClick={[Function]}
+      >
+        <span
+          className="r5-btn-social-icon c4"
+        />
+        <span
+          className="r5-btn-social-text"
+        >
+          Google
+        </span>
+      </div>
+    </div>
+    <div
+      className="c6"
+    >
+      <span>
+        or
+      </span>
+    </div>
+    <form
+      className="c7"
+      noValidate={true}
+      onSubmit={[Function]}
+    >
+      <div
+        className="c8"
+      >
+        <label
+          className="c9"
+          htmlFor="given_name"
+        >
+          First name
+        </label>
+        <input
+          className="c10"
+          id="given_name"
+          name="given_name"
+          onBlur={[Function]}
+          onChange={[Function]}
+          placeholder="First name"
+          required={true}
+          title="First name"
+          value=""
+        />
+      </div>
+      <div
+        className="c8"
+      >
+        <label
+          className="c9"
+          htmlFor="family_name"
+        >
+          Last name
+        </label>
+        <input
+          className="c10"
+          id="family_name"
+          name="family_name"
+          onBlur={[Function]}
+          onChange={[Function]}
+          placeholder="Last name"
+          required={true}
+          title="Last name"
+          value=""
+        />
+      </div>
+      <div
+        className="c8"
+      >
+        <label
+          className="c9"
+          htmlFor="email"
+        >
+          Email address
+        </label>
+        <input
+          className="c10"
+          id="email"
+          name="email"
+          onBlur={[Function]}
+          onChange={[Function]}
+          placeholder="Email address"
+          required={true}
+          title="Email address"
+          type="email"
+          value=""
+        />
+      </div>
+      <div
+        className="c8"
+      >
+        <div
+          style={
+            Object {
+              "position": "relative",
+            }
+          }
+        >
+          <label
+            className="c9"
+          >
+            Password
+          </label>
+          <input
+            className="c10"
+            name="password"
+            onBlur={[Function]}
+            onChange={[Function]}
+            onFocus={[Function]}
+            placeholder="Password"
+            title="Password"
+            type="password"
+            value=""
+          />
+        </div>
+      </div>
+      <div
+        className="c8"
+      >
+        <label
+          className="c9"
+          htmlFor="password_confirmation"
+        >
+          Password confirmation
+        </label>
+        <div
+          style={
+            Object {
+              "position": "relative",
+            }
+          }
+        >
+          <input
+            className="c10"
+            id="password_confirmation"
+            name="password_confirmation"
+            onBlur={[Function]}
+            onChange={[Function]}
+            placeholder="Password confirmation"
+            required={true}
+            title="Password confirmation"
+            type="password"
+            value=""
+          />
+        </div>
+      </div>
+      <button
+        className="c11"
+        disabled={false}
+        type="submit"
+      >
+        Sign up
+      </button>
+    </form>
+    <div
+      className="c12"
+    >
+      <span>
+        Already have an account?
+      </span>
+       
+      <a
+        className="c13"
+        href="javascript:{}"
+        onClick={[Function]}
+      >
+        Log in
+      </a>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Snapshot signup view inline social buttons 1`] = `
+.c1 {
+  margin-bottom: 15px;
+  text-align: center;
+  color: #212529;
+  font-weight: bold;
+  font-size: 16.8px;
+}
+
+.c6 {
+  color: #adb5bd;
+  display: block;
+  text-align: center;
+  overflow: hidden;
+  white-space: nowrap;
+  margin: 10px 0;
+}
+
+.c6 > span {
+  position: relative;
+  display: inline-block;
+}
+
+.c6 > span:before,
+.c6 > span:after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 9999px;
+  height: 1px;
+  background: #ced4da;
+}
+
+.c6 > span:before {
+  right: 100%;
+  margin-right: 14px;
+}
+
+.c6 > span:after {
+  left: 100%;
+  margin-left: 14px;
+}
+
+.c12 {
+  text-align: center;
+  margin-top: 15px;
+  color: #495057;
+}
+
+.c13 {
+  color: #229955;
+  -webkit-text-decoration: none;
+  text-decoration: none;
+}
+
+.c13:hover {
+  color: #145a32;
+  -webkit-text-decoration: none;
+  text-decoration: none;
+}
+
+.c0 {
+  font-size: 14px;
+  -webkit-transition: -webkit-transform 400ms ease, opacity 400ms ease;
+  -webkit-transition: transform 400ms ease, opacity 400ms ease;
+  transition: transform 400ms ease, opacity 400ms ease;
+  opacity: 0;
+  padding: 20px;
+  border-radius: 3px;
+  background-color: #ffffff;
+  max-width: 400px;
+  box-sizing: border-box;
+  margin: 0 auto;
+}
+
+.c11 {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: center;
+  font-weight: bold;
+  white-space: nowrap;
+  vertical-align: middle;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  touch-action: manipulation;
+  cursor: pointer;
+  color: #ffffff;
+  background-color: #229955;
+  border: 1px solid #229955;
+  padding: 9px 12px;
+  font-size: 14px;
+  line-height: 1.428571429;
+  border-radius: 3px;
+  -webkit-transition: all .15s ease-in-out;
+  transition: all .15s ease-in-out;
+}
+
+.c11:focus {
+  outline: 0;
+  box-shadow: 0 0 0 3px rgba(34,153,85,0.5);
+}
+
+.c11:hover,
+.c11:active {
+  background-color: #1b7842;
+  border-color: #1b7842;
+}
+
+.c11[disabled] {
+  opacity: .65;
+}
+
+.c4 {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 100%;
+  box-sizing: border-box;
+  border-radius: 2px;
+  background-image: url(svg);
+  background-repeat: no-repeat;
+  background-size: 20.000000003px 20.000000003px;
+  background-position: center center;
+  height: 100%;
+}
+
+.c3 {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: center;
+  font-weight: bold;
+  white-space: nowrap;
+  vertical-align: middle;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  touch-action: manipulation;
+  cursor: pointer;
+  color: #ffffff;
+  background-color: #3b5998;
+  border: 1px solid #3b5998;
+  padding: 9px 12px;
+  font-size: 14px;
+  line-height: 1.428571429;
+  border-radius: 3px;
+  -webkit-transition: all .15s ease-in-out;
+  transition: all .15s ease-in-out;
+  margin-bottom: 10px;
+  position: relative;
+  width: 40.000000006px;
+  height: 40.000000006px;
+  display: inline-block;
+  margin: 0 4px;
+}
+
+.c3:focus {
+  outline: 0;
+}
+
+.c3:hover,
+.c3:active {
+  color: #ffffff;
+  background-color: #30487b;
+  border-color: #30487b;
+}
+
+.c3[disabled] {
+  opacity: .65;
+}
+
+.c5 {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: center;
+  font-weight: bold;
+  white-space: nowrap;
+  vertical-align: middle;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  touch-action: manipulation;
+  cursor: pointer;
+  color: #58666e;
+  background-color: #ffffff;
+  border: 1px solid rgba(0,0,0,.15);
+  padding: 9px 12px;
+  font-size: 14px;
+  line-height: 1.428571429;
+  border-radius: 3px;
+  -webkit-transition: all .15s ease-in-out;
+  transition: all .15s ease-in-out;
+  margin-bottom: 10px;
+  position: relative;
+  width: 40.000000006px;
+  height: 40.000000006px;
+  display: inline-block;
+  margin: 0 4px;
+}
+
+.c5:focus {
+  outline: 0;
+}
+
+.c5:hover,
+.c5:active {
+  color: #58666e;
+  background-color: #ebebeb;
+  border-color: rgba(0,0,0,0.15);
+}
+
+.c5[disabled] {
+  opacity: .65;
+}
+
+.c2 {
+  text-align: center;
+  margin: 0 -4px;
+}
+
+.c7 {
+  position: relative;
+}
+
+.c9 {
+  color: #495057;
+  margin-bottom: 5px;
+  display: none;
+}
+
+.c8 {
+  margin-bottom: 10px;
+}
+
+.c10 {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  font-size: 14px;
+  line-height: 1.428571429;
+  color: #495057;
+  border-radius: 3px;
+  border-width: 1px;
+  border-style: solid;
+  border-color: #ced4da;
+  background-color: #fff;
+  background-image: none;
+  padding: 9px 12px;
+  -webkit-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+  transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+  box-shadow: none;
+  -webkit-appearance: none;
+}
+
+.c10:focus {
+  border-color: #5fdb94;
+  box-shadow: 0 0 0 3px rgba(95,219,148,0.5);
+  outline: 0;
+}
+
+.c10:disabled,
+.c10[readonly] {
+  background-color: #e9ecef;
+}
+
+.c10::-webkit-input-placeholder {
+  color: #868e96;
+}
+
+.c10::-moz-placeholder {
+  color: #868e96;
+}
+
+.c10:-ms-input-placeholder {
+  color: #868e96;
+}
+
+.c10::placeholder {
+  color: #868e96;
+}
+
+<div
+  className="c0"
+>
+  <div>
+    <div
+      className="c1"
+    >
+      Sign up
+    </div>
+    <div
+      className="r5-social-buttons c2"
+    >
+      <div
+        className="r5-btn-social r5-btn-social-facebook c3"
+        onClick={[Function]}
+        title="Facebook"
+      >
+        <span
+          className="r5-btn-social-icon c4"
+        />
+      </div>
+      <div
+        className="r5-btn-social r5-btn-social-google c5"
+        onClick={[Function]}
+        title="Google"
+      >
+        <span
+          className="r5-btn-social-icon c4"
+        />
+      </div>
+    </div>
+    <div
+      className="c6"
+    >
+      <span>
+        or
+      </span>
+    </div>
+    <form
+      className="c7"
+      noValidate={true}
+      onSubmit={[Function]}
+    >
+      <div
+        className="c8"
+      >
+        <label
+          className="c9"
+          htmlFor="given_name"
+        >
+          First name
+        </label>
+        <input
+          className="c10"
+          id="given_name"
+          name="given_name"
+          onBlur={[Function]}
+          onChange={[Function]}
+          placeholder="First name"
+          required={true}
+          title="First name"
+          value=""
+        />
+      </div>
+      <div
+        className="c8"
+      >
+        <label
+          className="c9"
+          htmlFor="family_name"
+        >
+          Last name
+        </label>
+        <input
+          className="c10"
+          id="family_name"
+          name="family_name"
+          onBlur={[Function]}
+          onChange={[Function]}
+          placeholder="Last name"
+          required={true}
+          title="Last name"
+          value=""
+        />
+      </div>
+      <div
+        className="c8"
+      >
+        <label
+          className="c9"
+          htmlFor="email"
+        >
+          Email address
+        </label>
+        <input
+          className="c10"
+          id="email"
+          name="email"
+          onBlur={[Function]}
+          onChange={[Function]}
+          placeholder="Email address"
+          required={true}
+          title="Email address"
+          type="email"
+          value=""
+        />
+      </div>
+      <div
+        className="c8"
+      >
+        <div
+          style={
+            Object {
+              "position": "relative",
+            }
+          }
+        >
+          <label
+            className="c9"
+          >
+            Password
+          </label>
+          <input
+            className="c10"
+            name="password"
+            onBlur={[Function]}
+            onChange={[Function]}
+            onFocus={[Function]}
+            placeholder="Password"
+            title="Password"
+            type="password"
+            value=""
+          />
+        </div>
+      </div>
+      <div
+        className="c8"
+      >
+        <label
+          className="c9"
+          htmlFor="password_confirmation"
+        >
+          Password confirmation
+        </label>
+        <div
+          style={
+            Object {
+              "position": "relative",
+            }
+          }
+        >
+          <input
+            className="c10"
+            id="password_confirmation"
+            name="password_confirmation"
+            onBlur={[Function]}
+            onChange={[Function]}
+            placeholder="Password confirmation"
+            required={true}
+            title="Password confirmation"
+            type="password"
+            value=""
+          />
+        </div>
+      </div>
+      <button
+        className="c11"
+        disabled={false}
+        type="submit"
+      >
+        Sign up
+      </button>
+    </form>
+    <div
+      className="c12"
+    >
+      <span>
+        Already have an account?
+      </span>
+       
+      <a
+        className="c13"
+        href="javascript:{}"
+        onClick={[Function]}
+      >
+        Log in
+      </a>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Snapshot signup view no login 1`] = `
+.c1 {
+  margin-bottom: 15px;
+  text-align: center;
+  color: #212529;
+  font-weight: bold;
+  font-size: 16.8px;
+}
+
+.c6 {
+  color: #adb5bd;
+  display: block;
+  text-align: center;
+  overflow: hidden;
+  white-space: nowrap;
+  margin: 10px 0;
+}
+
+.c6 > span {
+  position: relative;
+  display: inline-block;
+}
+
+.c6 > span:before,
+.c6 > span:after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 9999px;
+  height: 1px;
+  background: #ced4da;
+}
+
+.c6 > span:before {
+  right: 100%;
+  margin-right: 14px;
+}
+
+.c6 > span:after {
+  left: 100%;
+  margin-left: 14px;
+}
+
+.c0 {
+  font-size: 14px;
+  -webkit-transition: -webkit-transform 400ms ease, opacity 400ms ease;
+  -webkit-transition: transform 400ms ease, opacity 400ms ease;
+  transition: transform 400ms ease, opacity 400ms ease;
+  opacity: 0;
+  padding: 20px;
+  border-radius: 3px;
+  background-color: #ffffff;
+  max-width: 400px;
+  box-sizing: border-box;
+  margin: 0 auto;
+}
+
+.c11 {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: center;
+  font-weight: bold;
+  white-space: nowrap;
+  vertical-align: middle;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  touch-action: manipulation;
+  cursor: pointer;
+  color: #ffffff;
+  background-color: #229955;
+  border: 1px solid #229955;
+  padding: 9px 12px;
+  font-size: 14px;
+  line-height: 1.428571429;
+  border-radius: 3px;
+  -webkit-transition: all .15s ease-in-out;
+  transition: all .15s ease-in-out;
+}
+
+.c11:focus {
+  outline: 0;
+  box-shadow: 0 0 0 3px rgba(34,153,85,0.5);
+}
+
+.c11:hover,
+.c11:active {
+  background-color: #1b7842;
+  border-color: #1b7842;
+}
+
+.c11[disabled] {
+  opacity: .65;
+}
+
+.c4 {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 38.000000006px;
+  box-sizing: border-box;
+  border-radius: 2px;
+  background-image: url(svg);
+  background-repeat: no-repeat;
+  background-size: 20.000000003px 20.000000003px;
+  background-position: center center;
+}
+
+.c3 {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: center;
+  font-weight: bold;
+  white-space: nowrap;
+  vertical-align: middle;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  touch-action: manipulation;
+  cursor: pointer;
+  color: #ffffff;
+  background-color: #3b5998;
+  border: 1px solid #3b5998;
+  padding: 9px 12px;
+  font-size: 14px;
+  line-height: 1.428571429;
+  border-radius: 3px;
+  -webkit-transition: all .15s ease-in-out;
+  transition: all .15s ease-in-out;
+  margin-bottom: 10px;
+  position: relative;
+  width: 100%;
+  height: 40.000000006px;
+}
+
+.c3:focus {
+  outline: 0;
+}
+
+.c3:hover,
+.c3:active {
+  color: #ffffff;
+  background-color: #30487b;
+  border-color: #30487b;
+}
+
+.c3[disabled] {
+  opacity: .65;
+}
+
+.c5 {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: center;
+  font-weight: bold;
+  white-space: nowrap;
+  vertical-align: middle;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  touch-action: manipulation;
+  cursor: pointer;
+  color: #58666e;
+  background-color: #ffffff;
+  border: 1px solid rgba(0,0,0,.15);
+  padding: 9px 12px;
+  font-size: 14px;
+  line-height: 1.428571429;
+  border-radius: 3px;
+  -webkit-transition: all .15s ease-in-out;
+  transition: all .15s ease-in-out;
+  margin-bottom: 10px;
+  position: relative;
+  width: 100%;
+  height: 40.000000006px;
+}
+
+.c5:focus {
+  outline: 0;
+}
+
+.c5:hover,
+.c5:active {
+  color: #58666e;
+  background-color: #ebebeb;
+  border-color: rgba(0,0,0,0.15);
+}
+
+.c5[disabled] {
+  opacity: .65;
+}
+
+.c2 {
+  text-align: center;
+}
+
+.c7 {
+  position: relative;
+}
+
+.c9 {
+  color: #495057;
+  margin-bottom: 5px;
+  display: none;
+}
+
+.c8 {
+  margin-bottom: 10px;
+}
+
+.c10 {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  font-size: 14px;
+  line-height: 1.428571429;
+  color: #495057;
+  border-radius: 3px;
+  border-width: 1px;
+  border-style: solid;
+  border-color: #ced4da;
+  background-color: #fff;
+  background-image: none;
+  padding: 9px 12px;
+  -webkit-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+  transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+  box-shadow: none;
+  -webkit-appearance: none;
+}
+
+.c10:focus {
+  border-color: #5fdb94;
+  box-shadow: 0 0 0 3px rgba(95,219,148,0.5);
+  outline: 0;
+}
+
+.c10:disabled,
+.c10[readonly] {
+  background-color: #e9ecef;
+}
+
+.c10::-webkit-input-placeholder {
+  color: #868e96;
+}
+
+.c10::-moz-placeholder {
+  color: #868e96;
+}
+
+.c10:-ms-input-placeholder {
+  color: #868e96;
+}
+
+.c10::placeholder {
+  color: #868e96;
+}
+
+<div
+  className="c0"
+>
+  <div>
+    <div
+      className="c1"
+    >
+      Sign up
+    </div>
+    <div
+      className="r5-social-buttons c2"
+    >
+      <div
+        className="r5-btn-social r5-btn-social-facebook c3"
+        onClick={[Function]}
+      >
+        <span
+          className="r5-btn-social-icon c4"
+        />
+        <span
+          className="r5-btn-social-text"
+        >
+          Facebook
+        </span>
+      </div>
+      <div
+        className="r5-btn-social r5-btn-social-google c5"
+        onClick={[Function]}
+      >
+        <span
+          className="r5-btn-social-icon c4"
+        />
+        <span
+          className="r5-btn-social-text"
+        >
+          Google
+        </span>
+      </div>
+    </div>
+    <div
+      className="c6"
+    >
+      <span>
+        or
+      </span>
+    </div>
+    <form
+      className="c7"
+      noValidate={true}
+      onSubmit={[Function]}
+    >
+      <div
+        className="c8"
+      >
+        <label
+          className="c9"
+          htmlFor="given_name"
+        >
+          First name
+        </label>
+        <input
+          className="c10"
+          id="given_name"
+          name="given_name"
+          onBlur={[Function]}
+          onChange={[Function]}
+          placeholder="First name"
+          required={true}
+          title="First name"
+          value=""
+        />
+      </div>
+      <div
+        className="c8"
+      >
+        <label
+          className="c9"
+          htmlFor="family_name"
+        >
+          Last name
+        </label>
+        <input
+          className="c10"
+          id="family_name"
+          name="family_name"
+          onBlur={[Function]}
+          onChange={[Function]}
+          placeholder="Last name"
+          required={true}
+          title="Last name"
+          value=""
+        />
+      </div>
+      <div
+        className="c8"
+      >
+        <label
+          className="c9"
+          htmlFor="email"
+        >
+          Email address
+        </label>
+        <input
+          className="c10"
+          id="email"
+          name="email"
+          onBlur={[Function]}
+          onChange={[Function]}
+          placeholder="Email address"
+          required={true}
+          title="Email address"
+          type="email"
+          value=""
+        />
+      </div>
+      <div
+        className="c8"
+      >
+        <div
+          style={
+            Object {
+              "position": "relative",
+            }
+          }
+        >
+          <label
+            className="c9"
+          >
+            Password
+          </label>
+          <input
+            className="c10"
+            name="password"
+            onBlur={[Function]}
+            onChange={[Function]}
+            onFocus={[Function]}
+            placeholder="Password"
+            title="Password"
+            type="password"
+            value=""
+          />
+        </div>
+      </div>
+      <div
+        className="c8"
+      >
+        <label
+          className="c9"
+          htmlFor="password_confirmation"
+        >
+          Password confirmation
+        </label>
+        <div
+          style={
+            Object {
+              "position": "relative",
+            }
+          }
+        >
+          <input
+            className="c10"
+            id="password_confirmation"
+            name="password_confirmation"
+            onBlur={[Function]}
+            onChange={[Function]}
+            placeholder="Password confirmation"
+            required={true}
+            title="Password confirmation"
+            type="password"
+            value=""
+          />
+        </div>
+      </div>
+      <button
+        className="c11"
+        disabled={false}
+        type="submit"
+      >
+        Sign up
+      </button>
+    </form>
+  </div>
+</div>
+`;
+
+exports[`Snapshot signup view show labels 1`] = `
+.c1 {
+  margin-bottom: 15px;
+  text-align: center;
+  color: #212529;
+  font-weight: bold;
+  font-size: 16.8px;
+}
+
+.c6 {
+  color: #adb5bd;
+  display: block;
+  text-align: center;
+  overflow: hidden;
+  white-space: nowrap;
+  margin: 10px 0;
+}
+
+.c6 > span {
+  position: relative;
+  display: inline-block;
+}
+
+.c6 > span:before,
+.c6 > span:after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 9999px;
+  height: 1px;
+  background: #ced4da;
+}
+
+.c6 > span:before {
+  right: 100%;
+  margin-right: 14px;
+}
+
+.c6 > span:after {
+  left: 100%;
+  margin-left: 14px;
+}
+
+.c12 {
+  text-align: center;
+  margin-top: 15px;
+  color: #495057;
+}
+
+.c13 {
+  color: #229955;
+  -webkit-text-decoration: none;
+  text-decoration: none;
+}
+
+.c13:hover {
+  color: #145a32;
+  -webkit-text-decoration: none;
+  text-decoration: none;
+}
+
+.c0 {
+  font-size: 14px;
+  -webkit-transition: -webkit-transform 400ms ease, opacity 400ms ease;
+  -webkit-transition: transform 400ms ease, opacity 400ms ease;
+  transition: transform 400ms ease, opacity 400ms ease;
+  opacity: 0;
+  padding: 20px;
+  border-radius: 3px;
+  background-color: #ffffff;
+  max-width: 400px;
+  box-sizing: border-box;
+  margin: 0 auto;
+}
+
+.c11 {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: center;
+  font-weight: bold;
+  white-space: nowrap;
+  vertical-align: middle;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  touch-action: manipulation;
+  cursor: pointer;
+  color: #ffffff;
+  background-color: #229955;
+  border: 1px solid #229955;
+  padding: 9px 12px;
+  font-size: 14px;
+  line-height: 1.428571429;
+  border-radius: 3px;
+  -webkit-transition: all .15s ease-in-out;
+  transition: all .15s ease-in-out;
+}
+
+.c11:focus {
+  outline: 0;
+  box-shadow: 0 0 0 3px rgba(34,153,85,0.5);
+}
+
+.c11:hover,
+.c11:active {
+  background-color: #1b7842;
+  border-color: #1b7842;
+}
+
+.c11[disabled] {
+  opacity: .65;
+}
+
+.c4 {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 38.000000006px;
+  box-sizing: border-box;
+  border-radius: 2px;
+  background-image: url(svg);
+  background-repeat: no-repeat;
+  background-size: 20.000000003px 20.000000003px;
+  background-position: center center;
+}
+
+.c3 {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: center;
+  font-weight: bold;
+  white-space: nowrap;
+  vertical-align: middle;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  touch-action: manipulation;
+  cursor: pointer;
+  color: #ffffff;
+  background-color: #3b5998;
+  border: 1px solid #3b5998;
+  padding: 9px 12px;
+  font-size: 14px;
+  line-height: 1.428571429;
+  border-radius: 3px;
+  -webkit-transition: all .15s ease-in-out;
+  transition: all .15s ease-in-out;
+  margin-bottom: 10px;
+  position: relative;
+  width: 100%;
+  height: 40.000000006px;
+}
+
+.c3:focus {
+  outline: 0;
+}
+
+.c3:hover,
+.c3:active {
+  color: #ffffff;
+  background-color: #30487b;
+  border-color: #30487b;
+}
+
+.c3[disabled] {
+  opacity: .65;
+}
+
+.c5 {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: center;
+  font-weight: bold;
+  white-space: nowrap;
+  vertical-align: middle;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  touch-action: manipulation;
+  cursor: pointer;
+  color: #58666e;
+  background-color: #ffffff;
+  border: 1px solid rgba(0,0,0,.15);
+  padding: 9px 12px;
+  font-size: 14px;
+  line-height: 1.428571429;
+  border-radius: 3px;
+  -webkit-transition: all .15s ease-in-out;
+  transition: all .15s ease-in-out;
+  margin-bottom: 10px;
+  position: relative;
+  width: 100%;
+  height: 40.000000006px;
+}
+
+.c5:focus {
+  outline: 0;
+}
+
+.c5:hover,
+.c5:active {
+  color: #58666e;
+  background-color: #ebebeb;
+  border-color: rgba(0,0,0,0.15);
+}
+
+.c5[disabled] {
+  opacity: .65;
+}
+
+.c2 {
+  text-align: center;
+}
+
+.c7 {
+  position: relative;
+}
+
+.c9 {
+  color: #495057;
+  margin-bottom: 5px;
+  display: inline-block;
+}
+
+.c8 {
+  margin-bottom: 10px;
+}
+
+.c10 {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  font-size: 14px;
+  line-height: 1.428571429;
+  color: #495057;
+  border-radius: 3px;
+  border-width: 1px;
+  border-style: solid;
+  border-color: #ced4da;
+  background-color: #fff;
+  background-image: none;
+  padding: 9px 12px;
+  -webkit-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+  transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+  box-shadow: none;
+  -webkit-appearance: none;
+}
+
+.c10:focus {
+  border-color: #5fdb94;
+  box-shadow: 0 0 0 3px rgba(95,219,148,0.5);
+  outline: 0;
+}
+
+.c10:disabled,
+.c10[readonly] {
+  background-color: #e9ecef;
+}
+
+.c10::-webkit-input-placeholder {
+  color: #868e96;
+}
+
+.c10::-moz-placeholder {
+  color: #868e96;
+}
+
+.c10:-ms-input-placeholder {
+  color: #868e96;
+}
+
+.c10::placeholder {
+  color: #868e96;
+}
+
+<div
+  className="c0"
+>
+  <div>
+    <div
+      className="c1"
+    >
+      Sign up
+    </div>
+    <div
+      className="r5-social-buttons c2"
+    >
+      <div
+        className="r5-btn-social r5-btn-social-facebook c3"
+        onClick={[Function]}
+      >
+        <span
+          className="r5-btn-social-icon c4"
+        />
+        <span
+          className="r5-btn-social-text"
+        >
+          Facebook
+        </span>
+      </div>
+      <div
+        className="r5-btn-social r5-btn-social-google c5"
+        onClick={[Function]}
+      >
+        <span
+          className="r5-btn-social-icon c4"
+        />
+        <span
+          className="r5-btn-social-text"
+        >
+          Google
+        </span>
+      </div>
+    </div>
+    <div
+      className="c6"
+    >
+      <span>
+        or
+      </span>
+    </div>
+    <form
+      className="c7"
+      noValidate={true}
+      onSubmit={[Function]}
+    >
+      <div
+        className="c8"
+      >
+        <label
+          className="c9"
+          htmlFor="given_name"
+        >
+          First name
+        </label>
+        <input
+          className="c10"
+          id="given_name"
+          name="given_name"
+          onBlur={[Function]}
+          onChange={[Function]}
+          placeholder="First name"
+          required={true}
+          title="First name"
+          value=""
+        />
+      </div>
+      <div
+        className="c8"
+      >
+        <label
+          className="c9"
+          htmlFor="family_name"
+        >
+          Last name
+        </label>
+        <input
+          className="c10"
+          id="family_name"
+          name="family_name"
+          onBlur={[Function]}
+          onChange={[Function]}
+          placeholder="Last name"
+          required={true}
+          title="Last name"
+          value=""
+        />
+      </div>
+      <div
+        className="c8"
+      >
+        <label
+          className="c9"
+          htmlFor="email"
+        >
+          Email address
+        </label>
+        <input
+          className="c10"
+          id="email"
+          name="email"
+          onBlur={[Function]}
+          onChange={[Function]}
+          placeholder="Email address"
+          required={true}
+          title="Email address"
+          type="email"
+          value=""
+        />
+      </div>
+      <div
+        className="c8"
+      >
+        <div
+          style={
+            Object {
+              "position": "relative",
+            }
+          }
+        >
+          <label
+            className="c9"
+          >
+            Password
+          </label>
+          <input
+            className="c10"
+            name="password"
+            onBlur={[Function]}
+            onChange={[Function]}
+            onFocus={[Function]}
+            placeholder="Password"
+            title="Password"
+            type="password"
+            value=""
+          />
+        </div>
+      </div>
+      <div
+        className="c8"
+      >
+        <label
+          className="c9"
+          htmlFor="password_confirmation"
+        >
+          Password confirmation
+        </label>
+        <div
+          style={
+            Object {
+              "position": "relative",
+            }
+          }
+        >
+          <input
+            className="c10"
+            id="password_confirmation"
+            name="password_confirmation"
+            onBlur={[Function]}
+            onChange={[Function]}
+            placeholder="Password confirmation"
+            required={true}
+            title="Password confirmation"
+            type="password"
+            value=""
+          />
+        </div>
+      </div>
+      <button
+        className="c11"
+        disabled={false}
+        type="submit"
+      >
+        Sign up
+      </button>
+    </form>
+    <div
+      className="c12"
+    >
+      <span>
+        Already have an account?
+      </span>
+       
+      <a
+        className="c13"
+        href="javascript:{}"
+        onClick={[Function]}
+      >
+        Log in
+      </a>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Snapshot signup view with consents 1`] = `
+.c1 {
+  margin-bottom: 15px;
+  text-align: center;
+  color: #212529;
+  font-weight: bold;
+  font-size: 16.8px;
+}
+
+.c6 {
+  color: #adb5bd;
+  display: block;
+  text-align: center;
+  overflow: hidden;
+  white-space: nowrap;
+  margin: 10px 0;
+}
+
+.c6 > span {
+  position: relative;
+  display: inline-block;
+}
+
+.c6 > span:before,
+.c6 > span:after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 9999px;
+  height: 1px;
+  background: #ced4da;
+}
+
+.c6 > span:before {
+  right: 100%;
+  margin-right: 14px;
+}
+
+.c6 > span:after {
+  left: 100%;
+  margin-left: 14px;
+}
+
+.c15 {
+  text-align: center;
+  margin-top: 15px;
+  color: #495057;
+}
+
+.c16 {
+  color: #229955;
+  -webkit-text-decoration: none;
+  text-decoration: none;
+}
+
+.c16:hover {
+  color: #145a32;
+  -webkit-text-decoration: none;
+  text-decoration: none;
+}
+
+.c0 {
+  font-size: 14px;
+  -webkit-transition: -webkit-transform 400ms ease, opacity 400ms ease;
+  -webkit-transition: transform 400ms ease, opacity 400ms ease;
+  transition: transform 400ms ease, opacity 400ms ease;
+  opacity: 0;
+  padding: 20px;
+  border-radius: 3px;
+  background-color: #ffffff;
+  max-width: 400px;
+  box-sizing: border-box;
+  margin: 0 auto;
+}
+
+.c14 {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: center;
+  font-weight: bold;
+  white-space: nowrap;
+  vertical-align: middle;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  touch-action: manipulation;
+  cursor: pointer;
+  color: #ffffff;
+  background-color: #229955;
+  border: 1px solid #229955;
+  padding: 9px 12px;
+  font-size: 14px;
+  line-height: 1.428571429;
+  border-radius: 3px;
+  -webkit-transition: all .15s ease-in-out;
+  transition: all .15s ease-in-out;
+}
+
+.c14:focus {
+  outline: 0;
+  box-shadow: 0 0 0 3px rgba(34,153,85,0.5);
+}
+
+.c14:hover,
+.c14:active {
+  background-color: #1b7842;
+  border-color: #1b7842;
+}
+
+.c14[disabled] {
+  opacity: .65;
+}
+
+.c4 {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 38.000000006px;
+  box-sizing: border-box;
+  border-radius: 2px;
+  background-image: url(svg);
+  background-repeat: no-repeat;
+  background-size: 20.000000003px 20.000000003px;
+  background-position: center center;
+}
+
+.c3 {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: center;
+  font-weight: bold;
+  white-space: nowrap;
+  vertical-align: middle;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  touch-action: manipulation;
+  cursor: pointer;
+  color: #ffffff;
+  background-color: #3b5998;
+  border: 1px solid #3b5998;
+  padding: 9px 12px;
+  font-size: 14px;
+  line-height: 1.428571429;
+  border-radius: 3px;
+  -webkit-transition: all .15s ease-in-out;
+  transition: all .15s ease-in-out;
+  margin-bottom: 10px;
+  position: relative;
+  width: 100%;
+  height: 40.000000006px;
+}
+
+.c3:focus {
+  outline: 0;
+}
+
+.c3:hover,
+.c3:active {
+  color: #ffffff;
+  background-color: #30487b;
+  border-color: #30487b;
+}
+
+.c3[disabled] {
+  opacity: .65;
+}
+
+.c5 {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: center;
+  font-weight: bold;
+  white-space: nowrap;
+  vertical-align: middle;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  touch-action: manipulation;
+  cursor: pointer;
+  color: #58666e;
+  background-color: #ffffff;
+  border: 1px solid rgba(0,0,0,.15);
+  padding: 9px 12px;
+  font-size: 14px;
+  line-height: 1.428571429;
+  border-radius: 3px;
+  -webkit-transition: all .15s ease-in-out;
+  transition: all .15s ease-in-out;
+  margin-bottom: 10px;
+  position: relative;
+  width: 100%;
+  height: 40.000000006px;
+}
+
+.c5:focus {
+  outline: 0;
+}
+
+.c5:hover,
+.c5:active {
+  color: #58666e;
+  background-color: #ebebeb;
+  border-color: rgba(0,0,0,0.15);
+}
+
+.c5[disabled] {
+  opacity: .65;
+}
+
+.c2 {
+  text-align: center;
+}
+
+.c7 {
+  position: relative;
+}
+
+.c9 {
+  color: #495057;
+  margin-bottom: 5px;
+  display: none;
+}
+
+.c8 {
+  margin-bottom: 10px;
+}
+
+.c10 {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  font-size: 14px;
+  line-height: 1.428571429;
+  color: #495057;
+  border-radius: 3px;
+  border-width: 1px;
+  border-style: solid;
+  border-color: #ced4da;
+  background-color: #fff;
+  background-image: none;
+  padding: 9px 12px;
+  -webkit-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+  transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+  box-shadow: none;
+  -webkit-appearance: none;
+}
+
+.c10:focus {
+  border-color: #5fdb94;
+  box-shadow: 0 0 0 3px rgba(95,219,148,0.5);
+  outline: 0;
+}
+
+.c10:disabled,
+.c10[readonly] {
+  background-color: #e9ecef;
+}
+
+.c10::-webkit-input-placeholder {
+  color: #868e96;
+}
+
+.c10::-moz-placeholder {
+  color: #868e96;
+}
+
+.c10:-ms-input-placeholder {
+  color: #868e96;
+}
+
+.c10::placeholder {
+  color: #868e96;
+}
+
+.c12 {
+  padding-left: 20px;
+  margin-bottom: 0;
+  cursor: pointer;
+  font-weight: normal;
+}
+
+.c12 > input {
+  position: absolute;
+  margin-left: -20px;
+  margin-top: 2px;
+  line-height: normal;
+}
+
+.c11 {
+  margin-bottom: 10px;
+}
+
+.c13 {
+  font-size: 12px;
+  color: #adb5bd;
+  margin: 5px 5px 10px 5px;
+  text-align: justify;
+  display: block;
+}
+
+.c13 > p {
+  margin-top: 1px;
+  margin-bottom: 1px;
+}
+
+<div
+  className="c0"
+>
+  <div>
+    <div
+      className="c1"
+    >
+      Sign up
+    </div>
+    <div
+      className="r5-social-buttons c2"
+    >
+      <div
+        className="r5-btn-social r5-btn-social-facebook c3"
+        onClick={[Function]}
+      >
+        <span
+          className="r5-btn-social-icon c4"
+        />
+        <span
+          className="r5-btn-social-text"
+        >
+          Facebook
+        </span>
+      </div>
+      <div
+        className="r5-btn-social r5-btn-social-google c5"
+        onClick={[Function]}
+      >
+        <span
+          className="r5-btn-social-icon c4"
+        />
+        <span
+          className="r5-btn-social-text"
+        >
+          Google
+        </span>
+      </div>
+    </div>
+    <div
+      className="c6"
+    >
+      <span>
+        or
+      </span>
+    </div>
+    <form
+      className="c7"
+      noValidate={true}
+      onSubmit={[Function]}
+    >
+      <div
+        className="c8"
+      >
+        <label
+          className="c9"
+          htmlFor="email"
+        >
+          Email address
+        </label>
+        <input
+          className="c10"
+          id="email"
+          name="email"
+          onBlur={[Function]}
+          onChange={[Function]}
+          placeholder="Email address"
+          required={true}
+          title="Email address"
+          type="email"
+          value=""
+        />
+      </div>
+      <div
+        className="c8"
+      >
+        <div
+          style={
+            Object {
+              "position": "relative",
+            }
+          }
+        >
+          <label
+            className="c9"
+          >
+            Password
+          </label>
+          <input
+            className="c10"
+            name="password"
+            onBlur={[Function]}
+            onChange={[Function]}
+            onFocus={[Function]}
+            placeholder="Password"
+            title="Password"
+            type="password"
+            value=""
+          />
+        </div>
+      </div>
+      <div
+        style={
+          Object {
+            "position": "relative",
+          }
+        }
+      >
+        <div
+          className="c11"
+        >
+          <label
+            className="c12"
+          >
+            <input
+              checked={false}
+              name="consents.aConsent"
+              onChange={[Function]}
+              type="checkbox"
+            />
+            consent title
+          </label>
+        </div>
+        <div
+          className="c13"
+          dangerouslySetInnerHTML={
+            Object {
+              "__html": "<p>consent description</p>
+",
+            }
+          }
+          data-text="md"
+        />
+      </div>
+      <button
+        className="c14"
+        disabled={false}
+        type="submit"
+      >
+        Sign up
+      </button>
+    </form>
+    <div
+      className="c15"
+    >
+      <span>
+        Already have an account?
+      </span>
+       
+      <a
+        className="c16"
+        href="javascript:{}"
+        onClick={[Function]}
+      >
+        Log in
+      </a>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Snapshot signup view with user agreement 1`] = `
+.c1 {
+  margin-bottom: 15px;
+  text-align: center;
+  color: #212529;
+  font-weight: bold;
+  font-size: 16.8px;
+}
+
+.c6 {
+  color: #adb5bd;
+  display: block;
+  text-align: center;
+  overflow: hidden;
+  white-space: nowrap;
+  margin: 10px 0;
+}
+
+.c6 > span {
+  position: relative;
+  display: inline-block;
+}
+
+.c6 > span:before,
+.c6 > span:after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 9999px;
+  height: 1px;
+  background: #ced4da;
+}
+
+.c6 > span:before {
+  right: 100%;
+  margin-right: 14px;
+}
+
+.c6 > span:after {
+  left: 100%;
+  margin-left: 14px;
+}
+
+.c13 {
+  text-align: center;
+  margin-top: 15px;
+  color: #495057;
+}
+
+.c14 {
+  color: #229955;
+  -webkit-text-decoration: none;
+  text-decoration: none;
+}
+
+.c14:hover {
+  color: #145a32;
+  -webkit-text-decoration: none;
+  text-decoration: none;
+}
+
+.c0 {
+  font-size: 14px;
+  -webkit-transition: -webkit-transform 400ms ease, opacity 400ms ease;
+  -webkit-transition: transform 400ms ease, opacity 400ms ease;
+  transition: transform 400ms ease, opacity 400ms ease;
+  opacity: 0;
+  padding: 20px;
+  border-radius: 3px;
+  background-color: #ffffff;
+  max-width: 400px;
+  box-sizing: border-box;
+  margin: 0 auto;
+}
+
+.c12 {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: center;
+  font-weight: bold;
+  white-space: nowrap;
+  vertical-align: middle;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  touch-action: manipulation;
+  cursor: pointer;
+  color: #ffffff;
+  background-color: #229955;
+  border: 1px solid #229955;
+  padding: 9px 12px;
+  font-size: 14px;
+  line-height: 1.428571429;
+  border-radius: 3px;
+  -webkit-transition: all .15s ease-in-out;
+  transition: all .15s ease-in-out;
+}
+
+.c12:focus {
+  outline: 0;
+  box-shadow: 0 0 0 3px rgba(34,153,85,0.5);
+}
+
+.c12:hover,
+.c12:active {
+  background-color: #1b7842;
+  border-color: #1b7842;
+}
+
+.c12[disabled] {
+  opacity: .65;
+}
+
+.c4 {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 38.000000006px;
+  box-sizing: border-box;
+  border-radius: 2px;
+  background-image: url(svg);
+  background-repeat: no-repeat;
+  background-size: 20.000000003px 20.000000003px;
+  background-position: center center;
+}
+
+.c3 {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: center;
+  font-weight: bold;
+  white-space: nowrap;
+  vertical-align: middle;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  touch-action: manipulation;
+  cursor: pointer;
+  color: #ffffff;
+  background-color: #3b5998;
+  border: 1px solid #3b5998;
+  padding: 9px 12px;
+  font-size: 14px;
+  line-height: 1.428571429;
+  border-radius: 3px;
+  -webkit-transition: all .15s ease-in-out;
+  transition: all .15s ease-in-out;
+  margin-bottom: 10px;
+  position: relative;
+  width: 100%;
+  height: 40.000000006px;
+}
+
+.c3:focus {
+  outline: 0;
+}
+
+.c3:hover,
+.c3:active {
+  color: #ffffff;
+  background-color: #30487b;
+  border-color: #30487b;
+}
+
+.c3[disabled] {
+  opacity: .65;
+}
+
+.c5 {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: center;
+  font-weight: bold;
+  white-space: nowrap;
+  vertical-align: middle;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  touch-action: manipulation;
+  cursor: pointer;
+  color: #58666e;
+  background-color: #ffffff;
+  border: 1px solid rgba(0,0,0,.15);
+  padding: 9px 12px;
+  font-size: 14px;
+  line-height: 1.428571429;
+  border-radius: 3px;
+  -webkit-transition: all .15s ease-in-out;
+  transition: all .15s ease-in-out;
+  margin-bottom: 10px;
+  position: relative;
+  width: 100%;
+  height: 40.000000006px;
+}
+
+.c5:focus {
+  outline: 0;
+}
+
+.c5:hover,
+.c5:active {
+  color: #58666e;
+  background-color: #ebebeb;
+  border-color: rgba(0,0,0,0.15);
+}
+
+.c5[disabled] {
+  opacity: .65;
+}
+
+.c2 {
+  text-align: center;
+}
+
+.c7 {
+  position: relative;
+}
+
+.c9 {
+  color: #495057;
+  margin-bottom: 5px;
+  display: none;
+}
+
+.c8 {
+  margin-bottom: 10px;
+}
+
+.c10 {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  font-size: 14px;
+  line-height: 1.428571429;
+  color: #495057;
+  border-radius: 3px;
+  border-width: 1px;
+  border-style: solid;
+  border-color: #ced4da;
+  background-color: #fff;
+  background-image: none;
+  padding: 9px 12px;
+  -webkit-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+  transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+  box-shadow: none;
+  -webkit-appearance: none;
+}
+
+.c10:focus {
+  border-color: #5fdb94;
+  box-shadow: 0 0 0 3px rgba(95,219,148,0.5);
+  outline: 0;
+}
+
+.c10:disabled,
+.c10[readonly] {
+  background-color: #e9ecef;
+}
+
+.c10::-webkit-input-placeholder {
+  color: #868e96;
+}
+
+.c10::-moz-placeholder {
+  color: #868e96;
+}
+
+.c10:-ms-input-placeholder {
+  color: #868e96;
+}
+
+.c10::placeholder {
+  color: #868e96;
+}
+
+.c11 {
+  font-size: 11.200000000000001px;
+  color: #adb5bd;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.c11 p {
+  margin: 0;
+}
+
+.c11 a {
+  color: #adb5bd;
+  -webkit-text-decoration: underline;
+  text-decoration: underline;
+}
+
+.c11 a:hover {
+  color: #adb5bd;
+}
+
+<div
+  className="c0"
+>
+  <div>
+    <div
+      className="c1"
+    >
+      Sign up
+    </div>
+    <div
+      className="r5-social-buttons c2"
+    >
+      <div
+        className="r5-btn-social r5-btn-social-facebook c3"
+        onClick={[Function]}
+      >
+        <span
+          className="r5-btn-social-icon c4"
+        />
+        <span
+          className="r5-btn-social-text"
+        >
+          Facebook
+        </span>
+      </div>
+      <div
+        className="r5-btn-social r5-btn-social-google c5"
+        onClick={[Function]}
+      >
+        <span
+          className="r5-btn-social-icon c4"
+        />
+        <span
+          className="r5-btn-social-text"
+        >
+          Google
+        </span>
+      </div>
+    </div>
+    <div
+      className="c6"
+    >
+      <span>
+        or
+      </span>
+    </div>
+    <form
+      className="c7"
+      noValidate={true}
+      onSubmit={[Function]}
+    >
+      <div
+        className="c8"
+      >
+        <label
+          className="c9"
+          htmlFor="given_name"
+        >
+          First name
+        </label>
+        <input
+          className="c10"
+          id="given_name"
+          name="given_name"
+          onBlur={[Function]}
+          onChange={[Function]}
+          placeholder="First name"
+          required={true}
+          title="First name"
+          value=""
+        />
+      </div>
+      <div
+        className="c8"
+      >
+        <label
+          className="c9"
+          htmlFor="family_name"
+        >
+          Last name
+        </label>
+        <input
+          className="c10"
+          id="family_name"
+          name="family_name"
+          onBlur={[Function]}
+          onChange={[Function]}
+          placeholder="Last name"
+          required={true}
+          title="Last name"
+          value=""
+        />
+      </div>
+      <div
+        className="c8"
+      >
+        <label
+          className="c9"
+          htmlFor="email"
+        >
+          Email address
+        </label>
+        <input
+          className="c10"
+          id="email"
+          name="email"
+          onBlur={[Function]}
+          onChange={[Function]}
+          placeholder="Email address"
+          required={true}
+          title="Email address"
+          type="email"
+          value=""
+        />
+      </div>
+      <div
+        className="c8"
+      >
+        <div
+          style={
+            Object {
+              "position": "relative",
+            }
+          }
+        >
+          <label
+            className="c9"
+          >
+            Password
+          </label>
+          <input
+            className="c10"
+            name="password"
+            onBlur={[Function]}
+            onChange={[Function]}
+            onFocus={[Function]}
+            placeholder="Password"
+            title="Password"
+            type="password"
+            value=""
+          />
+        </div>
+      </div>
+      <div
+        className="c8"
+      >
+        <label
+          className="c9"
+          htmlFor="password_confirmation"
+        >
+          Password confirmation
+        </label>
+        <div
+          style={
+            Object {
+              "position": "relative",
+            }
+          }
+        >
+          <input
+            className="c10"
+            id="password_confirmation"
+            name="password_confirmation"
+            onBlur={[Function]}
+            onChange={[Function]}
+            placeholder="Password confirmation"
+            required={true}
+            title="Password confirmation"
+            type="password"
+            value=""
+          />
+        </div>
+      </div>
+      <div
+        className="c11"
+        dangerouslySetInnerHTML={
+          Object {
+            "__html": "<p>En vous inscrivant, vous acceptez les <a href=\\"https://sandbox-local.reach5.co/\\" target=\\"_blank\\" rel=\\"nofollow noreferrer noopener\\">conditions générales d'utilisation</a>.</p>
+",
+          }
+        }
+        data-text="md"
+      />
+      <button
+        className="c12"
+        disabled={false}
+        type="submit"
+      >
+        Sign up
+      </button>
+    </form>
+    <div
+      className="c13"
+    >
+      <span>
+        Already have an account?
+      </span>
+       
+      <a
+        className="c14"
+        href="javascript:{}"
+        onClick={[Function]}
+      >
+        Log in
+      </a>
+    </div>
+  </div>
+</div>
+`;
