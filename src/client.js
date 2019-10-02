@@ -6,6 +6,7 @@ import authWidget from './widgets/auth/authWidget';
 import emailEditorWidget from './widgets/emailEditor/emailEditorWidget';
 import passwordEditorWidget from './widgets/passwordEditor/passwordEditorWidget';
 import phoneNumberEditorWidget from './widgets/phoneNumbereditor/phoneNumberEditorWidget';
+import passwordResetWidget from './widgets/passwordReset/passwordResetWidget';
 import { logError } from './helpers/logger';
 
 export class UiClient {
@@ -29,6 +30,10 @@ export class UiClient {
 
     showPhoneNumberEditor(options) {
         this._showWidget(phoneNumberEditorWidget, options);
+    }
+
+    showPasswordReset(options) {
+        this._showWidget(passwordResetWidget, options);
     }
 
     async _showWidget(widget, options = {}, props = {}) {
