@@ -7,6 +7,7 @@ import emailEditorWidget from './widgets/emailEditor/emailEditorWidget';
 import passwordEditorWidget from './widgets/passwordEditor/passwordEditorWidget';
 import phoneNumberEditorWidget from './widgets/phoneNumbereditor/phoneNumberEditorWidget';
 import passwordResetWidget from './widgets/passwordReset/passwordResetWidget';
+import passwordlessWidget from './widgets/passwordless/passwordlessWidget';
 import { logError } from './helpers/logger';
 
 export class UiClient {
@@ -18,6 +19,10 @@ export class UiClient {
 
     showAuth(options) {
         this._ssoCheck(authWidget, options);
+    }
+
+    showPasswordless(options) {
+        this._ssoCheck(passwordlessWidget, options);
     }
 
     showEmailEditor(options) {
