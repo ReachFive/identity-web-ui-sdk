@@ -12,8 +12,9 @@
     "module": "build/main.en.es.js",
     "scripts": {
         "build": "npx rollup --config",
-        "watch": "npm run build -- --watch",
+        "build:watch": "npm run build -- --watch",
         "dev": "NODE_ENV=development npm run build",
+        "dev:watch": "NODE_ENV=development npm run build:watch",
         "test": "npx jest",
         "test:update": "npm run test -- --update-snapshot"
     },
