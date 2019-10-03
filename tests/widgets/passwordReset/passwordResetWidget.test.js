@@ -4,7 +4,7 @@ import { render } from 'enzyme';
 import Enzyme from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16';
 
-import passwordResetWidget from '../../../src/widgets/passwordReset/passwordResetWidget'
+import passwordResetWidget from '../../../src/widgets/passwordReset/passwordResetWidget';
 
 Enzyme.configure({ adapter: new Adapter() });
 

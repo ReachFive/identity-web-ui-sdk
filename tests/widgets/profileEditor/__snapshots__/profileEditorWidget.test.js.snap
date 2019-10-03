@@ -1,0 +1,178 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Snapshot profile editor basic 1`] = `
+.c0 {
+  font-size: 14px;
+  -webkit-transition: -webkit-transform 400ms ease, opacity 400ms ease;
+  -webkit-transition: transform 400ms ease, opacity 400ms ease;
+  transition: transform 400ms ease, opacity 400ms ease;
+  opacity: 0;
+  padding: 20px;
+  border-radius: 3px;
+  background-color: #ffffff;
+  max-width: 400px;
+  box-sizing: border-box;
+  margin: 0 auto;
+}
+
+.c5 {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: center;
+  font-weight: bold;
+  white-space: nowrap;
+  vertical-align: middle;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  touch-action: manipulation;
+  cursor: pointer;
+  color: #ffffff;
+  background-color: #229955;
+  border: 1px solid #229955;
+  padding: 9px 12px;
+  font-size: 14px;
+  line-height: 1.428571429;
+  border-radius: 3px;
+  -webkit-transition: all .15s ease-in-out;
+  transition: all .15s ease-in-out;
+}
+
+.c5:focus {
+  outline: 0;
+  box-shadow: 0 0 0 3px rgba(34,153,85,0.5);
+}
+
+.c5:hover,
+.c5:active {
+  background-color: #1b7842;
+  border-color: #1b7842;
+}
+
+.c5[disabled] {
+  opacity: .65;
+}
+
+.c1 {
+  position: relative;
+}
+
+.c3 {
+  color: #495057;
+  margin-bottom: 5px;
+  display: inline-block;
+}
+
+.c2 {
+  margin-bottom: 10px;
+}
+
+.c4 {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  font-size: 14px;
+  line-height: 1.428571429;
+  color: #495057;
+  border-radius: 3px;
+  border-width: 1px;
+  border-style: solid;
+  border-color: #ced4da;
+  background-color: #fff;
+  background-image: none;
+  padding: 9px 12px;
+  -webkit-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+  transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+  box-shadow: none;
+  -webkit-appearance: none;
+}
+
+.c4:focus {
+  border-color: #5fdb94;
+  box-shadow: 0 0 0 3px rgba(95,219,148,0.5);
+  outline: 0;
+}
+
+.c4:disabled,
+.c4[readonly] {
+  background-color: #e9ecef;
+}
+
+.c4::-webkit-input-placeholder {
+  color: #868e96;
+}
+
+.c4::-moz-placeholder {
+  color: #868e96;
+}
+
+.c4:-ms-input-placeholder {
+  color: #868e96;
+}
+
+.c4::placeholder {
+  color: #868e96;
+}
+
+<div
+  className="c0"
+>
+  <form
+    className="c1"
+    noValidate={true}
+    onSubmit={[Function]}
+  >
+    <div
+      className="c2"
+    >
+      <label
+        className="c3"
+        htmlFor="given_name"
+      >
+        First name
+      </label>
+      <input
+        className="c4"
+        id="given_name"
+        name="given_name"
+        onBlur={[Function]}
+        onChange={[Function]}
+        placeholder="First name"
+        required={true}
+        title="First name"
+        value=""
+      />
+    </div>
+    <div
+      className="c2"
+    >
+      <label
+        className="c3"
+        htmlFor="family_name"
+      >
+        Last name
+      </label>
+      <input
+        className="c4"
+        id="family_name"
+        name="family_name"
+        onBlur={[Function]}
+        onChange={[Function]}
+        placeholder="Last name"
+        required={true}
+        title="Last name"
+        value=""
+      />
+    </div>
+    <button
+      className="c5"
+      disabled={false}
+      type="submit"
+    >
+      Save
+    </button>
+  </form>
+</div>
+`;
