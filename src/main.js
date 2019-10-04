@@ -20,6 +20,7 @@ export function createClient(creationConfig) {
         showPasswordReset: options => client.then(client => client.showPasswordReset(options)),
         showPasswordless: options => client.then(client => client.showPasswordless(options)),
         showProfileEditor: options => client.then(client => client.showProfileEditor(options)),
-        showSocialAccounts: options => client.then(client => client.showSocialAccounts(options))
+        showSocialAccounts: options => client.then(client => client.showSocialAccounts(options)),
+        showSocialLogin: options => client.then(client => client.showSocialLogin(options))
     };
 }

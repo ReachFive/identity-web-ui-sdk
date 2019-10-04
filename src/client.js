@@ -10,6 +10,7 @@ import passwordResetWidget from './widgets/passwordReset/passwordResetWidget';
 import passwordlessWidget from './widgets/passwordless/passwordlessWidget';
 import profileEditorWidget from './widgets/profileEditor/profileEditorWidget';
 import socialAccountsWidget from './widgets/socialAccounts/socialAccountsWidget';
+import socialLoginWidget from './widgets/socialLogin/socialLoginWidget';
 import { logError } from './helpers/logger';
 
 export class UiClient {
@@ -21,6 +22,10 @@ export class UiClient {
 
     showAuth(options) {
         this._ssoCheck(authWidget, options);
+    }
+
+    showSocialLogin(options) {
+        this._ssoCheck(socialLoginWidget, options);
     }
 
     showPasswordless(options) {
