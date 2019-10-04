@@ -20,7 +20,7 @@ const SocialButtonIcon = withTheme(styled(({ className }) => (
     width: ${props => !props.textVisible ? '100%' : (props.theme.get('socialButton.height') - 2) + 'px'};
     box-sizing: border-box;
     border-radius: ${props => props.theme.get('socialButton.borderRadius') - 1}px;
-    background-image: url(${props => props.icon});
+    background-image: url(${props => `"data:image/svg+xml,${encodeURIComponent(props.icon)}"`});
     background-repeat: no-repeat;
     background-size: ${props => props.theme.get('socialButton.height') / 2}px ${props => props.theme.get('socialButton.height') / 2}px;
     background-position: center center;

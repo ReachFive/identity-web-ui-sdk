@@ -9,6 +9,7 @@ import phoneNumberEditorWidget from './widgets/phoneNumbereditor/phoneNumberEdit
 import passwordResetWidget from './widgets/passwordReset/passwordResetWidget';
 import passwordlessWidget from './widgets/passwordless/passwordlessWidget';
 import profileEditorWidget from './widgets/profileEditor/profileEditorWidget';
+import socialAccountsWidget from './widgets/socialAccounts/socialAccountsWidget';
 import { logError } from './helpers/logger';
 
 export class UiClient {
@@ -44,6 +45,10 @@ export class UiClient {
 
     showPasswordReset(options) {
         this._showWidget(passwordResetWidget, options);
+    }
+
+    showSocialAccounts(options) {
+        this._showWidget(socialAccountsWidget, options);
     }
 
     async _showWidget(widget, options = {}, props = {}) {
