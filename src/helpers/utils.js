@@ -34,3 +34,11 @@ export function isValued(v) {
         (Array.isArray(v) ? v.length > 0 : true)
     )
 }
+
+export function formatISO8601Date(year, month, day) {
+    if (isValued(year) && isValued(month) && isValued(day)) {
+        return `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
+    }
+
+    return null
+}

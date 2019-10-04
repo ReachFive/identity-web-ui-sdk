@@ -1,6 +1,6 @@
 import isISO8601 from 'validator';
-import padLeft from 'voca';
 
+import { formatISO8601Date } from '../../../helpers/utils';
 import { Validator } from '../../../core/validation';
 
 import { simpleField } from './simpleField';
@@ -10,7 +10,7 @@ const formatDate = formValue => {
         const [month, day, year] = formValue.split('/');
 
         if (year && year.length && month && month.length && day && day.length) {
-            return `${padLeft(year, 4, '0')}-${padLeft(month, 2, '0')}-${padLeft(day, 2, '0')}`;
+            return formatISO8601Date(year, month, day);
         }
     }
 

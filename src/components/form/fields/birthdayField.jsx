@@ -5,9 +5,8 @@ import { clearFix } from 'polished';
 import pick from 'lodash-es/pick';
 
 import { isNumeric, isISO8601 } from 'validator';
-import padLeft from 'voca';
 
-import { isValued } from '../../../helpers/utils';
+import { isValued, formatISO8601Date } from '../../../helpers/utils';
 import generateId from '../../../helpers/inputIdGenerator';
 
 import { Input, FormGroup, Select } from '../formControlsComponent';
@@ -146,13 +145,7 @@ const validateYear = year => {
     return 'birthdate.year';
 };
 
-const format = ({ day, month, year }) => {
-    if (isValued(year.value) && isValued(month.value) && isValued(day.value)) {
-        return `${padLeft(year.value, 4, '0')}-${padLeft(month.value, 2, '0')}-${padLeft(day.value, 2, '0')}`;
-    }
-
-    return null;
-};
+const format = ({ day, month, year }) => formatISO8601Date(year.value, month.value, day.value);
 
 export default function birthdateField({
     label,
@@ -237,7 +230,7 @@ export default function birthdateField({
 
                     if ((isSubmitted || day.isDirty || month.isDirty || year.isDirty)) {
                         const birthdate = format(state);
-                        if (birthdate && !isISO8601(birthdate)) {
+                        if (!birthdate || !isISO8601(birthdate)) {
                             return {
                                 error: i18n('validation.birthdate.dayOfMonth'),
                                 day: true
