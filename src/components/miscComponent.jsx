@@ -71,7 +71,7 @@ export const Alternative = withTheme(styled.div`
     color: ${props => props.theme.get('textColor')};
 `);
 
-export const Link = compose(withGoTo, withTheme)(styled(({ target, href = 'javascript:{}', children, goTo, className }) => {
+export const Link = compose(withGoTo, withTheme)(styled(({ target, href = '#', children, goTo, className }) => {
     const onClick = target ? (e => {
         e.preventDefault();
         goTo(target);
