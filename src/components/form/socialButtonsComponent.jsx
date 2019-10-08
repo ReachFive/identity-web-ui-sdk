@@ -34,7 +34,7 @@ const SocialButtonText = ({ children }) => (
     </span>
 );
 
-const SocialBtn = withTheme(Button.extend.attrs({
+const SocialBtn = withTheme(styled(Button).attrs({
     tagname: 'div',
     themePrefix: 'socialButton',
     color: ({ provider }) => provider.btnTextColor || '#ffffff',

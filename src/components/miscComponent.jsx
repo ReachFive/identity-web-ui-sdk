@@ -19,11 +19,11 @@ const TextBase = styled.div`
     margin-bottom: ${props => props.theme.get('spacing')}px;
 `;
 
-export const Info = withTheme(TextBase.extend`
+export const Info = withTheme(styled(TextBase)`
     color: ${props => props.theme.get('textColor')};
 `);
 
-export const Error = withTheme(TextBase.extend`
+export const Error = withTheme(styled(TextBase)`
     color: ${props => props.theme.get('dangerColor')};
 `);
 
