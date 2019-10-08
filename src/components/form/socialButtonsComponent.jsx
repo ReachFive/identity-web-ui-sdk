@@ -34,14 +34,18 @@ const SocialButtonText = ({ children }) => (
     </span>
 );
 
-const SocialBtn = withTheme(styled(Button).attrs({
-    tagname: 'div',
-    themePrefix: 'socialButton',
-    color: ({ provider }) => provider.btnTextColor || '#ffffff',
-    background: ({ provider }) => provider.btnBackgroundColor || provider.color,
-    border: ({ provider }) => provider.btnBorderColor || provider.color,
-    extendedClasses: ({ provider }) => classes(['r5-btn-social', `r5-btn-social-${provider.key}`]),
-    title: ({ inline, provider }) => inline && provider.name
+const SocialBtn = withTheme(styled(Button).attrs(props => {
+    const { provider, inline } = props
+
+    return {
+        tagname: 'div',
+        themePrefix: 'socialButton',
+        color: provider.btnTextColor || '#ffffff',
+        background: provider.btnBackgroundColor || provider.color,
+        border: provider.btnBorderColor || provider.color,
+        extendedClasses: classes(['r5-btn-social', `r5-btn-social-${provider.key}`]),
+        title: inline && provider.name
+    }
 })`
     margin-bottom: ${props => props.theme.get('spacing')}px;
     position: relative;
