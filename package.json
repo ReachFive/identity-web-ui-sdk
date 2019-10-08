@@ -51,7 +51,7 @@
         "jest": "24.9.0",
         "jest-styled-components": "6.3.3",
         "react-test-renderer": "16.10.2",
-        "rollup": "1.23.0",
+        "rollup": "1.23.1",
         "rollup-plugin-alias": "2.0.1",
         "rollup-plugin-babel": "4.3.3",
         "rollup-plugin-commonjs": "10.1.0",
