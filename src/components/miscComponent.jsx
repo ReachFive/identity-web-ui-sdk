@@ -1,6 +1,6 @@
 import React from 'react';
 
-import Remarkable from 'remarkable';
+import { Remarkable } from 'remarkable';
 import styled from 'styled-components';
 import { compose } from 'recompose';
 
