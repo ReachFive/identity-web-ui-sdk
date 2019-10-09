@@ -21,8 +21,6 @@
     },
     "dependencies": {
         "@reachfive/identity-core": "^1.7.1",
-        "babel-plugin-dynamic-import-node": "2.3.0",
-        "cheerio": "1.0.0-rc.3",
         "classnames": "2.2.6",
         "libphonenumber-js": "1.7.25",
         "lodash-es": "4.17.15",
@@ -43,7 +41,9 @@
         "@babel/plugin-proposal-class-properties": "7.5.5",
         "@babel/preset-env": "7.6.2",
         "@babel/preset-react": "7.0.0",
+        "babel-plugin-dynamic-import-node": "2.3.0",
         "babel-preset-jest": "24.9.0",
+        "cheerio": "1.0.0-rc.3",
         "core-js": "3.2.1",
         "enzyme": "3.10.0",
         "enzyme-adapter-react-16": "1.14.0",
