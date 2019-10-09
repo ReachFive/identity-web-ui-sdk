@@ -10,6 +10,7 @@
     "license": "MIT",
     "main": "build/main.en.cjs.js",
     "module": "build/main.en.es.js",
+    "types": "index.d.ts",
     "scripts": {
         "build": "npx rollup --config",
         "build:watch": "npm run build -- --watch",
