@@ -9,7 +9,6 @@ import svg from 'rollup-plugin-svg'
 import project from './package.json'
 
 const dependencies = Object.keys(project.dependencies)
-const peerDependencies = Object.keys(project.peerDependencies)
 
 const config = {
     input: 'src/index.js',
@@ -19,7 +18,6 @@ const config = {
         babel(),
         svg()
     ],
-    external: peerDependencies,
     onwarn: console.warn
 }
 
@@ -46,13 +44,13 @@ function createBundle(locale) {
             ...config,
             plugins,
             output: { file: `build/main.${locale}.es.js`, format: 'es' },
-            external: peerDependencies.concat(dependencies)
+            external: dependencies
         },
         {
             ...config,
             plugins,
             output: { file: `build/main.${locale}.cjs.js`, format: 'cjs' },
-            external: peerDependencies.concat(dependencies)
+            external: dependencies
         },
         // {
         //     ...config,
@@ -65,7 +63,6 @@ function createBundle(locale) {
         //             '@reachfive/identity-core': 'reach5'
         //         }
         //     },
-        //     external: peerDependencies
         // }
     ]
 }

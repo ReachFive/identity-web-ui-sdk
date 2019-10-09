@@ -19,10 +19,8 @@
         "test": "npx jest",
         "test:update": "npm run test -- --update-snapshot"
     },
-    "peerDependencies": {
-        "@reachfive/identity-core": "1.x"
-    },
     "dependencies": {
+        "@reachfive/identity-core": "^1.7.1",
         "babel-plugin-dynamic-import-node": "2.3.0",
         "cheerio": "1.0.0-rc.3",
         "classnames": "2.2.6",

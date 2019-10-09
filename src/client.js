@@ -1,7 +1,5 @@
 import ReactDOM from 'react-dom'
 
-import { createClient } from '@reachfive/identity-core';
-
 import authWidget from './widgets/auth/authWidget';
 import emailEditorWidget from './widgets/emailEditor/emailEditorWidget';
 import passwordEditorWidget from './widgets/passwordEditor/passwordEditorWidget';
@@ -14,10 +12,10 @@ import socialLoginWidget from './widgets/socialLogin/socialLoginWidget';
 import { logError } from './helpers/logger';
 
 export class UiClient {
-    constructor(config, urlParser) {
+    constructor(config, urlParser, coreClient) {
         this.config = config;
         this.urlParser = urlParser;
-        this.client = createClient(config);
+        this.client = coreClient;
     }
 
     showAuth(options) {

@@ -1,16 +1,16 @@
-import { rawRequest } from './helpers/httpClient';
+import { createClient as createCoreClient } from '@reachfive/identity-core';
+
 import { UiClient } from './client';
 import { createUrlParser } from './core/urlParser';
 import { createEventManager } from './core/identityEventManager';
-import { toQueryString } from './helpers/queryString';
 
 export function createClient(creationConfig) {
-    const eventManager = createEventManager();
-    const urlParser = createUrlParser(eventManager);
-    const query = { clientId: creationConfig.clientId, lang: creationConfig.language };
+    const urlParser = createUrlParser(createEventManager());
+    const coreClient = createCoreClient(creationConfig);
 
-    const client = rawRequest(`https://${creationConfig.domain}/identity/v1/config?${toQueryString(query)}`)
-        .then(remoteConfig => new UiClient({ ...creationConfig, ...remoteConfig }, urlParser));
+    const client = coreClient.remoteSettings.then(remoteSettings => {
+        return new UiClient({ ...creationConfig, ...remoteSettings }, urlParser, coreClient)
+    });
 
     return {
         showAuth: options => client.then(client => client.showAuth(options)),
