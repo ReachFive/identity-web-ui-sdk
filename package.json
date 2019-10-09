@@ -37,10 +37,10 @@
         "zxcvbn": "4.4.2"
     },
     "devDependencies": {
-        "@babel/core": "7.6.2",
+        "@babel/core": "7.6.3",
         "@babel/plugin-proposal-class-properties": "7.5.5",
-        "@babel/preset-env": "7.6.2",
-        "@babel/preset-react": "7.0.0",
+        "@babel/preset-env": "7.6.3",
+        "@babel/preset-react": "7.6.3",
         "babel-plugin-dynamic-import-node": "2.3.0",
         "babel-preset-jest": "24.9.0",
         "cheerio": "1.0.0-rc.3",
