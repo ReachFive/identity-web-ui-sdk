@@ -77,17 +77,13 @@ export class UiClient {
                 apiClient: this.client
             });
 
-            const { onReady = () => { } } = options;
-
-            container.innerHTML = '';
-
             ReactDOM.render(result, container);
 
-            const instance = {
-                destroy() { ReactDOM.unmountComponentAtNode(container) }
-            };
-
-            onReady(instance);
+            if (options.onReady && typeof options.onReady === 'function') {
+                options.onReady({
+                    destroy() { ReactDOM.unmountComponentAtNode(container) }
+                });
+            }
         } catch (e) {
             const message = e.isUserError ? e.message : 'Unexpected error';
 
