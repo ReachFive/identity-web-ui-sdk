@@ -24,11 +24,7 @@ class MainView extends React.Component {
     handleSubmit = data => {
         const { apiClient, accessToken, redirectUrl } = this.props;
 
-        return apiClient.updateEmail({
-            ...data,
-            accessToken,
-            redirectUrl: redirectUrl
-        });
+        return apiClient.updateEmail({ ...data, accessToken, redirectUrl });
     }
 
     handleSuccess = () => this.props.goTo('success');

@@ -1,5 +1,4 @@
 import React from 'react';
-
 import styled from 'styled-components';
 
 import { Heading, Link, Alternative, Separator, MarkdownContent } from '../../../components/miscComponent';
@@ -42,22 +41,18 @@ const UserAggreementStyle = withTheme(styled.div`
 `);
 
 export default class SignupView extends React.Component {
-    handleSignup = data => (
-        this.props.apiClient.signup({
-            data,
-            auth: this.props.auth
-        })
-    );
+    handleSignup = data => this.props.apiClient.signup({
+        data,
+        auth: this.props.auth,
+        redirectUrl: this.props && this.props.redirectUrl
+    });
 
     render() {
         const {
             signupFields = defaultSignupFields,
             userAgreement,
-            showLabels,
             socialProviders,
-            allowLogin,
             canShowPassword,
-            auth,
             beforeSignup = x => x,
             i18n,
             config,
@@ -74,23 +69,19 @@ export default class SignupView extends React.Component {
 
         return <div>
             <Heading>{i18n('signup.title')}</Heading>
-            {socialProviders && socialProviders.length > 0 && (
-                <SocialButtons providers={socialProviders} auth={auth} />
-            )}
-            {socialProviders && socialProviders.length > 0 && (
-                <Separator text={i18n('or')} />
-            )}
-            <SignupForm fields={allFields}
-                showLabels={showLabels}
+            {socialProviders && socialProviders.length > 0 &&
+                <SocialButtons providers={socialProviders} auth={this.props.auth} />}
+            {socialProviders && socialProviders.length > 0 && <Separator text={i18n('or')} />}
+            <SignupForm
+                fields={allFields}
+                showLabels={this.props.showLabels}
                 beforeSubmit={beforeSignup}
                 handler={this.handleSignup} />
-            {allowLogin && (
-                <Alternative>
-                    <span>{i18n('signup.loginLinkPrefix')}</span>
-                    &nbsp;
-                        <Link target="login">{i18n('signup.loginLink')}</Link>
-                </Alternative>
-            )}
+            {this.props.allowLogin && <Alternative>
+                <span>{i18n('signup.loginLinkPrefix')}</span>
+                &nbsp;
+                <Link target="login">{i18n('signup.loginLink')}</Link>
+            </Alternative>}
         </div>;
     }
 }

@@ -14,7 +14,8 @@ const contextEnhancer = withContext(
         theme: PropTypes.object.isRequired,
         i18n: PropTypes.func.isRequired,
         config: PropTypes.object.isRequired,
-        apiClient: PropTypes.object.isRequired
+        apiClient: PropTypes.object.isRequired,
+        redirectUrl: PropTypes.object,
     },
     props => pick(props, ['theme', 'i18n', 'config', 'apiClient'])
 );

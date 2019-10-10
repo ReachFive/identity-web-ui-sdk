@@ -21,7 +21,7 @@ class ProfileEditor extends React.Component {
     handleSubmit = data => this.props.apiClient.updateProfile({
         accessToken: this.props.accessToken,
         data,
-        redirectUrl: this.props && this.props.redirectUrl,
+        redirectUrl: this.props && this.props.redirectUrl
     });
 
     render() {

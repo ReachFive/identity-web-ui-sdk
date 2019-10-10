@@ -24,7 +24,7 @@ const ForgotPasswordForm = createForm({
 const skipError = err => err.error === 'resource_not_found';
 
 const enhance = withHandlers({
-    handleSubmit: ({ apiClient }) => data => apiClient.requestPasswordReset(data)
+    handleSubmit: ({ apiClient, redirectUrl }) => data => apiClient.requestPasswordReset({ ...data, redirectUrl })
 });
 
 export const ForgotPasswordView = enhance(({ i18n, goTo, allowLogin, handleSubmit, displaySafeErrorMessage }) => (
@@ -35,11 +35,9 @@ export const ForgotPasswordView = enhance(({ i18n, goTo, allowLogin, handleSubmi
             handler={handleSubmit}
             onSuccess={() => goTo('forgot-password-success')}
             skipError={displaySafeErrorMessage && skipError} />
-        {allowLogin && (
-            <Alternative>
-                <Link target="login">{i18n('forgotPassword.backToLoginLink')}</Link>
-            </Alternative>
-        )}
+        {allowLogin && <Alternative>
+            <Link target="login">{i18n('forgotPassword.backToLoginLink')}</Link>
+        </Alternative>}
     </div>
 ));
 
@@ -47,10 +45,8 @@ export const ForgotPasswordSuccessView = ({ i18n, allowLogin }) => (
     <div>
         <Heading>{i18n('forgotPassword.title')}</Heading>
         <Info>{i18n('forgotPassword.successMessage')}</Info>
-        {allowLogin && (
-            <Alternative>
-                <Link target="login">{i18n('back')}</Link>
-            </Alternative>
-        )}
+        {allowLogin && <Alternative>
+            <Link target="login">{i18n('back')}</Link>
+        </Alternative>}
     </div>
 );
