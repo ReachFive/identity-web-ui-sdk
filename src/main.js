@@ -3,13 +3,15 @@ import { createClient as createCoreClient } from '@reachfive/identity-core';
 import { UiClient } from './client';
 import { createUrlParser } from './core/urlParser';
 import { createEventManager } from './core/identityEventManager';
+import { camelCaseProperties } from './helpers/transformObjectProperties';
 
 export function createClient(creationConfig) {
     const urlParser = createUrlParser(createEventManager());
     const coreClient = createCoreClient(creationConfig);
 
     const client = coreClient.remoteSettings.then(remoteSettings => {
-        return new UiClient({ ...creationConfig, ...remoteSettings }, urlParser, coreClient)
+        const remoteConfig = camelCaseProperties(remoteSettings)
+        return new UiClient({ ...creationConfig, ...remoteConfig}, urlParser, coreClient)
     });
 
     return {
