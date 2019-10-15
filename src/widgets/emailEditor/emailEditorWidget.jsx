@@ -30,11 +30,12 @@ class MainView extends React.Component {
     handleSuccess = () => this.props.goTo('success');
 
     render() {
-        const { i18n } = this.props;
-
         return <div>
-            <Intro>{i18n('emailEditor.intro')}</Intro>
-            <EmailEditorForm handler={this.handleSubmit} onSuccess={this.handleSuccess} />
+            <Intro>{this.props.i18n('emailEditor.intro')}</Intro>
+            <EmailEditorForm
+                showLabels={this.props.showLabels}
+                handler={this.handleSubmit}
+                onSuccess={this.handleSuccess} />
         </div>;
     }
 }

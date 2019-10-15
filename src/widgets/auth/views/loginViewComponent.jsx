@@ -87,7 +87,8 @@ export default class LoginView extends React.Component {
                 {socialProviders && socialProviders.length > 0 &&
                     <Separator text={i18n('or')} />
                 }
-                <LoginForm showRememberMe={showRememberMe}
+                <LoginForm
+                    showRememberMe={showRememberMe}
                     showForgotPassword={allowForgotPassword}
                     canShowPassword={canShowPassword}
                     defaultEmail={defaultEmail}
