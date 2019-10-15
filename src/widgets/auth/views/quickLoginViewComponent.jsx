@@ -5,13 +5,12 @@ import SocialButtons from '../../../components/form/socialButtonsComponent';
 
 export default class QuickLoginView extends React.Component {
     render() {
-        const { auth, i18n, session = {} } = this.props;
-        const { name, email, lastLoginType } = session;
+        const { i18n, session = {} } = this.props;
 
         return <div>
-            <Heading>{name || email}</Heading>
+            <Heading>{session.name || session.email}</Heading>
             <Intro>{i18n('lastTimeYouLoggedInWith')}</Intro>
-            <SocialButtons providers={[lastLoginType]} auth={auth} />
+            <SocialButtons providers={[session.lastLoginType]} auth={this.props.auth} />
             <Alternative>
                 <Link target="login">{i18n('notYourAccount')}</Link>
             </Alternative>

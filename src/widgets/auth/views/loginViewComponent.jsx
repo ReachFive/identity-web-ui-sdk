@@ -64,17 +64,7 @@ export default class LoginView extends React.Component {
     });
 
     render() {
-        const {
-            socialProviders,
-            allowSignup,
-            allowForgotPassword,
-            showRememberMe,
-            auth,
-            acceptTos,
-            session = {},
-            i18n,
-            canShowPassword
-        } = this.props;
+        const { socialProviders, session = {}, i18n } = this.props;
 
         const defaultEmail = session.lastLoginType === 'password' ? session.email : null;
 
@@ -82,18 +72,19 @@ export default class LoginView extends React.Component {
             <div>
                 <Heading>{i18n('login.title')}</Heading>
                 {socialProviders && socialProviders.length > 0 &&
-                    <SocialButtons providers={socialProviders} auth={auth} acceptTos={acceptTos} />
+                    <SocialButtons providers={socialProviders} auth={this.props.auth} acceptTos={this.props.acceptTos} />
                 }
                 {socialProviders && socialProviders.length > 0 &&
                     <Separator text={i18n('or')} />
                 }
                 <LoginForm
-                    showRememberMe={showRememberMe}
-                    showForgotPassword={allowForgotPassword}
-                    canShowPassword={canShowPassword}
+                    showLabels={this.props.showLabels}
+                    showRememberMe={this.props.showRememberMe}
+                    showForgotPassword={this.props.allowForgotPassword}
+                    canShowPassword={this.props.canShowPassword}
                     defaultEmail={defaultEmail}
                     handler={this.handleLogin} />
-                {allowSignup &&
+                {this.props.allowSignup &&
                     <Alternative>
                         <span>{i18n('login.signupLinkPrefix')}</span>
                         &nbsp;

@@ -27,11 +27,12 @@ const enhance = withHandlers({
     handleSubmit: ({ apiClient, redirectUrl }) => data => apiClient.requestPasswordReset({ ...data, redirectUrl })
 });
 
-export const ForgotPasswordView = enhance(({ i18n, goTo, allowLogin, handleSubmit, displaySafeErrorMessage }) => (
+export const ForgotPasswordView = enhance(({ i18n, goTo, allowLogin, handleSubmit, displaySafeErrorMessage, showLabels }) => (
     <div>
         <Heading>{i18n('forgotPassword.title')}</Heading>
         <Intro>{i18n('forgotPassword.prompt')}</Intro>
         <ForgotPasswordForm
+            showLabels={showLabels}
             handler={handleSubmit}
             onSuccess={() => goTo('forgot-password-success')}
             skipError={displaySafeErrorMessage && skipError} />
