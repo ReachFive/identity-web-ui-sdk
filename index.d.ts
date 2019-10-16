@@ -1,6 +1,8 @@
+export { ErrorResponse } from '@reachfive/identity-core'
+
 export function createClient(creationConfig: Config): Client
 
-interface Client {
+export interface Client {
     showAuth(options: any): Promise<void>,
     showEmailEditor(options: any): Promise<void>,
     showPasswordEditor(options: any): Promise<void>,
@@ -12,8 +14,12 @@ interface Client {
     showSocialLogin(options: any): Promise<void>,
 }
 
-interface Config {
+export interface Config {
     clientId: string,
     domain: string,
     language?: string,
+}
+
+export interface WidgetInstance {
+    destroy(): void
 }
