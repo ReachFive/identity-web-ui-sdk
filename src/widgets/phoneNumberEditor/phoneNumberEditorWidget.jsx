@@ -35,12 +35,14 @@ class MainView extends React.Component {
     handleSuccess = data => this.props.goTo('verificationCode', data);
 
     render() {
-        const { i18n, config } = this.props;
-        const PhoneNumberInputForm = phoneNumberInputForm(config);
+        const PhoneNumberInputForm = phoneNumberInputForm(this.props.config);
 
         return <div>
-            <Intro>{i18n('phoneNumberEditor.intro')}</Intro>
-            <PhoneNumberInputForm handler={this.handleSubmit} onSuccess={this.handleSuccess} />
+            <Intro>{this.props.i18n('phoneNumberEditor.intro')}</Intro>
+            <PhoneNumberInputForm
+                showLabels={this.props.showLabels}
+                 handler={this.handleSubmit}
+                 onSuccess={this.handleSuccess} />
         </div>;
     }
 }
@@ -65,8 +67,7 @@ class VerificationCodeView extends React.Component {
             <VerificationCodeInputForm
                 handler={this.handleSubmit}
                 onSuccess={onSuccess}
-                onError={onError}
-            />
+                onError={onError} />
         </div>
     }
 }
