@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { UserError } from '../../helpers/errors';
+import { snakeCaseProperties, camelCaseProperties } from '../../helpers/transformObjectProperties';
 
 import { createWidget } from '../../components/widget/widget';
 import { createForm } from '../../components/form/formComponent';
@@ -19,8 +20,8 @@ class ProfileEditor extends React.Component {
     };
 
     handleSubmit = data => this.props.apiClient.updateProfile({
+        data: snakeCaseProperties(data),
         accessToken: this.props.accessToken,
-        data,
         redirectUrl: this.props && this.props.redirectUrl
     });
 
@@ -31,8 +32,7 @@ class ProfileEditor extends React.Component {
             fields={this.props.resolvedFields}
             showLabels={this.props.showLabels}
             onSuccess={this.props.onSuccess}
-            onError={this.props.onError}
-        />;
+            onError={this.props.onError} />;
     }
 }
 
@@ -65,7 +65,7 @@ export default createWidget({
             })
             .then(profile => ({
                 ...opts,
-                profile,
+                profile: camelCaseProperties(profile),
                 resolvedFields: resolvedFields.filter(field => {
                     return (field.path !== 'email' || !profile.email)
                         && (field.path !== 'phone_number' || !config.sms || !profile.phoneNumber)

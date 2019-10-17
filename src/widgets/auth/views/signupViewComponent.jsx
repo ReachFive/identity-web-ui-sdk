@@ -1,6 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
 
+import { snakeCaseProperties } from '../../../helpers/transformObjectProperties';
+
 import { Heading, Link, Alternative, Separator, MarkdownContent } from '../../../components/miscComponent';
 import SocialButtons from '../../../components/form/socialButtonsComponent';
 import { createForm } from '../../../components/form/formComponent';
@@ -42,7 +44,7 @@ const UserAggreementStyle = withTheme(styled.div`
 
 export default class SignupView extends React.Component {
     handleSignup = data => this.props.apiClient.signup({
-        data,
+        data: snakeCaseProperties(data),
         auth: this.props.auth,
         redirectUrl: this.props && this.props.redirectUrl
     });

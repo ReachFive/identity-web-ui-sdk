@@ -17,6 +17,7 @@ export const camelCasePath = (path) =>
         .join('.');
 
 export const camelCaseProperties = (object) => transformObjectProperties(object, camelCase);
+export const snakeCaseProperties = (object) => transformObjectProperties(object, lodashSnakeCase);
 
 function transformObjectProperties(object, transform) {
     if (isArray(object)) {
