@@ -22,7 +22,7 @@
     "dependencies": {
         "@reachfive/identity-core": "^1.7.1",
         "classnames": "2.2.6",
-        "libphonenumber-js": "1.7.25",
+        "libphonenumber-js": "1.7.26",
         "lodash-es": "4.17.15",
         "polished": "3.4.1",
         "prop-types": "15.7.2",
