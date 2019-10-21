@@ -123,7 +123,7 @@ function checkSpecialsCharacters(password, passwordPolicy) {
     if (!!passwordPolicy.specialCharacters) {
         const SPECIAL_CHARACTERS = " !\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~"
         const passwordChars = Array.from(password)
-        return !!passwordChars.find(c => SPECIAL_CHARACTERS.includes(c))
+        return !passwordChars.find(c => SPECIAL_CHARACTERS.includes(c))
     } else {
         return false
     }
@@ -131,7 +131,7 @@ function checkSpecialsCharacters(password, passwordPolicy) {
 
 function checkLowercaseCharacters(password, passwordPolicy) {
     if (!!passwordPolicy.lowercaseCharacters) {
-        return !!Array.from(password).find(c => isLower(c))
+        return !Array.from(password).find(c => isLower(c))
     } else {
         return false
     }
@@ -139,7 +139,7 @@ function checkLowercaseCharacters(password, passwordPolicy) {
 
 function checkUppercaseCharacters(password, passwordPolicy) {
     if (!!passwordPolicy.uppercaseCharacters) {
-        return !!Array.from(password).find(c => isUpper(c))
+        return !Array.from(password).find(c => isUpper(c))
     } else {
         return false
     }
@@ -147,7 +147,7 @@ function checkUppercaseCharacters(password, passwordPolicy) {
 
 function checkDigitCharacters(password, passwordPolicy) {
     if (!!passwordPolicy.digitCharacters) {
-        return !!Array.from(password).find(c => isDigit(c))
+        return !Array.from(password).find(c => isDigit(c))
     } else {
         return false
     }
