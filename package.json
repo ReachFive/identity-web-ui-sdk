@@ -20,7 +20,7 @@
         "test:update": "npm run test -- --update-snapshot"
     },
     "dependencies": {
-        "@reachfive/identity-core": "^1.7.1",
+        "@reachfive/identity-core": "^1.8.0",
         "classnames": "2.2.6",
         "libphonenumber-js": "1.7.26",
         "lodash-es": "4.17.15",
@@ -50,8 +50,8 @@
         "jest": "24.9.0",
         "jest-styled-components": "6.3.3",
         "react-test-renderer": "16.10.2",
-        "rollup": "1.24.0",
-        "rollup-plugin-alias": "2.0.1",
+        "rollup": "1.25.1",
+        "rollup-plugin-alias": "2.2.0",
         "rollup-plugin-babel": "4.3.3",
         "rollup-plugin-commonjs": "10.1.0",
         "rollup-plugin-node-resolve": "5.2.0",
