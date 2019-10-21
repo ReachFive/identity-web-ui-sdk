@@ -60,7 +60,8 @@
         "svg-react-loader": "0.4.6"
     },
     "files": [
-        "build"
+        "build",
+        "index.d.ts"
     ],
     "resolutions": {
         "core-js": "2.5.2"
