@@ -15,6 +15,7 @@ export const Button = styled(({ tagname = 'button', className, extendedClasses, 
         <Tagname className={classes([extendedClasses, className])}
             disabled={disabled}
             type={type}
+            data-testid={type}
             onClick={onClick}
             {...(title ? { title } : {})}>{children}</Tagname>
     );
