@@ -108,5 +108,9 @@ export default {
 
     "validation.password.minLength": "Les mots de passe courts sont faciles à deviner. Veuillez recommencer en utilisant au moins {min} caractères.",
     "validation.password.maxLength": "Veuillez limiter votre mot de passe à {max} caractères.",
-    "validation.password.minStrength": "Ce mot de passe est trop faible."
+    "validation.password.minStrength": "Ce mot de passe est trop faible.",
+    "validation.password.specials.characters": "Ce mot de passe doit contenir au moins un caractère spécial",
+    "validation.password.specials.lowercase": "Ce mot de passe doit contenir au moins un caractère minuscule",
+    "validation.password.specials.uppercase": "Ce mot de passe doit contenir au moins un caractère majuscule",
+    "validation.password.specials.digit": "Ce mot de passe doit contenir au moins un chiffre"
   }

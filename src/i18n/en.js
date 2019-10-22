@@ -108,5 +108,9 @@ export default {
 
     "validation.password.minLength": "Short passwords are easy to guess. Try one with at least {min} characters.",
     "validation.password.maxLength": "Please limit your password to a maximum of {max} characters.",
-    "validation.password.minStrength": "This password is too weak."
-  }
+    "validation.password.minStrength": "This password is too weak.",
+    "validation.password.specials.characters": "This password must contain at least one special character",
+    "validation.password.specials.lowercase": "This password must contain at least one lowercase character",
+    "validation.password.specials.uppercase": "This password must contain at least one uppercase character",
+    "validation.password.specials.digit": "This password must contain at least one digit character"
+}

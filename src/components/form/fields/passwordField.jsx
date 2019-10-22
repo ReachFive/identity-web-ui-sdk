@@ -1,4 +1,5 @@
 import React from 'react';
+import { isLower, isUpper, isDigit } from 'char-info';
 
 import styled from 'styled-components';
 
@@ -118,6 +119,40 @@ class PasswordField extends React.Component {
     }
 }
 
+function checkSpecialsCharacters(password, passwordPolicy) {
+    if (!!passwordPolicy.specialCharacters) {
+        const SPECIAL_CHARACTERS = " !\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~"
+        const passwordChars = Array.from(password)
+        return !passwordChars.find(c => SPECIAL_CHARACTERS.includes(c))
+    } else {
+        return false
+    }
+}
+
+function checkLowercaseCharacters(password, passwordPolicy) {
+    if (!!passwordPolicy.lowercaseCharacters) {
+        return !Array.from(password).find(c => isLower(c))
+    } else {
+        return false
+    }
+}
+
+function checkUppercaseCharacters(password, passwordPolicy) {
+    if (!!passwordPolicy.uppercaseCharacters) {
+        return !Array.from(password).find(c => isUpper(c))
+    } else {
+        return false
+    }
+}
+
+function checkDigitCharacters(password, passwordPolicy) {
+    if (!!passwordPolicy.digitCharacters) {
+        return !Array.from(password).find(c => isDigit(c))
+    } else {
+        return false
+    }
+}
+
 export const passwordField = ({ label = 'password', canShowPassword = false, ...staticProps }, { passwordPolicy }) => ({
     path: 'password',
     create: ({ i18n, showLabel }) => {
@@ -150,6 +185,14 @@ export const passwordField = ({ label = 'password', canShowPassword = false, ...
                             return { error: i18n('validation.password.maxLength', { max: MAX_PASSWORD_LENGTH }) };
                         } else if (strength < passwordPolicy.minStrength) {
                             return { error: i18n('validation.password.minStrength') };
+                        } else if (checkSpecialsCharacters(value, passwordPolicy)) {
+                            return { error: i18n('validation.password.specials.characters') };
+                        } else if (checkLowercaseCharacters(value, passwordPolicy)) {
+                            return { error: i18n('validation.password.specials.lowercase') };
+                        } else if (checkUppercaseCharacters(value, passwordPolicy)) {
+                            return { error: i18n('validation.password.specials.uppercase') };
+                        } else if (checkDigitCharacters(value, passwordPolicy)) {
+                            return { error: i18n('validation.password.specials.digit') };
                         }
                     }
                 }
