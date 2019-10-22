@@ -170,6 +170,7 @@ exports[`Snapshot profile editor basic 1`] = `
     </div>
     <button
       className="c5"
+      data-testid="submit"
       disabled={false}
       type="submit"
     >
