@@ -1,5 +1,5 @@
 import React from 'react';
-import { isLower, isUpper, isDigit } from "char-info";
+import { isLower, isUpper, isDigit } from 'char-info';
 
 import styled from 'styled-components';
 
