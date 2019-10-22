@@ -33,7 +33,8 @@ const SimpleField = props => {
                 required={required}
                 hasError={!!validation.error}
                 onChange={event => onChange({ value: event.target.value })}
-                onBlur={() => onChange({ isDirty: true })} />
+                onBlur={() => onChange({ isDirty: true })}
+                data-testid={path} />
         </FormGroup>
     );
 };

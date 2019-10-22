@@ -31,7 +31,8 @@ const ConsentField = ({ value, onChange, label, description, path }) => {
         <Checkbox value={value}
             onToggle={() => onChange(clickUpdate)}
             name={path}
-            label={label} />
+            label={label}
+            data-testid={path} />
         <MarkdownContent root={Description} source={description} />
     </div>
 };

@@ -63,7 +63,8 @@ class SimplePasswordField extends React.Component {
                     required={required}
                     hasError={!!validation.error}
                     onChange={event => onChange({ value: event.target.value })}
-                    onBlur={() => onChange({ isDirty: true })} />
+                    onBlur={() => onChange({ isDirty: true })}
+                    data-testid={path} />
                 {canShowPassword && showPassword && <HidePasswordIcon onClick={this.toggleShowPassword} />}
                 {canShowPassword && !showPassword && <ShowPasswordIcon onClick={this.toggleShowPassword} />}
             </div>

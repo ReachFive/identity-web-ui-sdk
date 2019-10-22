@@ -135,6 +135,7 @@ exports[`Snapshot profile editor basic 1`] = `
       </label>
       <input
         className="c4"
+        data-testid="given_name"
         id="given_name"
         name="given_name"
         onBlur={[Function]}
@@ -156,6 +157,7 @@ exports[`Snapshot profile editor basic 1`] = `
       </label>
       <input
         className="c4"
+        data-testid="family_name"
         id="family_name"
         name="family_name"
         onBlur={[Function]}

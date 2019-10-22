@@ -108,7 +108,8 @@ class PasswordField extends React.Component {
                         strength: zxcvbn ? zxcvbn(event.target.value).score : 0
                     })}
                     onFocus={() => onChange({ isTouched: true })}
-                    onBlur={() => onChange({ isDirty: true })} />
+                    onBlur={() => onChange({ isDirty: true })}
+                    data-testid="password" />
                 {canShowPassword && showPassword && <HidePasswordIcon onClick={this.toggleShowPassword} />}
                 {canShowPassword && !showPassword && <ShowPasswordIcon onClick={this.toggleShowPassword} />}
                 {isTouched && zxcvbn && <PasswordStrength score={strength} />}
