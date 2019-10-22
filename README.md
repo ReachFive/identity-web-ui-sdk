@@ -10,6 +10,20 @@ The following command installs the Identity Web UI SDK as a Node.js dependency:
 npm install --save @reachfive/identity-ui
 ```
 
+## Testing
+
+To launch the tests, run:
+
+```
+npm run test
+```
+
+To update the tests snapshots:
+
+```
+npm run test:update
+```
+
 ## Changelog
 
 Please refer to [changelog](CHANGELOG.md) to see the descriptions of each release.
