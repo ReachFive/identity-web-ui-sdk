@@ -82,7 +82,8 @@ class PhoneNumberField extends React.Component {
                 required={required}
                 hasError={!!validation.error}
                 onChange={event => this.asYouType(event.target.value)}
-                onBlur={() => onChange({ isDirty: true })} />
+                onBlur={() => onChange({ isDirty: true })}
+                data-testid={path} />
         </FormGroup>
     }
 }

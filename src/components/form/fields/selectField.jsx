@@ -33,7 +33,8 @@ const SelectField = props => {
             onChange={handleChange}
             onBlur={handleBlur}
             placeholder={placeholder}
-            options={props.values} />
+            options={props.values}
+            data-testid={props.path} />
     </FormGroup>;
 };
 

@@ -93,7 +93,8 @@ const BirthdateField = props => {
                     required={required}
                     placeholder={i18n('day')}
                     onChange={handleFieldChange('day')}
-                    onBlur={handleFieldBlur('day')} />
+                    onBlur={handleFieldBlur('day')}
+                    data-testid={`${BIRTHDAY_PATH}.day`} />
             </InputCol>
             <InputCol width={50}>
                 <Select name={`${BIRTHDAY_PATH}.month`}
@@ -103,7 +104,8 @@ const BirthdateField = props => {
                     onChange={handleFieldChange('month')}
                     onBlur={handleFieldBlur('month')}
                     placeholder={i18n('month')}
-                    options={months} />
+                    options={months}
+                    data-testid={`${BIRTHDAY_PATH}.month`} />
             </InputCol>
             <InputCol width={30}>
                 <Input type="text"
@@ -115,7 +117,8 @@ const BirthdateField = props => {
                     required={required}
                     placeholder={i18n('year')}
                     onChange={handleFieldChange('year')}
-                    onBlur={handleFieldBlur('year')} />
+                    onBlur={handleFieldBlur('year')}
+                    data-testid={`${BIRTHDAY_PATH}.year`} />
             </InputCol>
         </InputRow>
     </FormGroup>;
