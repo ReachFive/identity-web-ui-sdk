@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom'
 import authWidget from './widgets/auth/authWidget';
 import emailEditorWidget from './widgets/emailEditor/emailEditorWidget';
 import passwordEditorWidget from './widgets/passwordEditor/passwordEditorWidget';
-import phoneNumberEditorWidget from './widgets/phoneNumbereditor/phoneNumberEditorWidget';
+import phoneNumberEditorWidget from './widgets/phoneNumberEditor/phoneNumberEditorWidget';
 import passwordResetWidget from './widgets/passwordReset/passwordResetWidget';
 import passwordlessWidget from './widgets/passwordless/passwordlessWidget';
 import profileEditorWidget from './widgets/profileEditor/profileEditorWidget';

@@ -1,4 +1,4 @@
-[![npm](https://img.shields.io/npm/v/@reachfive/identity-ui.svg?color=blue)](https://www.npmjs.com/package/@reachfive/identity-ui)
+[![CircleCI](https://circleci.com/gh/ReachFive/identity-web-ui-sdk/tree/master.svg?style=svg)](https://circleci.com/gh/ReachFive/identity-web-ui-sdk/tree/master) [![npm](https://img.shields.io/npm/v/@reachfive/identity-ui.svg?color=blue)](https://www.npmjs.com/package/@reachfive/identity-ui)
 
 # ReachFive Identity Web UI SDK
 
