@@ -50,5 +50,3 @@ export default createMultiViewWidget({
         );
     }
 });
-
-// This feature is not available on your account.
