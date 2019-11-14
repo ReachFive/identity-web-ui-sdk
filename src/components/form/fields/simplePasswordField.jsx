@@ -7,8 +7,8 @@ import { createField } from '../fieldCreator'
 
 import { FormGroup, Input } from '../formControlsComponent';
 
-import EyeIcon from '../../../icons/eye.svg';
-import EyeSlashIcon from '../../../icons/eye-slash.svg';
+import { ReactComponent as EyeIcon } from '../../../icons/eye.svg';
+import { ReactComponent as EyeSlashIcon } from '../../../icons/eye-slash.svg';
 
 const eyeStyle = `
   position: absolute;
