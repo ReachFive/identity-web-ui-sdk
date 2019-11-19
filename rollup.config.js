@@ -4,7 +4,8 @@ import alias from 'rollup-plugin-alias'
 import babel from 'rollup-plugin-babel'
 import commonjs from 'rollup-plugin-commonjs'
 import resolve from 'rollup-plugin-node-resolve'
-import svg from 'rollup-plugin-svg'
+import svg from '@svgr/rollup'
+import url from 'rollup-plugin-url'
 
 import project from './package.json'
 
@@ -16,7 +17,9 @@ const config = {
         resolve({ extensions: ['.jsx', '.js', '.json'] }),
         commonjs(),
         babel(),
-        svg()
+        svg(),
+        // Add an inlined version of SVG files: https://www.smooth-code.com/open-source/svgr/docs/rollup/#using-with-url-plugin
+        url({ limit: Infinity, include: ['**/*.svg'] })
     ],
     onwarn: console.warn
 }

@@ -74,46 +74,41 @@ class PasswordField extends React.Component {
 
     render() {
         const {
-            value,
-            strength = 0,
-            isTouched,
             validation = {},
             onChange,
-            showLabel,
             inputId,
-            required,
             label,
-            autoComplete,
-            placeholder = label,
-            canShowPassword
         } = this.props;
 
         const { zxcvbn, showPassword } = this.state;
 
         return <FormGroupContainer>
             <div style={{ position: 'relative' }}>
-                <Label visible={showLabel} htmlFor={inputId}>
+                <Label visible={this.props.showLabel} htmlFor={inputId}>
                     {label}
                 </Label>
-                <Input id={inputId}
-                    name="password"
-                    type={showPassword ? 'text' : 'password'}
-                    value={value || ''}
-                    placeholder={placeholder}
-                    autoComplete={autoComplete}
-                    title={label}
-                    required={required}
-                    hasError={!!validation.error}
-                    onChange={event => onChange({
-                        value: event.target.value,
-                        strength: zxcvbn ? zxcvbn(event.target.value).score : 0
-                    })}
-                    onFocus={() => onChange({ isTouched: true })}
-                    onBlur={() => onChange({ isDirty: true })}
-                    data-testid="password" />
-                {canShowPassword && showPassword && <HidePasswordIcon onClick={this.toggleShowPassword} />}
-                {canShowPassword && !showPassword && <ShowPasswordIcon onClick={this.toggleShowPassword} />}
-                {isTouched && zxcvbn && <PasswordStrength score={strength} />}
+                <div style={{ position: 'relative' }}>
+                    <Input id={inputId}
+                        name="password"
+                        type={showPassword ? 'text' : 'password'}
+                        value={this.props.value || ''}
+                        placeholder={this.props.placeholder || label}
+                        autoComplete={this.props.autoComplete}
+                        title={label}
+                        required={this.props.required}
+                        hasError={Boolean(validation.error)}
+                        onChange={event => onChange({
+                            value: event.target.value,
+                            strength: zxcvbn ? zxcvbn(event.target.value).score : 0
+                        })}
+                        onFocus={() => onChange({ isTouched: true })}
+                        onBlur={() => onChange({ isDirty: true })}
+                        data-testid="password" />
+                    {this.props.canShowPassword && (showPassword
+                        ? <HidePasswordIcon onClick={this.toggleShowPassword} />
+                        : <ShowPasswordIcon onClick={this.toggleShowPassword} />)}
+                </div>
+                {this.props.isTouched && zxcvbn && <PasswordStrength score={this.props.strength || 0} />}
                 {validation.error && <FormError>{validation.error}</FormError>}
             </div>
         </FormGroupContainer>;

@@ -4,11 +4,10 @@ import styled from 'styled-components';
 import pick from 'lodash-es/pick';
 
 import { createField } from '../fieldCreator'
-
 import { FormGroup, Input } from '../formControlsComponent';
 
-import EyeIcon from '../../../icons/eye.svg';
-import EyeSlashIcon from '../../../icons/eye-slash.svg';
+import { ReactComponent as EyeIcon } from '../../../icons/eye.svg';
+import { ReactComponent as EyeSlashIcon } from '../../../icons/eye-slash.svg';
 
 const eyeStyle = `
   position: absolute;
@@ -26,47 +25,42 @@ export const ShowPasswordIcon = styled(EyeIcon)`${eyeStyle}`;
 export const HidePasswordIcon = styled(EyeSlashIcon)`${eyeStyle}`;
 
 class SimplePasswordField extends React.Component {
-    state = {
-        showPassword: false
-    };
+    state = { showPassword: false };
 
     render() {
         const {
             path,
-            value,
             validation = {},
             onChange,
-            showLabel,
             inputId,
-            type,
-            required,
-            label,
-            autoComplete,
-            placeholder = label,
-            canShowPassword
+            label
         } = this.props;
 
         const { showPassword } = this.state;
 
-        return <FormGroup inputId={inputId}
+        return <FormGroup
+            inputId={inputId}
             labelText={label}
             {...pick(validation, 'error')}
-            showLabel={showLabel}>
+            showLabel={this.props.showLabel}>
             <div style={{ position: 'relative' }}>
-                <Input id={inputId}
+                <Input
+                    id={inputId}
                     name={path}
                     type={showPassword ? 'text' : 'password'}
-                    value={value || ''}
-                    placeholder={placeholder}
-                    autoComplete={autoComplete}
+                    value={this.props.value || ''}
+                    placeholder={this.props.placeholder || label}
+                    autoComplete={this.props.autoComplete}
                     title={label}
-                    required={required}
-                    hasError={!!validation.error}
+                    required={this.props.required}
+                    hasError={Boolean(validation.error)}
                     onChange={event => onChange({ value: event.target.value })}
                     onBlur={() => onChange({ isDirty: true })}
                     data-testid={path} />
-                {canShowPassword && showPassword && <HidePasswordIcon onClick={this.toggleShowPassword} />}
-                {canShowPassword && !showPassword && <ShowPasswordIcon onClick={this.toggleShowPassword} />}
+                {this.props.canShowPassword && (
+                    showPassword
+                        ? <HidePasswordIcon onClick={this.toggleShowPassword} />
+                        : <ShowPasswordIcon onClick={this.toggleShowPassword} />)}
             </div>
         </FormGroup>;
     }
