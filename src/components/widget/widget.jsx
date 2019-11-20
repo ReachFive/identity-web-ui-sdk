@@ -29,7 +29,7 @@ export function createWidget({ component, prepare = (x => x), ...widgetAttrs }) 
             const fullProps = {
                 ...optionsRest,
                 ...context,
-                i18n: resolveI18n(i18n),
+                i18n: resolveI18n(context.defaultI18n, i18n),
                 theme: resolveTheme(theme)
             };
 

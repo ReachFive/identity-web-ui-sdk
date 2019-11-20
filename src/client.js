@@ -12,10 +12,11 @@ import socialLoginWidget from './widgets/socialLogin/socialLoginWidget';
 import { logError } from './helpers/logger';
 
 export class UiClient {
-    constructor(config, urlParser, coreClient) {
+    constructor(config, urlParser, coreClient, defaultI18n) {
         this.config = config;
         this.urlParser = urlParser;
         this.client = coreClient;
+        this.defaultI18n = defaultI18n;
     }
 
     showAuth(options) {
@@ -72,7 +73,8 @@ export class UiClient {
             const result = await widget(options, {
                 ...props,
                 config,
-                apiClient: this.client
+                apiClient: this.client,
+                defaultI18n: this.defaultI18n
             });
 
             ReactDOM.render(result, container);

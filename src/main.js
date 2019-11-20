@@ -10,8 +10,13 @@ export function createClient(creationConfig) {
     const coreClient = createCoreClient(creationConfig);
 
     const client = coreClient.remoteSettings.then(remoteSettings => {
-        const remoteConfig = camelCaseProperties(remoteSettings)
-        return new UiClient({ ...creationConfig, ...remoteConfig}, urlParser, coreClient)
+        const remoteConfig = camelCaseProperties(remoteSettings);
+        const language = creationConfig.language || remoteConfig.language;
+
+        return fetch(`http://localhost:5000/i18n/${language}.json`)
+            .then(response => response.json())
+            .then(defaultI18n => new UiClient({ ...creationConfig, ...remoteConfig}, urlParser, coreClient, defaultI18n))
+            .catch(console.error);
     });
 
     return {
