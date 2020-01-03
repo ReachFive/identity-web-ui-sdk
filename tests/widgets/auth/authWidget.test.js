@@ -118,13 +118,13 @@ describe('DOM testing', () => {
             const instance = await generateComponent({});
 
             // Form button
-            expect(instance.find('button').text()).toBe('Log in');
+            expect(instance.find('button').text()).toBe('login.submitLabel');
 
             // Links
             const links = instance.find('a');
             expect(links).toHaveLength(2);
-            expect(links.eq(0).text()).toEqual('Don\'t remember your password?');
-            expect(links.eq(1).text()).toEqual('Sign up');
+            expect(links.eq(0).text()).toEqual('login.forgotPasswordLink');
+            expect(links.eq(1).text()).toEqual('login.signupLink');
 
             // Social buttons
             expect(instance.find('span').filter(textFilter('Facebook'))).toHaveLength(1);
@@ -142,7 +142,7 @@ describe('DOM testing', () => {
 
             const links = instance.find('a');
             expect(links).toHaveLength(1);
-            expect(links.eq(0).text()).toEqual('Don\'t remember your password?');
+            expect(links.eq(0).text()).toEqual('login.forgotPasswordLink');
         });
 
         test('without forgot password', async () => {
@@ -164,7 +164,7 @@ describe('DOM testing', () => {
 
             expect(instance.find('a')).toHaveLength(2);
 
-            const checkbox = instance.find('label').filter(textFilter('Remember me'));
+            const checkbox = instance.find('label').filter(textFilter('rememberMe'));
             expect(checkbox).toHaveLength(1);
         });
 
@@ -231,12 +231,12 @@ describe('DOM testing', () => {
             });
 
             // Form button
-            expect(instance.find('button').text()).toBe('Sign up');
+            expect(instance.find('button').text()).toBe('signup.submitLabel');
 
             // Log in link
             const links = instance.find('a');
             expect(links).toHaveLength(1);
-            expect(links.eq(0).text()).toEqual('Log in');
+            expect(links.eq(0).text()).toEqual('signup.loginLink');
 
             // Social buttons
             expect(instance.find('span').filter(textFilter('Facebook'))).toHaveLength(1);

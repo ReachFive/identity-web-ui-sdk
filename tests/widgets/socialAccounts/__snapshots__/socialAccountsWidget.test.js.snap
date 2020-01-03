@@ -69,7 +69,7 @@ exports[`Snapshot basic 1`] = `
     <div
       className="c1"
     >
-      No linked third-party account
+      socialAccounts.noLinkedAccount
     </div>
   </div>
   <div
@@ -83,7 +83,7 @@ exports[`Snapshot basic 1`] = `
       className="c2"
       onClick={[Function]}
     >
-      Link new account
+      socialAccounts.linkNewAccount
     </button>
   </div>
 </div>

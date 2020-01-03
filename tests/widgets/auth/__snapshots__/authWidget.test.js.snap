@@ -155,12 +155,12 @@ exports[`Snapshot forgot password view default 1`] = `
     <div
       className="c1"
     >
-      Forgot password
+      forgotPassword.title
     </div>
     <div
       className="c2"
     >
-      Enter the email address associated with your account, and we’ll email you a link to reset your password.
+      forgotPassword.prompt
     </div>
     <form
       className="c3"
@@ -174,7 +174,7 @@ exports[`Snapshot forgot password view default 1`] = `
           className="c5"
           htmlFor="email"
         >
-          Email address
+          email
         </label>
         <input
           className="c6"
@@ -183,9 +183,9 @@ exports[`Snapshot forgot password view default 1`] = `
           name="email"
           onBlur={[Function]}
           onChange={[Function]}
-          placeholder="Email address"
+          placeholder="email"
           required={true}
-          title="Email address"
+          title="email"
           type="email"
           value=""
         />
@@ -196,7 +196,7 @@ exports[`Snapshot forgot password view default 1`] = `
         disabled={false}
         type="submit"
       >
-        Send reset link
+        forgotPassword.submitLabel
       </button>
     </form>
     <div
@@ -207,7 +207,7 @@ exports[`Snapshot forgot password view default 1`] = `
         href="#"
         onClick={[Function]}
       >
-        Back to Login
+        forgotPassword.backToLoginLink
       </a>
     </div>
   </div>
@@ -508,7 +508,7 @@ exports[`Snapshot login view default 1`] = `
     <div
       className="c1"
     >
-      Log in
+      login.title
     </div>
     <div
       className="r5-social-buttons c2"
@@ -559,7 +559,7 @@ exports[`Snapshot login view default 1`] = `
           className="c9"
           htmlFor="email"
         >
-          Email address
+          email
         </label>
         <input
           autoComplete="email"
@@ -569,9 +569,9 @@ exports[`Snapshot login view default 1`] = `
           name="email"
           onBlur={[Function]}
           onChange={[Function]}
-          placeholder="Email address"
+          placeholder="email"
           required={true}
-          title="Email address"
+          title="email"
           type="email"
           value=""
         />
@@ -583,7 +583,7 @@ exports[`Snapshot login view default 1`] = `
           className="c9"
           htmlFor="password"
         >
-          Password
+          password
         </label>
         <div
           style={
@@ -600,9 +600,9 @@ exports[`Snapshot login view default 1`] = `
             name="password"
             onBlur={[Function]}
             onChange={[Function]}
-            placeholder="Password"
+            placeholder="password"
             required={true}
-            title="Password"
+            title="password"
             type="password"
             value=""
           />
@@ -616,7 +616,7 @@ exports[`Snapshot login view default 1`] = `
           href="#"
           onClick={[Function]}
         >
-          Don't remember your password?
+          login.forgotPasswordLink
         </a>
       </div>
       <button
@@ -625,14 +625,14 @@ exports[`Snapshot login view default 1`] = `
         disabled={false}
         type="submit"
       >
-        Log in
+        login.submitLabel
       </button>
     </form>
     <div
       className="c14"
     >
       <span>
-        Do not have an account?
+        login.signupLinkPrefix
       </span>
        
       <a
@@ -640,7 +640,7 @@ exports[`Snapshot login view default 1`] = `
         href="#"
         onClick={[Function]}
       >
-        Sign up
+        login.signupLink
       </a>
     </div>
   </div>
@@ -947,7 +947,7 @@ exports[`Snapshot login view inline social buttons 1`] = `
     <div
       className="c1"
     >
-      Log in
+      login.title
     </div>
     <div
       className="r5-social-buttons c2"
@@ -990,7 +990,7 @@ exports[`Snapshot login view inline social buttons 1`] = `
           className="c9"
           htmlFor="email"
         >
-          Email address
+          email
         </label>
         <input
           autoComplete="email"
@@ -1000,9 +1000,9 @@ exports[`Snapshot login view inline social buttons 1`] = `
           name="email"
           onBlur={[Function]}
           onChange={[Function]}
-          placeholder="Email address"
+          placeholder="email"
           required={true}
-          title="Email address"
+          title="email"
           type="email"
           value=""
         />
@@ -1014,7 +1014,7 @@ exports[`Snapshot login view inline social buttons 1`] = `
           className="c9"
           htmlFor="password"
         >
-          Password
+          password
         </label>
         <div
           style={
@@ -1031,9 +1031,9 @@ exports[`Snapshot login view inline social buttons 1`] = `
             name="password"
             onBlur={[Function]}
             onChange={[Function]}
-            placeholder="Password"
+            placeholder="password"
             required={true}
-            title="Password"
+            title="password"
             type="password"
             value=""
           />
@@ -1047,7 +1047,7 @@ exports[`Snapshot login view inline social buttons 1`] = `
           href="#"
           onClick={[Function]}
         >
-          Don't remember your password?
+          login.forgotPasswordLink
         </a>
       </div>
       <button
@@ -1056,14 +1056,14 @@ exports[`Snapshot login view inline social buttons 1`] = `
         disabled={false}
         type="submit"
       >
-        Log in
+        login.submitLabel
       </button>
     </form>
     <div
       className="c14"
     >
       <span>
-        Do not have an account?
+        login.signupLinkPrefix
       </span>
        
       <a
@@ -1071,7 +1071,7 @@ exports[`Snapshot login view inline social buttons 1`] = `
         href="#"
         onClick={[Function]}
       >
-        Sign up
+        login.signupLink
       </a>
     </div>
   </div>
@@ -1367,7 +1367,7 @@ exports[`Snapshot login view no forgot password 1`] = `
     <div
       className="c1"
     >
-      Log in
+      login.title
     </div>
     <div
       className="r5-social-buttons c2"
@@ -1418,7 +1418,7 @@ exports[`Snapshot login view no forgot password 1`] = `
           className="c9"
           htmlFor="email"
         >
-          Email address
+          email
         </label>
         <input
           autoComplete="email"
@@ -1428,9 +1428,9 @@ exports[`Snapshot login view no forgot password 1`] = `
           name="email"
           onBlur={[Function]}
           onChange={[Function]}
-          placeholder="Email address"
+          placeholder="email"
           required={true}
-          title="Email address"
+          title="email"
           type="email"
           value=""
         />
@@ -1442,7 +1442,7 @@ exports[`Snapshot login view no forgot password 1`] = `
           className="c9"
           htmlFor="password"
         >
-          Password
+          password
         </label>
         <div
           style={
@@ -1459,9 +1459,9 @@ exports[`Snapshot login view no forgot password 1`] = `
             name="password"
             onBlur={[Function]}
             onChange={[Function]}
-            placeholder="Password"
+            placeholder="password"
             required={true}
-            title="Password"
+            title="password"
             type="password"
             value=""
           />
@@ -1473,14 +1473,14 @@ exports[`Snapshot login view no forgot password 1`] = `
         disabled={false}
         type="submit"
       >
-        Log in
+        login.submitLabel
       </button>
     </form>
     <div
       className="c12"
     >
       <span>
-        Do not have an account?
+        login.signupLinkPrefix
       </span>
        
       <a
@@ -1488,7 +1488,7 @@ exports[`Snapshot login view no forgot password 1`] = `
         href="#"
         onClick={[Function]}
       >
-        Sign up
+        login.signupLink
       </a>
     </div>
   </div>
@@ -1783,7 +1783,7 @@ exports[`Snapshot login view no signup 1`] = `
     <div
       className="c1"
     >
-      Log in
+      login.title
     </div>
     <div
       className="r5-social-buttons c2"
@@ -1834,7 +1834,7 @@ exports[`Snapshot login view no signup 1`] = `
           className="c9"
           htmlFor="email"
         >
-          Email address
+          email
         </label>
         <input
           autoComplete="email"
@@ -1844,9 +1844,9 @@ exports[`Snapshot login view no signup 1`] = `
           name="email"
           onBlur={[Function]}
           onChange={[Function]}
-          placeholder="Email address"
+          placeholder="email"
           required={true}
-          title="Email address"
+          title="email"
           type="email"
           value=""
         />
@@ -1858,7 +1858,7 @@ exports[`Snapshot login view no signup 1`] = `
           className="c9"
           htmlFor="password"
         >
-          Password
+          password
         </label>
         <div
           style={
@@ -1875,9 +1875,9 @@ exports[`Snapshot login view no signup 1`] = `
             name="password"
             onBlur={[Function]}
             onChange={[Function]}
-            placeholder="Password"
+            placeholder="password"
             required={true}
-            title="Password"
+            title="password"
             type="password"
             value=""
           />
@@ -1891,7 +1891,7 @@ exports[`Snapshot login view no signup 1`] = `
           href="#"
           onClick={[Function]}
         >
-          Don't remember your password?
+          login.forgotPasswordLink
         </a>
       </div>
       <button
@@ -1900,7 +1900,7 @@ exports[`Snapshot login view no signup 1`] = `
         disabled={false}
         type="submit"
       >
-        Log in
+        login.submitLabel
       </button>
     </form>
   </div>
@@ -2212,7 +2212,7 @@ exports[`Snapshot login view with canShowPassword 1`] = `
     <div
       className="c1"
     >
-      Log in
+      login.title
     </div>
     <div
       className="r5-social-buttons c2"
@@ -2263,7 +2263,7 @@ exports[`Snapshot login view with canShowPassword 1`] = `
           className="c9"
           htmlFor="email"
         >
-          Email address
+          email
         </label>
         <input
           autoComplete="email"
@@ -2273,9 +2273,9 @@ exports[`Snapshot login view with canShowPassword 1`] = `
           name="email"
           onBlur={[Function]}
           onChange={[Function]}
-          placeholder="Email address"
+          placeholder="email"
           required={true}
-          title="Email address"
+          title="email"
           type="email"
           value=""
         />
@@ -2287,7 +2287,7 @@ exports[`Snapshot login view with canShowPassword 1`] = `
           className="c9"
           htmlFor="password"
         >
-          Password
+          password
         </label>
         <div
           style={
@@ -2304,9 +2304,9 @@ exports[`Snapshot login view with canShowPassword 1`] = `
             name="password"
             onBlur={[Function]}
             onChange={[Function]}
-            placeholder="Password"
+            placeholder="password"
             required={true}
-            title="Password"
+            title="password"
             type="password"
             value=""
           />
@@ -2324,7 +2324,7 @@ exports[`Snapshot login view with canShowPassword 1`] = `
           href="#"
           onClick={[Function]}
         >
-          Don't remember your password?
+          login.forgotPasswordLink
         </a>
       </div>
       <button
@@ -2333,14 +2333,14 @@ exports[`Snapshot login view with canShowPassword 1`] = `
         disabled={false}
         type="submit"
       >
-        Log in
+        login.submitLabel
       </button>
     </form>
     <div
       className="c15"
     >
       <span>
-        Do not have an account?
+        login.signupLinkPrefix
       </span>
        
       <a
@@ -2348,7 +2348,7 @@ exports[`Snapshot login view with canShowPassword 1`] = `
         href="#"
         onClick={[Function]}
       >
-        Sign up
+        login.signupLink
       </a>
     </div>
   </div>
@@ -2669,7 +2669,7 @@ exports[`Snapshot login view with remember me 1`] = `
     <div
       className="c1"
     >
-      Log in
+      login.title
     </div>
     <div
       className="r5-social-buttons c2"
@@ -2720,7 +2720,7 @@ exports[`Snapshot login view with remember me 1`] = `
           className="c9"
           htmlFor="email"
         >
-          Email address
+          email
         </label>
         <input
           autoComplete="email"
@@ -2730,9 +2730,9 @@ exports[`Snapshot login view with remember me 1`] = `
           name="email"
           onBlur={[Function]}
           onChange={[Function]}
-          placeholder="Email address"
+          placeholder="email"
           required={true}
-          title="Email address"
+          title="email"
           type="email"
           value=""
         />
@@ -2744,7 +2744,7 @@ exports[`Snapshot login view with remember me 1`] = `
           className="c9"
           htmlFor="password"
         >
-          Password
+          password
         </label>
         <div
           style={
@@ -2761,9 +2761,9 @@ exports[`Snapshot login view with remember me 1`] = `
             name="password"
             onBlur={[Function]}
             onChange={[Function]}
-            placeholder="Password"
+            placeholder="password"
             required={true}
-            title="Password"
+            title="password"
             type="password"
             value=""
           />
@@ -2777,7 +2777,7 @@ exports[`Snapshot login view with remember me 1`] = `
           href="#"
           onClick={[Function]}
         >
-          Don't remember your password?
+          login.forgotPasswordLink
         </a>
       </div>
       <div
@@ -2793,7 +2793,7 @@ exports[`Snapshot login view with remember me 1`] = `
             required={true}
             type="checkbox"
           />
-          Remember me
+          rememberMe
         </label>
       </div>
       <button
@@ -2802,14 +2802,14 @@ exports[`Snapshot login view with remember me 1`] = `
         disabled={false}
         type="submit"
       >
-        Log in
+        login.submitLabel
       </button>
     </form>
     <div
       className="c16"
     >
       <span>
-        Do not have an account?
+        login.signupLinkPrefix
       </span>
        
       <a
@@ -2817,7 +2817,7 @@ exports[`Snapshot login view with remember me 1`] = `
         href="#"
         onClick={[Function]}
       >
-        Sign up
+        login.signupLink
       </a>
     </div>
   </div>
@@ -3113,7 +3113,7 @@ exports[`Snapshot signup view default 1`] = `
     <div
       className="c1"
     >
-      Sign up
+      signup.title
     </div>
     <div
       className="r5-social-buttons c2"
@@ -3164,7 +3164,7 @@ exports[`Snapshot signup view default 1`] = `
           className="c9"
           htmlFor="given_name"
         >
-          First name
+          givenName
         </label>
         <input
           className="c10"
@@ -3173,9 +3173,9 @@ exports[`Snapshot signup view default 1`] = `
           name="given_name"
           onBlur={[Function]}
           onChange={[Function]}
-          placeholder="First name"
+          placeholder="givenName"
           required={true}
-          title="First name"
+          title="givenName"
           value=""
         />
       </div>
@@ -3186,7 +3186,7 @@ exports[`Snapshot signup view default 1`] = `
           className="c9"
           htmlFor="family_name"
         >
-          Last name
+          familyName
         </label>
         <input
           className="c10"
@@ -3195,9 +3195,9 @@ exports[`Snapshot signup view default 1`] = `
           name="family_name"
           onBlur={[Function]}
           onChange={[Function]}
-          placeholder="Last name"
+          placeholder="familyName"
           required={true}
-          title="Last name"
+          title="familyName"
           value=""
         />
       </div>
@@ -3208,7 +3208,7 @@ exports[`Snapshot signup view default 1`] = `
           className="c9"
           htmlFor="email"
         >
-          Email address
+          email
         </label>
         <input
           className="c10"
@@ -3217,9 +3217,9 @@ exports[`Snapshot signup view default 1`] = `
           name="email"
           onBlur={[Function]}
           onChange={[Function]}
-          placeholder="Email address"
+          placeholder="email"
           required={true}
-          title="Email address"
+          title="email"
           type="email"
           value=""
         />
@@ -3237,7 +3237,7 @@ exports[`Snapshot signup view default 1`] = `
           <label
             className="c9"
           >
-            Password
+            password
           </label>
           <div
             style={
@@ -3253,8 +3253,8 @@ exports[`Snapshot signup view default 1`] = `
               onBlur={[Function]}
               onChange={[Function]}
               onFocus={[Function]}
-              placeholder="Password"
-              title="Password"
+              placeholder="password"
+              title="password"
               type="password"
               value=""
             />
@@ -3268,7 +3268,7 @@ exports[`Snapshot signup view default 1`] = `
           className="c9"
           htmlFor="password_confirmation"
         >
-          Password confirmation
+          passwordConfirmation
         </label>
         <div
           style={
@@ -3284,9 +3284,9 @@ exports[`Snapshot signup view default 1`] = `
             name="password_confirmation"
             onBlur={[Function]}
             onChange={[Function]}
-            placeholder="Password confirmation"
+            placeholder="passwordConfirmation"
             required={true}
-            title="Password confirmation"
+            title="passwordConfirmation"
             type="password"
             value=""
           />
@@ -3298,14 +3298,14 @@ exports[`Snapshot signup view default 1`] = `
         disabled={false}
         type="submit"
       >
-        Sign up
+        signup.submitLabel
       </button>
     </form>
     <div
       className="c12"
     >
       <span>
-        Already have an account?
+        signup.loginLinkPrefix
       </span>
        
       <a
@@ -3313,7 +3313,7 @@ exports[`Snapshot signup view default 1`] = `
         href="#"
         onClick={[Function]}
       >
-        Log in
+        signup.loginLink
       </a>
     </div>
   </div>
@@ -3615,7 +3615,7 @@ exports[`Snapshot signup view inline social buttons 1`] = `
     <div
       className="c1"
     >
-      Sign up
+      signup.title
     </div>
     <div
       className="r5-social-buttons c2"
@@ -3658,7 +3658,7 @@ exports[`Snapshot signup view inline social buttons 1`] = `
           className="c9"
           htmlFor="given_name"
         >
-          First name
+          givenName
         </label>
         <input
           className="c10"
@@ -3667,9 +3667,9 @@ exports[`Snapshot signup view inline social buttons 1`] = `
           name="given_name"
           onBlur={[Function]}
           onChange={[Function]}
-          placeholder="First name"
+          placeholder="givenName"
           required={true}
-          title="First name"
+          title="givenName"
           value=""
         />
       </div>
@@ -3680,7 +3680,7 @@ exports[`Snapshot signup view inline social buttons 1`] = `
           className="c9"
           htmlFor="family_name"
         >
-          Last name
+          familyName
         </label>
         <input
           className="c10"
@@ -3689,9 +3689,9 @@ exports[`Snapshot signup view inline social buttons 1`] = `
           name="family_name"
           onBlur={[Function]}
           onChange={[Function]}
-          placeholder="Last name"
+          placeholder="familyName"
           required={true}
-          title="Last name"
+          title="familyName"
           value=""
         />
       </div>
@@ -3702,7 +3702,7 @@ exports[`Snapshot signup view inline social buttons 1`] = `
           className="c9"
           htmlFor="email"
         >
-          Email address
+          email
         </label>
         <input
           className="c10"
@@ -3711,9 +3711,9 @@ exports[`Snapshot signup view inline social buttons 1`] = `
           name="email"
           onBlur={[Function]}
           onChange={[Function]}
-          placeholder="Email address"
+          placeholder="email"
           required={true}
-          title="Email address"
+          title="email"
           type="email"
           value=""
         />
@@ -3731,7 +3731,7 @@ exports[`Snapshot signup view inline social buttons 1`] = `
           <label
             className="c9"
           >
-            Password
+            password
           </label>
           <div
             style={
@@ -3747,8 +3747,8 @@ exports[`Snapshot signup view inline social buttons 1`] = `
               onBlur={[Function]}
               onChange={[Function]}
               onFocus={[Function]}
-              placeholder="Password"
-              title="Password"
+              placeholder="password"
+              title="password"
               type="password"
               value=""
             />
@@ -3762,7 +3762,7 @@ exports[`Snapshot signup view inline social buttons 1`] = `
           className="c9"
           htmlFor="password_confirmation"
         >
-          Password confirmation
+          passwordConfirmation
         </label>
         <div
           style={
@@ -3778,9 +3778,9 @@ exports[`Snapshot signup view inline social buttons 1`] = `
             name="password_confirmation"
             onBlur={[Function]}
             onChange={[Function]}
-            placeholder="Password confirmation"
+            placeholder="passwordConfirmation"
             required={true}
-            title="Password confirmation"
+            title="passwordConfirmation"
             type="password"
             value=""
           />
@@ -3792,14 +3792,14 @@ exports[`Snapshot signup view inline social buttons 1`] = `
         disabled={false}
         type="submit"
       >
-        Sign up
+        signup.submitLabel
       </button>
     </form>
     <div
       className="c12"
     >
       <span>
-        Already have an account?
+        signup.loginLinkPrefix
       </span>
        
       <a
@@ -3807,7 +3807,7 @@ exports[`Snapshot signup view inline social buttons 1`] = `
         href="#"
         onClick={[Function]}
       >
-        Log in
+        signup.loginLink
       </a>
     </div>
   </div>
@@ -4085,7 +4085,7 @@ exports[`Snapshot signup view no login 1`] = `
     <div
       className="c1"
     >
-      Sign up
+      signup.title
     </div>
     <div
       className="r5-social-buttons c2"
@@ -4136,7 +4136,7 @@ exports[`Snapshot signup view no login 1`] = `
           className="c9"
           htmlFor="given_name"
         >
-          First name
+          givenName
         </label>
         <input
           className="c10"
@@ -4145,9 +4145,9 @@ exports[`Snapshot signup view no login 1`] = `
           name="given_name"
           onBlur={[Function]}
           onChange={[Function]}
-          placeholder="First name"
+          placeholder="givenName"
           required={true}
-          title="First name"
+          title="givenName"
           value=""
         />
       </div>
@@ -4158,7 +4158,7 @@ exports[`Snapshot signup view no login 1`] = `
           className="c9"
           htmlFor="family_name"
         >
-          Last name
+          familyName
         </label>
         <input
           className="c10"
@@ -4167,9 +4167,9 @@ exports[`Snapshot signup view no login 1`] = `
           name="family_name"
           onBlur={[Function]}
           onChange={[Function]}
-          placeholder="Last name"
+          placeholder="familyName"
           required={true}
-          title="Last name"
+          title="familyName"
           value=""
         />
       </div>
@@ -4180,7 +4180,7 @@ exports[`Snapshot signup view no login 1`] = `
           className="c9"
           htmlFor="email"
         >
-          Email address
+          email
         </label>
         <input
           className="c10"
@@ -4189,9 +4189,9 @@ exports[`Snapshot signup view no login 1`] = `
           name="email"
           onBlur={[Function]}
           onChange={[Function]}
-          placeholder="Email address"
+          placeholder="email"
           required={true}
-          title="Email address"
+          title="email"
           type="email"
           value=""
         />
@@ -4209,7 +4209,7 @@ exports[`Snapshot signup view no login 1`] = `
           <label
             className="c9"
           >
-            Password
+            password
           </label>
           <div
             style={
@@ -4225,8 +4225,8 @@ exports[`Snapshot signup view no login 1`] = `
               onBlur={[Function]}
               onChange={[Function]}
               onFocus={[Function]}
-              placeholder="Password"
-              title="Password"
+              placeholder="password"
+              title="password"
               type="password"
               value=""
             />
@@ -4240,7 +4240,7 @@ exports[`Snapshot signup view no login 1`] = `
           className="c9"
           htmlFor="password_confirmation"
         >
-          Password confirmation
+          passwordConfirmation
         </label>
         <div
           style={
@@ -4256,9 +4256,9 @@ exports[`Snapshot signup view no login 1`] = `
             name="password_confirmation"
             onBlur={[Function]}
             onChange={[Function]}
-            placeholder="Password confirmation"
+            placeholder="passwordConfirmation"
             required={true}
-            title="Password confirmation"
+            title="passwordConfirmation"
             type="password"
             value=""
           />
@@ -4270,7 +4270,7 @@ exports[`Snapshot signup view no login 1`] = `
         disabled={false}
         type="submit"
       >
-        Sign up
+        signup.submitLabel
       </button>
     </form>
   </div>
@@ -4566,7 +4566,7 @@ exports[`Snapshot signup view show labels 1`] = `
     <div
       className="c1"
     >
-      Sign up
+      signup.title
     </div>
     <div
       className="r5-social-buttons c2"
@@ -4617,7 +4617,7 @@ exports[`Snapshot signup view show labels 1`] = `
           className="c9"
           htmlFor="given_name"
         >
-          First name
+          givenName
         </label>
         <input
           className="c10"
@@ -4626,9 +4626,9 @@ exports[`Snapshot signup view show labels 1`] = `
           name="given_name"
           onBlur={[Function]}
           onChange={[Function]}
-          placeholder="First name"
+          placeholder="givenName"
           required={true}
-          title="First name"
+          title="givenName"
           value=""
         />
       </div>
@@ -4639,7 +4639,7 @@ exports[`Snapshot signup view show labels 1`] = `
           className="c9"
           htmlFor="family_name"
         >
-          Last name
+          familyName
         </label>
         <input
           className="c10"
@@ -4648,9 +4648,9 @@ exports[`Snapshot signup view show labels 1`] = `
           name="family_name"
           onBlur={[Function]}
           onChange={[Function]}
-          placeholder="Last name"
+          placeholder="familyName"
           required={true}
-          title="Last name"
+          title="familyName"
           value=""
         />
       </div>
@@ -4661,7 +4661,7 @@ exports[`Snapshot signup view show labels 1`] = `
           className="c9"
           htmlFor="email"
         >
-          Email address
+          email
         </label>
         <input
           className="c10"
@@ -4670,9 +4670,9 @@ exports[`Snapshot signup view show labels 1`] = `
           name="email"
           onBlur={[Function]}
           onChange={[Function]}
-          placeholder="Email address"
+          placeholder="email"
           required={true}
-          title="Email address"
+          title="email"
           type="email"
           value=""
         />
@@ -4690,7 +4690,7 @@ exports[`Snapshot signup view show labels 1`] = `
           <label
             className="c9"
           >
-            Password
+            password
           </label>
           <div
             style={
@@ -4706,8 +4706,8 @@ exports[`Snapshot signup view show labels 1`] = `
               onBlur={[Function]}
               onChange={[Function]}
               onFocus={[Function]}
-              placeholder="Password"
-              title="Password"
+              placeholder="password"
+              title="password"
               type="password"
               value=""
             />
@@ -4721,7 +4721,7 @@ exports[`Snapshot signup view show labels 1`] = `
           className="c9"
           htmlFor="password_confirmation"
         >
-          Password confirmation
+          passwordConfirmation
         </label>
         <div
           style={
@@ -4737,9 +4737,9 @@ exports[`Snapshot signup view show labels 1`] = `
             name="password_confirmation"
             onBlur={[Function]}
             onChange={[Function]}
-            placeholder="Password confirmation"
+            placeholder="passwordConfirmation"
             required={true}
-            title="Password confirmation"
+            title="passwordConfirmation"
             type="password"
             value=""
           />
@@ -4751,14 +4751,14 @@ exports[`Snapshot signup view show labels 1`] = `
         disabled={false}
         type="submit"
       >
-        Sign up
+        signup.submitLabel
       </button>
     </form>
     <div
       className="c12"
     >
       <span>
-        Already have an account?
+        signup.loginLinkPrefix
       </span>
        
       <a
@@ -4766,7 +4766,7 @@ exports[`Snapshot signup view show labels 1`] = `
         href="#"
         onClick={[Function]}
       >
-        Log in
+        signup.loginLink
       </a>
     </div>
   </div>
@@ -5093,7 +5093,7 @@ exports[`Snapshot signup view with consents 1`] = `
     <div
       className="c1"
     >
-      Sign up
+      signup.title
     </div>
     <div
       className="r5-social-buttons c2"
@@ -5144,7 +5144,7 @@ exports[`Snapshot signup view with consents 1`] = `
           className="c9"
           htmlFor="email"
         >
-          Email address
+          email
         </label>
         <input
           className="c10"
@@ -5153,9 +5153,9 @@ exports[`Snapshot signup view with consents 1`] = `
           name="email"
           onBlur={[Function]}
           onChange={[Function]}
-          placeholder="Email address"
+          placeholder="email"
           required={true}
-          title="Email address"
+          title="email"
           type="email"
           value=""
         />
@@ -5173,7 +5173,7 @@ exports[`Snapshot signup view with consents 1`] = `
           <label
             className="c9"
           >
-            Password
+            password
           </label>
           <div
             style={
@@ -5189,8 +5189,8 @@ exports[`Snapshot signup view with consents 1`] = `
               onBlur={[Function]}
               onChange={[Function]}
               onFocus={[Function]}
-              placeholder="Password"
-              title="Password"
+              placeholder="password"
+              title="password"
               type="password"
               value=""
             />
@@ -5236,14 +5236,14 @@ exports[`Snapshot signup view with consents 1`] = `
         disabled={false}
         type="submit"
       >
-        Sign up
+        signup.submitLabel
       </button>
     </form>
     <div
       className="c15"
     >
       <span>
-        Already have an account?
+        signup.loginLinkPrefix
       </span>
        
       <a
@@ -5251,7 +5251,7 @@ exports[`Snapshot signup view with consents 1`] = `
         href="#"
         onClick={[Function]}
       >
-        Log in
+        signup.loginLink
       </a>
     </div>
   </div>
@@ -5568,7 +5568,7 @@ exports[`Snapshot signup view with user agreement 1`] = `
     <div
       className="c1"
     >
-      Sign up
+      signup.title
     </div>
     <div
       className="r5-social-buttons c2"
@@ -5619,7 +5619,7 @@ exports[`Snapshot signup view with user agreement 1`] = `
           className="c9"
           htmlFor="given_name"
         >
-          First name
+          givenName
         </label>
         <input
           className="c10"
@@ -5628,9 +5628,9 @@ exports[`Snapshot signup view with user agreement 1`] = `
           name="given_name"
           onBlur={[Function]}
           onChange={[Function]}
-          placeholder="First name"
+          placeholder="givenName"
           required={true}
-          title="First name"
+          title="givenName"
           value=""
         />
       </div>
@@ -5641,7 +5641,7 @@ exports[`Snapshot signup view with user agreement 1`] = `
           className="c9"
           htmlFor="family_name"
         >
-          Last name
+          familyName
         </label>
         <input
           className="c10"
@@ -5650,9 +5650,9 @@ exports[`Snapshot signup view with user agreement 1`] = `
           name="family_name"
           onBlur={[Function]}
           onChange={[Function]}
-          placeholder="Last name"
+          placeholder="familyName"
           required={true}
-          title="Last name"
+          title="familyName"
           value=""
         />
       </div>
@@ -5663,7 +5663,7 @@ exports[`Snapshot signup view with user agreement 1`] = `
           className="c9"
           htmlFor="email"
         >
-          Email address
+          email
         </label>
         <input
           className="c10"
@@ -5672,9 +5672,9 @@ exports[`Snapshot signup view with user agreement 1`] = `
           name="email"
           onBlur={[Function]}
           onChange={[Function]}
-          placeholder="Email address"
+          placeholder="email"
           required={true}
-          title="Email address"
+          title="email"
           type="email"
           value=""
         />
@@ -5692,7 +5692,7 @@ exports[`Snapshot signup view with user agreement 1`] = `
           <label
             className="c9"
           >
-            Password
+            password
           </label>
           <div
             style={
@@ -5708,8 +5708,8 @@ exports[`Snapshot signup view with user agreement 1`] = `
               onBlur={[Function]}
               onChange={[Function]}
               onFocus={[Function]}
-              placeholder="Password"
-              title="Password"
+              placeholder="password"
+              title="password"
               type="password"
               value=""
             />
@@ -5723,7 +5723,7 @@ exports[`Snapshot signup view with user agreement 1`] = `
           className="c9"
           htmlFor="password_confirmation"
         >
-          Password confirmation
+          passwordConfirmation
         </label>
         <div
           style={
@@ -5739,9 +5739,9 @@ exports[`Snapshot signup view with user agreement 1`] = `
             name="password_confirmation"
             onBlur={[Function]}
             onChange={[Function]}
-            placeholder="Password confirmation"
+            placeholder="passwordConfirmation"
             required={true}
-            title="Password confirmation"
+            title="passwordConfirmation"
             type="password"
             value=""
           />
@@ -5763,14 +5763,14 @@ exports[`Snapshot signup view with user agreement 1`] = `
         disabled={false}
         type="submit"
       >
-        Sign up
+        signup.submitLabel
       </button>
     </form>
     <div
       className="c13"
     >
       <span>
-        Already have an account?
+        signup.loginLinkPrefix
       </span>
        
       <a
@@ -5778,7 +5778,7 @@ exports[`Snapshot signup view with user agreement 1`] = `
         href="#"
         onClick={[Function]}
       >
-        Log in
+        signup.loginLink
       </a>
     </div>
   </div>

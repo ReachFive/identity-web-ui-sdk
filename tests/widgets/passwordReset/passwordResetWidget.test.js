@@ -38,7 +38,7 @@ describe('DOM testing', () => {
             // Then
             expect(instance.find('input[name="password"]')).toHaveLength(1);
             expect(instance.find('input[name="password_confirmation"]')).toHaveLength(1);
-            expect(instance.find('button').text()).toBe('Send');
+            expect(instance.find('button').text()).toBe('send');
         });
     });
 });
