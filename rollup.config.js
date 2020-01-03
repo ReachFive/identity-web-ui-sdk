@@ -24,19 +24,16 @@ const config = {
 export default [
     {
         ...config,
-        ...config.plugins,
         output: { file: 'build/main.es.js', format: 'es' },
         external: dependencies
     },
     {
         ...config,
-        ...config.plugins,
         output: { file: 'build/main.cjs.js', format: 'cjs' },
         external: dependencies
     },
     // {
     //     ...config,
-    //     ...config.plugins,
     //     output: {
     //         file: `build/main.${locale}.umd.js`,
     //         format: 'umd',
