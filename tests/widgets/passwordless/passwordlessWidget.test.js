@@ -44,17 +44,17 @@ describe('DOM testing', () => {
 
             // Intro
             expect(
-                instance.find('div').filter(textFilter('Enter your email to sign in or create an account.'))
+                instance.find('div').filter(textFilter('passwordless.intro'))
             ).toHaveLength(1);
 
             // Label
-            expect(instance.find('label').text()).toBe('Email address');
+            expect(instance.find('label').text()).toBe('email');
 
             // Input email
             expect(instance.find('[type="email"]')).toHaveLength(1);
 
             // Form button
-            expect(instance.find('button').text()).toBe('Send');
+            expect(instance.find('button').text()).toBe('send');
         });
 
         test('no intro', async () => {
@@ -63,7 +63,7 @@ describe('DOM testing', () => {
 
             // Intro
             expect(
-                instance.find('div').filter(textFilter('Enter your email to sign in or create an account.'))
+                instance.find('div').filter(textFilter('passwordless.intro'))
             ).toHaveLength(0);
         });
 
@@ -73,17 +73,17 @@ describe('DOM testing', () => {
 
             // Intro
             expect(
-                instance.find('div').filter(textFilter('Enter your phone number to sign in or create an account.'))
+                instance.find('div').filter(textFilter('passwordless.sms.intro'))
             ).toHaveLength(1);
 
             // Label
-            expect(instance.find('label').text()).toBe('Phone number');
+            expect(instance.find('label').text()).toBe('phoneNumber');
 
             // Input phone number
             expect(instance.find('[type="tel"]')).toHaveLength(1);
 
             // Form button
-            expect(instance.find('button').text()).toBe('Send');
+            expect(instance.find('button').text()).toBe('send');
         });
     });
 });

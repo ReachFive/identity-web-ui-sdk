@@ -131,7 +131,7 @@ exports[`Snapshot profile editor basic 1`] = `
         className="c3"
         htmlFor="given_name"
       >
-        First name
+        givenName
       </label>
       <input
         className="c4"
@@ -140,9 +140,9 @@ exports[`Snapshot profile editor basic 1`] = `
         name="given_name"
         onBlur={[Function]}
         onChange={[Function]}
-        placeholder="First name"
+        placeholder="givenName"
         required={true}
-        title="First name"
+        title="givenName"
         value=""
       />
     </div>
@@ -153,7 +153,7 @@ exports[`Snapshot profile editor basic 1`] = `
         className="c3"
         htmlFor="family_name"
       >
-        Last name
+        familyName
       </label>
       <input
         className="c4"
@@ -162,9 +162,9 @@ exports[`Snapshot profile editor basic 1`] = `
         name="family_name"
         onBlur={[Function]}
         onChange={[Function]}
-        placeholder="Last name"
+        placeholder="familyName"
         required={true}
-        title="Last name"
+        title="familyName"
         value=""
       />
     </div>
@@ -174,7 +174,7 @@ exports[`Snapshot profile editor basic 1`] = `
       disabled={false}
       type="submit"
     >
-      Save
+      save
     </button>
   </form>
 </div>
