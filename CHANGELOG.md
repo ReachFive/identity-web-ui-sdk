@@ -1,5 +1,16 @@
 # Changelog
 
+## v.1.0.0-alpha.3
+
+### 07/01/2020
+
+### Features
+- Implement continuous integration pipelines set up with CircleCI (see the [CircleCI configuration file](.circleci/config.yml) for more details).
+- The widgets labels are now translated in the language specified in the client's configuration.
+
+### Fixes
+- The eye icon is now correctly displayed in the Auth widget.
+
 ## v.1.0.0-alpha.2
 
 ### 06/11/2019
