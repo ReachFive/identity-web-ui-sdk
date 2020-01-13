@@ -57,7 +57,8 @@
         "rollup": "1.29.0",
         "rollup-plugin-babel": "4.3.3",
         "rollup-plugin-node-builtins": "2.1.2",
-        "rollup-plugin-node-globals": "1.4.0"
+        "rollup-plugin-node-globals": "1.4.0",
+        "rollup-plugin-uglify": "6.0.4"
     },
     "files": [
         "build",
