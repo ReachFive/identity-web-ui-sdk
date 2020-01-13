@@ -1,5 +1,7 @@
 import React from 'react';
+
 import { isLower, isUpper, isDigit } from 'char-info';
+import zxcvbn from 'zxcvbn';
 
 import styled from 'styled-components';
 
@@ -49,18 +51,14 @@ const PasswordStrength = withI18n(withTheme(({ score, theme, i18n }) => (
 
 class PasswordField extends React.Component {
     state = {
-        zxcvbn: null,
         showPassword: false
     };
 
     componentDidMount() {
-        import('@reachfive/zxcvbn').then(({ default: zxcvbn }) => {
-            if (this.unmounted) return;
+        const { value, onChange } = this.props;
 
-            const { value, onChange } = this.props;
-            this.setState({ ...this.state, zxcvbn });
-            onChange({ strength: zxcvbn(value).score });
-        })
+        this.setState({ ...this.state });
+        onChange({ strength: zxcvbn(value).score });
     }
 
     componentWillUnmount() {
@@ -80,7 +78,7 @@ class PasswordField extends React.Component {
             label,
         } = this.props;
 
-        const { zxcvbn, showPassword } = this.state;
+        const { showPassword } = this.state;
 
         return <FormGroupContainer>
             <div style={{ position: 'relative' }}>
@@ -99,7 +97,7 @@ class PasswordField extends React.Component {
                         hasError={Boolean(validation.error)}
                         onChange={event => onChange({
                             value: event.target.value,
-                            strength: zxcvbn ? zxcvbn(event.target.value).score : 0
+                            strength: zxcvbn(event.target.value).score
                         })}
                         onFocus={() => onChange({ isTouched: true })}
                         onBlur={() => onChange({ isDirty: true })}
@@ -108,7 +106,7 @@ class PasswordField extends React.Component {
                         ? <HidePasswordIcon onClick={this.toggleShowPassword} />
                         : <ShowPasswordIcon onClick={this.toggleShowPassword} />)}
                 </div>
-                {this.props.isTouched && zxcvbn && <PasswordStrength score={this.props.strength || 0} />}
+                {this.props.isTouched && <PasswordStrength score={this.props.strength || 0} />}
                 {validation.error && <FormError>{validation.error}</FormError>}
             </div>
         </FormGroupContainer>;

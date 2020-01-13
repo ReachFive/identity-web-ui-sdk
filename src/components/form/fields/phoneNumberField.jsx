@@ -1,6 +1,7 @@
 import React from 'react';
 
 import pick from 'lodash-es/pick';
+import * as libphonenumber from 'libphonenumber-js';
 
 import { Validator } from '../../../core/validation';
 
@@ -8,27 +9,17 @@ import { Input, FormGroup } from '../formControlsComponent';
 import { createField } from '../fieldCreator';
 
 class PhoneNumberField extends React.Component {
-    state = {
-        libphonenumber: null
-    };
-
     componentDidMount() {
-        import('libphonenumber-js').then(libphonenumber => {
-            if (this.unmounted) return;
+        const { phone, country } = this.props.value;
 
-            const { phone, country } = this.props.value;
+        try {
+            const parsed = libphonenumber.parse(phone, country);
+            const phoneValue = country === parsed.country
+                ? libphonenumber.format(parsed, 'National')
+                : phone;
 
-            this.setState({ libphonenumber });
-
-            try {
-                const parsed = libphonenumber.parse(phone, country);
-                const phoneValue = country === parsed.country
-                    ? libphonenumber.format(parsed, 'National')
-                    : phone;
-
-                this.asYouType(phoneValue);
-            } catch (e) { }
-        })
+            this.asYouType(phoneValue);
+        } catch (e) { }
     }
 
     componentWillUnmount() {
@@ -36,14 +27,13 @@ class PhoneNumberField extends React.Component {
     }
 
     asYouType = (inputValue) => {
-        const { onChange, value: { country } } = this.props;
-        const { libphonenumber } = this.state;
+        const { value: { country } } = this.props;
 
-        const phone = libphonenumber ? new libphonenumber.AsYouType(country).input(inputValue) : inputValue;
-        const formatted = libphonenumber ? libphonenumber.format(phone, country, 'International') : undefined;
-        const isValid = libphonenumber ? libphonenumber.isValidNumber(phone, country) : true;
+        const phone = new libphonenumber.AsYouType(country).input(inputValue);
+        const formatted = libphonenumber.format(phone, country, 'International');
+        const isValid = libphonenumber.isValidNumber(phone, country);
 
-        onChange({
+        this.props.onChange({
             value: {
                 country,
                 phone,
@@ -58,31 +48,28 @@ class PhoneNumberField extends React.Component {
             path,
             value,
             validation = {},
-            onChange,
-            showLabel,
             inputId,
             required = true,
             label,
             placeholder = label
         } = this.props;
-        const { phone } = value;
 
         return <FormGroup
             inputId={inputId}
             labelText={label}
             {...pick(validation, 'error')}
-            showLabel={showLabel}>
+            showLabel={this.props.showLabel}>
             <Input
                 id={inputId}
                 name={path}
                 type="tel"
-                value={phone || ''}
+                value={value.phone || ''}
                 placeholder={placeholder}
                 title={label}
                 required={required}
                 hasError={!!validation.error}
                 onChange={event => this.asYouType(event.target.value)}
-                onBlur={() => onChange({ isDirty: true })}
+                onBlur={() => this.props.onChange({ isDirty: true })}
                 data-testid={path} />
         </FormGroup>
     }
