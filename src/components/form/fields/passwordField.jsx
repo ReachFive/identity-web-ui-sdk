@@ -54,7 +54,7 @@ class PasswordField extends React.Component {
     };
 
     componentDidMount() {
-        import('zxcvbn').then(({ default: zxcvbn }) => {
+        import('@ReachFive/zxcvbn').then(({ default: zxcvbn }) => {
             if (this.unmounted) return;
 
             const { value, onChange } = this.props;
