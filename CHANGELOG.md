@@ -1,5 +1,13 @@
 # Changelog
 
+## v.1.0.0-alpha.4
+
+### 15/01/2020
+
+### Features
+- French weak passwords are now rejected by the password strength policies.
+- A UMD bundle is now generated at the build process. It will allow deploying the UI SDK on [unpkg](https://unpkg.com).
+
 ## v.1.0.0-alpha.3
 
 ### 07/01/2020
