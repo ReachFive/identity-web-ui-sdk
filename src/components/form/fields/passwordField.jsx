@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { isLower, isUpper, isDigit } from 'char-info';
-import zxcvbn from 'zxcvbn';
+import zxcvbn from '@reachfive/zxcvbn';
 
 import styled from 'styled-components';
 
