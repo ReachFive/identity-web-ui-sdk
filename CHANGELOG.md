@@ -1,5 +1,12 @@
 # Changelog
 
+## v.1.0.0-alpha.5
+
+### 21/01/2020
+
+### Fixes
+- Passwords in the French dictionary were considered good enough while they weren't.
+
 ## v.1.0.0-alpha.4
 
 ### 15/01/2020
