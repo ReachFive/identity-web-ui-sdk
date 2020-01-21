@@ -33,7 +33,7 @@
         "remarkable": "2.0.0",
         "styled-components": "4.4.1",
         "validator": "12.1.0",
-        "@reachfive/zxcvbn": "1.0.0-alpha.1"
+        "@reachfive/zxcvbn": "1.0.0-alpha.2"
     },
     "devDependencies": {
         "@babel/core": "7.7.7",
