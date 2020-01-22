@@ -1,5 +1,12 @@
 # Changelog
 
+## v.1.0.0-alpha.6
+
+### 22/01/2020
+
+### Fixes
+- The bundles are no longer in the `build` folder but in the folder associated with their format (`umd`, `cjs` and `es`).
+
 ## v.1.0.0-alpha.5
 
 ### 21/01/2020
