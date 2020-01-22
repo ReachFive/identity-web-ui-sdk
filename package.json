@@ -8,8 +8,8 @@
         "url": "git://https://github.com/ReachFive/identity-web-ui-sdk.git"
     },
     "license": "MIT",
-    "main": "build/main.en.cjs.js",
-    "module": "build/main.es.js",
+    "main": "cjs/identity-ui.js",
+    "module": "es/identity-ui.js",
     "types": "index.d.ts",
     "scripts": {
         "build": "npx rollup --config",
@@ -61,7 +61,9 @@
         "rollup-plugin-uglify": "6.0.4"
     },
     "files": [
-        "build",
+        "cjs",
+        "es",
+        "umd",
         "index.d.ts"
     ],
     "resolutions": {

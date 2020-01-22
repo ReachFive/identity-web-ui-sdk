@@ -66,18 +66,18 @@ function createUMDConfig({ file, withUglify = false }) {
 export default [
     {
         input: 'src/index.js',
-        output: { file: 'build/main.es.js', format: 'es' },
+        output: { file: 'es/identity-ui.js', format: 'es' },
         external: dependencies,
         plugins,
         onwarn: console.warn
     },
     {
         input: 'src/index.js',
-        output: { file: 'build/main.cjs.js', format: 'cjs' },
+        output: { file: 'cjs/identity-ui.js', format: 'cjs' },
         external: dependencies,
         plugins,
         onwarn: console.warn
     },
-    createUMDConfig({ file: 'build/main.umd.js' }),
-    createUMDConfig({ file: 'build/main.umd.min.js', withUglify: true })
+    createUMDConfig({ file: 'umd/identity-ui.js' }),
+    createUMDConfig({ file: 'umd/identity-ui.min.js', withUglify: true })
 ]
