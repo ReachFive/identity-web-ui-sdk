@@ -2,7 +2,9 @@ import React from 'react';
 
 import styled from 'styled-components';
 
-const Round = styled.div`
+import { withTheme } from '../widget/widgetContext';
+
+const Round = withTheme(styled.div`
     position: relative;
     margin-right: 5px;
 
@@ -36,14 +38,14 @@ const Round = styled.div`
     }
 
     > input[type="checkbox"]:checked + label {
-        background-color: #66bb6a;
-        border-color: #66bb6a;
+        background-color: ${props => props.theme.get('primaryColor')};
+        border-color: ${props => props.theme.get('primaryColor')};
     }
 
     > input[type="checkbox"]:checked + label:after {
         opacity: 1;
     }
-`;
+`);
 
 export const RoundCheckbox = props => <Round>
     <input type="checkbox" defaultChecked={props.checked} />
