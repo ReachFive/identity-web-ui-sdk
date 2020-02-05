@@ -47,7 +47,7 @@ export default class SignupView extends React.Component {
         data: snakeCaseProperties(data),
         auth: this.props.auth,
         redirectUrl: this.props && this.props.redirectUrl,
-        returnToAfterConfirmEmail: this.props && this.props.returnToAfterConfirmEmail,
+        returnToAfterEmailConfirmation: this.props && this.props.returnToAfterEmailConfirmation,
     });
 
     render() {
@@ -69,7 +69,6 @@ export default class SignupView extends React.Component {
                 { staticContent: <MarkdownContent key="user-aggreement" root={UserAggreementStyle} source={userAgreement} /> }
             ]
             : fields;
-        console.log("props", this.props)
 
         return <div>
             <Heading>{i18n('signup.title')}</Heading>
@@ -80,10 +79,7 @@ export default class SignupView extends React.Component {
                 fields={allFields}
                 showLabels={this.props.showLabels}
                 beforeSubmit={beforeSignup}
-                handler={(data) => {
-                    console.log("props.returnToAfterConfirmEmail", this.props.returnToAfterConfirmEmail)
-                    return this.handleSignup(data)
-                }} />
+                handler={this.handleSignup} />
             {this.props.allowLogin && <Alternative>
                 <span>{i18n('signup.loginLinkPrefix')}</span>
                 &nbsp;

@@ -22,7 +22,7 @@ export class UiClient {
     /**
      *
      * @param options `option.redirectUrl` is where the confirmation email will redirect.
-     *                `option.returnToAfterConfirmEmail` is where the page after the conformation email will redirect.
+     *                `option.returnToAfterEmailConfirmation` is where the page after the conformation email will redirect.
      *                This parameters is supported by the hosted page /email-confirmation
      */
     showAuth(options) {
