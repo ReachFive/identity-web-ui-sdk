@@ -24,7 +24,7 @@ export class UiClient {
      *
      *                `option.returnToAfterEmailConfirmation` the confirmation email will redirect to one page.
      *                This parameter is where this page will redirect.
-     *                This parameters is supported by the hosted page /email-confirmation
+     *                This parameter is supported by the `/email-confirmation` hosted page.
      */
     showAuth(options) {
         this._ssoCheck(authWidget, options);
