@@ -4,7 +4,7 @@ import styled, { css, keyframes } from 'styled-components';
 import omit from 'lodash-es/omit';
 
 import { RoundCheckbox } from './roundCheckBox';
-import { withTheme } from '../widget/widgetContext';
+import { withTheme, withI18n } from '../widget/widgetContext';
 
 const errorFadeIn = keyframes`
   0% { opacity: 0; }
@@ -167,7 +167,8 @@ const ValidationRule = withTheme(styled.div`
     margin-bottom: 2px;
 `);
 
-export const ValidationRules = props => <div>
+export const ValidationRules = withI18n(({ i18n, ...props }) => <div>
+    <Label visible>{i18n('validation.password.must.contain')}</Label>
     {Object.keys(props.rules).map((key, _) => {
         const rule = props.rules[key];
 
@@ -176,4 +177,4 @@ export const ValidationRules = props => <div>
             <Label visible>{rule.label}.</Label>
         </ValidationRule>
     })}
-</div>;
+</div>);
