@@ -48,6 +48,6 @@ const Round = withTheme(styled.div`
 `);
 
 export const RoundCheckbox = props => <Round>
-    <input type="checkbox" defaultChecked={props.checked} />
+    <input type="checkbox" checked={props.checked} onChange={() => {}} />
     <label />
 </Round>;
