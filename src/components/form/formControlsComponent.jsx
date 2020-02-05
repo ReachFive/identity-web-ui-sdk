@@ -162,7 +162,6 @@ export const RadioGroup = ({ options, onChange, value, name, ...props }) => (
     </FormGroup>
 );
 
-
 const ValidationRule = withTheme(styled.div`
     display: flex;
     margin-bottom: 2px;
@@ -174,7 +173,7 @@ export const ValidationRules = props => <div>
 
         return <ValidationRule key={key}>
             <RoundCheckbox checked={rule.verified} />
-            {rule.label}
+            <Label visible>{rule.label}.</Label>
         </ValidationRule>
     })}
 </div>;
