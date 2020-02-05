@@ -3,6 +3,7 @@ import React from 'react';
 import styled, { css, keyframes } from 'styled-components';
 import omit from 'lodash-es/omit';
 
+import { RoundCheckbox } from './roundCheckBox';
 import { withTheme } from '../widget/widgetContext';
 
 const errorFadeIn = keyframes`
@@ -150,7 +151,8 @@ export const Checkbox = withTheme(styled(({ value, onToggle, label, name, classN
 export const RadioGroup = ({ options, onChange, value, name, ...props }) => (
     <FormGroup {...props}>
         {options.map(({ label: optionLabel, value: optionValue }) => (
-            <Check checked={value === optionValue}
+            <Check
+                checked={value === optionValue}
                 onSelect={onChange(optionValue)}
                 label={optionLabel}
                 name={name}
@@ -159,3 +161,20 @@ export const RadioGroup = ({ options, onChange, value, name, ...props }) => (
         ))}
     </FormGroup>
 );
+
+
+const ValidationRule = withTheme(styled.div`
+    display: flex;
+    margin-bottom: 2px;
+`);
+
+export const ValidationRules = props => <div>
+    {Object.keys(props.rules).map((key, _) => {
+        const rule = props.rules[key];
+
+        return <ValidationRule key={key}>
+            <RoundCheckbox checked={rule.verified} />
+            {rule.label}
+        </ValidationRule>
+    })}
+</div>;

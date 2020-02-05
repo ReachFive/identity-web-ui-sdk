@@ -5,10 +5,10 @@ import zxcvbn from '@reachfive/zxcvbn';
 
 import styled from 'styled-components';
 
-import { Input, Label, FormGroupContainer, FormError } from '../formControlsComponent';
+import { Input, Label, FormGroupContainer, FormError, ValidationRules } from '../formControlsComponent';
 import { withI18n, withTheme } from '../../widget/widgetContext';
 
-import { ShowPasswordIcon, HidePasswordIcon } from './simplePasswordField'
+import { ShowPasswordIcon, HidePasswordIcon } from './simplePasswordField';
 
 const PasswordStrengthGaugeContainer = withTheme(styled.div`
     position: relative;
@@ -86,7 +86,8 @@ class PasswordField extends React.Component {
                     {label}
                 </Label>
                 <div style={{ position: 'relative' }}>
-                    <Input id={inputId}
+                    <Input
+                        id={inputId}
                         name="password"
                         type={showPassword ? 'text' : 'password'}
                         value={this.props.value || ''}
@@ -107,7 +108,8 @@ class PasswordField extends React.Component {
                         : <ShowPasswordIcon onClick={this.toggleShowPassword} />)}
                 </div>
                 {this.props.isTouched && <PasswordStrength score={this.props.strength || 0} />}
-                {validation.error && <FormError>{validation.error}</FormError>}
+                {validation.error && <FormError>{validation.errors}</FormError>}
+                {validation.rules && <ValidationRules rules={validation.rules}></ValidationRules>}
             </div>
         </FormGroupContainer>;
     }
@@ -169,28 +171,53 @@ export const passwordField = ({ label = 'password', canShowPassword = false, ...
             }),
             unbind: (model, { value }) => ({ ...model, password: value }),
             validate: ({ value, strength, isDirty }, ctx) => {
-                if (isDirty || ctx.isSubmitted) {
-                    if (!value) {
-                        return { error: i18n('validation.required') };
-                    } else {
-                        if (value.length < passwordPolicy.minLength) {
-                            return { error: i18n('validation.password.minLength', { min: passwordPolicy.minLength }) };
-                        } else if (value.length > MAX_PASSWORD_LENGTH) {
-                            return { error: i18n('validation.password.maxLength', { max: MAX_PASSWORD_LENGTH }) };
-                        } else if (strength < passwordPolicy.minStrength) {
-                            return { error: i18n('validation.password.minStrength') };
-                        } else if (checkSpecialsCharacters(value, passwordPolicy)) {
-                            return { error: i18n('validation.password.specials.characters') };
-                        } else if (checkLowercaseCharacters(value, passwordPolicy)) {
-                            return { error: i18n('validation.password.specials.lowercase') };
-                        } else if (checkUppercaseCharacters(value, passwordPolicy)) {
-                            return { error: i18n('validation.password.specials.uppercase') };
-                        } else if (checkDigitCharacters(value, passwordPolicy)) {
-                            return { error: i18n('validation.password.specials.digit') };
-                        }
-                    }
+                if (!isDirty && !ctx.isSubmitted) return {};
+
+                if (!value) {
+                    return { error: i18n('validation.required') };
                 }
-                return {};
+
+                const rules = {
+                    specialsCharacters: {
+                        label: i18n('validation.password.specials.characters'),
+                        verified: true
+                    },
+                    specialsLowercase: {
+                        label: i18n('validation.password.specials.lowercase'),
+                        verified: true
+                    },
+                    specialsUppercase: {
+                        label: i18n('validation.password.specials.uppercase'),
+                        verified: true
+                    },
+                    specialsDigit: {
+                        label: i18n('validation.password.specials.digit'),
+                        verified: true
+                    }
+                };
+
+                // if (value.length < passwordPolicy.minLength) {
+                //     errors.push(i18n('validation.password.minLength', { min: passwordPolicy.minLength }));
+                // }
+                // if (value.length > MAX_PASSWORD_LENGTH) {
+                //     errors.push(i18n('validation.password.maxLength', { max: MAX_PASSWORD_LENGTH }));
+                // }
+                // if (strength < passwordPolicy.minStrength) {
+                //     errors.push(i18n('validation.password.minStrength'));
+                // }
+                if (checkSpecialsCharacters(value, passwordPolicy)) {
+                    rules.specialsCharacters.verified = false;
+                }
+                if (checkLowercaseCharacters(value, passwordPolicy)) {
+                    rules.specialsLowercase.verified = false;
+                }
+                if (checkUppercaseCharacters(value, passwordPolicy)) {
+                    rules.specialsUppercase.verified = false;
+                }
+                if (checkDigitCharacters(value, passwordPolicy)) {
+                    rules.specialsDigit.verified = false;
+                }
+                return { rules };
             }
         }
     }
