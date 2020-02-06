@@ -46,7 +46,8 @@ export default class SignupView extends React.Component {
     handleSignup = data => this.props.apiClient.signup({
         data: snakeCaseProperties(data),
         auth: this.props.auth,
-        redirectUrl: this.props && this.props.redirectUrl
+        redirectUrl: this.props && this.props.redirectUrl,
+        returnToAfterEmailConfirmation: this.props && this.props.returnToAfterEmailConfirmation,
     });
 
     render() {
