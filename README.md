@@ -24,11 +24,6 @@ To update the tests snapshots:
 npm run test:update
 ```
 
-### Testing local version with hosted pages
-Go to the root of this directory and run the command `python -m SimpleHTTPServer`
-
-Then, in the file `co/reachfive/auth/views/hostedpages/auth.scala.html` of ciam-app, replace the line `<script src="https://unpkg.com/@@reachfive/identity-ui@@latest/umd/identity-ui.min.js"></script>` by `<script src="http://localhost:8000/umd/identity-ui.min.js"></script>`.
-
 ## Changelog
 
 Please refer to [changelog](CHANGELOG.md) to see the descriptions of each release.
