@@ -1,6 +1,14 @@
 # Changelog
 
-## v.1.10.0
+## v.1.0.0-alpha.8
+
+### Fixes
+- The UI SDK uses now the latest version of the Core SDK.
+
+### 06/02/2020
+
+## v.1.0.0-alpha.7
+
 ### 06/02/2020
 
 ### Features
