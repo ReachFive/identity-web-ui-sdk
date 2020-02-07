@@ -3,8 +3,7 @@ import React from 'react';
 import styled, { css, keyframes } from 'styled-components';
 import omit from 'lodash-es/omit';
 
-import { RoundCheckbox } from './roundCheckBox';
-import { withTheme, withI18n } from '../widget/widgetContext';
+import { withTheme } from '../widget/widgetContext';
 
 const errorFadeIn = keyframes`
   0% { opacity: 0; }
@@ -161,24 +160,3 @@ export const RadioGroup = ({ options, onChange, value, name, ...props }) => (
         ))}
     </FormGroup>
 );
-
-const ValidationRule = withTheme(styled.div`
-    display: flex;
-    margin-bottom: 2px;
-`);
-
-export const ValidationRules = withI18n(withTheme(styled(({ i18n, className, ...props }) =>
-    <div className={className}>
-        <Label visible>{i18n('validation.password.must.contain')}</Label>
-        {Object.keys(props.rules).map((key, _) => {
-            const rule = props.rules[key];
-
-            return <ValidationRule key={key}>
-                <RoundCheckbox checked={rule.verify(props.value)} />
-                <Label visible>{rule.label}</Label>
-            </ValidationRule>
-        })}
-    </div>
-)`
-    padding-top: ${props => props.theme.get('spacing')}px;
-`));

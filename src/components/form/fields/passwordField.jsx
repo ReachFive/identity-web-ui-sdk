@@ -5,7 +5,8 @@ import zxcvbn from '@reachfive/zxcvbn';
 
 import styled from 'styled-components';
 
-import { Input, Label, FormGroupContainer, FormError, ValidationRules } from '../formControlsComponent';
+import { Input, Label, FormGroupContainer, FormError } from '../formControlsComponent';
+import { PasswordPolicyRules } from '../passwordPolicyComponent';
 import { withI18n, withTheme } from '../../widget/widgetContext';
 
 import { ShowPasswordIcon, HidePasswordIcon } from './simplePasswordField';
@@ -109,7 +110,7 @@ class PasswordField extends React.Component {
                 </div>
                 {isTouched && <PasswordStrength score={this.props.strength || 0} />}
                 {validation.error && <FormError>{validation.error}</FormError>}
-                {isTouched && <ValidationRules value={value} rules={this.props.enabledRules}></ValidationRules>}
+                {isTouched && <PasswordPolicyRules value={value} rules={this.props.enabledRules} />}
             </div>
         </FormGroupContainer>;
     }
