@@ -8,7 +8,7 @@ import { withTheme, withI18n } from '../widget/widgetContext';
 
 const RoundCheckbox = withTheme(styled(({ className, ...props }) =>
     <div className={className}>
-        <input type="checkbox" checked={props.checked} onChange={() => {}} />
+        <input type="checkbox" checked={props.checked} onChange={() => { }} />
         <label />
     </div>
 )`
