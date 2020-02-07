@@ -173,8 +173,8 @@ export const ValidationRules = withI18n(({ i18n, ...props }) => <div>
         const rule = props.rules[key];
 
         return <ValidationRule key={key}>
-            <RoundCheckbox checked={rule.verified} />
-            <Label visible>{rule.label}.</Label>
+            <RoundCheckbox checked={rule.verify(props.value)} />
+            <Label visible>{rule.label}</Label>
         </ValidationRule>
     })}
 </div>);

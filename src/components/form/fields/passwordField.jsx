@@ -36,8 +36,6 @@ const PasswordStrengthGauge = withTheme(styled.div`
     transition: width 300ms ease-out, background-color 300ms linear;
 `);
 
-const MAX_PASSWORD_LENGTH = 255;
-
 const PasswordStrength = withI18n(withTheme(({ score, theme, i18n }) => (
     <div style={{ marginTop: `${theme.get('spacing') / 2}px` }}>
         <PasswordStrengthGaugeContainer>
@@ -76,6 +74,8 @@ class PasswordField extends React.Component {
             onChange,
             inputId,
             label,
+            isTouched,
+            value
         } = this.props;
 
         const { showPassword } = this.state;
@@ -90,7 +90,7 @@ class PasswordField extends React.Component {
                         id={inputId}
                         name="password"
                         type={showPassword ? 'text' : 'password'}
-                        value={this.props.value || ''}
+                        value={value || ''}
                         placeholder={this.props.placeholder || label}
                         autoComplete={this.props.autoComplete}
                         title={label}
@@ -107,47 +107,50 @@ class PasswordField extends React.Component {
                         ? <HidePasswordIcon onClick={this.toggleShowPassword} />
                         : <ShowPasswordIcon onClick={this.toggleShowPassword} />)}
                 </div>
-                {this.props.isTouched && <PasswordStrength score={this.props.strength || 0} />}
-                {validation.error && <FormError>{validation.errors}</FormError>}
-                {validation.rules && <ValidationRules rules={validation.rules}></ValidationRules>}
+                {isTouched && <PasswordStrength score={this.props.strength || 0} />}
+                {validation.error && <FormError>{validation.error}</FormError>}
+                {isTouched && <ValidationRules value={value} rules={this.props.enabledRules}></ValidationRules>}
             </div>
         </FormGroupContainer>;
     }
 }
 
-function checkSpecialsCharacters(password, passwordPolicy) {
-    if (!!passwordPolicy.specialCharacters) {
-        const SPECIAL_CHARACTERS = " !\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~"
-        const passwordChars = Array.from(password)
-        return !passwordChars.find(c => SPECIAL_CHARACTERS.includes(c))
-    } else {
-        return false
-    }
+function listEnabledRules(i18n, passwordPolicy) {
+    const SPECIAL_CHARACTERS = " !\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~";
+
+    const rules = {
+        minLength: {
+            label: i18n('validation.password.minLength', { min: passwordPolicy.minLength }),
+            verify: password => password.length >= passwordPolicy.minLength
+        },
+        specialCharacters: {
+            label: i18n('validation.password.specials.characters'),
+            verify: password => Array.from(password).some(c => SPECIAL_CHARACTERS.includes(c))
+        },
+        lowercaseCharacters: {
+            label: i18n('validation.password.specials.lowercase'),
+            verify: password => Array.from(password).some(c => isLower(c))
+        },
+        uppercaseCharacters: {
+            label: i18n('validation.password.specials.uppercase'),
+            verify: password => Array.from(password).some(c => isUpper(c))
+        },
+        digitCharacters: {
+            label: i18n('validation.password.specials.digit'),
+            verify: password => Array.from(password).some(c => isDigit(c))
+        }
+    };
+
+    const enabledRules = { ...rules };
+
+    Object.keys(enabledRules).forEach((key, _) => {
+        if (!passwordPolicy[key]) delete enabledRules[key];
+    });
+
+    return enabledRules;
 }
 
-function checkLowercaseCharacters(password, passwordPolicy) {
-    if (!!passwordPolicy.lowercaseCharacters) {
-        return !Array.from(password).find(c => isLower(c))
-    } else {
-        return false
-    }
-}
-
-function checkUppercaseCharacters(password, passwordPolicy) {
-    if (!!passwordPolicy.uppercaseCharacters) {
-        return !Array.from(password).find(c => isUpper(c))
-    } else {
-        return false
-    }
-}
-
-function checkDigitCharacters(password, passwordPolicy) {
-    if (!!passwordPolicy.digitCharacters) {
-        return !Array.from(password).find(c => isDigit(c))
-    } else {
-        return false
-    }
-}
+const MAX_PASSWORD_LENGTH = 255;
 
 export const passwordField = ({ label = 'password', canShowPassword = false, ...staticProps }, { passwordPolicy }) => ({
     path: 'password',
@@ -166,6 +169,7 @@ export const passwordField = ({ label = 'password', canShowPassword = false, ...
             initialize: () => ({
                 value: '',
                 strength: 0,
+                enabledRules: listEnabledRules(i18n, passwordPolicy),
                 isTouched: false,
                 isDirty: false
             }),
@@ -173,51 +177,21 @@ export const passwordField = ({ label = 'password', canShowPassword = false, ...
             validate: ({ value, strength, isDirty }, ctx) => {
                 if (!isDirty && !ctx.isSubmitted) return {};
 
+                const errors = [];
                 if (!value) {
-                    return { error: i18n('validation.required') };
+                    errors.push(i18n('validation.required'));
                 }
-
-                const rules = {
-                    specialsCharacters: {
-                        label: i18n('validation.password.specials.characters'),
-                        verified: true
-                    },
-                    specialsLowercase: {
-                        label: i18n('validation.password.specials.lowercase'),
-                        verified: true
-                    },
-                    specialsUppercase: {
-                        label: i18n('validation.password.specials.uppercase'),
-                        verified: true
-                    },
-                    specialsDigit: {
-                        label: i18n('validation.password.specials.digit'),
-                        verified: true
+                else {
+                    if (strength < passwordPolicy.minStrength) {
+                        errors.push(i18n('validation.password.minStrength'));
                     }
-                };
 
-                // if (value.length < passwordPolicy.minLength) {
-                //     errors.push(i18n('validation.password.minLength', { min: passwordPolicy.minLength }));
-                // }
-                // if (value.length > MAX_PASSWORD_LENGTH) {
-                //     errors.push(i18n('validation.password.maxLength', { max: MAX_PASSWORD_LENGTH }));
-                // }
-                // if (strength < passwordPolicy.minStrength) {
-                //     errors.push(i18n('validation.password.minStrength'));
-                // }
-                if (checkSpecialsCharacters(value, passwordPolicy)) {
-                    rules.specialsCharacters.verified = false;
+                    if (value.length > MAX_PASSWORD_LENGTH) {
+                        errors.push(i18n('validation.password.maxLength', { max: MAX_PASSWORD_LENGTH }));
+                    }
                 }
-                if (checkLowercaseCharacters(value, passwordPolicy)) {
-                    rules.specialsLowercase.verified = false;
-                }
-                if (checkUppercaseCharacters(value, passwordPolicy)) {
-                    rules.specialsUppercase.verified = false;
-                }
-                if (checkDigitCharacters(value, passwordPolicy)) {
-                    rules.specialsDigit.verified = false;
-                }
-                return { rules };
+
+                return errors.length == 0 ? {} : { error: errors.join(' ') };
             }
         }
     }
