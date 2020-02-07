@@ -167,14 +167,18 @@ const ValidationRule = withTheme(styled.div`
     margin-bottom: 2px;
 `);
 
-export const ValidationRules = withI18n(({ i18n, ...props }) => <div>
-    <Label visible>{i18n('validation.password.must.contain')}</Label>
-    {Object.keys(props.rules).map((key, _) => {
-        const rule = props.rules[key];
+export const ValidationRules = withI18n(withTheme(styled(({ i18n, className, ...props }) =>
+    <div className={className}>
+        <Label visible>{i18n('validation.password.must.contain')}</Label>
+        {Object.keys(props.rules).map((key, _) => {
+            const rule = props.rules[key];
 
-        return <ValidationRule key={key}>
-            <RoundCheckbox checked={rule.verify(props.value)} />
-            <Label visible>{rule.label}</Label>
-        </ValidationRule>
-    })}
-</div>);
+            return <ValidationRule key={key}>
+                <RoundCheckbox checked={rule.verify(props.value)} />
+                <Label visible>{rule.label}</Label>
+            </ValidationRule>
+        })}
+    </div>
+)`
+    padding-top: ${props => props.theme.get('spacing')}px;
+`));
