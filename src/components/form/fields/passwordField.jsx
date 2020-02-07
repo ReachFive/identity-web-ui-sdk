@@ -117,6 +117,8 @@ class PasswordField extends React.Component {
 }
 
 function listEnabledRules(i18n, passwordPolicy) {
+    if (!passwordPolicy) return {};
+
     const SPECIAL_CHARACTERS = " !\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~";
 
     const rules = {
