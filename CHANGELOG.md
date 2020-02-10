@@ -1,11 +1,18 @@
 # Changelog
 
+## v.1.0.0-alpha.9
+
+### 10/02/2020
+
+### Features
+- The _display password in clear text_ option can now be enabled on the password reset widget.
+
 ## v.1.0.0-alpha.8
+
+### 06/02/2020
 
 ### Fixes
 - The UI SDK uses now the latest version of the Core SDK.
-
-### 06/02/2020
 
 ## v.1.0.0-alpha.7
 
