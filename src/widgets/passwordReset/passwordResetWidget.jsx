@@ -28,16 +28,17 @@ class MainView extends React.Component {
     };
 
     render() {
-        const { showLabels, onError, i18n } = this.props;
+        const { i18n } = this.props;
 
         return <div>
             <Heading>{i18n('passwordReset.title')}</Heading>
             <Info>{i18n('passwordReset.intro')}</Info>
             <PasswordEditorForm
                 handler={this.handleSubmit}
-                showLabels={showLabels}
+                canShowPassword={this.props.canShowPassword}
+                showLabels={this.props.showLabels}
                 onSuccess={this.onSuccess}
-                onError={onError} />
+                onError={this.props.onError} />
         </div>;
     }
 }
