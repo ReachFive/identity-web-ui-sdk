@@ -11,6 +11,9 @@ import { withI18n, withTheme } from '../../widget/widgetContext';
 
 import { ShowPasswordIcon, HidePasswordIcon } from './simplePasswordField';
 
+const SPECIAL_CHARACTERS = " !\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~";
+const MAX_PASSWORD_LENGTH = 255;
+
 const PasswordStrengthGaugeContainer = withTheme(styled.div`
     position: relative;
     height: 8px;
@@ -119,8 +122,6 @@ class PasswordField extends React.Component {
 function listEnabledRules(i18n, passwordPolicy) {
     if (!passwordPolicy) return {};
 
-    const SPECIAL_CHARACTERS = " !\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~";
-
     const rules = {
         minLength: {
             label: i18n('validation.password.minLength', { min: passwordPolicy.minLength }),
@@ -144,16 +145,11 @@ function listEnabledRules(i18n, passwordPolicy) {
         }
     };
 
-    const enabledRules = { ...rules };
-
-    Object.keys(enabledRules).forEach((key, _) => {
-        if (!passwordPolicy[key]) delete enabledRules[key];
-    });
-
-    return enabledRules;
+    return Object.keys(rules).reduce((enabledRules, key) => {
+        if (passwordPolicy[key]) enabledRules[key] = rules[key];
+        return enabledRules;
+    }, {});
 }
-
-const MAX_PASSWORD_LENGTH = 255;
 
 export const passwordField = ({ label = 'password', canShowPassword = false, ...staticProps }, { passwordPolicy }) => ({
     path: 'password',
