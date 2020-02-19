@@ -6,9 +6,13 @@ import zxcvbn from '@reachfive/zxcvbn';
 import styled from 'styled-components';
 
 import { Input, Label, FormGroupContainer, FormError } from '../formControlsComponent';
+import { PasswordPolicyRules } from '../passwordPolicyComponent';
 import { withI18n, withTheme } from '../../widget/widgetContext';
 
-import { ShowPasswordIcon, HidePasswordIcon } from './simplePasswordField'
+import { ShowPasswordIcon, HidePasswordIcon } from './simplePasswordField';
+
+const SPECIAL_CHARACTERS = " !\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~";
+const MAX_PASSWORD_LENGTH = 255;
 
 const PasswordStrengthGaugeContainer = withTheme(styled.div`
     position: relative;
@@ -35,8 +39,6 @@ const PasswordStrengthGauge = withTheme(styled.div`
     border-radius: ${props => props.theme.get('borderRadius')}px;
     transition: width 300ms ease-out, background-color 300ms linear;
 `);
-
-const MAX_PASSWORD_LENGTH = 255;
 
 const PasswordStrength = withI18n(withTheme(({ score, theme, i18n }) => (
     <div style={{ marginTop: `${theme.get('spacing') / 2}px` }}>
@@ -76,6 +78,8 @@ class PasswordField extends React.Component {
             onChange,
             inputId,
             label,
+            isTouched,
+            value
         } = this.props;
 
         const { showPassword } = this.state;
@@ -86,10 +90,11 @@ class PasswordField extends React.Component {
                     {label}
                 </Label>
                 <div style={{ position: 'relative' }}>
-                    <Input id={inputId}
+                    <Input
+                        id={inputId}
                         name="password"
                         type={showPassword ? 'text' : 'password'}
-                        value={this.props.value || ''}
+                        value={value || ''}
                         placeholder={this.props.placeholder || label}
                         autoComplete={this.props.autoComplete}
                         title={label}
@@ -106,45 +111,44 @@ class PasswordField extends React.Component {
                         ? <HidePasswordIcon onClick={this.toggleShowPassword} />
                         : <ShowPasswordIcon onClick={this.toggleShowPassword} />)}
                 </div>
-                {this.props.isTouched && <PasswordStrength score={this.props.strength || 0} />}
+                {isTouched && <PasswordStrength score={this.props.strength || 0} />}
                 {validation.error && <FormError>{validation.error}</FormError>}
+                {isTouched && <PasswordPolicyRules value={value} rules={this.props.enabledRules} />}
             </div>
         </FormGroupContainer>;
     }
 }
 
-function checkSpecialsCharacters(password, passwordPolicy) {
-    if (!!passwordPolicy.specialCharacters) {
-        const SPECIAL_CHARACTERS = " !\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~"
-        const passwordChars = Array.from(password)
-        return !passwordChars.find(c => SPECIAL_CHARACTERS.includes(c))
-    } else {
-        return false
-    }
-}
+function listEnabledRules(i18n, passwordPolicy) {
+    if (!passwordPolicy) return {};
 
-function checkLowercaseCharacters(password, passwordPolicy) {
-    if (!!passwordPolicy.lowercaseCharacters) {
-        return !Array.from(password).find(c => isLower(c))
-    } else {
-        return false
-    }
-}
+    const rules = {
+        minLength: {
+            label: i18n('validation.password.minLength', { min: passwordPolicy.minLength }),
+            verify: password => password.length >= passwordPolicy.minLength
+        },
+        specialCharacters: {
+            label: i18n('validation.password.specials.characters'),
+            verify: password => Array.from(password).some(c => SPECIAL_CHARACTERS.includes(c))
+        },
+        lowercaseCharacters: {
+            label: i18n('validation.password.specials.lowercase'),
+            verify: password => Array.from(password).some(c => isLower(c))
+        },
+        uppercaseCharacters: {
+            label: i18n('validation.password.specials.uppercase'),
+            verify: password => Array.from(password).some(c => isUpper(c))
+        },
+        digitCharacters: {
+            label: i18n('validation.password.specials.digit'),
+            verify: password => Array.from(password).some(c => isDigit(c))
+        }
+    };
 
-function checkUppercaseCharacters(password, passwordPolicy) {
-    if (!!passwordPolicy.uppercaseCharacters) {
-        return !Array.from(password).find(c => isUpper(c))
-    } else {
-        return false
-    }
-}
-
-function checkDigitCharacters(password, passwordPolicy) {
-    if (!!passwordPolicy.digitCharacters) {
-        return !Array.from(password).find(c => isDigit(c))
-    } else {
-        return false
-    }
+    return Object.keys(rules).reduce((enabledRules, key) => {
+        if (passwordPolicy[key]) enabledRules[key] = rules[key];
+        return enabledRules;
+    }, {});
 }
 
 export const passwordField = ({ label = 'password', canShowPassword = false, ...staticProps }, { passwordPolicy }) => ({
@@ -164,33 +168,29 @@ export const passwordField = ({ label = 'password', canShowPassword = false, ...
             initialize: () => ({
                 value: '',
                 strength: 0,
+                enabledRules: listEnabledRules(i18n, passwordPolicy),
                 isTouched: false,
                 isDirty: false
             }),
             unbind: (model, { value }) => ({ ...model, password: value }),
             validate: ({ value, strength, isDirty }, ctx) => {
-                if (isDirty || ctx.isSubmitted) {
-                    if (!value) {
-                        return { error: i18n('validation.required') };
-                    } else {
-                        if (value.length < passwordPolicy.minLength) {
-                            return { error: i18n('validation.password.minLength', { min: passwordPolicy.minLength }) };
-                        } else if (value.length > MAX_PASSWORD_LENGTH) {
-                            return { error: i18n('validation.password.maxLength', { max: MAX_PASSWORD_LENGTH }) };
-                        } else if (strength < passwordPolicy.minStrength) {
-                            return { error: i18n('validation.password.minStrength') };
-                        } else if (checkSpecialsCharacters(value, passwordPolicy)) {
-                            return { error: i18n('validation.password.specials.characters') };
-                        } else if (checkLowercaseCharacters(value, passwordPolicy)) {
-                            return { error: i18n('validation.password.specials.lowercase') };
-                        } else if (checkUppercaseCharacters(value, passwordPolicy)) {
-                            return { error: i18n('validation.password.specials.uppercase') };
-                        } else if (checkDigitCharacters(value, passwordPolicy)) {
-                            return { error: i18n('validation.password.specials.digit') };
-                        }
+                if (!isDirty && !ctx.isSubmitted) return {};
+
+                const errors = [];
+                if (!value) {
+                    errors.push(i18n('validation.required'));
+                }
+                else {
+                    if (strength < passwordPolicy.minStrength) {
+                        errors.push(i18n('validation.password.minStrength'));
+                    }
+
+                    if (value.length > MAX_PASSWORD_LENGTH) {
+                        errors.push(i18n('validation.password.maxLength', { max: MAX_PASSWORD_LENGTH }));
                     }
                 }
-                return {};
+
+                return errors.length == 0 ? {} : { error: errors.join(' ') };
             }
         }
     }

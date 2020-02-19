@@ -150,7 +150,8 @@ export const Checkbox = withTheme(styled(({ value, onToggle, label, name, classN
 export const RadioGroup = ({ options, onChange, value, name, ...props }) => (
     <FormGroup {...props}>
         {options.map(({ label: optionLabel, value: optionValue }) => (
-            <Check checked={value === optionValue}
+            <Check
+                checked={value === optionValue}
                 onSelect={onChange(optionValue)}
                 label={optionLabel}
                 name={name}
