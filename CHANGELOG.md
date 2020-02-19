@@ -1,5 +1,12 @@
 # Changelog
 
+## v.1.0.0-alpha.10
+
+### 19/02/2020
+
+### Features
+- Improve the UX/UI of the password policy rules validation.
+
 ## v.1.0.0-alpha.9
 
 ### 10/02/2020
