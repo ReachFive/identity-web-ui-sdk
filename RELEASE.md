@@ -10,7 +10,7 @@
     npm --no-git-tag-version version [<newversion> | major | minor | patch]
     ```
 
-    This commands will update the version in the [`package.json`](package.json) file.
+    This command will update the version in the [`package.json`](package.json) file.
 
     Commit and push the change with the version.
 
