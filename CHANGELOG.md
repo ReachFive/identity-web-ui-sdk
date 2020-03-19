@@ -1,5 +1,11 @@
 # Changelog
 
+## v.1.0.0
+
+### 19/03/2020
+
+ReachFive UI SDK is out! 🚀
+
 ## v.1.0.0-alpha.10
 
 ### 19/02/2020
