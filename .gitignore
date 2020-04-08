@@ -1,6 +1,8 @@
 .DS_Store
 .idea
+*.iml
 .vscode
+.metals
 /node_modules/
 /cjs/
 /es/
