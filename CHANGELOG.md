@@ -1,5 +1,12 @@
 # Changelog
 
+## v.1.1.0
+
+### 16/04/2020
+
+### Fix
+- The [`showRememberMe`](https://developer.reachfive.com/sdk-ui/showAuth.html#showRememberMe) option is now taken into account.
+
 ## v.1.0.1
 
 ### 19/03/2020
