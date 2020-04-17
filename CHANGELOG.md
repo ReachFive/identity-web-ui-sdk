@@ -5,7 +5,7 @@
 ### 17/04/2020
 
 ### Fix
-- The UI SDK now use the latest version of the Core SDK.
+- The UI SDK now uses the latest version of the Core SDK.
 
 ## v.1.1.0
 
