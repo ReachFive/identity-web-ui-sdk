@@ -1,5 +1,12 @@
 # Changelog
 
+## v.1.2.1
+
+### 20/04/2020
+
+### Fix
+- The `showRememberMe` check box now properly sets the boolean `persistent` field into `auth` options object with the `showAuth` component.
+
 ## v.1.2.0
 
 ### 17/04/2020
