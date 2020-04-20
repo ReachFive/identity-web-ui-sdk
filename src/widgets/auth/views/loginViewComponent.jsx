@@ -48,7 +48,7 @@ export const LoginForm = createForm({
                 )
             },
             showRememberMe && checkboxField({
-                key: 'persistent',
+                key: 'auth.persistent',
                 label: 'rememberMe',
                 defaultValue: true
             })
@@ -58,10 +58,15 @@ export const LoginForm = createForm({
 });
 
 export default class LoginView extends React.Component {
-    handleLogin = data => this.props.apiClient.loginWithPassword({
-        ...data,
-        ...pick(this.props, 'auth')
-    });
+    handleLogin = data => {
+        return this.props.apiClient.loginWithPassword({
+            ...data,
+            auth: {
+                ...data.auth,
+                ...this.props.auth,
+            },
+        });
+    }
 
     render() {
         const { socialProviders, session = {}, i18n } = this.props;

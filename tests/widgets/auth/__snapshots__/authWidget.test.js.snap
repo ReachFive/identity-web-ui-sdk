@@ -2788,7 +2788,7 @@ exports[`Snapshot login view with remember me 1`] = `
         >
           <input
             checked={true}
-            name="persistent"
+            name="auth.persistent"
             onChange={[Function]}
             required={true}
             type="checkbox"
