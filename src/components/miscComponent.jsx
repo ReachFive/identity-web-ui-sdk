@@ -2,7 +2,7 @@ import React from 'react';
 
 import { Remarkable } from 'remarkable';
 import styled from 'styled-components';
-import { compose } from 'recompose';
+import { compose } from '@hypnosphi/recompose';
 
 import { withGoTo, withTheme } from './widget/widgetContext';
 

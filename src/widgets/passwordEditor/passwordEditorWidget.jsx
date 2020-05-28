@@ -2,7 +2,7 @@ import React from 'react';
 
 import omit from 'lodash-es/omit';
 import compact from 'lodash-es/compact';
-import compose from 'recompose/compose';
+import compose from '@hypnosphi/recompose/compose';
 
 import { Validator } from '../../core/validation';
 

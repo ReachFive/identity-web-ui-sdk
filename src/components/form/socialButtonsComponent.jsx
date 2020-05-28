@@ -2,7 +2,7 @@ import React from 'react';
 
 import styled from 'styled-components';
 import classes from 'classnames';
-import { compose, withHandlers } from 'recompose';
+import { compose, withHandlers } from '@hypnosphi/recompose';
 
 import * as providers from '../../providers/providers';
 import { withApiClient, withTheme } from '../widget/widgetContext';

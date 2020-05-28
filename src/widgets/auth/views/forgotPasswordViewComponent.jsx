@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { withHandlers } from 'recompose';
+import { withHandlers } from '@hypnosphi/recompose';
 
 import { email } from '../../../core/validation';
 import { Heading, Intro, Info, Link, Alternative } from '../../../components/miscComponent';
