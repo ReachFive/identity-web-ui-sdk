@@ -33,7 +33,7 @@
         "regenerator-runtime": "0.13.5",
         "remarkable": "2.0.1",
         "styled-components": "4.4.1",
-        "validator": "12.1.0"
+        "validator": "13.0.0"
     },
     "devDependencies": {
         "@babel/core": "7.10.1",
