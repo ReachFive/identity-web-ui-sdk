@@ -50,7 +50,7 @@ export const LoginForm = createForm({
             showRememberMe && checkboxField({
                 key: 'auth.persistent',
                 label: 'rememberMe',
-                defaultValue: true
+                defaultValue: false
             })
         ];
     },
