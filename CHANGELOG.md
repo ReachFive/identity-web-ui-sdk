@@ -1,5 +1,16 @@
 # Changelog
 
+## v.1.3.0
+
+### 29/05/2020
+
+### Fix
+- Call only the validation methods when the field is required or when the value is not empty.
+
+### Feature
+- Set the default value of the _Remember be_ to `false`.
+- Upgrade all the dependencies.
+
 ## v.1.2.1
 
 ### 20/04/2020
