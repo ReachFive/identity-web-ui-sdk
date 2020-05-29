@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { getContext } from 'recompose';
+import { getContext } from '@hypnosphi/recompose';
 
 export const withTheme = getContext({ theme: PropTypes.object.isRequired });
 export const withI18n = getContext({ i18n: PropTypes.func.isRequired });

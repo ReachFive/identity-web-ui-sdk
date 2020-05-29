@@ -67,7 +67,7 @@ exports[`Snapshot basic 1`] = `
 >
   <div>
     <div
-      className="c1"
+      className="sc-AxirZ c1"
     >
       socialAccounts.noLinkedAccount
     </div>

@@ -3,7 +3,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import pick from 'lodash-es/pick';
 import isFunction from 'lodash-es/isFunction';
-import { withContext } from 'recompose';
+import { withContext } from '@hypnosphi/recompose';
 
 import resolveTheme from '../../core/theme';
 import resolveI18n from '../../core/i18n';

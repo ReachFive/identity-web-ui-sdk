@@ -18,29 +18,7 @@ const plugins = [
         extensions: ['.jsx', '.js', '.json'],
         preferBuiltins: true
      }),
-    commonjs({
-        include: /node_modules/,
-        namedExports: {
-            'node_modules/react/index.js': [
-                'createFactory',
-                'Component',
-                'createElement',
-                'cloneElement',
-                'createContext',
-                'isValidElement',
-                'Children'
-            ],
-            'node_modules/react-is/index.js': [
-                'isElement',
-                'isValidElementType',
-                'ForwardRef'
-            ],
-            'node_modules/validator/index.js': [
-                'isNumeric',
-                'isISO8601'
-            ]
-        }
-    }),
+    commonjs({ include: /node_modules/ }),
     globals(),
     builtins(),
     babel(),
