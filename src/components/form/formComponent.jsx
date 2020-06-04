@@ -5,7 +5,7 @@ import some from 'lodash-es/some';
 import compact from 'lodash-es/compact';
 import styled from 'styled-components';
 
-import { PrimaryButton } from './buttonComponent';
+import { PrimaryButton, PrimaryButtons } from './buttonComponent';
 import { Error } from '../miscComponent';
 import { withI18n } from '../widget/widgetContext';
 import { logError } from '../../helpers/logger';
@@ -158,7 +158,7 @@ export function createForm(config) {
         };
 
         render() {
-            const { submitLabel, i18n } = this.props;
+            const { submitLabel, submitLabels, i18n } = this.props;
             const { errorMessage, isLoading, fields } = this.state;
 
             return <Form noValidate onSubmit={this.handleSubmit}>
@@ -169,9 +169,22 @@ export function createForm(config) {
                         onChange: newState => this.handleFieldChange(field.key, newState)
                     }) : field.staticContent)
                 }
-                <PrimaryButton disabled={isLoading}>
-                    {i18n(submitLabel)}
-                </PrimaryButton>
+                {
+                    !submitLabels && <PrimaryButton disabled={isLoading}>
+                        {i18n(submitLabel)}
+                    </PrimaryButton>
+                }
+                {
+                    submitLabels && <PrimaryButtons>
+                        <PrimaryButton disabled={isLoading}>
+                            {i18n(submitLabels.left)}
+                        </PrimaryButton>
+                        <PrimaryButton disabled={isLoading}>
+                            {i18n(submitLabels.right)}
+                        </PrimaryButton>
+                    </PrimaryButtons>
+                }
+
             </Form>;
         }
     }

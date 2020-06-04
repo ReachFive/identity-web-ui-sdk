@@ -70,3 +70,11 @@ export const PrimaryButton = withTheme(({ onClick, disabled = false, children, t
         {children}
     </Button>
 ));
+
+export const PrimaryButtons = withTheme(styled.div`
+    display: flex;
+
+    & > :first-child {
+        margin-right: 30px;
+    }
+`);
