@@ -1,14 +1,16 @@
 import { deepDefaults } from '../../helpers/deepDefaults';
 import { UserError } from '../../helpers/errors';
 import { createMultiViewWidget } from '../../components/widget/widget';
+
 import LoginView from './views/loginViewComponent'
+import LoginWithWebAuthnView from './views/loginWithWebAuthnViewComponent'
 import SignupView from './views/signupViewComponent'
 import { ForgotPasswordView, ForgotPasswordSuccessView } from './views/forgotPasswordViewComponent'
 import QuickLoginView from './views/quickLoginViewComponent'
 import ReauthView from './views/reauthViewComponent'
 
 export default createMultiViewWidget({
-    initialView({ initialScreen, allowLogin, allowQuickLogin, allowSignup, socialProviders, session = {} }) {
+    initialView({ initialScreen, allowLogin, allowQuickLogin, allowSignup, socialProviders, webAuthn, session = {} }) {
         const quickLogin = allowQuickLogin &&
             !session.isAuthenticated &&
             session.lastLoginType &&
@@ -16,12 +18,14 @@ export default createMultiViewWidget({
         return initialScreen
             || (quickLogin && 'quick-login')
             || (session.isAuthenticated && 'reauth')
-            || (allowLogin && 'login')
+            || (allowLogin && !webAuthn && 'login')
+            || (allowLogin && 'login-with-web-authn')
             || (allowSignup && 'signup')
             || 'forgot-password';
     },
     views: {
         'login': LoginView,
+        'login-with-web-authn': LoginWithWebAuthnView,
         'signup': SignupView,
         'forgot-password': ForgotPasswordView,
         'forgot-password-success': ForgotPasswordSuccessView,
