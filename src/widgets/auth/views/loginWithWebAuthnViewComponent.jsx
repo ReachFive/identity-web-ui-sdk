@@ -45,7 +45,7 @@ export default class LoginWithWebAuthnView extends React.Component {
         const webAuthnButtons = disabled => <WebAuthnViewPrimaryButtons
             disabled={disabled}
             i18n={i18n}
-            onPasswordIconClick={() => this.props.goTo('login')} />
+            onPasswordIconClick={() => this.props.goTo('login-with-password')} />
 
         return (
             <div>

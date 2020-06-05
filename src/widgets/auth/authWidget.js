@@ -4,6 +4,7 @@ import { createMultiViewWidget } from '../../components/widget/widget';
 
 import LoginView from './views/loginViewComponent'
 import LoginWithWebAuthnView from './views/loginWithWebAuthnViewComponent'
+import LoginWithPasswordView from './views/loginWithPasswordViewComponent'
 import SignupView from './views/signupViewComponent'
 import { ForgotPasswordView, ForgotPasswordSuccessView } from './views/forgotPasswordViewComponent'
 import QuickLoginView from './views/quickLoginViewComponent'
@@ -15,6 +16,7 @@ export default createMultiViewWidget({
             !session.isAuthenticated &&
             session.lastLoginType &&
             socialProviders.indexOf(session.lastLoginType) >= 0;
+
         return initialScreen
             || (quickLogin && 'quick-login')
             || (session.isAuthenticated && 'reauth')
@@ -26,6 +28,7 @@ export default createMultiViewWidget({
     views: {
         'login': LoginView,
         'login-with-web-authn': LoginWithWebAuthnView,
+        'login-with-password': LoginWithPasswordView,
         'signup': SignupView,
         'forgot-password': ForgotPasswordView,
         'forgot-password-success': ForgotPasswordSuccessView,
