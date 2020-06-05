@@ -22,10 +22,7 @@ export const LoginWithWebAuthnForm = createForm({
             })
         ];
     },
-    submitLabels: {
-        right: 'login.submitLabel',
-        left: 'login.submitLabel'
-    }
+    webAuthn: true
 });
 
 export default class LoginWithWebAuthnView extends React.Component {
