@@ -31,12 +31,11 @@ const ButtonWithIcon = withTheme(({ onClick, disabled = false, children, theme }
     </Button>
 ));
 
-
 export const ButtonsWithIcons = styled(({ disabled = false, i18n, className }) => <div className={classes(['r5-webauthn-buttons'], className)}>
     <ButtonWithIcon disabled={disabled}>
         <FingerPrintIcon />
     </ButtonWithIcon>
-    <Alternative>or</Alternative>
+    <Alternative>{i18n('or')}</Alternative>
     <ButtonWithIcon disabled={disabled}>
         <KeyboardIcon />
     </ButtonWithIcon>

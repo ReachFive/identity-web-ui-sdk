@@ -176,7 +176,7 @@ export function createForm(config) {
                     </PrimaryButton>
                 }
                 {
-                    webAuthn && <ButtonsWithIcons />
+                    webAuthn && <ButtonsWithIcons i18n={i18n} />
                 }
             </Form>;
         }
