@@ -4,6 +4,7 @@ import { email } from '../../../core/validation';
 import { Heading, Link, Alternative, Separator } from '../../../components/miscComponent';
 
 import SocialButtons from '../../../components/form/socialButtonsComponent';
+import { WebAuthnViewPrimaryButtons } from './../../../components/form/webAuthButtonsComponent';
 import { createForm } from '../../../components/form/formComponent';
 import { simpleField } from '../../../components/form/fields/simpleField';
 
@@ -41,6 +42,11 @@ export default class LoginWithWebAuthnView extends React.Component {
 
         const defaultEmail = session.lastLoginType === 'password' ? session.email : null;
 
+        const webAuthnButtons = disabled => <WebAuthnViewPrimaryButtons
+            disabled={disabled}
+            i18n={i18n}
+            onPasswordIconClick={() => this.props.goTo('login')} />
+
         return (
             <div>
                 <Heading>{i18n('login.title')}</Heading>
@@ -53,7 +59,8 @@ export default class LoginWithWebAuthnView extends React.Component {
                 <LoginWithWebAuthnForm
                     showLabels={this.props.showLabels}
                     defaultEmail={defaultEmail}
-                    handler={this.handleLogin} />
+                    handler={this.handleLogin}
+                    webAuthnButtons={webAuthnButtons} />
                 {this.props.allowSignup &&
                     <Alternative>
                         <span>{i18n('login.signupLinkPrefix')}</span>

@@ -6,7 +6,6 @@ import compact from 'lodash-es/compact';
 import styled from 'styled-components';
 
 import { PrimaryButton } from './buttonComponent';
-import { ButtonsWithIcons } from './webAuthButtonsComponent';
 import { Error } from '../miscComponent';
 import { withI18n } from '../widget/widgetContext';
 import { logError } from '../../helpers/logger';
@@ -175,9 +174,7 @@ export function createForm(config) {
                         {i18n(submitLabel)}
                     </PrimaryButton>
                 }
-                {
-                    webAuthn && <ButtonsWithIcons i18n={i18n} />
-                }
+                {webAuthn && this.props.webAuthnButtons(isLoading)}
             </Form>;
         }
     }

@@ -19,26 +19,36 @@ const iconStyle = `
 const FingerPrintIcon = styled(FingerPrint)`${iconStyle}`;
 const KeyboardIcon = styled(Keyboard)`${iconStyle}`;
 
-const ButtonWithIcon = withTheme(({ onClick, disabled = false, children, theme }) => (
-    <Button type="submit"
+const PrimaryButtonWithIcon = withTheme(({ type = "submit", onClick, disabled = false, title, children, theme }) => (
+    <Button
+        type={type}
+        title={title}
         onClick={onClick}
         disabled={disabled}
-        color={theme.get('primaryColor')}
         background={theme.get('backgroundColor')}
         border={theme.get('backgroundColor')}
+        color={theme.get('primaryColor')}
         theme={theme}>
         {children}
     </Button>
 ));
 
-export const ButtonsWithIcons = styled(({ disabled = false, i18n, className }) => <div className={classes(['r5-webauthn-buttons'], className)}>
-    <ButtonWithIcon disabled={disabled}>
+export const WebAuthnViewPrimaryButtons = styled(({ disabled, onPasswordIconClick, i18n, className }) => <div className={classes(['r5-webauthn-buttons'], className)}>
+    <PrimaryButtonWithIcon
+        title="Login with biometrics"
+        disabled={disabled}>
         <FingerPrintIcon />
-    </ButtonWithIcon>
+    </PrimaryButtonWithIcon>
+
     <Alternative>{i18n('or')}</Alternative>
-    <ButtonWithIcon disabled={disabled}>
+
+    <PrimaryButtonWithIcon
+        type="button"
+        title="Login with password"
+        disabled={disabled}
+        onClick={onPasswordIconClick}>
         <KeyboardIcon />
-    </ButtonWithIcon>
+    </PrimaryButtonWithIcon>
 </div>)`
     display: flex;
     align-items: center;
