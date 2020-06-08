@@ -11,7 +11,7 @@ import QuickLoginView from './views/quickLoginViewComponent'
 import ReauthView from './views/reauthViewComponent'
 
 export default createMultiViewWidget({
-    initialView({ initialScreen, allowLogin, allowQuickLogin, allowSignup, socialProviders, allowWebAuthnLogin, session = {} }) {
+    initialView({ initialScreen, allowLogin, allowQuickLogin, allowSignup, allowWebAuthnLogin, socialProviders, session = {} }) {
         const quickLogin = allowQuickLogin &&
             !session.isAuthenticated &&
             session.lastLoginType &&
@@ -38,6 +38,10 @@ export default createMultiViewWidget({
     prepare: (options, { config }) => {
         if (!config.passwordPolicy) {
             throw new UserError('This feature is not available on your account.');
+        }
+
+        if (!config.webAuthn && options.allowWebAuthnLogin) {
+            throw new UserError('The WebAuthn feature is not available on your account.');
         }
 
         return deepDefaults(
