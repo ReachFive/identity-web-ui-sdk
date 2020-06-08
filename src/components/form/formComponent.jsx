@@ -60,7 +60,7 @@ export function createForm(config) {
         }
 
         // Returns boolean
-        validateAllFields(cb) {
+        validateAllFields(callback) {
             this.setState(prevState => {
                 return this.inputFields.reduce((acc, field) => {
                     const fieldState = prevState.fields[field.key];
@@ -78,7 +78,7 @@ export function createForm(config) {
                         }
                     };
                 }, { hasErrors: false, fields: [] });
-            }, () => cb(!this.state.hasErrors));
+            }, () => callback && callback(!this.state.hasErrors));
         }
 
         handleFieldChange = (fieldName, stateUpdate) => {
@@ -157,6 +157,22 @@ export function createForm(config) {
             });
         };
 
+        handleClick = event => {
+            event.preventDefault();
+
+            this.validateAllFields(isValid => {
+                if (isValid) {
+                    this.setState({ isLoading: true });
+
+                    const fieldData = this.inputFields.reduce((acc, field) => {
+                        return field.unbind(acc, this.state.fields[field.key]);
+                    }, {});
+
+                    this.props.redirect(fieldData);
+                }
+            });
+        }
+
         render() {
             const { submitLabel, webAuthn, i18n } = this.props;
             const { errorMessage, isLoading, fields } = this.state;
@@ -174,7 +190,7 @@ export function createForm(config) {
                         {i18n(submitLabel)}
                     </PrimaryButton>
                 }
-                {webAuthn && this.props.webAuthnButtons(isLoading, fields['email'].value)}
+                {webAuthn && this.props.webAuthnButtons(isLoading, this.handleClick)}
             </Form>;
         }
     }

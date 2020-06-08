@@ -27,22 +27,12 @@ export const LoginWithWebAuthnForm = createForm({
 });
 
 export default class LoginWithWebAuthnView extends React.Component {
-    handleLogin = data => {
-        return this.props.apiClient.loginWithPassword({
-            ...data,
-            auth: {
-                ...data.auth,
-                ...this.props.auth,
-            },
-        });
-    }
-
     handleWebAuthnLogin = data => {
         console.log("Login with WebAuthn", data)
     }
 
-    onPasswordIconClick = username => {
-        this.props.goTo('login-with-password', { username })
+    redirectToPasswordLoginView = data => {
+        this.props.goTo('login-with-password', { username: data.email })
     }
 
     render() {
@@ -50,10 +40,10 @@ export default class LoginWithWebAuthnView extends React.Component {
 
         const defaultEmail = session.lastLoginType === 'password' ? session.email : null;
 
-        const webAuthnButtons = (disabled, username) => <WebAuthnViewPrimaryButtons
+        const webAuthnButtons = (disabled, handleClick) => <WebAuthnViewPrimaryButtons
             disabled={disabled}
             i18n={i18n}
-            onClick={() => this.onPasswordIconClick(username)} />
+            onClick={handleClick} />
 
         return (
             <div>
@@ -68,6 +58,7 @@ export default class LoginWithWebAuthnView extends React.Component {
                     showLabels={this.props.showLabels}
                     defaultEmail={defaultEmail}
                     handler={this.handleWebAuthnLogin}
+                    redirect={this.redirectToPasswordLoginView}
                     webAuthnButtons={webAuthnButtons} />
                 {this.props.allowSignup &&
                     <Alternative>
