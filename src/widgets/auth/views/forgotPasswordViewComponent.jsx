@@ -27,7 +27,7 @@ const enhance = withHandlers({
     handleSubmit: ({ apiClient, redirectUrl, returnToAfterPasswordReset }) => data => apiClient.requestPasswordReset({ ...data, redirectUrl, returnToAfterPasswordReset })
 });
 
-export const ForgotPasswordView = enhance(({ i18n, goTo, allowLogin, handleSubmit, displaySafeErrorMessage, showLabels, webAuthn }) => (
+export const ForgotPasswordView = enhance(({ i18n, goTo, allowLogin, handleSubmit, displaySafeErrorMessage, showLabels, allowWebAuthnLogin }) => (
     <div>
         <Heading>{i18n('forgotPassword.title')}</Heading>
         <Intro>{i18n('forgotPassword.prompt')}</Intro>
@@ -37,17 +37,17 @@ export const ForgotPasswordView = enhance(({ i18n, goTo, allowLogin, handleSubmi
             onSuccess={() => goTo('forgot-password-success')}
             skipError={displaySafeErrorMessage && skipError} />
         {allowLogin && <Alternative>
-            <Link target={webAuthn ? 'login-with-web-authn' : 'login'}>{i18n('forgotPassword.backToLoginLink')}</Link>
+            <Link target={allowWebAuthnLogin ? 'login-with-web-authn' : 'login'}>{i18n('forgotPassword.backToLoginLink')}</Link>
         </Alternative>}
     </div>
 ));
 
-export const ForgotPasswordSuccessView = ({ i18n, allowLogin, webAuthn }) => (
+export const ForgotPasswordSuccessView = ({ i18n, allowLogin, allowWebAuthnLogin }) => (
     <div>
         <Heading>{i18n('forgotPassword.title')}</Heading>
         <Info>{i18n('forgotPassword.successMessage')}</Info>
         {allowLogin && <Alternative>
-            <Link target={webAuthn ? 'login-with-web-authn' : 'login'}>{i18n('back')}</Link>
+            <Link target={allowWebAuthnLogin ? 'login-with-web-authn' : 'login'}>{i18n('back')}</Link>
         </Alternative>}
     </div>
 );

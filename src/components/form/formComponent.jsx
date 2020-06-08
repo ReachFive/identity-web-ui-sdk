@@ -174,7 +174,7 @@ export function createForm(config) {
         }
 
         render() {
-            const { submitLabel, webAuthn, i18n } = this.props;
+            const { submitLabel, allowWebAuthnLogin, i18n } = this.props;
             const { errorMessage, isLoading, fields } = this.state;
 
             return <Form noValidate onSubmit={this.handleSubmit}>
@@ -186,11 +186,11 @@ export function createForm(config) {
                     }) : field.staticContent)
                 }
                 {
-                    !webAuthn && <PrimaryButton disabled={isLoading}>
+                    !allowWebAuthnLogin && <PrimaryButton disabled={isLoading}>
                         {i18n(submitLabel)}
                     </PrimaryButton>
                 }
-                {webAuthn && this.props.webAuthnButtons(isLoading, this.handleClick)}
+                {allowWebAuthnLogin && this.props.webAuthnButtons(isLoading, this.handleClick)}
             </Form>;
         }
     }

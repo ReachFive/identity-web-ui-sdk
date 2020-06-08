@@ -23,7 +23,7 @@ export const LoginWithWebAuthnForm = createForm({
             })
         ];
     },
-    webAuthn: true
+    allowWebAuthnLogin: true
 });
 
 export default class LoginWithWebAuthnView extends React.Component {

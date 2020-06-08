@@ -11,7 +11,7 @@ import QuickLoginView from './views/quickLoginViewComponent'
 import ReauthView from './views/reauthViewComponent'
 
 export default createMultiViewWidget({
-    initialView({ initialScreen, allowLogin, allowQuickLogin, allowSignup, socialProviders, webAuthn, session = {} }) {
+    initialView({ initialScreen, allowLogin, allowQuickLogin, allowSignup, socialProviders, allowWebAuthnLogin, session = {} }) {
         const quickLogin = allowQuickLogin &&
             !session.isAuthenticated &&
             session.lastLoginType &&
@@ -20,7 +20,7 @@ export default createMultiViewWidget({
         return initialScreen
             || (quickLogin && 'quick-login')
             || (session.isAuthenticated && 'reauth')
-            || (allowLogin && !webAuthn && 'login')
+            || (allowLogin && !allowWebAuthnLogin && 'login')
             || (allowLogin && 'login-with-web-authn')
             || (allowSignup && 'signup')
             || 'forgot-password';
