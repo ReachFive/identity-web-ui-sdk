@@ -79,7 +79,7 @@ export default class LoginView extends React.Component {
                     canShowPassword={this.props.canShowPassword}
                     handler={this.handleLogin} />
                 <Alternative>
-                    <Link target="login-with-web-authn">{i18n('Use another identifier')}</Link>
+                    <Link target="login-with-web-authn">{i18n('login.password.userAnotherIdentifier')}</Link>
                 </Alternative>
             </div>
         );
