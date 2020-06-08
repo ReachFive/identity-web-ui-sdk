@@ -2,7 +2,7 @@ import React from 'react';
 
 import styled from 'styled-components';
 
-import { Heading, Link } from '../../../components/miscComponent';
+import { Alternative, Heading, Link } from '../../../components/miscComponent';
 import { withTheme } from '../../../components/widget/widgetContext';
 
 import { createForm } from '../../../components/form/formComponent';
@@ -57,15 +57,20 @@ export default class LoginView extends React.Component {
     }
 
     render() {
+        const { i18n } = this.props
+
         return (
             <div>
-                <Heading>{this.props.i18n('login.title')}</Heading>
+                <Heading>{i18n('login.title')}</Heading>
                 <LoginWithPasswordForm
                     showLabels={this.props.showLabels}
                     showRememberMe={this.props.showRememberMe}
                     showForgotPassword={this.props.allowForgotPassword}
                     canShowPassword={this.props.canShowPassword}
                     handler={this.handleLogin} />
+                <Alternative>
+                    <Link target="login-with-web-authn">{i18n('Use another identifier')}</Link>
+                </Alternative>
             </div>
         );
     }

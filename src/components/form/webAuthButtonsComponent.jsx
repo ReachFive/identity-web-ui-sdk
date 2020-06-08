@@ -4,7 +4,6 @@ import styled from 'styled-components';
 import classes from 'classnames';
 
 import { Button } from './buttonComponent';
-import { Alternative } from '../miscComponent';
 import { withTheme } from '../widget/widgetContext';
 
 import { ReactComponent as FingerPrint } from '../../icons/fingerprint.svg'
@@ -33,6 +32,11 @@ const PrimaryButtonWithIcon = withTheme(({ type = "submit", onClick, disabled = 
     </Button>
 ));
 
+const ButtonsSeparator = withTheme(styled.div`
+    text-align: center;
+    color: ${props => props.theme.get('mutedTextColor')}
+`);
+
 export const WebAuthnViewPrimaryButtons = styled(({ disabled, onPasswordIconClick, i18n, className }) => <div className={classes(['r5-webauthn-buttons'], className)}>
     <PrimaryButtonWithIcon
         title="Login with biometrics"
@@ -40,7 +44,7 @@ export const WebAuthnViewPrimaryButtons = styled(({ disabled, onPasswordIconClic
         <FingerPrintIcon />
     </PrimaryButtonWithIcon>
 
-    <Alternative>{i18n('or')}</Alternative>
+    <ButtonsSeparator>{i18n('or')}</ButtonsSeparator>
 
     <PrimaryButtonWithIcon
         type="button"
