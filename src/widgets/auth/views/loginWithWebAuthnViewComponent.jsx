@@ -37,15 +37,23 @@ export default class LoginWithWebAuthnView extends React.Component {
         });
     }
 
+    handleWebAuthnLogin = data => {
+        console.log("Login with WebAuthn", data)
+    }
+
+    onPasswordIconClick = username => {
+        this.props.goTo('login-with-password', { username })
+    }
+
     render() {
         const { socialProviders, session = {}, i18n } = this.props;
 
         const defaultEmail = session.lastLoginType === 'password' ? session.email : null;
 
-        const webAuthnButtons = disabled => <WebAuthnViewPrimaryButtons
+        const webAuthnButtons = (disabled, username) => <WebAuthnViewPrimaryButtons
             disabled={disabled}
             i18n={i18n}
-            onPasswordIconClick={() => this.props.goTo('login-with-password')} />
+            onClick={() => this.onPasswordIconClick(username)} />
 
         return (
             <div>
@@ -59,7 +67,7 @@ export default class LoginWithWebAuthnView extends React.Component {
                 <LoginWithWebAuthnForm
                     showLabels={this.props.showLabels}
                     defaultEmail={defaultEmail}
-                    handler={this.handleLogin}
+                    handler={this.handleWebAuthnLogin}
                     webAuthnButtons={webAuthnButtons} />
                 {this.props.allowSignup &&
                     <Alternative>

@@ -37,8 +37,9 @@ const ButtonsSeparator = withTheme(styled.div`
     color: ${props => props.theme.get('mutedTextColor')}
 `);
 
-export const WebAuthnViewPrimaryButtons = styled(({ disabled, onPasswordIconClick, i18n, className }) => <div className={classes(['r5-webauthn-buttons'], className)}>
+export const WebAuthnViewPrimaryButtons = styled(({ disabled, onClick, i18n, className }) => <div className={classes(['r5-webauthn-buttons'], className)}>
     <PrimaryButtonWithIcon
+        type="submit"
         title="Login with biometrics"
         disabled={disabled}>
         <FingerPrintIcon />
@@ -47,10 +48,9 @@ export const WebAuthnViewPrimaryButtons = styled(({ disabled, onPasswordIconClic
     <ButtonsSeparator>{i18n('or')}</ButtonsSeparator>
 
     <PrimaryButtonWithIcon
-        type="button"
         title="Login with password"
         disabled={disabled}
-        onClick={onPasswordIconClick}>
+        onClick={onClick}>
         <KeyboardIcon />
     </PrimaryButtonWithIcon>
 </div>)`

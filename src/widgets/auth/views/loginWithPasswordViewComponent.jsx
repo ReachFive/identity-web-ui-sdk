@@ -6,6 +6,7 @@ import { Alternative, Heading, Link } from '../../../components/miscComponent';
 import { withTheme } from '../../../components/widget/widgetContext';
 
 import { createForm } from '../../../components/form/formComponent';
+import { simpleField } from '../../../components/form/fields/simpleField';
 import { simplePasswordField } from '../../../components/form/fields/simplePasswordField';
 import checkboxField from '../../../components/form/fields/checkboxField';
 
@@ -20,8 +21,16 @@ const ForgotPasswordWrapper = withTheme(styled.div`
 
 export const LoginWithPasswordForm = createForm({
     prefix: 'r5-login-',
-    fields({ showRememberMe, canShowPassword, showForgotPassword, i18n }) {
+    fields({ username, showRememberMe, canShowPassword, showForgotPassword, i18n }) {
         return [
+            simpleField({
+                key: 'email',
+                label: 'email',
+                type: 'email',
+                autoComplete: 'email',
+                defaultValue: username,
+                readOnly: true
+            }),
             simplePasswordField({
                 key: 'password',
                 label: 'password',
@@ -63,6 +72,7 @@ export default class LoginView extends React.Component {
             <div>
                 <Heading>{i18n('login.title')}</Heading>
                 <LoginWithPasswordForm
+                    username={this.props.username}
                     showLabels={this.props.showLabels}
                     showRememberMe={this.props.showRememberMe}
                     showForgotPassword={this.props.allowForgotPassword}

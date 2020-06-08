@@ -174,7 +174,7 @@ export function createForm(config) {
                         {i18n(submitLabel)}
                     </PrimaryButton>
                 }
-                {webAuthn && this.props.webAuthnButtons(isLoading)}
+                {webAuthn && this.props.webAuthnButtons(isLoading, fields['email'].value)}
             </Form>;
         }
     }
