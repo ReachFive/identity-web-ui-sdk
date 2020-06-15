@@ -1,5 +1,12 @@
 # Changelog
 
+## v.1.4.0
+
+### 15/06/2020
+
+### Feature
+- Add a new `allowWebAuthnLogin` option to the [`showAuth`](https://developer.reachfive.com/sdk-ui/showAuth.html) widget to allow a user to login with biometrics.
+
 ## v.1.3.0
 
 ### 29/05/2020
