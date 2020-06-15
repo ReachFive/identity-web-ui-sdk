@@ -28,7 +28,13 @@ export const LoginWithWebAuthnForm = createForm({
 
 export default class LoginWithWebAuthnView extends React.Component {
     handleWebAuthnLogin = data => {
-        console.log("Login with WebAuthn", data)
+        return this.props.apiClient.loginWithWebAuthn({
+            ...data,
+            auth: {
+                ...data.auth,
+                ...this.props.auth,
+            }
+        });
     }
 
     redirectToPasswordLoginView = data => {
