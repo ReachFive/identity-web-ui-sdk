@@ -60,7 +60,7 @@ export function createForm(config) {
         }
 
         // Returns boolean
-        validateAllFields(cb) {
+        validateAllFields(callback) {
             this.setState(prevState => {
                 return this.inputFields.reduce((acc, field) => {
                     const fieldState = prevState.fields[field.key];
@@ -78,7 +78,7 @@ export function createForm(config) {
                         }
                     };
                 }, { hasErrors: false, fields: [] });
-            }, () => cb(!this.state.hasErrors));
+            }, () => callback && callback(!this.state.hasErrors));
         }
 
         handleFieldChange = (fieldName, stateUpdate) => {
@@ -157,8 +157,24 @@ export function createForm(config) {
             });
         };
 
+        handleClick = event => {
+            event.preventDefault();
+
+            this.validateAllFields(isValid => {
+                if (isValid) {
+                    this.setState({ isLoading: true });
+
+                    const fieldData = this.inputFields.reduce((acc, field) => {
+                        return field.unbind(acc, this.state.fields[field.key]);
+                    }, {});
+
+                    this.props.redirect(fieldData);
+                }
+            });
+        }
+
         render() {
-            const { submitLabel, i18n } = this.props;
+            const { submitLabel, allowWebAuthnLogin, i18n } = this.props;
             const { errorMessage, isLoading, fields } = this.state;
 
             return <Form noValidate onSubmit={this.handleSubmit}>
@@ -169,9 +185,12 @@ export function createForm(config) {
                         onChange: newState => this.handleFieldChange(field.key, newState)
                     }) : field.staticContent)
                 }
-                <PrimaryButton disabled={isLoading}>
-                    {i18n(submitLabel)}
-                </PrimaryButton>
+                {
+                    !allowWebAuthnLogin && <PrimaryButton disabled={isLoading}>
+                        {i18n(submitLabel)}
+                    </PrimaryButton>
+                }
+                {allowWebAuthnLogin && this.props.webAuthnButtons(isLoading, this.handleClick)}
             </Form>;
         }
     }

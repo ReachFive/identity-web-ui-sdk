@@ -2,11 +2,9 @@ import React from 'react';
 
 import styled from 'styled-components';
 
-import { email } from '../../../core/validation';
-import { Heading, Link, Alternative, Separator } from '../../../components/miscComponent';
+import { Alternative, Heading, Link } from '../../../components/miscComponent';
 import { withTheme } from '../../../components/widget/widgetContext';
 
-import SocialButtons from '../../../components/form/socialButtonsComponent';
 import { createForm } from '../../../components/form/formComponent';
 import { simpleField } from '../../../components/form/fields/simpleField';
 import { simplePasswordField } from '../../../components/form/fields/simplePasswordField';
@@ -21,17 +19,17 @@ const ForgotPasswordWrapper = withTheme(styled.div`
     `};
 `);
 
-export const LoginForm = createForm({
+export const LoginWithPasswordForm = createForm({
     prefix: 'r5-login-',
-    fields({ showEmail = true, showRememberMe, canShowPassword, showForgotPassword, defaultEmail, i18n }) {
+    fields({ username, showRememberMe, canShowPassword, showForgotPassword, i18n }) {
         return [
-            showEmail && simpleField({
+            simpleField({
                 key: 'email',
                 label: 'email',
                 type: 'email',
                 autoComplete: 'email',
-                defaultValue: defaultEmail,
-                validator: email
+                defaultValue: username,
+                readOnly: true
             }),
             simplePasswordField({
                 key: 'password',
@@ -68,33 +66,21 @@ export default class LoginView extends React.Component {
     }
 
     render() {
-        const { socialProviders, session = {}, i18n } = this.props;
-
-        const defaultEmail = session.lastLoginType === 'password' ? session.email : null;
+        const { i18n } = this.props
 
         return (
             <div>
                 <Heading>{i18n('login.title')}</Heading>
-                {socialProviders && socialProviders.length > 0 &&
-                    <SocialButtons providers={socialProviders} auth={this.props.auth} acceptTos={this.props.acceptTos} />
-                }
-                {socialProviders && socialProviders.length > 0 &&
-                    <Separator text={i18n('or')} />
-                }
-                <LoginForm
+                <LoginWithPasswordForm
+                    username={this.props.username}
                     showLabels={this.props.showLabels}
                     showRememberMe={this.props.showRememberMe}
                     showForgotPassword={this.props.allowForgotPassword}
                     canShowPassword={this.props.canShowPassword}
-                    defaultEmail={defaultEmail}
                     handler={this.handleLogin} />
-                {this.props.allowSignup &&
-                    <Alternative>
-                        <span>{i18n('login.signupLinkPrefix')}</span>
-                        &nbsp;
-                        <Link target="signup">{i18n('login.signupLink')}</Link>
-                    </Alternative>
-                }
+                <Alternative>
+                    <Link target="login-with-web-authn">{i18n('login.password.userAnotherIdentifier')}</Link>
+                </Alternative>
             </div>
         );
     }

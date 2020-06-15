@@ -59,6 +59,7 @@ export default class SignupView extends React.Component {
             beforeSignup = x => x,
             i18n,
             config,
+            allowWebAuthnLogin
         } = this.props;
 
         const fields = buildFormFields(signupFields, { ...config, canShowPassword });
@@ -83,7 +84,7 @@ export default class SignupView extends React.Component {
             {this.props.allowLogin && <Alternative>
                 <span>{i18n('signup.loginLinkPrefix')}</span>
                 &nbsp;
-                <Link target="login">{i18n('signup.loginLink')}</Link>
+                <Link target={allowWebAuthnLogin ? 'login-with-web-authn' : 'login'}>{i18n('signup.loginLink')}</Link>
             </Alternative>}
         </div>;
     }

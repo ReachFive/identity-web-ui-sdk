@@ -15,6 +15,7 @@ export const createField = ({
     label,
     defaultValue,
     required = true,
+    readOnly = false,
     validator = emptyRule,
     mapping = new PathMapping(camelCasePath(path)),
     format = {
@@ -33,10 +34,12 @@ export const createField = ({
             path: key,
             label: i18n(label),
             required,
+            readOnly,
             i18n,
             showLabel,
             ...extParams
         };
+
         const fullValidator = (required ? requiredRule.and(validator) : validator).create(i18n);
         const Component = component;
 

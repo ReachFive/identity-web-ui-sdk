@@ -12,25 +12,26 @@ const SimpleField = props => {
         onChange,
         showLabel,
         inputId,
-        type,
-        required,
         label,
-        autoComplete,
         placeholder = label
     } = props;
+
     return (
-        <FormGroup inputId={inputId}
+        <FormGroup
+            inputId={inputId}
             labelText={label}
             {...pick(validation, 'error')}
             showLabel={showLabel}>
-            <Input id={inputId}
+            <Input
+                id={inputId}
                 name={path}
-                type={type}
+                type={props.type}
                 value={value || ''}
                 placeholder={placeholder}
-                autoComplete={autoComplete}
+                autoComplete={props.autoComplete}
                 title={label}
-                required={required}
+                required={props.required}
+                readOnly={props.readOnly}
                 hasError={!!validation.error}
                 onChange={event => onChange({ value: event.target.value })}
                 onBlur={() => onChange({ isDirty: true })}
