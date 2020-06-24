@@ -12,6 +12,7 @@ export interface Client {
     showProfileEditor(options: any): Promise<void>,
     showSocialAccounts(options: any): Promise<void>,
     showSocialLogin(options: any): Promise<void>,
+    showWebAuthnDevices(options: any): Promise<void>
 }
 
 export interface Config {
