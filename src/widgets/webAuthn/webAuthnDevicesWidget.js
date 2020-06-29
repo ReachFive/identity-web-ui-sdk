@@ -28,13 +28,15 @@ const DevicesList = withI18n(withTheme(({ devices, i18n, theme, removeWebAuthnDe
     </div>
 )));
 
-function MainView (props) {
+function WebAuthnDevices (props) {
     const { i18n, theme } = props;
 
-    const [devices, setDevices] = useState(props.devices);
+    const [devices, setDevices] = useState(props.devices || []);
 
     const removeWebAuthnDevice = (deviceId) => {
         const { accessToken, apiClient } = props;
+
+        if (!confirm("Do you confirm that you want to remove the device?")) return;
 
         return apiClient
             .removeWebAuthnDevice(accessToken, deviceId)
@@ -66,7 +68,6 @@ function MainView (props) {
                 theme={theme}
                 removeWebAuthnDevice={removeWebAuthnDevice} />}
 
-
         <div style={{ marginTop: theme.get('spacing') }}>
             <PrimaryButton onClick={addNewWebAuthnDevice}>Add a new FIDO2 compliant device</PrimaryButton>
         </div>
@@ -76,7 +77,7 @@ function MainView (props) {
 export default createWidget({
     name: 'webauthn-devices',
     standalone: false,
-    component: MainView,
+    component: WebAuthnDevices,
     prepare: (options, { apiClient, config }) => {
         const { accessToken } = options;
 
