@@ -6,6 +6,7 @@ import { PrimaryButton } from '../../components/form/buttonComponent';
 import { Heading, Info } from '../../components/miscComponent';
 import { createWidget } from '../../components/widget/widget';
 import { withI18n, withTheme } from '../../components/widget/widgetContext';
+import { UserError } from '../../helpers/errors';
 
 const DeviceName = styled.div`
     text-align: center;
@@ -80,6 +81,10 @@ export default createWidget({
     component: WebAuthnDevices,
     prepare: (options, { apiClient, config }) => {
         const { accessToken } = options;
+
+        if (!config.webAuthn) {
+            throw new UserError('The WebAuthn feature is not available on your account.');
+        }
 
         return apiClient
             .listWebAuthnDevices(accessToken)
