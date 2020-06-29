@@ -14,7 +14,7 @@ const DeviceName = styled.div`
 
 const DevicesList = withI18n(withTheme(({ devices, i18n, theme, removeWebAuthnDevice }) => (
     <div>
-        <Heading>List of the registered devices</Heading>
+        <Heading>{i18n('webauthn.registredDevices.list')}</Heading>
 
         <div>
             {devices.map(device => {
@@ -37,7 +37,7 @@ function WebAuthnDevices (props) {
     const removeWebAuthnDevice = (deviceId) => {
         const { accessToken, apiClient } = props;
 
-        if (!confirm("Do you confirm that you want to remove the device?")) return;
+        if (!confirm(i18n('webauthn.registredDevices.confirm.removal'))) return;
 
         return apiClient
             .removeWebAuthnDevice(accessToken, deviceId)
@@ -62,7 +62,7 @@ function WebAuthnDevices (props) {
 
     return <div>
         {devices.length === 0
-            ? <Info>No registered devices</Info>
+            ? <Info>{i18n('webauthn.registredDevices.no.list')}</Info>
             : <DevicesList
                 devices={devices}
                 i18n={i18n}
@@ -70,7 +70,7 @@ function WebAuthnDevices (props) {
                 removeWebAuthnDevice={removeWebAuthnDevice} />}
 
         <div style={{ marginTop: theme.get('spacing') }}>
-            <PrimaryButton onClick={addNewWebAuthnDevice}>Add a new FIDO2 compliant device</PrimaryButton>
+            <PrimaryButton onClick={addNewWebAuthnDevice}>{i18n('webauthn.registredDevices.add')}</PrimaryButton>
         </div>
     </div>
 }
