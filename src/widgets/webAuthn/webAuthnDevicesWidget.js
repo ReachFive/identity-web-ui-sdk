@@ -86,6 +86,10 @@ export default createWidget({
             throw new UserError('The WebAuthn feature is not available on your account.');
         }
 
+        if (!accessToken) {
+            throw new UserError('You must be logged in to manage the FIDO2 devices.');
+        }
+
         return apiClient
             .listWebAuthnDevices(accessToken)
             .then(devices => ({
