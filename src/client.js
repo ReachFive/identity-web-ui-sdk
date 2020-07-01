@@ -9,6 +9,7 @@ import passwordlessWidget from './widgets/passwordless/passwordlessWidget';
 import profileEditorWidget from './widgets/profileEditor/profileEditorWidget';
 import socialAccountsWidget from './widgets/socialAccounts/socialAccountsWidget';
 import socialLoginWidget from './widgets/socialLogin/socialLoginWidget';
+import webAuthnWidget from './widgets/webAuthn/webAuthnDevicesWidget';
 import { logError } from './helpers/logger';
 
 export class UiClient {
@@ -60,6 +61,10 @@ export class UiClient {
 
     showSocialAccounts(options) {
         this._showWidget(socialAccountsWidget, options);
+    }
+
+    showWebAuthnDevices(options) {
+        this._showWidget(webAuthnWidget, options);
     }
 
     async _showWidget(widget, options = {}, props = {}) {
