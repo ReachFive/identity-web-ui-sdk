@@ -1,5 +1,12 @@
 # Changelog
 
+## v.1.5.0
+
+### 01/07/2020
+
+### Feature
+- Add a new widget [`showWebAuthnDevices`](https://developer.reachfive.com/sdk-ui/showWebAuthnDevices.html) allowing the management of the user’s registered FIDO2 devices.
+
 ## v.1.4.1
 
 ### 18/06/2020
