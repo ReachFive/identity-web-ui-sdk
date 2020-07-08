@@ -53,7 +53,7 @@ export default createWidget({
         });
 
         if (haveNotAllowedFields) {
-            throw new UserError('Theses fields are not allowed: password, password_confirmation.');
+            throw new UserError('These fields are not allowed: password, password_confirmation.');
         }
 
         const resolvedFields = buildFormFields(fields, config);

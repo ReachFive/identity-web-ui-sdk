@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 
-import { Card, CloseIcon } from '../../components/form/cardComponent'
-import { PrimaryButton } from '../../components/form/buttonComponent';
-import { Error, Heading, Info } from '../../components/miscComponent';
+import { Card, CloseIcon } from '../../components/form/cardComponent';
+import { simpleField } from '../../components/form/fields/simpleField';
+import { createForm } from '../../components/form/formComponent';
+import { Heading, Info, Separator } from '../../components/miscComponent';
 import { createWidget } from '../../components/widget/widget';
 import { withI18n, withTheme } from '../../components/widget/widgetContext';
 import { UserError } from '../../helpers/errors';
@@ -12,14 +13,21 @@ const DeviceName = styled.div`
     text-align: center;
 `;
 
-const DeviceForm = withTheme(styled.div`
-    & > * {
-        margin-top: ${props => props.theme.get('spacing')}px;
-    }
-`);
+const DeviceInputForm = createForm({
+    prefix: 'r5-device-editor-',
+    fields: [
+        simpleField({
+            key: 'friendlyName',
+            label: 'webauthn.friendly.name'
+        })
+    ],
+    submitLabel: 'add',
+    supportMultipleSubmits: true,
+    resetAfterSuccess: true
+});
 
 const DevicesList = withI18n(withTheme(({ devices, i18n, theme, removeWebAuthnDevice }) => (
-    <div>
+    <div style={{ marginBottom: theme.get('spacing') }}>
         <Heading>{i18n('webauthn.registredDevices.list')}</Heading>
 
         <div>
@@ -39,12 +47,9 @@ function WebAuthnDevices (props) {
     const { i18n, theme } = props;
 
     const [devices, setDevices] = useState(props.devices || []);
-    const [error, setError] = useState(undefined);
 
     const removeWebAuthnDevice = (deviceId) => {
         const { accessToken, apiClient } = props;
-
-        setError(undefined);
 
         if (!confirm(i18n('webauthn.registredDevices.confirm.removal'))) return;
 
@@ -57,22 +62,15 @@ function WebAuthnDevices (props) {
             });
     }
 
-    const addNewWebAuthnDevice = () => {
+    const addNewWebAuthnDevice = data => {
         const { accessToken, apiClient } = props;
 
-        setError(undefined);
-
         return apiClient
-            .addNewWebAuthnDevice(accessToken)
+            .addNewWebAuthnDevice(accessToken, data.friendlyName)
             .then(() => {
                 return apiClient.
                     listWebAuthnDevices(accessToken)
                     .then(newDevices => setDevices(newDevices));
-            })
-            .catch(error => {
-                if (error.errorMessageKey === 'error.webauthn.friendlyNameAlreadyAssociated') {
-                    setError('This device is already registered.');
-                }
             })
     }
 
@@ -85,16 +83,16 @@ function WebAuthnDevices (props) {
                 theme={theme}
                 removeWebAuthnDevice={removeWebAuthnDevice} />}
 
-        <DeviceForm>
-            <PrimaryButton onClick={addNewWebAuthnDevice}>{i18n('webauthn.registredDevices.add')}</PrimaryButton>
-            <Error>{error}</Error>
-        </DeviceForm>
+        <Separator text={i18n('webauthn.registredDevices.add')} />
+
+        <DeviceInputForm
+            showLabels={props.showLabels}
+            handler={addNewWebAuthnDevice} />
     </div>
 }
 
 export default createWidget({
     name: 'webauthn-devices',
-    standalone: false,
     component: WebAuthnDevices,
     prepare: (options, { apiClient, config }) => {
         const { accessToken } = options;
