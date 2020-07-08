@@ -59,6 +59,12 @@ export function createForm(config) {
             return field.validate(fieldState, formState) || {};
         }
 
+        formatErrorMessage(err) {
+            const i18nErrorMessage = this.props.i18n(err.errorMessageKey);
+
+            return i18nErrorMessage === err.errorMessageKey ? err.errorUserMsg : i18nErrorMessage;
+        }
+
         // Returns boolean
         validateAllFields(callback) {
             this.setState(prevState => {
@@ -130,7 +136,7 @@ export function createForm(config) {
             if (this.unmounted) return;
             this.setState({
                 isLoading: false,
-                errorMessage: err.errorUserMsg || this.props.i18n('unexpectedErrorOccurred'),
+                errorMessage: this.formatErrorMessage(err) || this.props.i18n('unexpectedErrorOccurred'),
                 ...(this.props.resetAfterError ? { fields: this.applyModel({}) } : {})
             });
         };
