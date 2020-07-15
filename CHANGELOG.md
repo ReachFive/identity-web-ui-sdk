@@ -1,5 +1,13 @@
 # Changelog
 
+## v.1.7.0
+
+### 08/07/2020
+
+### Feature
+- The user can now set the device's name in the [showWebAuthnDevices](https://developer.reachfive.com/sdk-ui/showWebAuthnDevices.html) widget.
+- The server error messages can now be overload in the `i18n` widget option.
+
 ## v.1.6.0
 
 ### 07/07/2020
