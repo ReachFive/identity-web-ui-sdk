@@ -135,6 +135,14 @@ function customFieldComponent(customField, cfg) {
             ...baseConfig,
             values: customField.selectableValues
         })
+    } else if (customField.dataType === 'email') {
+        return simpleField({
+            ...baseConfig,
+            type: 'email',
+            validator: email
+        });
+    } else if (customField.dataType === 'phone') {
+        return simpleField(baseConfig)
     } else if (customField.dataType === 'string') {
         return simpleField(baseConfig)
     } else {
