@@ -158,6 +158,7 @@ function consentFieldComponent(consent, cfg) {
         extendedParams: {
             description: consent.description
         },
+        type: consent.consentType,
         ...cfg,
         key: `consents.${consent.key}`
     };

@@ -43,10 +43,8 @@ export default function consentField(config) {
         defaultValue: config.defaultValue && { granted: config.defaultValue },
         format: {
             bind: x => !!(x && x.granted),
-            unbind: x => ({ granted: x, consentType: consentTypeFromInitialValue(config.defaultValue) })
+            unbind: x => ({ granted: x, consentType: config.type })
         },
         component: ConsentField
     });
 }
-
-const consentTypeFromInitialValue = (value) => value ? "opt-out" : "opt-in"
