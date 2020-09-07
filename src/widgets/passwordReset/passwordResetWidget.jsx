@@ -60,7 +60,7 @@ const resolveCode = () => {
         ? window.location.search.substr(1)
         : '';
 
-    return { authentication: pick(parseQueryString(qs), ['verificationCode', 'email', 'purpose']) };
+    return { authentication: pick(parseQueryString(qs), ['verificationCode', 'email']) };
 };
 
 export default createMultiViewWidget({
