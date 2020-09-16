@@ -1,5 +1,15 @@
 # Changelog
 
+## v1.9.0
+
+### 16/09/2020
+
+### Feature
+Always override account `opt-out` consents.
+
+### Fix
+Fix the CircleCi job to deploy a new version.
+
 ## v1.8.0
 
 ### 22/07/2020
