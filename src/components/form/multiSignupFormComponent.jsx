@@ -1,6 +1,5 @@
 import React from 'react';
 
-
 import { createForm } from './formComponent';
 import { buildFormFields } from './formFieldFactory';
 
