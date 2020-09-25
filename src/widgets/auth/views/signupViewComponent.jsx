@@ -76,11 +76,20 @@ export default class SignupView extends React.Component {
             {socialProviders && socialProviders.length > 0 &&
                 <SocialButtons providers={socialProviders} auth={this.props.auth} />}
             {socialProviders && socialProviders.length > 0 && <Separator text={i18n('or')} />}
-            <SignupForm
-                fields={allFields}
-                showLabels={this.props.showLabels}
-                beforeSubmit={beforeSignup}
-                handler={this.handleSignup} />
+
+            {this.props.allowWebAuthnSignup
+                ? <div>
+                    <Link target={'signup-with-web-authn'}>FIDO2</Link>
+                    <Separator text={i18n('or')} />
+                    <Link target={'signup-with-password'}>Password</Link>
+                </div>
+                : <SignupForm
+                    fields={allFields}
+                    showLabels={this.props.showLabels}
+                    beforeSubmit={beforeSignup}
+                    handler={this.handleSignup} />
+            }
+
             {this.props.allowLogin && <Alternative>
                 <span>{i18n('signup.loginLinkPrefix')}</span>
                 &nbsp;
