@@ -2,6 +2,7 @@ import React from 'react';
 
 import { createForm } from '../../../components/form/formComponent';
 import { buildFormFields } from '../../../components/form/formFieldFactory';
+import { simpleField } from '../../../components/form/fields/simpleField';
 import { Heading, Link, MarkdownContent } from '../../../components/miscComponent';
 import { snakeCaseProperties } from '../../../helpers/transformObjectProperties';
 
@@ -33,10 +34,11 @@ export default class SignupWithWebAuthnView extends React.Component {
             userAgreement
         } = this.props;
 
-        // The password fields shouldn't be in the webauthn signup even if they are provided in the options
-        const filteredSignupFields = signupFields.filter(field => field !== 'password' && field !== 'password_confirmation')
+        const webAuthnSignupFields = signupFields
+            .filter(field => field !== 'password' && field !== 'password_confirmation')
+            .concat('device_friendly_name')
 
-        const fields = buildFormFields(filteredSignupFields, this.props.config);
+        const fields = buildFormFields(webAuthnSignupFields, this.props.config);
 
         const allFields = userAgreement
         ? [

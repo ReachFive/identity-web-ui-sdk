@@ -95,6 +95,12 @@ const predefinedFields = {
         key: 'address.country',
         label: 'address.country',
         ...cfg
+    }),
+    deviceFriendlyName: cfg => simpleField({
+        key: 'friendlyName',
+        label: 'friendlyName',
+        required: false,
+        ...cfg
     })
 };
 
