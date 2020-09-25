@@ -2,7 +2,6 @@ import React from 'react';
 
 import { createForm } from '../../../components/form/formComponent';
 import { buildFormFields } from '../../../components/form/formFieldFactory';
-import { simpleField } from '../../../components/form/fields/simpleField';
 import { Heading, Link, MarkdownContent } from '../../../components/miscComponent';
 import { snakeCaseProperties } from '../../../helpers/transformObjectProperties';
 
@@ -51,13 +50,13 @@ export default class SignupWithWebAuthnView extends React.Component {
 
 
         return <div>
-            <Heading>Signup with FIDO2</Heading>
+            <Heading>{this.props.i18n('signup.withBiometric')}</Heading>
             <SignupForm
                 fields={allFields}
                 showLabels={this.props.showLabels}
                 beforeSubmit={beforeSignup}
                 handler={this.handleSignup} />
-            <Link target={'signup'}>Back</Link>
+            <Link target={'signup'}>{this.props.i18n('back')}</Link>
         </div>;
     }
 }

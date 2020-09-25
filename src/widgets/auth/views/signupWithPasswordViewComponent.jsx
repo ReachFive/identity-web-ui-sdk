@@ -1,14 +1,14 @@
 import React from 'react';
 
 import { Heading, Link } from '../../../components/miscComponent';
-import MultiSignupForm from '../../../components/form/multiSignupFormComponent';
+import PasswordSignupForm from '../../../components/form/passwordSignupFormComponent';
 
 export default class SignupWithPasswordView extends React.Component {
     render() {
         return <div>
-            <Heading>Signup with password</Heading>
-            <MultiSignupForm {...this.props} />
-            <Link target={'signup'}>Back</Link>
+            <Heading>{this.props.i18n('signup.withPassword')}</Heading>
+            <PasswordSignupForm {...this.props} />
+            <Link target={'signup'}>{this.props.i18n('back')}</Link>
         </div>;
     }
 }

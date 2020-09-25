@@ -2,7 +2,7 @@ import React from 'react';
 
 import { Heading, Link, Alternative, Separator } from '../../../components/miscComponent';
 import SocialButtons from '../../../components/form/socialButtonsComponent';
-import MultiSignupForm from '../../../components/form/multiSignupFormComponent';
+import PasswordSignupForm from '../../../components/form/passwordSignupFormComponent';
 
 
 export default class SignupView extends React.Component {
@@ -21,7 +21,7 @@ export default class SignupView extends React.Component {
                     <Separator text={i18n('or')} />
                     <Link target={'signup-with-password'}>Password</Link>
                 </div>
-                : <MultiSignupForm {...this.props} />
+                : <PasswordSignupForm {...this.props} />
             }
 
             {this.props.allowLogin && <Alternative>

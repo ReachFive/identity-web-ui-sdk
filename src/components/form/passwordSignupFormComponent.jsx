@@ -4,7 +4,7 @@ import { createForm } from './formComponent';
 import { buildFormFields } from './formFieldFactory';
 
 import { snakeCaseProperties } from '../../helpers/transformObjectProperties';
-import { MarkdownContent } from '../../components/miscComponent';
+import { MarkdownContent } from '../miscComponent';
 
 const defaultSignupFields = [
     'given_name',
@@ -19,13 +19,12 @@ const SignupForm = createForm({
     submitLabel: 'signup.submitLabel'
 });
 
-export default function MultiSignupForm(props) {
+export default function PasswordSignupForm(props) {
     const {
         beforeSignup = x => x,
         signupFields = defaultSignupFields,
         userAgreement,
         canShowPassword,
-        i18n,
         config
     } = props;
 
