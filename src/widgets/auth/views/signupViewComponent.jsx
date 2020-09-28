@@ -17,7 +17,10 @@ export default class SignupView extends React.Component {
             {socialProviders && socialProviders.length > 0 && <Separator text={i18n('or')} />}
 
             {this.props.allowWebAuthnSignup
-                ? <WebAuthnSignupViewPrimaryButtons i18n={i18n} />
+                ? <WebAuthnSignupViewPrimaryButtons
+                    onPasswordClick={() => this.props.goTo('signup-with-password')}
+                    onBiometricClick={() => this.props.goTo('signup-with-web-authn')}
+                    i18n={i18n} />
                 : <PasswordSignupForm {...this.props} />
             }
 

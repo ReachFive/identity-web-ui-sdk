@@ -44,9 +44,9 @@ const PrimaryButtonWithIcon = styled(withTheme(({ type = "submit", onClick, disa
     }
 `;
 
-export const WebAuthnSignupViewPrimaryButtons = styled(({ disabled, onClick, i18n, className }) => <div className={classes(['r5-webauthn-signup-buttons'], className)}>
+export const WebAuthnSignupViewPrimaryButtons = styled(({ onBiometricClick, onPasswordClick, i18n, className }) => <div className={classes(['r5-webauthn-signup-buttons'], className)}>
 <PrimaryButtonWithIcon
-    type="submit"
+    onClick={onBiometricClick}
     title="Signup with biometrics"
     text="Biometrics">
     <FingerPrintIcon />
@@ -55,9 +55,8 @@ export const WebAuthnSignupViewPrimaryButtons = styled(({ disabled, onClick, i18
 <Separator text={i18n('or')} />
 
 <PrimaryButtonWithIcon
+    onClick={onPasswordClick}
     title="Signup with password"
-    disabled={disabled}
-    onClick={onClick}
     text="Password">
     <KeyboardIcon />
 </PrimaryButtonWithIcon>
