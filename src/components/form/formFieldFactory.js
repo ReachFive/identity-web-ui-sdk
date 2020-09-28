@@ -98,7 +98,7 @@ const predefinedFields = {
     }),
     deviceFriendlyName: cfg => simpleField({
         key: 'friendlyName',
-        label: 'friendlyName',
+        label: 'webauthn.friendly.name',
         required: false,
         ...cfg
     })

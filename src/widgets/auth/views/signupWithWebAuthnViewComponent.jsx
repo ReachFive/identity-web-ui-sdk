@@ -50,7 +50,7 @@ export default class SignupWithWebAuthnView extends React.Component {
 
 
         return <div>
-            <Heading>{this.props.i18n('signup.withBiometric')}</Heading>
+            <Heading>{this.props.i18n('signup.withBiometrics')}</Heading>
             <SignupForm
                 fields={allFields}
                 showLabels={this.props.showLabels}
