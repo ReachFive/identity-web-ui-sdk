@@ -4,7 +4,7 @@ import { email } from '../../../core/validation';
 import { Heading, Link, Alternative, Separator } from '../../../components/miscComponent';
 
 import SocialButtons from '../../../components/form/socialButtonsComponent';
-import { WebAuthnLoginViewPrimaryButtons } from './../../../components/form/webAuthLoginButtonsComponent';
+import { WebAuthnLoginViewButtons } from './../../../components/form/webAuthAndPasswordButtonsComponent';
 import { createForm } from '../../../components/form/formComponent';
 import { simpleField } from '../../../components/form/fields/simpleField';
 
@@ -46,10 +46,10 @@ export default class LoginWithWebAuthnView extends React.Component {
 
         const defaultEmail = session.lastLoginType === 'password' ? session.email : null;
 
-        const webAuthnButtons = (disabled, handleClick) => <WebAuthnLoginViewPrimaryButtons
+        const webAuthnButtons = (disabled, handleClick) => <WebAuthnLoginViewButtons
             disabled={disabled}
             i18n={i18n}
-            onClick={handleClick} />
+            onPasswordClick={handleClick} />
 
         return (
             <div>

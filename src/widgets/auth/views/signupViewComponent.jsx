@@ -3,7 +3,7 @@ import React from 'react';
 import { Heading, Link, Alternative, Separator } from '../../../components/miscComponent';
 import SocialButtons from '../../../components/form/socialButtonsComponent';
 import PasswordSignupForm from '../../../components/form/passwordSignupFormComponent';
-import { WebAuthnSignupViewPrimaryButtons } from '../../../components/form/webAuthnSignupButtonsComponent';
+import { WebAuthnSignupViewButtons } from '../../../components/form/webAuthAndPasswordButtonsComponent';
 
 
 export default class SignupView extends React.Component {
@@ -17,7 +17,7 @@ export default class SignupView extends React.Component {
             {socialProviders && socialProviders.length > 0 && <Separator text={i18n('or')} />}
 
             {this.props.allowWebAuthnSignup
-                ? <WebAuthnSignupViewPrimaryButtons
+                ? <WebAuthnSignupViewButtons
                     onPasswordClick={() => this.props.goTo('signup-with-password')}
                     onBiometricClick={() => this.props.goTo('signup-with-web-authn')}
                     i18n={i18n} />
