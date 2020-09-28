@@ -37,7 +37,7 @@ const ButtonsSeparator = withTheme(styled.div`
     color: ${props => props.theme.get('mutedTextColor')}
 `);
 
-export const WebAuthnViewPrimaryButtons = styled(({ disabled, onClick, i18n, className }) => <div className={classes(['r5-webauthn-buttons'], className)}>
+export const WebAuthnLoginViewPrimaryButtons = styled(({ disabled, onClick, i18n, className }) => <div className={classes(['r5-webauthn-login-buttons'], className)}>
     <PrimaryButtonWithIcon
         type="submit"
         title="Login with biometrics"
