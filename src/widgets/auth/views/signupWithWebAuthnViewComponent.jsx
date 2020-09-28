@@ -2,7 +2,7 @@ import React from 'react';
 
 import { createForm } from '../../../components/form/formComponent';
 import { buildFormFields } from '../../../components/form/formFieldFactory';
-import { Heading, Link, MarkdownContent } from '../../../components/miscComponent';
+import { Alternative, Heading, Link, MarkdownContent } from '../../../components/miscComponent';
 import { snakeCaseProperties } from '../../../helpers/transformObjectProperties';
 
 const defaultSignupFields = [
@@ -56,7 +56,9 @@ export default class SignupWithWebAuthnView extends React.Component {
                 showLabels={this.props.showLabels}
                 beforeSubmit={beforeSignup}
                 handler={this.handleSignup} />
-            <Link target={'signup'}>{this.props.i18n('back')}</Link>
+            <Alternative>
+                <Link target={'signup'}>{this.props.i18n('back')}</Link>
+            </Alternative>
         </div>;
     }
 }
