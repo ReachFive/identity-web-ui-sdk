@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { UserAggreementStyle } from '../../../components/form/formControlsComponent'
 import { createForm } from '../../../components/form/formComponent';
 import { buildFormFields } from '../../../components/form/formFieldFactory';
 import { Alternative, Heading, Link, MarkdownContent } from '../../../components/miscComponent';

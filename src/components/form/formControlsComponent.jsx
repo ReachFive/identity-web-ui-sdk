@@ -160,3 +160,23 @@ export const RadioGroup = ({ options, onChange, value, name, ...props }) => (
         ))}
     </FormGroup>
 );
+
+export const UserAggreementStyle = withTheme(styled.div`
+    font-size: ${props => props.theme.get('fontSize') * 0.8}px;
+    color: ${props => props.theme.get('mutedTextColor')};
+    text-align: center;
+    margin-bottom: ${props => props.theme.get('spacing')}px;
+
+    p {
+        margin: 0;
+    }
+
+    a {
+        color: ${props => props.theme.get('mutedTextColor')};
+        text-decoration: underline;
+    }
+
+    a:hover {
+        color: ${props => props.theme.get('mutedTextColor')};
+    }
+`);

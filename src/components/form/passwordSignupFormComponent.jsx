@@ -2,6 +2,7 @@ import React from 'react';
 
 import { createForm } from './formComponent';
 import { buildFormFields } from './formFieldFactory';
+import { UserAggreementStyle } from './formControlsComponent'
 
 import { snakeCaseProperties } from '../../helpers/transformObjectProperties';
 import { MarkdownContent } from '../miscComponent';
