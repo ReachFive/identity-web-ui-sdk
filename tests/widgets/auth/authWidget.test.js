@@ -26,6 +26,8 @@ const defaultConfig = {
     }]
 };
 
+const webauthnConfig = { ...defaultConfig, webAuthn: true};
+
 describe('Snapshot', () => {
     const generateSnapshot = (options, config = defaultConfig) => () => {
         const tree = authWidget(options, { config, apiClient: {} })
@@ -97,6 +99,27 @@ describe('Snapshot', () => {
             signupFields: ['email', 'password', 'consents.aConsent']
         }));
     });
+
+    describe('with webauthn feature', () => {
+        test('login view with webauthn or password', generateSnapshot({
+            allowWebAuthnLogin: true
+        }, webauthnConfig))
+
+        test('signup view with webauthn or password ', generateSnapshot({
+            allowWebAuthnSignup: true,
+            initialScreen: 'signup'
+        }, webauthnConfig))
+
+        test('signup form view with password', generateSnapshot({
+            allowWebAuthnSignup: true,
+            initialScreen: 'signup-with-password'
+        }, webauthnConfig))
+
+        test('signup form view with webauthn', generateSnapshot({
+            allowWebAuthnSignup: true,
+            initialScreen: 'signup-with-web-authn'
+        }, webauthnConfig))
+    })
 
     describe('forgot password view', () => {
         test('default', generateSnapshot({
@@ -330,6 +353,99 @@ describe('DOM testing', () => {
             signupFields.forEach(field => {
                 expect(instance.find(`input[name="${field}"]`)).toHaveLength(1);
             });
+        });
+    });
+
+    describe('with webauthn feature', () => {
+        test('login view', async () => {
+            expect.assertions(5);
+            const instance = await generateComponent({ allowWebAuthnLogin: true }, webauthnConfig);
+
+            // Social buttons
+            expect(instance.find('span').filter(textFilter('Facebook'))).toHaveLength(1);
+            expect(instance.find('span').filter(textFilter('Google'))).toHaveLength(1);
+
+            // Email input
+            expect(instance.find('input[name="email"]')).toHaveLength(1);
+
+            // Form buttons
+            expect(instance.find('button')).toHaveLength(2);
+
+            // Sign in link
+            expect(instance.find('a').text()).toEqual('login.signupLink');
+        });
+
+        test('signup view with password or webauthn', async () => {
+            expect.assertions(6);
+            const instance = await generateComponent(
+                { allowWebAuthnSignup: true,  initialScreen: 'signup' },
+                webauthnConfig
+            );
+
+            // Social buttons
+            expect(instance.find('span').filter(textFilter('Facebook'))).toHaveLength(1);
+            expect(instance.find('span').filter(textFilter('Google'))).toHaveLength(1);
+
+            // Form buttons
+            const buttons = instance.find('button');
+            expect(buttons).toHaveLength(2);
+            expect(buttons.eq(0).text()).toBe('biometrics');
+            expect(buttons.eq(1).text()).toBe('password');
+
+            // Login in link
+            expect(instance.find('a').text()).toEqual('signup.loginLink');
+        });
+
+
+        test('signup form view with password', async () => {
+            expect.assertions(8);
+            const instance = await generateComponent(
+                { allowWebAuthnSignup: true,  initialScreen: 'signup-with-password' },
+                webauthnConfig
+            );
+
+            // Form fields
+            expect(instance.find('input')).toHaveLength(5);
+            [
+                'given_name',
+                'family_name',
+                'email',
+                'password',
+                'password_confirmation'
+            ].forEach(field => {
+                expect(instance.find(`input[name="${field}"]`)).toHaveLength(1)
+            });
+
+            // Form button
+            expect(instance.find('button').text()).toEqual('signup.submitLabel');
+
+            // Back link
+            expect(instance.find('a').text()).toEqual('back');
+        });
+
+        test('signup form view with webauthn', async () => {
+            expect.assertions(7);
+            const instance = await generateComponent(
+                { allowWebAuthnSignup: true,  initialScreen: 'signup-with-web-authn' },
+                webauthnConfig
+            );
+
+            // Form fields
+            expect(instance.find('input')).toHaveLength(4);
+            [
+                'given_name',
+                'family_name',
+                'email',
+                'device_friendly_name'
+            ].forEach(field => {
+                expect(instance.find(`input[name="${field}"]`)).toHaveLength(1)
+            });
+
+            // Form button
+            expect(instance.find('button').text()).toEqual('signup.submitLabel');
+
+            // Back link
+            expect(instance.find('a').text()).toEqual('back');
         });
     });
 });

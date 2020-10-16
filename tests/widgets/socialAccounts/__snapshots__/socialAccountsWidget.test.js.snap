@@ -4,6 +4,9 @@ exports[`Snapshot basic 1`] = `
 .c1 {
   text-align: center;
   margin-bottom: 10px;
+}
+
+.c2 {
   color: #495057;
 }
 
@@ -21,7 +24,7 @@ exports[`Snapshot basic 1`] = `
   margin: 0 auto;
 }
 
-.c2 {
+.c3 {
   display: block;
   width: 100%;
   box-sizing: border-box;
@@ -46,19 +49,19 @@ exports[`Snapshot basic 1`] = `
   transition: all .15s ease-in-out;
 }
 
-.c2:focus {
+.c3:focus {
   outline: 0;
   box-shadow: 0 0 0 3px rgba(206,212,218,0.5);
 }
 
-.c2:hover,
-.c2:active {
+.c3:hover,
+.c3:active {
   color: #495057;
   background-color: #ebebeb;
   border-color: #b7c0c8;
 }
 
-.c2[disabled] {
+.c3[disabled] {
   opacity: .65;
 }
 
@@ -67,7 +70,7 @@ exports[`Snapshot basic 1`] = `
 >
   <div>
     <div
-      className="sc-AxhCb c1"
+      className="c1 c2"
     >
       socialAccounts.noLinkedAccount
     </div>
@@ -80,7 +83,7 @@ exports[`Snapshot basic 1`] = `
     }
   >
     <button
-      className="c2"
+      className="c3"
       onClick={[Function]}
     >
       socialAccounts.linkNewAccount
