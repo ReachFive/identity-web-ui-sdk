@@ -1,5 +1,12 @@
 # Changelog
 
+## v1.10.0
+
+### 16/10/2020
+
+### Feature
+The [`showAuth`](https://developer.reachfive.com/sdk-ui/showAuth.html) widget can now handle signup with biometrics if the `allowWebAuthnSignup` option is enabled.
+
 ## v1.9.0
 
 ### 16/09/2020
@@ -15,7 +22,7 @@ Fix the CircleCi job to deploy a new version.
 ### 22/07/2020
 
 ### Feature
-- Add custom fields types (email & phone)
+Add custom fields types (email & phone).
 
 ## v1.7.0
 
