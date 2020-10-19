@@ -6,8 +6,6 @@ import LoginView from './views/loginViewComponent'
 import LoginWithWebAuthnView from './views/loginWithWebAuthnViewComponent'
 import LoginWithPasswordView from './views/loginWithPasswordViewComponent'
 import SignupView from './views/signupViewComponent'
-import SignupWithPasswordView from './views/signupWithPasswordViewComponent'
-import SignupWithWebAuthnView from './views/signupWithWebAuthnViewComponent'
 import { ForgotPasswordView, ForgotPasswordSuccessView } from './views/forgotPasswordViewComponent'
 import QuickLoginView from './views/quickLoginViewComponent'
 import ReauthView from './views/reauthViewComponent'
@@ -32,8 +30,6 @@ export default createMultiViewWidget({
         'login-with-web-authn': LoginWithWebAuthnView,
         'login-with-password': LoginWithPasswordView,
         'signup': SignupView,
-        'signup-with-password': SignupWithPasswordView,
-        'signup-with-web-authn': SignupWithWebAuthnView,
         'forgot-password': ForgotPasswordView,
         'forgot-password-success': ForgotPasswordSuccessView,
         'quick-login': QuickLoginView,
