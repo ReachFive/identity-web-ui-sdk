@@ -1,5 +1,12 @@
 # Changelog
 
+## v1.10.1
+
+### 19/10/2020
+
+### Fix
+Revert the latest FIDO2 signup feature since it's breaking the style of Hosted Pages.
+
 ## v1.10.0
 
 ### 16/10/2020
