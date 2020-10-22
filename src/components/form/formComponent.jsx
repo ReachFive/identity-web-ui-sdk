@@ -89,7 +89,6 @@ export function createForm(config) {
         }
 
         handleFieldChange = (fieldName, stateUpdate) => {
-            console.log("handleFieldChange")
             this.setState(prevState => {
                 const currentState = prevState.fields[fieldName];
                 const newState = {
@@ -211,7 +210,9 @@ export function createForm(config) {
                             debounce(function (component) {
                                 component.handleFieldValidation(field.key)
                             }, 500)(this);
-                        }
+                            this.props.onFieldChange(this.state.fields);
+                        },
+                        ...this.props.sharedProps
                     }) : field.staticContent)
                 }
                 {
