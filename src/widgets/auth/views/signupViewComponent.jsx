@@ -47,7 +47,7 @@ const UserAggreementStyle = withTheme(styled.div`
 
 export default class SignupView extends React.Component {
     state = {
-        blacklist: ['chocolatine']
+        blacklist: []
     }
 
     handleSignup = data => this.props.apiClient.signup({
@@ -58,17 +58,17 @@ export default class SignupView extends React.Component {
     });
 
     refreshBlacklist = data => {
-        const email = data['email'].value.split('@')
-        const givenName = data['given_name'].value.split(' ')
-        const lastName = data['family_name'].value.split(' ')
+        const email = data['email'].value.split('@');
+        const givenName = data['given_name'].value.split(' ');
+        const lastName = data['family_name'].value.split(' ');
 
         const blacklist =
             [email, givenName, lastName]
                 .flat(1)
                 .map(str => str.trim().toLowerCase())
-                .filter(function (word) { return isValued(word) })
+                .filter(function (word) { return isValued(word) });
 
-        const distinct = uniq(blacklist)
+        const distinct = uniq(blacklist);
 
         if (!isEqual(distinct, this.state.blacklist)) {
             this.setState({blacklist: distinct});
