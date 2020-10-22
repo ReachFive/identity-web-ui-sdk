@@ -23,6 +23,7 @@ export function createForm(config) {
             submitLabel: 'send',
             showLabels: false,
             skipError: false,
+            fieldValidationDebounce: 500,
             ...config
         };
 
@@ -197,7 +198,7 @@ export function createForm(config) {
         }
 
         render() {
-            const { submitLabel, allowWebAuthnLogin, i18n } = this.props;
+            const { submitLabel, allowWebAuthnLogin, i18n, fieldValidationDebounce } = this.props;
             const { errorMessage, isLoading, fields } = this.state;
 
             return <Form noValidate onSubmit={this.handleSubmit}>
@@ -209,7 +210,7 @@ export function createForm(config) {
                             this.handleFieldChange(field.key, newState);
                             debounce(function (component) {
                                 component.handleFieldValidation(field.key)
-                            }, 500)(this);
+                            }, fieldValidationDebounce)(this);
                             this.props.onFieldChange(this.state.fields);
                         },
                         ...this.props.sharedProps

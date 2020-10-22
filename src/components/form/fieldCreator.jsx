@@ -40,7 +40,7 @@ export const createField = ({
             ...extParams
         };
 
-        const fullValidator = (required ? requiredRule.and(validator) : validator).create(i18n)
+        const fullValidator = (required ? requiredRule.and(validator) : validator).create(i18n);
         const Component = component;
 
         return {
