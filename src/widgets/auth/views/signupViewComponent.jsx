@@ -58,9 +58,9 @@ export default class SignupView extends React.Component {
     });
 
     refreshBlacklist = data => {
-        const email = data['email'].value.split('@');
-        const givenName = data['given_name'].value.split(' ');
-        const lastName = data['family_name'].value.split(' ');
+        const email = data['email'] && data['email'].value.split('@') || "";
+        const givenName = data['given_name'] && data['given_name'].value.split(' ') || "";
+        const lastName = data['family_name'] && data['family_name'].value.split(' ') || "";
 
         const blacklist =
             [email, givenName, lastName]

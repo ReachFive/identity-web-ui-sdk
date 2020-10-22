@@ -24,6 +24,7 @@ export function createForm(config) {
             showLabels: false,
             skipError: false,
             fieldValidationDebounce: 1000,
+            onFieldChange: x => x,
             ...config
         };
 
@@ -90,6 +91,8 @@ export function createForm(config) {
         }
 
         handleFieldChange = (fieldName, stateUpdate) => {
+            this.props.onFieldChange(this.state.fields);
+
             this.setState(prevState => {
                 const currentState = prevState.fields[fieldName];
                 const newState = {
@@ -211,7 +214,6 @@ export function createForm(config) {
                             debounce(function (component) {
                                 component.handleFieldValidation(field.key)
                             }, fieldValidationDebounce)(this);
-                            this.props.onFieldChange(this.state.fields);
                         },
                         ...this.props.sharedProps
                     }) : field.staticContent)
