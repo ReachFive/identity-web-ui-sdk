@@ -23,7 +23,7 @@ export function createForm(config) {
             submitLabel: 'send',
             showLabels: false,
             skipError: false,
-            fieldValidationDebounce: 500,
+            fieldValidationDebounce: 1000,
             ...config
         };
 
