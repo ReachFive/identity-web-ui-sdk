@@ -193,7 +193,7 @@ export const passwordField = ({ label = 'password', canShowPassword = false, ...
                     errors.push(i18n('validation.required'));
                 }
                 else {
-                    const includesBannedWords = blacklist.some(str => value.toLowerCase().includes(str))
+                    const includesBannedWords = blacklist.some(str => value.toLowerCase().includes(str));
                     if (includesBannedWords || strength < passwordPolicy.minStrength) {
                         errors.push(i18n('validation.password.minStrength'));
                     }
