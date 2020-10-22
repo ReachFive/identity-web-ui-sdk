@@ -3,6 +3,7 @@ import React from 'react';
 import isFunction from 'lodash-es/isFunction';
 import some from 'lodash-es/some';
 import compact from 'lodash-es/compact';
+import debounce from 'lodash-es/debounce';
 import styled from 'styled-components';
 
 import { PrimaryButton } from './buttonComponent';
@@ -88,17 +89,34 @@ export function createForm(config) {
         }
 
         handleFieldChange = (fieldName, stateUpdate) => {
+            console.log("handleFieldChange")
             this.setState(prevState => {
                 const currentState = prevState.fields[fieldName];
                 const newState = {
                     ...currentState,
                     ...(isFunction(stateUpdate) ? stateUpdate(currentState) : stateUpdate)
                 };
-                const validation = this.validateField(this.fieldByKey[fieldName], newState, prevState);
                 const newFields = {
                     ...prevState.fields,
                     [fieldName]: {
                         ...newState,
+                    }
+                };
+
+                return {
+                    fields: newFields
+                };
+            });
+        };
+
+        handleFieldValidation = (fieldName) => {
+            this.setState(prevState => {
+                const currentState = prevState.fields[fieldName];
+                const validation = this.validateField(this.fieldByKey[fieldName], currentState, this.state);
+                const newFields = {
+                    ...prevState.fields,
+                    [fieldName]: {
+                        ...currentState,
                         validation
                     }
                 };
@@ -188,7 +206,12 @@ export function createForm(config) {
                 {
                     this.allFields.map(field => !field.staticContent ? field.render({
                         state: fields[field.key],
-                        onChange: newState => this.handleFieldChange(field.key, newState)
+                        onChange: newState => {
+                            this.handleFieldChange(field.key, newState);
+                            debounce(function (component) {
+                                component.handleFieldValidation(field.key)
+                            }, 500)(this);
+                        }
                     }) : field.staticContent)
                 }
                 {

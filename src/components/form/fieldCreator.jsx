@@ -40,7 +40,7 @@ export const createField = ({
             ...extParams
         };
 
-        const fullValidator = (required ? requiredRule.and(validator) : validator).create(i18n);
+        const fullValidator = (required ? requiredRule.and(validator) : validator).create(i18n)
         const Component = component;
 
         return {
@@ -56,7 +56,7 @@ export const createField = ({
             },
             unbind: (model, { value }) => mapping.unbind(model, format.unbind(value)),
             validate: ({ value, isDirty }, ctx) => (
-                (isDirty || ctx.isSubmitted) && (required || isValued(value)) ? fullValidator(value, ctx) : {}
+                (required || isValued(value)) ? fullValidator(value, ctx) : {}
             )
         };
     }
