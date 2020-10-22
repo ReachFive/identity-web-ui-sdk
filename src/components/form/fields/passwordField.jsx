@@ -58,7 +58,7 @@ class PasswordField extends React.Component {
     };
 
     componentDidUpdate(prevProps, prevState, snapshot) {
-        const blacklistUpdated = isEqual(prevProps.blacklist, this.props.blacklist)
+        const blacklistUpdated = isEqual(prevProps.blacklist, this.props.blacklist);
         if (!blacklistUpdated) {
             const { value, onChange, blacklist } = this.props;
             onChange({ strength: zxcvbn(value).score, blacklist });
