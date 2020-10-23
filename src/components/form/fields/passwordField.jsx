@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { isLower, isUpper, isDigit } from 'char-info';
+import { isEqual } from 'lodash-es';
 import zxcvbn from '@reachfive/zxcvbn';
 
 import styled from 'styled-components';
@@ -56,11 +57,19 @@ class PasswordField extends React.Component {
         showPassword: false
     };
 
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        const blacklistUpdated = isEqual(prevProps.blacklist, this.props.blacklist);
+        if (!blacklistUpdated) {
+            const { value, onChange, blacklist } = this.props;
+            onChange({ strength: zxcvbn(value).score, blacklist });
+        }
+    }
+
     componentDidMount() {
-        const { value, onChange } = this.props;
+        const { value, onChange, blacklist } = this.props;
 
         this.setState({ ...this.state });
-        onChange({ strength: zxcvbn(value).score });
+        onChange({ strength: zxcvbn(value).score, blacklist });
     }
 
     componentWillUnmount() {
@@ -79,7 +88,8 @@ class PasswordField extends React.Component {
             inputId,
             label,
             isTouched,
-            value
+            value,
+            blacklist = [],
         } = this.props;
 
         const { showPassword } = this.state;
@@ -102,7 +112,8 @@ class PasswordField extends React.Component {
                         hasError={Boolean(validation.error)}
                         onChange={event => onChange({
                             value: event.target.value,
-                            strength: zxcvbn(event.target.value).score
+                            strength: zxcvbn(event.target.value).score,
+                            blacklist
                         })}
                         onFocus={() => onChange({ isTouched: true })}
                         onBlur={() => onChange({ isDirty: true })}
@@ -170,10 +181,11 @@ export const passwordField = ({ label = 'password', canShowPassword = false, ...
                 strength: 0,
                 enabledRules: listEnabledRules(i18n, passwordPolicy),
                 isTouched: false,
-                isDirty: false
+                isDirty: false,
+                blacklist: [],
             }),
             unbind: (model, { value }) => ({ ...model, password: value }),
-            validate: ({ value, strength, isDirty }, ctx) => {
+            validate: ({ value, strength, isDirty, blacklist }, ctx) => {
                 if (!isDirty && !ctx.isSubmitted) return {};
 
                 const errors = [];
@@ -181,7 +193,8 @@ export const passwordField = ({ label = 'password', canShowPassword = false, ...
                     errors.push(i18n('validation.required'));
                 }
                 else {
-                    if (strength < passwordPolicy.minStrength) {
+                    const includesBannedWords = blacklist.some(str => value.includes(str));
+                    if (includesBannedWords || strength < passwordPolicy.minStrength) {
                         errors.push(i18n('validation.password.minStrength'));
                     }
 

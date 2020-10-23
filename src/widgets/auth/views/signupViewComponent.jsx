@@ -2,6 +2,9 @@ import React from 'react';
 import styled from 'styled-components';
 
 import { snakeCaseProperties } from '../../../helpers/transformObjectProperties';
+import { isValued } from '../../../helpers/utils';
+import { isEqual } from 'lodash-es';
+import uniq from 'lodash-es/uniq';
 
 import { Heading, Link, Alternative, Separator, MarkdownContent } from '../../../components/miscComponent';
 import SocialButtons from '../../../components/form/socialButtonsComponent';
@@ -43,12 +46,34 @@ const UserAggreementStyle = withTheme(styled.div`
 `);
 
 export default class SignupView extends React.Component {
+    state = {
+        blacklist: []
+    }
+
     handleSignup = data => this.props.apiClient.signup({
         data: snakeCaseProperties(data),
         auth: this.props.auth,
         redirectUrl: this.props && this.props.redirectUrl,
         returnToAfterEmailConfirmation: this.props && this.props.returnToAfterEmailConfirmation,
     });
+
+    refreshBlacklist = data => {
+        const email = data['email'] && data['email'].value.split('@') || "";
+        const givenName = data['given_name'] && data['given_name'].value.split(' ') || "";
+        const lastName = data['family_name'] && data['family_name'].value.split(' ') || "";
+
+        const blacklist =
+            [email, givenName, lastName]
+                .flat(1)
+                .map(str => str.trim().toLowerCase())
+                .filter(function (word) { return isValued(word) });
+
+        const distinct = uniq(blacklist);
+
+        if (!isEqual(distinct, this.state.blacklist)) {
+            this.setState({blacklist: distinct});
+        }
+    }
 
     render() {
         const {
@@ -71,6 +96,10 @@ export default class SignupView extends React.Component {
             ]
             : fields;
 
+        const sharedProps = {
+            blacklist: this.state.blacklist
+        }
+
         return <div>
             <Heading>{i18n('signup.title')}</Heading>
             {socialProviders && socialProviders.length > 0 &&
@@ -80,6 +109,8 @@ export default class SignupView extends React.Component {
                 fields={allFields}
                 showLabels={this.props.showLabels}
                 beforeSubmit={beforeSignup}
+                onFieldChange={this.refreshBlacklist}
+                sharedProps={sharedProps}
                 handler={this.handleSignup} />
             {this.props.allowLogin && <Alternative>
                 <span>{i18n('signup.loginLinkPrefix')}</span>
