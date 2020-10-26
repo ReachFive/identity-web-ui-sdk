@@ -189,7 +189,7 @@ export const passwordField = ({ label = 'password', canShowPassword = false, ...
                 value: '',
                 strength: 0,
                 enabledRules: listEnabledRules(i18n, passwordPolicy),
-                minStrength: passwordPolicy.minStrength,
+                minStrength: passwordPolicy && passwordPolicy.minStrength,
                 isTouched: false,
                 isDirty: false,
                 blacklist: [],
