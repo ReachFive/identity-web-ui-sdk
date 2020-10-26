@@ -58,15 +58,19 @@ export default class SignupView extends React.Component {
     });
 
     refreshBlacklist = data => {
-        const email = data['email'] && data['email'].value.split('@') || "";
-        const givenName = data['given_name'] && data['given_name'].value.split(' ') || "";
-        const lastName = data['family_name'] && data['family_name'].value.split(' ') || "";
+        const email = data['email'] && data['email'].value || "";
+        const givenName = data['given_name'] && data['given_name'].value || "";
+        const lastName = data['family_name'] && data['family_name'].value || "";
 
-        const blacklist =
-            [email, givenName, lastName]
-                .flat(1)
-                .map(str => str.trim().toLowerCase())
-                .filter(function (word) { return isValued(word) });
+        const blacklist = [
+            email.split('@'),
+            email,
+            givenName.split(' '),
+            lastName.split(' ')
+        ]
+            .flat(1)
+            .map(str => str.trim().toLowerCase())
+            .filter(function (word) { return isValued(word) });
 
         const distinct = uniq(blacklist);
 

@@ -61,15 +61,14 @@ class PasswordField extends React.Component {
         const blacklistUpdated = isEqual(prevProps.blacklist, this.props.blacklist);
         if (!blacklistUpdated) {
             const { value, onChange, blacklist } = this.props;
-            onChange({ strength: zxcvbn(value).score, blacklist });
+            onChange({ strength: getPasswordStrength(blacklist, value) });
         }
     }
 
     componentDidMount() {
         const { value, onChange, blacklist } = this.props;
-
         this.setState({ ...this.state });
-        onChange({ strength: zxcvbn(value).score, blacklist });
+        onChange({ strength: getPasswordStrength(blacklist, value) });
     }
 
     componentWillUnmount() {
@@ -112,8 +111,7 @@ class PasswordField extends React.Component {
                         hasError={Boolean(validation.error)}
                         onChange={event => onChange({
                             value: event.target.value,
-                            strength: zxcvbn(event.target.value).score,
-                            blacklist
+                            strength: getPasswordStrength(blacklist, event.target.value)
                         })}
                         onFocus={() => onChange({ isTouched: true })}
                         onBlur={() => onChange({ isDirty: true })}
@@ -162,6 +160,11 @@ function listEnabledRules(i18n, passwordPolicy) {
     }, {});
 }
 
+function getPasswordStrength(blacklist, fieldValue) {
+    const sanitized = `${fieldValue || ""}`.toLowerCase().trim();
+    return zxcvbn(sanitized, blacklist).score;
+}
+
 export const passwordField = ({ label = 'password', canShowPassword = false, ...staticProps }, { passwordPolicy }) => ({
     path: 'password',
     create: ({ i18n, showLabel }) => {
@@ -185,7 +188,7 @@ export const passwordField = ({ label = 'password', canShowPassword = false, ...
                 blacklist: [],
             }),
             unbind: (model, { value }) => ({ ...model, password: value }),
-            validate: ({ value, strength, isDirty, blacklist }, ctx) => {
+            validate: ({ value, strength, isDirty }, ctx) => {
                 if (!isDirty && !ctx.isSubmitted) return {};
 
                 const errors = [];
@@ -193,8 +196,7 @@ export const passwordField = ({ label = 'password', canShowPassword = false, ...
                     errors.push(i18n('validation.required'));
                 }
                 else {
-                    const includesBannedWords = blacklist.some(str => value.includes(str));
-                    if (includesBannedWords || strength < passwordPolicy.minStrength) {
+                    if (strength < passwordPolicy.minStrength) {
                         errors.push(i18n('validation.password.minStrength'));
                     }
 
