@@ -7,7 +7,7 @@ import zxcvbn from '@reachfive/zxcvbn';
 import styled from 'styled-components';
 
 import { Input, Label, FormGroupContainer, FormError } from '../formControlsComponent';
-import { PasswordPolicyRules } from './passwordPolicyRules';
+import { PasswordPolicyRules } from '../passwordPolicyComponent';
 import { withI18n, withTheme } from '../../widget/widgetContext';
 
 import { ShowPasswordIcon, HidePasswordIcon } from './simplePasswordField';
@@ -89,7 +89,6 @@ class PasswordField extends React.Component {
             isTouched,
             value,
             blacklist = [],
-            strength
         } = this.props;
 
         const { showPassword } = this.state;
@@ -121,14 +120,9 @@ class PasswordField extends React.Component {
                         ? <HidePasswordIcon onClick={this.toggleShowPassword} />
                         : <ShowPasswordIcon onClick={this.toggleShowPassword} />)}
                 </div>
-                {isTouched && <PasswordStrength score={strength || 0} />}
+                {isTouched && <PasswordStrength score={this.props.strength || 0} />}
                 {validation.error && <FormError>{validation.error}</FormError>}
-                {isTouched && <PasswordPolicyRules
-                    value={value}
-                    strength={strength}
-                    minStrength={this.props.minStrength}
-                    rules={this.props.enabledRules} />
-                }
+                {isTouched && <PasswordPolicyRules value={value} rules={this.props.enabledRules} />}
             </div>
         </FormGroupContainer>;
     }
@@ -189,7 +183,6 @@ export const passwordField = ({ label = 'password', canShowPassword = false, ...
                 value: '',
                 strength: 0,
                 enabledRules: listEnabledRules(i18n, passwordPolicy),
-                minStrength: passwordPolicy && passwordPolicy.minStrength,
                 isTouched: false,
                 isDirty: false,
                 blacklist: [],

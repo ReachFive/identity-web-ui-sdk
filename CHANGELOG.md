@@ -1,5 +1,12 @@
 # Changelog
 
+## v1.11.1
+
+### 28/10/2020
+
+### Fix
+Revert the new check rule for password strength since the wordings are not yet deployed.
+
 ## v1.11.0
 
 ### 28/10/2020
