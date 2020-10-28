@@ -2,9 +2,9 @@ import React from 'react';
 
 import styled from 'styled-components';
 
-import { Label } from '../formControlsComponent';
+import { Label } from './formControlsComponent';
 
-import { withTheme, withI18n } from '../../widget/widgetContext';
+import { withTheme, withI18n } from '../widget/widgetContext';
 
 const RoundCheckbox = withTheme(styled(({ className, ...props }) =>
     <div className={className}>
@@ -65,17 +65,9 @@ const PasswordPolicyIntro = withI18n(withTheme(styled(({ i18n, className }) =>
     margin-bottom: ${props => props.theme.get('spacing')}px;
 `));
 
-export const PasswordPolicyRules = withI18n(withTheme(styled(({ className, i18n, ...props }) =>
+export const PasswordPolicyRules = withTheme(styled(({ className, ...props }) =>
     <div className={className}>
-        {props.minStrength !== 0 && <PasswordPolicyRule>
-            <RoundCheckbox checked={props.strength >= props.minStrength} />
-            <Label visible>
-                {i18n('passwordStrength.minimum.required')} {i18n(`passwordStrength.score${props.minStrength}`).toLowerCase()}.
-            </Label>
-        </PasswordPolicyRule>}
-
         <PasswordPolicyIntro />
-
         {Object.keys(props.rules).map((key, _) => {
             const rule = props.rules[key];
 
@@ -87,4 +79,4 @@ export const PasswordPolicyRules = withI18n(withTheme(styled(({ className, i18n,
     </div>
 )`
     margin-top: ${props => props.theme.get('spacing')}px;
-`));
+`);
