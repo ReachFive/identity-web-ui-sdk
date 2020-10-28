@@ -1,5 +1,15 @@
 # Changelog
 
+## v1.11.0
+
+### 28/10/2020
+
+### Feature
+New changes were made on the [`showAuth`](https://developer.reachfive.com/sdk-ui/showAuth.html) widget:
+- A new check rule for password strength is now displayed on the signup view.
+- The users will be notified when a password contains words contained in the given name, the family name, or the email address. These blacklist words will also be taken into account of the password strength.
+- The validation errors will be displayed sooner on the form.
+
 ## v1.10.1
 
 ### 19/10/2020
