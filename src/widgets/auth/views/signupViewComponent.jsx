@@ -1,5 +1,4 @@
 import React from 'react';
-import styled from 'styled-components';
 
 import { snakeCaseProperties } from '../../../helpers/transformObjectProperties';
 import { isValued } from '../../../helpers/utils';
@@ -9,8 +8,8 @@ import uniq from 'lodash-es/uniq';
 import { Heading, Link, Alternative, Separator, MarkdownContent } from '../../../components/miscComponent';
 import SocialButtons from '../../../components/form/socialButtonsComponent';
 import { createForm } from '../../../components/form/formComponent';
+import { UserAggreementStyle } from '../../../components/form/formControlsComponent';
 import { buildFormFields } from '../../../components/form/formFieldFactory';
-import { withTheme } from '../../../components/widget/widgetContext';
 
 const defaultSignupFields = [
     'given_name',
@@ -24,26 +23,6 @@ const SignupForm = createForm({
     prefix: 'r5-signup-',
     submitLabel: 'signup.submitLabel'
 });
-
-const UserAggreementStyle = withTheme(styled.div`
-    font-size: ${props => props.theme.get('fontSize') * 0.8}px;
-    color: ${props => props.theme.get('mutedTextColor')};
-    text-align: center;
-    margin-bottom: ${props => props.theme.get('spacing')}px;
-
-    p {
-        margin: 0;
-    }
-
-    a {
-        color: ${props => props.theme.get('mutedTextColor')};
-        text-decoration: underline;
-    }
-
-    a:hover {
-        color: ${props => props.theme.get('mutedTextColor')};
-    }
-`);
 
 export default class SignupView extends React.Component {
     state = {
