@@ -396,7 +396,6 @@ describe('DOM testing', () => {
             expect(instance.find('a').text()).toEqual('signup.loginLink');
         });
 
-
         test('signup form view with password', async () => {
             expect.assertions(8);
             const instance = await generateComponent(
@@ -436,7 +435,7 @@ describe('DOM testing', () => {
                 'given_name',
                 'family_name',
                 'email',
-                'device_friendly_name'
+                'friendly_name'
             ].forEach(field => {
                 expect(instance.find(`input[name="${field}"]`)).toHaveLength(1)
             });

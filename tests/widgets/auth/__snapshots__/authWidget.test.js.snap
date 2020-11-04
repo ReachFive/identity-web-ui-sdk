@@ -6818,15 +6818,15 @@ exports[`Snapshot with webauthn feature signup form view with webauthn 1`] = `
       >
         <label
           className="c4"
-          htmlFor="device_friendly_name"
+          htmlFor="friendly_name"
         >
           webauthn.friendly.name
         </label>
         <input
           className="c5"
-          data-testid="device_friendly_name"
-          id="device_friendly_name"
-          name="device_friendly_name"
+          data-testid="friendly_name"
+          id="friendly_name"
+          name="friendly_name"
           onBlur={[Function]}
           onChange={[Function]}
           placeholder="webauthn.friendly.name"

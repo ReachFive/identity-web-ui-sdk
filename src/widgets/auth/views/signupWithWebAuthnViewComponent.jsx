@@ -21,7 +21,7 @@ export default class SignupWithWebAuthnView extends React.Component {
     handleSignup = data => this.props.apiClient.signupWithWebAuthn(
         {
             profile: snakeCaseProperties(data),
-            friendlyName: '',
+            friendlyName: data.friendlyName,
             redirectUrl: this.props && this.props.redirectUrl
         },
         this.props.auth
@@ -36,7 +36,7 @@ export default class SignupWithWebAuthnView extends React.Component {
 
         const webAuthnSignupFields = signupFields
             .filter(field => field !== 'password' && field !== 'password_confirmation')
-            .concat('device_friendly_name')
+            .concat('friendly_name')
 
         const fields = buildFormFields(webAuthnSignupFields, this.props.config);
 
