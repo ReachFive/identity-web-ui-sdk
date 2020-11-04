@@ -1,5 +1,12 @@
 # Changelog
 
+## v1.11.2
+
+### 04/11/2020
+
+### Feature
+A new check rule for password strength is now displayed on the signup view on the [`showAuth`](https://developer.reachfive.com/sdk-ui/showAuth.html) widget.
+
 ## v1.11.1
 
 ### 28/10/2020
