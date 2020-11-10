@@ -5807,3 +5807,1417 @@ exports[`Snapshot signup view with user agreement 1`] = `
   </div>
 </div>
 `;
+
+exports[`Snapshot with webauthn feature login view with webauthn or password 1`] = `
+.c1 {
+  margin-bottom: 15px;
+  text-align: center;
+  color: #212529;
+  font-weight: bold;
+  font-size: 16.8px;
+}
+
+.c6 {
+  color: #adb5bd;
+  display: block;
+  text-align: center;
+  overflow: hidden;
+  white-space: nowrap;
+  margin: 10px 0;
+}
+
+.c6 > span {
+  position: relative;
+  display: inline-block;
+}
+
+.c6 > span:before,
+.c6 > span:after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 9999px;
+  height: 1px;
+  background: #ced4da;
+}
+
+.c6 > span:before {
+  right: 100%;
+  margin-right: 14px;
+}
+
+.c6 > span:after {
+  left: 100%;
+  margin-left: 14px;
+}
+
+.c17 {
+  text-align: center;
+  margin-top: 15px;
+  color: #495057;
+}
+
+.c18 {
+  color: #229955;
+  -webkit-text-decoration: none;
+  text-decoration: none;
+}
+
+.c18:hover {
+  color: #145a32;
+  -webkit-text-decoration: none;
+  text-decoration: none;
+}
+
+.c0 {
+  font-size: 14px;
+  -webkit-transition: -webkit-transform 400ms ease, opacity 400ms ease;
+  -webkit-transition: transform 400ms ease, opacity 400ms ease;
+  transition: transform 400ms ease, opacity 400ms ease;
+  opacity: 0;
+  padding: 20px;
+  border-radius: 3px;
+  background-color: #ffffff;
+  max-width: 400px;
+  box-sizing: border-box;
+  margin: 0 auto;
+}
+
+.c12 {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: center;
+  font-weight: bold;
+  white-space: nowrap;
+  vertical-align: middle;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  touch-action: manipulation;
+  cursor: pointer;
+  color: #229955;
+  background-color: #ffffff;
+  border: 1px solid #ffffff;
+  padding: 9px 12px;
+  font-size: 14px;
+  line-height: 1.428571429;
+  border-radius: 3px;
+  -webkit-transition: all .15s ease-in-out;
+  transition: all .15s ease-in-out;
+}
+
+.c12:focus {
+  outline: 0;
+  box-shadow: 0 0 0 3px rgba(255,255,255,0.5);
+}
+
+.c12:hover,
+.c12:active {
+  color: #229955;
+  background-color: #ebebeb;
+  border-color: #ebebeb;
+}
+
+.c12[disabled] {
+  opacity: .65;
+}
+
+.c4 {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 38.000000006px;
+  box-sizing: border-box;
+  border-radius: 2px;
+  background-image: url(svg);
+  background-repeat: no-repeat;
+  background-size: 20.000000003px 20.000000003px;
+  background-position: center center;
+}
+
+.c3 {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: center;
+  font-weight: bold;
+  white-space: nowrap;
+  vertical-align: middle;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  touch-action: manipulation;
+  cursor: pointer;
+  color: #ffffff;
+  background-color: #3b5998;
+  border: 1px solid #3b5998;
+  padding: 9px 12px;
+  font-size: 14px;
+  line-height: 1.428571429;
+  border-radius: 3px;
+  -webkit-transition: all .15s ease-in-out;
+  transition: all .15s ease-in-out;
+  margin-bottom: 10px;
+  position: relative;
+  width: 100%;
+  height: 40.000000006px;
+}
+
+.c3:focus {
+  outline: 0;
+}
+
+.c3:hover,
+.c3:active {
+  color: #ffffff;
+  background-color: #30487b;
+  border-color: #30487b;
+}
+
+.c3[disabled] {
+  opacity: .65;
+}
+
+.c5 {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: center;
+  font-weight: bold;
+  white-space: nowrap;
+  vertical-align: middle;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  touch-action: manipulation;
+  cursor: pointer;
+  color: #58666e;
+  background-color: #ffffff;
+  border: 1px solid rgba(0,0,0,.15);
+  padding: 9px 12px;
+  font-size: 14px;
+  line-height: 1.428571429;
+  border-radius: 3px;
+  -webkit-transition: all .15s ease-in-out;
+  transition: all .15s ease-in-out;
+  margin-bottom: 10px;
+  position: relative;
+  width: 100%;
+  height: 40.000000006px;
+}
+
+.c5:focus {
+  outline: 0;
+}
+
+.c5:hover,
+.c5:active {
+  color: #58666e;
+  background-color: #ebebeb;
+  border-color: rgba(0,0,0,0.15);
+}
+
+.c5[disabled] {
+  opacity: .65;
+}
+
+.c2 {
+  text-align: center;
+}
+
+.c7 {
+  position: relative;
+}
+
+.c9 {
+  color: #495057;
+  margin-bottom: 5px;
+  display: none;
+}
+
+.c8 {
+  margin-bottom: 10px;
+}
+
+.c10 {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  font-size: 14px;
+  line-height: 1.428571429;
+  color: #495057;
+  border-radius: 3px;
+  border-width: 1px;
+  border-style: solid;
+  border-color: #ced4da;
+  background-color: #fff;
+  background-image: none;
+  padding: 9px 12px;
+  -webkit-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+  transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+  box-shadow: none;
+  -webkit-appearance: none;
+}
+
+.c10:focus {
+  border-color: #5fdb94;
+  box-shadow: 0 0 0 3px rgba(95,219,148,0.5);
+  outline: 0;
+}
+
+.c10:disabled,
+.c10[readonly] {
+  background-color: #e9ecef;
+}
+
+.c10::-webkit-input-placeholder {
+  color: #868e96;
+}
+
+.c10::-moz-placeholder {
+  color: #868e96;
+}
+
+.c10:-ms-input-placeholder {
+  color: #868e96;
+}
+
+.c10::placeholder {
+  color: #868e96;
+}
+
+.c14 {
+  width: 40px;
+  height: 40px;
+}
+
+.c16 {
+  width: 40px;
+  height: 40px;
+}
+
+.c13 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+}
+
+.c13 .r5-button-text {
+  margin-left: 10px;
+  text-transform: uppercase;
+}
+
+.c15 {
+  text-align: center;
+  color: #adb5bd;
+}
+
+.c11 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+}
+
+.c11 > :not(:last-child) {
+  margin-right: 20px;
+}
+
+<div
+  className="c0"
+>
+  <div>
+    <div
+      className="c1"
+    >
+      login.title
+    </div>
+    <div
+      className="r5-social-buttons c2"
+    >
+      <div
+        className="r5-btn-social r5-btn-social-facebook c3"
+        onClick={[Function]}
+      >
+        <span
+          className="r5-btn-social-icon c4"
+        />
+        <span
+          className="r5-btn-social-text"
+        >
+          Facebook
+        </span>
+      </div>
+      <div
+        className="r5-btn-social r5-btn-social-google c5"
+        onClick={[Function]}
+      >
+        <span
+          className="r5-btn-social-icon c4"
+        />
+        <span
+          className="r5-btn-social-text"
+        >
+          Google
+        </span>
+      </div>
+    </div>
+    <div
+      className="c6"
+    >
+      <span>
+        or
+      </span>
+    </div>
+    <form
+      className="c7"
+      noValidate={true}
+      onSubmit={[Function]}
+    >
+      <div
+        className="c8"
+      >
+        <label
+          className="c9"
+          htmlFor="email"
+        >
+          email
+        </label>
+        <input
+          autoComplete="email"
+          className="c10"
+          data-testid="email"
+          id="email"
+          name="email"
+          onBlur={[Function]}
+          onChange={[Function]}
+          placeholder="email"
+          readOnly={false}
+          required={true}
+          title="email"
+          type="email"
+          value=""
+        />
+      </div>
+      <div
+        className="r5-webauthn-login-buttons c11"
+      >
+        <button
+          className="c12 r5-button-with-icon c13"
+          data-testid="submit"
+          disabled={false}
+          title="login.withBiometrics"
+          type="submit"
+        >
+          <svg
+            className="c14"
+          />
+        </button>
+        <div
+          className="c15"
+        >
+          or
+        </div>
+        <button
+          className="c12 r5-button-with-icon c13"
+          data-testid="submit"
+          disabled={false}
+          onClick={[Function]}
+          title="login.withPassword"
+          type="submit"
+        >
+          <svg
+            className="c16"
+          />
+        </button>
+      </div>
+    </form>
+    <div
+      className="c17"
+    >
+      <span>
+        login.signupLinkPrefix
+      </span>
+       
+      <a
+        className="c18"
+        href="#"
+        onClick={[Function]}
+      >
+        login.signupLink
+      </a>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Snapshot with webauthn feature signup form view with password 1`] = `
+.c1 {
+  margin-bottom: 15px;
+  text-align: center;
+  color: #212529;
+  font-weight: bold;
+  font-size: 16.8px;
+}
+
+.c7 {
+  text-align: center;
+  margin-top: 15px;
+  color: #495057;
+}
+
+.c8 {
+  color: #229955;
+  -webkit-text-decoration: none;
+  text-decoration: none;
+}
+
+.c8:hover {
+  color: #145a32;
+  -webkit-text-decoration: none;
+  text-decoration: none;
+}
+
+.c0 {
+  font-size: 14px;
+  -webkit-transition: -webkit-transform 400ms ease, opacity 400ms ease;
+  -webkit-transition: transform 400ms ease, opacity 400ms ease;
+  transition: transform 400ms ease, opacity 400ms ease;
+  opacity: 0;
+  padding: 20px;
+  border-radius: 3px;
+  background-color: #ffffff;
+  max-width: 400px;
+  box-sizing: border-box;
+  margin: 0 auto;
+}
+
+.c6 {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: center;
+  font-weight: bold;
+  white-space: nowrap;
+  vertical-align: middle;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  touch-action: manipulation;
+  cursor: pointer;
+  color: #ffffff;
+  background-color: #229955;
+  border: 1px solid #229955;
+  padding: 9px 12px;
+  font-size: 14px;
+  line-height: 1.428571429;
+  border-radius: 3px;
+  -webkit-transition: all .15s ease-in-out;
+  transition: all .15s ease-in-out;
+}
+
+.c6:focus {
+  outline: 0;
+  box-shadow: 0 0 0 3px rgba(34,153,85,0.5);
+}
+
+.c6:hover,
+.c6:active {
+  background-color: #1b7842;
+  border-color: #1b7842;
+}
+
+.c6[disabled] {
+  opacity: .65;
+}
+
+.c2 {
+  position: relative;
+}
+
+.c4 {
+  color: #495057;
+  margin-bottom: 5px;
+  display: none;
+}
+
+.c3 {
+  margin-bottom: 10px;
+}
+
+.c5 {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  font-size: 14px;
+  line-height: 1.428571429;
+  color: #495057;
+  border-radius: 3px;
+  border-width: 1px;
+  border-style: solid;
+  border-color: #ced4da;
+  background-color: #fff;
+  background-image: none;
+  padding: 9px 12px;
+  -webkit-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+  transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+  box-shadow: none;
+  -webkit-appearance: none;
+}
+
+.c5:focus {
+  border-color: #5fdb94;
+  box-shadow: 0 0 0 3px rgba(95,219,148,0.5);
+  outline: 0;
+}
+
+.c5:disabled,
+.c5[readonly] {
+  background-color: #e9ecef;
+}
+
+.c5::-webkit-input-placeholder {
+  color: #868e96;
+}
+
+.c5::-moz-placeholder {
+  color: #868e96;
+}
+
+.c5:-ms-input-placeholder {
+  color: #868e96;
+}
+
+.c5::placeholder {
+  color: #868e96;
+}
+
+<div
+  className="c0"
+>
+  <div>
+    <div
+      className="c1"
+    >
+      signup.withPassword
+    </div>
+    <form
+      className="c2"
+      noValidate={true}
+      onSubmit={[Function]}
+    >
+      <div
+        className="c3"
+      >
+        <label
+          className="c4"
+          htmlFor="given_name"
+        >
+          givenName
+        </label>
+        <input
+          className="c5"
+          data-testid="given_name"
+          id="given_name"
+          name="given_name"
+          onBlur={[Function]}
+          onChange={[Function]}
+          placeholder="givenName"
+          readOnly={false}
+          required={true}
+          title="givenName"
+          value=""
+        />
+      </div>
+      <div
+        className="c3"
+      >
+        <label
+          className="c4"
+          htmlFor="family_name"
+        >
+          familyName
+        </label>
+        <input
+          className="c5"
+          data-testid="family_name"
+          id="family_name"
+          name="family_name"
+          onBlur={[Function]}
+          onChange={[Function]}
+          placeholder="familyName"
+          readOnly={false}
+          required={true}
+          title="familyName"
+          value=""
+        />
+      </div>
+      <div
+        className="c3"
+      >
+        <label
+          className="c4"
+          htmlFor="email"
+        >
+          email
+        </label>
+        <input
+          className="c5"
+          data-testid="email"
+          id="email"
+          name="email"
+          onBlur={[Function]}
+          onChange={[Function]}
+          placeholder="email"
+          readOnly={false}
+          required={true}
+          title="email"
+          type="email"
+          value=""
+        />
+      </div>
+      <div
+        className="c3"
+      >
+        <div
+          style={
+            Object {
+              "position": "relative",
+            }
+          }
+        >
+          <label
+            className="c4"
+          >
+            password
+          </label>
+          <div
+            style={
+              Object {
+                "position": "relative",
+              }
+            }
+          >
+            <input
+              className="c5"
+              data-testid="password"
+              name="password"
+              onBlur={[Function]}
+              onChange={[Function]}
+              onFocus={[Function]}
+              placeholder="password"
+              title="password"
+              type="password"
+              value=""
+            />
+          </div>
+        </div>
+      </div>
+      <div
+        className="c3"
+      >
+        <label
+          className="c4"
+          htmlFor="password_confirmation"
+        >
+          passwordConfirmation
+        </label>
+        <div
+          style={
+            Object {
+              "position": "relative",
+            }
+          }
+        >
+          <input
+            className="c5"
+            data-testid="password_confirmation"
+            id="password_confirmation"
+            name="password_confirmation"
+            onBlur={[Function]}
+            onChange={[Function]}
+            placeholder="passwordConfirmation"
+            required={true}
+            title="passwordConfirmation"
+            type="password"
+            value=""
+          />
+        </div>
+      </div>
+      <button
+        className="c6"
+        data-testid="submit"
+        disabled={false}
+        type="submit"
+      >
+        signup.submitLabel
+      </button>
+    </form>
+    <div
+      className="c7"
+    >
+      <a
+        className="c8"
+        href="#"
+        onClick={[Function]}
+      >
+        back
+      </a>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Snapshot with webauthn feature signup form view with webauthn 1`] = `
+.c1 {
+  margin-bottom: 15px;
+  text-align: center;
+  color: #212529;
+  font-weight: bold;
+  font-size: 16.8px;
+}
+
+.c7 {
+  text-align: center;
+  margin-top: 15px;
+  color: #495057;
+}
+
+.c8 {
+  color: #229955;
+  -webkit-text-decoration: none;
+  text-decoration: none;
+}
+
+.c8:hover {
+  color: #145a32;
+  -webkit-text-decoration: none;
+  text-decoration: none;
+}
+
+.c0 {
+  font-size: 14px;
+  -webkit-transition: -webkit-transform 400ms ease, opacity 400ms ease;
+  -webkit-transition: transform 400ms ease, opacity 400ms ease;
+  transition: transform 400ms ease, opacity 400ms ease;
+  opacity: 0;
+  padding: 20px;
+  border-radius: 3px;
+  background-color: #ffffff;
+  max-width: 400px;
+  box-sizing: border-box;
+  margin: 0 auto;
+}
+
+.c6 {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: center;
+  font-weight: bold;
+  white-space: nowrap;
+  vertical-align: middle;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  touch-action: manipulation;
+  cursor: pointer;
+  color: #ffffff;
+  background-color: #229955;
+  border: 1px solid #229955;
+  padding: 9px 12px;
+  font-size: 14px;
+  line-height: 1.428571429;
+  border-radius: 3px;
+  -webkit-transition: all .15s ease-in-out;
+  transition: all .15s ease-in-out;
+}
+
+.c6:focus {
+  outline: 0;
+  box-shadow: 0 0 0 3px rgba(34,153,85,0.5);
+}
+
+.c6:hover,
+.c6:active {
+  background-color: #1b7842;
+  border-color: #1b7842;
+}
+
+.c6[disabled] {
+  opacity: .65;
+}
+
+.c2 {
+  position: relative;
+}
+
+.c4 {
+  color: #495057;
+  margin-bottom: 5px;
+  display: none;
+}
+
+.c3 {
+  margin-bottom: 10px;
+}
+
+.c5 {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  font-size: 14px;
+  line-height: 1.428571429;
+  color: #495057;
+  border-radius: 3px;
+  border-width: 1px;
+  border-style: solid;
+  border-color: #ced4da;
+  background-color: #fff;
+  background-image: none;
+  padding: 9px 12px;
+  -webkit-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+  transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+  box-shadow: none;
+  -webkit-appearance: none;
+}
+
+.c5:focus {
+  border-color: #5fdb94;
+  box-shadow: 0 0 0 3px rgba(95,219,148,0.5);
+  outline: 0;
+}
+
+.c5:disabled,
+.c5[readonly] {
+  background-color: #e9ecef;
+}
+
+.c5::-webkit-input-placeholder {
+  color: #868e96;
+}
+
+.c5::-moz-placeholder {
+  color: #868e96;
+}
+
+.c5:-ms-input-placeholder {
+  color: #868e96;
+}
+
+.c5::placeholder {
+  color: #868e96;
+}
+
+<div
+  className="c0"
+>
+  <div>
+    <div
+      className="c1"
+    >
+      signup.withBiometrics
+    </div>
+    <form
+      className="c2"
+      noValidate={true}
+      onSubmit={[Function]}
+    >
+      <div
+        className="c3"
+      >
+        <label
+          className="c4"
+          htmlFor="given_name"
+        >
+          givenName
+        </label>
+        <input
+          className="c5"
+          data-testid="given_name"
+          id="given_name"
+          name="given_name"
+          onBlur={[Function]}
+          onChange={[Function]}
+          placeholder="givenName"
+          readOnly={false}
+          required={true}
+          title="givenName"
+          value=""
+        />
+      </div>
+      <div
+        className="c3"
+      >
+        <label
+          className="c4"
+          htmlFor="family_name"
+        >
+          familyName
+        </label>
+        <input
+          className="c5"
+          data-testid="family_name"
+          id="family_name"
+          name="family_name"
+          onBlur={[Function]}
+          onChange={[Function]}
+          placeholder="familyName"
+          readOnly={false}
+          required={true}
+          title="familyName"
+          value=""
+        />
+      </div>
+      <div
+        className="c3"
+      >
+        <label
+          className="c4"
+          htmlFor="email"
+        >
+          email
+        </label>
+        <input
+          className="c5"
+          data-testid="email"
+          id="email"
+          name="email"
+          onBlur={[Function]}
+          onChange={[Function]}
+          placeholder="email"
+          readOnly={false}
+          required={true}
+          title="email"
+          type="email"
+          value=""
+        />
+      </div>
+      <div
+        className="c3"
+      >
+        <label
+          className="c4"
+          htmlFor="friendly_name"
+        >
+          webauthn.friendly.name
+        </label>
+        <input
+          className="c5"
+          data-testid="friendly_name"
+          id="friendly_name"
+          name="friendly_name"
+          onBlur={[Function]}
+          onChange={[Function]}
+          placeholder="webauthn.friendly.name"
+          readOnly={false}
+          required={false}
+          title="webauthn.friendly.name"
+          value=""
+        />
+      </div>
+      <button
+        className="c6"
+        data-testid="submit"
+        disabled={false}
+        type="submit"
+      >
+        signup.submitLabel
+      </button>
+    </form>
+    <div
+      className="c7"
+    >
+      <a
+        className="c8"
+        href="#"
+        onClick={[Function]}
+      >
+        back
+      </a>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Snapshot with webauthn feature signup view with webauthn or password  1`] = `
+.c1 {
+  margin-bottom: 15px;
+  text-align: center;
+  color: #212529;
+  font-weight: bold;
+  font-size: 16.8px;
+}
+
+.c6 {
+  color: #adb5bd;
+  display: block;
+  text-align: center;
+  overflow: hidden;
+  white-space: nowrap;
+  margin: 10px 0;
+}
+
+.c6 > span {
+  position: relative;
+  display: inline-block;
+}
+
+.c6 > span:before,
+.c6 > span:after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 9999px;
+  height: 1px;
+  background: #ced4da;
+}
+
+.c6 > span:before {
+  right: 100%;
+  margin-right: 14px;
+}
+
+.c6 > span:after {
+  left: 100%;
+  margin-left: 14px;
+}
+
+.c11 {
+  text-align: center;
+  margin-top: 15px;
+  color: #495057;
+}
+
+.c12 {
+  color: #229955;
+  -webkit-text-decoration: none;
+  text-decoration: none;
+}
+
+.c12:hover {
+  color: #145a32;
+  -webkit-text-decoration: none;
+  text-decoration: none;
+}
+
+.c0 {
+  font-size: 14px;
+  -webkit-transition: -webkit-transform 400ms ease, opacity 400ms ease;
+  -webkit-transition: transform 400ms ease, opacity 400ms ease;
+  transition: transform 400ms ease, opacity 400ms ease;
+  opacity: 0;
+  padding: 20px;
+  border-radius: 3px;
+  background-color: #ffffff;
+  max-width: 400px;
+  box-sizing: border-box;
+  margin: 0 auto;
+}
+
+.c7 {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: center;
+  font-weight: bold;
+  white-space: nowrap;
+  vertical-align: middle;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  touch-action: manipulation;
+  cursor: pointer;
+  color: #229955;
+  background-color: #ffffff;
+  border: 1px solid #ffffff;
+  padding: 9px 12px;
+  font-size: 14px;
+  line-height: 1.428571429;
+  border-radius: 3px;
+  -webkit-transition: all .15s ease-in-out;
+  transition: all .15s ease-in-out;
+}
+
+.c7:focus {
+  outline: 0;
+  box-shadow: 0 0 0 3px rgba(255,255,255,0.5);
+}
+
+.c7:hover,
+.c7:active {
+  color: #229955;
+  background-color: #ebebeb;
+  border-color: #ebebeb;
+}
+
+.c7[disabled] {
+  opacity: .65;
+}
+
+.c4 {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 38.000000006px;
+  box-sizing: border-box;
+  border-radius: 2px;
+  background-image: url(svg);
+  background-repeat: no-repeat;
+  background-size: 20.000000003px 20.000000003px;
+  background-position: center center;
+}
+
+.c3 {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: center;
+  font-weight: bold;
+  white-space: nowrap;
+  vertical-align: middle;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  touch-action: manipulation;
+  cursor: pointer;
+  color: #ffffff;
+  background-color: #3b5998;
+  border: 1px solid #3b5998;
+  padding: 9px 12px;
+  font-size: 14px;
+  line-height: 1.428571429;
+  border-radius: 3px;
+  -webkit-transition: all .15s ease-in-out;
+  transition: all .15s ease-in-out;
+  margin-bottom: 10px;
+  position: relative;
+  width: 100%;
+  height: 40.000000006px;
+}
+
+.c3:focus {
+  outline: 0;
+}
+
+.c3:hover,
+.c3:active {
+  color: #ffffff;
+  background-color: #30487b;
+  border-color: #30487b;
+}
+
+.c3[disabled] {
+  opacity: .65;
+}
+
+.c5 {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: center;
+  font-weight: bold;
+  white-space: nowrap;
+  vertical-align: middle;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  touch-action: manipulation;
+  cursor: pointer;
+  color: #58666e;
+  background-color: #ffffff;
+  border: 1px solid rgba(0,0,0,.15);
+  padding: 9px 12px;
+  font-size: 14px;
+  line-height: 1.428571429;
+  border-radius: 3px;
+  -webkit-transition: all .15s ease-in-out;
+  transition: all .15s ease-in-out;
+  margin-bottom: 10px;
+  position: relative;
+  width: 100%;
+  height: 40.000000006px;
+}
+
+.c5:focus {
+  outline: 0;
+}
+
+.c5:hover,
+.c5:active {
+  color: #58666e;
+  background-color: #ebebeb;
+  border-color: rgba(0,0,0,0.15);
+}
+
+.c5[disabled] {
+  opacity: .65;
+}
+
+.c2 {
+  text-align: center;
+}
+
+.c9 {
+  width: 40px;
+  height: 40px;
+}
+
+.c10 {
+  width: 40px;
+  height: 40px;
+}
+
+.c8 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+}
+
+.c8 .r5-button-text {
+  margin-left: 10px;
+  text-transform: uppercase;
+}
+
+<div
+  className="c0"
+>
+  <div>
+    <div
+      className="c1"
+    >
+      signup.title
+    </div>
+    <div
+      className="r5-social-buttons c2"
+    >
+      <div
+        className="r5-btn-social r5-btn-social-facebook c3"
+        onClick={[Function]}
+      >
+        <span
+          className="r5-btn-social-icon c4"
+        />
+        <span
+          className="r5-btn-social-text"
+        >
+          Facebook
+        </span>
+      </div>
+      <div
+        className="r5-btn-social r5-btn-social-google c5"
+        onClick={[Function]}
+      >
+        <span
+          className="r5-btn-social-icon c4"
+        />
+        <span
+          className="r5-btn-social-text"
+        >
+          Google
+        </span>
+      </div>
+    </div>
+    <div
+      className="c6"
+    >
+      <span>
+        or
+      </span>
+    </div>
+    <div
+      className="r5-webauthn-signup-buttons "
+    >
+      <button
+        className="c7 r5-button-with-icon c8"
+        data-testid="submit"
+        disabled={false}
+        onClick={[Function]}
+        title="signup.withBiometrics"
+        type="submit"
+      >
+        <svg
+          className="c9"
+        />
+        <span
+          className="r5-button-text"
+        >
+          biometrics
+        </span>
+      </button>
+      <div
+        className="c6"
+      >
+        <span>
+          or
+        </span>
+      </div>
+      <button
+        className="c7 r5-button-with-icon c8"
+        data-testid="submit"
+        disabled={false}
+        onClick={[Function]}
+        title="signup.withPassword"
+        type="submit"
+      >
+        <svg
+          className="c10"
+        />
+        <span
+          className="r5-button-text"
+        >
+          password
+        </span>
+      </button>
+    </div>
+    <div
+      className="c11"
+    >
+      <span>
+        signup.loginLinkPrefix
+      </span>
+       
+      <a
+        className="c12"
+        href="#"
+        onClick={[Function]}
+      >
+        signup.loginLink
+      </a>
+    </div>
+  </div>
+</div>
+`;

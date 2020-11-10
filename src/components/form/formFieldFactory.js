@@ -95,6 +95,12 @@ const predefinedFields = {
         key: 'address.country',
         label: 'address.country',
         ...cfg
+    }),
+    friendlyName: cfg => simpleField({
+        key: 'friendly_name',
+        label: 'webauthn.friendly.name',
+        required: false,
+        ...cfg
     })
 };
 
