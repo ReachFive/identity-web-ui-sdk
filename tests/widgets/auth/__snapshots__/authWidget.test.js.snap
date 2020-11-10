@@ -6092,13 +6092,13 @@ exports[`Snapshot with webauthn feature login view with webauthn or password 1`]
 }
 
 .c14 {
-  width: 35px;
-  height: 35px;
+  width: 40px;
+  height: 40px;
 }
 
 .c16 {
-  width: 35px;
-  height: 35px;
+  width: 40px;
+  height: 40px;
 }
 
 .c13 {
@@ -7083,13 +7083,13 @@ exports[`Snapshot with webauthn feature signup view with webauthn or password  1
 }
 
 .c9 {
-  width: 35px;
-  height: 35px;
+  width: 40px;
+  height: 40px;
 }
 
 .c10 {
-  width: 35px;
-  height: 35px;
+  width: 40px;
+  height: 40px;
 }
 
 .c8 {
