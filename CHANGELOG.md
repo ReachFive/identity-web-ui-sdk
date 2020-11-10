@@ -1,5 +1,13 @@
 # Changelog
 
+## v1.11.3
+
+### 10/11/2020
+
+### Fix
+- The [`showAuth`](https://developer.reachfive.com/sdk-ui/showAuth.html) widget can now handle signup with biometrics if the `allowWebAuthnSignup` option is enabled. This feature is also available on the Hosted Pages.
+- The device's name is now optional in the [`showWebAuthnDevices`](https://developer.reachfive.com/sdk-ui/showWebAuthnDevices.html).
+
 ## v1.11.2
 
 ### 04/11/2020
