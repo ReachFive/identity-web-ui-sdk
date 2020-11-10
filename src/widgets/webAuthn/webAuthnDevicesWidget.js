@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 
 import { Card, CloseIcon } from '../../components/form/cardComponent';
-import { simpleField } from '../../components/form/fields/simpleField';
+import { buildFormFields } from './../../components/form/formFieldFactory';
 import { createForm } from '../../components/form/formComponent';
 import { Heading, Info, Separator } from '../../components/miscComponent';
 import { createWidget } from '../../components/widget/widget';
@@ -15,12 +15,6 @@ const DeviceName = styled.div`
 
 const DeviceInputForm = createForm({
     prefix: 'r5-device-editor-',
-    fields: [
-        simpleField({
-            key: 'friendlyName',
-            label: 'webauthn.friendly.name'
-        })
-    ],
     submitLabel: 'add',
     supportMultipleSubmits: true,
     resetAfterSuccess: true
@@ -74,6 +68,8 @@ function WebAuthnDevices (props) {
             })
     }
 
+    const fields = buildFormFields(['friendly_name'], props.config)
+
     return <div>
         {devices.length === 0
             ? <Info>{i18n('webauthn.registredDevices.no.list')}</Info>
@@ -86,6 +82,7 @@ function WebAuthnDevices (props) {
         <Separator text={i18n('webauthn.registredDevices.add')} />
 
         <DeviceInputForm
+            fields={fields}
             showLabels={props.showLabels}
             handler={addNewWebAuthnDevice} />
     </div>
