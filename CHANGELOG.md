@@ -1,5 +1,12 @@
 # Changelog
 
+## v1.11.4
+
+### 12/11/2020
+
+### Fix
+Temporary revert the SDK Core dependency version to solve the login with PKCE in hosted pages.
+
 ## v1.11.3
 
 ### 10/11/2020
