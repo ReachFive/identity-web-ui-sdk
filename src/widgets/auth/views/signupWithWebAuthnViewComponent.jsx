@@ -22,7 +22,8 @@ export default class SignupWithWebAuthnView extends React.Component {
         {
             profile: snakeCaseProperties(data),
             friendlyName: data.friendlyName,
-            redirectUrl: this.props && this.props.redirectUrl
+            redirectUrl: this.props && this.props.redirectUrl,
+            returnToAfterEmailConfirmation: this.props && this.props.returnToAfterEmailConfirmation
         },
         this.props.auth
     );
