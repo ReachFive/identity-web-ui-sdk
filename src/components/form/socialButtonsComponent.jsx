@@ -61,6 +61,9 @@ const SocialBtn = withTheme(styled(Button).attrs(props => {
     ${props => props.inline && props.textVisible && `
         padding-left: ${props.theme.get('socialButton.paddingX') + props.theme.get('socialButton.height') / 2}px;
     `}
+
+    font-weight: ${props => props.provider.fontWeight};
+    font-family: ${props => props.provider.fontFamily};
 `);
 
 const SocialButton = withTheme(({ provider, onClick, theme, count }) => {
@@ -72,7 +75,8 @@ const SocialButton = withTheme(({ provider, onClick, theme, count }) => {
         ? theme.get('socialButton.height') + 'px'
         : inline ? `calc(${100 / count}% - 8px)` : '100%';
 
-    return <SocialBtn provider={provider}
+    return <SocialBtn
+        provider={provider}
         inline={inline}
         textVisible={textVisible}
         width={width}
