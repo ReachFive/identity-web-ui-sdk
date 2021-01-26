@@ -98,6 +98,11 @@ describe('Snapshot', () => {
             initialScreen: 'signup',
             signupFields: ['email', 'password', 'consents.aConsent']
         }));
+
+        test('with mandatory consents', generateSnapshot({
+            initialScreen: 'signup',
+            signupFields: ['email', 'password', {key: 'consents.aConsent', required: true }]
+        }));
     });
 
     describe('with webauthn feature', () => {
