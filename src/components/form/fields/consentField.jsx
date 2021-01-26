@@ -1,12 +1,15 @@
 import React from 'react';
 
 import styled from 'styled-components';
+import pick from 'lodash-es/pick';
 
 import { withTheme } from '../../widget/widgetContext';
 
 import { Checkbox } from '../formControlsComponent';
 import { createField } from '../fieldCreator';
 import { MarkdownContent } from '../../miscComponent';
+
+import { checked } from '../../../core/validation';
 
 const Description = withTheme(styled.div`
     font-size: ${props => props.theme.get('smallTextFontSize')}px;
@@ -21,24 +24,27 @@ const Description = withTheme(styled.div`
     }
 `);
 
-const ConsentField = ({ value, onChange, label, description, path }) => {
+const ConsentField = ({ value, onChange, label, description, path, required, validation }) => {
     const clickUpdate = ({ value }) => ({
         value: !value,
         isDirty: true
     });
 
     return <div style={{ position: "relative" }}>
-        <Checkbox value={value}
+        <Checkbox
+            value={value}
             onToggle={() => onChange(clickUpdate)}
             name={path}
             label={label}
-            data-testid={path} />
+            {...pick(validation, 'error')}
+            data-testid={path}
+            required={required} />
         <MarkdownContent root={Description} source={description} />
     </div>
 };
 
 export default function consentField(config) {
-    return createField({
+    const baseProps = {
         ...config,
         defaultValue: config.defaultValue && { granted: config.defaultValue },
         format: {
@@ -46,5 +52,9 @@ export default function consentField(config) {
             unbind: x => ({ granted: x, consentType: config.type })
         },
         component: ConsentField
-    });
+    }
+
+    const props = config.required ? { ...baseProps, validator: checked } : baseProps;
+
+    return createField(props);
 }
