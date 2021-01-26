@@ -5234,6 +5234,7 @@ exports[`Snapshot signup view with consents 1`] = `
               checked={false}
               name="consents.aConsent"
               onChange={[Function]}
+              required={false}
               type="checkbox"
             />
             consent title

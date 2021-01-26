@@ -46,6 +46,7 @@ const ConsentField = ({ value, onChange, label, description, path, required, val
 export default function consentField(config) {
     const baseProps = {
         ...config,
+        required: !!config.required,
         defaultValue: config.defaultValue && { granted: config.defaultValue },
         format: {
             bind: x => !!(x && x.granted),
