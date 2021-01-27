@@ -5234,6 +5234,494 @@ exports[`Snapshot signup view with consents 1`] = `
               checked={false}
               name="consents.aConsent"
               onChange={[Function]}
+              required={false}
+              type="checkbox"
+            />
+            consent title
+          </label>
+        </div>
+        <div
+          className="c13"
+          dangerouslySetInnerHTML={
+            Object {
+              "__html": "<p>consent description</p>
+",
+            }
+          }
+          data-text="md"
+        />
+      </div>
+      <button
+        className="c14"
+        data-testid="submit"
+        disabled={false}
+        type="submit"
+      >
+        signup.submitLabel
+      </button>
+    </form>
+    <div
+      className="c15"
+    >
+      <span>
+        signup.loginLinkPrefix
+      </span>
+       
+      <a
+        className="c16"
+        href="#"
+        onClick={[Function]}
+      >
+        signup.loginLink
+      </a>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Snapshot signup view with mandatory consents 1`] = `
+.c1 {
+  margin-bottom: 15px;
+  text-align: center;
+  color: #212529;
+  font-weight: bold;
+  font-size: 16.8px;
+}
+
+.c6 {
+  color: #adb5bd;
+  display: block;
+  text-align: center;
+  overflow: hidden;
+  white-space: nowrap;
+  margin: 10px 0;
+}
+
+.c6 > span {
+  position: relative;
+  display: inline-block;
+}
+
+.c6 > span:before,
+.c6 > span:after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 9999px;
+  height: 1px;
+  background: #ced4da;
+}
+
+.c6 > span:before {
+  right: 100%;
+  margin-right: 14px;
+}
+
+.c6 > span:after {
+  left: 100%;
+  margin-left: 14px;
+}
+
+.c15 {
+  text-align: center;
+  margin-top: 15px;
+  color: #495057;
+}
+
+.c16 {
+  color: #229955;
+  -webkit-text-decoration: none;
+  text-decoration: none;
+}
+
+.c16:hover {
+  color: #145a32;
+  -webkit-text-decoration: none;
+  text-decoration: none;
+}
+
+.c0 {
+  font-size: 14px;
+  -webkit-transition: -webkit-transform 400ms ease, opacity 400ms ease;
+  -webkit-transition: transform 400ms ease, opacity 400ms ease;
+  transition: transform 400ms ease, opacity 400ms ease;
+  opacity: 0;
+  padding: 20px;
+  border-radius: 3px;
+  background-color: #ffffff;
+  max-width: 400px;
+  box-sizing: border-box;
+  margin: 0 auto;
+}
+
+.c14 {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: center;
+  font-weight: bold;
+  white-space: nowrap;
+  vertical-align: middle;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  touch-action: manipulation;
+  cursor: pointer;
+  color: #ffffff;
+  background-color: #229955;
+  border: 1px solid #229955;
+  padding: 9px 12px;
+  font-size: 14px;
+  line-height: 1.428571429;
+  border-radius: 3px;
+  -webkit-transition: all .15s ease-in-out;
+  transition: all .15s ease-in-out;
+}
+
+.c14:focus {
+  outline: 0;
+  box-shadow: 0 0 0 3px rgba(34,153,85,0.5);
+}
+
+.c14:hover,
+.c14:active {
+  background-color: #1b7842;
+  border-color: #1b7842;
+}
+
+.c14[disabled] {
+  opacity: .65;
+}
+
+.c4 {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 38.000000006px;
+  box-sizing: border-box;
+  border-radius: 2px;
+  background-image: url(svg);
+  background-repeat: no-repeat;
+  background-size: 20.000000003px 20.000000003px;
+  background-position: center center;
+}
+
+.c3 {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: center;
+  font-weight: bold;
+  white-space: nowrap;
+  vertical-align: middle;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  touch-action: manipulation;
+  cursor: pointer;
+  color: #ffffff;
+  background-color: #3b5998;
+  border: 1px solid #3b5998;
+  padding: 9px 12px;
+  font-size: 14px;
+  line-height: 1.428571429;
+  border-radius: 3px;
+  -webkit-transition: all .15s ease-in-out;
+  transition: all .15s ease-in-out;
+  margin-bottom: 10px;
+  position: relative;
+  width: 100%;
+  height: 40.000000006px;
+}
+
+.c3:focus {
+  outline: 0;
+}
+
+.c3:hover,
+.c3:active {
+  color: #ffffff;
+  background-color: #30487b;
+  border-color: #30487b;
+}
+
+.c3[disabled] {
+  opacity: .65;
+}
+
+.c5 {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: center;
+  font-weight: bold;
+  white-space: nowrap;
+  vertical-align: middle;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  touch-action: manipulation;
+  cursor: pointer;
+  color: #58666e;
+  background-color: #ffffff;
+  border: 1px solid rgba(0,0,0,.15);
+  padding: 9px 12px;
+  font-size: 14px;
+  line-height: 1.428571429;
+  border-radius: 3px;
+  -webkit-transition: all .15s ease-in-out;
+  transition: all .15s ease-in-out;
+  margin-bottom: 10px;
+  position: relative;
+  width: 100%;
+  height: 40.000000006px;
+}
+
+.c5:focus {
+  outline: 0;
+}
+
+.c5:hover,
+.c5:active {
+  color: #58666e;
+  background-color: #ebebeb;
+  border-color: rgba(0,0,0,0.15);
+}
+
+.c5[disabled] {
+  opacity: .65;
+}
+
+.c2 {
+  text-align: center;
+}
+
+.c7 {
+  position: relative;
+}
+
+.c9 {
+  color: #495057;
+  margin-bottom: 5px;
+  display: none;
+}
+
+.c8 {
+  margin-bottom: 10px;
+}
+
+.c10 {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  font-size: 14px;
+  line-height: 1.428571429;
+  color: #495057;
+  border-radius: 3px;
+  border-width: 1px;
+  border-style: solid;
+  border-color: #ced4da;
+  background-color: #fff;
+  background-image: none;
+  padding: 9px 12px;
+  -webkit-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+  transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+  box-shadow: none;
+  -webkit-appearance: none;
+}
+
+.c10:focus {
+  border-color: #5fdb94;
+  box-shadow: 0 0 0 3px rgba(95,219,148,0.5);
+  outline: 0;
+}
+
+.c10:disabled,
+.c10[readonly] {
+  background-color: #e9ecef;
+}
+
+.c10::-webkit-input-placeholder {
+  color: #868e96;
+}
+
+.c10::-moz-placeholder {
+  color: #868e96;
+}
+
+.c10:-ms-input-placeholder {
+  color: #868e96;
+}
+
+.c10::placeholder {
+  color: #868e96;
+}
+
+.c12 {
+  padding-left: 20px;
+  margin-bottom: 0;
+  cursor: pointer;
+  font-weight: normal;
+}
+
+.c12 > input {
+  position: absolute;
+  margin-left: -20px;
+  margin-top: 2px;
+  line-height: normal;
+}
+
+.c11 {
+  margin-bottom: 10px;
+}
+
+.c13 {
+  font-size: 12px;
+  color: #adb5bd;
+  margin: 5px 5px 10px 5px;
+  text-align: justify;
+  display: block;
+}
+
+.c13 > p {
+  margin-top: 1px;
+  margin-bottom: 1px;
+}
+
+<div
+  className="c0"
+>
+  <div>
+    <div
+      className="c1"
+    >
+      signup.title
+    </div>
+    <div
+      className="r5-social-buttons c2"
+    >
+      <div
+        className="r5-btn-social r5-btn-social-facebook c3"
+        onClick={[Function]}
+      >
+        <span
+          className="r5-btn-social-icon c4"
+        />
+        <span
+          className="r5-btn-social-text"
+        >
+          Facebook
+        </span>
+      </div>
+      <div
+        className="r5-btn-social r5-btn-social-google c5"
+        onClick={[Function]}
+      >
+        <span
+          className="r5-btn-social-icon c4"
+        />
+        <span
+          className="r5-btn-social-text"
+        >
+          Google
+        </span>
+      </div>
+    </div>
+    <div
+      className="c6"
+    >
+      <span>
+        or
+      </span>
+    </div>
+    <form
+      className="c7"
+      noValidate={true}
+      onSubmit={[Function]}
+    >
+      <div
+        className="c8"
+      >
+        <label
+          className="c9"
+          htmlFor="email"
+        >
+          email
+        </label>
+        <input
+          className="c10"
+          data-testid="email"
+          id="email"
+          name="email"
+          onBlur={[Function]}
+          onChange={[Function]}
+          placeholder="email"
+          readOnly={false}
+          required={true}
+          title="email"
+          type="email"
+          value=""
+        />
+      </div>
+      <div
+        className="c8"
+      >
+        <div
+          style={
+            Object {
+              "position": "relative",
+            }
+          }
+        >
+          <label
+            className="c9"
+          >
+            password
+          </label>
+          <div
+            style={
+              Object {
+                "position": "relative",
+              }
+            }
+          >
+            <input
+              className="c10"
+              data-testid="password"
+              name="password"
+              onBlur={[Function]}
+              onChange={[Function]}
+              onFocus={[Function]}
+              placeholder="password"
+              title="password"
+              type="password"
+              value=""
+            />
+          </div>
+        </div>
+      </div>
+      <div
+        style={
+          Object {
+            "position": "relative",
+          }
+        }
+      >
+        <div
+          className="c11"
+        >
+          <label
+            className="c12"
+          >
+            <input
+              checked={false}
+              name="consents.aConsent"
+              onChange={[Function]}
+              required={true}
               type="checkbox"
             />
             consent title
