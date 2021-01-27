@@ -9,7 +9,7 @@ import { Checkbox } from '../formControlsComponent';
 import { createField } from '../fieldCreator';
 import { MarkdownContent } from '../../miscComponent';
 
-import { checked } from '../../../core/validation';
+import { checked, empty } from '../../../core/validation';
 
 const Description = withTheme(styled.div`
     font-size: ${props => props.theme.get('smallTextFontSize')}px;
@@ -44,7 +44,7 @@ const ConsentField = ({ value, onChange, label, description, path, required, val
 };
 
 export default function consentField(config) {
-    const baseProps = {
+    return createField({
         ...config,
         required: !!config.required,
         defaultValue: config.defaultValue && { granted: config.defaultValue },
@@ -52,10 +52,7 @@ export default function consentField(config) {
             bind: x => !!(x && x.granted),
             unbind: x => ({ granted: x, consentType: config.type })
         },
+        validator: config.required ? checked : empty,
         component: ConsentField
-    }
-
-    const props = config.required ? { ...baseProps, validator: checked } : baseProps;
-
-    return createField(props);
+    });
 }
