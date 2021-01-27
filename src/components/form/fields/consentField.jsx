@@ -36,9 +36,9 @@ const ConsentField = ({ value, onChange, label, description, path, required, val
             onToggle={() => onChange(clickUpdate)}
             name={path}
             label={label}
-            {...pick(validation, 'error')}
             data-testid={path}
-            required={required} />
+            required={required}
+            {...pick(validation, 'error')} />
         <MarkdownContent root={Description} source={description} />
     </div>
 };
