@@ -6710,7 +6710,7 @@ exports[`Snapshot with webauthn feature login view with webauthn or password 1`]
       >
         <button
           className="c12 r5-button-with-icon c13"
-          data-testid="submit"
+          data-testid="webauthn-button"
           disabled={false}
           title="login.withBiometrics"
           type="submit"
@@ -6726,7 +6726,7 @@ exports[`Snapshot with webauthn feature login view with webauthn or password 1`]
         </div>
         <button
           className="c12 r5-button-with-icon c13"
-          data-testid="submit"
+          data-testid="password-button"
           disabled={false}
           onClick={[Function]}
           title="login.withPassword"
@@ -7651,7 +7651,7 @@ exports[`Snapshot with webauthn feature signup view with webauthn or password  1
     >
       <button
         className="c7 r5-button-with-icon c8"
-        data-testid="submit"
+        data-testid="webauthn-button"
         disabled={false}
         onClick={[Function]}
         title="signup.withBiometrics"
@@ -7675,7 +7675,7 @@ exports[`Snapshot with webauthn feature signup view with webauthn or password  1
       </div>
       <button
         className="c7 r5-button-with-icon c8"
-        data-testid="submit"
+        data-testid="password-button"
         disabled={false}
         onClick={[Function]}
         title="signup.withPassword"
