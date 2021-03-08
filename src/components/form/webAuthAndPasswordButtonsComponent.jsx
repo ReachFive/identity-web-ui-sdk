@@ -19,9 +19,10 @@ const iconStyle = `
 const FingerPrintIcon = styled(FingerPrint)`${iconStyle}`;
 const KeyboardIcon = styled(Keyboard)`${iconStyle}`;
 
-const PrimaryButtonWithIcon = styled(withTheme(({ type = "submit", onClick, disabled = false, title, text, children, theme, className }) => (
+const PrimaryButtonWithIcon = styled(withTheme(({ type = "submit", dataTestId, onClick, disabled = false, title, text, children, theme, className }) => (
     <Button
         type={type}
+        dataTestId={dataTestId}
         title={title}
         className={classes(['r5-button-with-icon'], className)}
         onClick={onClick}
@@ -52,6 +53,7 @@ const ButtonsSeparator = withTheme(styled.div`
 export const WebAuthnLoginViewButtons = styled(({ disabled, onPasswordClick, i18n, className }) => <div className={classes(['r5-webauthn-login-buttons'], className)}>
     <PrimaryButtonWithIcon
         type="submit"
+        dataTestId="webauthn-button"
         title={i18n('login.withBiometrics')}
         disabled={disabled}>
         <FingerPrintIcon />
@@ -60,6 +62,7 @@ export const WebAuthnLoginViewButtons = styled(({ disabled, onPasswordClick, i18
     <ButtonsSeparator>{i18n('or')}</ButtonsSeparator>
 
     <PrimaryButtonWithIcon
+        dataTestId="password-button"
         title={i18n('login.withPassword')}
         disabled={disabled}
         onClick={onPasswordClick}>
@@ -76,6 +79,7 @@ export const WebAuthnLoginViewButtons = styled(({ disabled, onPasswordClick, i18
 
 export const WebAuthnSignupViewButtons = styled(({ onBiometricClick, onPasswordClick, i18n, className }) => <div className={classes(['r5-webauthn-signup-buttons'], className)}>
     <PrimaryButtonWithIcon
+        dataTestId="webauthn-button"
         onClick={onBiometricClick}
         title={i18n('signup.withBiometrics')}
         text={i18n('biometrics')}>
@@ -85,6 +89,7 @@ export const WebAuthnSignupViewButtons = styled(({ onBiometricClick, onPasswordC
     <Separator text={i18n('or')} />
 
     <PrimaryButtonWithIcon
+        dataTestId="password-button"
         onClick={onPasswordClick}
         title={i18n('signup.withPassword')}
         text={i18n('password')}>
