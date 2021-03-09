@@ -7,12 +7,20 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.11.7] - 2020-03-09
+
+### Fixes
+
+Fix the values of the `data-test-id` props for the `showAuth` widget.
+
 ## [1.11.6] - 2020-01-27
 
 ### Fixes
+
 The [`returnToAfterEmailConfirmation`](https://developer.reachfive.com/sdk-ui/showAuth.html#returnToAfterEmailConfirmation) parameter is now taken into account in the 'Signup with biometrics' form.
 
 ### Changed
+
 The Instagram social provider is removed.
 
 ## [1.11.5] - 2020-12-10
