@@ -8,14 +8,14 @@ import { withTheme } from '../widget/widgetContext';
 
 const buttonTheme = (props, attr) => props.theme.get(`${props.themePrefix || 'button'}.${attr}`);
 
-export const Button = styled(({ tagname = 'button', className, extendedClasses, title, disabled, type, onClick, children }) => {
+export const Button = styled(({ tagname = 'button', className, extendedClasses, title, disabled, type, dataTestId, onClick, children }) => {
     const Tagname = tagname;
 
     return (
         <Tagname className={classes([extendedClasses, className])}
             disabled={disabled}
             type={type}
-            data-testid={type}
+            data-testid={dataTestId || type}
             onClick={onClick}
             {...(title ? { title } : {})}>{children}</Tagname>
     );
