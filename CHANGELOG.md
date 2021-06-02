@@ -7,6 +7,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.12.0] - 2020-06-02
+
+### Changed
+
+Upgrade identity-web-core-sdk version to 1.20.1
+
 ## [1.11.7] - 2020-03-09
 
 ### Fixes
