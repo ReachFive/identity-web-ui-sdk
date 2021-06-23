@@ -158,11 +158,19 @@ function customFieldComponent(customField, cfg) {
     }
 }
 
-function consentFieldComponent(consent, cfg) {
+function consentFieldComponent(consent, versionIDPath, cfg) {
+    // If the version ID is not defined in the path, get the latest version ID
+    const versionID = versionIDPath || Math.max(...Object.values(consent.versions.map(v => v.version_id)));
+
+    const version = consent.versions.find(version => version.version_id == versionID);
+    if (!version) {
+        throw new Error(`Unknown version ID n°${versionID} of consent '${consent.key}'.`);
+    }
+
     const baseConfig = {
-        label: consent.title,
+        label: version.title,
         extendedParams: {
-            description: consent.description
+            description: version.description
         },
         type: consent.consentType,
         ...cfg,
@@ -180,7 +188,7 @@ const findCustomField = (config, camelPath) => (
 )
 
 const findConsentField = (config, camelPath) => {
-    return find(config.consents, f => {
+    return find(config.consentsVersions, f => {
         const fieldCamelPath = camelCase(f.key);
         return camelPath === fieldCamelPath || camelPath === `consents.${fieldCamelPath}`;
     })
@@ -198,9 +206,10 @@ const resolveField = (fieldConfig, config) => {
         return customFieldComponent(customField, fieldConfig);
     }
 
-    const consentField = findConsentField(config, camelPath);
+    const camelPathSplit = camelPath.split('.v');
+    const consentField = findConsentField(config, camelPathSplit[0]);
     if (consentField) {
-        return consentFieldComponent(consentField, fieldConfig);
+        return consentFieldComponent(consentField, camelPathSplit[1], fieldConfig);
     }
 
     throw new Error(`Unknown field: ${fieldConfig.key}`);
