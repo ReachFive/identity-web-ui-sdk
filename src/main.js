@@ -4,6 +4,7 @@ import { UiClient } from './client';
 import { createUrlParser } from './core/urlParser';
 import { createEventManager } from './core/identityEventManager';
 import { camelCaseProperties } from './helpers/transformObjectProperties';
+import { toQueryString } from './helpers/queryString';
 
 export function createClient(creationConfig) {
     const urlParser = createUrlParser(createEventManager());
@@ -13,9 +14,14 @@ export function createClient(creationConfig) {
         const remoteConfig = camelCaseProperties(remoteSettings);
         const language = creationConfig.language || remoteConfig.language;
 
-        return fetch(`${remoteSettings.resourceBaseUrl}/${language}.json`)
+        return fetch(`https://${creationConfig.domain}/identity/v1/config/consents?${toQueryString({ lang: language })}`)
             .then(response => response.json())
-            .then(defaultI18n => new UiClient({ ...creationConfig, ...remoteConfig}, urlParser, coreClient, defaultI18n))
+            .then(consentsVersions => {
+                return fetch(`${remoteSettings.resourceBaseUrl}/${language}.json`)
+                    .then(response => response.json())
+                    .then(defaultI18n => new UiClient({ ...creationConfig, ...remoteConfig, consentsVersions }, urlParser, coreClient, defaultI18n))
+                    .catch(console.error);
+            })
             .catch(console.error);
     });
 
