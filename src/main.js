@@ -19,7 +19,14 @@ export function createClient(creationConfig) {
             .then(consentsVersions => {
                 return fetch(`${remoteSettings.resourceBaseUrl}/${language}.json`)
                     .then(response => response.json())
-                    .then(defaultI18n => new UiClient({ ...creationConfig, ...remoteConfig, consentsVersions }, urlParser, coreClient, defaultI18n))
+                    .then(defaultI18n => new UiClient(
+                        {
+                            ...creationConfig,
+                            ...remoteConfig,
+                            consentsVersions: camelCaseProperties(consentsVersions)
+                        },
+                        urlParser, coreClient, defaultI18n)
+                    )
                     .catch(console.error);
             })
             .catch(console.error);

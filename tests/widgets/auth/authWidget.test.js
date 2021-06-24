@@ -19,10 +19,13 @@ const defaultConfig = {
         minStrength: 2
     },
     socialProviders: ['facebook', 'google'],
-    consents: [{
+    consentsVersions: [{
         key: 'aConsent',
-        title: 'consent title',
-        description: 'consent description'
+        versions: [{
+            versionId: 1,
+            title: 'consent title',
+            description: 'consent description'
+        }]
     }]
 };
 

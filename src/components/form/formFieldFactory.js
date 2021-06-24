@@ -160,11 +160,11 @@ function customFieldComponent(customField, cfg) {
 
 function consentFieldComponent(consent, versionIdPath, cfg, language) {
     // If the version ID is not defined in the path, get the latest version ID
-    const versionId = parseInt(versionIdPath || Math.max(...Object.values(consent.versions.map(v => v.version_id))));
+    const versionId = parseInt(versionIdPath || Math.max(...Object.values(consent.versions.map(v => v.versionId))));
 
-    const version = consent.versions.find(version => version.version_id === versionId);
+    const version = consent.versions.find(version => version.versionId === versionId);
     if (!version) {
-        throw new Error(`Unknown version ID n°${versionID} of consent '${consent.key}'.`);
+        throw new Error(`Unknown version ID n°${versionId} of consent '${consent.key}'.`);
     }
 
     const baseConfig = {
