@@ -164,6 +164,7 @@ function consentFieldComponent(consent, fieldConfig) {
     }
 
     const baseConfig = {
+        ...fieldConfig,
         label: consent.title,
         extendedParams: {
             description: consent.description,
