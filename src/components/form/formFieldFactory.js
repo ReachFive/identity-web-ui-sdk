@@ -158,14 +158,19 @@ function customFieldComponent(customField, cfg) {
     }
 }
 
-function consentFieldComponent(consent, cfg) {
+function consentFieldComponent(consent, fieldConfig) {
+    if (fieldConfig.errorArchivedConsents && consent.status === 'archived') {
+        throw new UserError(`The '${consent.key}' consent is archived and cannot be displayed.`);
+    }
+
     const baseConfig = {
+        ...fieldConfig,
         label: consent.title,
         extendedParams: {
-            description: consent.description
+            description: consent.description,
+            consentCannotBeGranted: !fieldConfig.errorArchivedConsents && consent.status === 'archived'
         },
         type: consent.consentType,
-        ...cfg,
         key: `consents.${consent.key}`
     };
 
@@ -203,11 +208,16 @@ const resolveField = (fieldConfig, config) => {
         return consentFieldComponent(consentField, fieldConfig);
     }
 
-    throw new Error(`Unknown field: ${fieldConfig.key}`);
+    throw new UserError(`Unknown field: ${fieldConfig.key}`);
 };
 
-export const buildFormFields = (fields = [], { canShowPassword, ...config }) => compact(fields).map(field => (
-    resolveField(isString(field) ? { key: field, canShowPassword } : { canShowPassword, ...field }, config)
+export const buildFormFields = (fields = [], { canShowPassword, errorArchivedConsents, ...config }) => compact(fields).map(field => (
+    resolveField(
+        isString(field)
+            ? { key: field, canShowPassword, errorArchivedConsents }
+            : { ...field, canShowPassword, errorArchivedConsents },
+        config
+    )
 ));
 
 export const computeFieldList = fields => fields.map(f => f.path).join(',');

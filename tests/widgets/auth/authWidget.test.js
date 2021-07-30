@@ -101,7 +101,7 @@ describe('Snapshot', () => {
 
         test('with mandatory consents', generateSnapshot({
             initialScreen: 'signup',
-            signupFields: ['email', 'password', {key: 'consents.aConsent', required: true }]
+            signupFields: ['email', 'password', { key: 'consents.aConsent', required: true }]
         }));
     });
 

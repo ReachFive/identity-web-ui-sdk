@@ -56,7 +56,7 @@ export default createWidget({
             throw new UserError('These fields are not allowed: password, password_confirmation.');
         }
 
-        const resolvedFields = buildFormFields(fields, config);
+        const resolvedFields = buildFormFields(fields, { ...config, errorArchivedConsents: false });
 
         return apiClient
             .getUser({
