@@ -160,7 +160,7 @@ function customFieldComponent(customField, cfg) {
 
 function consentFieldComponent(consent, fieldConfig) {
     if (fieldConfig.errorArchivedConsents && consent.status === 'archived') {
-        throw new Error(`The '${consent.key}' consent is archived and cannot be displayed.`);
+        throw new UserError(`The '${consent.key}' consent is archived and cannot be displayed.`);
     }
 
     const baseConfig = {
@@ -208,7 +208,7 @@ const resolveField = (fieldConfig, config) => {
         return consentFieldComponent(consentField, fieldConfig);
     }
 
-    throw new Error(`Unknown field: ${fieldConfig.key}`);
+    throw new UserError(`Unknown field: ${fieldConfig.key}`);
 };
 
 export const buildFormFields = (fields = [], { canShowPassword, errorArchivedConsents, ...config }) => compact(fields).map(field => (
