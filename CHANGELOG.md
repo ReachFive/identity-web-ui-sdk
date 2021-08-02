@@ -7,6 +7,14 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.13.0] - 2021-08-02
+
+### Changed
+
+- Upgrade minors versions of dependencies.
+- Upgrade the ReachFive Core SDK version to [`1.21.0`](https://github.com/ReachFive/identity-web-core-sdk/releases/tag/v1.21.0).
+- The widgets handle now the archived consents: a user cannot accept an archived consent, but he can refuse the consent in the [`showProfileEditor`](https://developer.reachfive.com/sdk-ui/showProfileEditor.html) widget.
+
 ## [1.12.0] - 2020-06-02
 
 ### Changed
