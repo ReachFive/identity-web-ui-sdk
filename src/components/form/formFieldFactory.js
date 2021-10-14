@@ -159,7 +159,7 @@ function customFieldComponent(customField, cfg) {
 }
 
 
-function consentFieldComponent(consent, versionIdPath, cfg, language) {
+function consentFieldComponent(consent, fieldConfig, versionIdPath, language) {
     if (fieldConfig.errorArchivedConsents && consent.status === 'archived') {
         throw new UserError(`The '${consent.key}' consent is archived and cannot be displayed.`);
     }
@@ -169,11 +169,11 @@ function consentFieldComponent(consent, versionIdPath, cfg, language) {
 
     const version = consent.versions.find(version => version.versionId === versionId);
     if (!version) {
-        throw new Error(`Unknown version ID n°${versionId} of consent '${consent.key}'.`);
+        throw new UserError(`Unknown version ID n°${versionId} of consent '${consent.key}'.`);
     }
 
     const baseConfig = {
-        ...cfg,
+        ...fieldConfig,
         label: version.title,
         extendedParams: {
             version: { versionId, language },
@@ -216,7 +216,7 @@ const resolveField = (fieldConfig, config) => {
     const camelPathSplit = camelPath.split('.v');
     const consentField = findConsentField(config, camelPathSplit[0]);
     if (consentField) {
-        return consentFieldComponent(consentField, camelPathSplit[1], fieldConfig, config.language);
+        return consentFieldComponent(consentField, fieldConfig, camelPathSplit[1], config.language);
     }
 
     throw new UserError(`Unknown field: ${fieldConfig.key}`);
