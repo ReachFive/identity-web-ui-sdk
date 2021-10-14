@@ -158,7 +158,7 @@ exports[`Snapshot forgot password view default 1`] = `
       forgotPassword.title
     </div>
     <div
-      className="sc-AxirZ c2"
+      className="c2"
     >
       forgotPassword.prompt
     </div>

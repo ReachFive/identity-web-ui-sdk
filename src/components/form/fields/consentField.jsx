@@ -24,11 +24,11 @@ const Description = withTheme(styled.div`
     }
 `);
 
-const ConsentField = ({ value, onChange, label, description, path, required, validation }) => {
+const ConsentField = ({ value, onChange, label, description, path, required, validation, consentCannotBeGranted }) => {
     const clickUpdate = ({ value }) => ({
-        value: !value,
+        value: consentCannotBeGranted ? false : !value,
         isDirty: true
-    });
+    }); 
 
     return <div style={{ position: "relative" }}>
         <Checkbox

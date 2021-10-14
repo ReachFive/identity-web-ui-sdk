@@ -67,7 +67,7 @@ export default class PasswordSignupForm extends React.Component {
             config
         } = this.props;
 
-        const fields = buildFormFields(signupFields, { ...config, canShowPassword });
+        const fields = buildFormFields(signupFields, { ...config, canShowPassword, errorArchivedConsents: true });
 
         const allFields = userAgreement
             ? [
