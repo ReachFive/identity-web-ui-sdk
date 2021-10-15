@@ -212,7 +212,7 @@ const resolveField = (fieldConfig, config) => {
     if (customField) {
         return customFieldComponent(customField, fieldConfig);
     }
-
+    // test
     const camelPathSplit = camelPath.split('.v');
     const consentField = findConsentField(config, camelPathSplit[0]);
     if (consentField) {
