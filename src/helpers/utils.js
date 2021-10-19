@@ -31,7 +31,7 @@ export function getRandomInt(min, max) {
 * to be in a `userInput` field.
 */
 export function isValued(v) {
-    const unwrap = isObject(v) ? v.userInput : v;
+    const unwrap = isObject(v) ? v.raw : v;
     return (
         unwrap !== null &&
         unwrap !== undefined &&

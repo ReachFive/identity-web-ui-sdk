@@ -10,13 +10,13 @@ import { createField } from '../fieldCreator';
 
 class PhoneNumberField extends React.Component {
     componentDidMount() {
-        const { userInput, country } = this.props.value;
+        const { raw, country } = this.props.value;
 
         try {
-            const parsed = libphonenumber.parse(userInput, country);
+            const parsed = libphonenumber.parse(raw, country);
             const phoneValue = country === parsed.country
                 ? libphonenumber.format(parsed, 'National')
-                : userInput;
+                : raw;
 
             this.asYouType(phoneValue);
         } catch (e) { }
@@ -36,7 +36,7 @@ class PhoneNumberField extends React.Component {
         this.props.onChange({
             value: {
                 country,
-                userInput: phone,
+                raw: phone,
                 formatted,
                 isValid
             }
@@ -63,7 +63,7 @@ class PhoneNumberField extends React.Component {
                 id={inputId}
                 name={path}
                 type="tel"
-                value={value.userInput || ''}
+                value={value.raw || ''}
                 placeholder={placeholder}
                 title={label}
                 required={required}
@@ -83,10 +83,10 @@ export default function phoneNumberField(props, config) {
         format: {
             bind: x => ({
                 country: config.countryCode,
-                userInput: x,
+                raw: x,
                 isValid: true
             }),
-            unbind: x => x.formatted || x.userInput
+            unbind: x => x.formatted || x.raw
         },
         validator: new Validator({
             rule: value => value.isValid,
