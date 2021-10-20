@@ -3,9 +3,9 @@ import React from 'react';
 import pick from 'lodash-es/pick';
 import * as libphonenumber from 'libphonenumber-js';
 
-import {email, Validator} from '../../../core/validation';
+import { email, Validator } from '../../../core/validation';
 
-import { Input, FormGroup } from '../formControlsComponent';
+import { FormGroup, Input } from '../formControlsComponent';
 import { createField } from '../fieldCreator';
 
 /*
@@ -20,19 +20,19 @@ import { createField } from '../fieldCreator';
 */
 
 function specializeRawIdentifier(inputValue, telCall = _ => undefined, emailCall = _ => undefined, otherCall = _ => undefined) {
-    if(/^\+?[0-9]+/.test(inputValue)) {
+    if (/^\+?[0-9]+/.test(inputValue)) {
         return ({
             raw: inputValue,
             ...telCall(inputValue),
             type: 'tel',
         })
-    }else if(/@/.test(inputValue)) {
+    } else if (/@/.test(inputValue)) {
         return ({
             raw: inputValue,
             ...emailCall(inputValue),
             type: 'email',
         })
-    }else {
+    } else {
         return ({
             raw: inputValue,
             ...otherCall(inputValue),
@@ -42,9 +42,9 @@ function specializeRawIdentifier(inputValue, telCall = _ => undefined, emailCall
 }
 
 function specializeRefinedIdentifier(identifier, telCall = x => x, emailCall = x => x, otherCall = x => x) {
-    if(identifier.type === 'tel')
+    if (identifier.type === 'tel')
         return telCall(identifier)
-    else if(identifier.type === 'email')
+    else if (identifier.type === 'email')
         return emailCall(identifier)
     else return otherCall(identifier)
 }
@@ -68,16 +68,16 @@ class IdentifierField extends React.Component {
     }
 
     asYouType = (inputValue) => {
-        const {value: { country }} = this.props;
+        const {value: {country}} = this.props;
 
         const phone = new libphonenumber.AsYouType(country).input(inputValue);
         const formatted = libphonenumber.format(phone, country, 'International');
         const isValid = libphonenumber.isValidNumber(phone, country);
 
         return {
-                country,
-                formatted,
-                isValid,
+            country,
+            formatted,
+            isValid,
             raw: phone,
         }
     }
@@ -118,7 +118,7 @@ class IdentifierField extends React.Component {
                     })
                 }
                 onBlur={() => this.props.onChange({ isDirty: true })}
-                data-testid={path} />
+                data-testid={path}/>
         </FormGroup>
     }
 }
@@ -130,9 +130,9 @@ export default function identifierField(props, config) {
         label: 'identifier',
         format: {
             bind: x => specializeRawIdentifier(x,
-                    _ => ({country: config.countryCode, isValid: true}),
-                    _ =>  ({country: config.countryCode, isValid: true}),
-                    _ =>  ({country: config.countryCode, isValid: true})),
+                _ => ({ country: config.countryCode, isValid: true }),
+                _ => ({ country: config.countryCode, isValid: true }),
+                _ => ({ country: config.countryCode, isValid: true })),
             unbind: x => specializeRefinedIdentifier(
                 x,
                 v => v.formatted || v.raw,
@@ -141,11 +141,11 @@ export default function identifierField(props, config) {
         },
         validator: new Validator({
             rule: value => specializeRefinedIdentifier(value,
-                    v =>  v.isValid,
-                    v => email.rule(v.raw),
-                    _ => false),
+                v => v.isValid,
+                v => email.rule(v.raw),
+                _ => false),
             hint: value => specializeRefinedIdentifier(value,
-                _ =>  'phone',
+                _ => 'phone',
                 _ => 'email',
                 _ => 'identifier')
         }),
