@@ -27,7 +27,7 @@ export function getRandomInt(min, max) {
 }
 
 /* Returns whether a form value has been set with a valid value.
-* If the user's input is enriched as an object, raw input is expected
+* If the user's input has been enriched as an object, raw input is expected
 * to be in a `raw` field.
 */
 export function isValued(v) {
@@ -47,4 +47,14 @@ export function formatISO8601Date(year, month, day) {
     }
 
     return null
+}
+
+export function specializeIdentifierData({data}) {
+    return (!!data.identifier) ?
+        {
+            ...data,
+            identifier: undefined,
+            ...(/@/.test(data.identifier)) ? {email: data.identifier} : {phone_number: data.identifier},
+        }
+        : data
 }

@@ -8,6 +8,7 @@ import { WebAuthnLoginViewButtons } from './../../../components/form/webAuthAndP
 import { createForm } from '../../../components/form/formComponent';
 import { simpleField } from '../../../components/form/fields/simpleField';
 import identifierField from "../../../components/form/fields/identifierField";
+import {specializeIdentifierData} from "../../../helpers/utils";
 
 
 export const LoginWithWebAuthnForm = createForm({
@@ -34,10 +35,12 @@ export const LoginWithWebAuthnForm = createForm({
 
 export default class LoginWithWebAuthnView extends React.Component {
     handleWebAuthnLogin = data => {
+        const specializedData = specializeIdentifierData(data);
+
         return this.props.apiClient.loginWithWebAuthn({
-            ...data,
+            ...specializedData,
             auth: {
-                ...data.auth,
+                ...specializedData.auth,
                 ...this.props.auth,
             }
         });

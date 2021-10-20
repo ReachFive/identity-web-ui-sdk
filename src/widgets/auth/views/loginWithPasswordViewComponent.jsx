@@ -10,6 +10,7 @@ import { simpleField } from '../../../components/form/fields/simpleField';
 import { simplePasswordField } from '../../../components/form/fields/simplePasswordField';
 import checkboxField from '../../../components/form/fields/checkboxField';
 import identifierField from "../../../components/form/fields/identifierField";
+import {specializeIdentifierData} from "../../../helpers/utils";
 
 const ForgotPasswordWrapper = withTheme(styled.div`
     margin-bottom: ${props => props.theme.get('spacing')}px;
@@ -64,15 +65,7 @@ export const LoginWithPasswordForm = createForm({
 
 export default class LoginView extends React.Component {
     handleLogin = data => {
-        const specializedData =
-            (!!data.identifier) ?
-                {
-                    ...data,
-                    identifier: undefined,
-                    ...(/@/.test(data.identifier)) ? {email: data.identifier} : {phone_number: data.identifier},
-                }
-                : data;
-
+        const specializedData = specializeIdentifierData(data);
         return this.props.apiClient.loginWithPassword({
             ...specializedData,
             auth: {
