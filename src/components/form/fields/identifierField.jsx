@@ -90,7 +90,8 @@ class IdentifierField extends React.Component {
             inputId,
             required = true,
             label,
-            placeholder = label
+            placeholder = label,
+            readOnly
         } = this.props;
 
         return <FormGroup
@@ -106,6 +107,7 @@ class IdentifierField extends React.Component {
                 placeholder={placeholder}
                 title={label}
                 required={required}
+                readOnly={readOnly}
                 hasError={!!validation.error}
                 onChange={event =>
                     this.props.onChange({
@@ -127,7 +129,10 @@ export default function identifierField(props, config) {
         key: 'identifier',
         label: 'identifier',
         format: {
-            bind: x => ({type:'text', raw: x, country: config.countryCode, isValid: true}),
+            bind: x => specializeRawIdentifier(x,
+                    _ => ({country: config.countryCode, isValid: true}),
+                    _ =>  ({country: config.countryCode, isValid: true}),
+                    _ =>  ({country: config.countryCode, isValid: true})),
             unbind: x => specializeRefinedIdentifier(
                 x,
                 v => v.formatted || v.raw,
@@ -144,6 +149,6 @@ export default function identifierField(props, config) {
                 _ => 'email',
                 _ => 'identifier')
         }),
-        component: IdentifierField
+        component: IdentifierField,
     });
 }
