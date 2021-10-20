@@ -49,12 +49,12 @@ export function formatISO8601Date(year, month, day) {
     return null
 }
 
-export function specializeIdentifierData({data}) {
+export function specializeIdentifierData(data) {
     return (!!data.identifier) ?
         {
             ...data,
             identifier: undefined,
-            ...(/@/.test(data.identifier)) ? {email: data.identifier} : {phone_number: data.identifier},
+            ...(/@/.test(data.identifier)) ? {email: data.identifier} : {phoneNumber: data.identifier},
         }
         : data
 }

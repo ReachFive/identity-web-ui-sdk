@@ -66,6 +66,7 @@ export const LoginWithPasswordForm = createForm({
 export default class LoginView extends React.Component {
     handleLogin = data => {
         const specializedData = specializeIdentifierData(data);
+
         return this.props.apiClient.loginWithPassword({
             ...specializedData,
             auth: {
