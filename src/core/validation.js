@@ -1,6 +1,7 @@
 import validator from 'validator';
 
 import { isValued } from '../helpers/utils'
+import isFunction from 'lodash-es/isFunction';
 
 class CompoundValidator {
     constructor(current, next) {
@@ -23,13 +24,13 @@ class CompoundValidator {
 export class Validator {
     constructor({ rule, hint, parameters = [] }) {
         this.rule = rule;
-        this.hint = hint;
+        this.hint = !isFunction(hint) ? _ => hint : hint;
         this.parameters = parameters;
     }
 
     create(i18n) {
-        const errorMessage = i18n(`validation.${this.hint}`, this.parameters);
-        return (value, ctx) => !this.rule(value, ctx) && { error: errorMessage };
+        const errorMessage = v => i18n(`validation.${this.hint(v)}`, this.parameters);
+        return (value, ctx) => !this.rule(value, ctx) && { error: errorMessage(value) };
     }
 
     and(validator) {
