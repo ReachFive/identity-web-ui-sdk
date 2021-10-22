@@ -2,7 +2,7 @@ import React from 'react';
 
 import styled from 'styled-components';
 
-import {email } from '../../../core/validation';
+import { email } from '../../../core/validation';
 import { Heading, Link, Alternative, Separator } from '../../../components/miscComponent';
 import { withTheme } from '../../../components/widget/widgetContext';
 
