@@ -50,7 +50,11 @@ export default function consentField(config) {
         defaultValue: config.defaultValue && { granted: config.defaultValue },
         format: {
             bind: x => !!(x && x.granted),
-            unbind: x => ({ granted: x, consentType: config.type })
+            unbind: x => ({
+                granted: x,
+                consentType: config.type,
+                consentVersion: config.extendedParams.version
+            })
         },
         validator: config.required ? checked : empty,
         component: ConsentField

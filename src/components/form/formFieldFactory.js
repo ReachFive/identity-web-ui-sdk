@@ -158,16 +158,26 @@ function customFieldComponent(customField, cfg) {
     }
 }
 
-function consentFieldComponent(consent, fieldConfig) {
+
+function consentFieldComponent(consent, fieldConfig, versionIdPath, language) {
     if (fieldConfig.errorArchivedConsents && consent.status === 'archived') {
         throw new UserError(`The '${consent.key}' consent is archived and cannot be displayed.`);
     }
 
+    // If the version ID is not defined in the path, get the latest version ID
+    const versionId = parseInt(versionIdPath || Math.max(...Object.values(consent.versions.map(v => v.versionId))));
+
+    const version = consent.versions.find(version => version.versionId === versionId);
+    if (!version) {
+        throw new UserError(`Unknown version ID n°${versionId} of consent '${consent.key}'.`);
+    }
+
     const baseConfig = {
         ...fieldConfig,
-        label: consent.title,
+        label: version.title,
         extendedParams: {
-            description: consent.description,
+            version: { versionId, language },
+            description: version.description,
             consentCannotBeGranted: !fieldConfig.errorArchivedConsents && consent.status === 'archived'
         },
         type: consent.consentType,
@@ -185,7 +195,7 @@ const findCustomField = (config, camelPath) => (
 )
 
 const findConsentField = (config, camelPath) => {
-    return find(config.consents, f => {
+    return find(config.consentsVersions, f => {
         const fieldCamelPath = camelCase(f.key);
         return camelPath === fieldCamelPath || camelPath === `consents.${fieldCamelPath}`;
     })
@@ -203,9 +213,10 @@ const resolveField = (fieldConfig, config) => {
         return customFieldComponent(customField, fieldConfig);
     }
 
-    const consentField = findConsentField(config, camelPath);
+    const camelPathSplit = camelPath.split('.v');
+    const consentField = findConsentField(config, camelPathSplit[0]);
     if (consentField) {
-        return consentFieldComponent(consentField, fieldConfig);
+        return consentFieldComponent(consentField, fieldConfig, camelPathSplit[1], config.language);
     }
 
     throw new UserError(`Unknown field: ${fieldConfig.key}`);
