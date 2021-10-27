@@ -54,7 +54,7 @@ export function specializeIdentifierData(data) {
         {
             ...data,
             identifier: undefined,
-            ...(/@/.test(data.identifier)) ? {email: data.identifier} : {phoneNumber: data.identifier},
+            ...(/@/.test(data.identifier)) ? {email: data.identifier} : {phoneNumber: data.identifier.replace(/\s+/g, '')},
         }
         : data
 }
