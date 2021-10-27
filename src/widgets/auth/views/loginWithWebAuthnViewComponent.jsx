@@ -7,20 +7,27 @@ import SocialButtons from '../../../components/form/socialButtonsComponent';
 import { WebAuthnLoginViewButtons } from './../../../components/form/webAuthAndPasswordButtonsComponent';
 import { createForm } from '../../../components/form/formComponent';
 import { simpleField } from '../../../components/form/fields/simpleField';
+import identifierField from "../../../components/form/fields/identifierField";
+import {specializeIdentifierData} from "../../../helpers/utils";
 
 
 export const LoginWithWebAuthnForm = createForm({
     prefix: 'r5-login-',
-    fields({ showEmail = true, defaultEmail }) {
+    fields({ showIdentifier = true, defaultIdentifier, config }) {
         return [
-            showEmail && simpleField({
-                key: 'email',
-                label: 'email',
-                type: 'email',
-                autoComplete: 'email',
-                defaultValue: defaultEmail,
-                validator: email
-            })
+            showIdentifier && (config.sms) ?
+                identifierField({
+                    defaultValue: defaultIdentifier
+                }, config)
+                :
+                simpleField({
+                    key: 'email',
+                    label: 'email',
+                    type: 'email',
+                    autoComplete: 'email',
+                    defaultValue: defaultIdentifier,
+                    validator: email
+                }),
         ];
     },
     allowWebAuthnLogin: true
@@ -28,23 +35,26 @@ export const LoginWithWebAuthnForm = createForm({
 
 export default class LoginWithWebAuthnView extends React.Component {
     handleWebAuthnLogin = data => {
+        const specializedData = specializeIdentifierData(data);
+
         return this.props.apiClient.loginWithWebAuthn({
-            ...data,
+            ...specializedData,
             auth: {
-                ...data.auth,
+                ...specializedData.auth,
                 ...this.props.auth,
             }
         });
     }
 
     redirectToPasswordLoginView = data => {
-        this.props.goTo('login-with-password', { username: data.email })
+        const username = data.identifier || data.email;
+        this.props.goTo('login-with-password', { username })
     }
 
     render() {
         const { socialProviders, session = {}, i18n } = this.props;
 
-        const defaultEmail = session.lastLoginType === 'password' ? session.email : null;
+        const defaultIdentifier = session.lastLoginType === 'password' ? session.email : null;
 
         const webAuthnButtons = (disabled, handleClick) => <WebAuthnLoginViewButtons
             disabled={disabled}
@@ -62,10 +72,12 @@ export default class LoginWithWebAuthnView extends React.Component {
                 }
                 <LoginWithWebAuthnForm
                     showLabels={this.props.showLabels}
-                    defaultEmail={defaultEmail}
+                    defaultIdentifier={defaultIdentifier}
                     handler={this.handleWebAuthnLogin}
                     redirect={this.redirectToPasswordLoginView}
-                    webAuthnButtons={webAuthnButtons} />
+                    webAuthnButtons={webAuthnButtons}
+                    config={this.props.config}
+                />
                 {this.props.allowSignup &&
                     <Alternative>
                         <span>{i18n('login.signupLinkPrefix')}</span>

@@ -11,6 +11,8 @@ import { createForm } from '../../../components/form/formComponent';
 import { simpleField } from '../../../components/form/fields/simpleField';
 import { simplePasswordField } from '../../../components/form/fields/simplePasswordField';
 import checkboxField from '../../../components/form/fields/checkboxField';
+import identifierField from "../../../components/form/fields/identifierField";
+import {specializeIdentifierData} from "../../../helpers/utils";
 
 const ForgotPasswordWrapper = withTheme(styled.div`
     margin-bottom: ${props => props.theme.get('spacing')}px;
@@ -23,16 +25,21 @@ const ForgotPasswordWrapper = withTheme(styled.div`
 
 export const LoginForm = createForm({
     prefix: 'r5-login-',
-    fields({ showEmail = true, showRememberMe, canShowPassword, showForgotPassword, defaultEmail, i18n }) {
+    fields({ showIdentifier = true, showRememberMe, canShowPassword, showForgotPassword, defaultIdentifier, i18n, config }) {
         return [
-            showEmail && simpleField({
-                key: 'email',
-                label: 'email',
-                type: 'email',
-                autoComplete: 'email',
-                defaultValue: defaultEmail,
-                validator: email
-            }),
+            showIdentifier && (config.sms) ?
+                identifierField({
+                    defaultValue: defaultIdentifier,
+                }, config)
+                :
+                simpleField({
+                    key: 'email',
+                    label: 'email',
+                    type: 'email',
+                    autoComplete: 'email',
+                    defaultValue: defaultIdentifier,
+                    validator: email
+                }),
             simplePasswordField({
                 key: 'password',
                 label: 'password',
@@ -58,10 +65,12 @@ export const LoginForm = createForm({
 
 export default class LoginView extends React.Component {
     handleLogin = data => {
+        const specializedData = specializeIdentifierData(data);
+
         return this.props.apiClient.loginWithPassword({
-            ...data,
+            ...specializedData,
             auth: {
-                ...data.auth,
+                ...specializedData.auth,
                 ...this.props.auth,
             },
         });
@@ -70,7 +79,7 @@ export default class LoginView extends React.Component {
     render() {
         const { socialProviders, session = {}, i18n } = this.props;
 
-        const defaultEmail = session.lastLoginType === 'password' ? session.email : null;
+        const defaultIdentifier = session.lastLoginType === 'password' ? session.email : null;
 
         return (
             <div>
@@ -86,8 +95,10 @@ export default class LoginView extends React.Component {
                     showRememberMe={this.props.showRememberMe}
                     showForgotPassword={this.props.allowForgotPassword}
                     canShowPassword={this.props.canShowPassword}
-                    defaultEmail={defaultEmail}
-                    handler={this.handleLogin} />
+                    defaultIdentifier={defaultIdentifier}
+                    handler={this.handleLogin}
+                    config={this.props.config}
+                />
                 {this.props.allowSignup &&
                     <Alternative>
                         <span>{i18n('login.signupLinkPrefix')}</span>

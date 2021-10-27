@@ -9,6 +9,8 @@ import { createForm } from '../../../components/form/formComponent';
 import { simpleField } from '../../../components/form/fields/simpleField';
 import { simplePasswordField } from '../../../components/form/fields/simplePasswordField';
 import checkboxField from '../../../components/form/fields/checkboxField';
+import identifierField from "../../../components/form/fields/identifierField";
+import {specializeIdentifierData} from "../../../helpers/utils";
 
 const ForgotPasswordWrapper = withTheme(styled.div`
     margin-bottom: ${props => props.theme.get('spacing')}px;
@@ -21,16 +23,23 @@ const ForgotPasswordWrapper = withTheme(styled.div`
 
 export const LoginWithPasswordForm = createForm({
     prefix: 'r5-login-',
-    fields({ username, showRememberMe, canShowPassword, showForgotPassword, i18n }) {
+    fields({ username, showRememberMe, canShowPassword, showForgotPassword, i18n, config }) {
         return [
-            simpleField({
-                key: 'email',
-                label: 'email',
-                type: 'email',
-                autoComplete: 'email',
-                defaultValue: username,
-                readOnly: true
-            }),
+            (config.sms) ?
+                identifierField({
+                    key: 'identifier',
+                    defaultValue: username,
+                    readOnly: true,
+                }, config)
+                :
+                simpleField({
+                    key: 'email',
+                    label: 'email',
+                    type: 'email',
+                    autoComplete: 'email',
+                    defaultValue: username,
+                    readOnly: true
+                }),
             simplePasswordField({
                 key: 'password',
                 label: 'password',
@@ -56,10 +65,12 @@ export const LoginWithPasswordForm = createForm({
 
 export default class LoginView extends React.Component {
     handleLogin = data => {
+        const specializedData = specializeIdentifierData(data);
+
         return this.props.apiClient.loginWithPassword({
-            ...data,
+            ...specializedData,
             auth: {
-                ...data.auth,
+                ...specializedData.auth,
                 ...this.props.auth,
             },
         });
@@ -77,7 +88,9 @@ export default class LoginView extends React.Component {
                     showRememberMe={this.props.showRememberMe}
                     showForgotPassword={this.props.allowForgotPassword}
                     canShowPassword={this.props.canShowPassword}
-                    handler={this.handleLogin} />
+                    handler={this.handleLogin}
+                    config={this.props.config}
+                />
                 <Alternative>
                     <Link target="login-with-web-authn">{i18n('login.password.userAnotherIdentifier')}</Link>
                 </Alternative>
