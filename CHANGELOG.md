@@ -7,6 +7,17 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.14.0] - 2021-11-09
+
+### Changed
+
+- If the SMS feature is enabled for the account, login forms accept a phone number as the identifier.
+- Version of consents can be displayed.
+
+### Fixes
+
+Signup field `phone_number` for `showAuth` can now be made mandatory.
+
 ## [1.13.0] - 2021-08-02
 
 ### Changed
