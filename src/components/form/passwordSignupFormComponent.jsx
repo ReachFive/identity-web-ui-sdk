@@ -10,6 +10,7 @@ import { UserAggreementStyle } from './formControlsComponent'
 import { MarkdownContent } from '../miscComponent';
 import { snakeCaseProperties } from '../../helpers/transformObjectProperties';
 import { isValued } from '../../helpers/utils';
+import ReCaptcha, {extractCaptchaTokenFromData, importGoogleRecaptchaScript} from "../reCaptcha";
 
 const defaultSignupFields = [
     'given_name',
@@ -29,12 +30,20 @@ export default class PasswordSignupForm extends React.Component {
         blacklist: []
     }
 
-    handleSignup = data => this.props.apiClient.signup({
-        data: snakeCaseProperties(data),
-        auth: this.props.auth,
-        redirectUrl: this.props && this.props.redirectUrl,
-        returnToAfterEmailConfirmation: this.props && this.props.returnToAfterEmailConfirmation,
-    });
+    componentDidMount () {
+        importGoogleRecaptchaScript(this.props.recaptcha_site_key)
+    }
+
+    callback = data => {
+        const captchaToken = extractCaptchaTokenFromData(data)
+        return this.props.apiClient.signup({
+            captchaToken,
+            data: snakeCaseProperties(data),
+            auth: this.props.auth,
+            redirectUrl: this.props && this.props.redirectUrl,
+            returnToAfterEmailConfirmation: this.props && this.props.returnToAfterEmailConfirmation,
+        })
+    }
 
     refreshBlacklist = data => {
         const email = data['email'] && data['email'].value || '';
@@ -86,6 +95,6 @@ export default class PasswordSignupForm extends React.Component {
             beforeSubmit={beforeSignup}
             onFieldChange={this.refreshBlacklist}
             sharedProps={sharedProps}
-            handler={this.handleSignup} />
+            handler={(data) => ReCaptcha.handle(data, this.props, this.callback)} />
     }
 }

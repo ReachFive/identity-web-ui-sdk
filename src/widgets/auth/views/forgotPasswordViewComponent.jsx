@@ -7,6 +7,7 @@ import { Heading, Intro, Info, Link, Alternative } from '../../../components/mis
 
 import { createForm } from '../../../components/form/formComponent';
 import { simpleField } from '../../../components/form/fields/simpleField';
+import ReCaptcha, {importGoogleRecaptchaScript} from "../../../components/reCaptcha";
 
 const ForgotPasswordForm = createForm({
     prefix: 'r5-forgot-password-',
@@ -24,16 +25,18 @@ const ForgotPasswordForm = createForm({
 const skipError = err => err.error === 'resource_not_found';
 
 const enhance = withHandlers({
+    callback: ({ apiClient, redirectUrl, returnToAfterPasswordReset, recaptcha_enabled, recaptcha_site_key }) => data => ReCaptcha.handle({ ...data, redirectUrl, returnToAfterPasswordReset }, { apiClient, redirectUrl, returnToAfterPasswordReset, recaptcha_enabled, recaptcha_site_key }, apiClient.requestPasswordReset),
     handleSubmit: ({ apiClient, redirectUrl, returnToAfterPasswordReset }) => data => apiClient.requestPasswordReset({ ...data, redirectUrl, returnToAfterPasswordReset })
 });
 
-export const ForgotPasswordView = enhance(({ i18n, goTo, allowLogin, handleSubmit, displaySafeErrorMessage, showLabels, allowWebAuthnLogin }) => (
+export const ForgotPasswordView = enhance(({ i18n, goTo, allowLogin, callback, displaySafeErrorMessage, showLabels, allowWebAuthnLogin, recaptcha_site_key }) => (
     <div>
+        {importGoogleRecaptchaScript(recaptcha_site_key)}
         <Heading>{i18n('forgotPassword.title')}</Heading>
         <Intro>{i18n('forgotPassword.prompt')}</Intro>
         <ForgotPasswordForm
             showLabels={showLabels}
-            handler={handleSubmit}
+            handler={callback}
             onSuccess={() => goTo('forgot-password-success')}
             skipError={displaySafeErrorMessage && skipError} />
         {allowLogin && <Alternative>
