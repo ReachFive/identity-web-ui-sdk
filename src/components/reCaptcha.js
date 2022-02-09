@@ -13,7 +13,7 @@ export default class ReCaptcha {
                 const captchaToken = await this.getRecaptchaToken(conf.recaptcha_site_key)
                 return callback({...data, captchaToken})
             } catch(error) {
-                return Promise.reject({errorUserMsg: "Error recaptcha"})
+                return Promise.reject({errorUserMsg: "Error recaptcha", errorMessageKey: "recaptcha.error"})
             }
         }
         else {
