@@ -7,7 +7,7 @@ import { Heading, Intro, Info, Link, Alternative } from '../../../components/mis
 
 import { createForm } from '../../../components/form/formComponent';
 import { simpleField } from '../../../components/form/fields/simpleField';
-import ReCaptcha, {importGoogleRecaptchaScript} from "../../../components/reCaptcha";
+import ReCaptcha, {importGoogleRecaptchaScript} from '../../../components/reCaptcha';
 
 const ForgotPasswordForm = createForm({
     prefix: 'r5-forgot-password-',

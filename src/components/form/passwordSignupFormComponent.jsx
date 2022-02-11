@@ -10,7 +10,7 @@ import { UserAggreementStyle } from './formControlsComponent'
 import { MarkdownContent } from '../miscComponent';
 import { snakeCaseProperties } from '../../helpers/transformObjectProperties';
 import { isValued } from '../../helpers/utils';
-import ReCaptcha, {extractCaptchaTokenFromData, importGoogleRecaptchaScript} from "../reCaptcha";
+import ReCaptcha, {extractCaptchaTokenFromData, importGoogleRecaptchaScript} from '../reCaptcha';
 
 const defaultSignupFields = [
     'given_name',

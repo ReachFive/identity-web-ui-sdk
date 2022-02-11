@@ -11,7 +11,7 @@ import { simplePasswordField } from '../../../components/form/fields/simplePassw
 import checkboxField from '../../../components/form/fields/checkboxField';
 import identifierField from "../../../components/form/fields/identifierField";
 import {specializeIdentifierData} from "../../../helpers/utils";
-import ReCaptcha, {importGoogleRecaptchaScript} from "../../../components/reCaptcha";
+import ReCaptcha, {importGoogleRecaptchaScript} from '../../../components/reCaptcha';
 
 const ForgotPasswordWrapper = withTheme(styled.div`
     margin-bottom: ${props => props.theme.get('spacing')}px;
