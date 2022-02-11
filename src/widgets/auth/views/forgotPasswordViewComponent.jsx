@@ -25,8 +25,24 @@ const ForgotPasswordForm = createForm({
 const skipError = err => err.error === 'resource_not_found';
 
 const enhance = withHandlers({
-    callback: ({ apiClient, redirectUrl, returnToAfterPasswordReset, recaptcha_enabled, recaptcha_site_key }) => data => ReCaptcha.handle({ ...data, redirectUrl, returnToAfterPasswordReset }, { apiClient, redirectUrl, returnToAfterPasswordReset, recaptcha_enabled, recaptcha_site_key }, apiClient.requestPasswordReset),
-    handleSubmit: ({ apiClient, redirectUrl, returnToAfterPasswordReset }) => data => apiClient.requestPasswordReset({ ...data, redirectUrl, returnToAfterPasswordReset })
+    callback: ({
+                   apiClient,
+                   redirectUrl,
+                   returnToAfterPasswordReset,
+                   recaptcha_enabled,
+                   recaptcha_site_key
+               }) => data => ReCaptcha.handle({...data, redirectUrl, returnToAfterPasswordReset}, {
+        apiClient,
+        redirectUrl,
+        returnToAfterPasswordReset,
+        recaptcha_enabled,
+        recaptcha_site_key
+    }, apiClient.requestPasswordReset),
+    handleSubmit: ({
+                       apiClient,
+                       redirectUrl,
+                       returnToAfterPasswordReset
+                   }) => data => apiClient.requestPasswordReset({...data, redirectUrl, returnToAfterPasswordReset})
 });
 
 export const ForgotPasswordView = enhance(({ i18n, goTo, allowLogin, callback, displaySafeErrorMessage, showLabels, allowWebAuthnLogin, recaptcha_site_key }) => (
