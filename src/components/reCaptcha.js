@@ -2,15 +2,15 @@ import React from 'react'
 
 
 export default class ReCaptcha {
-     static getRecaptchaToken = async siteKey => {
-        return await window.grecaptcha.execute(siteKey, {action: "submit"})
+     static getRecaptchaToken = async (siteKey, action) => {
+        return await window.grecaptcha.execute(siteKey, {action: action})
     }
 
-    static handle = async (data, conf, callback) => {
+    static handle = async (data, conf, callback, action) => {
         if (conf.recaptcha_enabled)
         {
             try {
-                const captchaToken = await this.getRecaptchaToken(conf.recaptcha_site_key)
+                const captchaToken = await this.getRecaptchaToken(conf.recaptcha_site_key, action)
                 return callback({...data, captchaToken})
             } catch(error) {
                 return Promise.reject({errorUserMsg: "Error recaptcha", errorMessageKey: "recaptcha.error"})

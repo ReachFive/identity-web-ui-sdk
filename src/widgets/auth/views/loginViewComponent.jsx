@@ -101,7 +101,7 @@ export default class LoginView extends React.Component {
                     showForgotPassword={this.props.allowForgotPassword}
                     canShowPassword={this.props.canShowPassword}
                     defaultIdentifier={defaultIdentifier}
-                    handler={(data) => ReCaptcha.handle(data, this.props, this.callback)}
+                    handler={(data) => ReCaptcha.handle(data, this.props, this.callback, "login")}
                     config={this.props.config}
                 />
                 {this.props.allowSignup &&

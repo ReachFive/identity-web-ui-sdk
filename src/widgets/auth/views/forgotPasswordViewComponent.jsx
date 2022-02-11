@@ -37,7 +37,7 @@ const enhance = withHandlers({
         returnToAfterPasswordReset,
         recaptcha_enabled,
         recaptcha_site_key
-    }, apiClient.requestPasswordReset),
+    }, apiClient.requestPasswordReset, "forgot_password"),
     handleSubmit: ({
                        apiClient,
                        redirectUrl,

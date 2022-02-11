@@ -95,6 +95,6 @@ export default class PasswordSignupForm extends React.Component {
             beforeSubmit={beforeSignup}
             onFieldChange={this.refreshBlacklist}
             sharedProps={sharedProps}
-            handler={(data) => ReCaptcha.handle(data, this.props, this.callback)} />
+            handler={(data) => ReCaptcha.handle(data, this.props, this.callback, "signup")} />
     }
 }
