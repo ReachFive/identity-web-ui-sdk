@@ -76,7 +76,6 @@ class MainView extends React.Component {
 class VerificationCodeView extends React.Component {
     handleSubmit = data => {
         const { apiClient, auth, phoneNumber } = this.props;
-        console.log(data)
         return apiClient.verifyPasswordless({ phoneNumber, ...data }, auth);
     };
 
