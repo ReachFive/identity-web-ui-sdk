@@ -7,6 +7,13 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.15.0] - 2022-02-22
+
+### Features
+
+- Add ReCaptcha V3 for authentication pages: forgot-password, signup, login-with-password
+- Add ReCaptcha V3 for passwordless page
+
 ## [1.14.0] - 2021-11-10
 
 ### Changed
