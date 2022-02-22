@@ -11,6 +11,7 @@ import { simplePasswordField } from '../../../components/form/fields/simplePassw
 import checkboxField from '../../../components/form/fields/checkboxField';
 import identifierField from "../../../components/form/fields/identifierField";
 import {specializeIdentifierData} from "../../../helpers/utils";
+import ReCaptcha, {importGoogleRecaptchaScript} from '../../../components/reCaptcha';
 
 const ForgotPasswordWrapper = withTheme(styled.div`
     margin-bottom: ${props => props.theme.get('spacing')}px;
@@ -64,16 +65,20 @@ export const LoginWithPasswordForm = createForm({
 });
 
 export default class LoginView extends React.Component {
-    handleLogin = data => {
-        const specializedData = specializeIdentifierData(data);
+    componentDidMount () {
+        importGoogleRecaptchaScript(this.props.recaptcha_site_key)
+    }
 
+    callback = data => {
+        const specializedData = specializeIdentifierData(data);
         return this.props.apiClient.loginWithPassword({
             ...specializedData,
+            captchaToken: data.captchaToken,
             auth: {
                 ...specializedData.auth,
                 ...this.props.auth,
             },
-        });
+        })
     }
 
     render() {
@@ -88,7 +93,7 @@ export default class LoginView extends React.Component {
                     showRememberMe={this.props.showRememberMe}
                     showForgotPassword={this.props.allowForgotPassword}
                     canShowPassword={this.props.canShowPassword}
-                    handler={this.handleLogin}
+                    handler={(data) => ReCaptcha.handle(data, this.props, this.callback, "login")}
                     config={this.props.config}
                 />
                 <Alternative>

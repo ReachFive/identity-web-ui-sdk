@@ -9,6 +9,7 @@ import { createForm } from '../../components/form/formComponent';
 import { simpleField } from '../../components/form/fields/simpleField';
 import phoneNumberField from '../../components/form/fields/phoneNumberField';
 import SocialButtons from '../../components/form/socialButtonsComponent';
+import ReCaptcha, {importGoogleRecaptchaScript} from "../../components/reCaptcha";
 
 const EmailInputForm = createForm({
     prefix: 'r5-passwordless-',
@@ -39,7 +40,12 @@ const VerificationCodeInputForm = createForm({
 });
 
 class MainView extends React.Component {
-    handleSubmit = data => this.props.apiClient.startPasswordless(data, this.props.auth).then(_ => data);
+
+    componentDidMount () {
+        importGoogleRecaptchaScript(this.props.recaptcha_site_key)
+    }
+
+    callback = data => this.props.apiClient.startPasswordless(data, this.props.auth).then(_ => data);
 
     handleSuccess = data => {
         return data.email
@@ -60,9 +66,9 @@ class MainView extends React.Component {
                 <Separator text={i18n('or')} />
             )}
             {isEmail && showIntro && <Intro>{i18n('passwordless.intro')}</Intro>}
-            {isEmail && <EmailInputForm handler={this.handleSubmit} onSuccess={this.handleSuccess} />}
+            {isEmail && <EmailInputForm handler={(data) => ReCaptcha.handle(data, this.props, this.callback, "passwordless_email")} onSuccess={this.handleSuccess} />}
             {!isEmail && showIntro && <Intro>{i18n('passwordless.sms.intro')}</Intro>}
-            {!isEmail && <PhoneNumberInputForm handler={this.handleSubmit} onSuccess={this.handleSuccess} />}
+            {!isEmail && <PhoneNumberInputForm handler={(data) => ReCaptcha.handle(data, this.props, this.callback, "passwordless_phone")} onSuccess={this.handleSuccess} />}
         </div>;
     }
 }
@@ -70,14 +76,13 @@ class MainView extends React.Component {
 class VerificationCodeView extends React.Component {
     handleSubmit = data => {
         const { apiClient, auth, phoneNumber } = this.props;
-
         return apiClient.verifyPasswordless({ phoneNumber, ...data }, auth);
     };
 
     render() {
         return <div>
             <Info>{this.props.i18n('passwordless.sms.verification.intro')}</Info>
-            <VerificationCodeInputForm handler={this.handleSubmit} />
+            <VerificationCodeInputForm handler={(data) => ReCaptcha.handle(data, this.props, this.callback, "verify_passwordless_sms")} />
         </div>;
     }
 }
