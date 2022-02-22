@@ -4,12 +4,14 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0), and this project adheres
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+Please update the git links at the end of the file (unreleased) + add a new git link comparing
+the last release to the changes brought by the current release.
 
 ## [Unreleased]
 
 ## [1.15.0] - 2022-02-22
 
-### Features
+### Added
 
 - Add ReCaptcha V3 for authentication pages: forgot-password, signup, login-with-password
 - Add ReCaptcha V3 for passwordless page
@@ -272,7 +274,19 @@ The eye icon is now correctly displayed in the Auth widget.
 
 First version of the SDK Web UI.
 
-[Unreleased]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.11.5...HEAD
+[Unreleased]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.15.0...HEAD
+
+[1.15.0]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.14.0...v1.15.0
+
+[1.14.0]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.13.0...v1.14.0
+
+[1.13.0]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.12.0...v1.13.0
+
+[1.12.0]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.11.7...v1.12.0
+
+[1.11.7]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.11.6...v1.11.7
+
+[1.11.6]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.11.5...v1.11.6
 
 [1.11.5]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.11.4...v1.11.5
 
