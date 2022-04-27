@@ -1,7 +1,7 @@
 import babel from 'rollup-plugin-babel'
 import builtins from 'rollup-plugin-node-builtins'
 import globals from 'rollup-plugin-node-globals'
-import { uglify } from 'rollup-plugin-uglify'
+import { terser } from 'rollup-plugin-terser'
 import commonjs from '@rollup/plugin-commonjs'
 import resolve from '@rollup/plugin-node-resolve'
 import replace from '@rollup/plugin-replace'
@@ -36,7 +36,11 @@ function createUMDConfig({ file, withUglify = false }) {
             name: 'reach5Widgets',
             globals: { '@reachfive/identity-core': 'reach5' }
         },
-        plugins: withUglify ? [uglify(), ...plugins] : plugins,
+        plugins: withUglify ? [terser({
+            output: {
+                comments: false,
+            },
+        }), ...plugins] : plugins,
         onwarn: console.warn
     }
 }
