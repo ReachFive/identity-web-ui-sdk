@@ -10,7 +10,10 @@ import svg from '@svgr/rollup'
 
 import project from './package.json'
 
-const dependencies = Object.keys(project.dependencies)
+const requiredDependencies = Object.keys(project.dependencies)
+const peerDependencies = Object.keys(project.peerDependencies || [])
+const optionalDependencies = Object.keys(project.optionalDependencies || [])
+const allDependencies = [...requiredDependencies, ...peerDependencies, ...optionalDependencies]
 
 const plugins = [
     replace({ 'process.env.NODE_ENV': JSON.stringify('production') }),
@@ -35,13 +38,13 @@ function createUMDConfig({ file, withUglify = false }) {
             file,
             format: 'umd',
             name: 'reach5Widgets',
-            globals: { '@reachfive/identity-core': 'reach5' }
+            globals: {
+                '@reachfive/identity-core': 'reach5',
+                '@reachfive/zxcvbn': 'zxcvbn'
+            }
         },
-        plugins: withUglify ? [terser({
-            output: {
-                comments: false,
-            },
-        }), ...plugins] : plugins,
+        external: ['@reachfive/identity-core', '@reachfive/zxcvbn'],
+        plugins: withUglify ? [terser({output: {comments: false}}), ...plugins] : plugins,
         onwarn: console.warn
     }
 }
@@ -50,14 +53,14 @@ export default [
     {
         input: 'src/index.js',
         output: { file: 'es/identity-ui.js', format: 'es' },
-        external: dependencies,
+        external: allDependencies,
         plugins,
         onwarn: console.warn
     },
     {
         input: 'src/index.js',
         output: { file: 'cjs/identity-ui.js', format: 'cjs' },
-        external: dependencies,
+        external: allDependencies,
         plugins,
         onwarn: console.warn
     },
