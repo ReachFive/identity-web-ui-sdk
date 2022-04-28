@@ -2,7 +2,6 @@ import React from 'react';
 
 import { isLower, isUpper, isDigit } from 'char-info';
 import { isEqual } from 'lodash-es';
-import zxcvbn from '@reachfive/zxcvbn';
 
 import styled from 'styled-components';
 
@@ -167,8 +166,9 @@ function listEnabledRules(i18n, passwordPolicy) {
 }
 
 function getPasswordStrength(blacklist, fieldValue) {
-    const sanitized = `${fieldValue || ""}`.toLowerCase().trim();
-    return zxcvbn(sanitized, blacklist).score;
+    const zxcvbn = (window !== undefined) ? window?.zxcvbn : require('@reachfive/zxcvbn')?.zxcvbn;
+    const sanitized = `${fieldValue || ''}`.toLowerCase().trim();
+    return zxcvbn !== undefined ? zxcvbn(sanitized, blacklist).score : 0;
 }
 
 export const passwordField = ({ label = 'password', canShowPassword = false, ...staticProps }, { passwordPolicy }) => ({
@@ -212,7 +212,7 @@ export const passwordField = ({ label = 'password', canShowPassword = false, ...
                     }
                 }
 
-                return errors.length == 0 ? {} : { error: errors.join(' ') };
+                return errors.isEmpty ? {} : { error: errors.join(' ') };
             }
         }
     }
