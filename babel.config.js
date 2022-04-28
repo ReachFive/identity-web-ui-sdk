@@ -6,5 +6,6 @@ module.exports = {
     plugins: [
         '@babel/plugin-proposal-class-properties',
         'babel-plugin-dynamic-import-node'
-    ]
+    ],
+    compact: true
 };

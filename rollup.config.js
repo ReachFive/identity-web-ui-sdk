@@ -16,7 +16,8 @@ const plugins = [
     replace({ 'process.env.NODE_ENV': JSON.stringify('production') }),
     resolve({
         extensions: ['.jsx', '.js', '.json'],
-        preferBuiltins: true
+        preferBuiltins: true,
+        browser: true
      }),
     commonjs({ include: /node_modules/ }),
     globals(),
