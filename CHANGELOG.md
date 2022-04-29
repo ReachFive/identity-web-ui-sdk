@@ -7,6 +7,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Changed
+
+- Upgrade minors versions of dependencies.
+- Exclude SDK Core and zxcbn from the umd bundle.
+- Optimize bundle size.
+
 ## [1.15.0] - 2022-02-22
 
 ### Added
