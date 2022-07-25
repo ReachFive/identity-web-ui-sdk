@@ -7,6 +7,9 @@
     ```
 
 2. Describe the new features and the fixes in the [CHANGELOG.md](CHANGELOG.md) file.
+   Please update the git links at the end of the file (unreleased) + add a new git link comparing
+   the last release to the changes brought by the current release.
+
 
 3. Update the package's version with the command line below. It should respect the [semver](https://semver.org)
    versioning.

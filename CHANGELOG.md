@@ -7,6 +7,13 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.15.0] - 2022-02-22
+
+### Added
+
+- Add ReCaptcha V3 for authentication pages: forgot-password, signup, login-with-password
+- Add ReCaptcha V3 for passwordless page
+
 ## [1.14.0] - 2021-11-10
 
 ### Changed
@@ -76,7 +83,7 @@ Temporary revert the SDK Core dependency version to solve the login with PKCE in
 
 ## [1.11.2] - 2020-11-04
 
-### Features
+### Added
 
 A new check rule for password strength is now displayed on the signup view on
 the [showAuth](https://developer.reachfive.com/sdk-ui/showAuth.html) widget.
@@ -89,7 +96,7 @@ Revert the new check rule for password strength since the wordings are not yet d
 
 ## [1.11.0] - 2020-10-28
 
-### Features
+### Added
 
 New changes were made on the [showAuth](https://developer.reachfive.com/sdk-ui/showAuth.html) widget:
 
@@ -106,14 +113,14 @@ Revert the latest FIDO2 signup Features since it's breaking the style of Hosted 
 
 ## [1.10.0] - 2020-10-16
 
-### Features
+### Added
 
 The [showAuth](https://developer.reachfive.com/sdk-ui/showAuth.html) widget can now handle signup with biometrics if
 the `allowWebAuthnSignup` option is enabled.
 
 ## [1.9.0] - 2020-09-16
 
-### Features
+### Added
 
 Always override account `opt-out` consents.
 
@@ -123,13 +130,13 @@ Fixes the CircleCi job to deploy a new version.
 
 ## [1.8.0] - 2020-07-22
 
-### Features
+### Added
 
 Add custom fields types (email & phone).
 
 ## [1.7.0] - 2020-07-08
 
-### Features
+### Added
 
 - The user can now set the device's name in
   the [showWebAuthnDevices](https://developer.reachfive.com/sdk-ui/showWebAuthnDevices.html) widget.
@@ -137,7 +144,7 @@ Add custom fields types (email & phone).
 
 ## [1.6.0] - 2020-07-07
 
-### Features
+### Added
 
 Display a friendly user error message on
 the [showWebAuthnDevices](https://developer.reachfive.com/sdk-ui/showWebAuthnDevices.html) widget when the user wants to
@@ -145,7 +152,7 @@ add a device already registered.
 
 ## [1.5.0] - 2020-07-01
 
-### Features
+### Added
 
 Add a new widget [showWebAuthnDevices](https://developer.reachfive.com/sdk-ui/showWebAuthnDevices.html) allowing the
 management of the user’s registered FIDO2 devices.
@@ -158,7 +165,7 @@ The UI SDK now uses the latest version of the Core SDK.
 
 ## [1.4.0] - 2020-06-15
 
-### Features
+### Added
 
 Add a new `allowWebAuthnLogin` option to the [showAuth](https://developer.reachfive.com/sdk-ui/showAuth.html) widget to
 allow a user to login with biometrics.
@@ -169,7 +176,7 @@ allow a user to login with biometrics.
 
 Call only the validation methods when the field is required or when the value is not empty.
 
-### Features
+### Added
 
 - Set the default value of the _Remember be_ to `false`.
 - Upgrade all the dependencies.
@@ -200,13 +207,13 @@ ReachFive UI SDK is out! 🚀
 
 ## [1.0.0-alpha.10] - 2020-02-19
 
-### Features
+### Added
 
 Improve the UX/UI of the password policy rules validation.
 
 ## [1.0.0-alpha.9] - 2020-02-10
 
-### Features
+### Added
 
 The _display password in clear text_ option can now be enabled on the password reset widget.
 
@@ -218,7 +225,7 @@ The UI SDK uses now the latest version of the Core SDK.
 
 ## [1.0.0-alpha.7] - 2020-02-06
 
-### Features
+### Added
 
 Add the `returnToAfterPasswordReset` parameter for reset password and the `returnToAfterEmailConfirmation` parameter for
 signup.
@@ -237,14 +244,14 @@ Passwords in the French dictionary were considered good enough while they weren'
 
 ## [1.0.0-alpha.4] - 2020-01-15
 
-### Features
+### Added
 
 - French weak passwords are now rejected by the password strength policies.
 - A UMD bundle is now generated at the build process. It will allow deploying the UI SDK on [unpkg](https://unpkg.com).
 
 ## [1.0.0-alpha.3] - 2020-01-07
 
-### Features
+### Added
 
 - Implement continuous integration pipelines set up with CircleCI (see
   the [CircleCI configuration file](.circleci/config.yml) for more details).
@@ -256,7 +263,7 @@ The eye icon is now correctly displayed in the Auth widget.
 
 ## [1.0.0-alpha.2] - 2019-11-06
 
-### Features
+### Added
 
 - A `data-testid` attribute was added to most of the HTML elements.
 - Handle the errors returned at the creation of a password non-compliant to the account's password policy.
@@ -265,7 +272,19 @@ The eye icon is now correctly displayed in the Auth widget.
 
 First version of the SDK Web UI.
 
-[Unreleased]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.11.5...HEAD
+[Unreleased]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.15.0...HEAD
+
+[1.15.0]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.14.0...v1.15.0
+
+[1.14.0]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.13.0...v1.14.0
+
+[1.13.0]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.12.0...v1.13.0
+
+[1.12.0]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.11.7...v1.12.0
+
+[1.11.7]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.11.6...v1.11.7
+
+[1.11.6]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.11.5...v1.11.6
 
 [1.11.5]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.11.4...v1.11.5
 
