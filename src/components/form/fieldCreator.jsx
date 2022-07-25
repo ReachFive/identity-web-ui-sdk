@@ -22,6 +22,7 @@ export const createField = ({
         bind: x => isValued(x) ? x : '',
         unbind: x => !isEmpty(x) ? x : null
     },
+    rawProperty = 'raw',
     component,
     extendedParams = {}
 }) => ({
@@ -48,7 +49,7 @@ export const createField = ({
             render: ({ state, ...props }) => (<Component {...state} {...props} {...staticProps} />),
             initialize: model => {
                 const modelValue = mapping.bind(model);
-                const initValue = isValued(modelValue) ? modelValue : defaultValue;
+                const initValue = isValued(modelValue, rawProperty) ? modelValue : defaultValue;
                 return {
                     value: format.bind(initValue),
                     isDirty: false

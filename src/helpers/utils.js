@@ -30,8 +30,8 @@ export function getRandomInt(min, max) {
 * If the user's input has been enriched as an object, raw input is expected
 * to be in a `raw` field.
 */
-export function isValued(v) {
-    const unwrap = isObject(v) ? v.raw : v;
+export function isValued(v, rawProperty = 'raw') {
+    const unwrap = isObject(v) ? v[rawProperty] : v;
     return (
         unwrap !== null &&
         unwrap !== undefined &&
