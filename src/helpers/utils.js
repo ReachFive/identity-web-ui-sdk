@@ -28,10 +28,10 @@ export function getRandomInt(min, max) {
 
 /* Returns whether a form value has been set with a valid value.
 * If the user's input has been enriched as an object, raw input is expected
-* to be in a `raw` field.
+* to be in a raw property field (named 'raw' by default).
 */
-export function isValued(v) {
-    const unwrap = isObject(v) ? v.raw : v;
+export function isValued(v, rawProperty = 'raw') {
+    const unwrap = isObject(v) ? v[rawProperty] : v;
     return (
         unwrap !== null &&
         unwrap !== undefined &&

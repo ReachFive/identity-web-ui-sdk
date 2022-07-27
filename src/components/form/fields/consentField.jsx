@@ -28,7 +28,7 @@ const ConsentField = ({ value, onChange, label, description, path, required, val
     const clickUpdate = ({ value }) => ({
         value: consentCannotBeGranted ? false : !value,
         isDirty: true
-    }); 
+    });
 
     return <div style={{ position: "relative" }}>
         <Checkbox
@@ -57,6 +57,7 @@ export default function consentField(config) {
             })
         },
         validator: config.required ? checked : empty,
+        rawProperty: 'granted',
         component: ConsentField
     });
 }
