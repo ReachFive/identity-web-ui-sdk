@@ -7,6 +7,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Fixes
+
+Fix code validation in passwordless widget.
+
 ## [1.16.0] - 2022-07-27
 
 ### Changed

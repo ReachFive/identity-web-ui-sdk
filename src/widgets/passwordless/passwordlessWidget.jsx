@@ -82,7 +82,7 @@ class VerificationCodeView extends React.Component {
     render() {
         return <div>
             <Info>{this.props.i18n('passwordless.sms.verification.intro')}</Info>
-            <VerificationCodeInputForm handler={(data) => ReCaptcha.handle(data, this.props, this.callback, "verify_passwordless_sms")} />
+            <VerificationCodeInputForm handler={(data) => ReCaptcha.handle(data, this.props, this.handleSubmit, "verify_passwordless_sms")} />
         </div>;
     }
 }
