@@ -7,6 +7,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.16.1] - 2022-07-29
+
 ### Fixes
 
 Fix code validation in passwordless widget.
@@ -286,7 +288,9 @@ The eye icon is now correctly displayed in the Auth widget.
 
 First version of the SDK Web UI.
 
-[Unreleased]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.16.0...HEAD
+[Unreleased]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.16.1...HEAD
+
+[1.16.1]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.16.0...v1.16.1
 
 [1.16.0]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.15.0...v1.16.0
 
