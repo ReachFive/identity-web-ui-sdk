@@ -7,6 +7,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.16.2] - 2022-08-03
+
 ### Fixes
 
 Upgrade identity-web-core-sdk version to 1.24.1
@@ -292,7 +294,9 @@ The eye icon is now correctly displayed in the Auth widget.
 
 First version of the SDK Web UI.
 
-[Unreleased]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.16.1...HEAD
+[Unreleased]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.16.2...HEAD
+
+[1.16.2]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.16.1...v1.16.2
 
 [1.16.1]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.16.0...v1.16.1
 
