@@ -7,6 +7,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Fixes
+
+Use actual consent language in the signup payload.
+
 ## [1.16.2] - 2022-08-03
 
 ### Fixes
