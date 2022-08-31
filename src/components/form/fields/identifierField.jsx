@@ -19,8 +19,8 @@ import { createField } from '../fieldCreator';
 * }
 */
 
-function specializeRawIdentifier(inputValue, telCall = _ => undefined, emailCall = _ => undefined, otherCall = _ => undefined) {
-    if (/^\+?[0-9]+/.test(inputValue)) {
+function specializeRawIdentifier(withPhoneNumber, inputValue, telCall = _ => undefined, emailCall = _ => undefined, otherCall = _ => undefined) {
+    if (withPhoneNumber && (/^\+?[0-9]+/.test(inputValue))) {
         return ({
             raw: inputValue,
             ...telCall(inputValue),
@@ -91,7 +91,8 @@ class IdentifierField extends React.Component {
             required = true,
             label,
             placeholder = label,
-            readOnly
+            readOnly,
+            withPhoneNumber
         } = this.props;
 
         return <FormGroup
@@ -113,7 +114,7 @@ class IdentifierField extends React.Component {
                     this.props.onChange({
                         value: {
                             ...this.props.value,
-                            ...specializeRawIdentifier(event.target.value, this.asYouType)
+                            ...specializeRawIdentifier(withPhoneNumber, event.target.value, this.asYouType)
                         }
                     })
                 }
@@ -129,10 +130,12 @@ export default function identifierField(props, config) {
         key: 'identifier',
         label: 'identifier',
         format: {
-            bind: x => specializeRawIdentifier(x,
+            bind: x => specializeRawIdentifier(props.withPhoneNumber,
+                x,
                 _ => ({ country: config.countryCode, isValid: true }),
                 _ => ({ country: config.countryCode, isValid: true }),
-                _ => ({ country: config.countryCode, isValid: true })),
+                _ => ({ country: config.countryCode, isValid: true }),
+                ),
             unbind: x => specializeRefinedIdentifier(
                 x,
                 v => v.formatted || v.raw,
@@ -141,14 +144,15 @@ export default function identifierField(props, config) {
         },
         validator: new Validator({
             rule: value => specializeRefinedIdentifier(value,
-                v => v.isValid,
+                v => v.isValid || !props.withPhoneNumber,
                 v => email.rule(v.raw),
-                _ => false),
+                v => v.isValid),
             hint: value => specializeRefinedIdentifier(value,
                 _ => 'phone',
                 _ => 'email',
                 _ => 'identifier')
         }),
         component: IdentifierField,
+        extendedParams: {withPhoneNumber: props.withPhoneNumber}
     });
 }

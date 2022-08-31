@@ -2,13 +2,11 @@ import React from 'react';
 
 import styled from 'styled-components';
 
-import { email } from '../../../core/validation';
 import { Heading, Link, Alternative, Separator } from '../../../components/miscComponent';
 import { withTheme } from '../../../components/widget/widgetContext';
 
 import SocialButtons from '../../../components/form/socialButtonsComponent';
 import { createForm } from '../../../components/form/formComponent';
-import { simpleField } from '../../../components/form/fields/simpleField';
 import { simplePasswordField } from '../../../components/form/fields/simplePasswordField';
 import checkboxField from '../../../components/form/fields/checkboxField';
 import identifierField from "../../../components/form/fields/identifierField";
@@ -31,16 +29,13 @@ export const LoginForm = createForm({
             showIdentifier && (config.sms) ?
                 identifierField({
                     defaultValue: defaultIdentifier,
+                    withPhoneNumber: true
                 }, config)
                 :
-                simpleField({
-                    key: 'email',
-                    label: 'email',
-                    type: 'email',
-                    autoComplete: 'email',
+                identifierField({
                     defaultValue: defaultIdentifier,
-                    validator: email
-                }),
+                    withPhoneNumber: false
+                }, config),
             simplePasswordField({
                 key: 'password',
                 label: 'password',
