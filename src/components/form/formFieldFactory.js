@@ -18,6 +18,11 @@ import { simplePasswordField } from './fields/simplePasswordField';
 import consentField from './fields/consentField';
 
 const predefinedFields = {
+    customIdentifier: cfg => simpleField({
+        key: 'custom_identifier',
+        label: 'customIdentifier',
+        ...cfg
+    }),
     givenName: cfg => simpleField({
         key: 'given_name',
         label: 'givenName',
