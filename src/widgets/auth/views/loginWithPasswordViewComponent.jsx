@@ -29,13 +29,15 @@ export const LoginWithPasswordForm = createForm({
                 identifierField({
                     key: 'identifier',
                     defaultValue: username,
+                    withPhoneNumber: true,
                     readOnly: true,
                 }, config)
                 :
                 identifierField({
                     key: 'identifier',
                     defaultValue: username,
-                    withPhoneNumber: false
+                    withPhoneNumber: false,
+                    readOnly: true
                 }, config),
             simplePasswordField({
                 key: 'password',
