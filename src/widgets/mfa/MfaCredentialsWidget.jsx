@@ -9,12 +9,12 @@ import {deepDefaults} from '../../helpers/deepDefaults';
 
 
 const EmailRegisteringCredentialForm = createForm({
-    prefix: 'r5-mfa-credentials-email',
+    prefix: 'r5-mfa-credentials-email-',
     submitLabel: 'mfa.register.email'
 });
 
 const EmailVerificationCodeForm = createForm({
-    prefix: 'r5-verification-code',
+    prefix: 'r5-mfa-credentials-verification-code-',
     fields: [
         simpleField({
             key: 'verification_code',
@@ -25,10 +25,6 @@ const EmailVerificationCodeForm = createForm({
 })
 
 class MainView extends React.Component {
-    componentDidMount() {
-
-    }
-
     onEmailRegistering = _ => {
         return this.props.apiClient.startMfaEmailRegistration({
                 accessToken: this.props.accessToken
@@ -77,6 +73,5 @@ export default createMultiViewWidget({
             showIntro: true,
             ...options
         }
-    )
-    }
+    )}
 })
