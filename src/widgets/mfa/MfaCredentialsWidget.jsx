@@ -1,11 +1,11 @@
 import React from 'react';
+
 import { createMultiViewWidget } from '../../components/widget/widget';
 
-import {simpleField} from "../../components/form/fields/simpleField";
+import {simpleField} from '../../components/form/fields/simpleField';
 import {Info, Intro} from '../../components/miscComponent';
-
-import {createForm} from "../../components/form/formComponent";
-import {deepDefaults} from "../../helpers/deepDefaults";
+import {createForm} from '../../components/form/formComponent';
+import {deepDefaults} from '../../helpers/deepDefaults';
 
 
 const EmailRegisteringCredentialForm = createForm({
