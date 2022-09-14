@@ -34,6 +34,8 @@ const PhoneNumberRegisteringCredentialForm = config => createForm({
 })
 class MainView extends React.Component {
     onEmailRegistering = _ => {
+        console.log("CONFIG")
+        console.log(this.props.config)
         return this.props.apiClient.startMfaEmailRegistration({
                 accessToken: this.props.accessToken
             }
@@ -53,14 +55,14 @@ class MainView extends React.Component {
         return (
             <div>
                 <div>
-                    {showIntro && <Intro>{i18n('mfa.email.explain')}</Intro>}
-                    <EmailRegisteringCredentialForm handler={this.onEmailRegistering} onSuccess={data => this.props.goTo('verification-code', {...data, registrationType: 'email'})}/>
+                    {config.mfaEmailEnabled && showIntro && <Intro>{i18n('mfa.email.explain')}</Intro>}
+                    {config.mfaEmailEnabled && <EmailRegisteringCredentialForm handler={this.onEmailRegistering} onSuccess={data => this.props.goTo('verification-code', {...data, registrationType: 'email'})}/>}
                 </div>
                 <Separator/>
                 <div>
-                    <Intro>{showIntro && <Intro>{i18n('mfa.phoneNumber.explain')}</Intro>}</Intro>
-                    <PhoneNumberInputForm
-                        handler={this.onPhoneNumberRegistering} onSuccess={data => this.props.goTo('verification-code', {...data, registrationType: 'sms'})}/>
+                    {config.mfaSmsEnabled && <Intro>{showIntro && <Intro>{i18n('mfa.phoneNumber.explain')}</Intro>}</Intro>}
+                    {config.mfaSmsEnabled && <PhoneNumberInputForm
+                        handler={this.onPhoneNumberRegistering} onSuccess={data => this.props.goTo('verification-code', {...data, registrationType: 'sms'})}/> }
                 </div>
             </div>
         )
