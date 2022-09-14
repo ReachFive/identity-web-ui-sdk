@@ -6,7 +6,7 @@ import {simpleField} from '../../components/form/fields/simpleField';
 import {Info, Intro, Separator} from '../../components/miscComponent';
 import {createForm} from '../../components/form/formComponent';
 import {deepDefaults} from '../../helpers/deepDefaults';
-import phoneNumberField from "../../components/form/fields/phoneNumberField";
+import phoneNumberField from '../../components/form/fields/phoneNumberField';
 
 
 const EmailRegisteringCredentialForm = createForm({
