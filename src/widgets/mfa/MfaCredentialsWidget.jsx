@@ -56,7 +56,7 @@ class MainView extends React.Component {
                     {config.mfaEmailEnabled && showIntro && <Intro>{i18n('mfa.email.explain')}</Intro>}
                     {config.mfaEmailEnabled && <EmailRegisteringCredentialForm handler={this.onEmailRegistering} onSuccess={data => this.props.goTo('verification-code', {...data, registrationType: 'email'})}/>}
                 </div>
-                <Separator/>
+                {config.mfaEmailEnabled && config.mfaSmsEnabled && <Separator/>}
                 <div>
                     {config.mfaSmsEnabled && <Intro>{showIntro && <Intro>{i18n('mfa.phoneNumber.explain')}</Intro>}</Intro>}
                     {config.mfaSmsEnabled && <PhoneNumberInputForm
