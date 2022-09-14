@@ -34,8 +34,6 @@ const PhoneNumberRegisteringCredentialForm = config => createForm({
 })
 class MainView extends React.Component {
     onEmailRegistering = _ => {
-        console.log("CONFIG")
-        console.log(this.props.config)
         return this.props.apiClient.startMfaEmailRegistration({
                 accessToken: this.props.accessToken
             }
