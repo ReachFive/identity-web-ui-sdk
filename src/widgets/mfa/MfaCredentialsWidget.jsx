@@ -32,11 +32,11 @@ class MainView extends React.Component {
         )
     }
     render() {
-        const { i18n, showIntro } = this.props
+        const { i18n, showIntro, config } = this.props
         return (
             <div>
-                {showIntro && <Intro>{i18n('mfa.email.explain')}</Intro>}
-                <EmailRegisteringCredentialForm handler={this.onEmailRegistering} onSuccess={data => this.props.goTo('verification-code', data)}/>
+                {config.mfaEmailEnabled && showIntro && <Intro>{i18n('mfa.email.explain')}</Intro>}
+                {config.mfaEmailEnabled && <EmailRegisteringCredentialForm handler={this.onEmailRegistering} onSuccess={data => this.props.goTo('verification-code', data)}/>}
             </div>
         )
     }
