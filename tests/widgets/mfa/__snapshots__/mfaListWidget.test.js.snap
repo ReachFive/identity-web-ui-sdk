@@ -206,12 +206,14 @@ exports[`Snapshot basic 1`] = `
           33612345678
         </div>
         <div>
-          mfaList.createdAt
-           : 
+          <span>
+            mfaList.createdAt
+             : 
+          </span>
           <time
             dateTime="2022-09-21"
           >
-            9/20/2022
+            21/09/2022
           </time>
         </div>
       </div>
@@ -338,12 +340,14 @@ exports[`Snapshot basic 1`] = `
           root@reach5.co
         </div>
         <div>
-          mfaList.createdAt
-           : 
+          <span>
+            mfaList.createdAt
+             : 
+          </span>
           <time
             dateTime="2022-09-21"
           >
-            9/20/2022
+            21/09/2022
           </time>
         </div>
       </div>

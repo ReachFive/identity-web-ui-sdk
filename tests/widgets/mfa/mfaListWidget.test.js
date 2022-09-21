@@ -3,7 +3,7 @@ import 'jest-styled-components';
 
 import mfaListWidget from '../../../src/widgets/mfa/mfaListWidget';
 
-const defaultConfig = { domain: 'local.reach5.net' };
+const defaultConfig = { domain: 'local.reach5.net', language: 'fr' };
 
 describe('Snapshot', () => {
     const generateSnapshot = ({ options = {}, config = defaultConfig, credentials }) => () => {

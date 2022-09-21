@@ -1,8 +1,10 @@
 import React from 'react';
+import compose from '@hypnosphi/recompose/compose';
+
 import { Info } from '../../components/miscComponent';
 import { Card } from '../../components/form/cardComponent';
 import { createWidget } from "../../components/widget/widget";
-import { withI18n, withTheme } from '../../components/widget/widgetContext'
+import {withConfig, withI18n, withTheme} from '../../components/widget/widgetContext'
 import styled from "styled-components";
 
 import { ReactComponent as Envelope } from '../../icons/envelope.svg'
@@ -40,7 +42,11 @@ const CardContent = withTheme(styled.div`
     white-space: initial;
 `);
 
-export const MfaList = withI18n((({ credentials, i18n }) => (
+const dateFormat = (dateString, locales) => (
+    (new Date(dateString)).toLocaleDateString(locales, { timeZone: 'UTC' })
+)
+
+export const MfaList = compose(withI18n, withConfig)((({ credentials, i18n, config }) => (
     <div>
         {(credentials.length === 0) && (
             <Info>{i18n('mfaList.noCredentials')}</Info>
@@ -51,7 +57,10 @@ export const MfaList = withI18n((({ credentials, i18n }) => (
                 <CardContent>
                     <div style={{fontWeight: 'bold'}}>{friendlyName}</div>
                     <div>{email || phoneNumber}</div>
-                    <div>{i18n('mfaList.createdAt')}&nbsp;: <time dateTime={createdAt}>{(new Date(createdAt)).toLocaleDateString()}</time></div>
+                    <div>
+                        <span>{i18n('mfaList.createdAt')}&nbsp;: </span>
+                        <time dateTime={createdAt}>{dateFormat(createdAt, config.language)}</time>
+                    </div>
                 </CardContent>
             </Credential>
         ))}
