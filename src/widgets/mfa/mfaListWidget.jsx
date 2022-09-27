@@ -3,7 +3,7 @@ import compose from '@hypnosphi/recompose/compose';
 
 import { Info } from '../../components/miscComponent';
 import { Card } from '../../components/form/cardComponent';
-import { createWidget } from "../../components/widget/widget";
+import { createWidget } from '../../components/widget/widget';
 import {withConfig, withI18n, withTheme} from '../../components/widget/widgetContext'
 import styled from "styled-components";
 

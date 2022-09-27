@@ -73,7 +73,7 @@ export class UiClient {
         this._showWidget(mfaCredentialsWidget, options);
     }
 
-    showMfaList(options) {
+    showMfaCredentials(options) {
         this._showWidget(mfaListWidget, options);
     }
 
