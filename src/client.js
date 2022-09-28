@@ -12,6 +12,7 @@ import socialLoginWidget from './widgets/socialLogin/socialLoginWidget';
 import webAuthnWidget from './widgets/webAuthn/webAuthnDevicesWidget';
 import { logError } from './helpers/logger';
 import mfaCredentialsWidget from "./widgets/mfa/MfaCredentialsWidget";
+import mfaStepUpWidget from "./widgets/stepUp/mfaStepUpWidget";
 
 export class UiClient {
     constructor(config, urlParser, coreClient, defaultI18n) {
@@ -70,6 +71,10 @@ export class UiClient {
 
     showMfa(options) {
         this._showWidget(mfaCredentialsWidget, options);
+    }
+
+    showStepUp(options) {
+        this._showWidget(mfaStepUpWidget, options)
     }
 
     async _showWidget(widget, options = {}, props = {}) {
