@@ -1,6 +1,5 @@
 import Enzyme, {render} from "enzyme";
 import Adapter from "enzyme-adapter-react-16";
-import passwordlessWidget from "../../../src/widgets/passwordless/passwordlessWidget";
 import renderer from "react-test-renderer";
 import MfaCredentialsWidget from "../../../src/widgets/mfa/MfaCredentialsWidget";
 import $ from "cheerio";
