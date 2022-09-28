@@ -32,6 +32,7 @@ const PhoneNumberRegisteringCredentialForm = config => createForm({
     ],
     submitLabel: 'mfa.register.phoneNumber'
 })
+
 class MainView extends React.Component {
     onEmailRegistering = _ => {
         return this.props.apiClient.startMfaEmailRegistration({
@@ -84,7 +85,6 @@ class VerificationCodeView extends React.Component {
 
     render() {
         const { i18n, showIntro, status, goTo, registrationType } = this.props
-        const CredentialRegistered = CredentialRegisteredView({i18n, registrationType})
         return <div>
             {showIntro && status === 'email_sent' && <Intro>{i18n('mfa.verify.email')}</Intro>}
             {status === 'email_sent' && <VerificationCodeForm handler={this.onEmailCodeVerification} onSuccess={data => goTo('credential-registered', {...data, registrationType})}/>}
@@ -92,8 +92,7 @@ class VerificationCodeView extends React.Component {
             {showIntro && status === 'sms_sent' && <Intro>{i18n('mfa.verify.sms')}</Intro>}
             {status === 'sms_sent' && <VerificationCodeForm handler={this.onSmsCodeVerification} onSuccess={data => goTo('credential-registered', {...data, registrationType})}/>}
 
-            {showIntro && registrationType === 'email' && status === 'enabled' && <Intro>{i18n('mfa.email.alreadyRegistered')}</Intro>}
-            {showIntro && registrationType === 'sms' && status === 'enabled' && <CredentialRegistered />}
+            {showIntro && status === 'enabled' && goTo('credential-registered', {i18n, registrationType})}
         </div>
     }
 }
