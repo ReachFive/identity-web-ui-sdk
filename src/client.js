@@ -10,8 +10,9 @@ import profileEditorWidget from './widgets/profileEditor/profileEditorWidget';
 import socialAccountsWidget from './widgets/socialAccounts/socialAccountsWidget';
 import socialLoginWidget from './widgets/socialLogin/socialLoginWidget';
 import webAuthnWidget from './widgets/webAuthn/webAuthnDevicesWidget';
-import { logError } from './helpers/logger';
 import mfaCredentialsWidget from "./widgets/mfa/MfaCredentialsWidget";
+import mfaListWidget from './widgets/mfa/mfaListWidget'
+import { logError } from './helpers/logger';
 import mfaStepUpWidget from "./widgets/stepUp/mfaStepUpWidget";
 
 export class UiClient {
@@ -75,6 +76,10 @@ export class UiClient {
 
     showStepUp(options) {
         this._showWidget(mfaStepUpWidget, options)
+    }
+
+    showMfaCredentials(options) {
+        this._showWidget(mfaListWidget, options);
     }
 
     async _showWidget(widget, options = {}, props = {}) {

@@ -44,6 +44,7 @@ export function createClient(creationConfig) {
         showSocialLogin: options => client.then(client => client.showSocialLogin(options)),
         showWebAuthnDevices: options => client.then(client => client.showWebAuthnDevices(options)),
         showMfa: options => client.then(client => client.showMfa(options)),
+        showMfaCredentials: options => client.then(client => client.showMfaCredentials(options)),
         showStepUp: options => client.then(client => client.showStepUp(options))
     };
 }

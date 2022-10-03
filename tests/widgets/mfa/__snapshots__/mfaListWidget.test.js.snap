@@ -1,0 +1,391 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Snapshot basic 1`] = `
+.c1 {
+  padding: 9px 38px;
+  border: 1px solid #ced4da;
+  color: #495057;
+  box-sizing: border-box;
+  white-space: nowrap;
+  vertical-align: middle;
+  position: relative;
+}
+
+.c1:only-child {
+  border-radius: 3px;
+}
+
+.c1:not(:only-child):first-child {
+  border-radius: 3px 3px 0 0;
+}
+
+.c1:not(:only-child):last-child {
+  border-radius: 0 0 3px 3px;
+}
+
+.c1:not(:only-child):not(:last-child) {
+  border-bottom-width: 0;
+}
+
+.c0 {
+  font-size: 14px;
+  -webkit-transition: -webkit-transform 400ms ease, opacity 400ms ease;
+  -webkit-transition: transform 400ms ease, opacity 400ms ease;
+  transition: transform 400ms ease, opacity 400ms ease;
+  opacity: 0;
+  padding: 20px;
+  border-radius: 3px;
+  background-color: #ffffff;
+  max-width: 400px;
+  box-sizing: border-box;
+  margin: 0 auto;
+}
+
+.c5 {
+  width: 28px;
+  height: 28px;
+  fill: #495057;
+  -webkit-flex-shrink: 0;
+  -ms-flex-negative: 0;
+  flex-shrink: 0;
+}
+
+.c3 {
+  width: 28px;
+  height: 28px;
+  fill: #495057;
+  -webkit-flex-shrink: 0;
+  -ms-flex-negative: 0;
+  flex-shrink: 0;
+}
+
+.c2 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: row;
+  -ms-flex-direction: row;
+  flex-direction: row;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  color: #495057;
+  line-height: 1.5;
+}
+
+.c4 {
+  margin-left: 38px;
+  white-space: initial;
+}
+
+<div
+  className="c0"
+>
+  <div>
+    <div
+      className="c1 c2"
+    >
+      <svg
+        className="c3"
+        theme={
+          Theme {
+            "cache": Object {
+              "_absoluteLineHeight": 20,
+              "_blockHeight": 40,
+              "_blockInnerHeight": 38,
+              "animateWidgetEntrance": true,
+              "backgroundColor": "#ffffff",
+              "borderColor": "#ced4da",
+              "borderRadius": 3,
+              "borderWidth": 1,
+              "fontSize": 14,
+              "lineHeight": 1.428571429,
+              "maxWidth": 400,
+              "paddingY": 9,
+              "spacing": 10,
+              "textColor": "#495057",
+            },
+            "defaults": Object {
+              "_absoluteLineHeight": [Function],
+              "_blockHeight": [Function],
+              "_blockInnerHeight": [Function],
+              "animateWidgetEntrance": [Function],
+              "backgroundColor": [Function],
+              "borderColor": [Function],
+              "borderRadius": [Function],
+              "borderWidth": [Function],
+              "button": Object {
+                "borderRadius": [Function],
+                "borderWidth": [Function],
+                "focusBoxShadow": [Function],
+                "fontSize": [Function],
+                "fontWeight": [Function],
+                "height": [Function],
+                "lineHeight": [Function],
+                "paddingX": [Function],
+                "paddingY": [Function],
+              },
+              "dangerColor": [Function],
+              "fontSize": [Function],
+              "headingColor": [Function],
+              "input": Object {
+                "background": [Function],
+                "borderColor": [Function],
+                "borderRadius": [Function],
+                "borderWidth": [Function],
+                "boxShadow": [Function],
+                "color": [Function],
+                "disabledBackground": [Function],
+                "focusBorderColor": [Function],
+                "focusBoxShadow": [Function],
+                "fontSize": [Function],
+                "height": [Function],
+                "lineHeight": [Function],
+                "paddingX": [Function],
+                "paddingY": [Function],
+                "placeholderColor": [Function],
+              },
+              "lightBackgroundColor": [Function],
+              "lineHeight": [Function],
+              "link": Object {
+                "color": [Function],
+                "decoration": [Function],
+                "hoverColor": [Function],
+                "hoverDecoration": [Function],
+              },
+              "maxWidth": [Function],
+              "mutedTextColor": [Function],
+              "paddingX": [Function],
+              "paddingY": [Function],
+              "passwordStrengthValidator": Object {
+                "color0": [Function],
+                "color1": [Function],
+                "color2": [Function],
+                "color3": [Function],
+                "color4": [Function],
+              },
+              "primaryColor": [Function],
+              "smallTextFontSize": [Function],
+              "socialButton": Object {
+                "borderRadius": [Function],
+                "borderWidth": [Function],
+                "focusBoxShadow": [Function],
+                "fontSize": [Function],
+                "fontWeight": [Function],
+                "height": [Function],
+                "inline": [Function],
+                "lineHeight": [Function],
+                "paddingX": [Function],
+                "paddingY": [Function],
+                "textVisible": [Function],
+              },
+              "spacing": [Function],
+              "successColor": [Function],
+              "textColor": [Function],
+              "warningColor": [Function],
+            },
+            "props": Object {},
+          }
+        }
+      />
+      <div
+        className="c4"
+      >
+        <div
+          style={
+            Object {
+              "fontWeight": "bold",
+            }
+          }
+        >
+          identifier
+        </div>
+        <div>
+          33612345678
+        </div>
+        <div>
+          <span>
+            mfaList.createdAt
+             : 
+          </span>
+          <time
+            dateTime="2022-09-21"
+          >
+            21/09/2022
+          </time>
+        </div>
+      </div>
+    </div>
+    <div
+      className="c1 c2"
+    >
+      <svg
+        className="c5"
+        theme={
+          Theme {
+            "cache": Object {
+              "_absoluteLineHeight": 20,
+              "_blockHeight": 40,
+              "_blockInnerHeight": 38,
+              "animateWidgetEntrance": true,
+              "backgroundColor": "#ffffff",
+              "borderColor": "#ced4da",
+              "borderRadius": 3,
+              "borderWidth": 1,
+              "fontSize": 14,
+              "lineHeight": 1.428571429,
+              "maxWidth": 400,
+              "paddingY": 9,
+              "spacing": 10,
+              "textColor": "#495057",
+            },
+            "defaults": Object {
+              "_absoluteLineHeight": [Function],
+              "_blockHeight": [Function],
+              "_blockInnerHeight": [Function],
+              "animateWidgetEntrance": [Function],
+              "backgroundColor": [Function],
+              "borderColor": [Function],
+              "borderRadius": [Function],
+              "borderWidth": [Function],
+              "button": Object {
+                "borderRadius": [Function],
+                "borderWidth": [Function],
+                "focusBoxShadow": [Function],
+                "fontSize": [Function],
+                "fontWeight": [Function],
+                "height": [Function],
+                "lineHeight": [Function],
+                "paddingX": [Function],
+                "paddingY": [Function],
+              },
+              "dangerColor": [Function],
+              "fontSize": [Function],
+              "headingColor": [Function],
+              "input": Object {
+                "background": [Function],
+                "borderColor": [Function],
+                "borderRadius": [Function],
+                "borderWidth": [Function],
+                "boxShadow": [Function],
+                "color": [Function],
+                "disabledBackground": [Function],
+                "focusBorderColor": [Function],
+                "focusBoxShadow": [Function],
+                "fontSize": [Function],
+                "height": [Function],
+                "lineHeight": [Function],
+                "paddingX": [Function],
+                "paddingY": [Function],
+                "placeholderColor": [Function],
+              },
+              "lightBackgroundColor": [Function],
+              "lineHeight": [Function],
+              "link": Object {
+                "color": [Function],
+                "decoration": [Function],
+                "hoverColor": [Function],
+                "hoverDecoration": [Function],
+              },
+              "maxWidth": [Function],
+              "mutedTextColor": [Function],
+              "paddingX": [Function],
+              "paddingY": [Function],
+              "passwordStrengthValidator": Object {
+                "color0": [Function],
+                "color1": [Function],
+                "color2": [Function],
+                "color3": [Function],
+                "color4": [Function],
+              },
+              "primaryColor": [Function],
+              "smallTextFontSize": [Function],
+              "socialButton": Object {
+                "borderRadius": [Function],
+                "borderWidth": [Function],
+                "focusBoxShadow": [Function],
+                "fontSize": [Function],
+                "fontWeight": [Function],
+                "height": [Function],
+                "inline": [Function],
+                "lineHeight": [Function],
+                "paddingX": [Function],
+                "paddingY": [Function],
+                "textVisible": [Function],
+              },
+              "spacing": [Function],
+              "successColor": [Function],
+              "textColor": [Function],
+              "warningColor": [Function],
+            },
+            "props": Object {},
+          }
+        }
+      />
+      <div
+        className="c4"
+      >
+        <div
+          style={
+            Object {
+              "fontWeight": "bold",
+            }
+          }
+        >
+          identifier
+        </div>
+        <div>
+          root@reach5.co
+        </div>
+        <div>
+          <span>
+            mfaList.createdAt
+             : 
+          </span>
+          <time
+            dateTime="2022-09-21"
+          >
+            21/09/2022
+          </time>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Snapshot empty 1`] = `
+.c1 {
+  text-align: center;
+  margin-bottom: 10px;
+  color: #495057;
+}
+
+.c0 {
+  font-size: 14px;
+  -webkit-transition: -webkit-transform 400ms ease, opacity 400ms ease;
+  -webkit-transition: transform 400ms ease, opacity 400ms ease;
+  transition: transform 400ms ease, opacity 400ms ease;
+  opacity: 0;
+  padding: 20px;
+  border-radius: 3px;
+  background-color: #ffffff;
+  max-width: 400px;
+  box-sizing: border-box;
+  margin: 0 auto;
+}
+
+<div
+  className="c0"
+>
+  <div>
+    <div
+      className="c1"
+    >
+      mfaList.noCredentials
+    </div>
+  </div>
+</div>
+`;
