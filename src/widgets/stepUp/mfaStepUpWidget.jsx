@@ -1,11 +1,11 @@
 import React from 'react';
-import {createMultiViewWidget} from "../../components/widget/widget";
-import {deepDefaults} from "../../helpers/deepDefaults";
-import {createForm} from "../../components/form/formComponent";
-import radioboxField from "../../components/form/fields/radioboxField";
-import {Info, Intro} from "../../components/miscComponent";
-import {simpleField} from "../../components/form/fields/simpleField";
-import {toQueryString} from "../../helpers/queryString";
+import {createMultiViewWidget} from '../../components/widget/widget';
+import {deepDefaults} from '../../helpers/deepDefaults';
+import {createForm} from '../../components/form/formComponent';
+import radioboxField from '../../components/form/fields/radioboxField';
+import {Info, Intro} from '../../components/miscComponent';
+import {simpleField} from '../../components/form/fields/simpleField';
+import {toQueryString} from '../../helpers/queryString';
 
 const StartStepUpMfaButton = createForm({
     prefix: 'r5-mfa-start-step-up-',
