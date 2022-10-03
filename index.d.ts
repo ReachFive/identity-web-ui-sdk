@@ -13,7 +13,8 @@ export interface Client {
     showSocialAccounts(options: any): Promise<void>,
     showSocialLogin(options: any): Promise<void>,
     showWebAuthnDevices(options: any): Promise<void>,
-    showMfa(options: any): Promise<void>
+    showMfa(options: any): Promise<void>,
+    showMfaCredentials(options: any): Promise<void>
 }
 
 export interface Config {

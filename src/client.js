@@ -10,8 +10,9 @@ import profileEditorWidget from './widgets/profileEditor/profileEditorWidget';
 import socialAccountsWidget from './widgets/socialAccounts/socialAccountsWidget';
 import socialLoginWidget from './widgets/socialLogin/socialLoginWidget';
 import webAuthnWidget from './widgets/webAuthn/webAuthnDevicesWidget';
-import { logError } from './helpers/logger';
 import mfaCredentialsWidget from "./widgets/mfa/MfaCredentialsWidget";
+import mfaListWidget from './widgets/mfa/mfaListWidget'
+import { logError } from './helpers/logger';
 
 export class UiClient {
     constructor(config, urlParser, coreClient, defaultI18n) {
@@ -70,6 +71,10 @@ export class UiClient {
 
     showMfa(options) {
         this._showWidget(mfaCredentialsWidget, options);
+    }
+
+    showMfaCredentials(options) {
+        this._showWidget(mfaListWidget, options);
     }
 
     async _showWidget(widget, options = {}, props = {}) {
