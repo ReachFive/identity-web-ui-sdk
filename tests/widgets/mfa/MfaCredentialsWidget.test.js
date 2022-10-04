@@ -47,6 +47,16 @@ describe('DOM testing', () => {
             expect(
                 instance.find('button').filter(textFilter('mfa.register.email'))
             ).toHaveLength(1);
+
+            // Form button remove email
+            expect(
+                instance.find('button').filter(textFilter('mfa.remove.email'))
+            )
+
+            // Form button remove phone number
+            expect(
+                instance.find('button').filter(textFilter('mfa.remove.phoneNumber'))
+            )
         });
     });
 });
