@@ -7,8 +7,8 @@ import {Info, Intro, Separator} from '../../components/miscComponent';
 import {createForm} from '../../components/form/formComponent';
 import {deepDefaults} from '../../helpers/deepDefaults';
 import phoneNumberField from '../../components/form/fields/phoneNumberField';
-import {withTheme} from "../../components/widget/widgetContext";
-import styled from "styled-components";
+import {withTheme} from '../../components/widget/widgetContext';
+import styled from 'styled-components';
 
 
 const EmailRegisteringCredentialForm = createForm({
