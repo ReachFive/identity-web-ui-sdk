@@ -88,24 +88,22 @@ class MainView extends React.Component {
         return (
             <div>
                 <DivCredentialBlock>
+                    {config.mfaEmailEnabled &&
+                        <div>
+                            {showIntro && <Intro>{i18n('mfa.email.explain')}</Intro>}
+                            <EmailRegisteringCredentialForm handler={this.onEmailRegistering} onSuccess={data => this.props.goTo('verification-code', {...data, registrationType: 'email'})}/>
+                        </div>
+                    }
 
-                {config.mfaEmailEnabled &&
-                    <div>
-                        {showIntro && <Intro>{i18n('mfa.email.explain')}</Intro>}
-                        <EmailRegisteringCredentialForm handler={this.onEmailRegistering} onSuccess={data => this.props.goTo('verification-code', {...data, registrationType: 'email'})}/>
-                    </div>
-                }
-
-                {config.mfaEmailEnabled && config.mfaSmsEnabled && <Separator/>}
-                {config.mfaSmsEnabled &&
-                    <div>
-                        {showIntro && <Intro>{i18n('mfa.phoneNumber.explain')}</Intro>}
-                        <PhoneNumberInputForm
-                            handler={this.onPhoneNumberRegistering} onSuccess={data => this.props.goTo('verification-code', {...data, registrationType: 'sms'})}/>
-                    </div>
-                }
+                    {config.mfaEmailEnabled && config.mfaSmsEnabled && <Separator/>}
+                    {config.mfaSmsEnabled &&
+                        <div>
+                            {showIntro && <Intro>{i18n('mfa.phoneNumber.explain')}</Intro>}
+                            <PhoneNumberInputForm
+                                handler={this.onPhoneNumberRegistering} onSuccess={data => this.props.goTo('verification-code', {...data, registrationType: 'sms'})}/>
+                        </div>
+                    }
                 </DivCredentialBlock>
-
                 <DivCredentialBlock>
                     {showRemoveMfaCredentials &&
                         config.mfaEmailEnabled &&
@@ -113,7 +111,8 @@ class MainView extends React.Component {
                             {showIntro && <Intro>{i18n('mfa.email.remove.explain')}</Intro>}
                             <EmailCredentialRemovalForm handler={this.onEmailRemoval}
                                                         onSuccess={_ => this.props.goTo('credential-removed', {credentialType: 'email'})}/>
-                        </div>}
+                        </div>
+                    }
                     {showRemoveMfaCredentials && config.mfaEmailEnabled && config.mfaSmsEnabled && <Separator/>}
                     {showRemoveMfaCredentials &&
                         config.mfaSmsEnabled &&
@@ -121,7 +120,8 @@ class MainView extends React.Component {
                             {showIntro && <Intro>{i18n('mfa.phoneNumber.remove.explain')}</Intro>}
                             <PhoneNumberRemovalInputForm handler={this.onPhoneNumberRemoval}
                                                          onSuccess={_ => this.props.goTo('credential-removed', {credentialType: 'sms'})}/>
-                        </div>}
+                        </div>
+                    }
                 </DivCredentialBlock>
             </div>
         )
