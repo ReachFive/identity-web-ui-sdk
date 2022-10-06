@@ -558,23 +558,22 @@ exports[`Snapshot login view default 1`] = `
       >
         <label
           className="c9"
-          htmlFor="email"
+          htmlFor="identifier"
         >
-          email
+          identifier
         </label>
         <input
-          autoComplete="email"
           className="c10"
-          data-testid="email"
-          id="email"
-          name="email"
+          data-testid="identifier"
+          id="identifier"
+          name="identifier"
           onBlur={[Function]}
           onChange={[Function]}
-          placeholder="email"
+          placeholder="identifier"
           readOnly={false}
           required={true}
-          title="email"
-          type="email"
+          title="identifier"
+          type="text"
           value=""
         />
       </div>
@@ -990,23 +989,22 @@ exports[`Snapshot login view inline social buttons 1`] = `
       >
         <label
           className="c9"
-          htmlFor="email"
+          htmlFor="identifier"
         >
-          email
+          identifier
         </label>
         <input
-          autoComplete="email"
           className="c10"
-          data-testid="email"
-          id="email"
-          name="email"
+          data-testid="identifier"
+          id="identifier"
+          name="identifier"
           onBlur={[Function]}
           onChange={[Function]}
-          placeholder="email"
+          placeholder="identifier"
           readOnly={false}
           required={true}
-          title="email"
-          type="email"
+          title="identifier"
+          type="text"
           value=""
         />
       </div>
@@ -1419,23 +1417,22 @@ exports[`Snapshot login view no forgot password 1`] = `
       >
         <label
           className="c9"
-          htmlFor="email"
+          htmlFor="identifier"
         >
-          email
+          identifier
         </label>
         <input
-          autoComplete="email"
           className="c10"
-          data-testid="email"
-          id="email"
-          name="email"
+          data-testid="identifier"
+          id="identifier"
+          name="identifier"
           onBlur={[Function]}
           onChange={[Function]}
-          placeholder="email"
+          placeholder="identifier"
           readOnly={false}
           required={true}
-          title="email"
-          type="email"
+          title="identifier"
+          type="text"
           value=""
         />
       </div>
@@ -1836,23 +1833,22 @@ exports[`Snapshot login view no signup 1`] = `
       >
         <label
           className="c9"
-          htmlFor="email"
+          htmlFor="identifier"
         >
-          email
+          identifier
         </label>
         <input
-          autoComplete="email"
           className="c10"
-          data-testid="email"
-          id="email"
-          name="email"
+          data-testid="identifier"
+          id="identifier"
+          name="identifier"
           onBlur={[Function]}
           onChange={[Function]}
-          placeholder="email"
+          placeholder="identifier"
           readOnly={false}
           required={true}
-          title="email"
-          type="email"
+          title="identifier"
+          type="text"
           value=""
         />
       </div>
@@ -2266,23 +2262,22 @@ exports[`Snapshot login view with canShowPassword 1`] = `
       >
         <label
           className="c9"
-          htmlFor="email"
+          htmlFor="identifier"
         >
-          email
+          identifier
         </label>
         <input
-          autoComplete="email"
           className="c10"
-          data-testid="email"
-          id="email"
-          name="email"
+          data-testid="identifier"
+          id="identifier"
+          name="identifier"
           onBlur={[Function]}
           onChange={[Function]}
-          placeholder="email"
+          placeholder="identifier"
           readOnly={false}
           required={true}
-          title="email"
-          type="email"
+          title="identifier"
+          type="text"
           value=""
         />
       </div>
@@ -2724,23 +2719,22 @@ exports[`Snapshot login view with remember me 1`] = `
       >
         <label
           className="c9"
-          htmlFor="email"
+          htmlFor="identifier"
         >
-          email
+          identifier
         </label>
         <input
-          autoComplete="email"
           className="c10"
-          data-testid="email"
-          id="email"
-          name="email"
+          data-testid="identifier"
+          id="identifier"
+          name="identifier"
           onBlur={[Function]}
           onChange={[Function]}
-          placeholder="email"
+          placeholder="identifier"
           readOnly={false}
           required={true}
-          title="email"
-          type="email"
+          title="identifier"
+          type="text"
           value=""
         />
       </div>

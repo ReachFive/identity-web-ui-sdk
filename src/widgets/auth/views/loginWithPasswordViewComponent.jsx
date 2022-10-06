@@ -6,7 +6,6 @@ import { Alternative, Heading, Link } from '../../../components/miscComponent';
 import { withTheme } from '../../../components/widget/widgetContext';
 
 import { createForm } from '../../../components/form/formComponent';
-import { simpleField } from '../../../components/form/fields/simpleField';
 import { simplePasswordField } from '../../../components/form/fields/simplePasswordField';
 import checkboxField from '../../../components/form/fields/checkboxField';
 import identifierField from "../../../components/form/fields/identifierField";
@@ -30,17 +29,16 @@ export const LoginWithPasswordForm = createForm({
                 identifierField({
                     key: 'identifier',
                     defaultValue: username,
+                    withPhoneNumber: true,
                     readOnly: true,
                 }, config)
                 :
-                simpleField({
-                    key: 'email',
-                    label: 'email',
-                    type: 'email',
-                    autoComplete: 'email',
+                identifierField({
+                    key: 'identifier',
                     defaultValue: username,
+                    withPhoneNumber: false,
                     readOnly: true
-                }),
+                }, config),
             simplePasswordField({
                 key: 'password',
                 label: 'password',

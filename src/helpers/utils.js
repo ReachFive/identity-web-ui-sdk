@@ -1,4 +1,6 @@
 import isObject from 'lodash-es/isObject';
+import * as libphonenumber from 'libphonenumber-js';
+
 
 export function format(sFormat, args) {
     for (var i = 0; i < arguments.length - 1; i++) {
@@ -54,7 +56,11 @@ export function specializeIdentifierData(data) {
         {
             ...data,
             identifier: undefined,
-            ...(/@/.test(data.identifier)) ? {email: data.identifier} : {phoneNumber: data.identifier.replace(/\s+/g, '')},
+            ...(isValidEmail(data.identifier)) ? {email: data.identifier} : libphonenumber.isValidNumber(data.identifier) ? {phoneNumber: data.identifier.replace(/\s+/g, '')}: {customIdentifier: data.identifier},
         }
         : data
+}
+
+export function isValidEmail(email) {
+    return /\S+@\S+\.\S+/.test(email);
 }
