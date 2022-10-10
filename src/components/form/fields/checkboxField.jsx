@@ -11,7 +11,6 @@ const CheckboxField = props => {
         value: !value,
         isDirty: true
     });
-
     return <Checkbox value={value}
         onToggle={() => onChange(clickUpdate)}
         name={path}

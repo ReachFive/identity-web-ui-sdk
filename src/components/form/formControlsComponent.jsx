@@ -105,13 +105,14 @@ export const Select = withTheme(styled(({ options, placeholder = '', ...props })
 
 const checkboxWidth = 20;
 
-export const Check = withTheme(styled(({ checked, onSelect, label, radio, name, className, required }) => (
+export const Check = withTheme(styled(({ checked, onSelect, label, radio, name, className, required, value }) => (
     <label className={className}>
         <input type={radio ? 'radio' : 'checkbox'}
             checked={checked}
             name={name}
             onChange={onSelect}
-            required={required} />
+            required={required}
+            value={value}/>
         {label}
     </label>
 ))`
@@ -147,20 +148,26 @@ export const Checkbox = withTheme(styled(({ value, onToggle, label, name, classN
     margin-bottom: ${props => props.theme.get('spacing')}px;
 `);
 
-export const RadioGroup = ({ options, onChange, value, name, ...props }) => (
-    <FormGroup {...props}>
-        {options.map(({ label: optionLabel, value: optionValue }) => (
-            <Check
-                checked={value === optionValue}
-                onSelect={onChange(optionValue)}
-                label={optionLabel}
-                name={name}
-                inline={true}
-                radio />
-        ))}
-    </FormGroup>
-);
-
+export const RadioGroup = ({ options, onChange, value, name, inputId, ...props }) => {
+    const handleChange = event => {
+        onChange({value: event.target.value})
+    };
+    return (
+        <FormGroup inputId={inputId} {...props}>
+            {options.map(({label: optionLabel, value: optionValue, key: optionKey}) => (
+                <Check
+                    key={optionKey}
+                    checked={value === optionValue}
+                    onSelect={handleChange}
+                    label={optionLabel}
+                    name={optionKey}
+                    inline={true}
+                    value={optionValue}
+                    radio/>
+            ))}
+        </FormGroup>
+    );
+}
 export const UserAggreementStyle = withTheme(styled.div`
     font-size: ${props => props.theme.get('fontSize') * 0.8}px;
     color: ${props => props.theme.get('mutedTextColor')};

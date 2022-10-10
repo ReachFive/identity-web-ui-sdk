@@ -13,6 +13,7 @@ import webAuthnWidget from './widgets/webAuthn/webAuthnDevicesWidget';
 import mfaCredentialsWidget from "./widgets/mfa/MfaCredentialsWidget";
 import mfaListWidget from './widgets/mfa/mfaListWidget'
 import { logError } from './helpers/logger';
+import mfaStepUpWidget from "./widgets/stepUp/mfaStepUpWidget";
 
 export class UiClient {
     constructor(config, urlParser, coreClient, defaultI18n) {
@@ -71,6 +72,10 @@ export class UiClient {
 
     showMfa(options) {
         this._showWidget(mfaCredentialsWidget, options);
+    }
+
+    showStepUp(options) {
+        this._showWidget(mfaStepUpWidget, options)
     }
 
     showMfaCredentials(options) {
