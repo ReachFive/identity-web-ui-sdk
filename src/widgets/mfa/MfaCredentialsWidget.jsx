@@ -21,11 +21,8 @@ const EmailCredentialRemovalForm = createForm({
     submitLabel: 'mfa.remove.email'
 })
 
-const PhoneNumberCredentialRemovalForm = config => createForm({
+const PhoneNumberCredentialRemovalForm = createForm({
     prefix: 'r5-mfa-credentials-phone-number-removal-',
-    fields: [
-        phoneNumberField({required: true}, config)
-    ],
     submitLabel: 'mfa.remove.phoneNumber'
 })
 
@@ -82,9 +79,10 @@ class MainView extends React.Component {
     }
 
     render() {
-        const { i18n, showIntro, config, showRemoveMfaCredentials } = this.props
+        const { i18n, showIntro, config, showRemoveMfaCredentials, credentials } = this.props
         const PhoneNumberInputForm = PhoneNumberRegisteringCredentialForm(config);
-        const PhoneNumberRemovalInputForm = PhoneNumberCredentialRemovalForm(config)
+        const phoneNumberCredentialRegistered = credentials.find(credential => credential.type === 'sms')
+        const isEmailCredentialRegistered = credentials.some(credential => credential.type === 'email')
         return (
             <div>
                 <DivCredentialBlock>
@@ -107,18 +105,20 @@ class MainView extends React.Component {
                 <DivCredentialBlock>
                     {showRemoveMfaCredentials &&
                         config.mfaEmailEnabled &&
+                        isEmailCredentialRegistered &&
                         <div>
                             {showIntro && <Intro>{i18n('mfa.email.remove.explain')}</Intro>}
                             <EmailCredentialRemovalForm handler={this.onEmailRemoval}
                                                         onSuccess={_ => this.props.goTo('credential-removed', {credentialType: 'email'})}/>
                         </div>
                     }
-                    {showRemoveMfaCredentials && config.mfaEmailEnabled && config.mfaSmsEnabled && <Separator/>}
+                    {showRemoveMfaCredentials && config.mfaEmailEnabled && config.mfaSmsEnabled && phoneNumberCredentialRegistered && isEmailCredentialRegistered && <Separator/>}
                     {showRemoveMfaCredentials &&
                         config.mfaSmsEnabled &&
+                        phoneNumberCredentialRegistered &&
                         <div>
                             {showIntro && <Intro>{i18n('mfa.phoneNumber.remove.explain')}</Intro>}
-                            <PhoneNumberRemovalInputForm handler={this.onPhoneNumberRemoval}
+                            <PhoneNumberCredentialRemovalForm handler={data => this.onPhoneNumberRemoval({...data, ...phoneNumberCredentialRegistered})}
                                                          onSuccess={_ => this.props.goTo('credential-removed', {credentialType: 'sms'})}/>
                         </div>
                     }
@@ -175,11 +175,14 @@ export default createMultiViewWidget({
         'verification-code': VerificationCodeView,
         'credential-removed': CredentialRemovedView
     },
-    prepare: (options) => {
-        return deepDefaults({
-            showIntro: true,
-            showRemoveMfaCredentials: true,
-            ...options
-        }
-    )}
+    prepare: (options, { apiClient }) => {
+        return apiClient.listMfaCredentials(options.accessToken).then(credentials => {
+             return deepDefaults({
+                             showIntro: true,
+                             showRemoveMfaCredentials: true,
+                             ...options,
+                             ...credentials
+                         })
+        })
+    }
 })
