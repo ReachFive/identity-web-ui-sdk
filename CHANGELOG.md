@@ -5,11 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0), and this project adheres
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+
+## [1.17.0] - 2022-10-26
+
+### Added
+
+New field custom identifier to loginWithPassword
+New field custom identifier to signup
+New widget for MFA credentials listing
+New widget for registering and/or removing MFA credentials
+New widget for MFA step up
 
 ### Fixes
 
 Use actual consent language in the signup payload.
+
 
 ## [1.16.2] - 2022-08-03
 
@@ -299,6 +309,8 @@ The eye icon is now correctly displayed in the Auth widget.
 First version of the SDK Web UI.
 
 [Unreleased]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.16.2...HEAD
+
+[1.17.0]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.16.2...v1.17.0
 
 [1.16.2]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.16.1...v1.16.2
 
