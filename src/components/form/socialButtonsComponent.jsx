@@ -4,9 +4,12 @@ import styled from 'styled-components';
 import classes from 'classnames';
 import { compose, withHandlers } from '@hypnosphi/recompose';
 
+import { parseQueryString } from '../../helpers/queryString';
 import * as providers from '../../providers/providers';
 import { withApiClient, withTheme } from '../widget/widgetContext';
 import { Button } from './buttonComponent';
+
+const queryParams = parseQueryString(window.location.search.substring(1))
 
 const socialButtons = Object.keys(providers).reduce((acc, key) => ({ ...acc, [key]: providers[key] }), {});
 
@@ -89,7 +92,14 @@ const SocialButton = withTheme(({ provider, onClick, theme, count }) => {
 
 const SocialButtons = styled(({ providers, clickHandler, className }) => (
     <div className={classes(['r5-social-buttons', className])}>
-        {providers.map(providerKey => {
+        {providers.filter(providerKey => {
+            if (providerKey === 'bconnect') return queryParams['bconnectActivation'] === 'true'
+            else if (socialButtons[providerKey] === undefined) {
+                console.error(`${providerKey} provider not found.`)
+                return false
+            }
+            else return true
+        }).map(providerKey => {
             return <SocialButton
                 provider={socialButtons[providerKey]}
                 count={providers.length}
