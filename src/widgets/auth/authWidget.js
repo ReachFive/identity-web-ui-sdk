@@ -11,6 +11,7 @@ import SignupWithWebAuthnView from './views/signupWithWebAuthnViewComponent'
 import { ForgotPasswordView, ForgotPasswordSuccessView } from './views/forgotPasswordViewComponent'
 import QuickLoginView from './views/quickLoginViewComponent'
 import ReauthView from './views/reauthViewComponent'
+import { FaSelectionView, VerificationCodeView } from '../stepUp/mfaStepUpWidget'
 
 export default createMultiViewWidget({
     initialView({ initialScreen, allowLogin, allowQuickLogin, allowSignup, allowWebAuthnLogin, socialProviders, session = {} }) {
@@ -37,6 +38,8 @@ export default createMultiViewWidget({
         'forgot-password': ForgotPasswordView,
         'forgot-password-success': ForgotPasswordSuccessView,
         'quick-login': QuickLoginView,
+        'fa-selection': FaSelectionView,
+        'verification-code': VerificationCodeView,
         'reauth': ReauthView
     },
     prepare: (options, { config }) => {
