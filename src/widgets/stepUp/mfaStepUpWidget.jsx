@@ -34,7 +34,7 @@ const StartPasswordlessForm = createForm({
         ]
     }
 })
-class MainView extends React.Component {
+class MfaStepUpView extends React.Component {
     onGetStepUpToken = _ => {
         return this.props.apiClient.getMfaStepUpToken({
             options: this.props.auth,
@@ -51,7 +51,7 @@ class MainView extends React.Component {
     }
 }
 
-class FaSelectionView extends React.Component {
+export class FaSelectionView extends React.Component {
     onChooseFa = factor => {
         return this.props.apiClient.startPasswordless({
             ...factor,
@@ -73,7 +73,7 @@ class FaSelectionView extends React.Component {
     }
 }
 
-class VerificationCodeView extends React.Component {
+export class VerificationCodeView extends React.Component {
     handleSubmit = data => {
         const {apiClient, auth, challengeId, accessToken} = this.props;
         return apiClient
@@ -94,9 +94,9 @@ class VerificationCodeView extends React.Component {
 
 
 export default createMultiViewWidget({
-    initialView: 'main',
+    initialView: 'mfa-step-up',
     views: {
-        'main': MainView,
+        'mfa-step-up': MfaStepUpView,
         'fa-selection': FaSelectionView,
         'verification-code': VerificationCodeView
     },

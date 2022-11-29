@@ -74,6 +74,7 @@ export default class LoginView extends React.Component {
                 ...this.props.auth,
             },
         })
+            .then(res => res?.stepUpToken ? this.props.goTo('fa-selection', {token: res.stepUpToken, amr: res.amr}) : res)
     }
 
     render() {

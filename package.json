@@ -19,7 +19,7 @@
     },
     "dependencies": {
         "@hypnosphi/recompose": "0.30.5",
-        "@reachfive/identity-core": "1.24.1",
+        "@reachfive/identity-core": "1.25.0",
         "@reachfive/zxcvbn": "1.0.0-alpha.2",
         "char-info": "0.3.2",
         "classnames": "2.2.6",
