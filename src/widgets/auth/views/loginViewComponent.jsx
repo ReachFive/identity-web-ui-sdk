@@ -12,6 +12,7 @@ import checkboxField from '../../../components/form/fields/checkboxField';
 import identifierField from "../../../components/form/fields/identifierField";
 import {specializeIdentifierData} from "../../../helpers/utils";
 import ReCaptcha, {importGoogleRecaptchaScript} from '../../../components/reCaptcha'
+import {simpleField} from "../../../components/form/fields/simpleField";
 
 const ForgotPasswordWrapper = withTheme(styled.div`
     margin-bottom: ${props => props.theme.get('spacing')}px;
@@ -24,18 +25,22 @@ const ForgotPasswordWrapper = withTheme(styled.div`
 
 export const LoginForm = createForm({
     prefix: 'r5-login-',
-    fields({ showIdentifier = true, showRememberMe, canShowPassword, showForgotPassword, defaultIdentifier, i18n, config }) {
+    fields({ showIdentifier = true, showRememberMe, canShowPassword, showForgotPassword, defaultIdentifier, i18n, config, allowCustomIdentifier, customIdentifierLabel }) {
         return [
             showIdentifier && (config.sms) ?
                 identifierField({
                     defaultValue: defaultIdentifier,
-                    withPhoneNumber: true
+                    withPhoneNumber: true,
+                    required: !allowCustomIdentifier
                 }, config)
                 :
                 identifierField({
                     defaultValue: defaultIdentifier,
-                    withPhoneNumber: false
+                    withPhoneNumber: false,
+                    required: !allowCustomIdentifier
                 }, config),
+            allowCustomIdentifier &&
+                simpleField({key: 'customIdentifier', type: 'text', placeholder: customIdentifierLabel, required: false}),
             simplePasswordField({
                 key: 'password',
                 label: 'password',
@@ -78,7 +83,7 @@ export default class LoginView extends React.Component {
     }
 
     render() {
-        const { socialProviders, session = {}, i18n } = this.props;
+        const { socialProviders, session = {}, i18n, allowCustomIdentifier, customIdentifierLabel } = this.props;
 
         const defaultIdentifier = session.lastLoginType === 'password' ? session.email : null;
 
@@ -97,6 +102,8 @@ export default class LoginView extends React.Component {
                     showForgotPassword={this.props.allowForgotPassword}
                     canShowPassword={this.props.canShowPassword}
                     defaultIdentifier={defaultIdentifier}
+                    allowCustomIdentifier={allowCustomIdentifier}
+                    customIdentifierLabel={customIdentifierLabel}
                     handler={(data) => ReCaptcha.handle(data, this.props, this.callback, "login")}
                     config={this.props.config}
                 />
