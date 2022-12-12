@@ -57,6 +57,7 @@ export function specializeIdentifierData(data) {
             ...data,
             identifier: undefined,
             ...(isValidEmail(data.identifier)) ? {email: data.identifier} : libphonenumber.isValidNumber(data.identifier) ? {phoneNumber: data.identifier.replace(/\s+/g, '')}: {customIdentifier: data.identifier},
+            customIdentifier: data.customIdentifier
         }
         : data
 }
