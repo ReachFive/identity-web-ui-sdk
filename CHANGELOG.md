@@ -8,7 +8,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ## [1.18.0] - 2022-12-12
 
 Allow to start a step up flow during a login when mfa is required
-Add dedicated field custom identifier to login views
+Add dedicated field custom identifier to login views if the right option is enabled
 Fix issue during validation custom identifier can now be numbers
 
 ## [1.17.0] - 2022-10-26
