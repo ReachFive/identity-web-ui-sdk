@@ -177,6 +177,9 @@ function consentFieldComponent(consent, fieldConfig, versionIdPath) {
         throw new UserError(`Unknown version ID n°${versionId} of consent '${consent.key}'.`);
     }
 
+    // Include the version ID if defined
+    const formKey = versionIdPath === undefined ? `consents.${consent.key}` : `consents.${consent.key}.${versionIdPath}`
+
     const baseConfig = {
         ...fieldConfig,
         label: version.title,
@@ -186,7 +189,7 @@ function consentFieldComponent(consent, fieldConfig, versionIdPath) {
             consentCannotBeGranted: !fieldConfig.errorArchivedConsents && consent.status === 'archived'
         },
         type: consent.consentType,
-        key: `consents.${consent.key}.${versionIdPath}`,
+        key: formKey,
         path: `consents.${consent.key}` // Will target the same profile consent value for different versions of the consent
     };
 
