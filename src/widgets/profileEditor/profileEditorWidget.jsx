@@ -56,6 +56,7 @@ export default createWidget({
             throw new UserError('These fields are not allowed: password, password_confirmation.');
         }
 
+        // This step removes the version from the consents
         const resolvedFields = buildFormFields(fields, { ...config, errorArchivedConsents: false });
 
         return apiClient
@@ -63,13 +64,26 @@ export default createWidget({
                 accessToken,
                 fields: computeFieldList(resolvedFields)
             })
-            .then(profile => ({
+            .then(profile => {
+                const camelProfile = camelCaseProperties(profile);
+                return ({
                 ...opts,
-                profile: camelCaseProperties(profile),
+                profile: camelProfile,
                 resolvedFields: resolvedFields.filter(field => {
                     return (field.path !== 'email' || !profile.email)
                         && (field.path !== 'phone_number' || !config.sms || !profile.phoneNumber)
+                        && (field.path.startsWith('consents') && checkConsentVersion(field.path, fields, camelProfile.consents))
                 })
-            }));
+            })});
     }
 });
+
+// Filter out the resolved consent fileds with different version than the one the profile owns
+const checkConsentVersion = (path, fields, profileConsents) => {
+    const fieldConsent = fields.find(f => f.startsWith(path));
+    const fieldConsentSplit = fieldConsent.split('.v');
+    const fieldConsentKey = fieldConsentSplit[0].split('.')[1];
+    const fieldConsentVersion = fieldConsentSplit[1];
+    const profileConsentVersion = profileConsents[fieldConsentKey].consentVersion.versionId;
+    return fieldConsentVersion === undefined || parseInt(fieldConsentVersion) === profileConsentVersion;
+}
