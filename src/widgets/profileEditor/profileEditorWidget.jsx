@@ -66,7 +66,7 @@ export default createWidget({
             })
             .then(profile => {
                 const camelProfile = camelCaseProperties(profile);
-                const profileConsents = camelProfile.consents;
+                const profileConsents = camelProfile !== undefined ? camelProfile.consents : undefined;
                 const filteredProfileConsents = (profileConsents !== undefined && Object.keys(profileConsents).length) ? filterProfileConsents(fields, profileConsents) : undefined;
                 const filteredOutConsentsProfile = { ...profile, consents: filteredProfileConsents };
                 return ({
