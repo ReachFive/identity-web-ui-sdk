@@ -39,8 +39,12 @@ export const LoginForm = createForm({
                     withPhoneNumber: false,
                     required: !allowCustomIdentifier
                 }, config),
-            allowCustomIdentifier &&
-                simpleField({key: 'customIdentifier', type: 'text', placeholder: customIdentifierLabel, required: false}),
+            allowCustomIdentifier && {
+                staticContent: (
+                    <Separator text={i18n('or')} />
+                )
+            },
+            allowCustomIdentifier && simpleField({key: 'customIdentifier', type: 'text', placeholder: customIdentifierLabel, required: false}),
             simplePasswordField({
                 key: 'password',
                 label: 'password',
