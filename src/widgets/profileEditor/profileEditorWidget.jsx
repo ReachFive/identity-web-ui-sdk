@@ -66,8 +66,8 @@ export default createWidget({
             })
             .then(profile => {
                 const camelProfile = camelCaseProperties(profile);
-                const profileConsents = camelProfile !== undefined ? camelProfile.consents : undefined;
-                const filteredProfileConsents = (profileConsents !== undefined && Object.keys(profileConsents).length) ? filterProfileConsents(fields, profileConsents) : undefined;
+                const profileConsents = camelProfile && camelProfile.consents;
+                const filteredProfileConsents = (profileConsents && Object.keys(profileConsents).length) && filterProfileConsents(fields, config.consentsVersions, profileConsents);
                 const filteredOutConsentsProfile = { ...profile, consents: filteredProfileConsents };
                 return ({
                     ...opts,
@@ -82,12 +82,14 @@ export default createWidget({
 });
 
 // Filter out the profile consents with different version than the one the given consent field own
-const filterProfileConsents = (fields, profileConsents) => {
+const filterProfileConsents = (fields, consentsVersions, profileConsents) => {
     return Object.keys(profileConsents)
         .filter(profileConsentKey => {
             const consentField = fields.find(field => field.startsWith(`consents.${profileConsentKey}`));
             const consentFieldSplit = consentField.split('.v');
-            const consentFieldVersion = consentFieldSplit[1];
+            // Find most recent consent version if not given
+            const highestConsentVersion = consentsVersions[profileConsentKey].versions[0].versionId;
+            const consentFieldVersion = consentFieldSplit[1] || highestConsentVersion;
             const profileConsentVersion = profileConsents[profileConsentKey].consentVersion.versionId;
             return !consentFieldVersion || parseInt(consentFieldVersion) === profileConsentVersion;
         })
