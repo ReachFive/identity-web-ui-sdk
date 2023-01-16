@@ -5226,7 +5226,7 @@ exports[`Snapshot signup view with consents 1`] = `
           >
             <input
               checked={false}
-              name="consents.aConsent"
+              name="consents.aConsent.1"
               onChange={[Function]}
               required={false}
               type="checkbox"
@@ -5713,7 +5713,7 @@ exports[`Snapshot signup view with mandatory consents 1`] = `
           >
             <input
               checked={false}
-              name="consents.aConsent"
+              name="consents.aConsent.1"
               onChange={[Function]}
               required={true}
               type="checkbox"
