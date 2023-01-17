@@ -20,7 +20,7 @@ import { createField } from '../fieldCreator';
 */
 
 function specializeRawIdentifier(withPhoneNumber, inputValue, telCall = _ => undefined, emailCall = _ => undefined, otherCall = _ => undefined) {
-    if (withPhoneNumber && (/^\+?[0-9]+/.test(inputValue))) {
+    if (withPhoneNumber && (/^\+?[0-9]+$/.test(inputValue))) {
         return ({
             raw: inputValue,
             ...telCall(inputValue),
@@ -78,7 +78,7 @@ class IdentifierField extends React.Component {
             country,
             formatted,
             isValid,
-            raw: phone,
+            raw: isValid ? phone : inputValue,
         }
     }
 
@@ -103,7 +103,7 @@ class IdentifierField extends React.Component {
             <Input
                 id={inputId}
                 name={path}
-                type={value.type}
+                type='text'
                 value={value.raw || ''}
                 placeholder={placeholder}
                 title={label}
