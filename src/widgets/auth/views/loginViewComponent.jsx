@@ -39,8 +39,12 @@ export const LoginForm = createForm({
                     withPhoneNumber: false,
                     required: !allowCustomIdentifier
                 }, config),
-            allowCustomIdentifier &&
-                simpleField({key: 'customIdentifier', type: 'text', placeholder: customIdentifierLabel, required: false}),
+            allowCustomIdentifier && {
+                staticContent: (
+                    <Separator text={i18n('or')} />
+                )
+            },
+            allowCustomIdentifier && simpleField({key: 'customIdentifier', type: 'text', placeholder: i18n('customIdentifier'), required: false}),
             simplePasswordField({
                 key: 'password',
                 label: 'password',
@@ -103,7 +107,6 @@ export default class LoginView extends React.Component {
                     canShowPassword={this.props.canShowPassword}
                     defaultIdentifier={defaultIdentifier}
                     allowCustomIdentifier={allowCustomIdentifier}
-                    customIdentifierLabel={customIdentifierLabel}
                     handler={(data) => ReCaptcha.handle(data, this.props, this.callback, "login")}
                     config={this.props.config}
                 />

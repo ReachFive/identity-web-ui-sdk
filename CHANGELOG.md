@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0), and this project adheres
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+## [1.18.0] - 2022-12-12
+
+Allow to start a step up flow during a login when mfa is required
+Add dedicated field custom identifier to login views if the right option is enabled
+Fix issue during validation custom identifier can now be numbers
 
 ## [1.17.0] - 2022-10-26
 
@@ -308,7 +315,9 @@ The eye icon is now correctly displayed in the Auth widget.
 
 First version of the SDK Web UI.
 
-[Unreleased]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.16.2...HEAD
+[Unreleased]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.18.0...HEAD
+
+[1.18.0]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.17.0...v1.18.0
 
 [1.17.0]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.16.2...v1.17.0
 
