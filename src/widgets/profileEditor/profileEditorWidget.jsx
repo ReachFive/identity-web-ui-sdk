@@ -56,6 +56,7 @@ export default createWidget({
             throw new UserError('These fields are not allowed: password, password_confirmation.');
         }
 
+        // This step removes the version from the consents
         const resolvedFields = buildFormFields(fields, { ...config, errorArchivedConsents: false });
 
         return apiClient
@@ -63,13 +64,37 @@ export default createWidget({
                 accessToken,
                 fields: computeFieldList(resolvedFields)
             })
-            .then(profile => ({
-                ...opts,
-                profile: camelCaseProperties(profile),
-                resolvedFields: resolvedFields.filter(field => {
-                    return (field.path !== 'email' || !profile.email)
-                        && (field.path !== 'phone_number' || !config.sms || !profile.phoneNumber)
+            .then(profile => {
+                const camelProfile = camelCaseProperties(profile);
+                const profileConsents = camelProfile && camelProfile.consents;
+                const filteredProfileConsents = (profileConsents && Object.keys(profileConsents).length) && filterProfileConsents(fields, config.consentsVersions, profileConsents);
+                const filteredOutConsentsProfile = { ...profile, consents: filteredProfileConsents };
+                return ({
+                    ...opts,
+                    profile: filteredOutConsentsProfile,
+                    resolvedFields: resolvedFields.filter(field => {
+                        return (field.path !== 'email' || !filteredOutConsentsProfile.email)
+                            && (field.path !== 'phone_number' || !config.sms || !filteredOutConsentsProfile.phoneNumber);
+                    })
                 })
-            }));
+            });
     }
 });
+
+// Filter out the profile consents with different version than the one the given consent field own
+const filterProfileConsents = (fields, consentsVersions, profileConsents) => {
+    return Object.keys(profileConsents)
+        .filter(profileConsentKey => {
+            const consentField = fields.find(field => field.startsWith(`consents.${profileConsentKey}`));
+            const consentFieldSplit = consentField.split('.v');
+            // Find most recent consent version if not given
+            const highestConsentVersion = consentsVersions[profileConsentKey].versions[0].versionId;
+            const consentFieldVersion = consentFieldSplit[1] || highestConsentVersion;
+            const profileConsentVersion = profileConsents[profileConsentKey].consentVersion.versionId;
+            return !consentFieldVersion || parseInt(consentFieldVersion) === profileConsentVersion;
+        })
+        .reduce((filteredProfileConsents, consentKey) => {
+            filteredProfileConsents[consentKey] = profileConsents[consentKey];
+            return filteredProfileConsents;
+        }, {});
+}

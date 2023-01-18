@@ -186,7 +186,8 @@ function consentFieldComponent(consent, fieldConfig, versionIdPath) {
             consentCannotBeGranted: !fieldConfig.errorArchivedConsents && consent.status === 'archived'
         },
         type: consent.consentType,
-        key: `consents.${consent.key}`
+        key: `consents.${consent.key}.${versionId}`,
+        path: `consents.${consent.key}` // Will target the same profile consent value for different versions of the consent
     };
 
     return consentField(baseConfig);
@@ -217,11 +218,12 @@ const resolveField = (fieldConfig, config) => {
     if (customField) {
         return customFieldComponent(customField, fieldConfig);
     }
-
-    const camelPathSplit = camelPath.split('.v');
+    const camelPathSplit = camelPath.split('.v'); // TODO What if consent start with a `v`?
     const consentField = findConsentField(config, camelPathSplit[0]);
+    // Find most recent consent version if not given
+    const highestConsentVersion = consentField.versions[0].versionId;
     if (consentField) {
-        return consentFieldComponent(consentField, fieldConfig, camelPathSplit[1]);
+        return consentFieldComponent(consentField, fieldConfig, camelPathSplit[1] || highestConsentVersion);
     }
 
     throw new UserError(`Unknown field: ${fieldConfig.key}`);
