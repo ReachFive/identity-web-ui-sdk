@@ -9,7 +9,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [1.19.0] - 2023-02-22
 
+### Added
 Support the social provider Naver
+
+### Fixes
+Wrong consent version from profile in signup/profile editor forms
 
 ## [1.18.0] - 2022-12-12
 
