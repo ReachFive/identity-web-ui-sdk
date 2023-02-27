@@ -7,6 +7,14 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.19.0] - 2023-02-22
+
+### Added
+Support the social provider Naver
+
+### Fixes
+Wrong consent version from profile in signup/profile editor forms
+
 ## [1.18.0] - 2022-12-12
 
 Allow to start a step up flow during a login when mfa is required
@@ -315,7 +323,9 @@ The eye icon is now correctly displayed in the Auth widget.
 
 First version of the SDK Web UI.
 
-[Unreleased]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.18.0...HEAD
+[Unreleased]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.19.0...HEAD
+
+[1.19.0]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.18.0...v1.19.0
 
 [1.18.0]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.17.0...v1.18.0
 
