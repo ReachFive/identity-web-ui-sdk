@@ -5,6 +5,8 @@ import { Info } from '../../components/miscComponent';
 import { Card } from '../../components/form/cardComponent';
 import { createWidget } from '../../components/widget/widget';
 import {withConfig, withI18n, withTheme} from '../../components/widget/widgetContext'
+import { UserError } from '../../helpers/errors';
+
 import styled from "styled-components";
 
 import { ReactComponent as Envelope } from '../../icons/envelope.svg'
@@ -70,9 +72,13 @@ export const MfaList = compose(withI18n, withConfig)((({ credentials, i18n, conf
 export default createWidget({
     component: MfaList,
     prepare: (options, { apiClient }) => {
-        return apiClient.listMfaCredentials(options.accessToken).then(credentials => ({
-            ...options,
-            ...credentials,
-        }))
+        return apiClient.listMfaCredentials(options.accessToken)
+            .catch(error => {
+                throw new UserError.fromAppError(error)
+            })
+            .then(credentials => ({
+                ...options,
+                ...credentials,
+            }))
     }
 });
