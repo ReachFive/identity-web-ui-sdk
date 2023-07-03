@@ -52,8 +52,10 @@ export const checked = new Validator({
     hint: 'checked'
 });
 
+const emailRegex = new RegExp("^[a-zA-Z0-9\.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$")
+
 export const email = new Validator({
-    rule: validator.isEmail,
+    rule: value =>  emailRegex.test(value),
     hint: 'email'
 });
 
