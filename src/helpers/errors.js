@@ -3,4 +3,8 @@ export class UserError extends Error {
         super(...params)
         this.isUserError = true;
     }
+
+    static fromAppError(appError) {
+        return new UserError(appError.errorUserMsg || appError.errorDescription || appError.error)
+    }
 }

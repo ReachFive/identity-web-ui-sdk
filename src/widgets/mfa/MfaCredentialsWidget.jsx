@@ -8,6 +8,8 @@ import {createForm} from '../../components/form/formComponent';
 import {deepDefaults} from '../../helpers/deepDefaults';
 import phoneNumberField from '../../components/form/fields/phoneNumberField';
 import {withTheme} from '../../components/widget/widgetContext';
+import { UserError } from '../../helpers/errors';
+
 import styled from 'styled-components';
 
 
@@ -176,13 +178,17 @@ export default createMultiViewWidget({
         'credential-removed': CredentialRemovedView
     },
     prepare: (options, { apiClient }) => {
-        return apiClient.listMfaCredentials(options.accessToken).then(credentials => {
-             return deepDefaults({
-                             showIntro: true,
-                             showRemoveMfaCredentials: true,
-                             ...options,
-                             ...credentials
-                         })
-        })
+        return apiClient.listMfaCredentials(options.accessToken)
+            .catch(error => {
+                throw new UserError.fromAppError(error)
+            })
+            .then(credentials => {
+                return deepDefaults({
+                    showIntro: true,
+                    showRemoveMfaCredentials: true,
+                    ...options,
+                    ...credentials
+                })
+            })
     }
 })
