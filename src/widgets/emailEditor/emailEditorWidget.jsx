@@ -6,7 +6,7 @@ import { createMultiViewWidget } from '../../components/widget/widget';
 import { Info, Intro } from '../../components/miscComponent';
 import { createForm } from '../../components/form/formComponent';
 import { simpleField } from '../../components/form/fields/simpleField';
-import ReCaptcha, {importGoogleRecaptchaScript} from '../../../components/reCaptcha'
+import ReCaptcha, {importGoogleRecaptchaScript} from '../../components/reCaptcha'
 
 const EmailEditorForm = createForm({
     prefix: 'r5-email-editor-',
