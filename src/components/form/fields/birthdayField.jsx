@@ -135,18 +135,39 @@ const validateDay = day => {
     return 'birthdate.dayOfMonth';
 };
 
-const validateYear = year => {
-    if (isNumeric(year)) {
-        const yearNbr = parseInt(year);
-        const currentYear = new Date().getFullYear();
-        const age = currentYear - yearNbr;
-        if (age > 5 && age < 130) {
-            return false
-        }
-    }
+const isLeapYear = year =>  ((year % 4 == 0) && (year % 100 != 0)) || (year % 400 ==0);
 
-    return 'birthdate.year';
-};
+const validateYear = year => isNumeric(year) ? false : 'birthdate.year';
+
+const validateCompatibilityMonthDay = (year, month, day) => {
+    switch (month) {
+        case '2':
+            const maxDayOfFebruary = isLeapYear(year) ? 29: 28
+            return day <= maxDayOfFebruary ? false: 'birthdate.dayOfMonth';
+        case '4':
+            return day <= 30 ? false: 'birthdate.dayOfMonth';
+        case '6':
+            return day <= 30 ? false: 'birthdate.dayOfMonth';
+        case '9':
+            return day <= 30 ? false: 'birthdate.dayOfMonth';
+        case '11':
+            return day <= 30 ? false: 'birthdate.dayOfMonth';
+        default:
+            return false
+    }
+}
+
+const validateLimitAge = (day, month, year) => {
+    const yearNbr = parseInt(year);
+    const dayNbr = parseInt(day);
+    const monthNbr = parseInt(month)
+    const birthdayDate = new Date(0).setFullYear(yearNbr,  monthNbr - 1, dayNbr)
+    const yearDiff = new Date(new Date() - birthdayDate).getFullYear() - 1970
+    if (yearDiff <= 5 || yearDiff >= 130) {
+        return 'birthdate.yearLimit'
+    }
+    return false
+}
 
 const format = ({ day, month, year }) => formatISO8601Date(year.value, month.value, day.value);
 
@@ -232,6 +253,19 @@ export default function birthdateField({
                     }
 
                     if ((isSubmitted || day.isDirty || month.isDirty || year.isDirty)) {
+                        const compatibilityDayMonth = validateCompatibilityMonthDay(year.value, month.value, day.value);
+                        if (compatibilityDayMonth) {
+                            return {
+                                error: i18n(`validation.${compatibilityDayMonth}`),
+                                day: true
+                            };
+                        }
+                        const limitAge = validateLimitAge(day.value, month.value, year.value)
+                        if (limitAge) {
+                            return {
+                                error: i18n(`validation.${limitAge}`)
+                            };
+                        }
                         const birthdate = format(state);
                         if (!birthdate || !isISO8601(birthdate)) {
                             return {
