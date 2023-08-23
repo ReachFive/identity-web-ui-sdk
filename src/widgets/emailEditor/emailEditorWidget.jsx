@@ -6,6 +6,7 @@ import { createMultiViewWidget } from '../../components/widget/widget';
 import { Info, Intro } from '../../components/miscComponent';
 import { createForm } from '../../components/form/formComponent';
 import { simpleField } from '../../components/form/fields/simpleField';
+import ReCaptcha, {importGoogleRecaptchaScript} from '../../components/reCaptcha'
 
 const EmailEditorForm = createForm({
     prefix: 'r5-email-editor-',
@@ -21,7 +22,11 @@ const EmailEditorForm = createForm({
 });
 
 class MainView extends React.Component {
-    handleSubmit = data => {
+    componentDidMount () {
+        importGoogleRecaptchaScript(this.props.recaptcha_site_key)
+    }
+
+    callback = data => {
         const { apiClient, accessToken, redirectUrl } = this.props;
 
         return apiClient.updateEmail({ ...data, accessToken, redirectUrl });
@@ -34,7 +39,7 @@ class MainView extends React.Component {
             <Intro>{this.props.i18n('emailEditor.intro')}</Intro>
             <EmailEditorForm
                 showLabels={this.props.showLabels}
-                handler={this.handleSubmit}
+                handler={(data) => ReCaptcha.handle(data, this.props, this.callback, "update_email")}
                 onSuccess={this.handleSuccess} />
         </div>;
     }
