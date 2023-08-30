@@ -19,7 +19,9 @@ class PhoneNumberField extends React.Component {
                 : raw;
 
             this.asYouType(phoneValue);
-        } catch (e) { }
+        } catch (e) {
+            console.error(e)
+        }
     }
 
     componentWillUnmount() {

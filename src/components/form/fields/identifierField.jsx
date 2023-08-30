@@ -19,7 +19,7 @@ import { createField } from '../fieldCreator';
 * }
 */
 
-function specializeRawIdentifier(withPhoneNumber, inputValue, telCall = _ => undefined, emailCall = _ => undefined, otherCall = _ => undefined) {
+function specializeRawIdentifier(withPhoneNumber, inputValue, telCall = () => undefined, emailCall = () => undefined, otherCall = () => undefined) {
     if (withPhoneNumber && (/^\+?[0-9]+$/.test(inputValue))) {
         return ({
             raw: inputValue,
@@ -60,7 +60,9 @@ class IdentifierField extends React.Component {
                 : userInput;
 
             this.asYouType(phoneValue);
-        } catch (e) { }
+        } catch (e) {
+            console.error(e)
+        }
     }
 
     componentWillUnmount() {
@@ -132,9 +134,9 @@ export default function identifierField(props, config) {
         format: {
             bind: x => specializeRawIdentifier(props.withPhoneNumber,
                 x,
-                _ => ({ country: config.countryCode, isValid: true }),
-                _ => ({ country: config.countryCode, isValid: true }),
-                _ => ({ country: config.countryCode, isValid: true }),
+                () => ({ country: config.countryCode, isValid: true }),
+                () => ({ country: config.countryCode, isValid: true }),
+                () => ({ country: config.countryCode, isValid: true }),
                 ),
             unbind: x => specializeRefinedIdentifier(
                 x,
@@ -148,9 +150,9 @@ export default function identifierField(props, config) {
                 v => email.rule(v.raw),
                 v => v.isValid),
             hint: value => specializeRefinedIdentifier(value,
-                _ => 'phone',
-                _ => 'email',
-                _ => 'identifier')
+                () => 'phone',
+                () => 'email',
+                () => 'identifier')
         }),
         component: IdentifierField,
         extendedParams: {withPhoneNumber: props.withPhoneNumber}

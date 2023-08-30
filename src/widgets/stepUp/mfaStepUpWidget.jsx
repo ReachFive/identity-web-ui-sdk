@@ -35,7 +35,7 @@ const StartPasswordlessForm = createForm({
     }
 })
 class MfaStepUpView extends React.Component {
-    onGetStepUpToken = _ => {
+    onGetStepUpToken = () => {
         return this.props.apiClient.getMfaStepUpToken({
             options: this.props.auth,
             accessToken: this.props.accessToken

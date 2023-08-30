@@ -148,7 +148,7 @@ export const Checkbox = withTheme(styled(({ value, onToggle, label, name, classN
     margin-bottom: ${props => props.theme.get('spacing')}px;
 `);
 
-export const RadioGroup = ({ options, onChange, value, name, inputId, ...props }) => {
+export const RadioGroup = ({ options, onChange, value, inputId, ...props }) => {
     const handleChange = event => {
         onChange({value: event.target.value})
     };

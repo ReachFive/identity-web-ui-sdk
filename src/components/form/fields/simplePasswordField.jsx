@@ -69,7 +69,7 @@ class SimplePasswordField extends React.Component {
         const showPassword = !this.state.showPassword;
         this.setState({ ...this.state, showPassword });
     }
-};
+}
 
 export const simplePasswordField = ({ placeholder, autoComplete, canShowPassword = false, ...config }) => createField({
     ...config,

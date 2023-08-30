@@ -1,5 +1,5 @@
-import { enrichAuthResult } from './authResult';
-import EventManager from '../helpers/eventManager';
+import { enrichAuthResult } from './authResult'
+import EventManager from '../helpers/eventManager'
 
 export function createEventManager() {
     const eventManager = new EventManager();
@@ -21,4 +21,4 @@ export function createEventManager() {
             }
         }
     }
-};
+}

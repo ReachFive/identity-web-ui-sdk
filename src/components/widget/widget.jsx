@@ -51,7 +51,7 @@ export const createMultiViewWidget = ({ prepare, ...params }) => {
 }
 
 function multiViewWidget({ initialView, views, initialState = {}, onStartup, handlers }) {
-    return class extends React.Component {
+    return class MultiViewWidget extends React.Component {
         state = {
             ...initialState,
             activeView: isFunction(initialView) ? initialView(this.props) : initialView

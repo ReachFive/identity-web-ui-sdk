@@ -76,7 +76,7 @@ export const PasswordPolicyRules = withI18n(withTheme(styled(({ className, i18n,
 
         <PasswordPolicyIntro />
 
-        {Object.keys(props.rules).map((key, _) => {
+        {Object.keys(props.rules).map(key => {
             const rule = props.rules[key];
 
             return <PasswordPolicyRule key={key}>

@@ -29,7 +29,7 @@ class MainView extends React.Component {
         return apiClient.updatePhoneNumber({
             ...data,
             accessToken
-        }).then(_ => data);
+        }).then(() => data);
     };
 
     handleSuccess = data => this.props.goTo('verificationCode', data);

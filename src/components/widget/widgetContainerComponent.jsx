@@ -30,7 +30,7 @@ const WidgetContent = styled(({ name = false, className, children }) => (
     `}
 `;
 
-export default ({
+export default function widgetContainer({
     name,
     standalone = true,
     noIntro = false,
@@ -38,15 +38,19 @@ export default ({
     intro,
     theme,
     children
-}) => <Transition in={true} appear={theme.get('animateWidgetEntrance')} timeout={400}>
-        {state => (
-            <WidgetContent standalone={standalone}
-                theme={theme}
-                name={name}
-                transition={state}>
-                {title && <Heading>{title}</Heading>}
-                {!noIntro && intro && <Intro>{intro}</Intro>}
-                {children}
-            </WidgetContent>
-        )}
-    </Transition>;
+}) {
+    return (
+        <Transition in={true} appear={theme.get('animateWidgetEntrance')} timeout={400}>
+            {state => (
+                <WidgetContent standalone={standalone}
+                    theme={theme}
+                    name={name}
+                    transition={state}>
+                    {title && <Heading>{title}</Heading>}
+                    {!noIntro && intro && <Intro>{intro}</Intro>}
+                    {children}
+                </WidgetContent>
+            )}
+        </Transition>
+    )
+}
