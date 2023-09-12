@@ -10,6 +10,7 @@ import { isValued, formatISO8601Date } from '../../../helpers/utils';
 import generateId from '../../../helpers/inputIdGenerator';
 
 import { Input, FormGroup, Select } from '../formControlsComponent';
+import {DateTime} from 'luxon'
 
 const BIRTHDAY_PATH = 'birthdate'
 
@@ -126,7 +127,7 @@ const BirthdateField = props => {
 
 const validateDay = day => {
     if (isNumeric(day)) {
-        const dayNbr = parseInt(day);
+        const dayNbr = parseInt(day, 10);
         if (dayNbr <= 31 && dayNbr >= 1) {
             return false
         }
@@ -135,35 +136,18 @@ const validateDay = day => {
     return 'birthdate.dayOfMonth';
 };
 
-const isLeapYear = year =>  ((year % 4 == 0) && (year % 100 != 0)) || (year % 400 ==0);
-
 const validateYear = year => isNumeric(year) ? false : 'birthdate.year';
 
 const validateCompatibilityMonthDay = (year, month, day) => {
-    switch (month) {
-        case '2':
-            const maxDayOfFebruary = isLeapYear(year) ? 29: 28
-            return day <= maxDayOfFebruary ? false: 'birthdate.dayOfMonth';
-        case '4':
-            return day <= 30 ? false: 'birthdate.dayOfMonth';
-        case '6':
-            return day <= 30 ? false: 'birthdate.dayOfMonth';
-        case '9':
-            return day <= 30 ? false: 'birthdate.dayOfMonth';
-        case '11':
-            return day <= 30 ? false: 'birthdate.dayOfMonth';
-        default:
-            return false
-    }
+    return DateTime.fromObject({month, year, day}).isValid ? false : 'birthdate.dayOfMonth'
 }
 
 const validateLimitAge = (day, month, year) => {
-    const yearNbr = parseInt(year);
-    const dayNbr = parseInt(day);
-    const monthNbr = parseInt(month)
-    const birthdayDate = new Date(0).setFullYear(yearNbr,  monthNbr - 1, dayNbr)
-    const yearDiff = new Date(new Date() - birthdayDate).getFullYear() - 1970
-    if (yearDiff <= 5 || yearDiff >= 130) {
+    const yearNbr = parseInt(year, 10);
+    const dayNbr = parseInt(day, 10);
+    const monthNbr = parseInt(month, 10);
+    const age = DateTime.now().diff(DateTime.local(yearNbr, monthNbr, dayNbr), "years").years
+    if (age < 6 || age > 129) {
         return 'birthdate.yearLimit'
     }
     return false
@@ -253,13 +237,7 @@ export default function birthdateField({
                     }
 
                     if ((isSubmitted || day.isDirty || month.isDirty || year.isDirty)) {
-                        const compatibilityDayMonth = validateCompatibilityMonthDay(year.value, month.value, day.value);
-                        if (compatibilityDayMonth) {
-                            return {
-                                error: i18n(`validation.${compatibilityDayMonth}`),
-                                day: true
-                            };
-                        }
+
                         const limitAge = validateLimitAge(day.value, month.value, year.value)
                         if (limitAge) {
                             return {
@@ -270,6 +248,14 @@ export default function birthdateField({
                         if (!birthdate || !isISO8601(birthdate)) {
                             return {
                                 error: i18n('validation.birthdate.dayOfMonth'),
+                                day: true
+                            };
+                        }
+
+                        const compatibilityDayMonth = validateCompatibilityMonthDay(year.value, month.value, day.value);
+                        if (compatibilityDayMonth) {
+                            return {
+                                error: i18n(`validation.${compatibilityDayMonth}`),
                                 day: true
                             };
                         }
