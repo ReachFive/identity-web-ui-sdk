@@ -125,23 +125,6 @@ const BirthdateField = props => {
     </FormGroup>;
 };
 
-const validateDay = day => {
-    if (isNumeric(day)) {
-        const dayNbr = parseInt(day, 10);
-        if (dayNbr <= 31 && dayNbr >= 1) {
-            return false
-        }
-    }
-
-    return 'birthdate.dayOfMonth';
-};
-
-const validateYear = year => isNumeric(year) ? false : 'birthdate.year';
-
-const validateCompatibilityMonthDay = (year, month, day) => {
-    return DateTime.fromObject({month, year, day}).isValid ? false : 'birthdate.dayOfMonth'
-}
-
 const validateLimitAge = (day, month, year) => {
     const yearNbr = parseInt(year, 10);
     const dayNbr = parseInt(day, 10);
@@ -202,6 +185,7 @@ export default function birthdateField({
                     birthdate: format(state)
                 }),
                 validate: (state, { isSubmitted }) => {
+
                     const { required } = staticProps
                     const { day, month, year } = state;
 
@@ -216,34 +200,15 @@ export default function birthdateField({
                         } : {};
                     }
 
-                    if (isSubmitted || day.isDirty) {
-                        const dayError = validateDay(day.value);
-                        if (dayError) {
-                            return {
-                                error: i18n(`validation.${dayError}`),
-                                day: true
-                            };
-                        }
-                    }
+                    if ((isSubmitted || day.isDirty || month.isDirty || year.isDirty)) {
 
-                    if (isSubmitted || year.isDirty) {
-                        const yearError = validateYear(year.value);
-                        if (yearError) {
+                        if (!isNumeric(year.value) || !DateTime.fromObject({ year: parseInt(year.value, 10) }).isValid) {
                             return {
-                                error: i18n(`validation.${yearError}`),
+                                error: i18n(`validation.birthdate.year`),
                                 year: true
                             };
                         }
-                    }
 
-                    if ((isSubmitted || day.isDirty || month.isDirty || year.isDirty)) {
-
-                        const limitAge = validateLimitAge(day.value, month.value, year.value)
-                        if (limitAge) {
-                            return {
-                                error: i18n(`validation.${limitAge}`)
-                            };
-                        }
                         const birthdate = format(state);
                         if (!birthdate || !isISO8601(birthdate)) {
                             return {
@@ -252,11 +217,17 @@ export default function birthdateField({
                             };
                         }
 
-                        const compatibilityDayMonth = validateCompatibilityMonthDay(year.value, month.value, day.value);
-                        if (compatibilityDayMonth) {
+                        if (!(isNumeric(month.value) && isNumeric(day.value)) || !DateTime.fromObject({ year: year.value, month: month.value, day: day.value }).isValid) {
                             return {
-                                error: i18n(`validation.${compatibilityDayMonth}`),
+                                error: i18n(`validation.birthdate.dayOfMonth`),
                                 day: true
+                            }
+                        }
+
+                        const limitAge = validateLimitAge(day.value, month.value, year.value)
+                        if (limitAge) {
+                            return {
+                                error: i18n(`validation.${limitAge}`)
                             };
                         }
                     }
