@@ -202,7 +202,7 @@ export default function birthdateField({
 
                     if ((isSubmitted || day.isDirty || month.isDirty || year.isDirty)) {
 
-                        if (!isNumeric(year.value) || !DateTime.fromObject({ year: parseInt(year.value, 10) }).isValid) {
+                        if (!isNumeric(year.value.toString()) || !DateTime.fromObject({ year: parseInt(year.value, 10) }).isValid) {
                             return {
                                 error: i18n(`validation.birthdate.year`),
                                 year: true
@@ -217,7 +217,7 @@ export default function birthdateField({
                             };
                         }
 
-                        if (!(isNumeric(month.value) && isNumeric(day.value)) || !DateTime.fromObject({ year: year.value, month: month.value, day: day.value }).isValid) {
+                        if (!(isNumeric(month.value.toString()) && isNumeric(day.value.toString())) || !DateTime.fromObject({ year: year.value, month: month.value, day: day.value }).isValid) {
                             return {
                                 error: i18n(`validation.birthdate.dayOfMonth`),
                                 day: true
