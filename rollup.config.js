@@ -27,6 +27,12 @@ const plugins = [
     url({ limit: Infinity, include: ['**/*.svg'] })
 ]
 
+// Ignore Luxon library's circular dependencies
+function onWarn(message) {
+    if ( message.code === 'CIRCULAR_DEPENDENCY' ) return;
+    console.warn( message);
+}
+
 function createUMDConfig({ file, withUglify = false }) {
     return {
         input: 'src/index.js',
@@ -37,7 +43,7 @@ function createUMDConfig({ file, withUglify = false }) {
             globals: { '@reachfive/identity-core': 'reach5' }
         },
         plugins: withUglify ? [uglify(), ...plugins] : plugins,
-        onwarn: console.warn
+        onwarn: onWarn
     }
 }
 
@@ -47,14 +53,14 @@ export default [
         output: { file: 'es/identity-ui.js', format: 'es' },
         external: dependencies,
         plugins,
-        onwarn: console.warn
-    },
+        onwarn: onWarn
+        },
     {
         input: 'src/index.js',
         output: { file: 'cjs/identity-ui.js', format: 'cjs' },
         external: dependencies,
         plugins,
-        onwarn: console.warn
+        onwarn: onWarn
     },
     createUMDConfig({ file: 'umd/identity-ui.js' }),
     createUMDConfig({ file: 'umd/identity-ui.min.js', withUglify: true })

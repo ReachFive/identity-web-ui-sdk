@@ -10,6 +10,7 @@ import { isValued, formatISO8601Date } from '../../../helpers/utils';
 import generateId from '../../../helpers/inputIdGenerator';
 
 import { Input, FormGroup, Select } from '../formControlsComponent';
+import {DateTime} from 'luxon'
 
 const BIRTHDAY_PATH = 'birthdate'
 
@@ -124,29 +125,16 @@ const BirthdateField = props => {
     </FormGroup>;
 };
 
-const validateDay = day => {
-    if (isNumeric(day)) {
-        const dayNbr = parseInt(day);
-        if (dayNbr <= 31 && dayNbr >= 1) {
-            return false
-        }
+const validateLimitAge = (day, month, year) => {
+    const yearNbr = parseInt(year, 10);
+    const dayNbr = parseInt(day, 10);
+    const monthNbr = parseInt(month, 10);
+    const age = DateTime.now().diff(DateTime.local(yearNbr, monthNbr, dayNbr), "years").years
+    if (age < 6 || age > 129) {
+        return 'birthdate.yearLimit'
     }
-
-    return 'birthdate.dayOfMonth';
-};
-
-const validateYear = year => {
-    if (isNumeric(year)) {
-        const yearNbr = parseInt(year);
-        const currentYear = new Date().getFullYear();
-        const age = currentYear - yearNbr;
-        if (age > 5 && age < 130) {
-            return false
-        }
-    }
-
-    return 'birthdate.year';
-};
+    return false
+}
 
 const format = ({ day, month, year }) => formatISO8601Date(year.value, month.value, day.value);
 
@@ -197,6 +185,7 @@ export default function birthdateField({
                     birthdate: format(state)
                 }),
                 validate: (state, { isSubmitted }) => {
+
                     const { required } = staticProps
                     const { day, month, year } = state;
 
@@ -211,32 +200,34 @@ export default function birthdateField({
                         } : {};
                     }
 
-                    if (isSubmitted || day.isDirty) {
-                        const dayError = validateDay(day.value);
-                        if (dayError) {
-                            return {
-                                error: i18n(`validation.${dayError}`),
-                                day: true
-                            };
-                        }
-                    }
+                    if ((isSubmitted || day.isDirty || month.isDirty || year.isDirty)) {
 
-                    if (isSubmitted || year.isDirty) {
-                        const yearError = validateYear(year.value);
-                        if (yearError) {
+                        if (!isNumeric(year.value.toString()) || !DateTime.fromObject({ year: parseInt(year.value, 10) }).isValid) {
                             return {
-                                error: i18n(`validation.${yearError}`),
+                                error: i18n(`validation.birthdate.year`),
                                 year: true
                             };
                         }
-                    }
 
-                    if ((isSubmitted || day.isDirty || month.isDirty || year.isDirty)) {
                         const birthdate = format(state);
                         if (!birthdate || !isISO8601(birthdate)) {
                             return {
                                 error: i18n('validation.birthdate.dayOfMonth'),
                                 day: true
+                            };
+                        }
+
+                        if (!(isNumeric(month.value.toString()) && isNumeric(day.value.toString())) || !DateTime.fromObject({ year: year.value, month: month.value, day: day.value }).isValid) {
+                            return {
+                                error: i18n(`validation.birthdate.dayOfMonth`),
+                                day: true
+                            }
+                        }
+
+                        const limitAge = validateLimitAge(day.value, month.value, year.value)
+                        if (limitAge) {
+                            return {
+                                error: i18n(`validation.${limitAge}`)
                             };
                         }
                     }
