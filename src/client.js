@@ -19,7 +19,7 @@ export class UiClient {
     constructor(config, urlParser, coreClient, defaultI18n) {
         this.config = config;
         this.urlParser = urlParser;
-        this.client = coreClient;
+        this.core = coreClient;
         this.defaultI18n = defaultI18n;
     }
 
@@ -100,7 +100,7 @@ export class UiClient {
             const result = await widget(options, {
                 ...props,
                 config,
-                apiClient: this.client,
+                apiClient: this.core,
                 defaultI18n: this.defaultI18n
             });
 
@@ -134,13 +134,13 @@ export class UiClient {
                     // Avoid authentication triggering when an authentication response is present
                     if (authResult) return;
 
-                    this.client
+                    this.core
                         .getSessionInfo()
                         .then(session => {
                             const reAuthenticate = auth && auth.prompt && auth.prompt === 'login'
 
                             if (session.isAuthenticated && !reAuthenticate) {
-                                this.client.loginFromSession(auth);
+                                this.core.loginFromSession(auth);
                             } else {
                                 showAuthWidget(session);
                             }
