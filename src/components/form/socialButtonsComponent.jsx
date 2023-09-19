@@ -93,7 +93,7 @@ const SocialButton = withTheme(({ provider, onClick, theme, count }) => {
 const SocialButtons = styled(({ providers, clickHandler, className }) => (
     <div className={classes(['r5-social-buttons', className])}>
         {providers.flatMap(providerKey => {
-            const [providerName, variant] = providerKey.split(':')
+            const [providerName] = providerKey.split(':')
             if (providerName === 'bconnect' && queryParams['bconnectActivation'] !== 'true') return []
             else if (socialButtons[providerName] === undefined) {
                 console.error(`${providerName} provider not found.`)
