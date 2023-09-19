@@ -92,19 +92,21 @@ const SocialButton = withTheme(({ provider, onClick, theme, count }) => {
 
 const SocialButtons = styled(({ providers, clickHandler, className }) => (
     <div className={classes(['r5-social-buttons', className])}>
-        {providers.filter(providerKey => {
-            if (providerKey === 'bconnect') return queryParams['bconnectActivation'] === 'true'
-            else if (socialButtons[providerKey] === undefined) {
-                console.error(`${providerKey} provider not found.`)
-                return false
+        {providers.flatMap(providerKey => {
+            const [providerName] = providerKey.split(':')
+            if (providerName === 'bconnect' && queryParams['bconnectActivation'] !== 'true') return []
+            else if (socialButtons[providerName] === undefined) {
+                console.error(`${providerName} provider not found.`)
+                return []
             }
-            else return true
-        }).map(providerKey => {
-            return <SocialButton
-                provider={socialButtons[providerKey]}
-                count={providers.length}
-                onClick={clickHandler}
-                key={providerKey} />;
+            else return [
+                <SocialButton
+                    provider={socialButtons[providerName]}
+                    count={providers.length}
+                    onClick={() => clickHandler(providerKey)}
+                    key={providerKey}
+                />
+            ]
         })}
     </div>
 ))`
