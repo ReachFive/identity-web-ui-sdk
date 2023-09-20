@@ -7,8 +7,8 @@ import { Button } from './buttonComponent';
 import { Separator } from '../miscComponent';
 import { withTheme } from '../widget/widgetContext';
 
-import { ReactComponent as FingerPrint } from '../../icons/fingerprint.svg'
-import { ReactComponent as Keyboard } from '../../icons/keyboard.svg'
+import FingerPrint from '../../icons/fingerprint.svg'
+import Keyboard from '../../icons/keyboard.svg'
 
 
 const iconStyle = `

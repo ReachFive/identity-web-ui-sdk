@@ -13,22 +13,17 @@ const queryParams = parseQueryString(window.location.search.substring(1))
 
 const socialButtons = Object.keys(providers).reduce((acc, key) => ({ ...acc, [key]: providers[key] }), {});
 
-const SocialButtonIcon = withTheme(styled(({ className }) => (
-    <span className={classes(['r5-btn-social-icon', className])}></span>
+const SocialButtonIcon = withTheme(styled(({ className, icon }) => (
+    React.createElement(icon, { className: classes(['r5-btn-social-icon', className]) })
 ))`
     position: absolute;
     left: 0;
-    top: 0;
-    bottom: 0;
+    top: ${props => props.theme.get('socialButton.paddingY')}px;
+    bottom: ${props => props.theme.get('socialButton.paddingY')}px;
     width: ${props => !props.textVisible ? '100%' : (props.theme.get('socialButton.height') - 2) + 'px'};
+    height: ${props => props.theme.get('socialButton.height') - props.theme.get('socialButton.paddingY') * 2}px;
     box-sizing: border-box;
     border-radius: ${props => props.theme.get('socialButton.borderRadius') - 1}px;
-    background-image: url(${props => props.icon});
-    background-repeat: no-repeat;
-    background-size: ${props => props.theme.get('socialButton.height') / 2}px ${props => props.theme.get('socialButton.height') / 2}px;
-    background-position: center center;
-
-    ${props => !props.textVisible && 'height: 100%;'}
 `);
 
 const SocialButtonText = ({ children }) => (

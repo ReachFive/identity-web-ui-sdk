@@ -6,8 +6,8 @@ import pick from 'lodash-es/pick';
 import { createField } from '../fieldCreator'
 import { FormGroup, Input } from '../formControlsComponent';
 
-import { ReactComponent as EyeIcon } from '../../../icons/eye.svg';
-import { ReactComponent as EyeSlashIcon } from '../../../icons/eye-slash.svg';
+import EyeIcon from '../../../icons/eye.svg';
+import EyeSlashIcon from '../../../icons/eye-slash.svg';
 
 const eyeStyle = `
   position: absolute;

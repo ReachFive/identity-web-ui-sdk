@@ -9,8 +9,8 @@ import { UserError } from '../../helpers/errors';
 
 import styled from "styled-components";
 
-import { ReactComponent as Envelope } from '../../icons/envelope.svg'
-import { ReactComponent as CommentAltDots } from '../../icons/comment-alt-dots.svg'
+import Envelope from '../../icons/envelope.svg'
+import CommentAltDots from '../../icons/comment-alt-dots.svg'
 
 const iconStyle = props => `
     width: ${props.theme.get('fontSize') * 2}px;
