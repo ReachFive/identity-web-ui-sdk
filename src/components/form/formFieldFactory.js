@@ -221,8 +221,8 @@ const resolveField = (fieldConfig, config) => {
     const camelPathSplit = camelPath.split('.v'); // TODO What if consent start with a `v`?
     const consentField = findConsentField(config, camelPathSplit[0]);
     // Find most recent consent version if not given
-    const highestConsentVersion = consentField.versions[0].versionId;
     if (consentField) {
+        const highestConsentVersion = consentField.versions[0].versionId;
         return consentFieldComponent(consentField, fieldConfig, camelPathSplit[1] || highestConsentVersion);
     }
 
