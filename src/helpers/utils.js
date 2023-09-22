@@ -2,7 +2,7 @@ import isObject from 'lodash-es/isObject';
 import * as libphonenumber from 'libphonenumber-js';
 
 
-export function format(sFormat, args) {
+export function format(sFormat) {
     for (var i = 0; i < arguments.length - 1; i++) {
         if (arguments[i + 1] != null) {
             sFormat = sFormat.split('{' + i + '}').join(arguments[i + 1]);
@@ -52,7 +52,7 @@ export function formatISO8601Date(year, month, day) {
 }
 
 export function specializeIdentifierData(data) {
-    return (!!data.identifier) ?
+    return data.identifier ?
         {
             ...data,
             identifier: undefined,

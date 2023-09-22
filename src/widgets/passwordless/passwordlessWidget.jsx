@@ -45,7 +45,7 @@ class MainView extends React.Component {
         importGoogleRecaptchaScript(this.props.recaptcha_site_key)
     }
 
-    callback = data => this.props.apiClient.startPasswordless(data, this.props.auth).then(_ => data);
+    callback = data => this.props.apiClient.startPasswordless(data, this.props.auth).then(() => data);
 
     handleSuccess = data => {
         return data.email

@@ -1,3 +1,5 @@
+import { Buffer } from 'Buffer';
+
 /**
  * return an UTF-8 encoded string as URL Safe Base64
  *
@@ -32,8 +34,8 @@ export function decodeBase64UrlSafe(base64) {
     // base64 += Array(5 - base64.length % 4).join('=');
 
     base64 = base64
-        .replace(/\-/g, '+') // Convert '-' to '+'
-        .replace(/\_/g, '/'); // Convert '_' to '/'
+        .replace(/-/g, '+') // Convert '-' to '+'
+        .replace(/_/g, '/'); // Convert '_' to '/'
 
     return decodeBase64(base64); // Cf: https://developer.mozilla.org/fr/docs/D%C3%A9coder_encoder_en_base64
 }

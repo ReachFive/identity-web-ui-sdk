@@ -84,7 +84,7 @@ const SocialButton = withTheme(({ provider, onClick, theme, count }) => {
         textVisible={textVisible}
         width={width}
         height={height}
-        onClick={_ => onClick(provider.key)}>
+        onClick={() => onClick(provider.key)}>
         <SocialButtonIcon icon={provider.icon} textVisible={textVisible} />
         {textVisible && <SocialButtonText>{provider.name}</SocialButtonText>}
     </SocialBtn>;

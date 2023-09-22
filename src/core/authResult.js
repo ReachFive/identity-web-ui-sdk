@@ -1,5 +1,5 @@
-import { parseJwtTokenPayload } from '../helpers/jwt';
-import { logError } from '../helpers/logger';
+import { parseJwtTokenPayload } from '../helpers/jwt'
+import { logError } from '../helpers/logger'
 
 export function enrichAuthResult(response) {
     if (response.idToken) {
@@ -13,7 +13,7 @@ export function enrichAuthResult(response) {
         } catch (e) {
             logError('id token parsing error: ' + e);
         }
-    };
+    }
 
     return response;
 }

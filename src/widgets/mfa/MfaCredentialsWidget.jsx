@@ -53,7 +53,7 @@ const DivCredentialBlock = withTheme(styled.div`
 `);
 
 class MainView extends React.Component {
-    onEmailRegistering = _ => {
+    onEmailRegistering = () => {
         return this.props.apiClient.startMfaEmailRegistration({
                 accessToken: this.props.accessToken
             }
@@ -67,7 +67,7 @@ class MainView extends React.Component {
         })
     }
 
-    onEmailRemoval = _ => {
+    onEmailRemoval = () => {
         return this.props.apiClient.removeMfaEmail({
             accessToken: this.props.accessToken
         })
@@ -111,7 +111,7 @@ class MainView extends React.Component {
                         <div>
                             {showIntro && <Intro>{i18n('mfa.email.remove.explain')}</Intro>}
                             <EmailCredentialRemovalForm handler={this.onEmailRemoval}
-                                                        onSuccess={_ => this.props.goTo('credential-removed', {credentialType: 'email'})}/>
+                                                        onSuccess={() => this.props.goTo('credential-removed', {credentialType: 'email'})}/>
                         </div>
                     }
                     {showRemoveMfaCredentials && config.mfaEmailEnabled && config.mfaSmsEnabled && phoneNumberCredentialRegistered && isEmailCredentialRegistered && <Separator/>}
@@ -121,7 +121,7 @@ class MainView extends React.Component {
                         <div>
                             {showIntro && <Intro>{i18n('mfa.phoneNumber.remove.explain')}</Intro>}
                             <PhoneNumberCredentialRemovalForm handler={data => this.onPhoneNumberRemoval({...data, ...phoneNumberCredentialRegistered})}
-                                                         onSuccess={_ => this.props.goTo('credential-removed', {credentialType: 'sms'})}/>
+                                                         onSuccess={() => this.props.goTo('credential-removed', {credentialType: 'sms'})}/>
                         </div>
                     }
                 </DivCredentialBlock>

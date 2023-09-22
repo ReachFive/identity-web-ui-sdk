@@ -25,7 +25,7 @@ const ForgotPasswordWrapper = withTheme(styled.div`
 
 export const LoginForm = createForm({
     prefix: 'r5-login-',
-    fields({ showIdentifier = true, showRememberMe, canShowPassword, showForgotPassword, defaultIdentifier, i18n, config, allowCustomIdentifier, customIdentifierLabel }) {
+    fields({ showIdentifier = true, showRememberMe, canShowPassword, showForgotPassword, defaultIdentifier, i18n, config, allowCustomIdentifier }) {
         return [
             showIdentifier && (config.sms) ?
                 identifierField({
@@ -87,7 +87,7 @@ export default class LoginView extends React.Component {
     }
 
     render() {
-        const { socialProviders, session = {}, i18n, allowCustomIdentifier, customIdentifierLabel } = this.props;
+        const { socialProviders, session = {}, i18n, allowCustomIdentifier } = this.props;
 
         const defaultIdentifier = session.lastLoginType === 'password' ? session.email : null;
 

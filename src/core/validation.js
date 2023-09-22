@@ -24,7 +24,7 @@ class CompoundValidator {
 export class Validator {
     constructor({ rule, hint, parameters = [] }) {
         this.rule = rule;
-        this.hint = !isFunction(hint) ? _ => hint : hint;
+        this.hint = !isFunction(hint) ? () => hint : hint;
         this.parameters = parameters;
     }
 

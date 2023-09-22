@@ -4,6 +4,7 @@ import isUndefined from 'lodash-es/isUndefined';
 import isFunction from 'lodash-es/isFunction';
 import { lighten, transparentize, darken } from 'polished';
 
+/* eslint-disable @typescript-eslint/no-unused-vars */
 const white = '#fff';
 const gray100 = '#f8f9fa';
 const gray200 = '#e9ecef';
@@ -15,6 +16,7 @@ const gray700 = '#495057';
 const gray800 = '#343a40';
 const gray900 = '#212529';
 const black = '#000';
+/* eslint-enable @typescript-eslint/no-unused-vars */
 
 const inputBtnFocusBoxShadow = borderColor => `0 0 0 3px ${transparentize(0.5, borderColor)}`;
 

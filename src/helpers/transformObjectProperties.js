@@ -41,5 +41,5 @@ function transformObjectProperties(object, transform) {
 /* reuse lodash as it covers most cases, but we want the same behavior as the
      snakecasing strategy on the server where numbers are not separated from non numbers. */
 function snakeCase(input) {
-    return lodashSnakeCase(input).replace(/\_\d/g, dashNumber => dashNumber.slice(1));
+    return lodashSnakeCase(input).replace(/_\d/g, dashNumber => dashNumber.slice(1));
 }

@@ -1,6 +1,3 @@
-import React from 'react'
-
-
 export default class ReCaptcha {
      static getRecaptchaToken = async (siteKey, action) => {
         return await window.grecaptcha.execute(siteKey, {action: action})
