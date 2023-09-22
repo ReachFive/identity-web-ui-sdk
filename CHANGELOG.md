@@ -7,6 +7,25 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.20.0] - 2023-09-22
+
+### Added
+
+- Add Captcha in EmailEditor widget [#140](https://github.com/ReachFive/identity-web-ui-sdk/pull/140)
+- Add social provider variant format [#142](https://github.com/ReachFive/identity-web-ui-sdk/pull/142)
+- Add ESLint code analyzer [#143](https://github.com/ReachFive/identity-web-ui-sdk/pull/143)
+- Add type definitions for SDK methods arguments [#145](https://github.com/ReachFive/identity-web-ui-sdk/pull/145)
+
+### Changed
+
+- Show user error in MFA widget [#136](https://github.com/ReachFive/identity-web-ui-sdk/pull/136)
+- Validation on birthdate month and day compatibility + add age restriction message [#141](https://github.com/ReachFive/identity-web-ui-sdk/pull/141)
+- Upgrade libphonenumber version to 1.10.44 [#146](https://github.com/ReachFive/identity-web-ui-sdk/pull/146)
+
+### Fixes
+
+- Fix issue when consentField is missing [#144](https://github.com/ReachFive/identity-web-ui-sdk/pull/144)
+
 ## [1.19.0] - 2023-02-22
 
 ### Added
@@ -323,7 +342,9 @@ The eye icon is now correctly displayed in the Auth widget.
 
 First version of the SDK Web UI.
 
-[Unreleased]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.19.0...HEAD
+[Unreleased]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.20.0...HEAD
+
+[1.20.0]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.19.0...v1.20.0
 
 [1.19.0]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.18.0...v1.19.0
 
