@@ -1,5 +1,7 @@
 export * as Core from '@reachfive/identity-core'
-export { Client as CoreClient, ErrorResponse } from '@reachfive/identity-core'
+import { Client as CoreClient, AuthOptions as CoreAuthOptions, ErrorResponse } from '@reachfive/identity-core'
+
+import { InitialScreen, ProviderId } from './constants'
 
 export function createClient(creationConfig: Config): Client
 
@@ -126,38 +128,6 @@ export interface Field {
     type?: FieldType
 }
 
-/** The social provider keys. */
-export const providerKeys = [
-    'facebook',
-    'google',
-    'apple',
-    'linkedin',
-    'microsoft',
-    'twitter',
-    'paypal',
-    'amazon',
-    'vkontakte',
-    'weibo',
-    'wechat',
-    'qq',
-    'line',
-    'yandex',
-    'mailru',
-    'kakaotalk',
-    'franceconnect',
-    'oney',
-    'bconnect',
-    'naver'
-] as const
-export type ProviderId = typeof providerKeys[number]
-
-/** 
- * The widget’s initial screen.
- * @enum {('login' | 'login-with-web-authn' | 'signup' | 'forgot-password')}
- */
-export const initialScreens = ['login', 'login-with-web-authn', 'signup', 'forgot-password'] as const
-export type InitialScreen = typeof initialScreens[number]
-
 /** 
 * The auth type.
 * @enum {('magic_link' | 'sms')}
@@ -211,7 +181,7 @@ export interface AuthOptions extends Container, I18n, OnReady, Theme {
     allowCustomIdentifier?: boolean
 
     /** List of authentication options */
-    auth?: Core.AuthOptions
+    auth?: CoreAuthOptions
 
     /**
      * Whether or not to provide the display password in clear text option.
@@ -406,7 +376,7 @@ export interface SocialAccountsOptions extends AccessToken, Container, I18n, OnR
     socialProviders?: ProviderId[]
     
     /** List of authentication options */
-    auth?: Core.AuthOptions
+    auth?: CoreAuthOptions
 }
 
 export interface SocialLoginOptions extends Container, I18n, OnReady, Theme {
@@ -418,7 +388,7 @@ export interface SocialLoginOptions extends Container, I18n, OnReady, Theme {
     socialProviders?: ProviderId[]
 
     /** List of authentication options */
-    auth?: Core.AuthOptions
+    auth?: CoreAuthOptions
 
     /** The URL sent in the email to which the user is redirected. This URL must be whitelisted in the Allowed Callback URLs field of your ReachFive client settings. */
     redirectUrl?: string
@@ -458,7 +428,7 @@ export interface PassswordlessOptions extends Container, I18n, OnReady, OnSucces
     countryCode?: string
 
     /** List of authentication options */
-    auth?: Core.AuthOptions
+    auth?: CoreAuthOptions
 
     /** The URL sent in the email to which the user is redirected. This URL must be whitelisted in the Allowed Callback URLs field of your ReachFive client settings. */
     redirectUrl?: string
@@ -490,7 +460,7 @@ export interface MfaCredentialsOptions extends AccessToken, Container, I18n, OnR
 
 export interface StepUpOptions extends AccessToken, Container, I18n, OnReady, Theme {
     /** List of authentication options */
-    auth?: Core.AuthOptions
+    auth?: CoreAuthOptions
 
     /**
      * Show the introduction text.
