@@ -1,4 +1,4 @@
-import { Buffer } from 'Buffer';
+import { Buffer } from 'buffer/'; // note: the trailing slash is important!
 
 /**
  * return an UTF-8 encoded string as URL Safe Base64
