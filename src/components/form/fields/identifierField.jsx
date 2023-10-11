@@ -53,6 +53,8 @@ class IdentifierField extends React.Component {
     componentDidMount() {
         const { userInput, country } = this.props.value;
 
+        if (!userInput) return
+
         try {
             const parsed = libphonenumber.parse(userInput, country);
             const phoneValue = country === parsed.country
