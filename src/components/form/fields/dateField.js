@@ -1,4 +1,4 @@
-import isISO8601 from 'validator';
+import validator from 'validator';
 
 import { formatISO8601Date } from '../../../helpers/utils';
 import { Validator } from '../../../core/validation';
@@ -36,7 +36,7 @@ export default function dateField(config) {
             rule: value => {
                 const date = formatDate(value);
 
-                return !date || isISO8601(date);
+                return !date || validator.isISO8601(date);
             },
             hint: 'date'
         })

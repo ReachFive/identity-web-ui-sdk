@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { clearFix } from 'polished';
 import pick from 'lodash-es/pick';
 
-import { isNumeric, isISO8601 } from 'validator';
+import validator from 'validator';
 
 import { isValued, formatISO8601Date } from '../../../helpers/utils';
 import generateId from '../../../helpers/inputIdGenerator';
@@ -202,7 +202,7 @@ export default function birthdateField({
 
                     if ((isSubmitted || day.isDirty || month.isDirty || year.isDirty)) {
 
-                        if (!isNumeric(year.value.toString()) || !DateTime.fromObject({ year: parseInt(year.value, 10) }).isValid) {
+                        if (!validator.isNumeric(year.value.toString()) || !DateTime.fromObject({ year: parseInt(year.value, 10) }).isValid) {
                             return {
                                 error: i18n(`validation.birthdate.year`),
                                 year: true
@@ -210,14 +210,14 @@ export default function birthdateField({
                         }
 
                         const birthdate = format(state);
-                        if (!birthdate || !isISO8601(birthdate)) {
+                        if (!birthdate || !validator.isISO8601(birthdate)) {
                             return {
                                 error: i18n('validation.birthdate.dayOfMonth'),
                                 day: true
                             };
                         }
 
-                        if (!(isNumeric(month.value.toString()) && isNumeric(day.value.toString())) || !DateTime.fromObject({ year: year.value, month: month.value, day: day.value }).isValid) {
+                        if (!(validator.isNumeric(month.value.toString()) && validator.isNumeric(day.value.toString())) || !DateTime.fromObject({ year: year.value, month: month.value, day: day.value }).isValid) {
                             return {
                                 error: i18n(`validation.birthdate.dayOfMonth`),
                                 day: true
