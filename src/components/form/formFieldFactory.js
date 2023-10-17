@@ -109,7 +109,7 @@ const predefinedFields = {
     })
 };
 
-function customFieldComponent(customField, cfg) {
+function customFieldComponent(customField, cfg, config) {
     const baseConfig = {
         label: customField.name,
         ...cfg,
@@ -120,7 +120,7 @@ function customFieldComponent(customField, cfg) {
         const checkboxConfig = cfg.required ? { ...baseConfig, validator: checked } : { ...baseConfig }
         return checkboxField(checkboxConfig);
     } else if (customField.dataType === 'date') {
-        return dateField(baseConfig);
+        return dateField(baseConfig, config);
     } else if (customField.dataType === 'integer') {
         return simpleField({
             ...baseConfig,
@@ -216,7 +216,7 @@ const resolveField = (fieldConfig, config) => {
 
     const customField = findCustomField(config, camelPath);
     if (customField) {
-        return customFieldComponent(customField, fieldConfig);
+        return customFieldComponent(customField, fieldConfig, config);
     }
     const camelPathSplit = camelPath.split('.v'); // TODO What if consent start with a `v`?
     const consentField = findConsentField(config, camelPathSplit[0]);
