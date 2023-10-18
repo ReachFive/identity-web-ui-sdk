@@ -68,6 +68,56 @@ const DateField = ({ i18n, inputId, label, locale, onChange, path, required, sho
 
     const error = typeof validation === 'object' && 'error' in validation ? validation.error : null
 
+    const fields = {
+        day: (
+            <InputCol key="day" width={20}>
+                <Select
+                    name={`${path}.day`}
+                    value={day || ''}
+                    hasError={error}
+                    required={required}
+                    onChange={handleDayChange}
+                    placeholder={i18n('day')}
+                    options={daysInMonth.map(day => ({ value: day, label: day }))}
+                    data-testid={`${path}.day`}
+                    aria-label={i18n('day')}
+                />
+            </InputCol>
+        ),
+        month: (
+            <InputCol key="month" width={50}>
+                <Select
+                    name={`${path}.month`}
+                    value={month || ''}
+                    hasError={error}
+                    required={required}
+                    onChange={handleMonthChange}
+                    placeholder={i18n('month')}
+                    options={months.map((month, index) => ({ value: index + 1, label: month }))}
+                    data-testid={`${path}.month`}
+                    aria-label={i18n('month')}
+                />
+            </InputCol>
+        ),
+        year: (
+            <InputCol key="year" width={30}>
+                <Input
+                    type="number"
+                    maxlength="4"
+                    inputmode="numeric"
+                    name={`${path}.year`}
+                    value={year || ''}
+                    hasError={error}
+                    required={required}
+                    onChange={handleYearChange}
+                    placeholder={i18n('year')}
+                    data-testid={`${path}.year`}
+                    aria-label={i18n('year')}
+                />
+            </InputCol>
+        )
+    }
+
     return (
         <FormGroup
             inputId={inputId}
@@ -76,59 +126,7 @@ const DateField = ({ i18n, inputId, label, locale, onChange, path, required, sho
             showLabel={showLabel}
         >
             <InputRow>
-                {parts.map(part => {
-                    if (part === 'day') {
-                        return (
-                            <InputCol key="day" width={20}>
-                                <Select
-                                    name={`${path}.day`}
-                                    value={day || ''}
-                                    hasError={error}
-                                    required={required}
-                                    onChange={handleDayChange}
-                                    placeholder={i18n('day')}
-                                    options={daysInMonth.map(day => ({ value: day, label: day }))}
-                                    data-testid={`${path}.day`}
-                                    aria-label={i18n('day')}
-                                />
-                            </InputCol>
-                        )
-                    } else if (part === 'month') {
-                        return (
-                            <InputCol key="month" width={50}>
-                                <Select
-                                    name={`${path}.month`}
-                                    value={month || ''}
-                                    hasError={error}
-                                    required={required}
-                                    onChange={handleMonthChange}
-                                    placeholder={i18n('month')}
-                                    options={months.map((month, index) => ({ value: index + 1, label: month }))}
-                                    data-testid={`${path}.month`}
-                                    aria-label={i18n('month')}
-                                />
-                            </InputCol>
-                        )
-                    } else if (part === 'year') {
-                        return (
-                            <InputCol key="year" width={30}>
-                                <Input
-                                    type="number"
-                                    maxlength="4"
-                                    inputmode="numeric"
-                                    name={`${path}.year`}
-                                    value={year || ''}
-                                    hasError={error}
-                                    required={required}
-                                    onChange={handleYearChange}
-                                    placeholder={i18n('year')}
-                                    data-testid={`${path}.year`}
-                                    aria-label={i18n('year')}
-                                />
-                            </InputCol>
-                        )
-                    }
-                })}
+                {parts.map(part => fields[part])}
             </InputRow>
         </FormGroup>
     )
