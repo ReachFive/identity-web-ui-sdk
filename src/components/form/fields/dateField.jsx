@@ -147,10 +147,10 @@ const dateFormat = locale => DateTime.now().setLocale(locale).toLocaleParts().ma
     }
 }).join('')
 
-const datetimeValidator = locale => new Validator({
+export const datetimeValidator = locale => new Validator({
     rule: (value) => isValued(value) && value.raw.isValid,
     hint: 'date',
-    parameters: [dateFormat(locale)]
+    parameters: { format: dateFormat(locale) }
 })
 
 export default function dateField(props, config) {
