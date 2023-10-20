@@ -49,13 +49,13 @@ interface I18n {
 
 interface OnReady {
     /**
-     * Callback function called after the widget has been successfully loaded and rendered inside the container. 
+     * Callback function called after the widget has been successfully loaded and rendered inside the container.
      * The callback is called with the widget instance.
      */
     onReady?: (arg: WidgetInstance) => void
 }
 
-interface OnSuccess {	
+interface OnSuccess {
     /** Callback function called when the request has failed. */
     onSuccess?: () => void
 }
@@ -68,7 +68,7 @@ interface OnError {
 interface Theme {
     /**
      * The options to set up to customize the appearance of the widget.
-     * 
+     *
      * @type Theme
      */
     theme?: ThemeOptions
@@ -112,9 +112,9 @@ export interface SocialButtonTheme {
     borderWidth?: string
     /** Boolean that specifies if there is a box shadow on the button or not. */
     focusBoxShadow?: boolean
-}  
+}
 
-/** 
+/**
  * The field's type.
  * @enum {('hidden' | 'text' | 'number' | 'email' | 'tel')}
  */
@@ -128,7 +128,7 @@ export interface Field {
     type?: FieldType
 }
 
-/** 
+/**
 * The auth type.
 * @enum {('magic_link' | 'sms')}
 */
@@ -137,44 +137,44 @@ export type AuthType = 'magic_link' | 'sms'
 export interface AuthOptions extends Container, I18n, OnReady, Theme {
     /**
      * Boolean that specifies if the forgot password option is enabled.
-     * 
+     *
      * If the `allowLogin` and `allowSignup` properties are set to `false`, the forgot password feature is enabled even if `allowForgotPassword` is set to `false`.
-     * 
+     *
      * @default true
      */
     allowForgotPassword?: boolean
 
     /**
      * Boolean that specifies whether biometric login is enabled.
-     * 
+     *
      * @default false
      */
     allowWebAuthnLogin?: boolean
 
     /**
      * Boolean that specifies whether biometric signup is enabled.
-     * 
+     *
      * @default false
      */
     allowWebAuthnSignup?: boolean
 
     /**
      * Boolean that specifies whether login is enabled.
-     * 
+     *
      * @default true
      */
     allowLogin?: boolean
 
     /**
      * Boolean that specifies whether signup is enabled.
-     * 
+     *
      * @default true
      */
 
     allowSignup?: boolean
     /**
      * Boolean that specifies whether an additional field for the custom identifier is shown.
-     * 
+     *
      * @default false
      */
 
@@ -185,7 +185,7 @@ export interface AuthOptions extends Container, I18n, OnReady, Theme {
 
     /**
      * Whether or not to provide the display password in clear text option.
-     * 
+     *
      * @default false
      */
     canShowPassword?: boolean
@@ -197,16 +197,16 @@ export interface AuthOptions extends Container, I18n, OnReady, Theme {
     countryCode?: string
 
     /**
-     * Whether or not to display a safe error message on password reset, given an invalid email address. 
+     * Whether or not to display a safe error message on password reset, given an invalid email address.
      * This mode ensures not to leak email addresses registered to the platform.
-     * 
+     *
      * @default false
      */
     displaySafeErrorMessage?: boolean
 
     /**
      * The widget’s initial screen.
-     * 
+     *
      * - if `allowLogin` is set to `true`, it defaults to `login`.
      * - if `allowLogin` is set to `false` and `allowSignup` is set to `true`, it defaults to `signup`.
      * - if `allowLogin` is set to `false` and `allowWebAuthnLogin` is set to `true`, it defaults to `login-with-web-authn`.
@@ -234,39 +234,39 @@ export interface AuthOptions extends Container, I18n, OnReady, Theme {
 
     /**
      * Whether the signup form fields' labels are displayed on the login view.
-     * 
+     *
      * @default false
      */
     showLabels?: boolean
 
     /**
      * Whether the Remember me checkbox is displayed on the login view. Affects user session duration.
-     * 
+     *
      * The account session duration configured in the ReachFive Console (Settings  Security  SSO) applies when:
      * - The checkbox is hidden from the user
      * - The checkbox is visible and selected by the user
-     * 
+     *
      * If the checkbox is visible and not selected by the user, the default session duration of 1 day applies.
-     * 
+     *
      * @default false
      */
     showRememberMe?: boolean
 
     /**
      * List of the signup fields to display in the form.
-     * 
+     *
      * You can pass a field as an object to override default values :
-     * 
+     *
      * @example
      * {
      *   "key": "family_name",
-     *   "defaultValue": "Moreau", 
+     *   "defaultValue": "Moreau",
      *   "required": true
      * }
      */
     signupFields?: (Field | string)[]
 
-    /** 
+    /**
      * Lists the available social providers. This is an array of strings.
      * Tip: If you pass an empty array, social providers will not be displayed.
      */
@@ -282,7 +282,7 @@ export interface AuthOptions extends Container, I18n, OnReady, Theme {
 export interface EmailEditorOptions extends AccessToken, Container, I18n, OnReady, Theme {
     /** The URL sent in the email to which the user is redirected. This URL must be whitelisted in the `Allowed Callback URLs` field of your ReachFive client settings. */
     redirectUrl?: string
-  
+
     /**
      * Whether the signup form fields' labels are displayed on the login view.
      * @default false
@@ -296,13 +296,13 @@ export interface PasswordEditorOptions extends AccessToken, Container, I18n, OnR
      * @default false
      */
     showLabels?: boolean
-  
+
     /**
      * Ask for the old password before entering a new one.
      * @default false
      */
     promptOldPassword?: boolean
-  
+
     /** The URL sent in the email to which the user is redirected. This URL must be whitelisted in the Allowed Callback URLs field of your ReachFive client settings. */
     redirectUrl?: string
 }
@@ -310,13 +310,13 @@ export interface PasswordEditorOptions extends AccessToken, Container, I18n, OnR
 export interface PasswordResetOptions extends Container, OnReady, I18n, Theme {
     /** The URL to which the user is redirected after a password reset. */
     loginLink?: string
-  
+
     /**
      * Whether or not to provide the display password in clear text option.
      * @default false
      */
     canShowPassword?: boolean
-  
+
     /** The URL sent in the email to which the user is redirected. This URL must be whitelisted in the Allowed Callback URLs field of your ReachFive client settings. */
     redirectUrl?: string
 }
@@ -327,10 +327,10 @@ export interface PhoneNumberEditorOptions extends AccessToken, Container, OnRead
      * @default false
      */
     showLabels?: boolean
-  
+
     /**
      * The [ISO country](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) code useful to format phone numbers.
-     * 
+     *
      * Defaults to the predefined country code in your account settings or `FR`.
      */
     countryCode?: string
@@ -339,30 +339,30 @@ export interface PhoneNumberEditorOptions extends AccessToken, Container, OnRead
 export interface ProfileEditorOptions extends AccessToken, Container, OnReady, OnSuccess, OnError, I18n, Theme {
     /**
      * List of the fields to display in the form.
-     * 
+     *
      * **Important:**
-     * 
+     *
      * The following fields can not be changed with this widget:
      * - `password`
      * - `password_confirmation`
-     * 
+     *
      * It is not possible to update the primary identifier submitted at registration (email or phone number). When the primary identifier is the email address (SMS feature disabled), users can only enter a phone number and update without limit.
      */
     fields?: (Field | string)[]
-  
+
     /**
      * Whether the signup form fields' labels are displayed on the login view.
      * @default false
      */
     showLabels?: boolean
-  
+
     /**
      * The [ISO country](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) code useful to format phone numbers.
-     * 
+     *
      * Defaults to the predefined country code in your account settings or `FR`.
      */
     countryCode?: string
-  
+
     /** The URL sent in the email to which the user is redirected. This URL must be whitelisted in the `Allowed Callback URLs` field of your ReachFive client settings. */
     redirectUrl?: string
 }
@@ -370,11 +370,11 @@ export interface ProfileEditorOptions extends AccessToken, Container, OnReady, O
 export interface SocialAccountsOptions extends AccessToken, Container, I18n, OnReady, Theme {
     /**
      * Lists the available social providers. This is an array of strings.
-     * 
-     * Tip: If you pass an empty array, social providers will not be displayed. 
+     *
+     * Tip: If you pass an empty array, social providers will not be displayed.
      * */
     socialProviders?: ProviderId[]
-    
+
     /** List of authentication options */
     auth?: CoreAuthOptions
 }
@@ -382,8 +382,8 @@ export interface SocialAccountsOptions extends AccessToken, Container, I18n, OnR
 export interface SocialLoginOptions extends Container, I18n, OnReady, Theme {
     /**
      * Lists the available social providers. This is an array of strings.
-     * 
-     * Tip: If you pass an empty array, social providers will not be displayed. 
+     *
+     * Tip: If you pass an empty array, social providers will not be displayed.
      * */
     socialProviders?: ProviderId[]
 
@@ -409,8 +409,8 @@ export interface PassswordlessOptions extends Container, I18n, OnReady, OnSucces
 
     /**
      * Lists the available social providers. This is an array of strings.
-     * 
-     * Tip:  If you pass an empty array, social providers will not be displayed. 
+     *
+     * Tip:  If you pass an empty array, social providers will not be displayed.
      */
     socialProviders?: ProviderId[]
 
@@ -422,7 +422,7 @@ export interface PassswordlessOptions extends Container, I18n, OnReady, OnSucces
 
     /**
      * The [ISO country](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) code useful to format phone numbers.
-     * 
+     *
      * Defaults to the predefined country code in your account settings or `FR`.
      */
     countryCode?: string
@@ -454,6 +454,12 @@ export interface MfaOptions extends AccessToken, Container, I18n, OnReady, Theme
      * @default true
      */
     showRemoveMfaCredentials?: boolean
+
+    /**
+     * Boolean to enable (`true`) or disable (`false`) whether the option to remove MFA credentials are displayed.
+     * @default false
+     */
+    isMfaRegisteringRequired?: boolean
 }
 
 export interface MfaCredentialsOptions extends AccessToken, Container, I18n, OnReady, Theme {}
@@ -467,4 +473,10 @@ export interface StepUpOptions extends AccessToken, Container, I18n, OnReady, Th
      * @default true
      */
     showIntro?: boolean
+
+    /**
+     * Show the stepup button. Unnecessary for console use
+     * @default true
+     */
+    showStepUpStart?: boolean
 }

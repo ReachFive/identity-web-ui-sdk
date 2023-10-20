@@ -25,7 +25,7 @@ const VerificationCodeInputForm = createForm({
 
 const StartPasswordlessForm = createForm({
     prefix: 'r5-mfa-start-passwordless',
-    fields({ options }) {
+    fields({options}) {
         return [
             radioboxField({
                 key: 'authType',
@@ -34,42 +34,57 @@ const StartPasswordlessForm = createForm({
         ]
     }
 })
-class MfaStepUpView extends React.Component {
+
+class MainView extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {response: undefined}
+        this.onGetStepUpToken()
+    }
+
     onGetStepUpToken = () => {
         return this.props.apiClient.getMfaStepUpToken({
             options: this.props.auth,
             accessToken: this.props.accessToken
-        })
+        }).then(res => this.setState({response: res}))
     }
     render() {
-        return <div>
-            <StartStepUpMfaButton
-                handler={this.onGetStepUpToken}
-                onSuccess={data => this.props.goTo('fa-selection', {...data})}
-                />
+        const {showStepUpStart, goTo} = this.props
+        return this.state.response === undefined ? <div></div> : <div>
+            {showStepUpStart ?
+                <StartStepUpMfaButton
+                    handler={this.onGetStepUpToken}
+                    onSuccess={_ => goTo('fa-selection', this.state.response)}
+                /> : <FaSelectionView {...this.state.response} {...this.props}/>}
         </div>
     }
 }
 
 export class FaSelectionView extends React.Component {
-    onChooseFa = factor => {
-        return this.props.apiClient.startPasswordless({
-            ...factor,
-            stepUp: this.props.token,
-        }).then(resp =>
-            ({...resp, ...factor})
-        )
+    constructor(props) {
+        super(props);
+        this.state = {response: undefined}
+        if (this.props.amr.length == 1)
+            this.onChooseFa({authType: this.props.amr[0]})
     }
 
+
+    onChooseFa = factor => this.props.apiClient.startPasswordless({
+        ...factor,
+        stepUp: this.props.token,
+    }).then(res => this.setState({response: res}))
+
     render() {
-        const { amr, showIntro, i18n } = this.props
-        return <div>
-            {showIntro && <Intro>{i18n('mfa.select.factor')}</Intro>}
-            <StartPasswordlessForm
-                options={amr.map(factor => ({ key: factor, value: factor, label: factor}))}
-                handler={this.onChooseFa}
-                onSuccess={(data) => this.props.goTo('verification-code', {...data, amr})}/>
-        </div>
+        const {amr, showIntro, i18n} = this.props
+        return this.state.response === undefined ? <div></div> : amr.length == 1 ?
+            <VerificationCodeView {...this.state.response} {...this.props}/>
+            : <div>
+                {showIntro && <Intro>{i18n('mfa.select.factor')}</Intro>}
+                <StartPasswordlessForm
+                    options={amr.map(factor => ({key: factor, value: factor, label: factor}))}
+                    handler={this.onChooseFa}
+                    onSuccess={(data) => this.props.goTo('verification-code', {...data, amr})}/>
+            </div>
     }
 }
 
@@ -79,7 +94,7 @@ export class VerificationCodeView extends React.Component {
         return apiClient
             .verifyMfaPasswordless({challengeId, verificationCode: data.verificationCode, accessToken})
             .then(resp =>
-                window.location.replace( auth.redirectUri + "?" + toQueryString(resp)),
+                window.location.replace(auth.redirectUri + "?" + toQueryString(resp)),
             )
     }
 
@@ -94,9 +109,9 @@ export class VerificationCodeView extends React.Component {
 
 
 export default createMultiViewWidget({
-    initialView: 'mfa-step-up',
+    initialView: 'main',
     views: {
-        'mfa-step-up': MfaStepUpView,
+        'main': MainView,
         'fa-selection': FaSelectionView,
         'verification-code': VerificationCodeView
     },
@@ -105,6 +120,8 @@ export default createMultiViewWidget({
             {},
             options,
             {
-            showIntro: true,
-        })}
+                showIntro: true,
+                showStepUpStart: true
+            })
+    }
 })
