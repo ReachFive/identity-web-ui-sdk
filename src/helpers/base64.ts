@@ -7,7 +7,7 @@ import { Buffer } from 'buffer/'; // note: the trailing slash is important!
  *       as '-' and '/' is encoded as '_'. The padding character '=' is
  *       removed.
  */
-export function encodeBase64UrlSafe(str) {
+export function encodeBase64UrlSafe(str: string) {
     return encodeBase64(str)
         .replace(/\+/g, '-') // Convert '+' to '-'
         .replace(/\//g, '_') // Convert '/' to '_'
@@ -17,7 +17,7 @@ export function encodeBase64UrlSafe(str) {
 /**
  * encode an UTF-8 encoded string as Base64
  */
-export function encodeBase64(str) {
+export function encodeBase64(str: string) {
     // Cf: https://stackoverflow.com/questions/30106476/using-javascripts-atob-to-decode-base64-doesnt-properly-decode-utf-8-strings
     return btoa(
         encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, (_match, p1) => {
@@ -29,7 +29,7 @@ export function encodeBase64(str) {
 /**
  * return an decoded URL Safe Base64 as UTF-8 encoded string
  */
-export function decodeBase64UrlSafe(base64) {
+export function decodeBase64UrlSafe(base64: string) {
     // Add removed at end '='
     // base64 += Array(5 - base64.length % 4).join('=');
 
@@ -43,7 +43,7 @@ export function decodeBase64UrlSafe(base64) {
 /**
  * Encode an array into Base64 url safe - Used for PKCE random/hash functions.
  */
-export function encodeToBase64(array) {
+export function encodeToBase64(array: Uint8Array) {
     return Buffer.from(array)
         .toString('base64')
         .replace(/\+/g, '-')
@@ -54,7 +54,7 @@ export function encodeToBase64(array) {
 /**
  * decode Base64 as UTF-8 encoded string
  */
-export function decodeBase64(str) {
+export function decodeBase64(str: string) {
     // Cf: https://stackoverflow.com/questions/30106476/using-javascripts-atob-to-decode-base64-doesnt-properly-decode-utf-8-strings
     return decodeURIComponent(
         Array.prototype.map
