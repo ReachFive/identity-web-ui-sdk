@@ -1,5 +1,7 @@
 import icon from './facebook.svg';
 
+import type { Provider } from '../providers'
+
 export default {
     key: 'facebook',
     name: 'Facebook',
@@ -9,4 +11,4 @@ export default {
         width: 650,
         height: 400
     }
-};
+} satisfies Provider;

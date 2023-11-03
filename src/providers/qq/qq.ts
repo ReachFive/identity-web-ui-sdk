@@ -1,5 +1,7 @@
 import icon from './qq.svg';
 
+import type { Provider } from '../providers'
+
 export default {
     key: 'qq',
     name: 'QQ',
@@ -9,4 +11,4 @@ export default {
         width: 450,
         height: 400
     }
-};
+} satisfies Provider;

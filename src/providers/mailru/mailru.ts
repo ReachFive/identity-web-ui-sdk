@@ -1,5 +1,7 @@
 import icon from './mailru.svg';
 
+import type { Provider } from '../providers'
+
 export default {
     key: 'mailru',
     name: 'Mail.ru',
@@ -9,4 +11,4 @@ export default {
         width: 450,
         height: 400
     }
-};
+} satisfies Provider;

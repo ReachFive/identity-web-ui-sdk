@@ -1,5 +1,7 @@
 import icon from './bconnect.svg';
 
+import type { Provider } from '../providers'
+
 export default {
     key: 'bconnect',
     name: 'B.connect',
@@ -8,4 +10,4 @@ export default {
     btnTextColor: '#58666e',
     btnBackgroundColor: '#ffffff',
     icon,
-};
+} satisfies Provider;

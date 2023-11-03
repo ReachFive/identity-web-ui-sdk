@@ -1,5 +1,7 @@
 import icon from './google.svg';
 
+import type { Provider } from '../providers'
+
 export default {
     key: 'google',
     name: 'Google',
@@ -12,4 +14,4 @@ export default {
         width: 560,
         height: 630
     }
-};
+} satisfies Provider;
