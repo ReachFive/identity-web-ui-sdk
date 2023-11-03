@@ -131,7 +131,7 @@ const resolveAuthentication = (accessToken?: string, userId?: string): { authent
     }
 };
 
-export type PasswordEditorWidgetProps = Omit<PasswordEditorProps, 'autauthenticationhen'>
+export type PasswordEditorWidgetProps = Omit<PasswordEditorProps, 'authentication'>
 
 export default createWidget<PasswordEditorWidgetProps, PasswordEditorProps>({
     component: PasswordEditor,
