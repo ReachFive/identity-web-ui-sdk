@@ -1,15 +1,17 @@
+/**
+ * @jest-environment jsdom
+ */
+
+import { describe, expect, test } from '@jest/globals';
 import renderer from 'react-test-renderer';
+import { render, screen } from '@testing-library/react';
+import '@testing-library/jest-dom'
 import 'jest-styled-components';
-import { render } from 'enzyme';
-import Enzyme from 'enzyme';
-import Adapter from 'enzyme-adapter-react-16';
 
 import passwordResetWidget from '../../../src/widgets/passwordReset/passwordResetWidget';
 
-Enzyme.configure({ adapter: new Adapter() });
-
 describe('Snapshot', () => {
-    const generateSnapshot = (options) => () => {
+    const generateSnapshot = (options = {}) => () => {
         const tree = passwordResetWidget(options, { config: {}, apiClient: {} })
             .then(result => renderer.create(result).toJSON());
 
@@ -22,7 +24,7 @@ describe('Snapshot', () => {
 });
 
 describe('DOM testing', () => {
-    const generateComponent = async (options) => {
+    const generateComponent = async (options = {}) => {
         const result = await passwordResetWidget(options, { config: {}, apiClient: {} });
 
         return render(result);
@@ -33,12 +35,12 @@ describe('DOM testing', () => {
             expect.assertions(3);
 
             // When
-            const instance = await generateComponent();
+            await generateComponent();
 
             // Then
-            expect(instance.find('input[name="password"]')).toHaveLength(1);
-            expect(instance.find('input[name="password_confirmation"]')).toHaveLength(1);
-            expect(instance.find('button').text()).toBe('send');
+            expect(screen.queryByTestId('password')).toBeInTheDocument();
+            expect(screen.queryByTestId('password_confirmation')).toBeInTheDocument();
+            expect(screen.queryByTestId('submit').textContent).toBe('send');
         });
     });
 });

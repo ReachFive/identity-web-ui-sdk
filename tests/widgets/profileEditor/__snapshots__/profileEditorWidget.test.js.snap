@@ -21,7 +21,6 @@ exports[`Snapshot profile editor basic 1`] = `
   box-sizing: border-box;
   text-align: center;
   font-weight: bold;
-  white-space: nowrap;
   vertical-align: middle;
   -webkit-user-select: none;
   -moz-user-select: none;

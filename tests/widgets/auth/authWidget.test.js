@@ -1,16 +1,17 @@
+/**
+ * @jest-environment jsdom
+ */
+
+import { describe, expect, test } from '@jest/globals';
 import renderer from 'react-test-renderer';
+import { render, screen } from '@testing-library/react';
+import '@testing-library/jest-dom';
 import 'jest-styled-components';
-import $ from 'cheerio';
-import { render } from 'enzyme';
-import Enzyme from 'enzyme';
-import Adapter from 'enzyme-adapter-react-16';
 
 import { randomString } from '../../../src/helpers/random';
-import authWidget from '../../../src/widgets/auth/authWidget'
+import authWidget from '../../../src/widgets/auth/authWidget';
 
-Enzyme.configure({ adapter: new Adapter() })
-
-const textFilter = expected => (i, el) => $(el).text() === expected;
+import { providers } from '../../../src/providers/providers';
 
 const defaultConfig = {
     domain: 'local.reach5.net',
@@ -30,6 +31,16 @@ const defaultConfig = {
 };
 
 const webauthnConfig = { ...defaultConfig, webAuthn: true };
+
+function expectSocialButtons(toBeInTheDocument = true) {
+    return defaultConfig.socialProviders.forEach((provider) => {
+        if (toBeInTheDocument) {
+            expect(screen.queryByTitle(providers[provider].name)).toBeInTheDocument()
+        } else {
+            expect(screen.queryByTitle(providers[provider].name)).not.toBeInTheDocument()
+        }
+    })
+}
 
 describe('Snapshot', () => {
     const generateSnapshot = (options, config = defaultConfig) => () => {
@@ -106,6 +117,24 @@ describe('Snapshot', () => {
             initialScreen: 'signup',
             signupFields: ['email', 'password', { key: 'consents.aConsent', required: true }]
         }));
+
+        test('with custom fields', generateSnapshot(
+            {
+                initialScreen: 'signup',
+                signupFields: ['email', 'password', 'custom_fields.newsletter_optin'],
+            },
+            {
+                ...defaultConfig,
+                customFields: [
+                    {
+                        id: 'newsletter_optin',
+                        name: 'Newsletter optin',
+                        path: 'newsletter_optin',
+                        dataType: 'checkbox'
+                    }
+                ]
+            }
+        ))
     });
 
     describe('with webauthn feature', () => {
@@ -113,7 +142,7 @@ describe('Snapshot', () => {
             allowWebAuthnLogin: true
         }, webauthnConfig))
 
-        test('signup view with webauthn or password ', generateSnapshot({
+        test('signup view with webauthn or password', generateSnapshot({
             allowWebAuthnSignup: true,
             initialScreen: 'signup'
         }, webauthnConfig))
@@ -145,72 +174,66 @@ describe('DOM testing', () => {
 
     describe('login view', () => {
         test('default config', async () => {
-            expect.assertions(7);
-            const instance = await generateComponent({});
+            expect.assertions(6);
+            await generateComponent({});
 
             // Form button
-            expect(instance.find('button').text()).toBe('login.submitLabel');
+            expect(screen.queryByText('login.submitLabel')).toBeInTheDocument();
 
             // Links
-            const links = instance.find('a');
-            expect(links).toHaveLength(2);
-            expect(links.eq(0).text()).toEqual('login.forgotPasswordLink');
-            expect(links.eq(1).text()).toEqual('login.signupLink');
+            expect(screen.queryByText('login.forgotPasswordLink')).toBeInTheDocument();
+            expect(screen.queryByText('login.signupLink')).toBeInTheDocument();
 
             // Social buttons
-            expect(instance.find('span').filter(textFilter('Facebook'))).toHaveLength(1);
-            expect(instance.find('span').filter(textFilter('Google'))).toHaveLength(1);
+            expectSocialButtons(true)
 
             // No remember me
-            expect(instance.find('[type="checkbox"]')).toHaveLength(0);
+            expect(screen.queryByTestId('auth.persistent')).not.toBeInTheDocument();
         });
 
         test('login only', async () => {
             expect.assertions(2);
-            const instance = await generateComponent({
+            await generateComponent({
                 allowSignup: false
             });
 
-            const links = instance.find('a');
-            expect(links).toHaveLength(1);
-            expect(links.eq(0).text()).toEqual('login.forgotPasswordLink');
+            expect(screen.queryByText('login.forgotPasswordLink')).toBeInTheDocument();
+            expect(screen.queryByText('login.signupLinkk')).not.toBeInTheDocument();
         });
 
         test('without forgot password', async () => {
-            expect.assertions(1);
-            const instance = await generateComponent({
+            expect.assertions(3);
+            await generateComponent({
                 allowSignup: false,
                 allowForgotPassword: false
             });
 
-            const links = instance.find('a');
-            expect(links).toHaveLength(0);
+            expectSocialButtons(true)
+
+            expect(screen.queryByText('login.forgotPasswordLink')).not.toBeInTheDocument();
         });
 
         test('with remember me', async () => {
-            expect.assertions(2);
-            const instance = await generateComponent({
+            expect.assertions(1);
+            await generateComponent({
                 showRememberMe: true
             });
 
-            expect(instance.find('a')).toHaveLength(2);
-
-            const checkbox = instance.find('label').filter(textFilter('rememberMe'));
-            expect(checkbox).toHaveLength(1);
+            expect(screen.queryByLabelText('rememberMe')).toBeInTheDocument();
         });
 
         test('with canShowPassword', async () => {
             expect.assertions(1);
-            const instance = await generateComponent({
+            await generateComponent({
                 canShowPassword: true
             });
 
-            expect(instance.find('svg')).toHaveLength(1);
+            expect(screen.queryByTestId('password').parentElement.querySelector('svg')).toBeInTheDocument();
         });
 
         test('inline social buttons', async () => {
-            expect.assertions(4);
-            const instance = await generateComponent({
+            expect.assertions(2);
+            await generateComponent({
                 theme: {
                     socialButton: {
                         inline: true
@@ -219,29 +242,26 @@ describe('DOM testing', () => {
             });
 
             // Social buttons
-            expect(instance.find('span').filter(textFilter('Facebook'))).toHaveLength(0);
-            expect(instance.find('span').filter(textFilter('Google'))).toHaveLength(0);
-            expect(instance.find('[title="Facebook"]')).toHaveLength(1);
-            expect(instance.find('[title="Google"]')).toHaveLength(1);
+            expectSocialButtons(true)
         });
 
         describe('i18n', () => {
             test('overwrite title', async () => {
                 expect.assertions(1);
                 const title = randomString();
-                const instance = await generateComponent({
+                await generateComponent({
                     i18n: {
                         'login.title': title
                     }
                 });
 
-                expect(instance.find('div').filter(textFilter(title))).toHaveLength(1);
+                expect(screen.queryByText(title)).toBeInTheDocument();
             });
 
             test('overwrite title - expanded', async () => {
                 expect.assertions(1);
                 const title = randomString();
-                const instance = await generateComponent({
+                await generateComponent({
                     i18n: {
                         login: {
                             title
@@ -249,34 +269,31 @@ describe('DOM testing', () => {
                     }
                 });
 
-                expect(instance.find('div').filter(textFilter(title))).toHaveLength(1);
+                expect(screen.queryByText(title)).toBeInTheDocument();
             });
         });
     });
 
     describe('signup view', () => {
         test('default config', async () => {
-            expect.assertions(5);
-            const instance = await generateComponent({
+            expect.assertions(4);
+            await generateComponent({
                 initialScreen: 'signup'
             });
 
             // Form button
-            expect(instance.find('button').text()).toBe('signup.submitLabel');
+            expect(screen.queryByText('signup.submitLabel')).toBeInTheDocument();
 
-            // Log in link
-            const links = instance.find('a');
-            expect(links).toHaveLength(1);
-            expect(links.eq(0).text()).toEqual('signup.loginLink');
+            // Login link
+            expect(screen.queryByText('signup.loginLink')).toBeInTheDocument();
 
             // Social buttons
-            expect(instance.find('span').filter(textFilter('Facebook'))).toHaveLength(1);
-            expect(instance.find('span').filter(textFilter('Google'))).toHaveLength(1);
+            expectSocialButtons(true)
         });
 
         test('inline social buttons', async () => {
-            expect.assertions(4);
-            const instance = await generateComponent({
+            expect.assertions(2);
+            await generateComponent({
                 initialScreen: 'signup',
                 theme: {
                     socialButton: {
@@ -286,63 +303,50 @@ describe('DOM testing', () => {
             });
 
             // Social buttons
-            expect(instance.find('span').filter(textFilter('Facebook'))).toHaveLength(0);
-            expect(instance.find('span').filter(textFilter('Google'))).toHaveLength(0);
-            expect(instance.find('[title="Facebook"]')).toHaveLength(1);
-            expect(instance.find('[title="Google"]')).toHaveLength(1);
+            expectSocialButtons(true)
         });
 
         test('with user agreement', async () => {
-            expect.assertions(3);
-            const instance = await generateComponent({
+            expect.assertions(1);
+            await generateComponent({
                 initialScreen: 'signup',
                 userAgreement: 'I agreed [terms of use](https://example.com/termsofuse).'
             });
 
-            expect(instance.find('[data-text="md"]')).toHaveLength(1);
-
-            const links = instance.find('a');
-            expect(links).toHaveLength(2);
-            expect(links.eq(0).text()).toEqual('terms of use');
+            expect(screen.queryByText('terms of use')).toBeInTheDocument();
         });
 
         test('default signup fields', async () => {
-            expect.assertions(6);
-            const instance = await generateComponent({
+            expect.assertions(5);
+            await generateComponent({
                 initialScreen: 'signup'
             });
 
-            // Social buttons
-            expect(instance.find('input')).toHaveLength(5);
-            [
-                'given_name',
-                'family_name',
-                'email',
-                'password',
-                'password_confirmation'
-            ].forEach(field => {
-                expect(instance.find(`input[name="${field}"]`)).toHaveLength(1)
-            });
+            // form inputs
+            expect(screen.queryByTestId('given_name')).toBeInTheDocument();
+            expect(screen.queryByTestId('family_name')).toBeInTheDocument();
+            expect(screen.queryByTestId('email')).toBeInTheDocument();
+            expect(screen.queryByTestId('password')).toBeInTheDocument();
+            expect(screen.queryByTestId('password_confirmation')).toBeInTheDocument();
         });
 
         test('signup fields selection', async () => {
-            expect.assertions(4);
+            expect.assertions(3);
             const signupFields = ['email', 'password', 'password_confirmation'];
-            const instance = await generateComponent({
+            await generateComponent({
                 initialScreen: 'signup',
                 signupFields
             });
 
-            expect(instance.find('input')).toHaveLength(3);
             signupFields.forEach(field => {
-                expect(instance.find(`input[name="${field}"]`)).toHaveLength(1);
+                expect(screen.queryByTestId(field)).toBeInTheDocument();
             });
         });
 
         test('signup fields selection with custom field', async () => {
-            expect.assertions(4);
+            expect.assertions(3);
             const signupFields = ['email', 'password', 'custom_fields.newsletter_optin'];
-            const instance = await generateComponent({
+            await generateComponent({
                 initialScreen: 'signup',
                 signupFields
             }, {
@@ -357,102 +361,88 @@ describe('DOM testing', () => {
                 ]
             });
 
-            expect(instance.find('input')).toHaveLength(3);
-            signupFields.forEach(field => {
-                expect(instance.find(`input[name="${field}"]`)).toHaveLength(1);
-            });
+            expect(screen.queryByTestId('email')).toBeInTheDocument();
+            expect(screen.queryByTestId('password')).toBeInTheDocument();
+            expect(screen.queryByTestId('custom_fields.newsletter_optin')).toBeInTheDocument();
         });
     });
 
     describe('with webauthn feature', () => {
         test('login view', async () => {
-            expect.assertions(5);
-            const instance = await generateComponent({ allowWebAuthnLogin: true }, webauthnConfig);
+            expect.assertions(6);
+            await generateComponent({ allowWebAuthnLogin: true }, webauthnConfig);
 
             // Social buttons
-            expect(instance.find('span').filter(textFilter('Facebook'))).toHaveLength(1);
-            expect(instance.find('span').filter(textFilter('Google'))).toHaveLength(1);
+            expectSocialButtons(true)
 
             // Email input
-            expect(instance.find('input[name="email"]')).toHaveLength(1);
+            expect(screen.queryByTestId('email')).toBeInTheDocument();
 
             // Form buttons
-            expect(instance.find('button')).toHaveLength(2);
+            expect(screen.queryByTestId('webauthn-button')).toBeInTheDocument();
+            expect(screen.queryByTestId('password-button')).toBeInTheDocument();
 
             // Sign in link
-            expect(instance.find('a').text()).toEqual('login.signupLink');
+            expect(screen.queryByText('login.signupLink')).toBeInTheDocument();
         });
 
         test('signup view with password or webauthn', async () => {
-            expect.assertions(6);
-            const instance = await generateComponent(
+            expect.assertions(5);
+            await generateComponent(
                 { allowWebAuthnSignup: true,  initialScreen: 'signup' },
                 webauthnConfig
             );
 
             // Social buttons
-            expect(instance.find('span').filter(textFilter('Facebook'))).toHaveLength(1);
-            expect(instance.find('span').filter(textFilter('Google'))).toHaveLength(1);
+            expectSocialButtons(true)
 
             // Form buttons
-            const buttons = instance.find('button');
-            expect(buttons).toHaveLength(2);
-            expect(buttons.eq(0).text()).toBe('biometrics');
-            expect(buttons.eq(1).text()).toBe('password');
+            expect(screen.queryByTestId('webauthn-button')).toBeInTheDocument();
+            expect(screen.queryByTestId('password-button')).toBeInTheDocument();
 
             // Login in link
-            expect(instance.find('a').text()).toEqual('signup.loginLink');
+            expect(screen.queryByText('signup.loginLink')).toBeInTheDocument();
         });
 
         test('signup form view with password', async () => {
-            expect.assertions(8);
-            const instance = await generateComponent(
+            expect.assertions(7);
+            await generateComponent(
                 { allowWebAuthnSignup: true,  initialScreen: 'signup-with-password' },
                 webauthnConfig
             );
 
             // Form fields
-            expect(instance.find('input')).toHaveLength(5);
-            [
-                'given_name',
-                'family_name',
-                'email',
-                'password',
-                'password_confirmation'
-            ].forEach(field => {
-                expect(instance.find(`input[name="${field}"]`)).toHaveLength(1)
-            });
+            expect(screen.queryByTestId('given_name')).toBeInTheDocument();
+            expect(screen.queryByTestId('family_name')).toBeInTheDocument();
+            expect(screen.queryByTestId('email')).toBeInTheDocument();
+            expect(screen.queryByTestId('password')).toBeInTheDocument();
+            expect(screen.queryByTestId('password_confirmation')).toBeInTheDocument();
 
             // Form button
-            expect(instance.find('button').text()).toEqual('signup.submitLabel');
+            expect(screen.queryByText('signup.submitLabel')).toBeInTheDocument();
 
             // Back link
-            expect(instance.find('a').text()).toEqual('back');
+            expect(screen.queryByText('back')).toBeInTheDocument();
         });
 
         test('signup form view with webauthn', async () => {
-            expect.assertions(7);
-            const instance = await generateComponent(
+            expect.assertions(6);
+            await generateComponent(
                 { allowWebAuthnSignup: true,  initialScreen: 'signup-with-web-authn' },
                 webauthnConfig
             );
 
             // Form fields
-            expect(instance.find('input')).toHaveLength(4);
-            [
-                'given_name',
-                'family_name',
-                'email',
-                'friendly_name'
-            ].forEach(field => {
-                expect(instance.find(`input[name="${field}"]`)).toHaveLength(1)
-            });
+            expect(screen.queryByTestId('given_name')).toBeInTheDocument();
+            expect(screen.queryByTestId('family_name')).toBeInTheDocument();
+            expect(screen.queryByTestId('email')).toBeInTheDocument();
+            expect(screen.queryByTestId('friendly_name')).toBeInTheDocument();
 
             // Form button
-            expect(instance.find('button').text()).toEqual('signup.submitLabel');
+            expect(screen.queryByText('signup.submitLabel')).toBeInTheDocument();
 
             // Back link
-            expect(instance.find('a').text()).toEqual('back');
+            expect(screen.queryByText('back')).toBeInTheDocument();
         });
     });
 });

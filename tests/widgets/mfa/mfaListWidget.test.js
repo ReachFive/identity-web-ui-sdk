@@ -1,3 +1,8 @@
+/**
+ * @jest-environment jsdom
+ */
+
+import { describe, expect, jest, test } from '@jest/globals';
 import renderer from 'react-test-renderer';
 import 'jest-styled-components';
 

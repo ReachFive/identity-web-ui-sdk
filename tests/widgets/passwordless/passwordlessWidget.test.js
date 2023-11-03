@@ -1,20 +1,19 @@
+/**
+ * @jest-environment jsdom
+ */
+
+import { describe, expect, test } from '@jest/globals';
 import renderer from 'react-test-renderer';
+import { render, screen } from '@testing-library/react';
+import '@testing-library/jest-dom'
 import 'jest-styled-components';
-import $ from 'cheerio';
-import { render } from 'enzyme';
-import Enzyme from 'enzyme';
-import Adapter from 'enzyme-adapter-react-16';
 
 import passwordlessWidget from '../../../src/widgets/passwordless/passwordlessWidget'
-
-Enzyme.configure({ adapter: new Adapter() });
-
-const textFilter = expected => (i, el) => $(el).text() === expected;
 
 const defaultConfig = { domain: 'local.reach5.net' };
 
 describe('Snapshot', () => {
-    const generateSnapshot = (options, config = defaultConfig) => () => {
+    const generateSnapshot = (options = {}, config = defaultConfig) => () => {
         const tree = passwordlessWidget(options, { config, apiClient: {} })
             .then(result => renderer.create(result).toJSON());
 
@@ -31,7 +30,7 @@ describe('Snapshot', () => {
 });
 
 describe('DOM testing', () => {
-    const generateComponent = async (options, config = defaultConfig) => {
+    const generateComponent = async (options = {}, config = defaultConfig) => {
         const result = await passwordlessWidget(options, { config, apiClient: {} });
 
         return render(result);
@@ -40,50 +39,45 @@ describe('DOM testing', () => {
     describe('passwordless', () => {
         test('default', async () => {
             expect.assertions(4);
-            const instance = await generateComponent({});
+            await generateComponent({});
 
             // Intro
-            expect(
-                instance.find('div').filter(textFilter('passwordless.intro'))
-            ).toHaveLength(1);
+            expect(screen.queryByText('passwordless.intro')).toBeInTheDocument();
 
             // Label
-            expect(instance.find('label').text()).toBe('email');
+            expect(screen.queryByLabelText('email')).toBeInTheDocument();
 
             // Input email
-            expect(instance.find('[type="email"]')).toHaveLength(1);
+            expect(screen.queryByTestId('email')).toBeInTheDocument();
 
             // Form button
-            expect(instance.find('button').text()).toBe('send');
+            expect(screen.queryByTestId('submit').textContent).toBe('send');
         });
 
         test('no intro', async () => {
-            expect.assertions(1);
-            const instance = await generateComponent({ showIntro: false });
+            expect.assertions(2);
+            await generateComponent({ showIntro: false });
 
             // Intro
-            expect(
-                instance.find('div').filter(textFilter('passwordless.intro'))
-            ).toHaveLength(0);
+            expect(screen.queryByText('passwordless.intro')).not.toBeInTheDocument();
+            expect(screen.queryByText('passwordless.sms.intro')).not.toBeInTheDocument();
         });
 
         test('by phone number', async () => {
             expect.assertions(4);
-            const instance = await generateComponent({ authType: "sms" });
+            await generateComponent({ authType: "sms" });
 
             // Intro
-            expect(
-                instance.find('div').filter(textFilter('passwordless.sms.intro'))
-            ).toHaveLength(1);
+            expect(screen.queryByText('passwordless.sms.intro')).toBeInTheDocument();
 
             // Label
-            expect(instance.find('label').text()).toBe('phoneNumber');
+            expect(screen.queryByLabelText('phoneNumber')).toBeInTheDocument();
 
             // Input phone number
-            expect(instance.find('[type="tel"]')).toHaveLength(1);
+            expect(screen.queryByTestId('phone_number')).toBeInTheDocument();
 
             // Form button
-            expect(instance.find('button').text()).toBe('send');
+            expect(screen.queryByTestId('submit').textContent).toBe('send');
         });
     });
 });

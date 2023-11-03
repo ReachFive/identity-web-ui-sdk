@@ -1,3 +1,8 @@
+/**
+ * @jest-environment jsdom
+ */
+
+import { describe, expect, jest, test } from '@jest/globals';
 import renderer from 'react-test-renderer';
 import 'jest-styled-components';
 
@@ -22,5 +27,5 @@ describe('Snapshot', () => {
         expect(tree).resolves.toMatchSnapshot();
     };
 
-    test('basic', generateSnapshot({ socialIdentities: [{ id: '123456778', provider: 'facebook', name: 'John Doe' }] }))
+    test('basic', generateSnapshot({}, undefined, [{ id: '123456778', provider: 'facebook', name: 'John Doe' }]))
 })
