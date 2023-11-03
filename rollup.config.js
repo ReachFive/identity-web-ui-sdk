@@ -3,10 +3,6 @@ import svg from '@svgr/rollup'
 import dts from 'rollup-plugin-dts'
 import esbuild from 'rollup-plugin-esbuild'
 
-import packageJson from './package.json' assert { type: 'json' };
-
-const name = packageJson.main.replace(/\.js$/, '');
-
 const bundle = config => ({
     ...config,
     input: 'src/index.ts',
@@ -23,12 +19,12 @@ export default [
         ],
         output: [
             {
-                file: `${name}.js`,
+                file: 'identity-ui.js',
                 format: 'cjs',
                 sourcemap: true,
             },
             {
-                file: `${name}.mjs`,
+                file: 'identity-ui.mjs',
                 format: 'es',
                 sourcemap: true,
             },
@@ -39,7 +35,7 @@ export default [
             dts()
         ],
         output: {
-            file: `${name}.d.ts`,
+            file: 'identity-ui.d.ts',
             format: 'es',
         },
     }),

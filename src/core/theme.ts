@@ -89,8 +89,8 @@ export const buildTheme = (themeOptions: ThemeOptions = {}): Theme => {
     }
     const link = {
         color: base.primaryColor,
-        decoration: 'none' as CSS.TextDecorationLineProperty,
-        hoverDecoration: 'none' as CSS.TextDecorationLineProperty,
+        decoration: 'none' as CSS.Property.TextDecorationLine,
+        hoverDecoration: 'none' as CSS.Property.TextDecorationLine,
         ...customLink
     }
     const input = {
@@ -106,7 +106,7 @@ export const buildTheme = (themeOptions: ThemeOptions = {}): Theme => {
         ...customInput
     }
     const button = {
-        fontWeight: 'bold' as CSS.FontWeightProperty,
+        fontWeight: 'bold' as CSS.Property.FontWeight,
         fontSize: base.fontSize,
         lineHeight: base.lineHeight,
         paddingX: base.paddingX,
