@@ -39,6 +39,9 @@ class MainView extends React.Component {
     constructor(props) {
         super(props);
         this.state = {response: undefined}
+    }
+
+    componentDidMount() {
         this.onGetStepUpToken()
     }
 
@@ -64,10 +67,14 @@ export class FaSelectionView extends React.Component {
     constructor(props) {
         super(props);
         this.state = {response: undefined}
-        if (this.props.amr.length == 1)
-            this.onChooseFa({authType: this.props.amr[0]})
     }
 
+    componentDidMount() {
+        if (this.props.amr.length == 1)
+            this.onChooseFa({authType: this.props.amr[0]})
+        else
+            this.setState({response: {}})
+    }
 
     onChooseFa = factor => this.props.apiClient.startPasswordless({
         ...factor,
@@ -76,14 +83,14 @@ export class FaSelectionView extends React.Component {
 
     render() {
         const {amr, showIntro, i18n} = this.props
-        return this.state.response === undefined ? <div></div> : amr.length == 1 ?
+        return this.state.response === undefined ? null : amr.length == 1 ?
             <VerificationCodeView {...this.state.response} {...this.props}/>
             : <div>
                 {showIntro && <Intro>{i18n('mfa.select.factor')}</Intro>}
                 <StartPasswordlessForm
                     options={amr.map(factor => ({key: factor, value: factor, label: factor}))}
                     handler={this.onChooseFa}
-                    onSuccess={(data) => this.props.goTo('verification-code', {...data, amr})}/>
+                    onSuccess={(data) => this.props.goTo('verification-code', {...data, amr, ...this.state.response})}/>
             </div>
     }
 }
