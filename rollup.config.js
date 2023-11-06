@@ -19,12 +19,12 @@ export default [
         ],
         output: [
             {
-                file: 'identity-ui.js',
+                file: 'dist/identity-ui.js',
                 format: 'cjs',
                 sourcemap: true,
             },
             {
-                file: 'identity-ui.mjs',
+                file: 'dist/identity-ui.mjs',
                 format: 'es',
                 sourcemap: true,
             },
@@ -35,7 +35,7 @@ export default [
             dts()
         ],
         output: {
-            file: 'identity-ui.d.ts',
+            file: 'dist/identity-ui.d.ts',
             format: 'es',
         },
     }),
