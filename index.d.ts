@@ -459,7 +459,7 @@ export interface MfaOptions extends AccessToken, Container, I18n, OnReady, Theme
      * Boolean to enable (`true`) or disable (`false`) whether the option to remove MFA credentials are displayed.
      * @default false
      */
-    isMfaRegisteringRequired?: boolean
+    requireMfaRegistration?: boolean
 }
 
 export interface MfaCredentialsOptions extends AccessToken, Container, I18n, OnReady, Theme {}

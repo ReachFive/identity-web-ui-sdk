@@ -81,7 +81,7 @@ class MainView extends React.Component {
     }
 
     render() {
-        const { i18n, showIntro, config, showRemoveMfaCredentials, credentials, isMfaRegisteringRequired } = this.props
+        const { i18n, showIntro, config, showRemoveMfaCredentials, credentials, requireMfaRegistration } = this.props
         const PhoneNumberInputForm = PhoneNumberRegisteringCredentialForm(config);
         const phoneNumberCredentialRegistered = credentials.find(credential => credential.type === 'sms')
         const isEmailCredentialRegistered = credentials.some(credential => credential.type === 'email')
@@ -90,7 +90,7 @@ class MainView extends React.Component {
                 <DivCredentialBlock>
                     {config.mfaEmailEnabled && !credentials.map(credential => credential.type).includes('email') &&
                         <div>
-                            {showIntro && <Intro>{isMfaRegisteringRequired ? i18n('mfa.email.explain.required') :i18n('mfa.email.explain')}</Intro>}
+                            {showIntro && <Intro>{requireMfaRegistration ? i18n('mfa.email.explain.required') :i18n('mfa.email.explain')}</Intro>}
                             <EmailRegisteringCredentialForm handler={this.onEmailRegistering} onSuccess={data => this.props.goTo('verification-code', {...data, registrationType: 'email'})}/>
                         </div>
                     }
@@ -185,7 +185,7 @@ export default createMultiViewWidget({
             .then(credentials => {
                 return deepDefaults({
                     showIntro: true,
-                    isMfaRegisteringRequired: false,
+                    requireMfaRegistration: false,
                     showRemoveMfaCredentials: true,
                     ...options,
                     ...credentials
