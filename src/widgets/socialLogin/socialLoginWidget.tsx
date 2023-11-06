@@ -18,15 +18,15 @@ export interface SocialLoginWidgetProps {
      * 
      * Tip: If you pass an empty array, social providers will not be displayed. 
      * */
-    providers: string[]
+    socialProviders?: string[]
 }
 
 export default createWidget<SocialLoginWidgetProps, SocialButtonsProps>({
     name: 'social-login',
     standalone: false,
     component: SocialButtons,
-    prepare: ({ providers, ...options }, { config }) => ({
-        providers: providers || config.socialProviders,
+    prepare: ({ socialProviders, ...options }, { config }) => ({
+        providers: (Array.isArray(socialProviders) && socialProviders) || config.socialProviders,
         ...options,
     })
 });

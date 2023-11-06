@@ -1,7 +1,7 @@
 import React, { useLayoutEffect } from 'react';
 import { AuthOptions } from '@reachfive/identity-core';
 
-import type { Config } from '../../types';
+import type { Config, Prettify } from '../../types';
 
 import { email } from '../../core/validation';
 
@@ -199,7 +199,7 @@ const EmailSentView = () => {
     return <Info>{i18n('passwordless.emailSent')}</Info>
 }
 
-export interface PasswordlessWidgetProps extends MainViewProps, VerificationCodeViewProps {}
+export type PasswordlessWidgetProps = Prettify<MainViewProps & VerificationCodeViewProps>
 
 export default createMultiViewWidget<PasswordlessWidgetProps>({
     initialView: 'main',

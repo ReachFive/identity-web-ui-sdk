@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 
-import type { Config } from '../../types';
+import type { Config, Prettify } from '../../types';
 
 import { createMultiViewWidget } from '../../components/widget/widget';
 import { Info, Intro } from '../../components/miscComponent';
@@ -51,7 +51,7 @@ const MainView = ({ accessToken, showLabels = false }: MainViewProps) => {
         }).then(() => data);
     };
 
-    const handleSuccess = (data: PhoneNumberFormData) => goTo('verificationCode', data);
+    const handleSuccess = (data: PhoneNumberFormData) => goTo<VerificationCodeViewState>('verificationCode', data);
 
     const PhoneNumberInputForm = useMemo(() => phoneNumberInputForm(config), [config]);
 
@@ -67,15 +67,11 @@ const MainView = ({ accessToken, showLabels = false }: MainViewProps) => {
     )
 }
 
-interface VerificationCodeViewProps {
+type VerificationCodeViewProps = {
     /**
      * The authorization credential JSON Web Token (JWT) used to access the ReachFive API, less than five minutes old.
      */
     accessToken: string
-    /**
-     * The phone number to verify.
-     */
-    phoneNumber: string
     /**
      * Callback function called when the request has failed.
      */
@@ -87,14 +83,22 @@ interface VerificationCodeViewProps {
     onError?: () => void
 }
 
+type VerificationCodeViewState = {
+    /**
+     * The phone number to verify.
+     */
+    phoneNumber: string
+}
+
 const VerificationCodeView = ({
     accessToken,
-    phoneNumber,
     onSuccess = () => {},
     onError = () => {},
 }: VerificationCodeViewProps) => {
     const coreClient = useReachfive()
     const i18n = useI18n()
+    const { params } = useRouting()
+    const { phoneNumber } = params as VerificationCodeViewState
 
     const handleSubmit = (data: VerificationCodeFormData) => {
         return coreClient.verifyPhoneNumber({ ...data, phoneNumber, accessToken });
@@ -112,7 +116,7 @@ const VerificationCodeView = ({
     )
 }
 
-export interface PhoneNumberEditorWidgetProps extends MainViewProps, VerificationCodeViewProps {}
+export type PhoneNumberEditorWidgetProps = Prettify<MainViewProps & VerificationCodeViewProps>
 
 export default createMultiViewWidget<PhoneNumberEditorWidgetProps>({
     initialView: 'main',
