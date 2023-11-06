@@ -50,7 +50,7 @@ class MainView extends React.Component {
     }
     render() {
         const {showStepUpStart, goTo} = this.props
-        return this.state.response === undefined ? <div></div> : <div>
+        return this.state.response === undefined ? null : <div>
             {showStepUpStart ?
                 <StartStepUpMfaButton
                     handler={this.onGetStepUpToken}
