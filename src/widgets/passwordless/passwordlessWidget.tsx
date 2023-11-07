@@ -1,5 +1,5 @@
 import React, { useLayoutEffect } from 'react';
-import { AuthOptions } from '@reachfive/identity-core';
+import { AuthOptions, SingleFactorPasswordlessParams } from '@reachfive/identity-core';
 
 import type { Config, Prettify } from '../../types';
 
@@ -62,7 +62,7 @@ interface MainViewProps {
      * The passwordless auth type (`magic_link` or `sms`).
      * @default "magic_link"
      */
-    authType?: 'magic_link' | 'sms' /** @todo: expose type SingleFactorPasswordlessParams['authType']  */
+    authType?: SingleFactorPasswordlessParams['authType']
     /**
      * Boolean that specifies whether reCAPTCHA is enabled or not.
      */
@@ -150,7 +150,7 @@ interface VerificationCodeViewProps {
      * The passwordless auth type (`magic_link` or `sms`).
      * @default "magic_link"
      */
-    authType?: 'magic_link' | 'sms' /** @todo: expose type SingleFactorPasswordlessParams['authType']  */
+    authType?: SingleFactorPasswordlessParams['authType']
     /**
      * Boolean that specifies whether reCAPTCHA is enabled or not.
      */

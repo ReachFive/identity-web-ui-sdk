@@ -1,7 +1,5 @@
 import React from 'react';
-import { Profile } from '@reachfive/identity-core';
-
-import type { Consent, UserConsent } from '../../types/consents'
+import { ConsentVersions, Profile, UserConsent } from '@reachfive/identity-core';
 
 import { UserError } from '../../helpers/errors';
 
@@ -127,15 +125,13 @@ export default createWidget<ProfileEditorWidgetProps, ProfileEditorProps>({
                 fields: computeFieldList(resolvedFields)
             })
             .then((profile: Profile) => {
-                const filteredProfileConsents: Record<string, UserConsent> | undefined = (profile.consents && Object.keys(profile.consents).length) && filterProfileConsents(fields, config.consentsVersions, profile.consents);
+                const filteredProfileConsents = (profile.consents && Object.keys(profile.consents).length > 0) ? filterProfileConsents(fields, config.consentsVersions, profile.consents) : undefined;
                 const filteredOutConsentsProfile = { ...profile, consents: filteredProfileConsents };
                 return ({
                     ...opts,
                     profile: filteredOutConsentsProfile,
                     resolvedFields: resolvedFields.filter(field => {
-                        // @ts-expect-error email is not defined on Profile
                         return (field.path !== 'email' || !filteredOutConsentsProfile.email)
-                            // @ts-expect-error sms and phoneNumber are not defined on Profile
                             && (field.path !== 'phone_number' || !config.sms || !filteredOutConsentsProfile.phoneNumber);
                     })
                 })
@@ -144,7 +140,7 @@ export default createWidget<ProfileEditorWidgetProps, ProfileEditorProps>({
 });
 
 // Filter out the profile consents with different version than the one the given consent field own
-const filterProfileConsents = (fields: (string | Field)[], consentsVersions: Record<string, Consent>, profileConsents: Record<string, UserConsent>) => {
+const filterProfileConsents = (fields: (string | Field)[], consentsVersions: Record<string, ConsentVersions>, profileConsents: Record<string, UserConsent>) => {
     return Object.keys(profileConsents)
         .filter(profileConsentKey => {
             const consentField = fields.map(f => typeof f === 'string' ? f : f.key).find(field => field.startsWith(`consents.${profileConsentKey}`));

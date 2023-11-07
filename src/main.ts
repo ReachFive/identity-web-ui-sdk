@@ -1,7 +1,5 @@
 import { createClient as createCoreClient } from '@reachfive/identity-core';
-import type { Client as CoreClient, Config, RemoteSettings } from '@reachfive/identity-core';
-
-import type { Consent } from './types/consents'
+import type { Client as CoreClient, Config, ConsentVersions, RemoteSettings } from '@reachfive/identity-core';
 
 import { UiClient } from './client';
 import { camelCaseProperties } from './helpers/transformObjectProperties';
@@ -42,7 +40,7 @@ export function createClient(creationConfig: Config): Client {
                         const config = {
                             ...creationConfig,
                             ...remoteConfig,
-                            consentsVersions: camelCaseProperties(consentsVersions) as Record<string, Consent>
+                            consentsVersions: camelCaseProperties(consentsVersions) as Record<string, ConsentVersions>
                         }
                         return new UiClient(config, coreClient, defaultI18n)
                     })

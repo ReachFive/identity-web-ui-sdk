@@ -20,15 +20,6 @@ type SelectableValue = {
     translations: LabelTranslation[]
 }
 
-export type CustomField = {
-    dataType: 'number' | 'decimal' | 'integer' | 'string' | 'date' | 'checkbox' | 'select' | 'tags' | 'object' | 'phone' | 'email'
-    id: string
-    name: string
-    nameTranslations?: LabelTranslation[]
-    path: string
-    selectableValues?: SelectableValue[]
-}
-
 export function buildFormFields(
     fields: (string | Field)[] = [],
     config: Config & { canShowPassword?: boolean, errorArchivedConsents?: boolean }

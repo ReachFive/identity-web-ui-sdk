@@ -244,7 +244,7 @@ export const passwordField = ({ label = 'password', canShowPassword = false, ...
                     errors.push(i18n('validation.required'));
                 }
                 else {
-                    if (strength < passwordPolicy.minStrength) {
+                    if (passwordPolicy && strength < passwordPolicy.minStrength) {
                         errors.push(i18n('validation.password.minStrength'));
                     }
 

@@ -1,7 +1,7 @@
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import difference from 'lodash-es/difference';
-import { AuthOptions, Profile } from '@reachfive/identity-core';
+import { AuthOptions, Identity as CoreIdentity, Profile } from '@reachfive/identity-core';
 
 import { ProviderId, providers as socialProviders } from '../../providers/providers';
 
@@ -15,12 +15,7 @@ import { createMultiViewWidget } from '../../components/widget/widget';
 import { SocialButtons } from '../../components/form/socialButtonsComponent';
 import { DefaultButton } from '../../components/form/buttonComponent';
 
-/** @todo should be defined in @reachfive/identity-core */
-interface Identity {
-    id: string,
-    provider: ProviderId,
-    username: string
-}
+type Identity = CoreIdentity & { id: string }
 
 type Unlink = (id: string) => void
 
@@ -50,7 +45,7 @@ const withIdentities = <T extends WithIdentitiesProps = WithIdentitiesProps>(
                     fields: 'social_identities{id,provider,username}'
                 })
                 .then(({ socialIdentities }: Profile) => {
-                    setIdentities(socialIdentities)
+                    setIdentities(socialIdentities as Identity[])
                 });
         }, [accessToken, coreClient])
 
@@ -112,7 +107,7 @@ const IdentityList = ({ identities = [], unlink }: IdentityListProps) => {
                 <Info>{i18n('socialAccounts.noLinkedAccount')}</Info>
             )}
             {identities.map(({ provider, id, username }) => {
-                const providerInfos = socialProviders[provider];
+                const providerInfos = socialProviders[provider as ProviderId];
                 return (
                     <Card key={id}>
                         <SocialIcon icon={providerInfos.icon} />

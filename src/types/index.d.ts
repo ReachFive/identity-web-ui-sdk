@@ -1,6 +1,4 @@
-import type { Config as CoreConfig, RemoteSettings } from '@reachfive/identity-core'
-import type { ConsentsVersions } from './consents'
-import type { CustomField } from '../components/form/formFieldFactory'
+import type { Config as CoreConfig, ConsentVersions, CustomField, RemoteSettings } from '@reachfive/identity-core'
 
 export type Prettify<T> = {
     [K in keyof T]: T[K]
@@ -15,6 +13,8 @@ export type PartialExcept<T, K extends keyof T> = Prettify<RecursivePartial<T> &
 export type RequiredProperty<T, K extends keyof T> = T & {
     [P in K]-?: T[P];
 }
+
+type ConsentsVersions = { consentsVersions: Record<string, ConsentVersions> }
 
 type CustomFields = { customFields?: CustomField[] }
 
