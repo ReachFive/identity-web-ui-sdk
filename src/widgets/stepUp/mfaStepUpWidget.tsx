@@ -57,7 +57,17 @@ const StartPasswordlessForm = createForm<StartPasswordlessFormData, StartPasswor
 })
 
 export interface MfaStepUpViewProps {
-    accessToken: string
+    /**
+     * **Not recommended**
+     * 
+     * The authorization credential JSON Web Token (JWT) used to access the ReachFive API, less than five minutes old.
+     * 
+     * If empty, using an existing SSO session cookie.
+     */
+    accessToken?: string
+    /**
+     * List of authentication options
+     */
     auth?: AuthOptions
 }
 
@@ -119,6 +129,9 @@ export const FaSelectionView = ({ showIntro = true }: FaSelectionViewProps) => {
 export type VerificationCodeViewState = Prettify<StepUpHandlerResponse & FaSelectionViewState>
 
 export type VerificationCodeViewProps = {
+    /**
+     * List of authentication options
+     */
     auth?: AuthOptions
 }
 

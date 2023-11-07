@@ -59,8 +59,19 @@ const DevicesList = ({ devices, removeWebAuthnDevice }: DevicesListProps) => {
 }
 
 export interface WebAuthnDevicesProps {
+    /**
+     * The authorization credential JSON Web Token (JWT) used to access the ReachFive API, less than five minutes old.
+     */
     accessToken: string
+    /**
+     * Registred FIDO2 devices
+     */
     devices: DeviceCredential[]
+    /**
+     * Whether the form fields's labels are displayed on the login view.
+     * 
+     * @default false
+     */
     showLabels?: boolean
 }
 

@@ -64,9 +64,25 @@ const DivCredentialBlock = styled.div`
 `;
 
 interface MainViewProps {
+    /**
+     * The authorization credential JSON Web Token (JWT) used to access the ReachFive API, less than five minutes old.
+     */
     accessToken: string
+    /**
+     * The user’s MFA credentials
+     */
     credentials: MFA.CredentialsResponse['credentials']
+    /**
+     * Show the introduction text.
+     * 
+     * @default true
+     */
     showIntro?: boolean
+    /**
+     * Boolean to enable (true) or disable (false) whether the option to remove MFA credentials are displayed.
+     * 
+     * @default true
+     */
     showRemoveMfaCredentials?: boolean
 }
 
@@ -170,7 +186,13 @@ const MainView = ({ accessToken, credentials, showIntro = true, showRemoveMfaCre
 }
 
 interface VerificationCodeViewProps {
+    /**
+     * The authorization credential JSON Web Token (JWT) used to access the ReachFive API, less than five minutes old.
+     */
     accessToken: string
+    /**
+     * Show the introduction text.
+     */
     showIntro?: boolean
 }
 

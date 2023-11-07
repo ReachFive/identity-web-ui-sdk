@@ -34,7 +34,15 @@ const VerificationCodeInputForm = createForm<VerificationCodeFormData>({
 });
 
 interface MainViewProps {
+    /**
+     * The authorization credential JSON Web Token (JWT) used to access the ReachFive API, less than five minutes old.
+     */
     accessToken: string
+     /**
+     * Whether the form fields's labels are displayed on the login view.
+     * 
+     * @default false
+     */
     showLabels?: boolean
 }
 
