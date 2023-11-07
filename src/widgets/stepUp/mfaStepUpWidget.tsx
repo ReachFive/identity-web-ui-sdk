@@ -119,11 +119,10 @@ export const FaSelectionView = ({ showIntro = true }: FaSelectionViewProps) => {
 export type VerificationCodeViewState = Prettify<StepUpHandlerResponse & FaSelectionViewState>
 
 export type VerificationCodeViewProps = {
-    accessToken: string
     auth?: AuthOptions
 }
 
-export const VerificationCodeView = ({ accessToken, auth }: VerificationCodeViewProps) => {
+export const VerificationCodeView = ({ auth }: VerificationCodeViewProps) => {
     const coreClient = useReachfive()
     const i18n = useI18n()
     const { params } = useRouting()
@@ -131,7 +130,7 @@ export const VerificationCodeView = ({ accessToken, auth }: VerificationCodeView
 
     const handleSubmit = (data: VerificationCodeInputFormData) =>
         coreClient
-            .verifyMfaPasswordless({challengeId, verificationCode: data.verificationCode, accessToken})
+            .verifyMfaPasswordless({challengeId, verificationCode: data.verificationCode})
             // @ts-expect-error AuthResult is too complex and is not representative of the real response of this request 
             .then(resp => window.location.replace( auth.redirectUri + "?" + toQueryString(resp)))
 
