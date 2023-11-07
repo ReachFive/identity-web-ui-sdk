@@ -75,9 +75,9 @@ export class FaSelectionView extends React.Component {
 
 export class VerificationCodeView extends React.Component {
     handleSubmit = data => {
-        const {apiClient, auth, challengeId, accessToken} = this.props;
+        const {apiClient, auth, challengeId} = this.props;
         return apiClient
-            .verifyMfaPasswordless({challengeId, verificationCode: data.verificationCode, accessToken})
+            .verifyMfaPasswordless({challengeId, verificationCode: data.verificationCode})
             .then(resp =>
                 window.location.replace( auth.redirectUri + "?" + toQueryString(resp)),
             )
