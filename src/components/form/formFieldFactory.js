@@ -7,14 +7,14 @@ import { Validator, email, integer, float, checked } from '../../core/validation
 import { UserError } from '../../helpers/errors';
 import { camelCasePath } from '../../helpers/transformObjectProperties';
 
-import { simpleField } from './fields/simpleField';
+import simpleField from './fields/simpleField';
 import selectField from './fields/selectField';
 import checkboxField from './fields/checkboxField';
 import dateField from './fields/dateField';
 import birthdateField from './fields/birthdayField';
 import phoneNumberField from './fields/phoneNumberField';
-import { passwordField } from './fields/passwordField';
-import { simplePasswordField } from './fields/simplePasswordField';
+import passwordField from './fields/passwordField';
+import simplePasswordField from './fields/simplePasswordField';
 import consentField from './fields/consentField';
 
 const predefinedFields = {

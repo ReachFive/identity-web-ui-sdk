@@ -49,3 +49,5 @@ export const simpleField = ({ type, placeholder, autoComplete, ...config }) => c
         autoComplete
     }
 });
+
+export default simpleField;
