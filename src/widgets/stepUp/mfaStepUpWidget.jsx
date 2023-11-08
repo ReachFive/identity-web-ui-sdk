@@ -79,7 +79,7 @@ export class FaSelectionView extends React.Component {
     onChooseFa = factor => this.props.apiClient.startPasswordless({
         ...factor,
         stepUp: this.props.token,
-    }).then(res => this.setState({response: res}))
+    }).then(res => this.setState({response: {...res, ...factor}}))
 
     render() {
         const {amr, showIntro, i18n} = this.props
