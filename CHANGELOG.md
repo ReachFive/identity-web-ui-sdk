@@ -7,6 +7,16 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.22.0] - 2023-11-09
+
+### Added
+
+- User interface enhancement on date type field.
+
+### Fixes
+
+- AccessToken is no more required in passwordless code verification workflow.
+
 ## [1.21.0] - 2023-10-12
 
 ### Added
@@ -365,7 +375,9 @@ The eye icon is now correctly displayed in the Auth widget.
 
 First version of the SDK Web UI.
 
-[Unreleased]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.21.0...HEAD
+[Unreleased]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.22.0...HEAD
+
+[1.22.0]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.21.0...v1.22.0
 
 [1.21.0]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.20.2...v1.21.0
 
