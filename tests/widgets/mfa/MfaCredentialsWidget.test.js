@@ -43,9 +43,8 @@ describe('DOM testing', () => {
     describe('mfaCredentials', () => {
         test('default', async () => {
             const instance = await generateComponent({showIntro: true, showRemoveMfaCredentials: true}, defaultConfig, [
-                    { type: 'sms', phoneNumber: '33612345678', friendlyName: 'identifier', createdAt: '2022-09-21' },
-                    { type: 'email', email: 'root@reach5.co', friendlyName: 'identifier', createdAt: '2022-09-21' }
-                ]);
+                    { type: 'sms', phoneNumber: '33612345678', friendlyName: 'identifier', createdAt: '2022-09-21' }
+            ]);
             // Intro
             expect(
                 instance.find('div').filter(textFilter('mfa.email.explain'))

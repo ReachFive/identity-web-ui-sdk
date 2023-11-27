@@ -111,6 +111,7 @@ export const Check = withTheme(styled(({ checked, onSelect, label, radio, name, 
             checked={checked}
             name={name}
             onChange={onSelect}
+            style={ radio && {appearance: "radio"}}
             required={required}
             value={value}/>
         {label}
