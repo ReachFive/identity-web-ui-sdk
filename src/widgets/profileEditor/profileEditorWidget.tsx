@@ -2,6 +2,7 @@ import React from 'react';
 import { ConsentVersions, Profile, UserConsent } from '@reachfive/identity-core';
 
 import { UserError } from '../../helpers/errors';
+import { camelCaseProperties } from '../../helpers/transformObjectProperties';
 
 import { createWidget } from '../../components/widget/widget';
 import { createForm } from '../../components/form/formComponent';
@@ -70,6 +71,8 @@ const ProfileEditor = ({
             redirectUrl: redirectUrl
         });
 
+    console.log('profile', profile)
+
     return (
         <ProfileEditorForm
             handler={handleSubmit}
@@ -124,6 +127,7 @@ export default createWidget<ProfileEditorWidgetProps, ProfileEditorProps>({
                 accessToken,
                 fields: computeFieldList(resolvedFields)
             })
+            .then(profile => camelCaseProperties(profile) as Profile) /** @todo check api response key format in sdk core */
             .then((profile: Profile) => {
                 const filteredProfileConsents = (profile.consents && Object.keys(profile.consents).length > 0) ? filterProfileConsents(fields, config.consentsVersions, profile.consents) : undefined;
                 const filteredOutConsentsProfile = { ...profile, consents: filteredProfileConsents };
