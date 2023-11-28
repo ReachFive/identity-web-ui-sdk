@@ -144,7 +144,7 @@ function customFieldComponent(customField, cfg, config) {
     } else if (customField.dataType === 'select') {
         return selectField({
             ...baseConfig,
-            values: customField.selectableValues
+            values: customField.selectableValues ?? []
         })
     } else if (customField.dataType === 'email') {
         return simpleField({
