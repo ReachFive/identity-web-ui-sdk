@@ -44,15 +44,9 @@ describe('DOM testing', () => {
 
     describe('mfaCredentials', () => {
         test('default', async () => {
-            await generateComponent(
-                { showIntro: true, showRemoveMfaCredentials: true },
-                defaultConfig,
-                [
-                    { type: 'sms', phoneNumber: '33612345678', friendlyName: 'identifier', createdAt: '2022-09-21' },
-                    { type: 'email', email: 'root@reach5.co', friendlyName: 'identifier', createdAt: '2022-09-21' }
-                ]
-            );
-            
+            await generateComponent({showIntro: true, showRemoveMfaCredentials: true}, defaultConfig, [
+                { type: 'sms', phoneNumber: '33612345678', friendlyName: 'identifier', createdAt: '2022-09-21' }
+            ]);
             // Intro
             expect(screen.queryByText('mfa.email.explain')).toBeInTheDocument();
 

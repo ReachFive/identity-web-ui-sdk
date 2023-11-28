@@ -132,6 +132,7 @@ export const Check = styled(({ checked, onSelect, label, radio, name, className,
             checked={checked}
             name={name}
             onChange={onSelect}
+            style={radio ? {appearance: 'radio'} : undefined}
             required={required}
             value={value}
             data-testid={dataTestId}

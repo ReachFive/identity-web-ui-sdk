@@ -73,6 +73,12 @@ interface MainViewProps {
      */
     credentials: MFA.CredentialsResponse['credentials']
     /**
+     * Boolean to enable (`true`) or disable (`false`) whether the option to remove MFA credentials are displayed.
+     * 
+     * @default false
+     */
+    requireMfaRegistration?: boolean
+    /**
      * Show the introduction text.
      * 
      * @default true
@@ -86,7 +92,7 @@ interface MainViewProps {
     showRemoveMfaCredentials?: boolean
 }
 
-const MainView = ({ accessToken, credentials, showIntro = true, showRemoveMfaCredentials = true }: MainViewProps) => {
+const MainView = ({ accessToken, credentials, requireMfaRegistration = true, showIntro = true, showRemoveMfaCredentials = true }: MainViewProps) => {
     const coreClient = useReachfive()
     const config = useConfig()
     const i18n = useI18n()
@@ -128,9 +134,9 @@ const MainView = ({ accessToken, credentials, showIntro = true, showRemoveMfaCre
     return (
         <div>
             <DivCredentialBlock>
-                {config.mfaEmailEnabled &&
+                {config.mfaEmailEnabled && !credentials.map(credential => credential.type).includes('email') &&
                     <div>
-                        {showIntro && <Intro>{i18n('mfa.email.explain')}</Intro>}
+                        {showIntro && <Intro>{requireMfaRegistration ? i18n('mfa.email.explain.required') :i18n('mfa.email.explain')}</Intro>}
                         <EmailRegisteringCredentialForm
                             handler={onEmailRegistering}
                             onSuccess={(data: Awaited<ReturnType<typeof onEmailRegistering>>) => goTo<VerificationCodeViewState>('verification-code', {...data, registrationType: 'email'})}

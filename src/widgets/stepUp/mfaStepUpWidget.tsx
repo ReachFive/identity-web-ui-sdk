@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { AuthOptions, MFA, PasswordlessResponse } from '@reachfive/identity-core';
 import { PasswordlessParams } from '@reachfive/identity-core/es/main/oAuthClient';
 
@@ -56,7 +56,7 @@ const StartPasswordlessForm = createForm<StartPasswordlessFormData, StartPasswor
     }
 })
 
-export interface MfaStepUpViewProps {
+export interface MainViewProps {
     /**
      * **Not recommended**
      * 
@@ -69,77 +69,105 @@ export interface MfaStepUpViewProps {
      * List of authentication options
      */
     auth?: AuthOptions
+    /**
+     * Show the introduction text.
+     * 
+     * @default true
+     */
+    showIntro?: boolean
+    /**
+     * Show the stepup button. Unnecessary for console use
+     * 
+     * @default true
+     */
+    showStepUpStart?: boolean
 }
 
-export const MfaStepUpView = ({ accessToken, auth }: MfaStepUpViewProps) => {
+export const MainView = ({ accessToken, auth, showIntro = true, showStepUpStart = true }: MainViewProps) => {
     const coreClient = useReachfive()
     const { goTo } = useRouting()
 
-    const onGetStepUpToken = () => 
-        coreClient.getMfaStepUpToken({
-            options: auth,
-            accessToken: accessToken
-        })
+    const [response, setResponse] = useState<MFA.StepUpResponse | undefined>()
 
-    return (
+    const onGetStepUpToken = () => 
+        coreClient
+            .getMfaStepUpToken({
+                options: auth,
+                accessToken: accessToken
+            })
+            .then(res => setResponse(res))
+
+    return response === undefined ? null : (
         <div>
-            <StartStepUpMfaButton
-                handler={onGetStepUpToken}
-                onSuccess={(data: MFA.StepUpResponse) => goTo<FaSelectionViewState>('fa-selection', { ...data })}
-            />
+            {showStepUpStart ?
+                <StartStepUpMfaButton
+                    handler={onGetStepUpToken}
+                    onSuccess={(data: MFA.StepUpResponse) => goTo<FaSelectionViewState>('fa-selection', { ...data })}
+                /> :
+                <FaSelectionView {...response} showIntro={showIntro} />
+            } 
         </div>
     )
 }
 
 export type FaSelectionViewState = MFA.StepUpResponse
 
-export type FaSelectionViewProps = { showIntro?: boolean }
+export type FaSelectionViewProps = Prettify<Partial<MFA.StepUpResponse> & {
+    showIntro?: boolean
+}>
 
  // Unlike single factor authentication, StepUp request always returns a challengeId
 type StepUpResponse = RequiredProperty<PasswordlessResponse, 'challengeId'>
 
 type StepUpHandlerResponse = StepUpResponse & StartPasswordlessFormData
 
-export const FaSelectionView = ({ showIntro = true }: FaSelectionViewProps) => {
+export const FaSelectionView = (props: FaSelectionViewProps) => {
     const coreClient = useReachfive()
     const i18n = useI18n()
     const { goTo, params } = useRouting()
-    const { amr, token } = params as FaSelectionViewState
+    const state = params as FaSelectionViewState
 
-    const onChooseFa = (factor: StartPasswordlessFormData): Promise<StepUpHandlerResponse> =>
+    const { amr, showIntro = true, token } = { ...props, ...state }
+
+    const [response, setResponse] = useState<StepUpHandlerResponse | undefined>()
+
+    const onChooseFa = (factor: StartPasswordlessFormData): Promise<void> =>
         coreClient
             .startPasswordless({ ...factor, stepUp: token, })
-            .then(resp => ({
+            .then(resp => setResponse({
                 ...(resp as StepUpResponse),
                 ...factor,
-            }) )
+            }))
 
     return (
-        <div>
-            {showIntro && <Intro>{i18n('mfa.select.factor')}</Intro>}
-            <StartPasswordlessForm
-                options={amr.map(factor => ({ key: factor, value: factor, label: factor }))}
-                handler={onChooseFa}
-                onSuccess={(data: StepUpHandlerResponse) => goTo<VerificationCodeViewState>('verification-code', { ...data, amr, token })
-            }/>
-        </div>
+        response === undefined ? null : amr.length == 1 ?
+            <VerificationCodeView {...response} />
+            : <div>
+                {showIntro && <Intro>{i18n('mfa.select.factor')}</Intro>}
+                <StartPasswordlessForm
+                    options={amr.map(factor => ({key: factor, value: factor, label: factor}))}
+                    handler={onChooseFa}
+                    onSuccess={(data) => goTo<VerificationCodeViewState>('verification-code', {...data, amr, ...response})}/>
+            </div>
     )
 }
 
-export type VerificationCodeViewState = Prettify<StepUpHandlerResponse & FaSelectionViewState>
+export type VerificationCodeViewState = Prettify<StepUpHandlerResponse>
 
-export type VerificationCodeViewProps = {
+export type VerificationCodeViewProps = Prettify<Partial<StepUpHandlerResponse> & {
     /**
      * List of authentication options
      */
     auth?: AuthOptions
-}
+}>
 
-export const VerificationCodeView = ({ auth }: VerificationCodeViewProps) => {
+export const VerificationCodeView = (props: VerificationCodeViewProps) => {
     const coreClient = useReachfive()
     const i18n = useI18n()
     const { params } = useRouting()
-    const { authType, challengeId } = params as VerificationCodeViewState
+    const state = params as VerificationCodeViewState
+
+    const { auth, authType, challengeId } = { ...props, ...state }
 
     const handleSubmit = (data: VerificationCodeInputFormData) =>
         coreClient
@@ -149,21 +177,21 @@ export const VerificationCodeView = ({ auth }: VerificationCodeViewProps) => {
 
     return (
         <div>
-            {authType === "sms" && <Info>{i18n('passwordless.sms.verification.intro')}</Info>}
-            {authType === "email" && <Info>{i18n('passwordless.email.verification.intro')}</Info>}
+            {authType === 'sms' && <Info>{i18n('passwordless.sms.verification.intro')}</Info>}
+            {authType === 'email' && <Info>{i18n('passwordless.email.verification.intro')}</Info>}
             <VerificationCodeInputForm handler={handleSubmit}/>
         </div>
     )
 }
 
-export type MfaStepUpProps = MfaStepUpViewProps & FaSelectionViewProps & VerificationCodeViewProps
+export type MfaStepUpProps = MainViewProps & FaSelectionViewProps & VerificationCodeViewProps
 
 export type MfaStepUpWidgetProps = MfaStepUpProps
 
 export default createMultiViewWidget<MfaStepUpWidgetProps, MfaStepUpProps>({
-    initialView: 'mfa-step-up',
+    initialView: 'main',
     views: {
-        'mfa-step-up': MfaStepUpView,
+        'main': MainView,
         'fa-selection': FaSelectionView,
         'verification-code': VerificationCodeView
     },
