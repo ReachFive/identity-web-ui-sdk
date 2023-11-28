@@ -2,6 +2,7 @@ import React from 'react';
 
 import { isLower, isUpper, isDigit } from 'char-info';
 import { isEqual } from 'lodash-es';
+import type { PasswordPolicy } from '@reachfive/identity-core'
 import zxcvbn from '@reachfive/zxcvbn';
 import styled, { DefaultTheme } from 'styled-components';
 
@@ -174,10 +175,12 @@ class PasswordField extends React.Component<PasswordFieldProps, PasswordFieldSta
     }
 }
 
-function listEnabledRules(i18n: I18nResolver, passwordPolicy: Config['passwordPolicy']): Record<string, PasswordRule> {
-    if (!passwordPolicy) return {};
+type RuleKeys = Exclude<keyof PasswordPolicy, 'minStrength' | 'allowUpdateWithAccessTokenOnly'>
 
-    const rules: Record<string, PasswordRule> = {
+function listEnabledRules(i18n: I18nResolver, passwordPolicy: Config['passwordPolicy']): Record<RuleKeys, PasswordRule> {
+    if (!passwordPolicy) return {} as Record<RuleKeys, PasswordRule>;
+
+    const rules: Record<RuleKeys, PasswordRule> = {
         minLength: {
             label: i18n('validation.password.minLength', { min: passwordPolicy.minLength }),
             verify: (password: string) => password.length >= passwordPolicy.minLength
@@ -200,10 +203,10 @@ function listEnabledRules(i18n: I18nResolver, passwordPolicy: Config['passwordPo
         }
     };
 
-    return Object.keys(rules).reduce<Record<string, PasswordRule>>((enabledRules, key) => {
-        if (key in passwordPolicy) enabledRules[key] = rules[key];
+    return Object.keys(rules).reduce<Record<RuleKeys, PasswordRule>>((enabledRules, key) => {
+        if (key in passwordPolicy && passwordPolicy[key as RuleKeys]) enabledRules[key as RuleKeys] = rules[key as RuleKeys];
         return enabledRules;
-    }, {});
+    }, {} as Record<RuleKeys, PasswordRule>);
 }
 
 function getPasswordStrength(blacklist: string[], fieldValue?: string) {
