@@ -71,8 +71,6 @@ const ProfileEditor = ({
             redirectUrl: redirectUrl
         });
 
-    console.log('profile', profile)
-
     return (
         <ProfileEditorForm
             handler={handleSubmit}

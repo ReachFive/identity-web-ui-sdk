@@ -143,7 +143,7 @@ exports[`Snapshot profile editor basic 1`] = `
         readOnly={false}
         required={true}
         title="givenName"
-        value=""
+        value="John"
       />
     </div>
     <div
@@ -166,7 +166,7 @@ exports[`Snapshot profile editor basic 1`] = `
         readOnly={false}
         required={true}
         title="familyName"
-        value=""
+        value="Do"
       />
     </div>
     <button
