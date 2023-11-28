@@ -92,7 +92,7 @@ interface MainViewProps {
     showRemoveMfaCredentials?: boolean
 }
 
-const MainView = ({ accessToken, credentials, requireMfaRegistration = true, showIntro = true, showRemoveMfaCredentials = true }: MainViewProps) => {
+const MainView = ({ accessToken, credentials, requireMfaRegistration = false, showIntro = true, showRemoveMfaCredentials = true }: MainViewProps) => {
     const coreClient = useReachfive()
     const config = useConfig()
     const i18n = useI18n()
@@ -134,7 +134,7 @@ const MainView = ({ accessToken, credentials, requireMfaRegistration = true, sho
     return (
         <div>
             <DivCredentialBlock>
-                {config.mfaEmailEnabled && !credentials.map(credential => credential.type).includes('email') &&
+                {config.mfaEmailEnabled && !isEmailCredentialRegistered &&
                     <div>
                         {showIntro && <Intro>{requireMfaRegistration ? i18n('mfa.email.explain.required') :i18n('mfa.email.explain')}</Intro>}
                         <EmailRegisteringCredentialForm
