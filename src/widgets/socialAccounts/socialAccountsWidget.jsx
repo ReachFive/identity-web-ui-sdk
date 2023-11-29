@@ -82,7 +82,10 @@ export default createMultiViewWidget({
         auth: {},
         providers: config.socialProviders,
         ...options,
-        getAvailableProviders: identities => difference(options.providers || config.socialProviders, identities.map(i => i.provider))
+        getAvailableProviders: identities => {
+            const providerNames = (options.providers || config.socialProviders).map(provider => provider.split(':').shift())
+            return difference(providerNames, identities.map(i => i.provider))
+        }
     }),
     initialState: {
         identities: []
