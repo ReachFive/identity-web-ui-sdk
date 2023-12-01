@@ -12,9 +12,9 @@ import simplePasswordField from '../../components/form/fields/simplePasswordFiel
 import { useReachfive } from '../../contexts/reachfive';
 
 export type PasswordEditorFormData = {
-    old_password: string,
     password: string,
-    password_confirmation: string
+    passwordConfirmation: string
+    oldPassword: string,
 }
 
 interface PasswordEditorFormProps {
@@ -97,8 +97,7 @@ const PasswordEditor = ({
 }: PasswordEditorProps) => {
     const coreClient = useReachfive()
 
-    const handleSubmit = (data: PasswordEditorFormData) => {
-        const { password_confirmation: _, password, old_password: oldPassword } = data
+    const handleSubmit = ({ password, oldPassword }: PasswordEditorFormData) => {
         return coreClient.updatePassword({
             password,
             oldPassword,
