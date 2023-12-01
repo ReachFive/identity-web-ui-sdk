@@ -26,6 +26,13 @@ interface WithIdentitiesProps {
     unlink: Unlink
 }
 
+function findAvailableProviders(providers: string[], identities: Identity[]): string[] {
+    return difference(
+        providers.map(provider => provider.split(':').shift()).filter((name): name is string => !!name),
+        identities.map(i => i.provider)
+    )
+} 
+
 const withIdentities = <T extends WithIdentitiesProps = WithIdentitiesProps>(
     WrappedComponent: React.ComponentType<T>
 ) => {
@@ -109,7 +116,7 @@ const IdentityList = ({ identities = [], unlink }: IdentityListProps) => {
             {identities.map(({ provider, id, username }) => {
                 const providerInfos = socialProviders[provider as ProviderId];
                 return (
-                    <Card key={id}>
+                    <Card key={id} data-testid={`identity-${provider}`}>
                         <SocialIcon icon={providerInfos.icon} />
                         <span>{providerInfos.name}</span>
                         &nbsp;
@@ -137,7 +144,7 @@ interface SocialAccountsProps {
 const SocialAccounts = withIdentities(({ identities = [], providers, unlink }: SocialAccountsProps) => {
     const i18n = useI18n()
     const { goTo } = useRouting()
-    const availableProviders = difference(providers, identities.map(i => i.provider))
+    const availableProviders = findAvailableProviders(providers, identities)
     return (
         <Fragment>
             <IdentityList identities={identities} unlink={unlink} />
@@ -162,7 +169,7 @@ interface LinkAccountProps {
 
 const LinkAccount = withIdentities(({ auth, accessToken, identities = [], providers }: LinkAccountProps) => {
     const i18n = useI18n()
-    const availableProviders = difference(providers, identities.map(i => i.provider))
+    const availableProviders = findAvailableProviders(providers, identities)
     return (
         <Fragment>
             <SocialButtons providers={availableProviders} auth={{ ...auth, accessToken }} />
