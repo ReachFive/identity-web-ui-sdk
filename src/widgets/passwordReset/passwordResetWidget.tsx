@@ -42,8 +42,7 @@ const MainView = ({
     const i18n = useI18n()
     const { goTo } = useRouting()
 
-    const handleSubmit = (data: PasswordEditorFormData) => {
-        const { password, password_confirmation: _ } = data
+    const handleSubmit = ({ password }: PasswordEditorFormData) => {
         return coreClient.updatePassword({
             password,
             ...authentication
