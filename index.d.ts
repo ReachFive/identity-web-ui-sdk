@@ -373,7 +373,7 @@ export interface SocialAccountsOptions extends AccessToken, Container, I18n, OnR
      *
      * Tip: If you pass an empty array, social providers will not be displayed.
      * */
-    socialProviders?: ProviderId[]
+    providers?: ProviderId[]
 
     /** List of authentication options */
     auth?: CoreAuthOptions
