@@ -26,6 +26,7 @@ export interface Config {
     clientId: string,
     domain: string,
     language?: string,
+    locale?: string
 }
 
 export interface WidgetInstance {
