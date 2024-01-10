@@ -9,9 +9,19 @@
     },
     "license": "MIT",
     "type": "module",
-    "main": "dist/identity-ui.js",
-    "module": "dist/identity-ui.mjs",
-    "types": "dist/identity-ui.d.ts",
+    "main": "cjs/identity-ui.js",
+    "module": "es/identity-ui.js",
+    "types": "types/identity-ui.d.ts",
+    "exports": {
+        "require": {
+            "types": "./types/identity-ui.d.js",
+            "default": "./cjs/identity-ui.js"
+        },
+        "import": {
+            "types": "./types/identity-ui.d.ts",
+            "default": "./es/identity-ui.js"
+        }
+    },
     "scripts": {
         "build": "npx rollup --config",
         "watch": "npm run build -- --watch",
@@ -44,6 +54,7 @@
         "@babel/preset-react": "^7.22.15",
         "@babel/preset-typescript": "^7.23.2",
         "@jest/globals": "^29.7.0",
+        "@rollup/plugin-terser": "^0.4.4",
         "@rollup/plugin-url": "^8.0.2",
         "@svgr/rollup": "^8.1.0",
         "@testing-library/jest-dom": "^6.1.4",
