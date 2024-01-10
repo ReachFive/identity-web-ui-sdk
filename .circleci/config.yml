@@ -7,7 +7,7 @@ version: 2
 defaults: &defaults
   working_directory: ~/repo
   docker:
-    - image: circleci/node:15
+    - image: circleci/node
 
 jobs:
   test:
@@ -15,6 +15,7 @@ jobs:
     steps:
       - checkout
       - run: npm ci
+      - run: npm install @rollup/rollup-linux-x64-gnu
       - run: npm run build
       - run: npm run test
       - persist_to_workspace:

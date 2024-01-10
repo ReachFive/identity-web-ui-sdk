@@ -17,7 +17,7 @@ const CheckboxField = props => {
         label={label}
         {...pick(validation, 'error')}
         required={required}
-        data-testid={path} />
+        dataTestId={path} />
 };
 
 export default function checkboxField(config) {

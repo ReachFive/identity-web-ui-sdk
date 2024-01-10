@@ -8,12 +8,14 @@ import styled from 'styled-components';
 
 import { PrimaryButton } from './buttonComponent';
 import { Error } from '../miscComponent';
-import { withI18n } from '../widget/widgetContext';
+import { withConfig } from '../../contexts/config'
+import { withI18n } from '../../contexts/i18n';
 import { logError } from '../../helpers/logger';
 
 const Form = styled.form`
     position: relative;
 `;
+
 
 export function createForm(config) {
     class FormComponent extends React.Component {
@@ -228,5 +230,5 @@ export function createForm(config) {
         }
     }
 
-    return withI18n(FormComponent);
+    return withConfig(withI18n(FormComponent));
 }

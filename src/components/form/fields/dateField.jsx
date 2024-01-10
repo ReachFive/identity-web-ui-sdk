@@ -79,7 +79,7 @@ const DateField = ({ i18n, inputId, label, locale, onChange, path, required, sho
                     onChange={handleDayChange}
                     placeholder={i18n('day')}
                     options={daysInMonth.map(day => ({ value: day, label: day }))}
-                    data-testid={`${path}.day`}
+                    dataTestId={`${path}.day`}
                     aria-label={i18n('day')}
                 />
             </InputCol>
@@ -94,7 +94,7 @@ const DateField = ({ i18n, inputId, label, locale, onChange, path, required, sho
                     onChange={handleMonthChange}
                     placeholder={i18n('month')}
                     options={months.map((month, index) => ({ value: index + 1, label: month }))}
-                    data-testid={`${path}.month`}
+                    dataTestId={`${path}.month`}
                     aria-label={i18n('month')}
                 />
             </InputCol>
@@ -111,7 +111,7 @@ const DateField = ({ i18n, inputId, label, locale, onChange, path, required, sho
                     required={required}
                     onChange={handleYearChange}
                     placeholder={i18n('year')}
-                    data-testid={`${path}.year`}
+                    dataTestId={`${path}.year`}
                     aria-label={i18n('year')}
                 />
             </InputCol>

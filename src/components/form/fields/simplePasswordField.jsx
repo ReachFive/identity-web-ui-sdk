@@ -80,3 +80,5 @@ export const simplePasswordField = ({ placeholder, autoComplete, canShowPassword
         canShowPassword
     }
 });
+
+export default simplePasswordField;

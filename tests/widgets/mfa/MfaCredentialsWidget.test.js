@@ -1,13 +1,14 @@
-import Enzyme, {render} from "enzyme";
-import Adapter from "enzyme-adapter-react-16";
-import renderer from "react-test-renderer";
+/**
+ * @jest-environment jsdom
+ */
+
+import { describe, expect, jest, test } from '@jest/globals';
+import renderer from 'react-test-renderer';
+import { render, screen } from '@testing-library/react';
+import '@testing-library/jest-dom'
 import MfaCredentialsWidget from "../../../src/widgets/mfa/MfaCredentialsWidget";
-import $ from "cheerio";
 
-
-Enzyme.configure({ adapter: new Adapter() });
 const defaultConfig = { domain: 'local.reach5.net', mfaEmailEnabled: true, mfaSmsEnabled: true };
-const textFilter = expected => (i, el) => $(el).text() === expected;
 
 describe('Snapshot', () => {
     const generateSnapshot = ({options = {showIntro: true}, config = defaultConfig, credentials }) => () => {
@@ -29,8 +30,9 @@ describe('Snapshot', () => {
         ]}));
     });
 });
+
 describe('DOM testing', () => {
-    const generateComponent = async (options, config = defaultConfig, credentials) => {
+    const generateComponent = async (options = {}, config = defaultConfig, credentials) => {
 
         const apiClient = {
             listMfaCredentials: jest.fn().mockReturnValueOnce(Promise.resolve({ credentials }))
@@ -41,34 +43,83 @@ describe('DOM testing', () => {
     };
 
     describe('mfaCredentials', () => {
-        test('default', async () => {
-            const instance = await generateComponent({showIntro: true, showRemoveMfaCredentials: true}, defaultConfig, [
-                    { type: 'sms', phoneNumber: '33612345678', friendlyName: 'identifier', createdAt: '2022-09-21' }
-            ]);
+        test('no credentials', async () => {
+            await generateComponent({showIntro: true, showRemoveMfaCredentials: true}, defaultConfig, []);
             // Intro
-            expect(
-                instance.find('div').filter(textFilter('mfa.email.explain'))
-            ).toHaveLength(1);
+            expect(screen.queryByText('mfa.email.explain')).toBeInTheDocument();
 
             // Form button sms
-            expect(
-                instance.find('button').filter(textFilter('mfa.register.phoneNumber'))
-            ).toHaveLength(1);
+            expect(screen.queryByText('mfa.register.phoneNumber')).toBeInTheDocument();
 
-            // // Form button email
-            expect(
-                instance.find('button').filter(textFilter('mfa.register.email'))
-            ).toHaveLength(1);
+            // Form button email
+            expect(screen.queryByText('mfa.register.email')).toBeInTheDocument();
 
-            // // Form button remove email
-            expect(
-                instance.find('button').filter(textFilter('mfa.remove.email'))
-            )
+            // Form button remove email
+            expect(screen.queryByText('mfa.remove.email')).not.toBeInTheDocument();
 
-            // // Form button remove phone number
-            expect(
-                instance.find('button').filter(textFilter('mfa.remove.phoneNumber'))
-            )
+            // Form button remove phone number
+            expect(screen.queryByText('mfa.remove.phoneNumber')).not.toBeInTheDocument();
+        });
+
+        test('requireMfaRegistration', async () => {
+            await generateComponent({showIntro: true, showRemoveMfaCredentials: true, requireMfaRegistration: true}, defaultConfig, [
+                { type: 'sms', phoneNumber: '33612345678', friendlyName: 'identifier', createdAt: '2022-09-21' },
+            ]);
+            // Intro
+            expect(screen.queryByText('mfa.email.explain.required')).toBeInTheDocument();
+
+            // Form button sms
+            expect(screen.queryByText('mfa.register.phoneNumber')).toBeInTheDocument();
+
+            // Form button email
+            expect(screen.queryByText('mfa.register.email')).toBeInTheDocument();
+
+            // Form button remove email
+            expect(screen.queryByText('mfa.remove.email')).not.toBeInTheDocument();
+
+            // Form button remove phone number
+            expect(screen.queryByText('mfa.remove.phoneNumber')).toBeInTheDocument();
+        });
+
+        test('only sms credential', async () => {
+            await generateComponent({showIntro: true, showRemoveMfaCredentials: true}, defaultConfig, [
+                { type: 'sms', phoneNumber: '33612345678', friendlyName: 'identifier', createdAt: '2022-09-21' },
+            ]);
+            // Intro
+            expect(screen.queryByText('mfa.email.explain')).toBeInTheDocument();
+
+            // Form button sms
+            expect(screen.queryByText('mfa.register.phoneNumber')).toBeInTheDocument();
+
+            // Form button email
+            expect(screen.queryByText('mfa.register.email')).toBeInTheDocument();
+
+            // Form button remove email
+            expect(screen.queryByText('mfa.remove.email')).not.toBeInTheDocument();
+
+            // Form button remove phone number
+            expect(screen.queryByText('mfa.remove.phoneNumber')).toBeInTheDocument();
+        });
+
+        test('all credentials', async () => {
+            await generateComponent({showIntro: true, showRemoveMfaCredentials: true}, defaultConfig, [
+                { type: 'sms', phoneNumber: '33612345678', friendlyName: 'identifier', createdAt: '2022-09-21' },
+                { type: 'email', email: 'root@reach5.co', friendlyName: 'identifier', createdAt: '2022-09-21' }
+            ]);
+            // Intro
+            expect(screen.queryByText('mfa.email.explain')).not.toBeInTheDocument();
+
+            // Form button sms
+            expect(screen.queryByText('mfa.register.phoneNumber')).toBeInTheDocument();
+
+            // Form button email
+            expect(screen.queryByText('mfa.register.email')).not.toBeInTheDocument();
+
+            // Form button remove email
+            expect(screen.queryByText('mfa.remove.email')).toBeInTheDocument();
+
+            // Form button remove phone number
+            expect(screen.queryByText('mfa.remove.phoneNumber')).toBeInTheDocument();
         });
     });
 });

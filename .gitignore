@@ -4,6 +4,7 @@
 .vscode
 .metals
 /node_modules/
+/dist/
 /cjs/
 /es/
 /umd/

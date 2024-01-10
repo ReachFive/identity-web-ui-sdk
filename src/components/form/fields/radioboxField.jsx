@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { createField } from '../fieldCreator';
-import {RadioGroup} from "../formControlsComponent";
+import {RadioGroup} from '../formControlsComponent';
 
 const RadioboxField = props => {
     const { options, onChange, inputId} = props
