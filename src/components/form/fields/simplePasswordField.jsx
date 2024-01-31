@@ -71,12 +71,11 @@ class SimplePasswordField extends React.Component {
     }
 }
 
-export const simplePasswordField = ({ placeholder, autoComplete, canShowPassword = false, ...config }) => createField({
+export const simplePasswordField = ({ placeholder, canShowPassword = false, ...config }) => createField({
     ...config,
     component: SimplePasswordField,
     extendedParams: {
         placeholder,
-        autoComplete,
         canShowPassword
     }
 });

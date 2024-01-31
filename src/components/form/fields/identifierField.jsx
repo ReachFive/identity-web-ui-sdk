@@ -111,6 +111,7 @@ class IdentifierField extends React.Component {
                 value={value.raw || ''}
                 placeholder={placeholder}
                 title={label}
+                autoComplete={this.props.autoComplete}
                 required={required}
                 readOnly={readOnly}
                 hasError={!!validation.error}
