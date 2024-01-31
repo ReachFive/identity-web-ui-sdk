@@ -1,5 +1,3 @@
-// import { LoginWithWebAuthnParams } from '@reachfive/identity-core';
-// import { LoginWithPasswordParams } from '@reachfive/identity-core/es/main/oAuthClient'
 import * as libphonenumber from 'libphonenumber-js';
 
 const CHARS = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -43,9 +41,6 @@ export function formatISO8601Date(year: string | number, month: string | number,
 
     return null
 }
-
-// type LoginWithPasswordOptions = Omit<LoginWithPasswordParams, 'email' | 'phoneNumber' | 'customIdentifier'>
-// type LoginWithWebAuthnOptions = Omit<LoginWithWebAuthnParams, 'email' | 'phoneNumber'>
 
 export type Identifier = { identifier: string }
 export type EmailIdentifier = { email: string }
