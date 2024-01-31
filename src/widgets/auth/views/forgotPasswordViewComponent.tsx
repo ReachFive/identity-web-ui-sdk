@@ -32,35 +32,29 @@ const skipError = (err: AppError) => err.error === 'resource_not_found';
 export interface ForgotPasswordViewProps {
     /**
      * Boolean that specifies whether login is enabled.
-     * 
+     *
      * @default true
      */
     allowLogin?: boolean
     /**
-     * Whether or not to display a safe error message on password reset, given an invalid email address. 
+     * Whether or not to display a safe error message on password reset, given an invalid email address.
      * This mode ensures not to leak email addresses registered to the platform.
-     * 
+     *
      * @default false
      */
     displaySafeErrorMessage?: boolean
     /**
      * Whether the signup form fields' labels are displayed on the login view.
-     * 
+     *
      * @default false
      */
     showLabels?: boolean
-    /**
-     * Boolean that specifies whether biometric login is enabled.
-     * 
-     * @default false
-     */
-    allowWebAuthnLogin?: boolean
     /**
      * Boolean that specifies whether reCAPTCHA is enabled or not.
      */
     recaptcha_enabled?: boolean
     /**
-     * The SITE key that comes from your [reCAPTCHA](https://www.google.com/recaptcha/admin/create) setup. 
+     * The SITE key that comes from your [reCAPTCHA](https://www.google.com/recaptcha/admin/create) setup.
      * This must be paired with the appropriate secret key that you received when setting up reCAPTCHA.
      */
     recaptcha_site_key?: string
@@ -80,7 +74,6 @@ export const ForgotPasswordView = ({
     allowLogin = true,
     displaySafeErrorMessage = false,
     showLabels = false,
-    allowWebAuthnLogin = false,
     recaptcha_enabled = false,
     recaptcha_site_key,
     redirectUrl,
@@ -114,7 +107,7 @@ export const ForgotPasswordView = ({
                 onSuccess={() => goTo('forgot-password-success')}
                 skipError={displaySafeErrorMessage && skipError} />
             {allowLogin && <Alternative>
-                <Link target={allowWebAuthnLogin ? 'login-with-web-authn' : 'login'}>{i18n('forgotPassword.backToLoginLink')}</Link>
+                <Link target={'login'}>{i18n('forgotPassword.backToLoginLink')}</Link>
             </Alternative>}
         </div>
     )
@@ -122,17 +115,16 @@ export const ForgotPasswordView = ({
 
 export interface ForgotPasswordSuccessViewProps {
     allowLogin?: boolean
-    allowWebAuthnLogin?: boolean
 }
 
-export const ForgotPasswordSuccessView = ({ allowLogin, allowWebAuthnLogin }: ForgotPasswordSuccessViewProps) => {
+export const ForgotPasswordSuccessView = ({ allowLogin }: ForgotPasswordSuccessViewProps) => {
     const i18n = useI18n()
     return (
         <div>
             <Heading>{i18n('forgotPassword.title')}</Heading>
             <Info>{i18n('forgotPassword.successMessage')}</Info>
             {allowLogin && <Alternative>
-                <Link target={allowWebAuthnLogin ? 'login-with-web-authn' : 'login'}>{i18n('back')}</Link>
+                <Link target={'login'}>{i18n('back')}</Link>
             </Alternative>}
         </div>
     )

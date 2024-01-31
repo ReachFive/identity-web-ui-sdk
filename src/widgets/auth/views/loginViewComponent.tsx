@@ -62,18 +62,13 @@ export const LoginForm = createForm<LoginFormData, LoginFormOptions>({
         config,
     }) {
         return [
-            showIdentifier && (config.sms) ?
-                identifierField({
-                    defaultValue: defaultIdentifier,
-                    withPhoneNumber: true,
-                    required: !allowCustomIdentifier
-                }, config)
-                :
-                identifierField({
-                    defaultValue: defaultIdentifier,
-                    withPhoneNumber: false,
-                    required: !allowCustomIdentifier
-                }, config),
+            identifierField({
+                defaultValue: defaultIdentifier,
+                withPhoneNumber: showIdentifier && config.sms,
+                required: !allowCustomIdentifier,
+                autoComplete: 'username webauthn'
+            },
+            config),
             allowCustomIdentifier && {
                 staticContent: (
                     <Separator text={i18n('or')} />
@@ -110,31 +105,37 @@ export type LoginViewProps = {
     acceptTos?: boolean
     /**
      * Boolean that specifies whether an additional field for the custom identifier is shown.
-     * 
+     *
      * @default false
      */
     allowCustomIdentifier?: boolean
     /**
      * Boolean that specifies if the forgot password option is enabled.
-     * 
+     *
      * If the `allowLogin` and `allowSignup` properties are set to `false`, the forgot password feature is enabled even if `allowForgotPassword` is set to `false`.
-     * 
+     *
      * @default true
      */
     allowForgotPassword?: boolean
     /**
      * Boolean that specifies whether signup is enabled.
-     * 
+     *
      * @default true
      */
     allowSignup?: boolean
+    /**
+     * Boolean that specifies whether biometric login is enabled.
+     *
+     * @default false
+     */
+    allowWebAuthnLogin?: boolean
     /**
      * List of authentication options
      */
     auth?: AuthOptions
     /**
      * Whether or not to provide the display password in clear text option.
-     * 
+     *
      * @default false
      */
     canShowPassword?: boolean
@@ -143,29 +144,29 @@ export type LoginViewProps = {
      */
     recaptcha_enabled?: boolean
     /**
-     * The SITE key that comes from your [reCAPTCHA](https://www.google.com/recaptcha/admin/create) setup. 
+     * The SITE key that comes from your [reCAPTCHA](https://www.google.com/recaptcha/admin/create) setup.
      * This must be paired with the appropriate secret key that you received when setting up reCAPTCHA.
      */
     recaptcha_site_key?: string
     /**
      * Whether the signup form fields' labels are displayed on the login view.
-     * 
+     *
      * @default false
      */
     showLabels?: boolean
     /**
      * Whether the Remember me checkbox is displayed on the login view. Affects user session duration.
-     * 
+     *
      * The account session duration configured in the ReachFive Console (Settings  Security  SSO) applies when:
      * - The checkbox is hidden from the user
      * - The checkbox is visible and selected by the user
-     * 
+     *
      * If the checkbox is visible and not selected by the user, the default session duration of 1 day applies.
-     * 
+     *
      * @default false
      */
     showRememberMe?: boolean
-    /** 
+    /**
      * Lists the available social providers. This is an array of strings.
      * Tip: If you pass an empty array, social providers will not be displayed.
      */
@@ -176,6 +177,7 @@ export const LoginView = ({
     acceptTos,
     allowForgotPassword = true,
     allowSignup = true,
+    allowWebAuthnLogin,
     auth,
     canShowPassword = false,
     socialProviders,
@@ -193,6 +195,17 @@ export const LoginView = ({
     useLayoutEffect(() => {
         importGoogleRecaptchaScript(recaptcha_site_key)
     }, [recaptcha_site_key])
+
+    React.useEffect(() => {
+        if (allowWebAuthnLogin) {
+            coreClient.loginWithWebAuthn({
+                conditionalMediation: true,
+                auth: {
+                    ...auth
+                }
+            })
+        }
+    }, [coreClient, auth, allowWebAuthnLogin])
 
     const callback = (data: LoginFormData & { captchaToken?: string }) => {
         const { auth: dataAuth, ...specializedData} = specializeIdentifierData<LoginWithPasswordParams>(data);
