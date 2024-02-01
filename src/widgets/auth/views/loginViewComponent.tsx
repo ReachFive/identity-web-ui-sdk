@@ -203,7 +203,7 @@ export const LoginView = ({
                 auth: {
                     ...auth
                 }
-            })
+            }).catch(() => undefined)
         }
     }, [coreClient, auth, allowWebAuthnLogin])
 
