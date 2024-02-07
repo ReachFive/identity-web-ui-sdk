@@ -199,7 +199,7 @@ export const LoginView = ({
     React.useEffect(() => {
         if (allowWebAuthnLogin) {
             coreClient.loginWithWebAuthn({
-                conditionalMediation: true,
+                conditionalMediation: 'preferred',
                 auth: {
                     ...auth
                 }
