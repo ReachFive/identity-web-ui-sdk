@@ -159,7 +159,7 @@ export default function dateField(props, config) {
                 const dt = value ? DateTime.fromISO(value) : DateTime.invalid('empty value')
                 return dt.isValid ? { raw: dt } : undefined
             },
-            unbind: (value) => value.raw.toISODate()
+            unbind: (value) => value && value.raw.toISODate()
         },
         validator: props.validator ? datetimeValidator(config.language).and(props.validator) : datetimeValidator(config.language),
         component: DateField,
