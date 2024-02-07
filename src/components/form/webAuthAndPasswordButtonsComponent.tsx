@@ -71,7 +71,7 @@ export const WebAuthnLoginViewButtons = styled(({ disabled, onPasswordClick, cla
         <div className={classes(['r5-webauthn-login-buttons'], className)}>
             <PrimaryButtonWithIcon
                 type="submit"
-                dataTestId="webauthn-button"
+                data-testid="webauthn-button"
                 title={i18n('login.withBiometrics')}
                 disabled={disabled}
                 {...props}
@@ -82,7 +82,7 @@ export const WebAuthnLoginViewButtons = styled(({ disabled, onPasswordClick, cla
             <ButtonsSeparator>{i18n('or')}</ButtonsSeparator>
 
             <PrimaryButtonWithIcon
-                dataTestId="password-button"
+                data-testid="password-button"
                 title={i18n('login.withPassword')}
                 disabled={disabled}
                 onClick={onPasswordClick}>
@@ -110,7 +110,7 @@ export const WebAuthnSignupViewButtons = styled(({ onBiometricClick, onPasswordC
     return (
         <div className={classes(['r5-webauthn-signup-buttons'], className)}>
         <PrimaryButtonWithIcon
-            dataTestId="webauthn-button"
+            data-testid="webauthn-button"
             onClick={onBiometricClick}
             title={i18n('signup.withBiometrics')}
             text={i18n('biometrics')}>
@@ -120,7 +120,7 @@ export const WebAuthnSignupViewButtons = styled(({ onBiometricClick, onPasswordC
         <Separator text={i18n('or')} />
 
         <PrimaryButtonWithIcon
-            dataTestId="password-button"
+            data-testid="password-button"
             onClick={onPasswordClick}
             title={i18n('signup.withPassword')}
             text={i18n('password')}>

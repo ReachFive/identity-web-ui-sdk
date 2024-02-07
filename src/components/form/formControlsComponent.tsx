@@ -173,7 +173,7 @@ interface CheckboxProps extends React.InputHTMLAttributes<HTMLInputElement> {
 
 export const Checkbox = styled(({ value, onToggle, label, name, className, error, required, dataTestId }: CheckboxProps) => (
     <div className={className}>
-        <Check checked={!!value} onSelect={onToggle} label={label} name={name} required={required} dataTestId={dataTestId} />
+        <Check checked={!!value} onSelect={onToggle} label={label} name={name} required={required} data-testid={dataTestId} />
         {error && <FormError>{error}</FormError>}
     </div>
 ))`
