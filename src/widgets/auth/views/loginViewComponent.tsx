@@ -196,16 +196,19 @@ export const LoginView = ({
         importGoogleRecaptchaScript(recaptcha_site_key)
     }, [recaptcha_site_key])
 
+    const controller = new AbortController();
+    const signal = controller.signal;
     React.useEffect(() => {
         if (allowWebAuthnLogin) {
             coreClient.loginWithWebAuthn({
                 conditionalMediation: 'preferred',
                 auth: {
                     ...auth
-                }
+                },
+                signal: signal
             }).catch(() => undefined)
         }
-    }, [coreClient, auth, allowWebAuthnLogin])
+    }, [coreClient, auth, allowWebAuthnLogin, signal])
 
     const callback = (data: LoginFormData & { captchaToken?: string }) => {
         const { auth: dataAuth, ...specializedData} = specializeIdentifierData<LoginWithPasswordParams>(data);
@@ -243,7 +246,7 @@ export const LoginView = ({
                 <Alternative>
                     <span>{i18n('login.signupLinkPrefix')}</span>
                     &nbsp;
-                    <Link target="signup">{i18n('login.signupLink')}</Link>
+                    <Link target="signup" controller={controller}>{i18n('login.signupLink')}</Link>
                 </Alternative>
             }
         </div>
