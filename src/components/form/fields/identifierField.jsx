@@ -96,7 +96,8 @@ class IdentifierField extends React.Component {
             label,
             placeholder = label,
             readOnly,
-            withPhoneNumber
+            withPhoneNumber,
+            autoComplete
         } = this.props;
 
         return <FormGroup
@@ -111,7 +112,7 @@ class IdentifierField extends React.Component {
                 value={value.raw || ''}
                 placeholder={placeholder}
                 title={label}
-                autoComplete={this.props.autoComplete}
+                autoComplete={autoComplete}
                 required={required}
                 readOnly={readOnly}
                 hasError={!!validation.error}
