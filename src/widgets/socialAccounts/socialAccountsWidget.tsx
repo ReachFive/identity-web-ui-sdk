@@ -139,7 +139,7 @@ const IdentityList = ({ identities = [], unlink }: IdentityListProps) => {
                         <span>{providerInfos.name}</span>
                         &nbsp;
                         <MutedText>-&nbsp;{username}</MutedText>
-                        <CloseIcon title={i18n('remove')} onClick={() => onRemove(id)} />
+                        <CloseIcon title={i18n('remove')} onClick={() => onRemove(id)} data-testid={`identity-${provider}-unlink`} />
                     </Card>
                 );
             })}
