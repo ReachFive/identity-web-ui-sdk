@@ -166,6 +166,7 @@ exports[`Snapshot basic 1`] = `
         </span>
         <span
           class="c4"
+          data-testid="identity-facebook-unlink"
           title="remove"
         />
       </div>

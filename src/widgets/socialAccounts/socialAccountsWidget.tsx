@@ -3,12 +3,15 @@ import styled from 'styled-components';
 import difference from 'lodash-es/difference';
 import { AuthOptions, Identity as CoreIdentity, Profile } from '@reachfive/identity-core';
 
+import { UserError } from '../../helpers/errors';
+
 import { ProviderId, providers as socialProviders } from '../../providers/providers';
 
 import { useI18n } from '../../contexts/i18n';
 import { useReachfive } from '../../contexts/reachfive';
 import { useRouting } from '../../contexts/routing';
 
+import { ErrorMessage } from '../../components/error';
 import { Card, CloseIcon } from '../../components/form/cardComponent';
 import { Link, Info, Alternative } from '../../components/miscComponent';
 import { createMultiViewWidget } from '../../components/widget/widget';
@@ -17,7 +20,7 @@ import { DefaultButton } from '../../components/form/buttonComponent';
 
 type Identity = CoreIdentity & { id: string }
 
-type Unlink = (id: string) => void
+type Unlink = (id: string) => Promise<void>
 
 interface WithIdentitiesProps {
     accessToken: string
@@ -57,9 +60,15 @@ const withIdentities = <T extends WithIdentitiesProps = WithIdentitiesProps>(
         }, [accessToken, coreClient])
 
         const unlink = useCallback((identityId: string) => {
-            coreClient.unlink({ accessToken, identityId });
+            const prevIdentities = identities
             // Optimistic update
             setIdentities(identities.filter(i => i.id !== identityId))
+            // api call + catch failure
+            return coreClient.unlink({ accessToken, identityId }).catch(error => {
+                // restore previous identities
+                setIdentities(prevIdentities)
+                return Promise.reject(error)
+            })
         }, [accessToken, coreClient, identities])
 
         const handleAuthenticated = useCallback(() => {
@@ -108,11 +117,20 @@ interface IdentityListProps {
 
 const IdentityList = ({ identities = [], unlink }: IdentityListProps) => {
     const i18n = useI18n()
+    const [error, setError] = useState<UserError | undefined>()
+
+    const onRemove = (id: string) => {
+        unlink(id)
+            .then(() => setError(undefined))
+            .catch(error => setError(UserError.fromAppError(error)))
+    }
+
     return (
         <div>
             {identities.length === 0 && (
                 <Info>{i18n('socialAccounts.noLinkedAccount')}</Info>
             )}
+            {error && <ErrorMessage style={{ marginBottom: '10px' }}>{error.message}</ErrorMessage>}
             {identities.map(({ provider, id, username }) => {
                 const providerInfos = socialProviders[provider as ProviderId];
                 return (
@@ -121,7 +139,7 @@ const IdentityList = ({ identities = [], unlink }: IdentityListProps) => {
                         <span>{providerInfos.name}</span>
                         &nbsp;
                         <MutedText>-&nbsp;{username}</MutedText>
-                        <CloseIcon title={i18n('remove')} onClick={() => unlink(id)} />
+                        <CloseIcon title={i18n('remove')} onClick={() => onRemove(id)} data-testid={`identity-${provider}-unlink`} />
                     </Card>
                 );
             })}
