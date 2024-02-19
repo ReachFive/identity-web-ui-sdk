@@ -7,7 +7,21 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.25.0] - 2023-02-19
+
+### Changed
+
+- TypeScript migration
+
+### Fixes
+
+- Fix dateField validation when value is empty
+- Show API error when trying to unlink a social account with a non-fresh access_token
+
 ## [1.24.0] - 2023-01-05
+
+## Added
+
 - Add variable locale
 
 ## [1.23.1] - 2023-12-12
@@ -389,7 +403,9 @@ The eye icon is now correctly displayed in the Auth widget.
 
 First version of the SDK Web UI.
 
-[Unreleased]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.24.0...HEAD
+[Unreleased]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.25.0...HEAD
+
+[1.25.0]:  https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.24.0...v1.25.0
 
 [1.24.0]:  https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.23.1...v1.24.0
 
