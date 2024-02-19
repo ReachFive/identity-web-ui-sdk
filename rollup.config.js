@@ -7,8 +7,20 @@ import svg from '@svgr/rollup'
 import dts from 'rollup-plugin-dts'
 import esbuild from 'rollup-plugin-esbuild'
 
-import pkg from './package.json' assert { type: "json" }
+import pkg from './package.json' assert { type: 'json' }
 const dependencies = Object.keys(pkg.dependencies)
+
+const banner = [
+    `/**`,
+    ` * ${pkg.name} - v${pkg.version}`,
+    ` * Compiled ${(new Date()).toUTCString().replace(/GMT/g, 'UTC')}`,
+    ` *`,
+    ` * Copyright (c) ReachFive.`,
+    ` *`,
+    ` * This source code is licensed under the MIT license found in the`,
+    ` * LICENSE file in the root directory of this source tree.`,
+    ` **/`,
+].join('\n');
 
 // Ignore Luxon library's circular dependencies
 function onWarn(message) {
@@ -46,16 +58,19 @@ export default [
         external: dependencies,
         output: [
             {
+                banner,
                 file: 'cjs/identity-ui.js',
                 format: 'cjs',
                 sourcemap: true,
             },
             {
+                banner,
                 file: 'es/identity-ui.js',
                 format: 'es',
                 sourcemap: true,
             },
             {
+                banner,
                 file: 'es/identity-ui.min.js',
                 format: 'es',
                 plugins: [terser()],
@@ -68,6 +83,7 @@ export default [
         plugins,
         output: [
             {
+                banner,
                 file: 'umd/identity-ui.js',
                 format: 'umd',
                 name: 'IdentityUI',
@@ -75,6 +91,7 @@ export default [
                 globals: { '@reachfive/identity-core': 'reach5' },
             },
             {
+                banner,
                 file: 'umd/identity-ui.min.js',
                 format: 'umd',
                 name: 'IdentityUI',
