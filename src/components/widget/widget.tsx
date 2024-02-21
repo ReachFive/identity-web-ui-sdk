@@ -7,7 +7,7 @@ import type { I18nMessages } from '../../core/i18n';
 
 import { ConfigProvider } from '../../contexts/config';
 import { I18nProvider } from '../../contexts/i18n'
-import { ReacfiveProvider } from '../../contexts/reachfive'
+import { ReachfiveProvider } from '../../contexts/reachfive'
 import { RoutingProvider } from '../../contexts/routing'
 import { SessionProvider } from '../../contexts/session'
 
@@ -49,7 +49,7 @@ export function createWidget<P, U = P>({
 
             return (
                 <ConfigProvider config={context.config}>
-                    <ReacfiveProvider client={context.apiClient}>
+                    <ReachfiveProvider client={context.apiClient}>
                         <SessionProvider session={context.session}>
                             <ThemeProvider theme={theme}>
                                 <I18nProvider defaultMessages={context.defaultI18n} messages={options.i18n}>
@@ -59,7 +59,7 @@ export function createWidget<P, U = P>({
                                 </I18nProvider>
                             </ThemeProvider>
                         </SessionProvider>
-                    </ReacfiveProvider>
+                    </ReachfiveProvider>
                 </ConfigProvider>
             );
         });
@@ -94,7 +94,7 @@ function multiViewWidget<P, U>({ initialView, views, initialState = {} as MultiW
             ...initialState,
             activeView: typeof initialView === 'function' ? initialView(this.props) : initialView
         };
-        
+
         // _goTo = <View extends keyof typeof views, S extends ComponentProps<(typeof views)[View]>>(view: View, props?: S) => this.setState({
         _goTo = <S extends Record<string, unknown>>(view: string, params?: S) => this.setState({
             activeView: view as MultiWidgetState['activeView'],

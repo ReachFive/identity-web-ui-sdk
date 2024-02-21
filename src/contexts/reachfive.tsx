@@ -5,17 +5,17 @@ export interface Props {
   client: CoreClient
 }
 
-export const ReacfiveContext = React.createContext<CoreClient | undefined>(undefined);
+export const ReachfiveContext = React.createContext<CoreClient | undefined>(undefined);
 
 export function useReachfive(): CoreClient {
-  const context = React.useContext(ReacfiveContext);
+  const context = React.useContext(ReachfiveContext);
   if (!context) {
-    throw new Error('No ReacfiveContext provided');
+    throw new Error('No ReachfiveContext provided');
   }
 
   return context;
 }
 
-export function ReacfiveProvider({ children, client }: PropsWithChildren<Props>): JSX.Element | null {
-  return <ReacfiveContext.Provider value={client}>{children}</ReacfiveContext.Provider>
+export function ReachfiveProvider({ children, client }: PropsWithChildren<Props>): JSX.Element | null {
+  return <ReachfiveContext.Provider value={client}>{children}</ReachfiveContext.Provider>
 }

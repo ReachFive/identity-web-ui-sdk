@@ -1,6 +1,6 @@
 {
     "name": "@reachfive/identity-ui",
-    "version": "1.25.0-alpha.0",
+    "version": "1.25.1",
     "description": "ReachFive Identity Web UI SDK",
     "author": "ReachFive",
     "repository": {
@@ -54,6 +54,9 @@
         "@babel/preset-react": "^7.22.15",
         "@babel/preset-typescript": "^7.23.2",
         "@jest/globals": "^29.7.0",
+        "@rollup/plugin-commonjs": "^25.0.7",
+        "@rollup/plugin-node-resolve": "^15.2.3",
+        "@rollup/plugin-replace": "^5.0.5",
         "@rollup/plugin-terser": "^0.4.4",
         "@rollup/plugin-url": "^8.0.2",
         "@svgr/rollup": "^8.1.0",
