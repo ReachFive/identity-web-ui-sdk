@@ -97,7 +97,7 @@
         "cjs",
         "es",
         "umd",
-        "index.d.ts"
+        "types"
     ],
     "resolutions": {
         "core-js": "2.5.2"
