@@ -1,6 +1,6 @@
 {
     "name": "@reachfive/identity-ui",
-    "version": "1.25.1",
+    "version": "1.25.2",
     "description": "ReachFive Identity Web UI SDK",
     "author": "ReachFive",
     "repository": {
@@ -97,7 +97,7 @@
         "cjs",
         "es",
         "umd",
-        "index.d.ts"
+        "types"
     ],
     "resolutions": {
         "core-js": "2.5.2"

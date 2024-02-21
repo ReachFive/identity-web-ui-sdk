@@ -1,3 +1,12 @@
+/**
+ * @reachfive/identity-ui - v1.25.1
+ * Compiled Wed, 21 Feb 2024 14:23:30 UTC
+ *
+ * Copyright (c) ReachFive.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ **/
 import { Config as Config$1, RemoteSettings, ConsentVersions, CustomField, Client as Client$1, SessionInfo, AuthOptions, MFA, PasswordlessResponse, SingleFactorPasswordlessParams, Profile, UserConsent, DeviceCredential } from '@reachfive/identity-core';
 export { Config } from '@reachfive/identity-core';
 import CSS from 'csstype';
