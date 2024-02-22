@@ -1,5 +1,4 @@
-import camelCase from 'lodash-es/camelCase';
-import lodashSnakeCase from 'lodash-es/snakeCase';
+import { camelCase, snakeCase as lodashSnakeCase } from './utils';
 
 export const snakeCasePath = (path: string) =>
     path

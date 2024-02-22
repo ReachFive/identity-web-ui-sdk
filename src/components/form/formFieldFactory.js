@@ -1,6 +1,4 @@
-import camelCase from 'lodash-es/camelCase';
-
-import { find } from '../../helpers/utils'
+import { camelCase, find } from '../../helpers/utils'
 
 import { Validator, email, integer, float, checked } from '../../core/validation';
 import { UserError } from '../../helpers/errors';

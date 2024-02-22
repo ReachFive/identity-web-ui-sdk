@@ -83,6 +83,23 @@ export function isValidEmail(email: string) {
     return /\S+@\S+\.\S+/.test(email);
 }
 
+export function camelCase(string: string) {
+    return string
+    .toLowerCase()
+    .replace(/[^a-z0-9]/ig, ' ')
+    .trim()
+    .replace(/(?:^\w|[A-Z]|\b\w)/g, function(word, index) {
+        return index === 0 ? word.toLowerCase() : word.toUpperCase();
+    })
+    .replace(/\s+/g, '');
+}
+
+export function snakeCase(string: string) {
+    const matches = string.match(/[A-Z]{2,}(?=[A-Z][a-z]+[0-9]*|\b)|[A-Z]?[a-z]+[0-9]*|[A-Z]|[0-9]+/g) 
+    return matches ? matches.map(s => s.toLowerCase()).join('_') : '';
+}
+
+
 export function isEmpty(value: unknown) {
     if (value == null) {
         return true;
