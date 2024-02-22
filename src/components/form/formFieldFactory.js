@@ -1,5 +1,4 @@
 import compact from 'lodash-es/compact';
-import isString from 'lodash-es/isString';
 import camelCase from 'lodash-es/camelCase';
 import find from 'lodash-es/find';
 
@@ -231,7 +230,7 @@ const resolveField = (fieldConfig, config) => {
 
 export const buildFormFields = (fields = [], { canShowPassword, errorArchivedConsents, ...config }) => compact(fields).map(field => (
     resolveField(
-        isString(field)
+        typeof field === 'string'
             ? { key: field, canShowPassword, errorArchivedConsents }
             : { ...field, canShowPassword, errorArchivedConsents },
         config
