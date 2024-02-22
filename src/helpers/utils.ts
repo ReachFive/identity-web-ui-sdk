@@ -110,3 +110,16 @@ export function intersection<T>(arr1: T[], ...args: T[][]) {
 export function find<T>(collection: Record<string, T>, predicate: (item: T) => boolean) {
     return Object.values(collection).find(value => predicate(value))
 }
+
+export function debounce(func: (...args: unknown[]) => void, delay: number, { leading }: { leading?: boolean } = {}) {
+    let timerId: NodeJS.Timeout
+  
+    return (...args: unknown[]) => {
+      if (!timerId && leading) {
+        func(...args)
+      }
+      clearTimeout(timerId)
+  
+      timerId = setTimeout(() => func(...args), delay)
+    }
+  }

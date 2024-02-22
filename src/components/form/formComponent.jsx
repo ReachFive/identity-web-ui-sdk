@@ -1,9 +1,8 @@
 import React from 'react';
 
-import debounce from 'lodash-es/debounce';
 import styled from 'styled-components';
 
-import { find } from '../../helpers/utils';
+import { debounce, find } from '../../helpers/utils';
 
 import { PrimaryButton } from './buttonComponent';
 import { Error } from '../miscComponent';
