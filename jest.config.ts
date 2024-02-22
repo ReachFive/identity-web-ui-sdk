@@ -11,9 +11,6 @@ const config: JestConfigWithTsJest = {
         '.svg$': '<rootDir>/mocks/svg.js',
         '@reachfive/i18n': '<rootDir>/src/i18n/en.js'
     },
-    transformIgnorePatterns: [
-        'node_modules/(?!(lodash-es)/)'
-    ]
 };
 
 export default config
