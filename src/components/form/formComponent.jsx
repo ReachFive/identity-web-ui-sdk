@@ -1,8 +1,9 @@
 import React from 'react';
 
-import some from 'lodash-es/some';
 import debounce from 'lodash-es/debounce';
 import styled from 'styled-components';
+
+import { find } from '../../helpers/utils';
 
 import { PrimaryButton } from './buttonComponent';
 import { Error } from '../miscComponent';
@@ -125,7 +126,7 @@ export function createForm(config) {
                 };
 
                 return {
-                    hasErrors: !!validation.error || some(newFields, ({ validation = {} }) => validation.error),
+                    hasErrors: !!validation.error || find(newFields, ({ validation = {} }) => validation.error) !== undefined,
                     fields: newFields
                 };
             });
