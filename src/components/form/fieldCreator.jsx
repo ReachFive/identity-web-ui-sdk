@@ -1,10 +1,8 @@
 import React from 'react';
 
-import isEmpty from 'lodash-es/isEmpty';
-
 import { PathMapping } from '../../core/mapping';
 import { required as requiredRule, empty as emptyRule } from '../../core/validation';
-import { isValued } from '../../helpers/utils';
+import { isEmpty, isValued } from '../../helpers/utils';
 import generateId from '../../helpers/inputIdGenerator';
 import { camelCasePath } from '../../helpers/transformObjectProperties';
 
