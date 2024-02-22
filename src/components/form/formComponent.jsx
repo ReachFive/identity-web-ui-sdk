@@ -1,7 +1,6 @@
 import React from 'react';
 
 import some from 'lodash-es/some';
-import compact from 'lodash-es/compact';
 import debounce from 'lodash-es/debounce';
 import styled from 'styled-components';
 
@@ -32,7 +31,7 @@ export function createForm(config) {
         constructor(props) {
             super(props);
 
-            this.allFields = compact(typeof props.fields === 'function' ? props.fields(props) : props.fields).map(f => (
+            this.allFields = (typeof props.fields === 'function' ? props.fields(props) : props.fields).filter(x => !!x).map(f => (
                 !f.staticContent ? f.create({ i18n: props.i18n, showLabel: props.showLabels }) : f
             ));
 

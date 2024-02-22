@@ -1,4 +1,3 @@
-import compact from 'lodash-es/compact';
 import camelCase from 'lodash-es/camelCase';
 import find from 'lodash-es/find';
 
@@ -228,7 +227,7 @@ const resolveField = (fieldConfig, config) => {
     throw new UserError(`Unknown field: ${fieldConfig.key}`);
 };
 
-export const buildFormFields = (fields = [], { canShowPassword, errorArchivedConsents, ...config }) => compact(fields).map(field => (
+export const buildFormFields = (fields = [], { canShowPassword, errorArchivedConsents, ...config }) => fields.filter(x => !!x).map(field => (
     resolveField(
         typeof field === 'string'
             ? { key: field, canShowPassword, errorArchivedConsents }
