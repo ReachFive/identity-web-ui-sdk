@@ -84,11 +84,18 @@ export function isValidEmail(email: string) {
 }
 
 export function isEmpty(value: unknown) {
-    return (
-        value == null ||
-        (typeof value === 'object' && Object.keys(value).length === 0) ||
-        (typeof value === 'string' && value.trim().length === 0)
-      ) 
+    if (value == null) {
+        return true;
+    }
+    if (Array.isArray(value) || typeof value == 'string' || Buffer.isBuffer(value)) {
+        return !value.length;
+    }
+    for (const key in value) {
+        if (Object.hasOwnProperty.call(value, key)) {
+            return false;
+        }
+    }
+    return true;
 }
 
 export function difference<T>(arr1: T[], arr2: T[]) {
