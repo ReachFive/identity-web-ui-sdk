@@ -101,3 +101,8 @@ export function isEmpty(value: unknown) {
 export function difference<T>(arr1: T[], arr2: T[]) {
     return arr1.filter(x => !arr2.includes(x))
 }
+
+export function intersection<T>(arr1: T[], ...args: T[][]) {
+    // return arr1.filter(item => arr2.includes(item))
+    return arr1.filter(item => args.every(arr => arr.includes(item)))
+}
