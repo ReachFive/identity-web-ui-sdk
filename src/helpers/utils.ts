@@ -90,3 +90,7 @@ export function isEmpty(value: unknown) {
         (typeof value === 'string' && value.trim().length === 0)
       ) 
 }
+
+export function difference<T>(arr1: T[], arr2: T[]) {
+    return arr1.filter(x => !arr2.includes(x))
+}

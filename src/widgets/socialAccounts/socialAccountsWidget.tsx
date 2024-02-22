@@ -1,9 +1,9 @@
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
-import difference from 'lodash-es/difference';
 import { AuthOptions, Identity as CoreIdentity, Profile } from '@reachfive/identity-core';
 
 import { UserError } from '../../helpers/errors';
+import { difference } from '../../helpers/utils';
 
 import { ProviderId, providers as socialProviders } from '../../providers/providers';
 
