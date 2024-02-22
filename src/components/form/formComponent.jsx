@@ -1,6 +1,5 @@
 import React from 'react';
 
-import isFunction from 'lodash-es/isFunction';
 import some from 'lodash-es/some';
 import compact from 'lodash-es/compact';
 import debounce from 'lodash-es/debounce';
@@ -33,7 +32,7 @@ export function createForm(config) {
         constructor(props) {
             super(props);
 
-            this.allFields = compact(isFunction(props.fields) ? props.fields(props) : props.fields).map(f => (
+            this.allFields = compact(typeof props.fields === 'function' ? props.fields(props) : props.fields).map(f => (
                 !f.staticContent ? f.create({ i18n: props.i18n, showLabel: props.showLabels }) : f
             ));
 
@@ -99,7 +98,7 @@ export function createForm(config) {
                 const currentState = prevState.fields[fieldName];
                 const newState = {
                     ...currentState,
-                    ...(isFunction(stateUpdate) ? stateUpdate(currentState) : stateUpdate)
+                    ...(typeof stateUpdate === 'function' ? stateUpdate(currentState) : stateUpdate)
                 };
                 const newFields = {
                     ...prevState.fields,

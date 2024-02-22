@@ -1,6 +1,5 @@
 import React from 'react';
 
-import isFunction from 'lodash-es/isFunction';
 import isEmpty from 'lodash-es/isEmpty';
 
 import { PathMapping } from '../../core/mapping';
@@ -28,7 +27,7 @@ export const createField = ({
 }) => ({
     path: path,
     create: ({ i18n, showLabel }) => {
-        const extParams = isFunction(extendedParams) ? extendedParams(i18n) : extendedParams;
+        const extParams = typeof extendedParams === 'function' ? extendedParams(i18n) : extendedParams;
         const staticProps = {
             inputId: generateId(key),
             key,
