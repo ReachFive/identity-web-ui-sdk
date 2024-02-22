@@ -115,6 +115,10 @@ export function isEmpty(value: unknown) {
     return true;
 }
 
+export function isEqual<T>(arr1: T[], arr2: T[]) {
+    return arr1.length === arr2.length && arr1.every(x => arr2.includes(x))
+}
+
 export function difference<T>(arr1: T[], arr2: T[]) {
     return arr1.filter(x => !arr2.includes(x))
 }
