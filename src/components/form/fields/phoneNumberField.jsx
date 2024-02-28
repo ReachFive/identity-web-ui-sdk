@@ -11,6 +11,8 @@ class PhoneNumberField extends React.Component {
     componentDidMount() {
         const { raw, country } = this.props.value;
 
+        if (!raw) return;
+
         try {
             const parsed = libphonenumber.parse(raw, country);
             const phoneValue = country === parsed.country

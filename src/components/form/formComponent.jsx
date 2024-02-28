@@ -31,7 +31,7 @@ export function createForm(config) {
         constructor(props) {
             super(props);
 
-            this.allFields = (typeof props.fields === 'function' ? props.fields(props) : props.fields).filter(x => !!x).map(f => (
+            this.allFields = (typeof props.fields === 'function' ? props.fields(props) : props.fields ?? []).filter(x => !!x).map(f => (
                 !f.staticContent ? f.create({ i18n: props.i18n, showLabel: props.showLabels }) : f
             ));
 

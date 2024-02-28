@@ -124,12 +124,11 @@ export function difference<T>(arr1: T[], arr2: T[]) {
 }
 
 export function intersection<T>(arr1: T[], ...args: T[][]) {
-    // return arr1.filter(item => arr2.includes(item))
     return arr1.filter(item => args.every(arr => arr.includes(item)))
 }
 
 export function find<T>(collection: Record<string, T>, predicate: (item: T) => boolean) {
-    return Object.values(collection).find(value => predicate(value))
+    return Object.values(collection ?? {}).find(value => predicate(value))
 }
 
 export function debounce(func: (...args: unknown[]) => void, delay: number, { leading }: { leading?: boolean } = {}) {

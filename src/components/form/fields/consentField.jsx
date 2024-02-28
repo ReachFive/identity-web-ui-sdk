@@ -21,7 +21,7 @@ const Description = styled.div`
     }
 `;
 
-const ConsentField = ({ value, onChange, label, description, path, required, validation, consentCannotBeGranted }) => {
+const ConsentField = ({ value, onChange, label, description, path, required, validation={}, consentCannotBeGranted }) => {
     const clickUpdate = ({ value }) => ({
         value: consentCannotBeGranted ? false : !value,
         isDirty: true

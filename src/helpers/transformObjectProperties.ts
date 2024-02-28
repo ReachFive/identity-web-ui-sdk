@@ -51,3 +51,4 @@ export function transformObjectProperties<T>(
 function snakeCase(input: string) {
     return underlingSnakeCase(input).replace(/_\d/g, dashNumber => dashNumber.slice(1));
 }
+ 
