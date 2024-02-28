@@ -44,8 +44,8 @@
         "validator": "^13.11.0"
     },
     "peerDependencies": {
-        "react": "^18.2.0",
-        "react-dom": "^18.2.0",
+        "react": "^16.14.0",
+        "react-dom": "^16.14.0",
         "styled-components": "5.1.1"
     },
     "devDependencies": {
@@ -61,7 +61,7 @@
         "@rollup/plugin-url": "^8.0.2",
         "@svgr/rollup": "^8.1.0",
         "@testing-library/jest-dom": "^6.2.0",
-        "@testing-library/react": "^14.0.0",
+        "@testing-library/react": "^12.1.5",
         "@types/babel__generator": "^7.6.6",
         "@types/lodash-es": "^4.17.9",
         "@types/react": "^18.2.23",
@@ -85,7 +85,7 @@
         "jest-environment-jsdom": "^29.7.0",
         "jest-styled-components": "^7.2.0",
         "polished": "^4.2.2",
-        "react-test-renderer": "^18.2.0",
+        "react-test-renderer": "^16.14.0",
         "rollup": "^4.1.4",
         "rollup-plugin-dts": "^6.1.0",
         "rollup-plugin-esbuild": "^6.1.0",
