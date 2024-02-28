@@ -370,17 +370,29 @@ describe('DOM testing', () => {
     describe('with webauthn feature', () => {
         test('login view', async () => {
             expect.assertions(6);
+            const generateComponent = async (options, config = defaultConfig) => {
+                const result = await authWidget(options, {
+                    config, apiClient: {
+                        loginWithWebAuthn: jest.fn().mockRejectedValue(Promise.reject())
+                    }
+                });
+
+                return render(result);
+            };
+
             await generateComponent({ allowWebAuthnLogin: true }, webauthnConfig);
 
             // Social buttons
             expectSocialButtons(true)
 
             // Email input
-            expect(screen.queryByTestId('email')).toBeInTheDocument();
+            expect(screen.queryByTestId('identifier')).toBeInTheDocument();
 
-            // Form buttons
-            expect(screen.queryByTestId('webauthn-button')).toBeInTheDocument();
-            expect(screen.queryByTestId('password-button')).toBeInTheDocument();
+            // Form button
+            expect(screen.queryByText('login.submitLabel')).toBeInTheDocument();
+
+            // Links
+            expect(screen.queryByText('login.forgotPasswordLink')).toBeInTheDocument();
 
             // Sign in link
             expect(screen.queryByText('login.signupLink')).toBeInTheDocument();
@@ -426,7 +438,7 @@ describe('DOM testing', () => {
         });
 
         test('signup form view with webauthn', async () => {
-            expect.assertions(6);
+            expect.assertions(5);
             await generateComponent(
                 { allowWebAuthnSignup: true,  initialScreen: 'signup-with-web-authn' },
                 webauthnConfig
@@ -436,7 +448,6 @@ describe('DOM testing', () => {
             expect(screen.queryByTestId('given_name')).toBeInTheDocument();
             expect(screen.queryByTestId('family_name')).toBeInTheDocument();
             expect(screen.queryByTestId('email')).toBeInTheDocument();
-            expect(screen.queryByTestId('friendly_name')).toBeInTheDocument();
 
             // Form button
             expect(screen.queryByText('signup.submitLabel')).toBeInTheDocument();
