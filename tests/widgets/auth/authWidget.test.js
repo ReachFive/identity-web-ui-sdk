@@ -52,7 +52,9 @@ describe('Snapshot', () => {
     };
 
     describe('login view', () => {
-        test('default', generateSnapshot({}));
+        test('default', generateSnapshot({
+            allowWebAuthnLogin: false
+        }));
 
         test('no signup', generateSnapshot({
             allowSignup: false
@@ -166,9 +168,8 @@ describe('Snapshot', () => {
 });
 
 describe('DOM testing', () => {
-    const generateComponent = async (options, config = defaultConfig) => {
-        const result = await authWidget(options, { config, apiClient: {} });
-
+    const generateComponent = async (options, config = defaultConfig, apiClient = {}) => {
+        const result = await authWidget(options, { config, apiClient });
         return render(result);
     };
 
@@ -370,17 +371,9 @@ describe('DOM testing', () => {
     describe('with webauthn feature', () => {
         test('login view', async () => {
             expect.assertions(6);
-            const generateComponent = async (options, config = defaultConfig) => {
-                const result = await authWidget(options, {
-                    config, apiClient: {
-                        loginWithWebAuthn: jest.fn().mockRejectedValue(Promise.reject())
-                    }
-                });
-
-                return render(result);
-            };
-
-            await generateComponent({ allowWebAuthnLogin: true }, webauthnConfig);
+            await generateComponent({ allowWebAuthnLogin: true }, webauthnConfig, {
+                loginWithWebAuthn: jest.fn().mockRejectedValue(Promise.reject())
+            });
 
             // Social buttons
             expectSocialButtons(true)
