@@ -6763,6 +6763,441 @@ exports[`Snapshot signup view with user agreement 1`] = `
 </div>
 `;
 
+exports[`Snapshot with webauthn feature login view with webauthn or password 1`] = `
+.c1 {
+  margin-bottom: 15px;
+  text-align: center;
+  color: #212529;
+  font-weight: bold;
+  font-size: 16.8px;
+}
+
+.c6 {
+  color: #adb5bd;
+  display: block;
+  text-align: center;
+  overflow: hidden;
+  white-space: nowrap;
+  margin: 10px 0;
+}
+
+.c6 > span {
+  position: relative;
+  display: inline-block;
+}
+
+.c6 > span:before,
+.c6 > span:after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 9999px;
+  height: 1px;
+  background: #ced4da;
+}
+
+.c6 > span:before {
+  right: 100%;
+  margin-right: 14px;
+}
+
+.c6 > span:after {
+  left: 100%;
+  margin-left: 14px;
+}
+
+.c14 {
+  text-align: center;
+  margin-top: 15px;
+  color: #495057;
+}
+
+.c12 {
+  color: #229955;
+  -webkit-text-decoration: none;
+  text-decoration: none;
+}
+
+.c12:hover {
+  color: #145a32;
+  -webkit-text-decoration: none;
+  text-decoration: none;
+}
+
+.c0 {
+  font-size: 14px;
+  -webkit-transition: -webkit-transform 400ms ease, opacity 400ms ease;
+  -webkit-transition: transform 400ms ease, opacity 400ms ease;
+  transition: transform 400ms ease, opacity 400ms ease;
+  opacity: 0;
+  padding: 20px;
+  border-radius: 3px;
+  background-color: #ffffff;
+  max-width: 400px;
+  box-sizing: border-box;
+  margin: 0 auto;
+}
+
+.c13 {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: center;
+  font-weight: bold;
+  vertical-align: middle;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  touch-action: manipulation;
+  cursor: pointer;
+  color: #ffffff;
+  background-color: #229955;
+  border: 1px solid #229955;
+  padding: 9px 12px;
+  font-size: 14px;
+  line-height: 1.428571429;
+  border-radius: 3px;
+  -webkit-transition: all .15s ease-in-out;
+  transition: all .15s ease-in-out;
+}
+
+.c13:focus {
+  outline: 0;
+  box-shadow: 0 0 0 3px rgba(34,153,85,0.5);
+}
+
+.c13:hover,
+.c13:active {
+  background-color: #1b7842;
+  border-color: #1b7842;
+}
+
+.c13[disabled] {
+  opacity: .65;
+}
+
+.c4 {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 38px;
+  box-sizing: border-box;
+  border-radius: 2px;
+  background-image: url(svg);
+  background-repeat: no-repeat;
+  background-size: 20px 20px;
+  background-position: center center;
+}
+
+.c3 {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: center;
+  font-weight: bold;
+  vertical-align: middle;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  touch-action: manipulation;
+  cursor: pointer;
+  color: #ffffff;
+  background-color: #3b5998;
+  border: 1px solid #3b5998;
+  padding: 9px 12px;
+  font-size: 14px;
+  line-height: 1.428571429;
+  border-radius: 3px;
+  -webkit-transition: all .15s ease-in-out;
+  transition: all .15s ease-in-out;
+  margin-bottom: 10px;
+  position: relative;
+  width: 100%;
+  height: 40px;
+}
+
+.c3:focus {
+  outline: 0;
+  box-shadow: 0 0 0 3px rgba(59,89,152,0.5);
+}
+
+.c3:hover,
+.c3:active {
+  color: #ffffff;
+  background-color: #30487b;
+  border-color: #30487b;
+}
+
+.c3[disabled] {
+  opacity: .65;
+}
+
+.c5 {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: center;
+  font-weight: bold;
+  vertical-align: middle;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  touch-action: manipulation;
+  cursor: pointer;
+  color: #58666e;
+  background-color: #ffffff;
+  border: 1px solid rgba(0,0,0,.15);
+  padding: 9px 12px;
+  font-size: 14px;
+  line-height: 1.428571429;
+  border-radius: 3px;
+  -webkit-transition: all .15s ease-in-out;
+  transition: all .15s ease-in-out;
+  margin-bottom: 10px;
+  position: relative;
+  width: 100%;
+  height: 40px;
+}
+
+.c5:focus {
+  outline: 0;
+  box-shadow: 0 0 0 3px rgba(0,0,0,0);
+}
+
+.c5:hover,
+.c5:active {
+  color: #58666e;
+  background-color: #ebebeb;
+  border-color: rgba(0,0,0,0.15);
+}
+
+.c5[disabled] {
+  opacity: .65;
+}
+
+.c2 {
+  text-align: center;
+}
+
+.c7 {
+  position: relative;
+}
+
+.c9 {
+  color: #495057;
+  margin-bottom: 5px;
+  display: none;
+}
+
+.c8 {
+  margin-bottom: 10px;
+}
+
+.c10 {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  font-size: 14px;
+  line-height: 1.428571429;
+  color: #495057;
+  border-radius: 3px;
+  border-width: 1px;
+  border-style: solid;
+  border-color: #ced4da;
+  background-color: #fff;
+  background-image: none;
+  padding: 9px 12px;
+  -webkit-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+  transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+  box-shadow: none;
+  -webkit-appearance: none;
+}
+
+.c10:focus {
+  border-color: #5fdb94;
+  box-shadow: 0 0 0 3px rgba(95,219,148,0.5);
+  outline: 0;
+}
+
+.c10:disabled,
+.c10[readonly] {
+  background-color: #e9ecef;
+}
+
+.c10::-webkit-input-placeholder {
+  color: #868e96;
+}
+
+.c10::-moz-placeholder {
+  color: #868e96;
+}
+
+.c10:-ms-input-placeholder {
+  color: #868e96;
+}
+
+.c10::placeholder {
+  color: #868e96;
+}
+
+.c11 {
+  margin-bottom: 10px;
+  text-align: right;
+}
+
+<div
+  className="c0"
+>
+  <div>
+    <div
+      className="c1"
+    >
+      login.title
+    </div>
+    <div
+      className="r5-social-buttons c2"
+    >
+      <button
+        className="r5-btn-social r5-btn-social-facebook c3"
+        onClick={[Function]}
+        title="Facebook"
+      >
+        <span
+          className="r5-btn-social-icon c4"
+        />
+        <span
+          className="r5-btn-social-text"
+        >
+          Facebook
+        </span>
+      </button>
+      <button
+        className="r5-btn-social r5-btn-social-google c5"
+        onClick={[Function]}
+        title="Google"
+      >
+        <span
+          className="r5-btn-social-icon c4"
+        />
+        <span
+          className="r5-btn-social-text"
+        >
+          Google
+        </span>
+      </button>
+    </div>
+    <div
+      className="c6"
+    >
+      <span>
+        or
+      </span>
+    </div>
+    <form
+      className="c7"
+      noValidate={true}
+      onSubmit={[Function]}
+    >
+      <div
+        className="c8"
+      >
+        <label
+          className="c9"
+          htmlFor="identifier"
+        >
+          identifier
+        </label>
+        <input
+          autoComplete="username webauthn"
+          className="c10"
+          data-testid="identifier"
+          id="identifier"
+          name="identifier"
+          onBlur={[Function]}
+          onChange={[Function]}
+          placeholder="identifier"
+          readOnly={false}
+          required={true}
+          title="identifier"
+          type="text"
+          value=""
+        />
+      </div>
+      <div
+        className="c8"
+      >
+        <label
+          className="c9"
+          htmlFor="password"
+        >
+          password
+        </label>
+        <div
+          style={
+            {
+              "position": "relative",
+            }
+          }
+        >
+          <input
+            autoComplete="current-password"
+            className="c10"
+            data-testid="password"
+            id="password"
+            name="password"
+            onBlur={[Function]}
+            onChange={[Function]}
+            placeholder="password"
+            required={true}
+            title="password"
+            type="password"
+            value=""
+          />
+        </div>
+      </div>
+      <div
+        className="c11"
+      >
+        <a
+          className="c12"
+          href="#"
+          onClick={[Function]}
+        >
+          login.forgotPasswordLink
+        </a>
+      </div>
+      <button
+        className="c13"
+        data-testid="submit"
+        disabled={false}
+        type="submit"
+      >
+        login.submitLabel
+      </button>
+    </form>
+    <div
+      className="c14"
+    >
+      <span>
+        login.signupLinkPrefix
+      </span>
+       
+      <a
+        className="c12"
+        href="#"
+        onClick={[Function]}
+      >
+        login.signupLink
+      </a>
+    </div>
+  </div>
+</div>
+`;
+
 exports[`Snapshot with webauthn feature signup form view with password 1`] = `
 .c1 {
   margin-bottom: 15px;

@@ -44,7 +44,7 @@ function expectSocialButtons(toBeInTheDocument = true) {
 
 describe('Snapshot', () => {
     const apiClient = {
-        loginWithWebAuthn: jest.fn().mockRejectedValue(Promise.reject())
+        loginWithWebAuthn: jest.fn().mockRejectedValue(new Error('This is a mock.'))
     }
 
     const generateSnapshot = (options, config = defaultConfig) => () => {
@@ -376,7 +376,7 @@ describe('DOM testing', () => {
         test('login view', async () => {
             expect.assertions(6);
             await generateComponent({ allowWebAuthnLogin: true }, webauthnConfig, {
-                loginWithWebAuthn: jest.fn().mockRejectedValue(Promise.reject())
+                loginWithWebAuthn: jest.fn().mockRejectedValue(new Error('This is a mock.'))
             });
 
             // Social buttons
