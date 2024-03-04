@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import { describe, expect, test } from '@jest/globals';
+import { describe, expect, jest, test } from '@jest/globals';
 import renderer from 'react-test-renderer';
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
@@ -43,8 +43,12 @@ function expectSocialButtons(toBeInTheDocument = true) {
 }
 
 describe('Snapshot', () => {
+    const apiClient = {
+        loginWithWebAuthn: jest.fn().mockRejectedValue(Promise.reject())
+    }
+
     const generateSnapshot = (options, config = defaultConfig) => () => {
-        const tree = authWidget(options, { config, apiClient: {} })
+        const tree = authWidget(options, { config, apiClient })
             .then(result => renderer.create(result).toJSON())
             .catch(e => console.error(e) || Promise.reject(e));
 
