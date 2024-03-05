@@ -28,13 +28,15 @@ describe('Snapshot', () => {
             { config, apiClient }
         )
 
-        const { container, rerender } = await render(widget);
+        await waitFor(async () => {
+            const { container, rerender } = await render(widget);
 
-        await waitFor(() => expect(apiClient.getUser).toHaveBeenCalled())
-
-        await rerender(widget)
-        
-        expect(container).toMatchSnapshot();
+            await waitFor(() => expect(apiClient.getUser).toHaveBeenCalled())
+    
+            await rerender(widget)
+            
+            expect(container).toMatchSnapshot();
+        })
     };
 
     test('basic', generateSnapshot({
@@ -61,11 +63,13 @@ describe('DOM testing', () => {
             { config, apiClient }
         )
 
-        const { rerender } = await render(widget);
+        await waitFor(async () => {
+            const { rerender } = await render(widget);
 
-        await waitFor(() => expect(apiClient.getUser).toHaveBeenCalled())
+            await waitFor(() => expect(apiClient.getUser).toHaveBeenCalled())
 
-        return await rerender(widget)
+            await rerender(widget)
+        })
     };
 
     describe('with default config', () => {
