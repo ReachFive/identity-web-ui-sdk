@@ -1,5 +1,5 @@
 import React from 'react';
-import { createRoot } from 'react-dom/client';
+import { render, unmountComponentAtNode } from 'react-dom';
 import type { AuthOptions, Client as CoreClient, SessionInfo } from '@reachfive/identity-core'
 
 import { Config, Prettify } from './types'
@@ -138,17 +138,16 @@ export class UiClient {
                 defaultI18n: this.defaultI18n
             });
 
-            const root = createRoot(container)
-            root.render(WidgetComponent);
+            render(WidgetComponent, container);
 
             if (options.onReady && typeof options.onReady === 'function') {
                 options.onReady({
-                    destroy() { root.unmount() }
+                    destroy() { unmountComponentAtNode(container) }
                 });
             }
         } catch (error) {
             const message = this.adaptError(error);
-            createRoot(container).render(<ErrorMessage>{message}</ErrorMessage>)
+            render(<ErrorMessage>{message}</ErrorMessage>, container)
             this.handleError(error)
         }
     }
