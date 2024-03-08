@@ -32,7 +32,7 @@ export type Context = {
 type PrepareFn<P, U> = (options: PropsWithI18n<PropsWithTheme<P>>, context: Context) => PropsWithI18n<PropsWithTheme<U>> | PromiseLike<PropsWithI18n<PropsWithTheme<U>>>
 
 type CreateWidget<P, U> = {
-    component: ComponentType<U>
+    component: ComponentType<Omit<U, 'theme'>>
     prepare?: PrepareFn<P, U>
 } & WidgetContainerProps
 
@@ -42,17 +42,17 @@ export function createWidget<P, U = P>({
     ...widgetAttrs
 }: CreateWidget<P, U>) {
     return (options: PropsWithTheme<PropsWithI18n<P>>, context: Context) => {
-        return Promise.resolve(prepare(options, context)).then(preparedOptions => {
+        return Promise.resolve(prepare(options, context)).then(({ theme: customTheme, ...preparedOptions }) => {
             const Component = component
 
-            const theme: Theme = buildTheme(options.theme)
+            const theme: Theme = buildTheme(customTheme)
 
             return (
                 <ConfigProvider config={context.config}>
                     <ReachfiveProvider client={context.apiClient}>
                         <SessionProvider session={context.session}>
                             <ThemeProvider theme={theme}>
-                                <I18nProvider defaultMessages={context.defaultI18n} messages={options.i18n}>
+                                <I18nProvider defaultMessages={context.defaultI18n} messages={preparedOptions.i18n}>
                                     <WidgetContainer {...widgetAttrs}>
                                         <Component {...preparedOptions} />
                                     </WidgetContainer>
@@ -77,8 +77,8 @@ export function createMultiViewWidget<P, U = P>({ prepare, ...params }: MultiVie
 }
 
 export interface MultiViewWidgetProps<P, U> {
-    initialView: ((props: U) => string) | string
-    views: Record<string, ComponentType<U>>
+    initialView: ((props: Omit<U, 'theme'>) => string) | string
+    views: Record<string, ComponentType<Omit<U, 'theme'>>>
     initialState?: MultiWidgetState
     prepare?: PrepareFn<P, U>
 }
@@ -88,7 +88,7 @@ export type MultiWidgetState = Record<string, unknown> & {
 }
 
 function multiViewWidget<P, U>({ initialView, views, initialState = {} as MultiWidgetState }: MultiViewWidgetProps<P, U>) {
-    return class MultiViewWidget extends React.Component<U, MultiWidgetState> {
+    return class MultiViewWidget extends React.Component<Omit<U, 'theme'>, MultiWidgetState> {
 
         state = {
             ...initialState,
