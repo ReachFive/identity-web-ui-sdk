@@ -128,6 +128,8 @@ export interface ButtonTheme {
     paddingX: number
     /** Specifies the padding for the y axis. (top and bottom) */
     paddingY: number
+    /** Specifies the border-color. */
+    borderColor: CSS.Color,
     /** Specifies the border-radius. */
     borderRadius: number
     /** Specifies the border-width. */
@@ -153,6 +155,8 @@ export interface SocialButtonTheme {
     paddingX: number
     /** Specifies the padding for the y axis. (top and bottom) */
     paddingY: number
+    /** Specifies the border-color. */
+    borderColor: CSS.Color,
     /** Specifies the border-radius. */
     borderRadius: number
     /** Specifies the border-width. */

@@ -99,8 +99,8 @@ export const buildTheme = (themeOptions: ThemeOptions = {}): Theme => {
         lineHeight: base.lineHeight,
         paddingX: base.paddingX,
         paddingY:base.paddingY,
-        borderRadius: base.borderRadius,
         borderColor: base.borderColor,
+        borderRadius: base.borderRadius,
         borderWidth: base.borderWidth,
         focusBorderColor: lighten(0.25, base.primaryColor),
         ...customInput
@@ -111,6 +111,7 @@ export const buildTheme = (themeOptions: ThemeOptions = {}): Theme => {
         lineHeight: base.lineHeight,
         paddingX: base.paddingX,
         paddingY: base.paddingY,
+        borderColor: base.borderColor,
         borderRadius: base.borderRadius,
         borderWidth: base.borderWidth,
         ...customButton
@@ -122,6 +123,7 @@ export const buildTheme = (themeOptions: ThemeOptions = {}): Theme => {
         lineHeight: button.lineHeight,
         paddingX: button.paddingX,
         paddingY: button.paddingY,
+        borderColor: button.borderColor,
         borderRadius: button.borderRadius,
         borderWidth: button.borderWidth,
         ...customSocialButton
