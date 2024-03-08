@@ -25,7 +25,7 @@
     "scripts": {
         "build": "npx rollup --config",
         "watch": "npm run build -- --watch",
-        "test": "npx jest",
+        "test": "npx jest --force-exit --detectOpenHandles",
         "test:update": "npm run test -- --update-snapshot",
         "typecheck": "tsc --noEmit",
         "lint": "eslint --ext .js,.jsx,.ts,.tsx src/"
