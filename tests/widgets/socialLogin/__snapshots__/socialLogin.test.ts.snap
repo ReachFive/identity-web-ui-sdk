@@ -1,0 +1,154 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Snapshot social login basic 1`] = `
+.c0 {
+  font-size: 14px;
+  -webkit-transition: -webkit-transform 400ms ease, opacity 400ms ease;
+  -webkit-transition: transform 400ms ease, opacity 400ms ease;
+  transition: transform 400ms ease, opacity 400ms ease;
+  opacity: 0;
+}
+
+.c3 {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 38px;
+  box-sizing: border-box;
+  border-radius: 2px;
+  background-image: url(svg);
+  background-repeat: no-repeat;
+  background-size: 20px 20px;
+  background-position: center center;
+}
+
+.c2 {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: center;
+  font-weight: bold;
+  vertical-align: middle;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  touch-action: manipulation;
+  cursor: pointer;
+  color: #ffffff;
+  background-color: #3b5998;
+  border: 1px solid #3b5998;
+  padding: 9px 12px;
+  font-size: 14px;
+  line-height: 1.428571429;
+  border-radius: 3px;
+  -webkit-transition: all .15s ease-in-out;
+  transition: all .15s ease-in-out;
+  margin-bottom: 10px;
+  position: relative;
+  width: 100%;
+  height: 40px;
+}
+
+.c2:focus {
+  outline: 0;
+  box-shadow: 0 0 0 3px rgba(59,89,152,0.5);
+}
+
+.c2:hover,
+.c2:active {
+  color: #ffffff;
+  background-color: #30487b;
+  border-color: #30487b;
+}
+
+.c2[disabled] {
+  opacity: .65;
+}
+
+.c4 {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: center;
+  font-weight: bold;
+  vertical-align: middle;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  touch-action: manipulation;
+  cursor: pointer;
+  color: #58666e;
+  background-color: #ffffff;
+  border: 1px solid rgba(0,0,0,.15);
+  padding: 9px 12px;
+  font-size: 14px;
+  line-height: 1.428571429;
+  border-radius: 3px;
+  -webkit-transition: all .15s ease-in-out;
+  transition: all .15s ease-in-out;
+  margin-bottom: 10px;
+  position: relative;
+  width: 100%;
+  height: 40px;
+}
+
+.c4:focus {
+  outline: 0;
+  box-shadow: 0 0 0 3px rgba(0,0,0,0);
+}
+
+.c4:hover,
+.c4:active {
+  color: #58666e;
+  background-color: #ebebeb;
+  border-color: rgba(0,0,0,0.15);
+}
+
+.c4[disabled] {
+  opacity: .65;
+}
+
+.c1 {
+  text-align: center;
+}
+
+<div
+  className="c0 r5-social-login r5-widget-active"
+>
+  <div
+    className="r5-social-buttons c1"
+  >
+    <button
+      className="r5-btn-social r5-btn-social-facebook c2"
+      onClick={[Function]}
+      title="Facebook"
+    >
+      <span
+        className="r5-btn-social-icon c3"
+      />
+      <span
+        className="r5-btn-social-text"
+      >
+        Facebook
+      </span>
+    </button>
+    <button
+      className="r5-btn-social r5-btn-social-google c4"
+      onClick={[Function]}
+      title="Google"
+    >
+      <span
+        className="r5-btn-social-icon c3"
+      />
+      <span
+        className="r5-btn-social-text"
+      >
+        Google
+      </span>
+    </button>
+  </div>
+</div>
+`;
