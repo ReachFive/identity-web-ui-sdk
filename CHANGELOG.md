@@ -7,6 +7,16 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.25.3] - 2023-03-08
+
+### Fixes
+
+- Make `@rollup/rollup-linux-x64-gnu` dependency optional
+- Fix React hook warning due to mismatch of React versions
+- Resolve not wrapped in act warning issue in tests
+- Fix custom theme option forwarding
+- Prevent phone-number field validation on empty value
+
 ## [1.25.2] - 2023-02-21
 
 ### Fixes
@@ -415,7 +425,9 @@ The eye icon is now correctly displayed in the Auth widget.
 
 First version of the SDK Web UI.
 
-[Unreleased]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.25.2...HEAD
+[Unreleased]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.25.3...HEAD
+
+[1.25.3]:  https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.25.2...v1.25.3
 
 [1.25.2]:  https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.25.1...v1.25.2
 
