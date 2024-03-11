@@ -1,6 +1,5 @@
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
-import difference from 'lodash-es/difference';
 import { AuthOptions, Identity as CoreIdentity, Profile } from '@reachfive/identity-core';
 
 import { UserError } from '../../helpers/errors';
@@ -30,10 +29,10 @@ interface WithIdentitiesProps {
 }
 
 function findAvailableProviders(providers: string[], identities: Identity[]): string[] {
-    return difference(
-        providers.map(provider => provider.split(':').shift()).filter((name): name is string => !!name),
-        identities.map(i => i.provider)
-    )
+    return providers.filter(provider => {
+        const providerName = provider.split('').shift();
+        return identities.findIndex(i => i.provider == providerName) == -1;
+    });
 } 
 
 const withIdentities = <T extends WithIdentitiesProps = WithIdentitiesProps>(
