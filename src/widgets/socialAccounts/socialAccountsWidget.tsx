@@ -30,7 +30,7 @@ interface WithIdentitiesProps {
 
 function findAvailableProviders(providers: string[], identities: Identity[]): string[] {
     return providers.filter(provider => {
-        const providerName = provider.split('').shift();
+        const providerName = provider.split(':').shift();
         return identities.findIndex(i => i.provider == providerName) == -1;
     });
 } 
