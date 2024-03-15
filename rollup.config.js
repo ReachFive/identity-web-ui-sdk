@@ -38,7 +38,6 @@ const plugins = [
         preventAssignment: true,
         values: {
             'process.env.NODE_ENV': JSON.stringify('production'),
-            'lodash/': 'lodash-es/',
         }
     }),
     nodeResolve({

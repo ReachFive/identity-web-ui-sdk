@@ -2,8 +2,6 @@ import React, { useCallback, useLayoutEffect, useState } from 'react';
 import { AuthOptions } from '@reachfive/identity-core';
 import { SignupParams } from '@reachfive/identity-core/es/main/oAuthClient';
 
-import { isEqual } from 'lodash-es';
-
 import { createForm } from './formComponent';
 import { buildFormFields, type Field } from './formFieldFactory';
 import { UserAggreementStyle } from './formControlsComponent'
@@ -15,6 +13,8 @@ import ReCaptcha, { extractCaptchaTokenFromData, importGoogleRecaptchaScript, ty
 
 import { useReachfive } from '../../contexts/reachfive';
 import { useConfig } from '../../contexts/config';
+
+import { isEqual } from '../../helpers/utils';
 
 const SignupForm = createForm<SignupParams['data']>({
     prefix: 'r5-signup-',

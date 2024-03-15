@@ -78,3 +78,65 @@ export function specializeIdentifierData<T extends LoginWithPasswordParams | Log
 export function isValidEmail(email: string) {
     return /\S+@\S+\.\S+/.test(email);
 }
+
+export function camelCase(string: string) {
+    return string
+    .replace(/((?<![A-Z])[A-Z])/g, ' $1')
+    .toLowerCase()
+    .replace(/[^a-z0-9]/ig, ' ')
+    .trim()
+    .replace(/(?:^\w|[A-Z]|\b\w)/g, function(word, index) {
+        return index === 0 ? word.toLowerCase() : word.toUpperCase();
+    })
+    .replace(/\s+/g, '');
+}
+
+export function snakeCase(string: string) {
+    const matches = string.match(/[A-Z]{2,}(?=[A-Z][a-z]+[0-9]*|\b)|[A-Z]?[a-z]+|[A-Z]|[0-9]+/g) 
+    return matches ? matches.map(s => s.toLowerCase()).join('_') : '';
+}
+
+
+export function isEmpty(value: unknown) {
+    if (value == null) {
+        return true;
+    }
+    if (Array.isArray(value) || typeof value == 'string' || Buffer.isBuffer(value)) {
+        return !value.length;
+    }
+    for (const key in value) {
+        if (Object.hasOwnProperty.call(value, key)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+export function isEqual<T>(arr1: T[], arr2: T[]) {
+    return arr1.length === arr2.length && arr1.every(x => arr2.includes(x))
+}
+
+export function difference<T>(arr1: T[], arr2: T[]) {
+    return arr1.filter(x => !arr2.includes(x))
+}
+
+export function intersection<T>(arr1: T[], ...args: T[][]) {
+    return arr1.filter(item => args.every(arr => arr.includes(item)))
+}
+
+export function find<T>(collection: Record<string, T>, predicate: (item: T) => boolean) {
+    return Object.values(collection ?? {}).find(value => predicate(value))
+}
+
+export function debounce(func: (...args: unknown[]) => void, delay: number, { leading }: { leading?: boolean } = {}) {
+    let timerId: NodeJS.Timeout
+  
+    return (...args: unknown[]) => {
+      if (!timerId && leading) {
+        func(...args)
+      }
+      clearTimeout(timerId)
+  
+      timerId = setTimeout(() => func(...args), delay)
+    }
+  }

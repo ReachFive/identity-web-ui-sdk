@@ -1,7 +1,5 @@
 import React from 'react';
 
-import compact from 'lodash-es/compact';
-
 import { Validator } from '../../core/validation';
 
 import { createWidget } from '../../components/widget/widget';
@@ -33,7 +31,7 @@ interface PasswordEditorFormProps {
 export const PasswordEditorForm = createForm<PasswordEditorFormData, PasswordEditorFormProps>({
     prefix: 'r5-password-editor-',
     fields({ promptOldPassword = false, canShowPassword = false, config }) {
-        return compact([
+        return [
             promptOldPassword && simplePasswordField({
                 key: 'old_password',
                 label: 'oldPassword'
@@ -52,7 +50,7 @@ export const PasswordEditorForm = createForm<PasswordEditorFormData, PasswordEdi
                     hint: 'passwordMatch'
                 })
             })
-        ]);
+        ].filter(x => !!x);
     },
     resetAfterSuccess: true,
     resetAfterError: true

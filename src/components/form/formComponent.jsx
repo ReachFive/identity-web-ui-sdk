@@ -1,10 +1,8 @@
 import React from 'react';
 
-import isFunction from 'lodash-es/isFunction';
-import some from 'lodash-es/some';
-import compact from 'lodash-es/compact';
-import debounce from 'lodash-es/debounce';
 import styled from 'styled-components';
+
+import { debounce, find } from '../../helpers/utils';
 
 import { PrimaryButton } from './buttonComponent';
 import { Error } from '../miscComponent';
@@ -33,7 +31,7 @@ export function createForm(config) {
         constructor(props) {
             super(props);
 
-            this.allFields = compact(isFunction(props.fields) ? props.fields(props) : props.fields).map(f => (
+            this.allFields = (typeof props.fields === 'function' ? props.fields(props) : props.fields ?? []).filter(x => !!x).map(f => (
                 !f.staticContent ? f.create({ i18n: props.i18n, showLabel: props.showLabels }) : f
             ));
 
@@ -99,7 +97,7 @@ export function createForm(config) {
                 const currentState = prevState.fields[fieldName];
                 const newState = {
                     ...currentState,
-                    ...(isFunction(stateUpdate) ? stateUpdate(currentState) : stateUpdate)
+                    ...(typeof stateUpdate === 'function' ? stateUpdate(currentState) : stateUpdate)
                 };
                 const newFields = {
                     ...prevState.fields,
@@ -127,7 +125,7 @@ export function createForm(config) {
                 };
 
                 return {
-                    hasErrors: !!validation.error || some(newFields, ({ validation = {} }) => validation.error),
+                    hasErrors: !!validation.error || find(newFields, ({ validation = {} }) => validation.error) !== undefined,
                     fields: newFields
                 };
             });
