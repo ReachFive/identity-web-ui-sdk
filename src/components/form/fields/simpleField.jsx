@@ -1,5 +1,4 @@
 import React from 'react';
-import pick from 'lodash-es/pick';
 
 import { FormGroup, Input } from '../formControlsComponent';
 import { createField } from '../fieldCreator';
@@ -20,7 +19,7 @@ const SimpleField = props => {
         <FormGroup
             inputId={inputId}
             labelText={label}
-            {...pick(validation, 'error')}
+            {...(({ error }) => ({ error }))(validation)}
             showLabel={showLabel}>
             <Input
                 id={inputId}

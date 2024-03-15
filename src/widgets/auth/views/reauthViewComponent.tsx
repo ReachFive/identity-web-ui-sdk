@@ -1,6 +1,7 @@
 import React from 'react';
 import { AuthOptions } from '@reachfive/identity-core';
-import intersection from 'lodash-es/intersection';
+
+import { intersection } from '../../../helpers/utils'
 
 import { Heading, Intro, Separator } from '../../../components/miscComponent';
 import { SocialButtons } from '../../../components/form/socialButtonsComponent';
@@ -52,7 +53,7 @@ export const ReauthView = ({ allowForgotPassword = true, auth, session, showLabe
         })
     )
 
-    const userSocialProviders = intersection(socialProviders, session.socialProviders);
+    const userSocialProviders = intersection(socialProviders ?? [], session.socialProviders ?? []);
 
     return (
         <div>

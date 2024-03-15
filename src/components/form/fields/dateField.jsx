@@ -22,7 +22,7 @@ const InputCol = styled.div`
     flex-basis: ${props => props.width}%;
 `;
 
-const DateField = ({ i18n, inputId, label, locale, onChange, path, required, showLabel, validation, value }) => {
+const DateField = ({ i18n, inputId, label, locale, onChange, path, required, showLabel, validation={}, value }) => {
     const [day, setDay] = useState(isValued(value) ? value.raw.day : undefined)
     const [month, setMonth] = useState(isValued(value) ? value.raw.month : undefined)
     const [year, setYear] = useState(isValued(value) ? value.raw.year : undefined)
