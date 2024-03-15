@@ -10,18 +10,17 @@ import { createField } from '../fieldCreator';
 class PhoneNumberField extends React.Component {
     componentDidMount() {
         const { raw, country } = this.props.value;
-
-        if (!raw) return;
-
-        try {
-            const parsed = libphonenumber.parse(raw, country);
-            const phoneValue = country === parsed.country
-                ? libphonenumber.format(parsed, 'National')
-                : raw;
-
-            this.asYouType(phoneValue);
-        } catch (e) {
-            console.error(e)
+        if (typeof raw === 'string') {
+            try {
+                const parsed = libphonenumber.parse(raw, country);
+                const phoneValue = country === parsed.country
+                    ? libphonenumber.format(parsed, 'National')
+                    : raw;
+        
+                this.asYouType(phoneValue);
+            } catch (e) {
+                console.error(e)
+            }
         }
     }
 
