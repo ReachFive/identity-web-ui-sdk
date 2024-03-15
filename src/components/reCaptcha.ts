@@ -43,3 +43,5 @@ export function extractCaptchaTokenFromData<T extends { captchaToken?: string }>
     delete data.captchaToken
     return token
 }
+
+export type WithCaptchaToken<T> = T & { captchaToken?: string }

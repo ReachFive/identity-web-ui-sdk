@@ -16,7 +16,7 @@ import { useReachfive } from '../../../contexts/reachfive';
 import { useRouting } from '../../../contexts/routing';
 import { useSession } from '../../../contexts/session';
 
-import { specializeIdentifierData, isCustomIdentifier } from '../../../helpers/utils';
+import { specializeIdentifierData } from '../../../helpers/utils';
 
 type LoginWithWebAuthnFormData = { identifier: string } | { email: string }
 
@@ -85,7 +85,7 @@ export const LoginWithWebAuthnView = ({ acceptTos, allowSignup = true, auth, sho
         (data: LoginWithWebAuthnFormData) => {
             const { auth: dataAuth, ...identifier } = specializeIdentifierData<LoginWithWebAuthnParams>(data);
 
-            if (isCustomIdentifier(identifier)) {
+            if ('customIdentifier' in identifier) {
                 console.error('Custom identifier is not a valid WebAuthn identifier.')
                 return Promise.reject(new Error('Custom identifier is not a valid WebAuthn identifier.'));
             }

@@ -1,6 +1,6 @@
 /**
- * @reachfive/identity-ui - v1.25.2
- * Compiled Thu, 07 Mar 2024 14:43:01 UTC
+ * @reachfive/identity-ui - v1.25.3
+ * Compiled Fri, 15 Mar 2024 15:04:16 UTC
  *
  * Copyright (c) ReachFive.
  *
@@ -157,6 +157,8 @@ interface ButtonTheme {
     paddingX: number
     /** Specifies the padding for the y axis. (top and bottom) */
     paddingY: number
+    /** Specifies the border-color. */
+    borderColor: CSS.Color,
     /** Specifies the border-radius. */
     borderRadius: number
     /** Specifies the border-width. */
@@ -182,6 +184,8 @@ interface SocialButtonTheme {
     paddingX: number
     /** Specifies the padding for the y axis. (top and bottom) */
     paddingY: number
+    /** Specifies the border-color. */
+    borderColor: CSS.Color,
     /** Specifies the border-radius. */
     borderRadius: number
     /** Specifies the border-width. */
