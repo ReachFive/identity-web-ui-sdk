@@ -9,6 +9,8 @@ describe('utils', () => {
         expect(camelCase('Foo 1 Bar 1')).toEqual('foo1Bar1')
         expect(camelCase('--foo-1-bar-1--')).toEqual('foo1Bar1')
         expect(camelCase('__FOO_1_BAR_1__')).toEqual('foo1Bar1')
+        expect(camelCase('foo_bar')).toEqual('fooBar')
+        expect(camelCase('fooBar')).toEqual('fooBar')
     })
 
     /** @see https://lodash.com/docs/4.17.15#snakeCase */
@@ -16,6 +18,8 @@ describe('utils', () => {
         expect(snakeCase('Foo 1 Bar 1')).toEqual('foo_1_bar_1')
         expect(snakeCase('foo1Bar1')).toEqual('foo_1_bar_1')
         expect(snakeCase('--FOO-1-BAR-1--')).toEqual('foo_1_bar_1')
+        expect(snakeCase('foo_bar')).toEqual('foo_bar')
+        expect(snakeCase('fooBar')).toEqual('foo_bar')
     })
 
     test('isEmpty', () => {

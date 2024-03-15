@@ -85,6 +85,7 @@ export function isValidEmail(email: string) {
 
 export function camelCase(string: string) {
     return string
+    .replace(/((?<![A-Z])[A-Z])/g, ' $1')
     .toLowerCase()
     .replace(/[^a-z0-9]/ig, ' ')
     .trim()
