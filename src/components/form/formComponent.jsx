@@ -31,13 +31,7 @@ export function createForm(config) {
         constructor(props) {
             super(props);
 
-            this.allFields = (typeof props.fields === 'function' ? props.fields(props) : props.fields ?? []).filter(x => !!x).map(f => (
-                !f.staticContent ? f.create({ i18n: props.i18n, showLabel: props.showLabels }) : f
-            ));
-
-            this.inputFields = this.allFields.filter(f => !f.staticContent);
-
-            this.fieldByKey = this.inputFields.reduce((acc, field) => ({ ...acc, [field.key]: field }), {});
+            this.updateFields(props)
 
             this.state = {
                 isLoading: false,
@@ -45,6 +39,24 @@ export function createForm(config) {
                 errorMessage: null,
                 fields: this.applyModel(props.initialModel)
             };
+        }
+
+        updateFields(props) {
+            this.allFields = (typeof props.fields === 'function' ? props.fields(props) : props.fields ?? []).filter(x => !!x).map(f => (
+                !f.staticContent ? f.create({ i18n: props.i18n, showLabel: props.showLabels }) : f
+            ));
+
+            this.inputFields = this.allFields.filter(f => !f.staticContent);
+
+            this.fieldByKey = this.inputFields.reduce((acc, field) => ({ ...acc, [field.key]: field }), {});
+        }
+
+
+        UNSAFE_componentWillReceiveProps(props) {
+            this.updateFields(props)
+            this.setState({
+                fields: this.applyModel(props.initialModel)
+            })
         }
 
         componentWillUnmount() {
