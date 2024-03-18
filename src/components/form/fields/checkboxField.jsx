@@ -1,7 +1,5 @@
 import React from 'react';
 
-import pick from 'lodash-es/pick';
-
 import { createField } from '../fieldCreator';
 import { Checkbox } from '../formControlsComponent';
 
@@ -15,7 +13,7 @@ const CheckboxField = props => {
         onToggle={() => onChange(clickUpdate)}
         name={path}
         label={label}
-        {...pick(validation, 'error')}
+        {...(({ error }) => ({ error }))(validation)}
         required={required}
         dataTestId={path} />
 };

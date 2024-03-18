@@ -1,7 +1,4 @@
-import compact from 'lodash-es/compact';
-import isString from 'lodash-es/isString';
-import camelCase from 'lodash-es/camelCase';
-import find from 'lodash-es/find';
+import { camelCase, find } from '../../helpers/utils'
 
 import { Validator, email, integer, float, checked } from '../../core/validation';
 import { UserError } from '../../helpers/errors';
@@ -229,9 +226,9 @@ const resolveField = (fieldConfig, config) => {
     throw new UserError(`Unknown field: ${fieldConfig.key}`);
 };
 
-export const buildFormFields = (fields = [], { canShowPassword, errorArchivedConsents, ...config }) => compact(fields).map(field => (
+export const buildFormFields = (fields = [], { canShowPassword, errorArchivedConsents, ...config }) => fields.filter(x => !!x).map(field => (
     resolveField(
-        isString(field)
+        typeof field === 'string'
             ? { key: field, canShowPassword, errorArchivedConsents }
             : { ...field, canShowPassword, errorArchivedConsents },
         config

@@ -1,7 +1,6 @@
 import React from 'react';
 
 import styled from 'styled-components';
-import pick from 'lodash-es/pick';
 
 import { Checkbox } from '../formControlsComponent';
 import { createField } from '../fieldCreator';
@@ -22,7 +21,7 @@ const Description = styled.div`
     }
 `;
 
-const ConsentField = ({ value, onChange, label, description, path, required, validation, consentCannotBeGranted }) => {
+const ConsentField = ({ value, onChange, label, description, path, required, validation={}, consentCannotBeGranted }) => {
     const clickUpdate = ({ value }) => ({
         value: consentCannotBeGranted ? false : !value,
         isDirty: true
@@ -36,7 +35,8 @@ const ConsentField = ({ value, onChange, label, description, path, required, val
             label={label}
             data-testid={path}
             required={required}
-            {...pick(validation, 'error')} />
+            {...(({ error }) => ({ error }))(validation)}
+        />
         <MarkdownContent root={Description} source={description} />
     </div>
 };
