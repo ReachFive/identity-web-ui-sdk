@@ -16,7 +16,7 @@ export default class ReCaptcha {
         return await window.grecaptcha.execute(siteKey, {action: action})
     }
 
-    static handle = async <T extends { captchaToken?: string }>(data: T, conf: ReCaptchaConf, callback: (data: T) => Promise<unknown>, action: string) => {
+    static handle = async <T extends { captchaToken?: string }, R>(data: T, conf: ReCaptchaConf, callback: (data: T) => Promise<R>, action: string) => {
         if (conf.recaptcha_enabled)
         {
             try {

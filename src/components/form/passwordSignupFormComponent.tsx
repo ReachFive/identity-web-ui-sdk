@@ -15,6 +15,7 @@ import { useReachfive } from '../../contexts/reachfive';
 import { useConfig } from '../../contexts/config';
 
 import { isEqual } from '../../helpers/utils';
+import { FieldValue } from './fieldCreator';
 
 const SignupForm = createForm<SignupParams['data']>({
     prefix: 'r5-signup-',
@@ -75,10 +76,10 @@ export const PasswordSignupForm = ({
     )
 
     const refreshBlacklist = useCallback(
-        (data: Record<string, { value?: string }>) => {
-            const email = data['email'] && data['email'].value || '';
-            const givenName = data['given_name'] && data['given_name'].value || '';
-            const lastName = data['family_name'] && data['family_name'].value || '';
+        (data: Record<string, FieldValue<unknown>>) => {
+            const email = data['email'] && data['email'].value as string || '';
+            const givenName = data['given_name'] && data['given_name'].value as string || '';
+            const lastName = data['family_name'] && data['family_name'].value as string || '';
 
             const list = [
                 email.split('@'),
