@@ -1,5 +1,4 @@
-import camelCase from 'lodash-es/camelCase';
-import lodashSnakeCase from 'lodash-es/snakeCase';
+import { camelCase, snakeCase as underlingSnakeCase } from './utils';
 
 export const snakeCasePath = (path: string) =>
     path
@@ -18,7 +17,7 @@ export const camelCaseProperties = function (object: Record<string, unknown>) {
 }
 
 export const snakeCaseProperties = function (object: Record<string, unknown>) {
-    return transformObjectProperties(object, lodashSnakeCase);
+    return transformObjectProperties(object, underlingSnakeCase);
 }
 
 type TransformObjectProperties<T> = T extends (infer U)[]
@@ -46,8 +45,10 @@ export function transformObjectProperties<T>(
     return input as TransformObjectProperties<T>;
 }
 
-/* reuse lodash as it covers most cases, but we want the same behavior as the
-     snakecasing strategy on the server where numbers are not separated from non numbers. */
+/** Reuse lodash's _.snakeCase behavior as it covers most cases, but we want the same behavior as the
+  * snakecasing strategy on the server where numbers are not separated from non numbers.
+  */
 function snakeCase(input: string) {
-    return lodashSnakeCase(input).replace(/_\d/g, dashNumber => dashNumber.slice(1));
+    return underlingSnakeCase(input).replace(/_\d/g, dashNumber => dashNumber.slice(1));
 }
+ 

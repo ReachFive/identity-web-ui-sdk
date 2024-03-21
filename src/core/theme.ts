@@ -1,7 +1,7 @@
-import CSS from 'csstype'
 import { lighten, transparentize, darken } from 'polished';
+import { CSSProperties } from 'styled-components';
     
-import { Theme, ThemeOptions, BaseTheme } from '../types/styled'
+import { Theme, ThemeOptions, BaseTheme, LinkTheme, InputTheme, ButtonTheme, SocialButtonTheme } from '../types/styled'
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
 const white = '#fff';
@@ -54,8 +54,8 @@ export const _blockInnerHeight = (theme: Parameters<typeof _absoluteLineHeight>[
 export const _blockHeight = (theme: Parameters<typeof _blockInnerHeight>[0] & Pick<PrimitiveTheme, 'borderWidth'>) =>
     _blockInnerHeight(theme) + 2 * theme.borderWidth
 
-export const inputBtnFocusBoxShadow = (borderColor?: string) =>
-    borderColor ? `0 0 0 3px ${transparentize(0.5, borderColor)}` : undefined;
+export const inputBtnFocusBoxShadow = (color?: CSSProperties['color']): NonNullable<CSSProperties['boxShadow']> =>
+    color ? `0 0 0 3px ${transparentize(0.5, color)}` : 'none';
 
 export const height = (fontSize: number, lineHeight: number, paddingY: number, borderWidth: number) =>
     Math.round(fontSize * lineHeight) + 2 * paddingY + 2 * borderWidth
@@ -69,7 +69,7 @@ export const baseInputTheme = {
     focusBoxShadow: inputBtnFocusBoxShadow,
 }
 
-export const buildTheme = (themeOptions: ThemeOptions = {}): Theme => {
+export const buildTheme = (themeOptions: ThemeOptions = {} as Partial<ThemeOptions>): Theme => {
     const {
         link: customLink,
         input: customInput,
@@ -78,7 +78,7 @@ export const buildTheme = (themeOptions: ThemeOptions = {}): Theme => {
         ...customBase
     } = themeOptions
     const primitive = { ...primitiveTheme, ...customBase }
-    const base = {
+    const base: BaseTheme = {
         paddingY: paddingY(primitive),
         paddingX: paddingX(primitive),
         spacing: Math.round(_blockHeight(primitive) / 4),
@@ -87,41 +87,43 @@ export const buildTheme = (themeOptions: ThemeOptions = {}): Theme => {
         _blockHeight: _blockHeight(primitive),
         ...primitive,
     }
-    const link = {
+    const link: Omit<LinkTheme, 'hoverColor'> = {
         color: base.primaryColor,
-        decoration: 'none' as CSS.Property.TextDecorationLine,
-        hoverDecoration: 'none' as CSS.Property.TextDecorationLine,
+        decoration: 'none',
+        hoverDecoration: 'none',
         ...customLink
     }
-    const input = {
+    const input: Omit<InputTheme, 'focusBoxShadow' | 'height'> = {
         ...baseInputTheme,
         fontSize: base.fontSize,
         lineHeight: base.lineHeight,
         paddingX: base.paddingX,
-        paddingY:base.paddingY,
-        borderRadius: base.borderRadius,
+        paddingY: base.paddingY,
         borderColor: base.borderColor,
+        borderRadius: base.borderRadius,
         borderWidth: base.borderWidth,
         focusBorderColor: lighten(0.25, base.primaryColor),
         ...customInput
     }
-    const button = {
-        fontWeight: 'bold' as CSS.Property.FontWeight,
+    const button: Omit<ButtonTheme, 'focusBoxShadow' | 'height'> = {
+        fontWeight: 'bold',
         fontSize: base.fontSize,
         lineHeight: base.lineHeight,
         paddingX: base.paddingX,
         paddingY: base.paddingY,
+        borderColor: base.borderColor,
         borderRadius: base.borderRadius,
         borderWidth: base.borderWidth,
         ...customButton
     }
-    const socialButton = {
+    const socialButton: Omit<SocialButtonTheme, 'focusBoxShadow' | 'height' | 'textVisible'> = {
         inline: false,
         fontWeight: button.fontWeight,
         fontSize: button.fontSize,
         lineHeight: button.lineHeight,
         paddingX: button.paddingX,
         paddingY: button.paddingY,
+        borderColor: button.borderColor,
         borderRadius: button.borderRadius,
         borderWidth: button.borderWidth,
         ...customSocialButton
@@ -153,7 +155,7 @@ export const buildTheme = (themeOptions: ThemeOptions = {}): Theme => {
             color1: base.dangerColor,
             color2: base.warningColor,
             color3: lighten(0.2, base.successColor),
-            color4: base.successColor
+            color4: base.successColor,
         }
     }
 }

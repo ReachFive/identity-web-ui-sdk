@@ -1,11 +1,8 @@
 import React from 'react';
 
-import isFunction from 'lodash-es/isFunction';
-import isEmpty from 'lodash-es/isEmpty';
-
 import { PathMapping } from '../../core/mapping';
 import { required as requiredRule, empty as emptyRule } from '../../core/validation';
-import { isValued } from '../../helpers/utils';
+import { isEmpty, isValued } from '../../helpers/utils';
 import generateId from '../../helpers/inputIdGenerator';
 import { camelCasePath } from '../../helpers/transformObjectProperties';
 
@@ -29,7 +26,7 @@ export const createField = ({
 }) => ({
     path: path,
     create: ({ i18n, showLabel }) => {
-        const extParams = isFunction(extendedParams) ? extendedParams(i18n) : extendedParams;
+        const extParams = typeof extendedParams === 'function' ? extendedParams(i18n) : extendedParams;
         const staticProps = {
             inputId: generateId(key),
             key,

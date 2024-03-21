@@ -1,6 +1,5 @@
 import React from 'react';
 
-import pick from 'lodash-es/pick';
 import * as libphonenumber from 'libphonenumber-js';
 
 import { Validator } from '../../../core/validation';
@@ -11,16 +10,17 @@ import { createField } from '../fieldCreator';
 class PhoneNumberField extends React.Component {
     componentDidMount() {
         const { raw, country } = this.props.value;
-
-        try {
-            const parsed = libphonenumber.parse(raw, country);
-            const phoneValue = country === parsed.country
-                ? libphonenumber.format(parsed, 'National')
-                : raw;
-
-            this.asYouType(phoneValue);
-        } catch (e) {
-            console.error(e)
+        if (typeof raw === 'string') {
+            try {
+                const parsed = libphonenumber.parse(raw, country);
+                const phoneValue = country === parsed.country
+                    ? libphonenumber.format(parsed, 'National')
+                    : raw;
+        
+                this.asYouType(phoneValue);
+            } catch (e) {
+                console.error(e)
+            }
         }
     }
 
@@ -55,11 +55,11 @@ class PhoneNumberField extends React.Component {
             label,
             placeholder = label
         } = this.props;
-
+        
         return <FormGroup
             inputId={inputId}
             labelText={label}
-            {...pick(validation, 'error')}
+            {...(({ error }) => ({ error }))(validation)}
             showLabel={this.props.showLabel}>
             <Input
                 id={inputId}
