@@ -13,6 +13,7 @@ export const createField = ({
     defaultValue,
     required = true,
     readOnly = false,
+    autoComplete,
     validator = emptyRule,
     mapping = new PathMapping(camelCasePath(path)),
     format = {
@@ -33,6 +34,7 @@ export const createField = ({
             label: i18n(label),
             required,
             readOnly,
+            autoComplete,
             i18n,
             showLabel,
             ...extParams
