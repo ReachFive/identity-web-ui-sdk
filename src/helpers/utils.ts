@@ -1,5 +1,4 @@
-// import { LoginWithWebAuthnParams } from '@reachfive/identity-core';
-// import { LoginWithPasswordParams } from '@reachfive/identity-core/es/main/oAuthClient'
+import { LoginWithPasswordParams, LoginWithWebAuthnParams } from '@reachfive/identity-core';
 import * as libphonenumber from 'libphonenumber-js';
 
 const CHARS = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -44,39 +43,34 @@ export function formatISO8601Date(year: string | number, month: string | number,
     return null
 }
 
-// type LoginWithPasswordOptions = Omit<LoginWithPasswordParams, 'email' | 'phoneNumber' | 'customIdentifier'>
-// type LoginWithWebAuthnOptions = Omit<LoginWithWebAuthnParams, 'email' | 'phoneNumber'>
-
 export type Identifier = { identifier: string }
 export type EmailIdentifier = { email: string }
 export type PhoneNumberIdentifier = { phoneNumber: string }
 export type CustomIdentifier = { customIdentifier: string }
 export type SpecializedIdentifier = EmailIdentifier | PhoneNumberIdentifier | CustomIdentifier
 
-export const isEmailIdentifier = (identifier: SpecializedIdentifier | Record<string, string>): identifier is EmailIdentifier => 'email' in identifier
-export const isPhoneNumberIdentifier = (identifier: SpecializedIdentifier | Record<string, string>): identifier is PhoneNumberIdentifier => 'phoneNumber' in identifier
-export const isCustomIdentifier = (identifier: SpecializedIdentifier | Record<string, string>): identifier is CustomIdentifier => 'customIdentifier' in identifier
-export const isSpecializedIdentifier = (identifier: SpecializedIdentifier | Record<string, string>): identifier is SpecializedIdentifier =>
-    isEmailIdentifier(identifier) || isPhoneNumberIdentifier(identifier) || isCustomIdentifier(identifier)
+type IdentifierLoginPassword = { identifier: string } & Omit<LoginWithPasswordParams, 'email' | 'phoneNumber' | 'customIdentifier'>
+type IdentifierLoginWithWebAuthn = { identifier: string } & Omit<LoginWithWebAuthnParams, 'email' | 'phoneNumber'>
 
+type IdentifierData<T extends LoginWithPasswordParams | LoginWithWebAuthnParams> =
+    T extends LoginWithPasswordParams
+        ? LoginWithPasswordParams | IdentifierLoginPassword
+        : LoginWithWebAuthnParams | IdentifierLoginWithWebAuthn
 
-export type IdentifierData<Options> = Identifier &  Omit<Options, 'email' | 'phoneNumber' | 'customIdentifier'>
-export type SpecializedIdentifierData<Options> = SpecializedIdentifier & Omit<Options, 'identifier' | 'email' | 'phoneNumber' | 'customIdentifier'>
+export const specializeIdentifier = (identifier: string): SpecializedIdentifier =>
+    isValidEmail(identifier)
+        ? { email: identifier } 
+        : libphonenumber.isValidNumber(identifier) 
+            ? { phoneNumber: identifier.replace(/\s+/g, '') }
+            : { customIdentifier: identifier }
 
-export function specializeIdentifierData<Options>(data: IdentifierData<Options> | SpecializedIdentifierData<Options>): SpecializedIdentifierData<Options> {
-    if ('identifier' in data) {
-        const { identifier, ...dataWithoutIdentifier } = data
-        return {
-            ...dataWithoutIdentifier,
-            ...(
-                isValidEmail(identifier) ? { email: identifier } :
-                libphonenumber.isValidNumber(identifier) ? { phoneNumber: identifier.replace(/\s+/g, '') } :
-                { customIdentifier: identifier }
-            ),
-            ...('customIdentifier' in data ? { customIdentifier: data.customIdentifier } : {}),
-        } as SpecializedIdentifierData<Options>
+export function specializeIdentifierData<T extends LoginWithPasswordParams | LoginWithWebAuthnParams>(data: IdentifierData<T>): T {
+    if ('identifier' in data && typeof data.identifier === 'string') {
+        const { identifier, ...rest } = data as IdentifierLoginPassword | IdentifierLoginWithWebAuthn;
+        const specializedIdentifier = specializeIdentifier(identifier);
+        return { ...specializedIdentifier, ...rest } as T;
     }
-    return data
+    return data as T;
 }
 
 export function isValidEmail(email: string) {

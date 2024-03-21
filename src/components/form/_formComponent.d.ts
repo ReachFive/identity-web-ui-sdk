@@ -1,5 +1,3 @@
-import React, { ReactNode } from 'react'
-
 import type { WithConfig } from '../../contexts/config'
 import type { WithI18n } from '../../contexts/i18n'
 
@@ -13,14 +11,12 @@ export interface PasswordPolicy {
 }
 
 export interface FormOptions<P = {}> {
-    allowWebAuthnLogin?: boolean
     prefix?: string
     fields?: FieldCreator<P>[] | ((props: WithConfig<WithI18n<P>>) => FieldCreator<P>[])
     resetAfterSuccess?: boolean
     resetAfterError?: boolean
     submitLabel?: string
     supportMultipleSubmits?: boolean
-    webAuthnButtons?: (disabled: boolean, clickHandler: (event: MouseEvent) => void) => ReactNode
 }
 
 export type WithFormProps<T, P = {}> = P & FormOptions<P> & {
@@ -31,7 +27,6 @@ export type WithFormProps<T, P = {}> = P & FormOptions<P> & {
     onError?: (error: Error | AppError) => void
     onFieldChange?: (data: Record<string, { value?: string }>) => void
     onSuccess?: (result) => void
-    redirect?: (data: T) => void
     supportMultipleSubmits?: boolean
     showLabels?: boolean
     sharedProps?: Record<string, unknown>

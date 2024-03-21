@@ -69,10 +69,11 @@ export const Alternative = styled.div`
     color: ${props => props.theme.textColor};
 `;
 
-export const Link = styled(({ target, href = '#', children, className }: AnchorHTMLAttributes<HTMLAnchorElement>) => {
+export const Link = styled(({ target, href = '#', children, className, controller }: {controller?: AbortController} & AnchorHTMLAttributes<HTMLAnchorElement>) => {
     const { goTo } = useRouting()
 
     const onClick = target ? ((e: MouseEvent<HTMLAnchorElement>) => {
+        controller?.abort(`Going to ${target}`)
         e.preventDefault();
         goTo(target);
     }) : (() => { });

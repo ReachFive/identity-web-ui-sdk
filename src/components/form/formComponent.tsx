@@ -25,7 +25,6 @@ export type FormFields<P = {}> =
     | ((options: FieldOptions<P>) => (FieldCreator<unknown, P> | StaticContent)[])
 
 type FormOptions<P = {}> = {
-    allowWebAuthnLogin?: boolean
     fields?: FormFields<P>
     fieldValidationDebounce?: number
     prefix?: string
@@ -35,7 +34,6 @@ type FormOptions<P = {}> = {
     showLabels?: boolean
     skipError?: boolean | ((error: Error) => boolean) | ((error: AppError) => boolean)
     supportMultipleSubmits?: boolean
-    webAuthnButtons?: (isLoading: boolean, onClick: (event: React.MouseEvent<HTMLElement>) => void) => React.ReactNode
 }
 
 type FormProps<Model = {}, P = {}, R = {}> = FormOptions<P> & P & {
@@ -45,7 +43,6 @@ type FormProps<Model = {}, P = {}, R = {}> = FormOptions<P> & P & {
     onError?: (error: Error | AppError) => void
     onFieldChange?: (fields: Record<string, FieldValue<unknown>>) => void
     onSuccess?: (result: R) => void
-    redirect?: (data: Model) => void
     sharedProps?: Record<string, unknown>
 }
 
@@ -55,7 +52,6 @@ export function createForm<Model = {}, P = {}>(formOptions: FormOptions<P>) {
         const i18n = useI18n();
 
         const {
-            allowWebAuthnLogin = false,
             beforeSubmit,
             fields = [],
             fieldValidationDebounce = 1000,
@@ -64,7 +60,6 @@ export function createForm<Model = {}, P = {}>(formOptions: FormOptions<P>) {
             onError,
             onFieldChange,
             onSuccess,
-            redirect,
             resetAfterError,
             resetAfterSuccess,
             submitLabel = 'send',
@@ -72,7 +67,6 @@ export function createForm<Model = {}, P = {}>(formOptions: FormOptions<P>) {
             showLabels = false,
             skipError,
             supportMultipleSubmits = false,
-            webAuthnButtons,
         } = Object.assign({}, formOptions, props);
 
         const [isLoading, setIsLoading] = useState(false);
@@ -245,22 +239,6 @@ export function createForm<Model = {}, P = {}>(formOptions: FormOptions<P>) {
             });
         }
 
-        const handleClick = (event: React.MouseEvent<HTMLElement>) => {
-            event.preventDefault()
-
-            validateAllFields(isValid => {
-                if (isValid && typeof redirect === 'function') {
-                    setIsLoading(true);
-
-                    const fieldData = inputFields.reduce((acc, field) => {
-                        return field.unbind(acc, fieldValues[field.key]);
-                    }, {} as Model);
-
-                    redirect(fieldData);
-                }
-            });
-        }
-
         return (
             <Form noValidate onSubmit={handleSubmit}>
                 {errorMessage && <ErrorText>{errorMessage}</ErrorText>}
@@ -274,12 +252,9 @@ export function createForm<Model = {}, P = {}>(formOptions: FormOptions<P>) {
                         ...sharedProps as P
                     }) : field.staticContent)
                 }
-                {
-                    !allowWebAuthnLogin && <PrimaryButton disabled={isLoading}>
-                        {i18n(submitLabel)}
-                    </PrimaryButton>
-                }
-                {allowWebAuthnLogin && webAuthnButtons && webAuthnButtons(isLoading, handleClick)}
+                <PrimaryButton disabled={isLoading}>
+                    {i18n(submitLabel)}
+                </PrimaryButton>
             </Form>
         )
     }

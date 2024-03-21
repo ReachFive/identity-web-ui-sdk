@@ -37,19 +37,19 @@ export interface SignupWithWebAuthnViewProps {
     returnToAfterEmailConfirmation?: string
     /**
      * Whether the signup form fields' labels are displayed on the login view.
-     * 
+     *
      * @default false
      */
     showLabels?: boolean
     /**
      * List of the signup fields to display in the form.
-     * 
+     *
      * You can pass a field as an object to override default values :
-     * 
+     *
      * @example
      * {
      *   "key": "family_name",
-     *   "defaultValue": "Moreau", 
+     *   "defaultValue": "Moreau",
      *   "required": true
      * }
      */
@@ -88,7 +88,6 @@ export const SignupWithWebAuthnView = ({
 
         const webAuthnSignupFields = signupFields
             .filter(field => field !== 'password' && field !== 'password_confirmation')
-            .concat('friendly_name')
 
         const fields = buildFormFields(webAuthnSignupFields, config);
 

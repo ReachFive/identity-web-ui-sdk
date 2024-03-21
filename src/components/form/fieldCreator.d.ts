@@ -59,6 +59,7 @@ export interface FieldProps<T, F, P extends FieldComponentProps<F, ExtraParams>,
     defaultValue?: F
     required: boolean
     readOnly: boolean
+    autoComplete?: AutoFill
     validator?: Validator
     mapping?: PathMapping
     format?: Formatter<T, F>

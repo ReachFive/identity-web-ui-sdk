@@ -14,7 +14,6 @@ const Form = styled.form`
     position: relative;
 `;
 
-
 export function createForm(config) {
     class FormComponent extends React.Component {
         static defaultProps = {
@@ -198,24 +197,8 @@ export function createForm(config) {
             });
         };
 
-        handleClick = event => {
-            event.preventDefault();
-
-            this.validateAllFields(isValid => {
-                if (isValid) {
-                    this.setState({ isLoading: true });
-
-                    const fieldData = this.inputFields.reduce((acc, field) => {
-                        return field.unbind(acc, this.state.fields[field.key]);
-                    }, {});
-
-                    this.props.redirect(fieldData);
-                }
-            });
-        }
-
         render() {
-            const { submitLabel, allowWebAuthnLogin, i18n } = this.props;
+            const { submitLabel, i18n } = this.props;
             const { errorMessage, isLoading, fields } = this.state;
 
             return <Form noValidate onSubmit={this.handleSubmit}>
@@ -230,12 +213,9 @@ export function createForm(config) {
                         ...this.props.sharedProps
                     }) : field.staticContent)
                 }
-                {
-                    !allowWebAuthnLogin && <PrimaryButton disabled={isLoading}>
-                        {i18n(submitLabel)}
-                    </PrimaryButton>
-                }
-                {allowWebAuthnLogin && this.props.webAuthnButtons(isLoading, this.handleClick)}
+                <PrimaryButton disabled={isLoading}>
+                    {i18n(submitLabel)}
+                </PrimaryButton>
             </Form>;
         }
     }

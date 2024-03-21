@@ -9,7 +9,7 @@ import { UserAggreementStyle } from './formControlsComponent'
 import { MarkdownContent } from '../miscComponent';
 import { snakeCaseProperties } from '../../helpers/transformObjectProperties';
 import { isValued } from '../../helpers/utils';
-import ReCaptcha, {extractCaptchaTokenFromData, importGoogleRecaptchaScript} from '../reCaptcha';
+import ReCaptcha, { extractCaptchaTokenFromData, importGoogleRecaptchaScript, type WithCaptchaToken } from '../reCaptcha';
 
 import { useReachfive } from '../../contexts/reachfive';
 import { useConfig } from '../../contexts/config';
@@ -62,7 +62,7 @@ export const PasswordSignupForm = ({
     }, [recaptcha_site_key])
 
     const callback = useCallback(
-        (data: SignupParams['data'] & { captchaToken?: string }) => {
+        (data: WithCaptchaToken<SignupParams['data']>) => {
             const captchaToken = extractCaptchaTokenFromData(data)
             return coreClient.signup({
                 captchaToken,

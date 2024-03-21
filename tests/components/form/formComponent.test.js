@@ -445,47 +445,47 @@ describe('DOM testing', () => {
             expect(input).toHaveValue('');
         })
 
-        test('allow WebAuthn login', async () => {
-            const user = userEvent.setup()
+        // test('allow WebAuthn login', async () => {
+        //     const user = userEvent.setup()
 
-            const redirect = jest.fn();
+        //     const redirect = jest.fn();
 
-            await generateComponent({
-                fields: [
-                    simpleField({
-                        key: 'simpleField',
-                        label: 'Simple field',
-                        type: 'text',
-                    }),
-                ],
-                allowWebAuthnLogin: true,
-                webAuthnButtons: (disabled, onPasswordClick) => (
-                    <WebAuthnLoginViewButtons
-                        disabled={disabled}
-                        onPasswordClick={onPasswordClick}
-                    />
-                ),
-                redirect,
-            });
+        //     await generateComponent({
+        //         fields: [
+        //             simpleField({
+        //                 key: 'simpleField',
+        //                 label: 'Simple field',
+        //                 type: 'text',
+        //             }),
+        //         ],
+        //         allowWebAuthnLogin: true,
+        //         webAuthnButtons: (disabled, onPasswordClick) => (
+        //             <WebAuthnLoginViewButtons
+        //                 disabled={disabled}
+        //                 onPasswordClick={onPasswordClick}
+        //             />
+        //         ),
+        //         redirect,
+        //     });
 
-            const input = screen.queryByTestId('simpleField');
-            expect(input).toBeInTheDocument();
+        //     const input = screen.queryByTestId('simpleField');
+        //     expect(input).toBeInTheDocument();
             
-            await user.type(input, 'my value');
-            expect(input).toHaveValue('my value');
+        //     await user.type(input, 'my value');
+        //     expect(input).toHaveValue('my value');
 
-            const webauthnButton = screen.queryByTestId('webauthn-button');
-            expect(webauthnButton).toBeInTheDocument();
+        //     const webauthnButton = screen.queryByTestId('webauthn-button');
+        //     expect(webauthnButton).toBeInTheDocument();
 
-            const passwordButton = screen.queryByTestId('password-button');
-            expect(passwordButton).toBeInTheDocument();
+        //     const passwordButton = screen.queryByTestId('password-button');
+        //     expect(passwordButton).toBeInTheDocument();
 
-            await user.click(passwordButton);
+        //     await user.click(passwordButton);
 
-            expect(redirect).toHaveBeenCalledWith({
-                simpleField: 'my value'
-            })
-        })
+        //     expect(redirect).toHaveBeenCalledWith({
+        //         simpleField: 'my value'
+        //     })
+        // })
 
     })
 })
