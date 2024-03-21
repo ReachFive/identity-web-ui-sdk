@@ -1,6 +1,6 @@
 /**
  * @reachfive/identity-ui - v1.25.3
- * Compiled Thu, 14 Mar 2024 18:20:48 UTC
+ * Compiled Thu, 21 Mar 2024 14:09:41 UTC
  *
  * Copyright (c) ReachFive.
  *
@@ -318,6 +318,12 @@ type LoginViewProps = {
      */
     allowSignup?: boolean;
     /**
+     * Boolean that specifies whether biometric login is enabled.
+     *
+     * @default false
+     */
+    allowWebAuthnLogin?: boolean;
+    /**
      * List of authentication options
      */
     auth?: AuthOptions;
@@ -360,44 +366,6 @@ type LoginViewProps = {
      */
     socialProviders?: string[];
 };
-
-interface LoginWithWebAuthnViewProps {
-    /**
-     * @deprecated
-     */
-    acceptTos?: boolean;
-    /**
-     * Boolean that specifies whether signup is enabled.
-     *
-     * @default true
-     */
-    allowSignup?: boolean;
-    /**
-     * List of authentication options
-     */
-    auth?: AuthOptions;
-    /**
-     * Whether the signup form fields' labels are displayed on the login view.
-     *
-     * @default false
-     */
-    showLabels?: boolean;
-    /**
-     * Lists the available social providers. This is an array of strings.
-     * Tip: If you pass an empty array, social providers will not be displayed.
-     */
-    socialProviders?: string[];
-}
-
-interface LoginWithPasswordViewProps {
-    allowForgotPassword?: boolean;
-    auth?: AuthOptions;
-    canShowPassword?: boolean;
-    recaptcha_enabled?: boolean;
-    recaptcha_site_key?: string;
-    showLabels?: boolean;
-    showRememberMe?: boolean;
-}
 
 interface PasswordSignupFormProps {
     auth?: AuthOptions;
@@ -463,12 +431,6 @@ interface SignupViewProps extends SignupWithPasswordViewProps, SignupWithWebAuth
      */
     allowLogin?: boolean;
     /**
-     * Boolean that specifies whether biometric login is enabled.
-     *
-     * @default false
-     */
-    allowWebAuthnLogin?: boolean;
-    /**
      * Boolean that specifies whether biometric signup is enabled.
      *
      * @default false
@@ -502,12 +464,6 @@ interface ForgotPasswordViewProps {
      */
     showLabels?: boolean;
     /**
-     * Boolean that specifies whether biometric login is enabled.
-     *
-     * @default false
-     */
-    allowWebAuthnLogin?: boolean;
-    /**
      * Boolean that specifies whether reCAPTCHA is enabled or not.
      */
     recaptcha_enabled?: boolean;
@@ -529,16 +485,9 @@ interface ForgotPasswordViewProps {
 }
 interface ForgotPasswordSuccessViewProps {
     allowLogin?: boolean;
-    allowWebAuthnLogin?: boolean;
 }
 
 interface QuickLoginViewProps {
-    /**
-     * Boolean that specifies whether biometric login is enabled.
-     *
-     * @default false
-     */
-    allowWebAuthnLogin?: boolean;
     /**
      * List of authentication options
      */
@@ -616,7 +565,7 @@ type VerificationCodeViewProps$3 = Prettify<Partial<StepUpHandlerResponse> & {
 type MfaStepUpProps = MainViewProps$5 & FaSelectionViewProps & VerificationCodeViewProps$3;
 type MfaStepUpWidgetProps = MfaStepUpProps;
 
-interface AuthWidgetProps extends LoginViewProps, LoginWithWebAuthnViewProps, LoginWithPasswordViewProps, SignupViewProps, SignupWithPasswordViewProps, SignupWithWebAuthnViewProps, ForgotPasswordViewProps, ForgotPasswordSuccessViewProps, QuickLoginViewProps, ReauthViewProps, Omit<FaSelectionViewProps, keyof FaSelectionViewState>, Omit<VerificationCodeViewProps$3, keyof VerificationCodeViewState> {
+interface AuthWidgetProps extends LoginViewProps, SignupViewProps, SignupWithPasswordViewProps, SignupWithWebAuthnViewProps, ForgotPasswordViewProps, ForgotPasswordSuccessViewProps, QuickLoginViewProps, ReauthViewProps, Omit<FaSelectionViewProps, keyof FaSelectionViewState>, Omit<VerificationCodeViewProps$3, keyof VerificationCodeViewState> {
     /**
      * Boolean that specifies whether quick login is enabled.
      *
@@ -628,10 +577,9 @@ interface AuthWidgetProps extends LoginViewProps, LoginWithWebAuthnViewProps, Lo
      *
      * - if `allowLogin` is set to `true`, it defaults to `login`.
      * - if `allowLogin` is set to `false` and `allowSignup` is set to `true`, it defaults to `signup`.
-     * - if `allowLogin` is set to `false` and `allowWebAuthnLogin` is set to `true`, it defaults to `login-with-web-authn`.
      * - otherwise, defaults to `forgot-password`.
      */
-    initialScreen?: 'login' | 'login-with-web-authn' | 'signup' | 'forgot-password';
+    initialScreen?: 'login' | 'signup' | 'forgot-password';
 }
 
 interface MainViewProps$4 {
