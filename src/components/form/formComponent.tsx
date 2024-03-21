@@ -32,7 +32,7 @@ type FormOptions<P = {}> = {
     resetAfterSuccess?: boolean
     submitLabel?: string
     showLabels?: boolean
-    skipError?: boolean | ((error: Error) => boolean) | ((error: AppError) => boolean)
+    skipError?: boolean | ((error: AppError | Error | string) => boolean)
     supportMultipleSubmits?: boolean
 }
 
@@ -40,7 +40,7 @@ type FormProps<Model = {}, P = {}, R = {}> = FormOptions<P> & P & {
     beforeSubmit?: (data: Model) => Model
     handler: (data: Model) => Promise<R>
     initialModel?: Model
-    onError?: (error: Error | AppError) => void
+    onError?: ((error: AppError | Error | string) => void)
     onFieldChange?: (fields: Record<string, FieldValue<unknown>>) => void
     onSuccess?: (result: R) => void
     sharedProps?: Record<string, unknown>
@@ -197,7 +197,7 @@ export function createForm<Model = {}, P = {}>(formOptions: FormOptions<P>) {
             }
         };
 
-        const handleError = (err: Error | AppError) => {
+        const handleError = (err: AppError | Error | string) => {
             onError && onError(err);
 
             if (isAppError(err) && !err.errorUserMsg) {
@@ -232,9 +232,10 @@ export function createForm<Model = {}, P = {}>(formOptions: FormOptions<P>) {
 
                     handler(processedData)
                         .then(handleSuccess)
-                        .catch((err: Error | AppError) => 
-                            // @ts-expect-error TODO: skipError(err) param type
-                            typeof skipError === 'function' && skipError(err) ? handleSuccess() : handleError(err));
+                        .catch((err: AppError | Error | string) => 
+                            typeof skipError === 'function' && skipError(err)
+                                ? handleSuccess({} as R)
+                                : handleError(err));
                 }
             });
         }

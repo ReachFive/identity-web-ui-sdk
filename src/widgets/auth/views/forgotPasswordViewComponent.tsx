@@ -1,7 +1,7 @@
 import React, { useCallback, useLayoutEffect } from 'react';
 import { RequestPasswordResetParams } from '@reachfive/identity-core/es/main/profileClient';
 
-import { AppError } from '../../../helpers/errors'
+import { AppError, isAppError } from '../../../helpers/errors'
 
 import { email } from '../../../core/validation';
 import { Heading, Intro, Info, Link, Alternative } from '../../../components/miscComponent';
@@ -27,7 +27,8 @@ const ForgotPasswordForm = createForm<RequestPasswordResetParams>({
     submitLabel: 'forgotPassword.submitLabel'
 });
 
-const skipError = (err: AppError) => err.error === 'resource_not_found';
+const skipError = (err: AppError | Error | string) =>
+    isAppError(err) && err.error === 'resource_not_found';
 
 export interface ForgotPasswordViewProps {
     /**
