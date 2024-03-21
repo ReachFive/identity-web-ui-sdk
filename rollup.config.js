@@ -38,7 +38,6 @@ const plugins = [
         preventAssignment: true,
         values: {
             'process.env.NODE_ENV': JSON.stringify('production'),
-            'lodash/': 'lodash-es/',
         }
     }),
     nodeResolve({
@@ -70,10 +69,9 @@ export default [
                 sourcemap: true,
             },
             {
-                banner,
                 file: 'es/identity-ui.min.js',
                 format: 'es',
-                plugins: [terser()],
+                plugins: [terser({ output: { preamble: banner } })],
                 sourcemap: true,
             },
         ],
@@ -91,11 +89,10 @@ export default [
                 globals: { '@reachfive/identity-core': 'reach5' },
             },
             {
-                banner,
                 file: 'umd/identity-ui.min.js',
                 format: 'umd',
                 name: 'reach5Widgets',
-                plugins: [terser()],
+                plugins: [terser({ output: { preamble: banner } })],
                 sourcemap: true,
                 globals: { '@reachfive/identity-core': 'reach5' },
             },
@@ -107,6 +104,7 @@ export default [
             dts()
         ],
         output: {
+            banner,
             file: 'types/identity-ui.d.ts',
             format: 'es',
         },

@@ -1,7 +1,6 @@
 import React from 'react';
 
 import { isLower, isUpper, isDigit } from 'char-info';
-import { isEqual } from 'lodash-es';
 import type { PasswordPolicy } from '@reachfive/identity-core'
 import zxcvbn from '@reachfive/zxcvbn';
 import styled, { DefaultTheme } from 'styled-components';
@@ -16,6 +15,8 @@ import { ShowPasswordIcon, HidePasswordIcon } from './simplePasswordField';
 import { useI18n } from '../../../contexts/i18n';
 import { VaildatorResult } from '../../../core/validation';
 import { I18nResolver } from '../../../core/i18n';
+
+import { isEqual } from '../../../helpers/utils';
 
 const SPECIAL_CHARACTERS = " !\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~";
 const MAX_PASSWORD_LENGTH = 255;

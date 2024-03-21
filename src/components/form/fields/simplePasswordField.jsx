@@ -1,7 +1,6 @@
 import React from 'react';
 
 import styled from 'styled-components';
-import pick from 'lodash-es/pick';
 
 import { createField } from '../fieldCreator'
 import { FormGroup, Input } from '../formControlsComponent';
@@ -41,7 +40,7 @@ class SimplePasswordField extends React.Component {
         return <FormGroup
             inputId={inputId}
             labelText={label}
-            {...pick(validation, 'error')}
+            {...(({ error }) => ({ error }))(validation)}
             showLabel={this.props.showLabel}>
             <div style={{ position: 'relative' }}>
                 <Input

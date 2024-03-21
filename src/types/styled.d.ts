@@ -1,8 +1,7 @@
 import 'styled-components';
+import { CSSProperties } from 'styled-components'
 
 import { RecursivePartial } from './index'
-import { inputBtnFocusBoxShadow } from '../core/theme'
-import CSS from 'csstype'
 
 declare module 'styled-components' {
     export interface DefaultTheme extends Theme {}
@@ -30,15 +29,15 @@ export interface BaseTheme {
     /**
      * @default "#212529"
      */
-    headingColor: CSS.Color
+    headingColor: NonNullable<CSSProperties['color']>
     /**
      * @default "#495057"
      */
-    textColor: CSS.Color
+    textColor: NonNullable<CSSProperties['color']>
     /**
      * @default "#adb5bd"
      */
-    mutedTextColor: CSS.Color
+    mutedTextColor: NonNullable<CSSProperties['color']>
      /**
      * @default "3"
      */
@@ -46,7 +45,7 @@ export interface BaseTheme {
     /**
      * @default "#ced4da "
      */
-    borderColor: CSS.Color
+    borderColor: NonNullable<CSSProperties['color']>
     /**
      * @default 1
      */
@@ -54,28 +53,28 @@ export interface BaseTheme {
     /**
      * @default "#ffffff"
      */
-    backgroundColor: CSS.Color
+    backgroundColor: NonNullable<CSSProperties['color']>
     /**
      * The button and link default color.
      * @default "#229955"
      */
-    primaryColor: CSS.Color
+    primaryColor: NonNullable<CSSProperties['color']>
     /**
      * @default "#dc4e41"
      */
-    dangerColor: CSS.Color
+    dangerColor: NonNullable<CSSProperties['color']>
     /**
      * @default "#ffc107"
      */
-    warningColor: CSS.Color
+    warningColor: NonNullable<CSSProperties['color']>
     /**
      * @default "#229955"
      */
-    successColor: CSS.Color
+    successColor: NonNullable<CSSProperties['color']>
     /**
      * @default "#e9ecef"
      */
-    lightBackgroundColor: CSS.Color
+    lightBackgroundColor: NonNullable<CSSProperties['color']>
     /** Specifies the padding for the x axis. (left and right) */
     paddingX: number
     /** Specifies the padding for the y axis. (top and bottom) */
@@ -91,27 +90,27 @@ export interface BaseTheme {
 }
 
 export interface LinkTheme {
-    color: CSS.Color
-    decoration: CSS.TextDecorationLineProperty
-    hoverColor: CSS.Color
-    hoverDecoration: CSS.TextDecorationLineProperty
+    color: NonNullable<CSSProperties['color']>
+    decoration: NonNullable<CSSProperties['textDecoration']>
+    hoverColor: NonNullable<CSSProperties['color']>
+    hoverDecoration: NonNullable<CSSProperties['textDecoration']>
 }
 
 export interface InputTheme {
-    color: CSS.Color
-    placeholderColor: CSS.Color
+    color: NonNullable<CSSProperties['color']>
+    placeholderColor: NonNullable<CSSProperties['color']>
     fontSize: number
     lineHeight: number
     paddingX: number
     paddingY: number
     borderRadius: number
-    borderColor: CSS.Color
+    borderColor: NonNullable<CSSProperties['color']>
     borderWidth: number
-    background: CSS.Color
-    disabledBackground: CSS.Color
-    boxShadow: string
-    focusBorderColor: CSS.Color
-    focusBoxShadow: typeof inputBtnFocusBoxShadow
+    background: NonNullable<CSSProperties['color']>
+    disabledBackground: NonNullable<CSSProperties['color']>
+    boxShadow: NonNullable<CSSProperties['boxShadow']>
+    focusBorderColor: NonNullable<CSSProperties['color']>
+    focusBoxShadow: (color?: CSSProperties['color']) => NonNullable<CSSProperties['boxShadow']>
     height: number
 }
 
@@ -119,7 +118,7 @@ export interface ButtonTheme {
     /** Specifies the font-weight (such as normal, bold, or 900).
      * @default 'bold'
      */
-    fontWeight: CSS.FontWeightProperty
+    fontWeight: NonNullable<CSSProperties['fontWeight']>
     /** Specifies the font-size. */
     fontSize: number
      /** Specifies the line-height. */
@@ -128,12 +127,14 @@ export interface ButtonTheme {
     paddingX: number
     /** Specifies the padding for the y axis. (top and bottom) */
     paddingY: number
+    /** Specifies the border-color. */
+    borderColor: NonNullable<CSSProperties['color']>,
     /** Specifies the border-radius. */
     borderRadius: number
     /** Specifies the border-width. */
     borderWidth: number
     /** Function that specifies the box shadow based on the border color. */
-    focusBoxShadow: typeof inputBtnFocusBoxShadow
+    focusBoxShadow: (color?: CSSProperties['color']) => NonNullable<CSSProperties['boxShadow']>
     /** Specifies the height. */
     height: number
 }
@@ -144,7 +145,7 @@ export interface SocialButtonTheme {
      /** Boolean that specifies if the text is visible. */
     textVisible: boolean
     /** Specifies the font-weight (such as normal, bold, or 900). */
-    fontWeight: CSS.FontWeightProperty
+    fontWeight: NonNullable<CSSProperties['fontWeight']>
     /** Specifies the font-size. */
     fontSize: number
      /** Specifies the line-height. */
@@ -153,22 +154,24 @@ export interface SocialButtonTheme {
     paddingX: number
     /** Specifies the padding for the y axis. (top and bottom) */
     paddingY: number
+    /** Specifies the border-color. */
+    borderColor: NonNullable<CSSProperties['color']>,
     /** Specifies the border-radius. */
     borderRadius: number
     /** Specifies the border-width. */
     borderWidth: number
     /** Function that specifies the box shadow based on the border color. */
-    focusBoxShadow: typeof inputBtnFocusBoxShadow
+    focusBoxShadow: (color?: CSSProperties['color']) => NonNullable<CSSProperties['boxShadow']>
     /** Specifies the height. */
     height: number
 }
 
 export interface PasswordStrengthTheme {
-    color0: CSS.Color
-    color1: CSS.Color
-    color2: CSS.Color
-    color3: CSS.Color
-    color4: CSS.Color
+    color0: NonNullable<CSSProperties['color']>
+    color1: NonNullable<CSSProperties['color']>
+    color2: NonNullable<CSSProperties['color']>
+    color3: NonNullable<CSSProperties['color']>
+    color4: NonNullable<CSSProperties['color']>
 }
 
 export interface Theme extends BaseTheme {

@@ -1,6 +1,6 @@
 {
     "name": "@reachfive/identity-ui",
-    "version": "1.25.1",
+    "version": "1.25.3",
     "description": "ReachFive Identity Web UI SDK",
     "author": "ReachFive",
     "repository": {
@@ -25,7 +25,7 @@
     "scripts": {
         "build": "npx rollup --config",
         "watch": "npm run build -- --watch",
-        "test": "npx jest",
+        "test": "npx jest --force-exit",
         "test:update": "npm run test -- --update-snapshot",
         "typecheck": "tsc --noEmit",
         "lint": "eslint --ext .js,.jsx,.ts,.tsx src/"
@@ -37,15 +37,14 @@
         "char-info": "0.3.2",
         "classnames": "^2.3.2",
         "libphonenumber-js": "^1.10.44",
-        "lodash-es": "4.17.21",
         "luxon": "^3.4.3",
         "react-transition-group": "4.4.2",
         "remarkable": "2.0.1",
         "validator": "^13.11.0"
     },
     "peerDependencies": {
-        "react": "^18.2.0",
-        "react-dom": "^18.2.0",
+        "react": "^16.9.24",
+        "react-dom": "^16.9.24",
         "styled-components": "5.1.1"
     },
     "devDependencies": {
@@ -61,11 +60,11 @@
         "@rollup/plugin-url": "^8.0.2",
         "@svgr/rollup": "^8.1.0",
         "@testing-library/jest-dom": "^6.2.0",
-        "@testing-library/react": "^14.0.0",
+        "@testing-library/react": "^12.1.5",
         "@types/babel__generator": "^7.6.6",
-        "@types/lodash-es": "^4.17.9",
-        "@types/react": "^18.2.23",
-        "@types/react-dom": "^18.2.7",
+        "@types/react": "^16.9.24",
+        "@types/react-dom": "^16.9.24",
+        "@types/react-test-renderer": "^16.9.12",
         "@types/react-transition-group": "^4.4.6",
         "@types/remarkable": "^2.0.7",
         "@types/styled-components": "^5.1.28",
@@ -85,7 +84,7 @@
         "jest-environment-jsdom": "^29.7.0",
         "jest-styled-components": "^7.2.0",
         "polished": "^4.2.2",
-        "react-test-renderer": "^18.2.0",
+        "react-test-renderer": "^16.14.0",
         "rollup": "^4.1.4",
         "rollup-plugin-dts": "^6.1.0",
         "rollup-plugin-esbuild": "^6.1.0",
@@ -93,11 +92,14 @@
         "ts-node": "^10.9.1",
         "typescript": "^5.2.2"
     },
+    "optionalDependencies": {
+        "@rollup/rollup-linux-x64-gnu": "^4.12.0"
+    },
     "files": [
         "cjs",
         "es",
         "umd",
-        "index.d.ts"
+        "types"
     ],
     "resolutions": {
         "core-js": "2.5.2"
