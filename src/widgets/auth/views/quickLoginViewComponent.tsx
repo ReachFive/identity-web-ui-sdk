@@ -10,18 +10,12 @@ import { PropsWithSession  } from '../../../contexts/session'
 
 export interface QuickLoginViewProps {
     /**
-     * Boolean that specifies whether biometric login is enabled.
-     * 
-     * @default false
-     */
-    allowWebAuthnLogin?: boolean
-    /**
      * List of authentication options
      */
     auth?: AuthOptions
 }
 
-export const  QuickLoginView = ({ allowWebAuthnLogin = false, auth, session }: PropsWithSession<QuickLoginViewProps>) => {
+export const QuickLoginView = ({ auth, session }: PropsWithSession<QuickLoginViewProps>) => {
     const i18n = useI18n()
 
     // this component should never be display without session infos defined
@@ -33,7 +27,7 @@ export const  QuickLoginView = ({ allowWebAuthnLogin = false, auth, session }: P
         <Intro>{i18n('lastTimeYouLoggedInWith')}</Intro>
         <SocialButtons providers={session.lastLoginType ? [session.lastLoginType] : []} auth={auth} />
         <Alternative>
-            <Link target={allowWebAuthnLogin ? 'login-with-web-authn' : 'login'}>{i18n('notYourAccount')}</Link>
+          <Link target={'login'}>{i18n('notYourAccount')}</Link>
         </Alternative>
     </div>
     )

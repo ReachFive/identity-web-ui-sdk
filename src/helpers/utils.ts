@@ -1,5 +1,3 @@
-// import { LoginWithWebAuthnParams } from '@reachfive/identity-core';
-// import { LoginWithPasswordParams } from '@reachfive/identity-core/es/main/oAuthClient'
 import { LoginWithPasswordParams, LoginWithWebAuthnParams } from '@reachfive/identity-core';
 import * as libphonenumber from 'libphonenumber-js';
 

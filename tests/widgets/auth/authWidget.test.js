@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import { describe, expect, test } from '@jest/globals';
+import { describe, expect, jest, test } from '@jest/globals';
 import renderer from 'react-test-renderer';
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
@@ -43,8 +43,12 @@ function expectSocialButtons(toBeInTheDocument = true) {
 }
 
 describe('Snapshot', () => {
+    const apiClient = {
+        loginWithWebAuthn: jest.fn().mockRejectedValue(new Error('This is a mock.'))
+    }
+
     const generateSnapshot = (options, config = defaultConfig) => () => {
-        const tree = authWidget(options, { config, apiClient: {} })
+        const tree = authWidget(options, { config, apiClient })
             .then(result => renderer.create(result).toJSON())
             .catch(e => console.error(e) || Promise.reject(e));
 
@@ -52,7 +56,9 @@ describe('Snapshot', () => {
     };
 
     describe('login view', () => {
-        test('default', generateSnapshot({}));
+        test('default', generateSnapshot({
+            allowWebAuthnLogin: false
+        }));
 
         test('no signup', generateSnapshot({
             allowSignup: false
@@ -166,9 +172,8 @@ describe('Snapshot', () => {
 });
 
 describe('DOM testing', () => {
-    const generateComponent = async (options, config = defaultConfig) => {
-        const result = await authWidget(options, { config, apiClient: {} });
-
+    const generateComponent = async (options, config = defaultConfig, apiClient = {}) => {
+        const result = await authWidget(options, { config, apiClient });
         return render(result);
     };
 
@@ -370,17 +375,21 @@ describe('DOM testing', () => {
     describe('with webauthn feature', () => {
         test('login view', async () => {
             expect.assertions(6);
-            await generateComponent({ allowWebAuthnLogin: true }, webauthnConfig);
+            await generateComponent({ allowWebAuthnLogin: true }, webauthnConfig, {
+                loginWithWebAuthn: jest.fn().mockRejectedValue(new Error('This is a mock.'))
+            });
 
             // Social buttons
             expectSocialButtons(true)
 
             // Email input
-            expect(screen.queryByTestId('email')).toBeInTheDocument();
+            expect(screen.queryByTestId('identifier')).toBeInTheDocument();
 
-            // Form buttons
-            expect(screen.queryByTestId('webauthn-button')).toBeInTheDocument();
-            expect(screen.queryByTestId('password-button')).toBeInTheDocument();
+            // Form button
+            expect(screen.queryByText('login.submitLabel')).toBeInTheDocument();
+
+            // Links
+            expect(screen.queryByText('login.forgotPasswordLink')).toBeInTheDocument();
 
             // Sign in link
             expect(screen.queryByText('login.signupLink')).toBeInTheDocument();
@@ -426,7 +435,7 @@ describe('DOM testing', () => {
         });
 
         test('signup form view with webauthn', async () => {
-            expect.assertions(6);
+            expect.assertions(5);
             await generateComponent(
                 { allowWebAuthnSignup: true,  initialScreen: 'signup-with-web-authn' },
                 webauthnConfig
@@ -436,7 +445,6 @@ describe('DOM testing', () => {
             expect(screen.queryByTestId('given_name')).toBeInTheDocument();
             expect(screen.queryByTestId('family_name')).toBeInTheDocument();
             expect(screen.queryByTestId('email')).toBeInTheDocument();
-            expect(screen.queryByTestId('friendly_name')).toBeInTheDocument();
 
             // Form button
             expect(screen.queryByText('signup.submitLabel')).toBeInTheDocument();

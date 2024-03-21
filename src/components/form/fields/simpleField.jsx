@@ -39,13 +39,12 @@ const SimpleField = props => {
     );
 };
 
-export const simpleField = ({ type, placeholder, autoComplete, ...config }) => createField({
+export const simpleField = ({ type, placeholder, ...config }) => createField({
     ...config,
     component: SimpleField,
     extendedParams: {
         type,
         placeholder,
-        autoComplete
     }
 });
 

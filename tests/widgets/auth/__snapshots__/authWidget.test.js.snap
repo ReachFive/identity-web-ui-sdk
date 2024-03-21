@@ -563,6 +563,7 @@ exports[`Snapshot login view default 1`] = `
           identifier
         </label>
         <input
+          autoComplete="username webauthn"
           className="c10"
           data-testid="identifier"
           id="identifier"
@@ -993,6 +994,7 @@ exports[`Snapshot login view inline social buttons 1`] = `
           identifier
         </label>
         <input
+          autoComplete="username webauthn"
           className="c10"
           data-testid="identifier"
           id="identifier"
@@ -1422,6 +1424,7 @@ exports[`Snapshot login view no forgot password 1`] = `
           identifier
         </label>
         <input
+          autoComplete="username webauthn"
           className="c10"
           data-testid="identifier"
           id="identifier"
@@ -1839,6 +1842,7 @@ exports[`Snapshot login view no signup 1`] = `
           identifier
         </label>
         <input
+          autoComplete="username webauthn"
           className="c10"
           data-testid="identifier"
           id="identifier"
@@ -2269,6 +2273,7 @@ exports[`Snapshot login view with canShowPassword 1`] = `
           identifier
         </label>
         <input
+          autoComplete="username webauthn"
           className="c10"
           data-testid="identifier"
           id="identifier"
@@ -2727,6 +2732,7 @@ exports[`Snapshot login view with remember me 1`] = `
           identifier
         </label>
         <input
+          autoComplete="username webauthn"
           className="c10"
           data-testid="identifier"
           id="identifier"
@@ -6800,19 +6806,19 @@ exports[`Snapshot with webauthn feature login view with webauthn or password 1`]
   margin-left: 14px;
 }
 
-.c17 {
+.c14 {
   text-align: center;
   margin-top: 15px;
   color: #495057;
 }
 
-.c18 {
+.c12 {
   color: #229955;
   -webkit-text-decoration: none;
   text-decoration: none;
 }
 
-.c18:hover {
+.c12:hover {
   color: #145a32;
   -webkit-text-decoration: none;
   text-decoration: none;
@@ -6832,7 +6838,7 @@ exports[`Snapshot with webauthn feature login view with webauthn or password 1`]
   margin: 0 auto;
 }
 
-.c12 {
+.c13 {
   display: block;
   width: 100%;
   box-sizing: border-box;
@@ -6845,9 +6851,9 @@ exports[`Snapshot with webauthn feature login view with webauthn or password 1`]
   user-select: none;
   touch-action: manipulation;
   cursor: pointer;
-  color: #229955;
-  background-color: #ffffff;
-  border: 1px solid #ffffff;
+  color: #ffffff;
+  background-color: #229955;
+  border: 1px solid #229955;
   padding: 9px 12px;
   font-size: 14px;
   line-height: 1.428571429;
@@ -6856,19 +6862,18 @@ exports[`Snapshot with webauthn feature login view with webauthn or password 1`]
   transition: all .15s ease-in-out;
 }
 
-.c12:focus {
+.c13:focus {
   outline: 0;
-  box-shadow: 0 0 0 3px rgba(255,255,255,0.5);
+  box-shadow: 0 0 0 3px rgba(34,153,85,0.5);
 }
 
-.c12:hover,
-.c12:active {
-  color: #229955;
-  background-color: #ebebeb;
-  border-color: #ebebeb;
+.c13:hover,
+.c13:active {
+  background-color: #1b7842;
+  border-color: #1b7842;
 }
 
-.c12[disabled] {
+.c13[disabled] {
   opacity: .65;
 }
 
@@ -7039,54 +7044,9 @@ exports[`Snapshot with webauthn feature login view with webauthn or password 1`]
   color: #868e96;
 }
 
-.c14 {
-  width: 40px;
-  height: 40px;
-}
-
-.c16 {
-  width: 40px;
-  height: 40px;
-}
-
-.c13 {
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-align-items: center;
-  -webkit-box-align: center;
-  -ms-flex-align: center;
-  align-items: center;
-  -webkit-box-pack: center;
-  -webkit-justify-content: center;
-  -ms-flex-pack: center;
-  justify-content: center;
-}
-
-.c13 .r5-button-text {
-  margin-left: 10px;
-  text-transform: uppercase;
-}
-
-.c15 {
-  text-align: center;
-  color: #adb5bd;
-}
-
 .c11 {
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-align-items: center;
-  -webkit-box-align: center;
-  -ms-flex-align: center;
-  align-items: center;
-}
-
-.c11 > :not(:last-child) {
-  margin-right: 20px;
+  margin-bottom: 10px;
+  text-align: right;
 }
 
 <div
@@ -7147,68 +7107,87 @@ exports[`Snapshot with webauthn feature login view with webauthn or password 1`]
       >
         <label
           className="c9"
-          htmlFor="email"
+          htmlFor="identifier"
         >
-          email
+          identifier
         </label>
         <input
-          autoComplete="email"
+          autoComplete="username webauthn"
           className="c10"
-          data-testid="email"
-          id="email"
-          name="email"
+          data-testid="identifier"
+          id="identifier"
+          name="identifier"
           onBlur={[Function]}
           onChange={[Function]}
-          placeholder="email"
+          placeholder="identifier"
           readOnly={false}
           required={true}
-          title="email"
-          type="email"
+          title="identifier"
+          type="text"
           value=""
         />
       </div>
       <div
-        className="r5-webauthn-login-buttons c11"
+        className="c8"
       >
-        <button
-          className="c12 r5-button-with-icon c13"
-          data-testid="webauthn-button"
-          disabled={false}
-          title="login.withBiometrics"
-          type="submit"
+        <label
+          className="c9"
+          htmlFor="password"
         >
-          <svg
-            className="c14"
-          />
-        </button>
+          password
+        </label>
         <div
-          className="c15"
+          style={
+            {
+              "position": "relative",
+            }
+          }
         >
-          or
-        </div>
-        <button
-          className="c12 r5-button-with-icon c13"
-          data-testid="password-button"
-          disabled={false}
-          onClick={[Function]}
-          title="login.withPassword"
-          type="submit"
-        >
-          <svg
-            className="c16"
+          <input
+            autoComplete="current-password"
+            className="c10"
+            data-testid="password"
+            id="password"
+            name="password"
+            onBlur={[Function]}
+            onChange={[Function]}
+            placeholder="password"
+            required={true}
+            title="password"
+            type="password"
+            value=""
           />
-        </button>
+        </div>
       </div>
+      <div
+        className="c11"
+      >
+        <a
+          className="c12"
+          href="#"
+          onClick={[Function]}
+        >
+          login.forgotPasswordLink
+        </a>
+      </div>
+      <button
+        className="c13"
+        data-testid="submit"
+        disabled={false}
+        type="submit"
+      >
+        login.submitLabel
+      </button>
     </form>
     <div
-      className="c17"
+      className="c14"
     >
       <span>
         login.signupLinkPrefix
       </span>
        
       <a
-        className="c18"
+        className="c12"
         href="#"
         onClick={[Function]}
       >
@@ -7758,29 +7737,6 @@ exports[`Snapshot with webauthn feature signup form view with webauthn 1`] = `
           required={true}
           title="email"
           type="email"
-          value=""
-        />
-      </div>
-      <div
-        className="c3"
-      >
-        <label
-          className="c4"
-          htmlFor="friendly_name"
-        >
-          webauthn.friendly.name
-        </label>
-        <input
-          className="c5"
-          data-testid="friendly_name"
-          id="friendly_name"
-          name="friendly_name"
-          onBlur={[Function]}
-          onChange={[Function]}
-          placeholder="webauthn.friendly.name"
-          readOnly={false}
-          required={false}
-          title="webauthn.friendly.name"
           value=""
         />
       </div>

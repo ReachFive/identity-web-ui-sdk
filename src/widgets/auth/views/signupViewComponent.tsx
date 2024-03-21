@@ -13,23 +13,17 @@ import type { SignupWithWebAuthnViewProps } from './signupWithWebAuthnViewCompon
 export interface SignupViewProps extends SignupWithPasswordViewProps, SignupWithWebAuthnViewProps {
     /**
      * Boolean that specifies whether login is enabled.
-     * 
+     *
      * @default true
      */
     allowLogin?: boolean
     /**
-     * Boolean that specifies whether biometric login is enabled.
-     * 
-     * @default false
-     */
-    allowWebAuthnLogin?: boolean
-    /**
      * Boolean that specifies whether biometric signup is enabled.
-     * 
+     *
      * @default false
      */
     allowWebAuthnSignup?: boolean
-    /** 
+    /**
      * Lists the available social providers. This is an array of strings.
      * Tip: If you pass an empty array, social providers will not be displayed.
      */
@@ -38,7 +32,6 @@ export interface SignupViewProps extends SignupWithPasswordViewProps, SignupWith
 
 export const SignupView = ({
     allowLogin = true,
-    allowWebAuthnLogin = false,
     allowWebAuthnSignup = false,
     socialProviders,
     ...props
@@ -64,7 +57,7 @@ export const SignupView = ({
             {allowLogin && <Alternative>
                 <span>{i18n('signup.loginLinkPrefix')}</span>
                 &nbsp;
-                <Link target={allowWebAuthnLogin ? 'login-with-web-authn' : 'login'}>
+                <Link target={'login'}>
                     {i18n('signup.loginLink')}
                 </Link>
             </Alternative>}
