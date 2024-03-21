@@ -6,7 +6,7 @@ import { createMultiViewWidget } from '../../components/widget/widget';
 import { Info, Intro } from '../../components/miscComponent';
 import { createForm } from '../../components/form/formComponent';
 import { simpleField } from '../../components/form/fields/simpleField';
-import ReCaptcha, {importGoogleRecaptchaScript} from '../../components/reCaptcha'
+import ReCaptcha, { importGoogleRecaptchaScript, type WithCaptchaToken } from '../../components/reCaptcha'
 import { useI18n } from '../../contexts/i18n';
 import { useReachfive } from '../../contexts/reachfive';
 import { useRouting } from '../../contexts/routing';
@@ -67,7 +67,7 @@ const MainView = ({
         importGoogleRecaptchaScript(recaptcha_site_key)
     }, [recaptcha_site_key])
 
-    const callback = (data: EmailFormData & { captchaToken?: string }) => {
+    const callback = (data: WithCaptchaToken<EmailFormData>) => {
         return coreClient.updateEmail({ ...data, accessToken, redirectUrl });
     }
 

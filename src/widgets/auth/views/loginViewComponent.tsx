@@ -1,6 +1,5 @@
 import React, { useLayoutEffect } from 'react';
-import { AuthOptions } from '@reachfive/identity-core'
-import { LoginWithPasswordParams } from '@reachfive/identity-core/es/main/oAuthClient'
+import { AuthOptions, LoginWithPasswordParams } from '@reachfive/identity-core'
 import styled from 'styled-components';
 
 import { Heading, Link, Alternative, Separator } from '../../../components/miscComponent';
@@ -10,7 +9,7 @@ import { createForm } from '../../../components/form/formComponent';
 import simplePasswordField from '../../../components/form/fields/simplePasswordField';
 import checkboxField from '../../../components/form/fields/checkboxField';
 import identifierField from '../../../components/form/fields/identifierField';
-import ReCaptcha, { importGoogleRecaptchaScript } from '../../../components/reCaptcha'
+import ReCaptcha, { importGoogleRecaptchaScript, type WithCaptchaToken } from '../../../components/reCaptcha'
 import { simpleField } from '../../../components/form/fields/simpleField';
 
 import { FaSelectionViewState } from '../../stepUp/mfaStepUpWidget'
@@ -210,7 +209,7 @@ export const LoginView = ({
         }
     }, [coreClient, auth, allowWebAuthnLogin, signal])
 
-    const callback = (data: LoginFormData & { captchaToken?: string }) => {
+    const callback = (data: WithCaptchaToken<LoginFormData>) => {
         const { auth: dataAuth, ...specializedData} = specializeIdentifierData<LoginWithPasswordParams>(data);
         return coreClient.loginWithPassword({
             ...specializedData,
