@@ -30,10 +30,10 @@ interface WithIdentitiesProps {
 }
 
 function findAvailableProviders(providers: string[], identities: Identity[]): string[] {
-    return difference(
-        providers.map(provider => provider.split(':').shift()).filter((name): name is string => !!name),
-        identities.map(i => i.provider)
-    )
+    return providers.filter(provider => {
+        const providerName = provider.split(':').shift();
+        return identities.findIndex(i => i.provider == providerName) == -1;
+    });
 } 
 
 const withIdentities = <T extends WithIdentitiesProps = WithIdentitiesProps>(
