@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import { debounce, find } from '../../helpers/utils';
 
 import { PrimaryButton } from './buttonComponent';
-import { Error } from '../miscComponent';
+import { ErrorText } from '../miscComponent';
 import { withConfig } from '../../contexts/config'
 import { withI18n } from '../../contexts/i18n';
 import { logError } from '../../helpers/logger';
@@ -13,7 +13,6 @@ import { logError } from '../../helpers/logger';
 const Form = styled.form`
     position: relative;
 `;
-
 
 export function createForm(config) {
     class FormComponent extends React.Component {
@@ -103,8 +102,6 @@ export function createForm(config) {
         }
 
         handleFieldChange = (fieldName, stateUpdate) => {
-            this.props.onFieldChange(this.state.fields);
-
             this.setState(prevState => {
                 const currentState = prevState.fields[fieldName];
                 const newState = {
@@ -117,6 +114,8 @@ export function createForm(config) {
                         ...newState,
                     }
                 };
+                
+                this.props.onFieldChange(newFields);
 
                 return {
                     fields: newFields
@@ -142,6 +141,8 @@ export function createForm(config) {
                 };
             });
         };
+
+        handleFieldValidationDebounced = debounce(this.handleFieldValidation, this.props.fieldValidationDebounce);
 
         onSuccess = result => {
             this.props.onSuccess && this.props.onSuccess(result);
@@ -196,45 +197,25 @@ export function createForm(config) {
             });
         };
 
-        handleClick = event => {
-            event.preventDefault();
-
-            this.validateAllFields(isValid => {
-                if (isValid) {
-                    this.setState({ isLoading: true });
-
-                    const fieldData = this.inputFields.reduce((acc, field) => {
-                        return field.unbind(acc, this.state.fields[field.key]);
-                    }, {});
-
-                    this.props.redirect(fieldData);
-                }
-            });
-        }
-
         render() {
-            const { submitLabel, i18n, fieldValidationDebounce } = this.props;
+            const { submitLabel, i18n } = this.props;
             const { errorMessage, isLoading, fields } = this.state;
 
             return <Form noValidate onSubmit={this.handleSubmit}>
-                {errorMessage && <Error>{errorMessage}</Error>}
+                {errorMessage && <ErrorText>{errorMessage}</ErrorText>}
                 {
                     this.allFields.map(field => !field.staticContent ? field.render({
                         state: fields[field.key],
                         onChange: newState => {
                             this.handleFieldChange(field.key, newState);
-                            debounce(function (component) {
-                                component.handleFieldValidation(field.key)
-                            }, fieldValidationDebounce)(this);
+                            this.handleFieldValidationDebounced(field.key);
                         },
                         ...this.props.sharedProps
                     }) : field.staticContent)
                 }
-                {
-                    <PrimaryButton disabled={isLoading}>
-                        {i18n(submitLabel)}
-                    </PrimaryButton>
-                }
+                <PrimaryButton disabled={isLoading}>
+                    {i18n(submitLabel)}
+                </PrimaryButton>
             </Form>;
         }
     }

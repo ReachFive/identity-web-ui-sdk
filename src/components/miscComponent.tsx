@@ -21,7 +21,7 @@ export const Info = styled(TextBase)`
     color: ${props => props.theme.textColor};
 `;
 
-export const Error = styled(TextBase)`
+export const ErrorText = styled(TextBase)`
     color: ${props => props.theme.dangerColor};
 `;
 

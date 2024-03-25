@@ -95,7 +95,10 @@ export const MainView = ({ accessToken, auth, showIntro = true, showStepUpStart 
                 options: auth,
                 accessToken: accessToken
             })
-            .then(res => setResponse(res))
+            .then(res => {
+                setResponse(res)
+                return res
+            })
 
     return response === undefined ? null : (
         <div>
@@ -131,13 +134,17 @@ export const FaSelectionView = (props: FaSelectionViewProps) => {
 
     const [response, setResponse] = useState<StepUpHandlerResponse | undefined>()
 
-    const onChooseFa = (factor: StartPasswordlessFormData): Promise<void> =>
+    const onChooseFa = (factor: StartPasswordlessFormData): Promise<StepUpHandlerResponse> =>
         coreClient
             .startPasswordless({ ...factor, stepUp: token, })
-            .then(resp => setResponse({
-                ...(resp as StepUpResponse),
-                ...factor,
-            }))
+            .then(resp => {
+                const stepupHandlerResponse = {
+                    ...(resp as StepUpResponse),
+                    ...factor,
+                } satisfies StepUpHandlerResponse
+                setResponse(stepupHandlerResponse)
+                return stepupHandlerResponse
+            })
 
     return (
         response === undefined ? null : amr.length == 1 ?
@@ -147,7 +154,7 @@ export const FaSelectionView = (props: FaSelectionViewProps) => {
                 <StartPasswordlessForm
                     options={amr.map(factor => ({key: factor, value: factor, label: factor}))}
                     handler={onChooseFa}
-                    onSuccess={(data) => goTo<VerificationCodeViewState>('verification-code', {...data, amr, ...response})}/>
+                    onSuccess={(data: StepUpHandlerResponse) => goTo<VerificationCodeViewState>('verification-code', {...data, ...response})}/>
             </div>
     )
 }

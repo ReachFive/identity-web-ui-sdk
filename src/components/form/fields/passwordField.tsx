@@ -74,18 +74,16 @@ const PasswordStrength = ({ score }: PasswordStrength) => {
     )
 }
 
-interface PasswordFieldProps extends FieldComponentProps<string> {
+interface PasswordFieldProps extends Omit<FieldComponentProps<string>, 'onChange' | 'value'> {
     blacklist: string[]
     isDirty?: boolean
     isTouched?: boolean
-    placeholder?: string
-    autoComplete?: string
     onChange: (event: { value?: string, strength?: PasswordStrengthScore, isTouched?: boolean, isDirty?: boolean }) => void
     canShowPassword?: boolean
     enabledRules: Record<string, PasswordRule>
     minStrength: PasswordStrengthScore
     strength: PasswordStrengthScore
-    value?: string
+    value: string
 }
 
 interface PasswordFieldState {
@@ -215,7 +213,7 @@ function getPasswordStrength(blacklist: string[], fieldValue?: string) {
     return zxcvbn(sanitized, blacklist).score;
 }
 
-export const passwordField = ({ label = 'password', canShowPassword = false, ...staticProps }, { passwordPolicy }: Config): FieldCreator<string, PasswordFieldProps> => ({
+export const passwordField = ({ label = 'password', canShowPassword = false, ...staticProps }, { passwordPolicy }: Config): FieldCreator<string, PasswordFieldProps, { strength: PasswordStrengthScore }> => ({
     path: 'password',
     create: ({ i18n, showLabel }) => {
         const actualLabel = i18n(label);
