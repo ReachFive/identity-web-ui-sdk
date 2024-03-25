@@ -7,6 +7,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.26.0] - 2023-03-25
+
+## Added
+
+Discoverable login for passkey in `showAuth` when allowWebAuthnLogin is activated
+
 ## [1.25.4] - 2023-03-22
 
 ### Changes
@@ -437,7 +443,9 @@ The eye icon is now correctly displayed in the Auth widget.
 
 First version of the SDK Web UI.
 
-[Unreleased]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.25.4...HEAD
+[Unreleased]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.26.0...HEAD
+
+[1.26.0]:  https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.25.4...v1.26.0
 
 [1.25.4]:  https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.25.3...v1.25.4
 
