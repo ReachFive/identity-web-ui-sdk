@@ -12,8 +12,6 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Fixes
 - Don't override user form value with initial model form's prop
 
-## [1.25.5] - 2023-03-26
-
 ## [1.25.4] - 2023-03-22
 
 ### Changes
@@ -446,9 +444,7 @@ First version of the SDK Web UI.
 
 [Unreleased]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.25.6...HEAD
 
-[1.25.6]:  https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.25.5...v1.25.6
-
-[1.25.5]:  https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.25.4...v1.25.5
+[1.25.6]:  https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.25.4...v1.25.6
 
 [1.25.4]:  https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.25.3...v1.25.4
 
