@@ -7,6 +7,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.25.5] - 2023-03-26
+
+### Fixes
+- Don't override user form value with initial model form's prop
+
 ## [1.25.4] - 2023-03-22
 
 ### Changes
@@ -437,7 +442,9 @@ The eye icon is now correctly displayed in the Auth widget.
 
 First version of the SDK Web UI.
 
-[Unreleased]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.25.4...HEAD
+[Unreleased]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.25.5...HEAD
+
+[1.25.5]:  https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.25.4...v1.25.5
 
 [1.25.4]:  https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.25.3...v1.25.4
 
