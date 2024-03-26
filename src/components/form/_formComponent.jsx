@@ -53,9 +53,6 @@ export function createForm(config) {
 
         UNSAFE_componentWillReceiveProps(props) {
             this.updateFields(props)
-            this.setState({
-                fields: this.applyModel(props.initialModel)
-            })
         }
 
         componentWillUnmount() {
