@@ -12,7 +12,6 @@ import 'jest-styled-components';
 
 import { createForm } from '../../../src/components/form/formComponent.tsx';
 import { simpleField } from '../../../src/components/form/fields/simpleField';
-import { WebAuthnLoginViewButtons } from '../../../src/components/form/webAuthAndPasswordButtonsComponent';
 import { ConfigProvider } from '../../../src/contexts/config';
 import { I18nProvider } from '../../../src/contexts/i18n';
 import { buildTheme } from '../../../src/core/theme'
@@ -143,12 +142,13 @@ describe('DOM testing', () => {
                     }),
                 ],
                 initialModel: {
-                    simpleField: 'my value'
+                    simpleField: 'default value'
                 },
             })
 
-            expect(screen.queryByTestId('simpleField')).toBeInTheDocument();
-            expect(screen.queryByDisplayValue('my value')).toBeInTheDocument();
+            const input = screen.queryByTestId('simpleField')
+            expect(input).toBeInTheDocument();
+            expect(input).toHaveValue('default value');
         })
 
         test('handle field change event', async () => {
@@ -163,18 +163,23 @@ describe('DOM testing', () => {
                         type: 'text',
                     }),
                 ],
+                initialModel: {
+                    simpleField: 'default value'
+                },
                 onFieldChange: handleChange
             })
 
             const input = screen.queryByTestId('simpleField')
             expect(input).toBeInTheDocument();
+            expect(input).toHaveValue('default value');
 
             // triggering multiple change events in a row
+            await user.clear(input)
             await user.type(input, 'my value')
 
             expect(input).toHaveValue('my value');
 
-            expect(handleChange).toHaveBeenCalledTimes(8)
+            expect(handleChange).toHaveBeenCalledTimes(9)
             expect(handleChange).toHaveBeenLastCalledWith({
                 simpleField: {
                     isDirty: false,

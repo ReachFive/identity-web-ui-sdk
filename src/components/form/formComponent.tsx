@@ -18,6 +18,15 @@ export type StaticContent = {
     staticContent: React.ReactNode
 }
 
+export type FormContext<Model> = {
+    isSubmitted: boolean,
+    fields: FieldValues<Model>
+}
+
+export type FieldValues<Model> = {
+    [K in keyof Model]: FieldValue<Model[K]>
+}
+
 export type FieldOptions<P> = WithConfig<WithI18n<P>>
 
 export type FormFields<P = {}> = 
@@ -39,7 +48,7 @@ type FormOptions<P = {}> = {
 type FormProps<Model = {}, P = {}, R = {}> = FormOptions<P> & P & {
     beforeSubmit?: (data: Model) => Model
     handler: (data: Model) => Promise<R>
-    initialModel?: Model
+    initialModel?: Partial<Model>
     onError?: ((error: AppError | Error | string) => void)
     onFieldChange?: (fields: Record<string, FieldValue<unknown>>) => void
     onSuccess?: (result: R) => void
@@ -89,23 +98,22 @@ export function createForm<Model = {}, P = {}>(formOptions: FormOptions<P>) {
                 !('staticContent' in field)
         );
 
-        
         const fieldByKey = inputFields.reduce(
-            (acc: Record<string, FieldType>, field: FieldType) => ({ ...acc, [field.key]: field }),
-            {} as Record<string, FieldType>
+            (acc: Record<keyof Model, FieldType>, field: FieldType) => ({ ...acc, [field.key]: field }),
+            {} as Record<keyof Model, FieldType>
         );
 
-        const filledWithModel = (): Record<string, FieldValue<unknown>> =>
+        const filledWithModel = (): FieldValues<Model> =>
             inputFields.reduce(
                 (acc, field) => ({
                     ...acc,
                     [field.key]: field.initialize(initialModel),
                 }),
-                {} as Record<string, FieldValue<unknown>>
+                {} as FieldValues<Model>
             )
-        
-        const [fieldValues, setFieldValues] = useState(filledWithModel())
-                
+
+        const [fieldValues, setFieldValues] = useState<FieldValues<Model>>(filledWithModel())
+
         const handleFieldChange = <T,>(fieldName: keyof typeof fieldValues, stateUpdate: FieldValue<T>) => {
             const currentState = fieldValues[fieldName];
             const newState = {
@@ -126,14 +134,14 @@ export function createForm<Model = {}, P = {}>(formOptions: FormOptions<P>) {
             setFieldValues(newFieldValues);
         }
 
-        const validateField = <T, P, S extends { isSubmitted: boolean }>(field: Field<T, P>, fieldState: FieldValue<T>, ctx: S) =>
+        const validateField = <T, P>(field: Field<T, P>, fieldState: FieldValue<T>, ctx: FormContext<Model>) =>
             field.validate(fieldState, ctx) || {};
-        
+
         const validateAllFields = (callback: (isValid: boolean) => void) => {
             const { hasErrors, values: newFieldValues } = inputFields.reduce(
                 (acc, field) => {
-                    const fieldState = fieldValues[field.key];
-                    const validation = validateField(field, fieldState, { isSubmitted: true });
+                    const fieldState = fieldValues[field.key as keyof Model];
+                    const validation = validateField(field, fieldState, { isSubmitted: true, fields: fieldValues });
                     return {
                         hasErrors: acc.hasErrors || (typeof validation === 'object' && 'error' in validation),
                         values: {
@@ -145,7 +153,7 @@ export function createForm<Model = {}, P = {}>(formOptions: FormOptions<P>) {
                         }
                     }
                 },
-                { hasErrors: false, values: {} as Record<string, FieldValue<unknown>> }
+                { hasErrors: false, values: {} as FieldValues<Model> }
             )
 
             setHasErrors(hasErrors);
@@ -157,7 +165,7 @@ export function createForm<Model = {}, P = {}>(formOptions: FormOptions<P>) {
         const handleFieldValidation = useCallback(
             (fieldName: keyof typeof fieldValues) => {
                 const currentState = fieldValues[fieldName];
-                const validation = validateField(fieldByKey[fieldName], currentState, { isSubmitted: false });
+                const validation = validateField(fieldByKey[fieldName], currentState, { isSubmitted: false, fields: fieldValues });
 
                 const newFieldValues = {
                     ...fieldValues,
@@ -176,7 +184,7 @@ export function createForm<Model = {}, P = {}>(formOptions: FormOptions<P>) {
         )
 
         const handleFieldValidationDebounced = useDebounceCallback(handleFieldValidation, fieldValidationDebounce);
-        
+
         const formatErrorMessage = (err: unknown) => {
             if (typeof err === 'string') {
                 return i18n(err)
@@ -225,7 +233,7 @@ export function createForm<Model = {}, P = {}>(formOptions: FormOptions<P>) {
                     setIsLoading(true)
 
                     const fieldData = inputFields.reduce((acc, field) => {
-                        return field.unbind(acc, fieldValues[field.key]);
+                        return field.unbind(acc, fieldValues[field.key as keyof Model]);
                     }, {} as Model);
 
                     const processedData = beforeSubmit ? beforeSubmit(fieldData) : fieldData;
@@ -245,10 +253,10 @@ export function createForm<Model = {}, P = {}>(formOptions: FormOptions<P>) {
                 {errorMessage && <ErrorText>{errorMessage}</ErrorText>}
                 {
                     allFields.map(field => !('staticContent' in field) ? field.render({
-                        state: fieldValues[field.key],
+                        state: fieldValues[field.key as keyof Model],
                         onChange: newState => {
-                            handleFieldChange(field.key, newState);
-                            handleFieldValidationDebounced(field.key);
+                            handleFieldChange(field.key as keyof Model, newState);
+                            handleFieldValidationDebounced(field.key as keyof Model);
                         },
                         ...sharedProps as P
                     }) : field.staticContent)

@@ -3,7 +3,7 @@ import React from 'react';
 import { Validator } from '../../core/validation';
 
 import { createWidget } from '../../components/widget/widget';
-import { createForm } from '../../components/form/formComponent';
+import { FormContext, createForm } from '../../components/form/formComponent';
 import passwordField from '../../components/form/fields/passwordField'
 import simplePasswordField from '../../components/form/fields/simplePasswordField';
 
@@ -46,7 +46,7 @@ export const PasswordEditorForm = createForm<PasswordEditorFormData, PasswordEdi
                 label: 'passwordConfirmation',
                 autoComplete: 'new-password',
                 validator: new Validator({
-                    rule: (value: string, ctx: { fields: { password: { value: string } } }) => value === ctx.fields.password.value,
+                    rule: (value: string, ctx: FormContext<PasswordEditorFormData>) => value === ctx.fields.password.value,
                     hint: 'passwordMatch'
                 })
             })
