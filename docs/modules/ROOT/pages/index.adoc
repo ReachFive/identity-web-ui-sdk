@@ -2,12 +2,14 @@
 
 placeholder
 
+test
+
 == Test fetch
 
 [cols="3m,7a"]
 |===
 |Attribute |Description
 
-include::sdk-ui-test:ROOT:example$types/styled.d.ts[tag=animateWidgetEntrance]
+include::sdk-ui-attributes:ROOT:example$styled.d.ts[tags="animateWidgetEntrance,fontSize"]
 
 |===

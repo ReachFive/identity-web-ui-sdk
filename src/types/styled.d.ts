@@ -22,8 +22,12 @@ export interface BaseTheme {
     end::animateWidgetEntrance[]
      */
     fontSize: number
-    /** Specifies the font-size for small texts.
-     * @default 12
+    /** tag::fontSize[]
+     |fontSize
+     |Specifies the font-size for small texts.
+     
+     @default 12
+     end::fontSize[]
      */
     smallTextFontSize: number
     /** Specifies the line-height.
