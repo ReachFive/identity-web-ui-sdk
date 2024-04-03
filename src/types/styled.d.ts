@@ -14,8 +14,12 @@ export interface BaseTheme {
      * @default true
      */
     animateWidgetEntrance: boolean
-    /** Specifies the font-size.
-     * @default 14
+    /** tag::animateWidgetEntrance[]
+        |animateWidgetEntrance
+        |Specifies the font-size.
+        
+        @default 14
+    end::animateWidgetEntrance[]
      */
     fontSize: number
     /** Specifies the font-size for small texts.

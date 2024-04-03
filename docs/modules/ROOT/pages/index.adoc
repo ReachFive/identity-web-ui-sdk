@@ -1,0 +1,13 @@
+= {company} UI SDK
+
+placeholder
+
+== Test fetch
+
+[cols="3m,7a"]
+|===
+|Attribute |Description
+
+include::sdk-ui-test:ROOT:example$types/styled.d.ts[tag=animateWidgetEntrance]
+
+|===

@@ -1,0 +1,11 @@
+name: sdk-ui-test
+version: master
+title: UI JS SDK
+start_page: index.adoc
+nav:
+- modules/ROOT/nav.adoc
+
+asciidoc:
+  attributes:
+    min-node-version: 10.0.0
+    max-node-version: 15.2.1
