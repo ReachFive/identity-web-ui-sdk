@@ -1,1 +1,0 @@
-../../../../src/types/styled.d.ts

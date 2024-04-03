@@ -2,14 +2,14 @@
 
 placeholder
 
-test
+{localdatetime}
 
 == Test fetch
 
-[cols="3m,7a"]
+[cols="28%m,16%s,56%a"]
 |===
-|Attribute |Description
+|Attribute |Type |Description
 
-include::sdk-ui-attributes:ROOT:example$styled.d.ts[tags="animateWidgetEntrance,fontSize"]
+include::sdk-ui-attributes:ROOT:example$types/styled.d.ts[tags="animateWidgetEntrance,fontSize,smallTextFontSize"]
 
 |===
