@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { AuthOptions, MFA, PasswordlessResponse } from '@reachfive/identity-core';
 import { PasswordlessParams } from '@reachfive/identity-core/es/main/oAuthClient';
 
@@ -89,25 +89,39 @@ export const MainView = ({ accessToken, auth, showIntro = true, showStepUpStart 
 
     const [response, setResponse] = useState<MFA.StepUpResponse | undefined>()
 
-    const onGetStepUpToken = () => 
-        coreClient
+    const onGetStepUpToken = useCallback(
+        () => coreClient
             .getMfaStepUpToken({
                 options: auth,
                 accessToken: accessToken
             })
-            .then(res => setResponse(res))
-
-    return response === undefined ? null : (
-        <div>
-            {showStepUpStart ?
-                <StartStepUpMfaButton
-                    handler={onGetStepUpToken}
-                    onSuccess={(data: MFA.StepUpResponse) => goTo<FaSelectionViewState>('fa-selection', { ...data })}
-                /> :
-                <FaSelectionView {...response} showIntro={showIntro} />
-            } 
-        </div>
+            .then(res => {
+                setResponse(res)
+                return res
+            }),
+        [accessToken, auth, coreClient]
     )
+
+    useEffect(() => {
+        if (!showStepUpStart) {
+            onGetStepUpToken()
+        }
+    }, [showStepUpStart, onGetStepUpToken])
+
+    if (showStepUpStart) {
+        return (
+            <StartStepUpMfaButton
+                handler={onGetStepUpToken}
+                onSuccess={(data: MFA.StepUpResponse) => goTo<FaSelectionViewState>('fa-selection', { ...data })}
+            />
+        )
+    }
+
+    if (response) {
+        return <FaSelectionView {...response} showIntro={showIntro} />
+    }
+
+    return null
 }
 
 export type FaSelectionViewState = MFA.StepUpResponse
