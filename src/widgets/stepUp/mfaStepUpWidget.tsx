@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { AuthOptions, MFA, PasswordlessResponse } from '@reachfive/identity-core';
 import { PasswordlessParams } from '@reachfive/identity-core/es/main/oAuthClient';
 
@@ -89,31 +89,46 @@ export const MainView = ({ accessToken, auth, showIntro = true, showStepUpStart 
 
     const [response, setResponse] = useState<MFA.StepUpResponse | undefined>()
 
-    const onGetStepUpToken = () => 
-        coreClient
+    const onGetStepUpToken = useCallback(
+        () => coreClient
             .getMfaStepUpToken({
                 options: auth,
                 accessToken: accessToken
             })
-            .then(res => setResponse(res))
-
-    return response === undefined ? null : (
-        <div>
-            {showStepUpStart ?
-                <StartStepUpMfaButton
-                    handler={onGetStepUpToken}
-                    onSuccess={(data: MFA.StepUpResponse) => goTo<FaSelectionViewState>('fa-selection', { ...data })}
-                /> :
-                <FaSelectionView {...response} showIntro={showIntro} />
-            } 
-        </div>
+            .then(res => {
+                setResponse(res)
+                return res
+            }),
+        [accessToken, auth, coreClient]
     )
+
+    useEffect(() => {
+        if (!showStepUpStart) {
+            onGetStepUpToken()
+        }
+    }, [showStepUpStart, onGetStepUpToken])
+
+    if (showStepUpStart) {
+        return (
+            <StartStepUpMfaButton
+                handler={onGetStepUpToken}
+                onSuccess={(data: MFA.StepUpResponse) => goTo<FaSelectionViewState>('fa-selection', { ...data })}
+            />
+        )
+    }
+
+    if (response) {
+        return <FaSelectionView {...response} showIntro={showIntro} auth={auth} />
+    }
+
+    return null
 }
 
 export type FaSelectionViewState = MFA.StepUpResponse
 
 export type FaSelectionViewProps = Prettify<Partial<MFA.StepUpResponse> & {
     showIntro?: boolean
+    auth?: AuthOptions
 }>
 
  // Unlike single factor authentication, StepUp request always returns a challengeId
@@ -124,32 +139,45 @@ type StepUpHandlerResponse = StepUpResponse & StartPasswordlessFormData
 export const FaSelectionView = (props: FaSelectionViewProps) => {
     const coreClient = useReachfive()
     const i18n = useI18n()
-    const { goTo, params } = useRouting()
+    const { params } = useRouting()
     const state = params as FaSelectionViewState
 
     const { amr, showIntro = true, token } = { ...props, ...state }
 
     const [response, setResponse] = useState<StepUpHandlerResponse | undefined>()
 
-    const onChooseFa = (factor: StartPasswordlessFormData): Promise<void> =>
-        coreClient
-            .startPasswordless({ ...factor, stepUp: token, })
-            .then(resp => setResponse({
-                ...(resp as StepUpResponse),
-                ...factor,
-            }))
-
-    return (
-        response === undefined ? null : amr.length == 1 ?
-            <VerificationCodeView {...response} />
-            : <div>
-                {showIntro && <Intro>{i18n('mfa.select.factor')}</Intro>}
-                <StartPasswordlessForm
-                    options={amr.map(factor => ({key: factor, value: factor, label: factor}))}
-                    handler={onChooseFa}
-                    onSuccess={(data) => goTo<VerificationCodeViewState>('verification-code', {...data, amr, ...response})}/>
-            </div>
+    const onChooseFa = useCallback(
+        (factor: StartPasswordlessFormData): Promise<void> =>
+            coreClient
+                .startPasswordless({ ...factor, stepUp: token, })
+                .then(resp => setResponse({
+                    ...(resp as StepUpResponse),
+                    ...factor,
+                })),
+        [coreClient, token]
     )
+
+    useEffect(() => {
+        if (amr.length === 1) {
+            onChooseFa({ authType: amr[0] as PasswordlessParams['authType'] })
+        }
+    }, [amr, onChooseFa])
+
+    if (response) {
+        return <VerificationCodeView {...response} auth={props.auth} />
+    }
+
+    if (amr.length === 1) {
+        <div>
+            {showIntro && <Intro>{i18n('mfa.select.factor')}</Intro>}
+            <StartPasswordlessForm
+                options={amr.map(factor => ({key: factor, value: factor, label: factor}))}
+                handler={onChooseFa}
+            />
+        </div>
+    }
+
+    return null;
 }
 
 export type VerificationCodeViewState = Prettify<StepUpHandlerResponse>
@@ -173,7 +201,7 @@ export const VerificationCodeView = (props: VerificationCodeViewProps) => {
         coreClient
             .verifyMfaPasswordless({challengeId, verificationCode: data.verificationCode})
             // @ts-expect-error AuthResult is too complex and is not representative of the real response of this request 
-            .then(resp => window.location.replace( auth.redirectUri + "?" + toQueryString(resp)))
+            .then(resp => window.location.replace( auth?.redirectUri + "?" + toQueryString(resp)))
 
     return (
         <div>

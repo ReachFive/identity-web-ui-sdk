@@ -1,6 +1,6 @@
 /**
  * @reachfive/identity-ui - v1.25.7
- * Compiled Mon, 08 Apr 2024 16:32:27 UTC
+ * Compiled Tue, 09 Apr 2024 13:55:02 UTC
  *
  * Copyright (c) ReachFive.
  *
@@ -552,6 +552,7 @@ interface MainViewProps$5 {
 type FaSelectionViewState = MFA.StepUpResponse;
 type FaSelectionViewProps = Prettify<Partial<MFA.StepUpResponse> & {
     showIntro?: boolean;
+    auth?: AuthOptions;
 }>;
 type StepUpResponse = RequiredProperty<PasswordlessResponse, 'challengeId'>;
 type StepUpHandlerResponse = StepUpResponse & StartPasswordlessFormData;
