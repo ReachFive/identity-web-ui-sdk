@@ -1,6 +1,6 @@
 /**
- * @reachfive/identity-ui - v1.25.7
- * Compiled Tue, 09 Apr 2024 13:55:02 UTC
+ * @reachfive/identity-ui - v1.26.0
+ * Compiled Tue, 09 Apr 2024 14:07:05 UTC
  *
  * Copyright (c) ReachFive.
  *
@@ -963,7 +963,7 @@ declare class UiClient {
     _ssoCheck<P extends WidgetProps>(widget: Widget<Omit<P, keyof WidgetProps>>, options: P & {
         auth?: AuthOptions;
     }): void;
-    adaptError(error: unknown): string | boolean;
+    adaptError(error: unknown): string;
     handleError(error: unknown): void;
 }
 
