@@ -49,6 +49,8 @@ export type PhoneNumberIdentifier = { phoneNumber: string }
 export type CustomIdentifier = { customIdentifier: string }
 export type SpecializedIdentifier = EmailIdentifier | PhoneNumberIdentifier | CustomIdentifier
 
+export const isCustomIdentifier = (identifier: SpecializedIdentifier | Record<string, string>): identifier is CustomIdentifier => 'customIdentifier' in identifier
+
 type IdentifierLoginPassword = { identifier: string } & Omit<LoginWithPasswordParams, 'email' | 'phoneNumber' | 'customIdentifier'>
 type IdentifierLoginWithWebAuthn = { identifier: string } & Omit<LoginWithWebAuthnParams, 'email' | 'phoneNumber'>
 
