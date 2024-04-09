@@ -90,15 +90,17 @@ export const MainView = ({ accessToken, auth, showIntro = true, showStepUpStart 
     const [response, setResponse] = useState<MFA.StepUpResponse | undefined>()
 
     const onGetStepUpToken = useCallback(
-        () => coreClient
-            .getMfaStepUpToken({
-                options: auth,
-                accessToken: accessToken
-            })
-            .then(res => {
-                setResponse(res)
-                return res
-            }),
+        (): Promise<MFA.StepUpResponse> => (
+            coreClient
+                .getMfaStepUpToken({
+                    options: auth,
+                    accessToken: accessToken
+                })
+                .then(res => {
+                    setResponse(res)
+                    return res
+                })
+        ),
         [accessToken, auth, coreClient]
     )
 

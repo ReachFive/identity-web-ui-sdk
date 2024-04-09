@@ -1,6 +1,6 @@
 /**
  * @reachfive/identity-ui - v1.26.0
- * Compiled Tue, 09 Apr 2024 14:07:05 UTC
+ * Compiled Tue, 09 Apr 2024 16:56:39 UTC
  *
  * Copyright (c) ReachFive.
  *
@@ -253,34 +253,38 @@ interface FieldCreateProps {
     showLabel: boolean
 }
 
-interface FieldCreator<T, P extends FieldComponentProps<T> = FieldComponentProps<T>, S = {}> {
+interface FieldCreator<T, P = {}, E = {}> {
     path: string,
-    create: (options: WithI18n<FieldCreateProps>) => Field$1<T, P, S>
+    create: (options: WithI18n<FieldCreateProps>) => Field$1<T, P, E>
 }
 
-interface Field$1<T, P extends FieldComponentProps<T>, S = {}> {
+interface Field$1<T, P = {}, E = {}> {
     key: string
-    render: (props: P & { state: S }) => React.ReactNode
-    initialize: (model: Record<string, unknown>) => FieldValue<T>
-    unbind: <M extends Record<string, unknown>>(model: M, state: P) => M
-    validate: (data: P, ctx: { isSubmitted: boolean }) => VaildatorResult
+    render: (props: P & Partial<FieldComponentProps<T>> & { state: FieldValue<T, E> }) => React.ReactNode
+    initialize: <M>(model: M) => FieldValue<T, E>
+    unbind: <M>(model: M, state: FieldValue<T, E>) => M
+    validate: <S extends { isSubmitted: boolean }>(data: FieldValue<T, E>, ctx: S) => VaildatorResult
 }
 
-type FieldValue<T> = {
+type FieldValue<T, E = {}> = E & {
     value: T | null,
     isDirty: boolean
+    validation?: VaildatorResult
 }
 
-type FieldComponentProps<T, P = {}> = P & {
+type FieldComponentProps<T, P = {}, E = {}> = P & {
     inputId: string
     key: string
     path: string
     label: string
+    onChange: (value: FieldValue<T, E>) => void
+    placeholder?: string
+    autoComplete?: string
     required?: boolean
     readOnly?: boolean
     i18n: I18nResolver
     showLabel?: boolean
-    value?: FormValue<T>
+    value?: FormValue<T, E>
     validation?: VaildatorResult
 }
 

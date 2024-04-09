@@ -11,7 +11,7 @@ import { useI18n } from '../../contexts/i18n';
 import { useReachfive } from '../../contexts/reachfive';
 import { useRouting } from '../../contexts/routing';
 
-import { ErrorMessage } from '../../components/error';
+import { ErrorText } from '../../components/miscComponent';
 import { Card, CloseIcon } from '../../components/form/cardComponent';
 import { Link, Info, Alternative } from '../../components/miscComponent';
 import { createMultiViewWidget } from '../../components/widget/widget';
@@ -134,7 +134,7 @@ const IdentityList = ({ identities = [], unlink }: IdentityListProps) => {
             {identities.length === 0 && (
                 <Info>{i18n('socialAccounts.noLinkedAccount')}</Info>
             )}
-            {error && <ErrorMessage style={{ marginBottom: '10px' }}>{error.message}</ErrorMessage>}
+            {error && <ErrorText style={{ marginBottom: '10px' }}>{error.message}</ErrorText>}
             {identities.map(({ provider, id, username }) => {
                 const providerInfos = socialProviders[provider as ProviderId];
                 return (

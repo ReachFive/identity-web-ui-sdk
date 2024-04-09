@@ -128,15 +128,16 @@ export function find<T>(collection: Record<string, T>, predicate: (item: T) => b
     return Object.values(collection ?? {}).find(value => predicate(value))
 }
 
-export function debounce(func: (...args: unknown[]) => void, delay: number, { leading }: { leading?: boolean } = {}) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function debounce<T extends unknown[], S>(func: (...args: T) => S, delay: number, { leading }: { leading?: boolean } = {}) {
     let timerId: NodeJS.Timeout
   
-    return (...args: unknown[]) => {
-      if (!timerId && leading) {
-        func(...args)
-      }
-      clearTimeout(timerId)
+    return (...args: T) => {
+        if (!timerId && leading) {
+            func(...args)
+        }
+        clearTimeout(timerId)
   
-      timerId = setTimeout(() => func(...args), delay)
+        timerId = setTimeout(() => func(...args), delay)
     }
   }
