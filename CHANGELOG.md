@@ -13,6 +13,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - Discoverable login for passkey in `showAuth` when allowWebAuthnLogin is activated
 
+### Fixes
+
+- MFA stepUp main view initialization and rendering conditions
+- Better global error message handling
+- SocialAccount `auth` config formarding
+
 ## [1.25.7] - 2023-04-03
 
 ### Fixes
