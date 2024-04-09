@@ -1,6 +1,6 @@
 /**
- * @reachfive/identity-ui - v1.25.3
- * Compiled Thu, 21 Mar 2024 18:00:09 UTC
+ * @reachfive/identity-ui - v1.26.0
+ * Compiled Tue, 09 Apr 2024 16:52:59 UTC
  *
  * Copyright (c) ReachFive.
  *
@@ -556,6 +556,7 @@ interface MainViewProps$5 {
 type FaSelectionViewState = MFA.StepUpResponse;
 type FaSelectionViewProps = Prettify<Partial<MFA.StepUpResponse> & {
     showIntro?: boolean;
+    auth?: AuthOptions;
 }>;
 type StepUpResponse = RequiredProperty<PasswordlessResponse, 'challengeId'>;
 type StepUpHandlerResponse = StepUpResponse & StartPasswordlessFormData;
@@ -966,7 +967,7 @@ declare class UiClient {
     _ssoCheck<P extends WidgetProps>(widget: Widget<Omit<P, keyof WidgetProps>>, options: P & {
         auth?: AuthOptions;
     }): void;
-    adaptError(error: unknown): string | boolean;
+    adaptError(error: unknown): string;
     handleError(error: unknown): void;
 }
 

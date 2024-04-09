@@ -49,6 +49,8 @@ export type PhoneNumberIdentifier = { phoneNumber: string }
 export type CustomIdentifier = { customIdentifier: string }
 export type SpecializedIdentifier = EmailIdentifier | PhoneNumberIdentifier | CustomIdentifier
 
+export const isCustomIdentifier = (identifier: SpecializedIdentifier | Record<string, string>): identifier is CustomIdentifier => 'customIdentifier' in identifier
+
 type IdentifierLoginPassword = { identifier: string } & Omit<LoginWithPasswordParams, 'email' | 'phoneNumber' | 'customIdentifier'>
 type IdentifierLoginWithWebAuthn = { identifier: string } & Omit<LoginWithWebAuthnParams, 'email' | 'phoneNumber'>
 
@@ -79,7 +81,7 @@ export function isValidEmail(email: string) {
 
 export function camelCase(string: string) {
     return string
-    .replace(/((?<![A-Z])[A-Z])/g, ' $1')
+    .replace(/([^A-Z])([A-Z])/g, '$1 $2') // "aB" become "a B"
     .toLowerCase()
     .replace(/[^a-z0-9]/ig, ' ')
     .trim()

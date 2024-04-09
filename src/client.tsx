@@ -185,11 +185,15 @@ export class UiClient {
         }
     }
 
-    adaptError(error: unknown) {
-        return error instanceof UserError ? error.isUserError : error instanceof Error ? error.message : 'Unexpected error'
+    adaptError(error: unknown): string {
+        return error instanceof UserError
+            ? error.message
+            : error instanceof Error 
+                ? error.message 
+                : 'Unexpected error'
     }
 
-    handleError(error: unknown) {
+    handleError(error: unknown): void {
         if (error instanceof UserError) {
             const message = this.adaptError(error)
             logError(`ReachFive widget display fails: ${message}`);
