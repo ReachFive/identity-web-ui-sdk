@@ -1,6 +1,5 @@
 import React from 'react';
 
-import pick from 'lodash-es/pick';
 import * as libphonenumber from 'libphonenumber-js';
 
 import { Validator } from '../../../core/validation';
@@ -56,11 +55,11 @@ class PhoneNumberField extends React.Component {
             label,
             placeholder = label
         } = this.props;
-
+        
         return <FormGroup
             inputId={inputId}
             labelText={label}
-            {...pick(validation, 'error')}
+            {...(({ error }) => ({ error }))(validation)}
             showLabel={this.props.showLabel}>
             <Input
                 id={inputId}

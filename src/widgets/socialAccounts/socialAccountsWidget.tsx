@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { AuthOptions, Identity as CoreIdentity, Profile } from '@reachfive/identity-core';
 
 import { UserError } from '../../helpers/errors';
+import { difference } from '../../helpers/utils';
 
 import { ProviderId, providers as socialProviders } from '../../providers/providers';
 
@@ -45,30 +46,28 @@ const withIdentities = <T extends WithIdentitiesProps = WithIdentitiesProps>(
         const { goTo } = useRouting()
         const [identities, setIdentities] = useState<Identity[]>([])
 
-        const { accessToken, auth, ...componentProps } = props
-
         const refresh = useCallback(() => {
             coreClient
                 .getUser({
-                    accessToken: accessToken,
+                    accessToken: props.accessToken,
                     fields: 'social_identities{id,provider,username}'
                 })
                 .then(({ socialIdentities }: Profile) => {
                     setIdentities(socialIdentities as Identity[])
                 });
-        }, [accessToken, coreClient])
+        }, [props.accessToken, coreClient])
 
         const unlink = useCallback((identityId: string) => {
             const prevIdentities = identities
             // Optimistic update
             setIdentities(identities.filter(i => i.id !== identityId))
             // api call + catch failure
-            return coreClient.unlink({ accessToken, identityId }).catch(error => {
+            return coreClient.unlink({ accessToken: props.accessToken, identityId }).catch(error => {
                 // restore previous identities
                 setIdentities(prevIdentities)
                 return Promise.reject(error)
             })
-        }, [accessToken, coreClient, identities])
+        }, [props.accessToken, coreClient, identities])
 
         const handleAuthenticated = useCallback(() => {
             refresh()
@@ -76,14 +75,20 @@ const withIdentities = <T extends WithIdentitiesProps = WithIdentitiesProps>(
         }, [goTo, refresh])
 
         useEffect(() => {
-            if (auth?.popupMode) {
+            if (props.auth?.popupMode) {
                 coreClient.on('authenticated', handleAuthenticated);
             }
             refresh();
             return () => coreClient.off('authenticated', handleAuthenticated)
-        }, [coreClient, auth, handleAuthenticated, refresh])
+        }, [coreClient, props.auth, handleAuthenticated, refresh])
         
-        return <WrappedComponent {...(componentProps as T)} identities={identities} unlink={unlink} />;
+        return (
+            <WrappedComponent
+                {...(props as T)}
+                identities={identities}
+                unlink={unlink}
+            />
+        );
     };
   
     ComponentWithIdentities.displayName = `withIdentities(${displayName})`;

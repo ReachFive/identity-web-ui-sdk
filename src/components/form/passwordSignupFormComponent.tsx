@@ -2,8 +2,6 @@ import React, { useCallback, useLayoutEffect, useState } from 'react';
 import { AuthOptions } from '@reachfive/identity-core';
 import { SignupParams } from '@reachfive/identity-core/es/main/oAuthClient';
 
-import { isEqual } from 'lodash-es';
-
 import { createForm } from './formComponent';
 import { buildFormFields, type Field } from './formFieldFactory';
 import { UserAggreementStyle } from './formControlsComponent'
@@ -11,10 +9,12 @@ import { UserAggreementStyle } from './formControlsComponent'
 import { MarkdownContent } from '../miscComponent';
 import { snakeCaseProperties } from '../../helpers/transformObjectProperties';
 import { isValued } from '../../helpers/utils';
-import ReCaptcha, {extractCaptchaTokenFromData, importGoogleRecaptchaScript} from '../reCaptcha';
+import ReCaptcha, { extractCaptchaTokenFromData, importGoogleRecaptchaScript, type WithCaptchaToken } from '../reCaptcha';
 
 import { useReachfive } from '../../contexts/reachfive';
 import { useConfig } from '../../contexts/config';
+
+import { isEqual } from '../../helpers/utils';
 
 const SignupForm = createForm<SignupParams['data']>({
     prefix: 'r5-signup-',
@@ -61,7 +61,7 @@ export const PasswordSignupForm = ({
     }, [recaptcha_site_key])
 
     const callback = useCallback(
-        (data: SignupParams['data'] & { captchaToken?: string }) => {
+        (data: WithCaptchaToken<SignupParams['data']>) => {
             const captchaToken = extractCaptchaTokenFromData(data)
             return coreClient.signup({
                 captchaToken,

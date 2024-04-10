@@ -12,7 +12,7 @@ import { createForm } from '../../components/form/formComponent';
 import { simpleField } from '../../components/form/fields/simpleField';
 import phoneNumberField from '../../components/form/fields/phoneNumberField';
 import { SocialButtons } from '../../components/form/socialButtonsComponent';
-import ReCaptcha, { importGoogleRecaptchaScript } from '../../components/reCaptcha';
+import ReCaptcha, { importGoogleRecaptchaScript, type WithCaptchaToken } from '../../components/reCaptcha';
 
 import { useReachfive } from '../../contexts/reachfive';
 import { useRouting } from '../../contexts/routing';
@@ -108,7 +108,7 @@ const MainView = ({
         importGoogleRecaptchaScript(recaptcha_site_key)
     }, [recaptcha_site_key])
 
-    const callback = (data: (EmailFormData | PhoneNumberFormFata) & { captchaToken?: string }) =>
+    const callback = (data: WithCaptchaToken<EmailFormData | PhoneNumberFormFata>) =>
         coreClient.startPasswordless({
             authType,
             ...data,
@@ -176,7 +176,7 @@ const VerificationCodeView = ({
     const { params } = useRouting()
     const { phoneNumber } = params as VerificationCodeViewState
 
-    const handleSubmit = (data: VerificationCodeFormData & { captchaToken?: string }) => {
+    const handleSubmit = (data: WithCaptchaToken<VerificationCodeFormData>) => {
         return coreClient.verifyPasswordless({
             authType,
             phoneNumber,

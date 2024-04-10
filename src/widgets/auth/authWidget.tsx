@@ -4,8 +4,6 @@ import { UserError } from '../../helpers/errors';
 import { createMultiViewWidget } from '../../components/widget/widget';
 
 import LoginView, { type LoginViewProps } from './views/loginViewComponent'
-import LoginWithWebAuthnView, { type LoginWithWebAuthnViewProps } from './views/loginWithWebAuthnViewComponent'
-import LoginWithPasswordView, { type LoginWithPasswordViewProps } from './views/loginWithPasswordViewComponent'
 import SignupView, { type SignupViewProps } from './views/signupViewComponent'
 import SignupWithPasswordView, { type SignupWithPasswordViewProps } from './views/signupWithPasswordViewComponent'
 import SignupWithWebAuthnView, { type SignupWithWebAuthnViewProps} from './views/signupWithWebAuthnViewComponent'
@@ -21,8 +19,6 @@ import { ProviderId } from '../../providers/providers';
 
 export interface AuthWidgetProps extends
     LoginViewProps,
-    LoginWithWebAuthnViewProps,
-    LoginWithPasswordViewProps,
     SignupViewProps,
     SignupWithPasswordViewProps,
     SignupWithWebAuthnViewProps,
@@ -34,19 +30,18 @@ export interface AuthWidgetProps extends
     Omit<VerificationCodeViewProps, keyof VerificationCodeViewState> {
         /**
          * Boolean that specifies whether quick login is enabled.
-         * 
+         *
          * @default true
          */
         allowQuickLogin?: boolean
         /**
          * The widget’s initial screen.
-         * 
+         *
          * - if `allowLogin` is set to `true`, it defaults to `login`.
          * - if `allowLogin` is set to `false` and `allowSignup` is set to `true`, it defaults to `signup`.
-         * - if `allowLogin` is set to `false` and `allowWebAuthnLogin` is set to `true`, it defaults to `login-with-web-authn`.
          * - otherwise, defaults to `forgot-password`.
          */
-        initialScreen?: 'login' | 'login-with-web-authn' | 'signup' | 'forgot-password'
+        initialScreen?: 'login' | 'signup' | 'forgot-password'
     }
 
 export default createMultiViewWidget<AuthWidgetProps, PropsWithSession<AuthWidgetProps>>({
@@ -55,7 +50,6 @@ export default createMultiViewWidget<AuthWidgetProps, PropsWithSession<AuthWidge
         allowLogin = true,
         allowQuickLogin = true,
         allowSignup = true,
-        allowWebAuthnLogin,
         socialProviders,
         session = {} as SessionInfo
     }): string {
@@ -67,15 +61,12 @@ export default createMultiViewWidget<AuthWidgetProps, PropsWithSession<AuthWidge
         return initialScreen
             || (quickLogin && 'quick-login')
             || (session.isAuthenticated && 'reauth')
-            || (allowLogin && !allowWebAuthnLogin && 'login')
-            || (allowLogin && 'login-with-web-authn')
+            || (allowLogin && 'login')
             || (allowSignup && 'signup')
             || 'forgot-password';
     },
     views: {
         'login': LoginView,
-        'login-with-web-authn': LoginWithWebAuthnView,
-        'login-with-password': LoginWithPasswordView,
         'signup': SignupView,
         'signup-with-password': SignupWithPasswordView,
         'signup-with-web-authn': SignupWithWebAuthnView,

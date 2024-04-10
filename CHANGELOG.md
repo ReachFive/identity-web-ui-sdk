@@ -7,6 +7,42 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.26.0] - 2023-03-25
+
+## Added
+
+- Discoverable login for passkey in `showAuth` when allowWebAuthnLogin is activated
+
+### Fixes
+
+- MFA stepUp main view initialization and rendering conditions
+- Better global error message handling
+- SocialAccount `auth` config formarding
+
+## [1.25.7] - 2023-04-03
+
+### Fixes
+
+- Replace lookbehind regular exepression because it's not yet implemented on Safari iOS <16.4
+
+## [1.25.6] - 2023-03-26
+
+### Fixes
+
+- Don't override user form value with initial model form's prop
+
+## [1.25.4] - 2023-03-22
+
+### Changes
+
+- Remove 'loadash' dependency
+- Use `CSSProperties` type from 'styled-components' instead of `CSS` from 'CSS'.
+
+### Fixes
+
+- Field props should be updated when form's props changes.
+- Email validation should not be triggered when trying to login with a custom identifier
+
 ## [1.25.3] - 2023-03-08
 
 ### Fixes
@@ -425,7 +461,15 @@ The eye icon is now correctly displayed in the Auth widget.
 
 First version of the SDK Web UI.
 
-[Unreleased]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.25.3...HEAD
+[Unreleased]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.26.0...HEAD
+
+[1.26.0]:  https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.25.7...v1.26.0
+
+[1.25.7]:  https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.25.6...v1.25.7
+
+[1.25.6]:  https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.25.4...v1.25.6
+
+[1.25.4]:  https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.25.3...v1.25.4
 
 [1.25.3]:  https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.25.2...v1.25.3
 

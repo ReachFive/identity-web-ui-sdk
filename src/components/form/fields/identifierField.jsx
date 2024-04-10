@@ -1,6 +1,5 @@
 import React from 'react';
 
-import pick from 'lodash-es/pick';
 import * as libphonenumber from 'libphonenumber-js';
 
 import { email, Validator } from '../../../core/validation';
@@ -96,13 +95,14 @@ class IdentifierField extends React.Component {
             label,
             placeholder = label,
             readOnly,
-            withPhoneNumber
+            withPhoneNumber,
+            autoComplete
         } = this.props;
 
         return <FormGroup
             inputId={inputId}
             labelText={label}
-            {...pick(validation, 'error')}
+            {...(({ error }) => ({ error }))(validation)}
             showLabel={this.props.showLabel}>
             <Input
                 id={inputId}
@@ -111,6 +111,7 @@ class IdentifierField extends React.Component {
                 value={value.raw || ''}
                 placeholder={placeholder}
                 title={label}
+                autoComplete={autoComplete}
                 required={required}
                 readOnly={readOnly}
                 hasError={!!validation.error}
