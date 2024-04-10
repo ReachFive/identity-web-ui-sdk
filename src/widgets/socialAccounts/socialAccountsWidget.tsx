@@ -3,7 +3,6 @@ import styled from 'styled-components';
 import { AuthOptions, Identity as CoreIdentity, Profile } from '@reachfive/identity-core';
 
 import { UserError } from '../../helpers/errors';
-import { difference } from '../../helpers/utils';
 
 import { ProviderId, providers as socialProviders } from '../../providers/providers';
 
@@ -34,13 +33,13 @@ function findAvailableProviders(providers: string[], identities: Identity[]): st
         const providerName = provider.split(':').shift();
         return identities.findIndex(i => i.provider == providerName) == -1;
     });
-} 
+}
 
 const withIdentities = <T extends WithIdentitiesProps = WithIdentitiesProps>(
     WrappedComponent: React.ComponentType<T>
 ) => {
     const displayName = WrappedComponent.displayName || WrappedComponent.name || "Component";
-  
+
     const ComponentWithIdentities = (props: Omit<T, 'identities' | 'unlink'>) => {
         const coreClient = useReachfive()
         const { goTo } = useRouting()
@@ -81,7 +80,7 @@ const withIdentities = <T extends WithIdentitiesProps = WithIdentitiesProps>(
             refresh();
             return () => coreClient.off('authenticated', handleAuthenticated)
         }, [coreClient, props.auth, handleAuthenticated, refresh])
-        
+
         return (
             <WrappedComponent
                 {...(props as T)}
@@ -90,9 +89,9 @@ const withIdentities = <T extends WithIdentitiesProps = WithIdentitiesProps>(
             />
         );
     };
-  
+
     ComponentWithIdentities.displayName = `withIdentities(${displayName})`;
-  
+
     return ComponentWithIdentities;
 }
 
@@ -213,13 +212,13 @@ export interface SocialAccountsWidgetProps {
     auth?: AuthOptions
     /**
      * Lists the available social providers. This is an array of strings.
-     * 
-     * Tip: If you pass an empty array, social providers will not be displayed. 
+     *
+     * Tip: If you pass an empty array, social providers will not be displayed.
      * */
     providers?: string[]
 }
 
-interface SocialAccountsWidgetPropsPrepared extends 
+interface SocialAccountsWidgetPropsPrepared extends
     Omit<SocialAccountsProps, 'identities' | 'unlink'>, // indentities and unlink are injected by HoC `withIdentity`
     Omit<LinkAccountProps, 'identities' | 'unlink'>
     {}
