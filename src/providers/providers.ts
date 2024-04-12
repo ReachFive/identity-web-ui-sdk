@@ -35,6 +35,7 @@ import { default as orange } from './orange/orange'
 import { default as paypal } from './paypal/paypal'
 import { default as ping } from './ping/ping'
 import { default as qq } from './qq/qq'
+import { default as tiktok } from './tiktok/tiktok'
 import { default as twitter } from './twitter/twitter'
 import { default as vkontakte } from './vkontakte/vkontakte'
 import { default as wechat } from './wechat/wechat'
@@ -59,6 +60,7 @@ export const providers = {
     paypal: paypal,
     ping: ping,
     qq: qq,
+    tiktok: tiktok,
     twitter: twitter,
     vkontakte: vkontakte,
     wechat: wechat,
