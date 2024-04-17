@@ -13,6 +13,8 @@ import ReCaptcha, {importGoogleRecaptchaScript} from '../../../components/reCapt
 import { useI18n } from '../../../contexts/i18n'
 import { useRouting } from '../../../contexts/routing';
 import { useReachfive } from '../../../contexts/reachfive';
+import { selectLogin } from '../authWidget.tsx';
+import { InitialScreen } from '../../../../constants.ts';
 
 const ForgotPasswordForm = createForm<RequestPasswordResetParams>({
     prefix: 'r5-forgot-password-',
@@ -49,6 +51,14 @@ export interface ForgotPasswordViewProps {
      * @default false
      */
     showLabels?: boolean
+
+    initialScreen?: InitialScreen
+    /**
+     * Boolean that specifies whether biometric login is enabled.
+     *
+     * @default false
+     */
+    allowWebAuthnLogin?: boolean
     /**
      * Boolean that specifies whether reCAPTCHA is enabled or not.
      */
@@ -74,7 +84,9 @@ export const ForgotPasswordView = ({
     allowLogin = true,
     displaySafeErrorMessage = false,
     showLabels = false,
+    allowWebAuthnLogin = false,
     recaptcha_enabled = false,
+    initialScreen,
     recaptcha_site_key,
     redirectUrl,
     returnToAfterPasswordReset,
@@ -107,7 +119,7 @@ export const ForgotPasswordView = ({
                 onSuccess={() => goTo('forgot-password-success')}
                 skipError={displaySafeErrorMessage && skipError} />
             {allowLogin && <Alternative>
-                <Link target={'login'}>{i18n('forgotPassword.backToLoginLink')}</Link>
+                <Link target={selectLogin(initialScreen, allowWebAuthnLogin)}>{i18n('forgotPassword.backToLoginLink')}</Link>
             </Alternative>}
         </div>
     )
@@ -115,16 +127,18 @@ export const ForgotPasswordView = ({
 
 export interface ForgotPasswordSuccessViewProps {
     allowLogin?: boolean
+    initialScreen?: InitialScreen
+    allowWebAuthnLogin?: boolean
 }
 
-export const ForgotPasswordSuccessView = ({ allowLogin }: ForgotPasswordSuccessViewProps) => {
+export const ForgotPasswordSuccessView = ({ allowLogin, initialScreen, allowWebAuthnLogin }: ForgotPasswordSuccessViewProps) => {
     const i18n = useI18n()
     return (
         <div>
             <Heading>{i18n('forgotPassword.title')}</Heading>
             <Info>{i18n('forgotPassword.successMessage')}</Info>
             {allowLogin && <Alternative>
-                <Link target={'login'}>{i18n('back')}</Link>
+                <Link target={selectLogin(initialScreen, allowWebAuthnLogin)}>{i18n('back')}</Link>
             </Alternative>}
         </div>
     )

@@ -9,6 +9,8 @@ import { useRouting } from '../../../contexts/routing';
 
 import type { SignupWithPasswordViewProps } from './signupWithPasswordViewComponent'
 import type { SignupWithWebAuthnViewProps } from './signupWithWebAuthnViewComponent'
+import { selectLogin } from '../authWidget.tsx';
+import { InitialScreen } from '../../../../constants.ts';
 
 export interface SignupViewProps extends SignupWithPasswordViewProps, SignupWithWebAuthnViewProps {
     /**
@@ -17,6 +19,13 @@ export interface SignupViewProps extends SignupWithPasswordViewProps, SignupWith
      * @default true
      */
     allowLogin?: boolean
+    initialScreen?: InitialScreen,
+    /**
+     * Boolean that specifies whether biometric login is enabled.
+     *
+     * @default false
+     */
+    allowWebAuthnLogin?: boolean
     /**
      * Boolean that specifies whether biometric signup is enabled.
      *
@@ -32,6 +41,8 @@ export interface SignupViewProps extends SignupWithPasswordViewProps, SignupWith
 
 export const SignupView = ({
     allowLogin = true,
+    initialScreen,
+    allowWebAuthnLogin = false,
     allowWebAuthnSignup = false,
     socialProviders,
     ...props
@@ -57,7 +68,7 @@ export const SignupView = ({
             {allowLogin && <Alternative>
                 <span>{i18n('signup.loginLinkPrefix')}</span>
                 &nbsp;
-                <Link target={'login'}>
+                <Link target={selectLogin(initialScreen, allowWebAuthnLogin)}>
                     {i18n('signup.loginLink')}
                 </Link>
             </Alternative>}
