@@ -49,7 +49,7 @@ export type PhoneNumberIdentifier = { phoneNumber: string }
 export type CustomIdentifier = { customIdentifier: string }
 export type SpecializedIdentifier = EmailIdentifier | PhoneNumberIdentifier | CustomIdentifier
 
-export const isCustomIdentifier = (identifier: SpecializedIdentifier | Record<string, string>): identifier is CustomIdentifier => 'customIdentifier' in identifier
+export const isCustomIdentifier = (identifier: SpecializedIdentifier | Record<string, unknown>): identifier is CustomIdentifier => 'customIdentifier' in identifier
 
 type IdentifierLoginPassword = { identifier: string } & Omit<LoginWithPasswordParams, 'email' | 'phoneNumber' | 'customIdentifier'>
 type IdentifierLoginWithWebAuthn = { identifier: string } & Omit<LoginWithWebAuthnParams, 'email' | 'phoneNumber'>
@@ -61,8 +61,8 @@ type IdentifierData<T extends LoginWithPasswordParams | LoginWithWebAuthnParams>
 
 export const specializeIdentifier = (identifier: string): SpecializedIdentifier =>
     isValidEmail(identifier)
-        ? { email: identifier } 
-        : libphonenumber.isValidNumber(identifier) 
+        ? { email: identifier }
+        : libphonenumber.isValidNumber(identifier)
             ? { phoneNumber: identifier.replace(/\s+/g, '') }
             : { customIdentifier: identifier }
 
@@ -92,7 +92,7 @@ export function camelCase(string: string) {
 }
 
 export function snakeCase(string: string) {
-    const matches = string.match(/[A-Z]{2,}(?=[A-Z][a-z]+[0-9]*|\b)|[A-Z]?[a-z]+|[A-Z]|[0-9]+/g) 
+    const matches = string.match(/[A-Z]{2,}(?=[A-Z][a-z]+[0-9]*|\b)|[A-Z]?[a-z]+|[A-Z]|[0-9]+/g)
     return matches ? matches.map(s => s.toLowerCase()).join('_') : '';
 }
 
@@ -130,13 +130,13 @@ export function find<T>(collection: Record<string, T>, predicate: (item: T) => b
 
 export function debounce(func: (...args: unknown[]) => void, delay: number, { leading }: { leading?: boolean } = {}) {
     let timerId: NodeJS.Timeout
-  
+
     return (...args: unknown[]) => {
       if (!timerId && leading) {
         func(...args)
       }
       clearTimeout(timerId)
-  
+
       timerId = setTimeout(() => func(...args), delay)
     }
   }

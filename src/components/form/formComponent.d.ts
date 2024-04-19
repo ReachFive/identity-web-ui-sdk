@@ -1,3 +1,5 @@
+import type { MouseEvent, ReactNode } from 'react'
+
 import type { WithConfig } from '../../contexts/config'
 import type { WithI18n } from '../../contexts/i18n'
 
@@ -11,12 +13,14 @@ export interface PasswordPolicy {
 }
 
 export interface FormOptions<P = {}> {
+    allowWebAuthnLogin?: boolean
     prefix?: string
     fields?: FieldCreator[] | ((props: WithConfig<WithI18n<P>>) => FieldCreator[])
     resetAfterSuccess?: boolean
     resetAfterError?: boolean
     submitLabel?: string
     supportMultipleSubmits?: boolean
+    webAuthnButtons?: (disabled: boolean, clickHandler: (event: MouseEvent) => void) => ReactNode
 }
 
 export type WithFormProps<T, P = {}> = P & FormOptions<P> & {
