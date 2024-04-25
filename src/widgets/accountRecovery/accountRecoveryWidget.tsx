@@ -193,7 +193,7 @@ const resolveCode = () => {
         ? window.location.search.substr(1)
         : '';
     const {verificationCode, email, clientId} = parseQueryString(qs)
-    return {authentication: { verificationCode, email, clientId} as Authentication};
+    return {authentication: { verificationCode, email, clientId } as Authentication};
 };
 
 type Authentication = { verificationCode: string, email: string, clientId: string }

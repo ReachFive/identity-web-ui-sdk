@@ -7,11 +7,17 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
-## [1.26.0] - 2023-03-25
+## [1.26.1] - 2024-04-19
+
+## Added
+-
+- Add a second UI for login with passkey: choose between integrated password and passkey with `initialScreen: 'login'` or separated password and passkey with `initialScreen: 'login-with-web-authn'`
+
+## [1.26.0] - 2024-03-25
 
 ## Added
 
-- Discoverable login for passkey in `showAuth` when allowWebAuthnLogin is activated
+- Discoverable login for passkey in `showAuth` when `allowWebAuthnLogin` is activated
 
 ### Fixes
 
@@ -19,19 +25,19 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Better global error message handling
 - SocialAccount `auth` config formarding
 
-## [1.25.7] - 2023-04-03
+## [1.25.7] - 2024-04-03
 
 ### Fixes
 
 - Replace lookbehind regular exepression because it's not yet implemented on Safari iOS <16.4
 
-## [1.25.6] - 2023-03-26
+## [1.25.6] - 2024-03-26
 
 ### Fixes
 
 - Don't override user form value with initial model form's prop
 
-## [1.25.4] - 2023-03-22
+## [1.25.4] - 2024-03-22
 
 ### Changes
 
@@ -43,7 +49,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Field props should be updated when form's props changes.
 - Email validation should not be triggered when trying to login with a custom identifier
 
-## [1.25.3] - 2023-03-08
+## [1.25.3] - 2024-03-08
 
 ### Fixes
 
@@ -53,19 +59,19 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Fix custom theme option forwarding
 - Prevent phone-number field validation on empty value
 
-## [1.25.2] - 2023-02-21
+## [1.25.2] - 2024-02-21
 
 ### Fixes
 
 - Fix types definitions bundling
 
-## [1.25.1] - 2023-02-19
+## [1.25.1] - 2024-02-19
 
 ### Fixes
 
 - Fix bundle dependencies embeding
 
-## [1.25.0] - 2023-02-19
+## [1.25.0] - 2024-02-19
 
 ### Changed
 
@@ -76,7 +82,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Fix dateField validation when value is empty
 - Show API error when trying to unlink a social account with a non-fresh access_token
 
-## [1.24.0] - 2023-01-05
+## [1.24.0] - 2024-01-05
 
 ## Added
 
@@ -461,7 +467,9 @@ The eye icon is now correctly displayed in the Auth widget.
 
 First version of the SDK Web UI.
 
-[Unreleased]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.26.0...HEAD
+[Unreleased]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.26.1...HEAD
+
+[1.26.1]:  https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.26.0...v1.26.1
 
 [1.26.0]:  https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.25.7...v1.26.0
 

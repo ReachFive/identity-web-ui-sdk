@@ -144,8 +144,13 @@ describe('Snapshot', () => {
     });
 
     describe('with webauthn feature', () => {
-        test('login view with webauthn or password', generateSnapshot({
+        test('login old view with webauthn or password', generateSnapshot({
             allowWebAuthnLogin: true
+        }, webauthnConfig))
+
+        test('login new view with integradted webauthn and password', generateSnapshot({
+            allowWebAuthnLogin: true,
+            initialScreen: 'login'
         }, webauthnConfig))
 
         test('signup view with webauthn or password', generateSnapshot({
@@ -373,9 +378,9 @@ describe('DOM testing', () => {
     });
 
     describe('with webauthn feature', () => {
-        test('login view', async () => {
+        test('new login view', async () => {
             expect.assertions(6);
-            await generateComponent({ allowWebAuthnLogin: true }, webauthnConfig, {
+            await generateComponent({ allowWebAuthnLogin: true, initialScreen: 'login' }, webauthnConfig, {
                 loginWithWebAuthn: jest.fn().mockRejectedValue(new Error('This is a mock.'))
             });
 
@@ -390,6 +395,26 @@ describe('DOM testing', () => {
 
             // Links
             expect(screen.queryByText('login.forgotPasswordLink')).toBeInTheDocument();
+
+            // Sign in link
+            expect(screen.queryByText('login.signupLink')).toBeInTheDocument();
+        });
+
+        test('old login view', async () => {
+            expect.assertions(6);
+            await generateComponent({ allowWebAuthnLogin: true, initialScreen: 'login-with-web-authn' }, webauthnConfig, {
+                loginWithWebAuthn: jest.fn().mockRejectedValue(new Error('This is a mock.'))
+            });
+
+            // Social buttons
+            expectSocialButtons(true)
+
+            // Email input
+            expect(screen.queryByTestId('identifier')).toBeInTheDocument();
+
+            // Form buttons
+            expect(screen.queryByTestId('webauthn-button')).toBeInTheDocument();
+            expect(screen.queryByTestId('password-button')).toBeInTheDocument();
 
             // Sign in link
             expect(screen.queryByText('login.signupLink')).toBeInTheDocument();

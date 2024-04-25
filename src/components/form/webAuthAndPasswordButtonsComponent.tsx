@@ -54,6 +54,51 @@ const PrimaryButtonWithIcon = styled(({
     }
 `;
 
+const ButtonsSeparator = styled.div`
+    text-align: center;
+    color: ${props => props.theme.mutedTextColor}
+`;
+
+export interface WebAuthnLoginViewButtonsProps {
+    disabled?: ButtonProps['disabled']
+    onPasswordClick: ButtonProps['onClick']
+    className?: classes.Argument
+}
+
+export const WebAuthnLoginViewButtons = styled(({ disabled, onPasswordClick, className, ...props }: WebAuthnLoginViewButtonsProps) => {
+    const i18n = useI18n()
+    return (
+        <div className={classes(['r5-webauthn-login-buttons'], className)}>
+            <PrimaryButtonWithIcon
+                type="submit"
+                dataTestId="webauthn-button"
+                title={i18n('login.withBiometrics')}
+                disabled={disabled}
+                {...props}
+            >
+                <FingerPrintIcon />
+            </PrimaryButtonWithIcon>
+
+            <ButtonsSeparator>{i18n('or')}</ButtonsSeparator>
+
+            <PrimaryButtonWithIcon
+                dataTestId="password-button"
+                title={i18n('login.withPassword')}
+                disabled={disabled}
+                onClick={onPasswordClick}>
+                <KeyboardIcon />
+            </PrimaryButtonWithIcon>
+        </div>
+    )
+})`
+    display: flex;
+    align-items: center;
+
+    & > :not(:last-child) {
+        margin-right: 20px;
+    }
+`;
+
 export interface WebAuthnSignupViewButtonsProps {
     onBiometricClick: ButtonProps['onClick']
     onPasswordClick: ButtonProps['onClick']
