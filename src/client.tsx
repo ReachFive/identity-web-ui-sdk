@@ -24,6 +24,7 @@ import webAuthnWidget, { type WebAuthnWidgetProps } from './widgets/webAuthn/web
 import mfaCredentialsWidget, { type MfaCredentialsWidgetProps } from './widgets/mfa/MfaCredentialsWidget';
 import mfaListWidget, { type MfaListWidgetProps } from './widgets/mfa/mfaListWidget'
 import mfaStepUpWidget, { type MfaStepUpWidgetProps } from './widgets/stepUp/mfaStepUpWidget';
+import accountRecoveryWidget, { type AccountRecoveryWidgetProps } from './widgets/accountRecovery/accountRecoveryWidget.tsx'
 
 export interface WidgetInstance {
     destroy(): void
@@ -38,7 +39,7 @@ export interface WidgetProps {
      */
     countryCode?: string
     /**
-     * Callback function called after the widget has been successfully loaded and rendered inside the container. 
+     * Callback function called after the widget has been successfully loaded and rendered inside the container.
      * The callback is called with the widget instance.
      */
     onReady?: (instance: WidgetInstance) => void
@@ -55,7 +56,7 @@ export class UiClient {
     config: Config
     core: CoreClient
     defaultI18n: I18nMessages
-    
+
     constructor(config: Config, coreClient: CoreClient, defaultI18n: I18nMessages) {
         this.config = config;
         this.core = coreClient;
@@ -64,6 +65,10 @@ export class UiClient {
 
     showAuth(options: WidgetOptions<AuthWidgetProps>) {
         this._ssoCheck(authWidget, options);
+    }
+
+    showAccountRecovery(options: WidgetOptions<AccountRecoveryWidgetProps>) {
+        this._showWidget(accountRecoveryWidget, options);
     }
 
     showSocialLogin(options: WidgetOptions<SocialLoginWidgetProps>) {
@@ -155,7 +160,7 @@ export class UiClient {
     _ssoCheck<P extends WidgetProps>(widget: Widget<Omit<P, keyof WidgetProps>>, options: P & { auth?: AuthOptions }) {
         const { auth = {} } = options;
         const showAuthWidget = (session?: SessionInfo) => this._showWidget(widget, options, { session });
-        
+
         if (this.config.sso || auth.idTokenHint || auth.loginHint) {
             setTimeout(() =>
                 Promise.resolve(this.core.checkUrlFragment(window.location.href)).then(authResult => {
@@ -188,8 +193,8 @@ export class UiClient {
     adaptError(error: unknown): string {
         return error instanceof UserError
             ? error.message
-            : error instanceof Error 
-                ? error.message 
+            : error instanceof Error
+                ? error.message
                 : 'Unexpected error'
     }
 

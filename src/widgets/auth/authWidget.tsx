@@ -16,6 +16,7 @@ import type { FaSelectionViewProps, FaSelectionViewState, VerificationCodeViewPr
 import type { PropsWithSession } from '../../contexts/session'
 
 import { ProviderId } from '../../providers/providers';
+import { AccountRecoverySuccessView, AccountRecoveryView } from './views/accountRecoveryViewComponent.tsx'
 
 export interface AuthWidgetProps extends
     LoginViewProps,
@@ -71,7 +72,9 @@ export default createMultiViewWidget<AuthWidgetProps, PropsWithSession<AuthWidge
         'signup-with-password': SignupWithPasswordView,
         'signup-with-web-authn': SignupWithWebAuthnView,
         'forgot-password': ForgotPasswordView,
+        'account-recovery': AccountRecoveryView,
         'forgot-password-success': ForgotPasswordSuccessView,
+        'account-recovery-success': AccountRecoverySuccessView,
         'quick-login': QuickLoginView,
         'fa-selection': FaSelectionView,
         'verification-code': VerificationCodeView,
