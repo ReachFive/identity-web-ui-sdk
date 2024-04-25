@@ -5,7 +5,7 @@ import type { Provider } from '../providers'
 export default {
     key: 'tiktok',
     name: 'TikTok',
-    color: '#39b6b6',
+    color: '#000',
     icon,
     windowSize: {
         width: 440,
