@@ -38,7 +38,7 @@ interface MainViewProps {
 const DeviceInputForm = createForm<{}, MainViewProps>({
     prefix: 'r5-credentials-reset',
     fields: [],
-    submitLabel: 'passkeyReset.button',
+    submitLabel: 'accountRecovery.passkeyReset.button',
     supportMultipleSubmits: true,
     resetAfterSuccess: true
 })
@@ -57,13 +57,13 @@ const PasskeysExplanation = styled(() => {
     const i18n = useI18n()
     return (
             <ul>
-                <li><b>{i18n('passkeyReset.subtitle1')}</b></li>
+                <li><b>{i18n('accountRecovery.passkeyReset.subtitle1')}</b></li>
                 <ul>
-                    <li>{i18n('passkeyReset.legend1')}</li>
+                    <li>{i18n('accountRecovery.passkeyReset.legend1')}</li>
                 </ul>
-                <li><b>{i18n('passkeyReset.subtitle2')}</b></li>
+                <li><b>{i18n('accountRecovery.passkeyReset.subtitle2')}</b></li>
                 <ul>
-                    <li>{i18n('passkeyReset.legend2')}</li>
+                    <li>{i18n('accountRecovery.passkeyReset.legend2')}</li>
                 </ul>
             </ul>
     )
@@ -97,9 +97,9 @@ const NewPasskey = ({
 
     return (
         <div>
-            <Heading>{i18n('passkeyReset.title')}</Heading>
+            <Heading>{i18n('accountRecovery.passkeyReset.title')}</Heading>
             <PasskeysIcon/>
-            <Intro><b>{i18n('passkeyReset.intro')}</b></Intro>
+            <Intro><b>{i18n('accountRecovery.passkeyReset.intro')}</b></Intro>
             <PasskeysExplanation/>
             <DeviceInputForm
                 handler={handleSubmit}
@@ -124,11 +124,11 @@ const PasskeySuccessView = ({loginLink}: SuccessViewProps) => {
     const i18n = useI18n()
     return (
         <div>
-            <Heading>{i18n('passkeyReset.successTitle')}</Heading>
-            <Info>{i18n('passkeyReset.successMessage')}</Info>
+            <Heading>{i18n('accountRecovery.passkeyReset.successTitle')}</Heading>
+            <Info>{i18n('accountRecovery.passkeyReset.successMessage')}</Info>
             {loginLink && (
                 <Info>
-                    <Link href={loginLink}>{i18n('passkeyReset.loginLink')}</Link>
+                    <Link href={loginLink}>{i18n('accountRecovery.passkeyReset.loginLink')}</Link>
                 </Info>
             )}
         </div>

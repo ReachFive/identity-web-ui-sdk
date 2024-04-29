@@ -58,7 +58,7 @@ export const LoginForm = createForm<LoginFormData, LoginFormOptions>({
         showIdentifier = true,
         showRememberMe,
         showForgotPassword,
-        showAccountRecovery,
+        showAccountRecovery = false ,
         i18n,
         config,
     }) {
@@ -92,7 +92,7 @@ export const LoginForm = createForm<LoginFormData, LoginFormOptions>({
             showAccountRecovery && {
                 staticContent: (
                     <ResetCredentialWrapper key="account-recovery" floating={showRememberMe}>
-                        <Link target="account-recovery">{i18n('login.accountRecovery')}</Link>
+                        <Link target="account-recovery">{i18n('accountRecovery.title')}</Link>
                     </ResetCredentialWrapper>
                 )
             },
@@ -125,6 +125,12 @@ export type LoginViewProps = {
      * @default true
      */
     allowForgotPassword?: boolean
+    /**
+     * Boolean that specifies if the account recovery is enabled.
+     *
+     * @default true
+     */
+    allowAccountRecovery?: boolean
     /**
      * Boolean that specifies whether signup is enabled.
      *
@@ -186,6 +192,7 @@ export const LoginView = ({
     allowForgotPassword = true,
     allowSignup = true,
     allowWebAuthnLogin,
+    allowAccountRecovery = false,
     auth,
     canShowPassword = false,
     socialProviders,
@@ -245,7 +252,7 @@ export const LoginView = ({
                 showLabels={showLabels}
                 showRememberMe={showRememberMe}
                 showForgotPassword={allowForgotPassword}
-                showAccountRecovery={allowWebAuthnLogin}
+                showAccountRecovery={allowAccountRecovery}
                 canShowPassword={canShowPassword}
                 defaultIdentifier={defaultIdentifier}
                 allowCustomIdentifier={allowCustomIdentifier}

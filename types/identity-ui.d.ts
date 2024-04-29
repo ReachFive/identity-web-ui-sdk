@@ -1,6 +1,6 @@
 /**
- * @reachfive/identity-ui - v1.26.0
- * Compiled Thu, 25 Apr 2024 12:13:16 UTC
+ * @reachfive/identity-ui - v1.26.1
+ * Compiled Mon, 29 Apr 2024 12:16:41 UTC
  *
  * Copyright (c) ReachFive.
  *
@@ -312,6 +312,12 @@ type LoginViewProps = {
      */
     allowForgotPassword?: boolean;
     /**
+     * Boolean that specifies if the account recovery is enabled.
+     *
+     * @default true
+     */
+    allowAccountRecovery?: boolean;
+    /**
      * Boolean that specifies whether signup is enabled.
      *
      * @default true
@@ -397,6 +403,7 @@ interface LoginWithWebAuthnViewProps {
 
 interface LoginWithPasswordViewProps {
     allowForgotPassword?: boolean;
+    allowAccountRecovery?: boolean;
     auth?: AuthOptions;
     canShowPassword?: boolean;
     recaptcha_enabled?: boolean;
