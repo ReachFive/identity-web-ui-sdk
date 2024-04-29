@@ -17,6 +17,7 @@ interface MainViewProps {
 
     /**
      * Allow an end-user to create a password instead of a Passkey
+     * @default true
      */
     allowCreatePassword?: boolean
     /**
@@ -73,10 +74,8 @@ const PasskeysExplanation = styled(() => {
 const NewPasskey = ({
                         authentication,
                         allowCreatePassword = true,
-                        onSuccess = () => {
-                        },
-                        onError = () => {
-                        },
+                        onSuccess = () => {},
+                        onError = () => {},
                     }: PropsWithAuthentication<MainViewProps>) => {
     const coreClient = useReachfive()
     const i18n = useI18n()

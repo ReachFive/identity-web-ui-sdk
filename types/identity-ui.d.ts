@@ -1001,6 +1001,7 @@ type MfaListWidgetProps = {
 interface MainViewProps {
     /**
      * Allow an end-user to create a password instead of a Passkey
+     * @default true
      */
     allowCreatePassword?: boolean;
     /**
