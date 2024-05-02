@@ -17,17 +17,27 @@ import { useRouting } from '../../../contexts/routing';
 import { useSession } from '../../../contexts/session';
 
 import { isCustomIdentifier, specializeIdentifierData } from '../../../helpers/utils';
+import styled from 'styled-components'
 
 type LoginWithWebAuthnFormData = { identifier: string } | { email: string }
 
 interface LoginWithWebAuthnFormProps {
     defaultIdentifier?: string
     showIdentifier?: boolean
+    showAccountRecovery?: boolean
 }
+
+const ResetCredentialWrapper = styled.div<{ floating?: boolean }>`
+    margin-bottom: ${props => props.theme.spacing}px;
+    text-align: right;
+    ${props => props.floating && `
+        right: 0;
+    `};
+`;
 
 export const LoginWithWebAuthnForm = createForm<LoginWithWebAuthnFormData, LoginWithWebAuthnFormProps>({
     prefix: 'r5-login-',
-    fields({ showIdentifier = true, defaultIdentifier, config }) {
+    fields({ showIdentifier = true, defaultIdentifier, config, showAccountRecovery = false, i18n }) {
         return [
             identifierField({
                     defaultValue: defaultIdentifier,
@@ -35,7 +45,15 @@ export const LoginWithWebAuthnForm = createForm<LoginWithWebAuthnFormData, Login
                     required: true,
                     autoComplete: 'username webauthn'
                 },
-                config)];
+                config),
+            showAccountRecovery && {
+                staticContent: (
+                    <ResetCredentialWrapper key="account-recovery" floating={true}>
+                    <Link target="account-recovery">{i18n('accountRecovery.title')}</Link>
+                    </ResetCredentialWrapper>
+                )
+            }
+        ];
     },
     allowWebAuthnLogin: true
 });
@@ -66,9 +84,11 @@ export interface LoginWithWebAuthnViewProps {
      * Tip: If you pass an empty array, social providers will not be displayed.
      */
     socialProviders?: string[]
+
+    allowAccountRecovery?: boolean
 }
 
-export const LoginWithWebAuthnView = ({ acceptTos, allowSignup = true, auth, showLabels = false, socialProviders }: LoginWithWebAuthnViewProps) => {
+export const LoginWithWebAuthnView = ({ acceptTos, allowSignup = true, auth, showLabels = false, socialProviders, allowAccountRecovery }: LoginWithWebAuthnViewProps) => {
     const coreClient = useReachfive()
     const { goTo } = useRouting()
     const i18n = useI18n()
@@ -139,6 +159,7 @@ export const LoginWithWebAuthnView = ({ acceptTos, allowSignup = true, auth, sho
                 handler={handleWebAuthnLogin}
                 redirect={redirectToPasswordLoginView}
                 webAuthnButtons={webAuthnButtons}
+                showAccountRecovery={allowAccountRecovery}
             />
             {allowSignup &&
                 <Alternative>
