@@ -314,7 +314,7 @@ type LoginViewProps = {
     /**
      * Boolean that specifies if the account recovery is enabled.
      *
-     * @default true
+     * @default false
      */
     allowAccountRecovery?: boolean;
     /**
