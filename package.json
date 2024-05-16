@@ -31,7 +31,7 @@
         "lint": "eslint --ext .js,.jsx,.ts,.tsx src/"
     },
     "dependencies": {
-        "@reachfive/identity-core": "^1.32.2",
+        "@reachfive/identity-core": "^1.33.0",
         "@reachfive/zxcvbn": "1.0.0-alpha.2",
         "buffer": "^6.0.3",
         "char-info": "0.3.2",
