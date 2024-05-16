@@ -9,7 +9,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Added
 
-- Add new widgets for account recovery
+- Add new widgets for account recovery (Passkeys)
 
 
 ## [1.26.1] - 2024-04-19
