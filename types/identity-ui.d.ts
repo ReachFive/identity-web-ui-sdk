@@ -1,6 +1,6 @@
 /**
- * @reachfive/identity-ui - v1.26.0
- * Compiled Thu, 18 Apr 2024 15:11:30 UTC
+ * @reachfive/identity-ui - v1.26.1
+ * Compiled Thu, 16 May 2024 08:48:31 UTC
  *
  * Copyright (c) ReachFive.
  *
@@ -312,6 +312,12 @@ type LoginViewProps = {
      */
     allowForgotPassword?: boolean;
     /**
+     * Boolean that specifies if the account recovery is enabled.
+     *
+     * @default false
+     */
+    allowAccountRecovery?: boolean;
+    /**
      * Boolean that specifies whether signup is enabled.
      *
      * @default true
@@ -393,10 +399,12 @@ interface LoginWithWebAuthnViewProps {
      * Tip: If you pass an empty array, social providers will not be displayed.
      */
     socialProviders?: string[];
+    allowAccountRecovery?: boolean;
 }
 
 interface LoginWithPasswordViewProps {
     allowForgotPassword?: boolean;
+    allowAccountRecovery?: boolean;
     auth?: AuthOptions;
     canShowPassword?: boolean;
     recaptcha_enabled?: boolean;
@@ -590,7 +598,7 @@ interface ReauthViewProps {
 interface StartPasswordlessFormData {
     authType: PasswordlessParams['authType'];
 }
-interface MainViewProps$5 {
+interface MainViewProps$6 {
     /**
      * **Not recommended**
      *
@@ -630,7 +638,7 @@ type VerificationCodeViewProps$3 = Prettify<Partial<StepUpHandlerResponse> & {
      */
     auth?: AuthOptions;
 }>;
-type MfaStepUpProps = MainViewProps$5 & FaSelectionViewProps & VerificationCodeViewProps$3;
+type MfaStepUpProps = MainViewProps$6 & FaSelectionViewProps & VerificationCodeViewProps$3;
 type MfaStepUpWidgetProps = MfaStepUpProps;
 
 interface AuthWidgetProps extends LoginViewProps, LoginWithWebAuthnViewProps, LoginWithPasswordViewProps, SignupViewProps, SignupWithPasswordViewProps, SignupWithWebAuthnViewProps, ForgotPasswordViewProps, ForgotPasswordSuccessViewProps, QuickLoginViewProps, ReauthViewProps, Omit<FaSelectionViewProps, keyof FaSelectionViewState>, Omit<VerificationCodeViewProps$3, keyof VerificationCodeViewState> {
@@ -652,7 +660,7 @@ interface AuthWidgetProps extends LoginViewProps, LoginWithWebAuthnViewProps, Lo
     initialScreen?: InitialScreen;
 }
 
-interface MainViewProps$4 {
+interface MainViewProps$5 {
     /**
      * The authorization credential JSON Web Token (JWT) used to access the ReachFive API, less than five minutes old.
      */
@@ -677,7 +685,7 @@ interface MainViewProps$4 {
      */
     showLabels?: boolean;
 }
-interface EmailEditorWidgetProps extends MainViewProps$4 {
+interface EmailEditorWidgetProps extends MainViewProps$5 {
 }
 
 interface PasswordEditorFormProps {
@@ -727,7 +735,7 @@ type Authentication = {
 };
 type PasswordEditorWidgetProps = Omit<PasswordEditorProps, 'authentication'>;
 
-interface MainViewProps$3 {
+interface MainViewProps$4 {
     /**
      * The authorization credential JSON Web Token (JWT) used to access the ReachFive API, less than five minutes old.
      */
@@ -754,9 +762,9 @@ type VerificationCodeViewProps$2 = {
      */
     onError?: () => void;
 };
-type PhoneNumberEditorWidgetProps = Prettify<MainViewProps$3 & VerificationCodeViewProps$2>;
+type PhoneNumberEditorWidgetProps = Prettify<MainViewProps$4 & VerificationCodeViewProps$2>;
 
-interface MainViewProps$2 {
+interface MainViewProps$3 {
     /**
      * Whether or not to provide the display password in clear text option.
      * @default false
@@ -777,13 +785,13 @@ interface MainViewProps$2 {
      */
     showLabels?: boolean;
 }
-interface SuccessViewProps {
+interface SuccessViewProps$1 {
     loginLink?: string;
 }
-interface PasswordResetWidgetProps extends MainViewProps$2, SuccessViewProps {
+interface PasswordResetWidgetProps extends MainViewProps$3, SuccessViewProps$1 {
 }
 
-interface MainViewProps$1 {
+interface MainViewProps$2 {
     /**
      * List of authentication options
      */
@@ -835,7 +843,7 @@ interface VerificationCodeViewProps$1 {
      */
     recaptcha_site_key?: string;
 }
-type PasswordlessWidgetProps = Prettify<MainViewProps$1 & VerificationCodeViewProps$1>;
+type PasswordlessWidgetProps = Prettify<MainViewProps$2 & VerificationCodeViewProps$1>;
 
 type ProfileWithConsents = Profile & {
     consents?: Record<string, UserConsent>;
@@ -940,7 +948,7 @@ interface WebAuthnDevicesProps {
 }
 type WebAuthnWidgetProps = Omit<WebAuthnDevicesProps, 'devices'>;
 
-interface MainViewProps {
+interface MainViewProps$1 {
     /**
      * The authorization credential JSON Web Token (JWT) used to access the ReachFive API, less than five minutes old.
      */
@@ -981,7 +989,7 @@ interface VerificationCodeViewProps {
 interface CredentialRegisteredViewProps {
 }
 type CredentialRemovedViewProps = {};
-type MfaCredentialsProps = Prettify<MainViewProps & CredentialRegisteredViewProps & VerificationCodeViewProps & CredentialRemovedViewProps>;
+type MfaCredentialsProps = Prettify<MainViewProps$1 & CredentialRegisteredViewProps & VerificationCodeViewProps & CredentialRemovedViewProps>;
 type MfaCredentialsWidgetProps = Prettify<Omit<MfaCredentialsProps, 'credentials'>>;
 
 type MfaListWidgetProps = {
@@ -990,6 +998,33 @@ type MfaListWidgetProps = {
     */
     accessToken: string;
 };
+
+interface MainViewProps {
+    /**
+     * Allow an end-user to create a password instead of a Passkey
+     * @default true
+     */
+    allowCreatePassword?: boolean;
+    /**
+     * Callback function called when the request has failed.
+     */
+    onSuccess?: () => void;
+    /**
+     * Callback function called after the widget has been successfully loaded and rendered inside the container.
+     * The callback is called with the widget instance.
+     */
+    onError?: () => void;
+    /**
+     * Whether the form fields' labels are displayed on the form view.
+     * @default false
+     */
+    showLabels?: boolean;
+}
+interface SuccessViewProps {
+    loginLink?: string;
+}
+interface AccountRecoveryWidgetProps extends MainViewProps, SuccessViewProps {
+}
 
 interface WidgetInstance {
     destroy(): void;
@@ -1016,6 +1051,7 @@ declare class UiClient {
     defaultI18n: I18nMessages;
     constructor(config: Config, coreClient: Client$1, defaultI18n: I18nMessages);
     showAuth(options: WidgetOptions<AuthWidgetProps>): void;
+    showAccountRecovery(options: WidgetOptions<AccountRecoveryWidgetProps>): void;
     showSocialLogin(options: WidgetOptions<SocialLoginWidgetProps>): void;
     showPasswordless(options: WidgetOptions<PasswordlessWidgetProps>): void;
     showEmailEditor(options: WidgetOptions<EmailEditorWidgetProps>): void;
@@ -1039,6 +1075,7 @@ declare class UiClient {
 type Client = {
     core: Client$1;
     showAuth: InstanceType<typeof UiClient>['showAuth'];
+    showAccountRecovery: InstanceType<typeof UiClient>['showAccountRecovery'];
     showEmailEditor: InstanceType<typeof UiClient>['showEmailEditor'];
     showPasswordEditor: InstanceType<typeof UiClient>['showPasswordEditor'];
     showPhoneNumberEditor: InstanceType<typeof UiClient>['showPhoneNumberEditor'];

@@ -19,7 +19,7 @@ import { useRouting } from '../../../contexts/routing';
 import { specializeIdentifierData } from '../../../helpers/utils';
 import { FaSelectionViewState } from '../../stepUp/mfaStepUpWidget';
 
-const ForgotPasswordWrapper = styled.div<{ floating?: boolean }>`
+const ResetCredentialWrapper = styled.div<{ floating?: boolean }>`
     margin-bottom: ${props => props.theme.spacing}px;
     text-align: right;
     ${props => props.floating && `
@@ -37,12 +37,13 @@ interface LoginWithPasswordFormProps {
     canShowPassword?: boolean
     showRememberMe?: boolean
     showForgotPassword: boolean
+    showAccountRecovery?: boolean
     username?: string
 }
 
 export const LoginWithPasswordForm = createForm<LoginWithPasswordFormData, LoginWithPasswordFormProps>({
     prefix: 'r5-login-',
-    fields({ username, showRememberMe, canShowPassword, showForgotPassword, i18n, config }) {
+    fields({ username, showRememberMe, canShowPassword, showForgotPassword, showAccountRecovery, i18n, config }) {
         return [
             (config.sms) ?
                 identifierField({
@@ -64,11 +65,18 @@ export const LoginWithPasswordForm = createForm<LoginWithPasswordFormData, Login
                 autoComplete: 'current-password',
                 canShowPassword
             }),
-            showForgotPassword && {
+            showForgotPassword && !showAccountRecovery && {
                 staticContent: (
-                    <ForgotPasswordWrapper key="forgot-password" floating={showRememberMe}>
+                    <ResetCredentialWrapper key="forgot-password" floating={showRememberMe}>
                         <Link target="forgot-password">{i18n('login.forgotPasswordLink')}</Link>
-                    </ForgotPasswordWrapper>
+                    </ResetCredentialWrapper>
+                )
+            },
+            showAccountRecovery && {
+                staticContent: (
+                    <ResetCredentialWrapper key="account-recovery" floating={showRememberMe}>
+                        <Link target="account-recovery">{i18n('accountRecovery.title')}</Link>
+                    </ResetCredentialWrapper>
                 )
             },
             showRememberMe && checkboxField({
@@ -83,6 +91,7 @@ export const LoginWithPasswordForm = createForm<LoginWithPasswordFormData, Login
 
 export interface LoginWithPasswordViewProps {
     allowForgotPassword?: boolean
+    allowAccountRecovery?: boolean
     auth?: AuthOptions
     canShowPassword?: boolean
     recaptcha_enabled?: boolean
@@ -97,6 +106,7 @@ export type LoginWithPasswordViewState = {
 
 export const LoginWithPasswordView = ({
     allowForgotPassword = true,
+    allowAccountRecovery = false,
     auth,
     canShowPassword,
     recaptcha_enabled = false,
@@ -134,6 +144,7 @@ export const LoginWithPasswordView = ({
                 showLabels={showLabels}
                 showRememberMe={showRememberMe}
                 showForgotPassword={allowForgotPassword}
+                showAccountRecovery={allowAccountRecovery}
                 canShowPassword={canShowPassword}
                 handler={(data: LoginWithPasswordFormData) => ReCaptcha.handle(data, { recaptcha_enabled, recaptcha_site_key }, callback, "login")}
             />
