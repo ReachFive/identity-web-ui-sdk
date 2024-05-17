@@ -10,6 +10,7 @@ export type { Config } from '@reachfive/identity-core';
 export type Client = {
     core: CoreClient,
     showAuth: InstanceType<typeof UiClient>['showAuth']
+    showAccountRecovery: InstanceType<typeof UiClient>['showAccountRecovery']
     showEmailEditor: InstanceType<typeof UiClient>['showEmailEditor']
     showPasswordEditor: InstanceType<typeof UiClient>['showPasswordEditor']
     showPhoneNumberEditor: InstanceType<typeof UiClient>['showPhoneNumberEditor']
@@ -50,6 +51,7 @@ export function createClient(creationConfig: Config): Client {
     return {
         core: coreClient,
         showAuth: (options: Parameters<Awaited<typeof client>['showAuth']>[0]) => client.then(client => client.showAuth(options)),
+        showAccountRecovery: (options: Parameters<Awaited<typeof client>['showAccountRecovery']>[0]) => client.then(client => client.showAccountRecovery(options)),
         showEmailEditor: (options: Parameters<Awaited<typeof client>['showEmailEditor']>[0]) => client.then(client => client.showEmailEditor(options)),
         showPasswordEditor: (options: Parameters<Awaited<typeof client>['showPasswordEditor']>[0]) => client.then(client => client.showPasswordEditor(options)),
         showPhoneNumberEditor: (options: Parameters<Awaited<typeof client>['showPhoneNumberEditor']>[0]) => client.then(client => client.showPhoneNumberEditor(options)),

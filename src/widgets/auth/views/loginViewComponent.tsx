@@ -21,7 +21,7 @@ import { useSession } from '../../../contexts/session';
 
 import { specializeIdentifierData } from '../../../helpers/utils';
 
-const ForgotPasswordWrapper = styled.div<{ floating?: boolean }>`
+const ResetCredentialWrapper = styled.div<{ floating?: boolean }>`
     margin-bottom: ${props => props.theme.spacing}px;
     text-align: right;
     ${props => props.floating && `
@@ -45,6 +45,7 @@ export interface LoginFormOptions {
     defaultIdentifier?: string
     showEmail?: boolean
     showForgotPassword?: boolean
+    showAccountRecovery?: boolean
     showIdentifier?: boolean
     showRememberMe?: boolean
 }
@@ -59,6 +60,7 @@ export const LoginForm = createForm<LoginFormData, LoginFormOptions>({
         showIdentifier = true,
         showRememberMe,
         showForgotPassword,
+        showAccountRecovery = false ,
         i18n,
         config,
     }) {
@@ -82,11 +84,18 @@ export const LoginForm = createForm<LoginFormData, LoginFormOptions>({
                 autoComplete: 'current-password',
                 canShowPassword
             }),
-            showForgotPassword && {
+            showForgotPassword && !showAccountRecovery && {
                 staticContent: (
-                    <ForgotPasswordWrapper key="forgot-password" floating={showRememberMe}>
+                    <ResetCredentialWrapper key="forgot-password" floating={showRememberMe}>
                         <Link target="forgot-password">{i18n('login.forgotPasswordLink')}</Link>
-                    </ForgotPasswordWrapper>
+                    </ResetCredentialWrapper>
+                )
+            },
+            showAccountRecovery && {
+                staticContent: (
+                    <ResetCredentialWrapper key="account-recovery" floating={showRememberMe}>
+                        <Link target="account-recovery">{i18n('accountRecovery.title')}</Link>
+                    </ResetCredentialWrapper>
                 )
             },
             showRememberMe && checkboxField({
@@ -118,6 +127,12 @@ export type LoginViewProps = {
      * @default true
      */
     allowForgotPassword?: boolean
+    /**
+     * Boolean that specifies if the account recovery is enabled.
+     *
+     * @default false
+     */
+    allowAccountRecovery?: boolean
     /**
      * Boolean that specifies whether signup is enabled.
      *
@@ -180,6 +195,7 @@ export const LoginView = ({
     allowForgotPassword = true,
     allowSignup = true,
     allowWebAuthnLogin,
+    allowAccountRecovery = false,
     auth,
     canShowPassword = false,
     socialProviders,
@@ -240,6 +256,7 @@ export const LoginView = ({
                 showLabels={showLabels}
                 showRememberMe={showRememberMe}
                 showForgotPassword={allowForgotPassword}
+                showAccountRecovery={allowAccountRecovery}
                 canShowPassword={canShowPassword}
                 defaultIdentifier={defaultIdentifier}
                 allowCustomIdentifier={allowCustomIdentifier}
