@@ -192,7 +192,7 @@ export default createWidget<WebAuthnWidgetProps, WebAuthnDevicesProps>({
     }
 });
 
-
+// Source https://github.com/passkeydeveloper/passkey-authenticator-aaguids
 import { ReactComponent as FingerPrint } from '../../icons/fingerprint.svg'
 import { ReactComponent as OnePassword } from '../../icons/webauthn/1password.svg'
 import { ReactComponent as Apple } from '../../icons/webauthn/apple.svg'
