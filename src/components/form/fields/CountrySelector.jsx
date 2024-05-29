@@ -9,7 +9,7 @@ countries.registerLocale(french);
 
 const countryOptions = Object.entries(countries.getNames('en')).map(([code, name]) => ({ value: code, label: name }));
 
-const CountrySelector = ({ value, onChange }) => (
+const countrySelector = ({ value, onChange }) => (
     <Select
         value={countryOptions.find(option => option.value === value)}
         onChange={option => onChange(option.value)}
@@ -17,4 +17,4 @@ const CountrySelector = ({ value, onChange }) => (
     />
 );
 
-export default CountrySelector;
+export default countrySelector;

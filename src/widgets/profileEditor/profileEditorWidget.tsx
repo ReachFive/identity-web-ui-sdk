@@ -11,7 +11,7 @@ import { useReachfive } from '../../contexts/reachfive';
 import { FieldCreator } from '../../components/form/fieldCreator';
 import { Field } from '../../components/form/formFieldFactory';
 
-import CountrySelector from '../../components/form/fields/CountrySelector';
+import CountrySelector from '../../components/form/fields/countrySelector';
 
 type ProfileWithConsents = Profile & { consents?: Record<string, UserConsent> }
 
