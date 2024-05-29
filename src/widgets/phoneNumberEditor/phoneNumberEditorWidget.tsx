@@ -13,7 +13,7 @@ import { useI18n } from '../../contexts/i18n';
 import { useRouting } from '../../contexts/routing';
 import { useConfig } from '../../contexts/config';
 
-import CountrySelector from '../../components/form/fields/countrySelector';
+import CountrySelector from '../../components/form/fields/CountrySelector';
 
 type PhoneNumberFormData = { phoneNumber: string }
 
