@@ -5,6 +5,6 @@ interface CountrySelectorProps {
     onChange: (value: string) => void;
 }
 
-const CountrySelector: FC<CountrySelectorProps>;
+const countrySelector: FC<CountrySelectorProps>;
 
-export default CountrySelector;
+export default countrySelector;
