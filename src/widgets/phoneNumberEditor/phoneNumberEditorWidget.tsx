@@ -13,11 +13,16 @@ import { useI18n } from '../../contexts/i18n';
 import { useRouting } from '../../contexts/routing';
 import { useConfig } from '../../contexts/config';
 
+import CountrySelector from '../../components/form/fields/countrySelector';
+
 type PhoneNumberFormData = { phoneNumber: string }
 
 const phoneNumberInputForm = (config: Config) => createForm<PhoneNumberFormData>({
     prefix: 'r5-phonenumber-editor-',
-    fields: [phoneNumberField({ required: true }, config)]
+    fields: [
+        { component: CountrySelector, key: 'countryCode', label: 'Country Code' },
+        phoneNumberField({ required: true }, config)
+    ]
 });
 
 type VerificationCodeFormData = { verificationCode: string }

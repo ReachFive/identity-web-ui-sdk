@@ -11,6 +11,8 @@ import { useReachfive } from '../../contexts/reachfive';
 import { FieldCreator } from '../../components/form/fieldCreator';
 import { Field } from '../../components/form/formFieldFactory';
 
+import CountrySelector from '../../components/form/fields/CountrySelector';
+
 type ProfileWithConsents = Profile & { consents?: Record<string, UserConsent> }
 
 const ProfileEditorForm = createForm<ProfileWithConsents>({
@@ -95,7 +97,7 @@ export interface ProfileEditorWidgetProps extends Omit<ProfileEditorProps, 'prof
      * 
      * It is not possible to update the primary identifier submitted at registration (email or phone number). When the primary identifier is the email address (SMS feature disabled), users can only enter a phone number and update without limit.
      */
-    fields?: (string | Field)[]
+    fields?: (string | Field | typeof CountrySelector)[]
 }
 
 export default createWidget<ProfileEditorWidgetProps, ProfileEditorProps>({

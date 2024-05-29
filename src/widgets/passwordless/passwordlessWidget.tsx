@@ -19,6 +19,9 @@ import { useRouting } from '../../contexts/routing';
 import { useI18n } from '../../contexts/i18n';
 import { useConfig } from '../../contexts/config';
 
+import CountrySelector from '../../components/form/fields/CountrySelector';
+
+
 type EmailFormData = { email: string, captchaToken?: string }
 
 const EmailInputForm = createForm<EmailFormData>({
@@ -37,7 +40,10 @@ type PhoneNumberFormFata = { phoneNumber: string, captchaToken?: string }
 
 const phoneNumberInputForm = (config: Config) => createForm<PhoneNumberFormFata>({
     prefix: 'r5-passwordless-sms-',
-    fields: [phoneNumberField({ required: true }, config)]
+    fields: [
+        { component: CountrySelector, key: 'countryCode', label: 'Country Code' },
+        phoneNumberField({ required: true }, config)
+    ]
 });
 
 type VerificationCodeFormData = { verificationCode: string }
