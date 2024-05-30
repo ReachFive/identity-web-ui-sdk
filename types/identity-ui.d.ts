@@ -1,6 +1,6 @@
 /**
- * @reachfive/identity-ui - v1.26.0
- * Compiled Thu, 18 Apr 2024 15:11:30 UTC
+ * @reachfive/identity-ui - v1.26.1
+ * Compiled Thu, 30 May 2024 05:42:35 UTC
  *
  * Copyright (c) ReachFive.
  *
@@ -10,7 +10,7 @@
 import { CSSProperties } from 'styled-components';
 import { Config as Config$1, RemoteSettings, ConsentVersions, CustomField, Client as Client$1, SessionInfo, AuthOptions, MFA, PasswordlessResponse, SingleFactorPasswordlessParams, Profile, UserConsent, DeviceCredential } from '@reachfive/identity-core';
 export { Config } from '@reachfive/identity-core';
-import React$1 from 'react';
+import React$1, { FC } from 'react';
 import { PasswordlessParams } from '@reachfive/identity-core/es/main/oAuthClient';
 
 type Prettify<T> = {
@@ -841,51 +841,19 @@ type ProfileWithConsents = Profile & {
     consents?: Record<string, UserConsent>;
 };
 interface ProfileEditorProps {
-    /**
-     * The authorization credential JSON Web Token (JWT) used to access the ReachFive API, less than five minutes old.
-     */
     accessToken: string;
-    /**
-     * Callback function called when the request has failed.
-     */
     onSuccess?: () => void;
-    /**
-     * Callback function called after the widget has been successfully loaded and rendered inside the container.
-     * The callback is called with the widget instance.
-     */
     onError?: () => void;
-    /**
-     *
-     */
     profile: ProfileWithConsents;
-    /**
-     * The URL sent in the email to which the user is redirected.
-     * This URL must be whitelisted in the `Allowed Callback URLs` field of your ReachFive client settings.
-     */
     redirectUrl?: string;
-    /**
-     *
-     */
     resolvedFields: FieldCreator<unknown>[];
-    /**
-     * Whether the form fields' labels are displayed on the form view.
-     * @default false
-     */
     showLabels?: boolean;
 }
+interface FieldComponent extends Field {
+    component?: FC<any>;
+}
 interface ProfileEditorWidgetProps extends Omit<ProfileEditorProps, 'profile' | 'resolvedFields'> {
-    /**
-     * List of the fields to display in the form.
-     *
-     * **Important:**
-     *
-     * The following fields can not be changed with this widget:
-     * - `password`
-     * - `password_confirmation`
-     *
-     * It is not possible to update the primary identifier submitted at registration (email or phone number). When the primary identifier is the email address (SMS feature disabled), users can only enter a phone number and update without limit.
-     */
-    fields?: (string | Field)[];
+    fields?: (string | FieldComponent)[];
 }
 
 interface SocialAccountsWidgetProps {

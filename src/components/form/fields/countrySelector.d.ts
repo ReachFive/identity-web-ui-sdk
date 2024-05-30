@@ -1,10 +1,11 @@
 import { FC } from 'react';
 
-interface CountrySelectorProps {
+export interface CountrySelectorProps {
+    key?: string;
     value: string;
     onChange: (value: string) => void;
 }
 
-const countrySelector: FC<CountrySelectorProps>;
+const CountrySelector: FC<CountrySelectorProps>;
 
-export default countrySelector;
+export default CountrySelector;
