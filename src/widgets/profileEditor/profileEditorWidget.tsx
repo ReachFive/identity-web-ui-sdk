@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { FC } from 'react';
 import { ConsentVersions, Profile, UserConsent } from '@reachfive/identity-core';
 
 import { UserError } from '../../helpers/errors';
@@ -10,6 +10,7 @@ import { buildFormFields, computeFieldList } from '../../components/form/formFie
 import { useReachfive } from '../../contexts/reachfive';
 import { FieldCreator } from '../../components/form/fieldCreator';
 import { Field } from '../../components/form/formFieldFactory';
+import CountrySelector from '../../components/form/fields/countrySelector';
 
 type ProfileWithConsents = Profile & { consents?: Record<string, UserConsent> }
 
@@ -83,6 +84,10 @@ const ProfileEditor = ({
     )
 }
 
+interface FieldComponent extends Field {
+    component?: FC<any>; 
+}
+
 export interface ProfileEditorWidgetProps extends Omit<ProfileEditorProps, 'profile' | 'resolvedFields'> {
     /**
      * List of the fields to display in the form.
@@ -95,7 +100,7 @@ export interface ProfileEditorWidgetProps extends Omit<ProfileEditorProps, 'prof
      * 
      * It is not possible to update the primary identifier submitted at registration (email or phone number). When the primary identifier is the email address (SMS feature disabled), users can only enter a phone number and update without limit.
      */
-    fields?: (string | Field)[]
+    fields?: (string | FieldComponent)[];
 }
 
 export default createWidget<ProfileEditorWidgetProps, ProfileEditorProps>({
@@ -103,7 +108,7 @@ export default createWidget<ProfileEditorWidgetProps, ProfileEditorProps>({
     prepare: (options, { apiClient, config }) => {
         const opts = {
             showLabels: true,
-            fields: [],
+            fields: [{ key: 'country', component: CountrySelector }],
             ...options
         };
         const { accessToken, fields = [] } = opts;
@@ -142,7 +147,7 @@ export default createWidget<ProfileEditorWidgetProps, ProfileEditorProps>({
 });
 
 // Filter out the profile consents with different version than the one the given consent field own
-const filterProfileConsents = (fields: (string | Field)[], consentsVersions: Record<string, ConsentVersions>, profileConsents: Record<string, UserConsent>) => {
+const filterProfileConsents = (fields: (string | FieldComponent)[], consentsVersions: Record<string, ConsentVersions>, profileConsents: Record<string, UserConsent>) => {
     return Object.keys(profileConsents)
         .filter(profileConsentKey => {
             const consentField = fields.map(f => typeof f === 'string' ? f : f.key).find(field => field.startsWith(`consents.${profileConsentKey}`));

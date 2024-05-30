@@ -40,7 +40,10 @@
         "luxon": "^3.4.3",
         "react-transition-group": "4.4.2",
         "remarkable": "2.0.1",
-        "validator": "^13.11.0"
+        "validator": "^13.11.0",
+        "i18n-iso-countries": "^7.11.2",
+        "@rollup/plugin-json": "^6.1.0"
+
     },
     "peerDependencies": {
         "react": "^16.9.24",

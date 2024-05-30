@@ -1,6 +1,6 @@
 /**
- * @reachfive/identity-ui - v1.26.1
- * Compiled Thu, 16 May 2024 08:48:31 UTC
+ * @reachfive/identity-ui - v1.27.0
+ * Compiled Thu, 30 May 2024 09:07:56 UTC
  *
  * Copyright (c) ReachFive.
  *
@@ -10,7 +10,7 @@
 import { CSSProperties } from 'styled-components';
 import { Config as Config$1, RemoteSettings, ConsentVersions, CustomField, Client as Client$1, SessionInfo, AuthOptions, MFA, PasswordlessResponse, SingleFactorPasswordlessParams, Profile, UserConsent, DeviceCredential } from '@reachfive/identity-core';
 export { Config } from '@reachfive/identity-core';
-import React$1 from 'react';
+import React$1, { FC } from 'react';
 import { PasswordlessParams } from '@reachfive/identity-core/es/main/oAuthClient';
 
 type Prettify<T> = {
@@ -881,6 +881,9 @@ interface ProfileEditorProps {
      */
     showLabels?: boolean;
 }
+interface FieldComponent extends Field {
+    component?: FC<any>;
+}
 interface ProfileEditorWidgetProps extends Omit<ProfileEditorProps, 'profile' | 'resolvedFields'> {
     /**
      * List of the fields to display in the form.
@@ -893,7 +896,7 @@ interface ProfileEditorWidgetProps extends Omit<ProfileEditorProps, 'profile' | 
      *
      * It is not possible to update the primary identifier submitted at registration (email or phone number). When the primary identifier is the email address (SMS feature disabled), users can only enter a phone number and update without limit.
      */
-    fields?: (string | Field)[];
+    fields?: (string | FieldComponent)[];
 }
 
 interface SocialAccountsWidgetProps {

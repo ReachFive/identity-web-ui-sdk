@@ -7,6 +7,7 @@ import { Info, Intro } from '../../components/miscComponent';
 import { createForm } from '../../components/form/formComponent';
 import { simpleField } from '../../components/form/fields/simpleField';
 import phoneNumberField from '../../components/form/fields/phoneNumberField'
+import CountrySelector from '../../components/form/fields/countrySelector';
 
 import { useReachfive } from '../../contexts/reachfive';
 import { useI18n } from '../../contexts/i18n';
@@ -17,7 +18,10 @@ type PhoneNumberFormData = { phoneNumber: string }
 
 const phoneNumberInputForm = (config: Config) => createForm<PhoneNumberFormData>({
     prefix: 'r5-phonenumber-editor-',
-    fields: [phoneNumberField({ required: true }, config)]
+    fields: [
+        { component: CountrySelector, key: 'countryCode', label: 'Country Code' },
+        phoneNumberField({ required: true }, config)
+    ]
 });
 
 type VerificationCodeFormData = { verificationCode: string }

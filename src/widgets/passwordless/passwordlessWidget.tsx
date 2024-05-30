@@ -13,11 +13,14 @@ import { simpleField } from '../../components/form/fields/simpleField';
 import phoneNumberField from '../../components/form/fields/phoneNumberField';
 import { SocialButtons } from '../../components/form/socialButtonsComponent';
 import ReCaptcha, { importGoogleRecaptchaScript, type WithCaptchaToken } from '../../components/reCaptcha';
+import CountrySelector from '../../components/form/fields/countrySelector';
 
 import { useReachfive } from '../../contexts/reachfive';
 import { useRouting } from '../../contexts/routing';
 import { useI18n } from '../../contexts/i18n';
 import { useConfig } from '../../contexts/config';
+
+
 
 type EmailFormData = { email: string, captchaToken?: string }
 
@@ -37,7 +40,10 @@ type PhoneNumberFormFata = { phoneNumber: string, captchaToken?: string }
 
 const phoneNumberInputForm = (config: Config) => createForm<PhoneNumberFormFata>({
     prefix: 'r5-passwordless-sms-',
-    fields: [phoneNumberField({ required: true }, config)]
+    fields: [
+        { component: CountrySelector, key: 'countryCode', label: 'Country Code' },
+        phoneNumberField({ required: true }, config)
+    ]
 });
 
 type VerificationCodeFormData = { verificationCode: string }

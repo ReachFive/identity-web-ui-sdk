@@ -71,7 +71,7 @@ class PhoneNumberField extends React.Component {
                 required={required}
                 hasError={!!validation.error}
                 onChange={event => this.asYouType(event.target.value)}
-                onBlur={() => this.props.onChange({ isDirty: true })}
+                onBlur={() => this.props.onChange({ ...value, isDirty: true })}
                 data-testid={path} />
         </FormGroup>
     }
@@ -84,14 +84,14 @@ export default function phoneNumberField(props, config) {
         label: 'phoneNumber',
         format: {
             bind: x => ({
-                country: config.countryCode,
-                raw: x,
+                country: x.country || config.countryCode,
+                raw: x.raw || x,
                 isValid: true
             }),
-            unbind: x => x.formatted || x.raw
+            unbind: x => ({ country: x.country, raw: x.formatted || x.raw })
         },
         validator: new Validator({
-            rule: value => value.isValid,
+            rule: value => libphonenumber.isValidNumber(value.raw, value.country),
             hint: 'phone'
         }),
         component: PhoneNumberField
