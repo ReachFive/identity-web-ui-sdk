@@ -7,10 +7,16 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.27.0] - 2024-05-16
+
+## Added
+
+- Add new widgets for account recovery (Passkeys)
+
 ## [1.26.1] - 2024-04-19
 
 ## Added
--
+
 - Add a second UI for login with passkey: choose between integrated password and passkey with `initialScreen: 'login'` or separated password and passkey with `initialScreen: 'login-with-web-authn'`
 
 ## [1.26.0] - 2024-03-25
