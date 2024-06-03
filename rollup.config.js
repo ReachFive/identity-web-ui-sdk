@@ -6,6 +6,7 @@ import url from '@rollup/plugin-url'
 import svg from '@svgr/rollup'
 import dts from 'rollup-plugin-dts'
 import esbuild from 'rollup-plugin-esbuild'
+import json from '@rollup/plugin-json';
 
 import pkg from './package.json' assert { type: 'json' }
 const dependencies = Object.keys(pkg.dependencies)
@@ -49,6 +50,7 @@ const plugins = [
     // Add an inlined version of SVG files: https://www.smooth-code.com/open-source/svgr/docs/rollup/#using-with-url-plugin
     url({ limit: Infinity, include: ['**/*.svg'] }),
     esbuild(),
+    json(),
 ]
 
 export default [

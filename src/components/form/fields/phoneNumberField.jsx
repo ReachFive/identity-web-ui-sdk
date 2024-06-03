@@ -1,11 +1,23 @@
 import React from 'react';
 
 import * as libphonenumber from 'libphonenumber-js';
+import { getCountryCallingCode } from 'libphonenumber-js';
+import { countries } from 'iso-3166-1-alpha-2';
 
 import { Validator } from '../../../core/validation';
 
 import { Input, FormGroup } from '../formControlsComponent';
 import { createField } from '../fieldCreator';
+
+const countryCallingCodes = Object.keys(countries).reduce((result, countryCode) => {
+    try {
+        const callingCode = getCountryCallingCode(countryCode);
+        result[countryCode] = `+${callingCode}`;
+    } catch (error) {
+        
+    }
+    return result;
+}, {});
 
 class PhoneNumberField extends React.Component {
     componentDidMount() {
@@ -53,27 +65,48 @@ class PhoneNumberField extends React.Component {
             inputId,
             required = true,
             label,
-            placeholder = label
+            placeholder = label,
+            countryCode 
         } = this.props;
         
-        return <FormGroup
-            inputId={inputId}
-            labelText={label}
-            {...(({ error }) => ({ error }))(validation)}
-            showLabel={this.props.showLabel}>
-            <Input
-                id={inputId}
-                name={path}
-                type="tel"
-                value={value.raw || ''}
-                placeholder={placeholder}
-                title={label}
-                required={required}
-                hasError={!!validation.error}
-                onChange={event => this.asYouType(event.target.value)}
-                onBlur={() => this.props.onChange({ isDirty: true })}
-                data-testid={path} />
-        </FormGroup>
+        return (
+            <FormGroup
+                inputId={inputId}
+                labelText={label}
+                {...(({ error }) => ({ error }))(validation)}
+                showLabel={this.props.showLabel}>
+                <select value={countryCode} onChange={this.handleCountryChange}>
+                    {Object.entries(countryCallingCodes).map(([countryCode, callingCode]) => (
+                        <option value={countryCode} key={countryCode}>
+                            {countryCode} ({callingCode})
+                        </option>
+                    ))}
+                </select>
+                <Input
+                    id={inputId}
+                    name={path}
+                    type="tel"
+                    value={value.raw || ''}
+                    placeholder={placeholder}
+                    title={label}
+                    required={required}
+                    hasError={!!validation.error}
+                    onChange={event => this.asYouType(event.target.value)}
+                    onBlur={() => this.props.onChange({ isDirty: true })}
+                    data-testid={path} />
+            </FormGroup>
+        );
+    }
+
+    handleCountryChange = (event) => {
+        this.props.onChange({
+            value: {
+                country: event.target.value,
+                raw: this.props.value.raw,
+                formatted: this.props.value.formatted,
+                isValid: this.props.value.isValid
+            }
+        });
     }
 }
 
