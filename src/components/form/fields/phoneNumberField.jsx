@@ -1,21 +1,12 @@
 import React from 'react';
-
-import * as libphonenumber from 'libphonenumber-js';
-import { getCountryCallingCode } from 'libphonenumber-js';
-import { countries } from 'iso-3166-1-alpha-2';
-
+import { parsePhoneNumberFromString, AsYouType, isValidNumber, getCountryCallingCode, getCountries } from 'libphonenumber-js';
 import { Validator } from '../../../core/validation';
-
-import { Input, FormGroup } from '../formControlsComponent';
+import { Input, FormGroup, Select } from '../formControlsComponent';
 import { createField } from '../fieldCreator';
 
-const countryCallingCodes = Object.keys(countries).reduce((result, countryCode) => {
-    try {
-        const callingCode = getCountryCallingCode(countryCode);
-        result[countryCode] = `+${callingCode}`;
-    } catch (error) {
-        
-    }
+const countryCallingCodes = getCountries().reduce((result, countryCode) => {
+    const callingCode = getCountryCallingCode(countryCode);
+    result[countryCode] = `+${callingCode}`;
     return result;
 }, {});
 
@@ -24,28 +15,28 @@ class PhoneNumberField extends React.Component {
         const { raw, country } = this.props.value;
         if (typeof raw === 'string') {
             try {
-                const parsed = libphonenumber.parse(raw, country);
+                const parsed = parsePhoneNumberFromString(raw, country);
                 const phoneValue = country === parsed.country
-                    ? libphonenumber.format(parsed, 'National')
+                    ? parsed.formatNational()
                     : raw;
-        
                 this.asYouType(phoneValue);
             } catch (e) {
-                console.error(e)
+                console.error(e);
             }
         }
     }
 
     componentWillUnmount() {
-        this.unmounted = true
+        this.unmounted = true;
     }
 
     asYouType = (inputValue) => {
         const { value: { country } } = this.props;
 
-        const phone = new libphonenumber.AsYouType(country).input(inputValue);
-        const formatted = libphonenumber.format(phone, country, 'International');
-        const isValid = libphonenumber.isValidNumber(phone, country);
+        const phone = new AsYouType(country).input(inputValue);
+        const parsedPhone = parsePhoneNumberFromString(phone, country);
+        const formatted = parsedPhone ? parsedPhone.formatInternational() : phone;
+        const isValid = parsedPhone ? isValidNumber(parsedPhone) : false;
 
         this.props.onChange({
             value: {
@@ -66,22 +57,27 @@ class PhoneNumberField extends React.Component {
             required = true,
             label,
             placeholder = label,
-            countryCode 
+            countryCode
         } = this.props;
-        
+
+        const options = Object.entries(countryCallingCodes).map(([code, callingCode]) => ({
+            label: `${code} (${callingCode})`,
+            value: code
+        }));
+
         return (
             <FormGroup
                 inputId={inputId}
                 labelText={label}
                 {...(({ error }) => ({ error }))(validation)}
-                showLabel={this.props.showLabel}>
-                <select value={countryCode} onChange={this.handleCountryChange}>
-                    {Object.entries(countryCallingCodes).map(([countryCode, callingCode]) => (
-                        <option value={countryCode} key={countryCode}>
-                            {countryCode} ({callingCode})
-                        </option>
-                    ))}
-                </select>
+                showLabel={this.props.showLabel}
+            >
+                <Select 
+                    value={countryCode} 
+                    onChange={this.handleCountryChange}
+                    options={options}
+                    placeholder="Select country"
+                />
                 <Input
                     id={inputId}
                     name={path}
@@ -92,8 +88,9 @@ class PhoneNumberField extends React.Component {
                     required={required}
                     hasError={!!validation.error}
                     onChange={event => this.asYouType(event.target.value)}
-                    onBlur={() => this.props.onChange({ isDirty: true })}
-                    data-testid={path} />
+                    onBlur={() => this.props.onChange({ ...value, isDirty: true })}
+                    data-testid={path}
+                />
             </FormGroup>
         );
     }
@@ -117,14 +114,14 @@ export default function phoneNumberField(props, config) {
         label: 'phoneNumber',
         format: {
             bind: x => ({
-                country: config.countryCode,
-                raw: x,
+                country: x.country || config.countryCode,
+                raw: x.raw || x,
                 isValid: true
             }),
-            unbind: x => x.formatted || x.raw
+            unbind: x => ({ country: x.country, raw: x.formatted || x.raw })
         },
         validator: new Validator({
-            rule: value => value.isValid,
+            rule: value => isValidNumber(value.raw, value.country),
             hint: 'phone'
         }),
         component: PhoneNumberField
