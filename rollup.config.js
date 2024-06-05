@@ -2,14 +2,15 @@ import commonjs from '@rollup/plugin-commonjs';
 import replace from '@rollup/plugin-replace';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
 import terser from '@rollup/plugin-terser';
-import url from '@rollup/plugin-url'
-import svg from '@svgr/rollup'
-import dts from 'rollup-plugin-dts'
-import esbuild from 'rollup-plugin-esbuild'
+import url from '@rollup/plugin-url';
+import svg from '@svgr/rollup';
+import dts from 'rollup-plugin-dts';
+import esbuild from 'rollup-plugin-esbuild';
 import json from '@rollup/plugin-json';
+import postcss from 'rollup-plugin-postcss';
 
-import pkg from './package.json' assert { type: 'json' }
-const dependencies = Object.keys(pkg.dependencies)
+import pkg from './package.json' assert { type: 'json' };
+const dependencies = Object.keys(pkg.dependencies);
 
 const banner = [
     `/**`,
@@ -25,14 +26,14 @@ const banner = [
 
 // Ignore Luxon library's circular dependencies
 function onWarn(message) {
-    if ( message.code === 'CIRCULAR_DEPENDENCY' ) return;
-    console.warn( message);
+    if (message.code === 'CIRCULAR_DEPENDENCY') return;
+    console.warn(message);
 }
 
 const bundle = config => ({
     ...config,
     input: 'src/index.ts',
-})
+});
 
 const plugins = [
     replace({
@@ -47,11 +48,13 @@ const plugins = [
     }),
     commonjs({ include: /node_modules/ }),
     svg(),
-    // Add an inlined version of SVG files: https://www.smooth-code.com/open-source/svgr/docs/rollup/#using-with-url-plugin
     url({ limit: Infinity, include: ['**/*.svg'] }),
     esbuild(),
     json(),
-]
+    postcss({
+        extensions: ['.css'],
+    }),
+];
 
 export default [
     bundle({
@@ -112,4 +115,4 @@ export default [
         },
         onwarn: onWarn
     }),
-]
+];

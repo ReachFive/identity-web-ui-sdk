@@ -2,22 +2,19 @@
  * @jest-environment jsdom
  */
 
-import { describe, expect, test } from '@jest/globals';
+import { describe, expect, jest, test } from '@jest/globals';
 import renderer from 'react-test-renderer';
 import { render, screen } from '@testing-library/react';
-import '@testing-library/jest-dom'
-import 'jest-styled-components';
-
-import passwordlessWidget from '../../../src/widgets/passwordless/passwordlessWidget'
+import '@testing-library/jest-dom';
+import passwordlessWidget from '../../../src/widgets/passwordless/passwordlessWidget';
 
 const defaultConfig = { domain: 'local.reach5.net' };
 
 describe('Snapshot', () => {
-    const generateSnapshot = (options = {}, config = defaultConfig) => () => {
-        const tree = passwordlessWidget(options, { config, apiClient: {} })
-            .then(result => renderer.create(result).toJSON());
-
-        expect(tree).resolves.toMatchSnapshot();
+    const generateSnapshot = (options = {}, config = defaultConfig) => async () => {
+        const result = await passwordlessWidget(options, { config, apiClient: {} });
+        const tree = renderer.create(result).toJSON();
+        expect(tree).toMatchSnapshot();
     };
 
     describe('passwordless', () => {
@@ -32,7 +29,6 @@ describe('Snapshot', () => {
 describe('DOM testing', () => {
     const generateComponent = async (options = {}, config = defaultConfig) => {
         const result = await passwordlessWidget(options, { config, apiClient: {} });
-
         return render(result);
     };
 
@@ -74,7 +70,9 @@ describe('DOM testing', () => {
             expect(screen.queryByLabelText('phoneNumber')).toBeInTheDocument();
 
             // Input phone number
-            expect(screen.queryByTestId('phone_number')).toBeInTheDocument();
+            const phoneNumberInput = screen.queryByTestId('phone_number');
+            console.log(phoneNumberInput);
+            expect(phoneNumberInput).toBeInTheDocument();
 
             // Form button
             expect(screen.queryByTestId('submit').textContent).toBe('send');
