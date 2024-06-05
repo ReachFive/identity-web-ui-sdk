@@ -15,7 +15,8 @@ import { useConfig } from '../../contexts/config';
 import { UserError } from '../../helpers/errors';
 
 const DeviceName = styled.div`
-    text-align: center;
+    font-weight: bold;
+    line-height: 2;
 `;
 
 interface FormData {
