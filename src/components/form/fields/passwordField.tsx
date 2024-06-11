@@ -74,13 +74,16 @@ const PasswordStrength = ({ score }: PasswordStrength) => {
     )
 }
 
-interface PasswordFieldProps extends FieldComponentProps<string> {
+type ExtraValues = {
+    strength?: PasswordStrengthScore,
+    isTouched?: boolean,
+}
+
+interface PasswordFieldProps extends FieldComponentProps<string, {}, ExtraValues> {
     blacklist: string[]
     isDirty?: boolean
     isTouched?: boolean
-    placeholder?: string
-    autoComplete?: string
-    onChange: (event: { value?: string, strength?: PasswordStrengthScore, isTouched?: boolean, isDirty?: boolean }) => void
+    // onChange: (event: { value?: string, strength?: PasswordStrengthScore, isTouched?: boolean, isDirty?: boolean }) => void
     canShowPassword?: boolean
     enabledRules: Record<string, PasswordRule>
     minStrength: PasswordStrengthScore
@@ -103,14 +106,20 @@ class PasswordField extends React.Component<PasswordFieldProps, PasswordFieldSta
         const blacklistUpdated = isEqual(prevProps.blacklist, this.props.blacklist);
         if (!blacklistUpdated) {
             const { value, onChange, blacklist } = this.props;
-            onChange({ strength: getPasswordStrength(blacklist, value) });
+            onChange({
+                strength: getPasswordStrength(blacklist, value),
+                value: value ?? null,
+            });
         }
     }
 
     componentDidMount() {
         const { value, onChange, blacklist } = this.props;
         this.setState({ ...this.state });
-        onChange({ strength: getPasswordStrength(blacklist, value) });
+        onChange({
+            strength: getPasswordStrength(blacklist, value),
+            value: value ?? null,
+        });
     }
 
     componentWillUnmount() {
@@ -156,8 +165,14 @@ class PasswordField extends React.Component<PasswordFieldProps, PasswordFieldSta
                             value: event.target.value,
                             strength: getPasswordStrength(blacklist, event.target.value)
                         })}
-                        onFocus={() => onChange({ isTouched: true })}
-                        onBlur={() => onChange({ isDirty: true })}
+                        onFocus={(event) => onChange({
+                            value: event.target.value,
+                            isTouched: true
+                        })}
+                        onBlur={(event) => onChange({
+                            value: event.target.value,
+                            isDirty: true
+                        })}
                         data-testid="password" />
                     {this.props.canShowPassword && (showPassword
                         ? <HidePasswordIcon onClick={this.toggleShowPassword} />
@@ -215,7 +230,10 @@ function getPasswordStrength(blacklist: string[], fieldValue?: string) {
     return zxcvbn(sanitized, blacklist).score;
 }
 
-export const passwordField = ({ label = 'password', canShowPassword = false, ...staticProps }, { passwordPolicy }: Config): FieldCreator<string, PasswordFieldProps> => ({
+export const passwordField = (
+    { label = 'password', canShowPassword = false, ...staticProps },
+    { passwordPolicy }: Config
+): FieldCreator<string, PasswordFieldProps, ExtraValues> => ({
     path: 'password',
     create: ({ i18n, showLabel }) => {
         const actualLabel = i18n(label);
@@ -248,7 +266,7 @@ export const passwordField = ({ label = 'password', canShowPassword = false, ...
                     errors.push(i18n('validation.required'));
                 }
                 else {
-                    if (passwordPolicy && strength < passwordPolicy.minStrength) {
+                    if (passwordPolicy && strength && strength < passwordPolicy.minStrength) {
                         errors.push(i18n('validation.password.minStrength'));
                     }
 

@@ -8,8 +8,10 @@ const config: JestConfigWithTsJest = {
         "^.+\\.jsx?$": "babel-jest"
     },
     moduleNameMapper: {
+        '.css$': '<rootDir>/mocks/css.js',
         '.svg$': '<rootDir>/mocks/svg.js',
-        '@reachfive/i18n': '<rootDir>/src/i18n/en.js'
+        '@reachfive/i18n': '<rootDir>/src/i18n/en.js',
+        'react-phone-number-input/locale/([a-z_-]+)\\.json.js$': '<rootDir>/node_modules/react-phone-number-input/locale/$1.json'
     },
 };
 
