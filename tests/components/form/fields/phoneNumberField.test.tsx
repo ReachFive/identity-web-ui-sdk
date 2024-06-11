@@ -11,8 +11,6 @@ import 'jest-styled-components';
 import { ThemeProvider } from 'styled-components';
 import { formatPhoneNumberIntl, type Value } from 'react-phone-number-input';
 
-// import labels from '../../../../node_modules/react-phone-number-input/locale/fr.json'
-
 import type { Config } from '../../../../src/types';
 import type { Theme } from '../../../../src/types/styled'
 
@@ -68,10 +66,6 @@ const queryByName = (renderResult: RenderResult, name: Matcher) => {
 }
 
 describe('DOM testing', () => {
-
-    // See: https://www.npmjs.com/package/react-phone-number-input#localization
-    // jest.mock('../../../../node_modules/react-phone-number-input/locale/fr.json.js', () => labels);
-
     test('with country select', async () => {
         const user = userEvent.setup()
 
