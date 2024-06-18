@@ -10,7 +10,7 @@ import { Info, Intro, Separator } from '../../components/miscComponent';
 
 import { createForm } from '../../components/form/formComponent';
 import { simpleField } from '../../components/form/fields/simpleField';
-import phoneNumberField from '../../components/form/fields/phoneNumberField';
+import phoneNumberField, { type PhoneNumberOptions } from '../../components/form/fields/phoneNumberField';
 import { SocialButtons } from '../../components/form/socialButtonsComponent';
 import ReCaptcha, { importGoogleRecaptchaScript, type WithCaptchaToken } from '../../components/reCaptcha';
 
@@ -88,6 +88,10 @@ interface MainViewProps {
      * Tip:  If you pass an empty array, social providers will not be displayed. 
      */
     socialProviders?: string[]
+    /**
+     * Phone number field options.
+     */
+    phoneNumberOptions?: PhoneNumberOptions
 }
 
 const MainView = ({
@@ -98,6 +102,7 @@ const MainView = ({
     showIntro = true,
     showSocialLogins = false,
     socialProviders,
+    phoneNumberOptions,
 }: MainViewProps) => {
     const coreClient = useReachfive()
     const config = useConfig()
@@ -140,6 +145,9 @@ const MainView = ({
             {!isEmail && <PhoneNumberInputForm
                 handler={(data: PhoneNumberFormFata) => ReCaptcha.handle(data, { recaptcha_enabled, recaptcha_site_key }, callback, "passwordless_phone")}
                 onSuccess={handleSuccess}
+                sharedProps={{
+                    ...phoneNumberOptions
+                }}
             />}
         </div>
     )

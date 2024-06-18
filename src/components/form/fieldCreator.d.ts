@@ -42,7 +42,7 @@ export type FieldComponentProps<T, P = {}, E = {}> = P & {
     readOnly?: boolean
     i18n: I18nResolver
     showLabel?: boolean
-    value?: FormValue<T, E>
+    value?: FormValue<T>
     validation?: VaildatorResult
 }
 

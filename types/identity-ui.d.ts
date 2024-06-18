@@ -1,6 +1,6 @@
 /**
  * @reachfive/identity-ui - v1.27.0
- * Compiled Mon, 10 Jun 2024 16:02:24 UTC
+ * Compiled Tue, 18 Jun 2024 13:34:42 UTC
  *
  * Copyright (c) ReachFive.
  *
@@ -284,7 +284,7 @@ type FieldComponentProps<T, P = {}, E = {}> = P & {
     readOnly?: boolean
     i18n: I18nResolver
     showLabel?: boolean
-    value?: FormValue<T, E>
+    value?: FormValue<T>
     validation?: VaildatorResult
 }
 
@@ -739,6 +739,26 @@ type Authentication = {
 };
 type PasswordEditorWidgetProps = Omit<PasswordEditorProps, 'authentication'>;
 
+type PhoneNumberOptions = {
+    /**
+     * If `withCountrySelect` property is `true` then the user can select the country for the phone number. Must be a supported {@link https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2#Officially_assigned_code_elements country code}.
+     * @default true
+     */
+    withCountrySelect?: boolean;
+    /**
+     * If `countryCore` is specified and `international` property is true then the phone number can only be input in "international" format for that country.
+     * By default, the "country calling code" part (example: +1 when country is US) is not included in the input field.
+     * To change that, pass `withCountryCallingCode` property, and it will include the "country calling code" part in the input field.
+     * @default false
+     */
+    withCountryCallingCode?: boolean;
+    /**
+     * If `International` property is `true` then the phone number can only be input in "international" format according to `countryCore`.
+     * @default false
+     */
+    international?: boolean;
+};
+
 interface MainViewProps$4 {
     /**
      * The authorization credential JSON Web Token (JWT) used to access the ReachFive API, less than five minutes old.
@@ -750,6 +770,10 @@ interface MainViewProps$4 {
     * @default false
     */
     showLabels?: boolean;
+    /**
+     * Phone number field options.
+     */
+    phoneNumberOptions?: PhoneNumberOptions;
 }
 type VerificationCodeViewProps$2 = {
     /**
@@ -830,6 +854,10 @@ interface MainViewProps$2 {
      * Tip:  If you pass an empty array, social providers will not be displayed.
      */
     socialProviders?: string[];
+    /**
+     * Phone number field options.
+     */
+    phoneNumberOptions?: PhoneNumberOptions;
 }
 interface VerificationCodeViewProps$1 {
     /**
@@ -979,6 +1007,10 @@ interface MainViewProps$1 {
      * @default true
      */
     showRemoveMfaCredentials?: boolean;
+    /**
+     * Phone number field options.
+     */
+    phoneNumberOptions?: PhoneNumberOptions;
 }
 interface VerificationCodeViewProps {
     /**

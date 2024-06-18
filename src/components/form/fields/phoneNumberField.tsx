@@ -34,10 +34,30 @@ function importLocale(locale: string) {
         .then(module => module.default as Labels);
 }
 
+export type PhoneNumberOptions = {
+    /**
+     * If `withCountrySelect` property is `true` then the user can select the country for the phone number. Must be a supported {@link https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2#Officially_assigned_code_elements country code}.
+     * @default true
+     */
+    withCountrySelect?: boolean
+    /**
+     * If `countryCore` is specified and `international` property is true then the phone number can only be input in "international" format for that country.
+     * By default, the "country calling code" part (example: +1 when country is US) is not included in the input field.
+     * To change that, pass `withCountryCallingCode` property, and it will include the "country calling code" part in the input field.
+     * @default false
+     */
+    withCountryCallingCode?: boolean
+    /**
+     * If `International` property is `true` then the phone number can only be input in "international" format according to `countryCore`.
+     * @default false
+     */
+    international?: boolean
+}
+
 /**
  * If neither country nor defaultCountry are specified then the phone number can only be input in "international" format.
  */
-export interface PhoneNumberFieldProps extends FieldComponentProps<Value> {
+export interface PhoneNumberFieldProps extends FieldComponentProps<Value>, PhoneNumberOptions {
     /**
      * If defaultCountry is specified then the phone number can be input both in "international" format and "national" format.
      * A phone number that's being input in "national" format will be parsed as a phone number belonging to the defaultCountry.
@@ -49,32 +69,17 @@ export interface PhoneNumberFieldProps extends FieldComponentProps<Value> {
      */
     country?: Country
     /**
-     * If country is specified and international property is true then the phone number can only be input in "international" format for that country.
-     */
-    international?: boolean
-    /**
      * If locale is specified then translate component using the given language.
      * @see https://gitlab.com/catamphetamine/react-phone-number-input/tree/master/locale
      */
     locale?: string
-    /**
-     * If country is specified and international property is true then the phone number can only be input in "international" format for that country.
-     * By default, the "country calling code" part (example: +1 when country is US) is not included in the input field.
-     * To change that, pass withCountryCallingCode property, and it will include the "country calling code" part in the input field.
-     */
-    withCountryCallingCode?: boolean
-    /**
-     * Whether displayed the phone input with a country selector or not.
-     */
-    withCountrySelect?: boolean
 }
 
 const PhoneNumberField = (props: PhoneNumberFieldProps) => {
     const {
-        defaultCountry,
         country,
         inputId,
-        international = true,
+        international = false,
         label,
         locale = 'en',
         onChange,
@@ -84,8 +89,8 @@ const PhoneNumberField = (props: PhoneNumberFieldProps) => {
         showLabel,
         validation = {},
         value,
-        withCountryCallingCode = true,
-        withCountrySelect = true
+        withCountryCallingCode = false,
+        withCountrySelect = true,
     } = props;
 
     const [labels, setLabels] = useState<Labels>()
@@ -130,7 +135,6 @@ const PhoneNumberField = (props: PhoneNumberFieldProps) => {
                 <PhoneInput
                     id={inputId}
                     name={path}
-                    country={country}
                     value={currentValue}
                     placeholder={placeholder}
                     required={required}
@@ -138,7 +142,14 @@ const PhoneNumberField = (props: PhoneNumberFieldProps) => {
                     onChange={handlePhoneChange}
                     labels={labels}
                     international={international}
-                    defaultCountry={defaultCountry}
+                    {...(withCountrySelect
+                        ? ({
+                            defaultCountry: country,
+                        })
+                        : ({
+                            country,
+                        })
+                    )}
                     withCountryCallingCode={withCountryCallingCode}
                     inputComponent={Input}
                     hasError={!!error}
@@ -152,11 +163,6 @@ const phoneNumberField = (
     {
         key = 'phone_number',
         label = 'phoneNumber',
-        defaultCountry,
-        country,
-        international,
-        withCountryCallingCode,
-        withCountrySelect,
         ...props
     }: Partial<PhoneNumberFieldProps>,
     config: Config
@@ -187,11 +193,7 @@ const phoneNumberField = (
             hint: 'phone'
         }),
         extendedParams: {
-            defaultCountry: defaultCountry ?? (isValidCountryCode(config.countryCode) ? config.countryCode : undefined),
-            country,
-            international,
-            withCountryCallingCode,
-            withCountrySelect,
+            country: isValidCountryCode(config.countryCode) ? config.countryCode : undefined,
             locale: config.language,
         }
     });
