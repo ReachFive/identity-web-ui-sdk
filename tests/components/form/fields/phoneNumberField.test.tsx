@@ -69,7 +69,7 @@ describe('DOM testing', () => {
     test('with country select', async () => {
         const user = userEvent.setup()
 
-        const defaultCountry = 'FR'
+        const country = 'FR'
         const initialValue = '+33123456789'
         const key = 'phone_number'
         const label = 'phone'
@@ -78,11 +78,10 @@ describe('DOM testing', () => {
         const renderResult = await waitFor(async () => {
             const Field = phoneNumberField(
                 {
-                    defaultCountry,
+                    country,
                     i18n: i18nResolver,
                     key,
                     label,
-                    withCountrySelect: true
                 },
                 defaultConfig
             )
@@ -91,7 +90,7 @@ describe('DOM testing', () => {
                     showLabel: true
                 })
                 .render({
-                    defaultCountry,
+                    country,
                     i18n: i18nResolver,
                     inputId: key,
                     key,
@@ -101,6 +100,9 @@ describe('DOM testing', () => {
                     state: {
                         value: initialValue as Value
                     },
+                    international: true,
+                    withCountrySelect: true,
+                    withCountryCallingCode: true,
                 })
             
             return render(
@@ -119,7 +121,7 @@ describe('DOM testing', () => {
 
         const countrySelect = queryByName(renderResult, 'phone_numberCountry')
         expect(countrySelect).toBeInTheDocument()
-        expect(countrySelect).toHaveValue(defaultCountry)
+        expect(countrySelect).toHaveValue(country)
 
         const newValue = '+12133734253'
         await user.clear(input)

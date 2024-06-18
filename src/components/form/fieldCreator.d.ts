@@ -25,7 +25,7 @@ export interface Field<T, P = {}, E = {}> {
 }
 
 export type FieldValue<T, E = {}> = E & {
-    value: T | null,
+    value?: T
     isDirty?: boolean
     validation?: VaildatorResult
 }

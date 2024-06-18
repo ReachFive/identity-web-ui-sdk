@@ -108,7 +108,7 @@ class PasswordField extends React.Component<PasswordFieldProps, PasswordFieldSta
             const { value, onChange, blacklist } = this.props;
             onChange({
                 strength: getPasswordStrength(blacklist, value),
-                value: value ?? null,
+                value,
             });
         }
     }
@@ -118,7 +118,7 @@ class PasswordField extends React.Component<PasswordFieldProps, PasswordFieldSta
         this.setState({ ...this.state });
         onChange({
             strength: getPasswordStrength(blacklist, value),
-            value: value ?? null,
+            value,
         });
     }
 

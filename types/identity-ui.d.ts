@@ -267,7 +267,7 @@ interface Field$1<T, P = {}, E = {}> {
 }
 
 type FieldValue<T, E = {}> = E & {
-    value: T | null,
+    value?: T
     isDirty?: boolean
     validation?: VaildatorResult
 }
