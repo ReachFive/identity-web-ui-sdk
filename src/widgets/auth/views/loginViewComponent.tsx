@@ -72,7 +72,7 @@ export const LoginForm = createForm<LoginFormData, LoginFormOptions>({
                 autoComplete: 'username webauthn'
             },
             config),
-            allowCustomIdentifier && allowAuthentMailPhone &&{
+            allowCustomIdentifier && allowAuthentMailPhone && {
                 staticContent: (
                     <Separator text={i18n('or')} />
                 )
