@@ -1,6 +1,6 @@
 /**
  * @reachfive/identity-ui - v1.27.0
- * Compiled Tue, 18 Jun 2024 13:34:42 UTC
+ * Compiled Mon, 24 Jun 2024 15:09:57 UTC
  *
  * Copyright (c) ReachFive.
  *
@@ -742,21 +742,9 @@ type PasswordEditorWidgetProps = Omit<PasswordEditorProps, 'authentication'>;
 type PhoneNumberOptions = {
     /**
      * If `withCountrySelect` property is `true` then the user can select the country for the phone number. Must be a supported {@link https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2#Officially_assigned_code_elements country code}.
-     * @default true
+     * @default false
      */
     withCountrySelect?: boolean;
-    /**
-     * If `countryCore` is specified and `international` property is true then the phone number can only be input in "international" format for that country.
-     * By default, the "country calling code" part (example: +1 when country is US) is not included in the input field.
-     * To change that, pass `withCountryCallingCode` property, and it will include the "country calling code" part in the input field.
-     * @default false
-     */
-    withCountryCallingCode?: boolean;
-    /**
-     * If `International` property is `true` then the phone number can only be input in "international" format according to `countryCore`.
-     * @default false
-     */
-    international?: boolean;
 };
 
 interface MainViewProps$4 {

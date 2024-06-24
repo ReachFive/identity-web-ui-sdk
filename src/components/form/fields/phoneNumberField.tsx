@@ -37,21 +37,9 @@ function importLocale(locale: string) {
 export type PhoneNumberOptions = {
     /**
      * If `withCountrySelect` property is `true` then the user can select the country for the phone number. Must be a supported {@link https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2#Officially_assigned_code_elements country code}.
-     * @default true
+     * @default false
      */
     withCountrySelect?: boolean
-    /**
-     * If `countryCore` is specified and `international` property is true then the phone number can only be input in "international" format for that country.
-     * By default, the "country calling code" part (example: +1 when country is US) is not included in the input field.
-     * To change that, pass `withCountryCallingCode` property, and it will include the "country calling code" part in the input field.
-     * @default false
-     */
-    withCountryCallingCode?: boolean
-    /**
-     * If `International` property is `true` then the phone number can only be input in "international" format according to `countryCore`.
-     * @default false
-     */
-    international?: boolean
 }
 
 /**
@@ -79,7 +67,6 @@ const PhoneNumberField = (props: PhoneNumberFieldProps) => {
     const {
         country,
         inputId,
-        international = false,
         label,
         locale = 'en',
         onChange,
@@ -89,8 +76,7 @@ const PhoneNumberField = (props: PhoneNumberFieldProps) => {
         showLabel,
         validation = {},
         value,
-        withCountryCallingCode = false,
-        withCountrySelect = true,
+        withCountrySelect = false,
     } = props;
 
     const [labels, setLabels] = useState<Labels>()
@@ -141,7 +127,8 @@ const PhoneNumberField = (props: PhoneNumberFieldProps) => {
                     data-testid="phone_number"
                     onChange={handlePhoneChange}
                     labels={labels}
-                    international={international}
+                    international={true}
+                    withCountryCallingCode={true}
                     {...(withCountrySelect
                         ? ({
                             defaultCountry: country,
@@ -150,7 +137,6 @@ const PhoneNumberField = (props: PhoneNumberFieldProps) => {
                             country,
                         })
                     )}
-                    withCountryCallingCode={withCountryCallingCode}
                     inputComponent={Input}
                     hasError={!!error}
                 />

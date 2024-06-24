@@ -100,9 +100,7 @@ describe('DOM testing', () => {
                     state: {
                         value: initialValue as Value
                     },
-                    international: true,
                     withCountrySelect: true,
-                    withCountryCallingCode: true,
                 })
             
             return render(
