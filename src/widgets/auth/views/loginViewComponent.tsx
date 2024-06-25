@@ -40,6 +40,7 @@ export type LoginFormData = {
 
 export interface LoginFormOptions {
     allowCustomIdentifier?: boolean
+    allowAuthentMailPhone?: boolean
     canShowPassword?: boolean
     defaultIdentifier?: string
     showEmail?: boolean
@@ -53,6 +54,7 @@ export const LoginForm = createForm<LoginFormData, LoginFormOptions>({
     prefix: 'r5-login-',
     fields({
         allowCustomIdentifier,
+        allowAuthentMailPhone = true,
         canShowPassword,
         defaultIdentifier,
         showIdentifier = true,
@@ -63,14 +65,14 @@ export const LoginForm = createForm<LoginFormData, LoginFormOptions>({
         config,
     }) {
         return [
-            identifierField({
+            allowAuthentMailPhone && identifierField({
                 defaultValue: defaultIdentifier,
                 withPhoneNumber: showIdentifier && config.sms,
                 required: !allowCustomIdentifier,
                 autoComplete: 'username webauthn'
             },
             config),
-            allowCustomIdentifier && {
+            allowCustomIdentifier && allowAuthentMailPhone && {
                 staticContent: (
                     <Separator text={i18n('or')} />
                 )
@@ -185,6 +187,7 @@ export type LoginViewProps = {
      * Tip: If you pass an empty array, social providers will not be displayed.
      */
     socialProviders?: string[]
+    allowAuthentMailPhone?: boolean
 }
 
 export const LoginView = ({
@@ -201,6 +204,7 @@ export const LoginView = ({
     showRememberMe = false,
     recaptcha_enabled = false,
     recaptcha_site_key,
+    allowAuthentMailPhone = true,
 }: LoginViewProps) => {
     const i18n = useI18n()
     const coreClient = useReachfive()
@@ -256,6 +260,7 @@ export const LoginView = ({
                 canShowPassword={canShowPassword}
                 defaultIdentifier={defaultIdentifier}
                 allowCustomIdentifier={allowCustomIdentifier}
+                allowAuthentMailPhone={allowAuthentMailPhone}
                 handler={(data: LoginFormData) => ReCaptcha.handle(data, { recaptcha_enabled, recaptcha_site_key }, callback, "login")}
             />
             {allowSignup &&

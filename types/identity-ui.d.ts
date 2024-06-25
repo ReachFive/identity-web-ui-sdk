@@ -1,6 +1,6 @@
 /**
  * @reachfive/identity-ui - v1.26.1
- * Compiled Thu, 16 May 2024 08:48:31 UTC
+ * Compiled Fri, 17 May 2024 07:07:09 UTC
  *
  * Copyright (c) ReachFive.
  *
@@ -310,6 +310,13 @@ type LoginViewProps = {
      *
      * @default true
      */
+    allowAuthentMailPhone?: boolean;
+    /**
+     * Boolean that specifies if the email/phone field is enabled.
+     *
+     * @default true
+     */
+
     allowForgotPassword?: boolean;
     /**
      * Boolean that specifies if the account recovery is enabled.
@@ -371,6 +378,7 @@ type LoginViewProps = {
      * Tip: If you pass an empty array, social providers will not be displayed.
      */
     socialProviders?: string[];
+    
 };
 
 interface LoginWithWebAuthnViewProps {
