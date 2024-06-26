@@ -1,4 +1,4 @@
-import React, { PropsWithChildren } from 'react';
+import React, { ForwardedRef, PropsWithChildren } from 'react';
 
 import styled, { useTheme } from 'styled-components';
 import { Transition, TransitionStatus } from 'react-transition-group';
@@ -11,10 +11,11 @@ interface WidgetContentProps {
     className?: classes.Argument
     standalone?: boolean
     transition?: TransitionStatus
+    ref?: ForwardedRef<HTMLDivElement> | null
 }
 
-const WidgetContent = styled(({ name, className, children }: PropsWithChildren<WidgetContentProps>) => (
-    <div className={classes(className, {
+const WidgetContent = styled(({ name, className, children, ref }: PropsWithChildren<WidgetContentProps>) => (
+    <div ref={ref} className={classes(className, {
         [`r5-${name}`]: !!name,
         'r5-widget-active': !!name
     })}>{children}</div>
@@ -53,10 +54,12 @@ export default function WidgetContainer({
     children
 }: PropsWithChildren<WidgetContainerProps>) {
     const theme = useTheme()
+    const nodeRef = React.useRef<HTMLDivElement>(null)
     return (
-        <Transition in={true} appear={theme.animateWidgetEntrance} timeout={400}>
+        <Transition nodeRef={nodeRef} in={true} appear={theme.animateWidgetEntrance} timeout={400}>
             {state => (
                 <WidgetContent
+                    ref={nodeRef}
                     standalone={standalone}
                     name={name}
                     transition={state}
