@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, unmountComponentAtNode } from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import type { AuthOptions, Client as CoreClient, SessionInfo } from '@reachfive/identity-core'
 
 import { Config, Prettify } from './types'
@@ -130,6 +130,8 @@ export class UiClient {
             throw new Error(`Container '#${options.container}' not found.`);
         }
 
+        const root = createRoot(container)
+
         try {
             const config = {
                 ...this.config,
@@ -142,17 +144,17 @@ export class UiClient {
                 apiClient: this.core,
                 defaultI18n: this.defaultI18n
             });
-
-            render(WidgetComponent, container);
+            
+            root.render(WidgetComponent);
 
             if (options.onReady && typeof options.onReady === 'function') {
                 options.onReady({
-                    destroy() { unmountComponentAtNode(container) }
+                    destroy() { root.unmount() }
                 });
             }
         } catch (error) {
             const message = this.adaptError(error);
-            render(<ErrorMessage>{message}</ErrorMessage>, container)
+            root.render(<ErrorMessage>{message}</ErrorMessage>)
             this.handleError(error)
         }
     }
