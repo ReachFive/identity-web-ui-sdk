@@ -1,6 +1,6 @@
 import React, { MouseEventHandler, PropsWithChildren } from 'react';
 
-import styled, { withTheme, type DefaultTheme } from 'styled-components';
+import styled, { useTheme, type DefaultTheme } from 'styled-components';
 import { darken } from 'polished';
 import classes from 'classnames';
 
@@ -73,21 +73,29 @@ export const Button = styled(({ tagname = 'button', className, extendedClasses, 
     }
 `;
 
-export const DefaultButton = withTheme(props => (
-    <Button {...props} background="#ffffff" border={props.theme.borderColor} color={props.theme.textColor} />
-));
+interface DefaultButtonProps extends Omit<ButtonProps, 'background' | 'color'> {}
 
-interface PrimaryButtonProps extends Omit<ButtonProps, 'type' | 'background' | 'border'> {
-    theme: DefaultTheme
-}
+export const DefaultButton = ({ children, ...props }: PropsWithChildren<DefaultButtonProps>) => {
+    const theme = useTheme()
+    return (
+        <Button {...props} background="#ffffff" border={theme.borderColor} color={theme.textColor}>
+            {children}
+        </Button>
+    )
+};
 
-export const PrimaryButton = withTheme(({ children, theme, ...props }: PropsWithChildren<PrimaryButtonProps>) => (
-    <Button
-        type="submit"
-        {...props}
-        background={theme.primaryColor}
-        border={theme.primaryColor}
-    >
-        {children}
-    </Button>
-));
+interface PrimaryButtonProps extends Omit<ButtonProps, 'type' | 'background' | 'border'> {}
+
+export const PrimaryButton = ({ children, ...props }: PropsWithChildren<PrimaryButtonProps>) =>  {
+    const theme = useTheme()
+    return (
+        <Button
+            type="submit"
+            {...props}
+            background={theme.primaryColor}
+            border={theme.primaryColor}
+        >
+            {children}
+        </Button>
+    )
+};
