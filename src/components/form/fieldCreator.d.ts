@@ -1,9 +1,10 @@
 import { ComponentType } from 'react';
 
-import { WithI18n } from '../../contexts/i18n'
+import { WithI18n } from '../../contexts/i18n';
+import { I18nResolver } from '../../core/i18n';
 import { Validator } from '../../core/validation';
 import { PathMapping } from '../../core/mapping';
-import { VaildatorResult } from '../../core/validation'
+import { VaildatorResult } from '../../core/validation';
 import { FormValue } from '../../helpers/utils';
 
 interface FieldCreateProps {
