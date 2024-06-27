@@ -3,24 +3,9 @@
 exports[`Snapshot social login basic 1`] = `
 .c0 {
   font-size: 14px;
-  -webkit-transition: -webkit-transform 400ms ease, opacity 400ms ease;
-  -webkit-transition: transform 400ms ease, opacity 400ms ease;
-  transition: transform 400ms ease, opacity 400ms ease;
+  -webkit-transition: -webkit-transform 400ms ease,opacity 400ms ease;
+  transition: transform 400ms ease,opacity 400ms ease;
   opacity: 0;
-}
-
-.c3 {
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 38px;
-  box-sizing: border-box;
-  border-radius: 2px;
-  background-image: url(svg);
-  background-repeat: no-repeat;
-  background-size: 20px 20px;
-  background-position: center center;
 }
 
 .c2 {
@@ -45,10 +30,6 @@ exports[`Snapshot social login basic 1`] = `
   border-radius: 3px;
   -webkit-transition: all .15s ease-in-out;
   transition: all .15s ease-in-out;
-  margin-bottom: 10px;
-  position: relative;
-  width: 100%;
-  height: 40px;
 }
 
 .c2:focus {
@@ -67,7 +48,7 @@ exports[`Snapshot social login basic 1`] = `
   opacity: .65;
 }
 
-.c4 {
+.c5 {
   display: block;
   width: 100%;
   box-sizing: border-box;
@@ -89,26 +70,45 @@ exports[`Snapshot social login basic 1`] = `
   border-radius: 3px;
   -webkit-transition: all .15s ease-in-out;
   transition: all .15s ease-in-out;
-  margin-bottom: 10px;
-  position: relative;
-  width: 100%;
-  height: 40px;
 }
 
-.c4:focus {
+.c5:focus {
   outline: 0;
   box-shadow: 0 0 0 3px rgba(0,0,0,0);
 }
 
-.c4:hover,
-.c4:active {
+.c5:hover,
+.c5:active {
   color: #58666e;
   background-color: #ebebeb;
   border-color: rgba(0,0,0,0.15);
 }
 
-.c4[disabled] {
+.c5[disabled] {
   opacity: .65;
+}
+
+.c4 {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 38px;
+  box-sizing: border-box;
+  border-radius: 2px;
+  background-image: url(svg);
+  background-repeat: no-repeat;
+  -webkit-background-size: 20px 20px;
+  background-size: 20px 20px;
+  -webkit-background-position: center center;
+  background-position: center center;
+}
+
+.c3 {
+  margin-bottom: 10px;
+  position: relative;
+  width: 100%;
+  height: 40px;
 }
 
 .c1 {
@@ -122,12 +122,12 @@ exports[`Snapshot social login basic 1`] = `
     className="r5-social-buttons c1"
   >
     <button
-      className="r5-btn-social r5-btn-social-facebook c2"
+      className="r5-btn-social r5-btn-social-facebook c2 c3"
       onClick={[Function]}
       title="Facebook"
     >
       <span
-        className="r5-btn-social-icon c3"
+        className="r5-btn-social-icon c4"
       />
       <span
         className="r5-btn-social-text"
@@ -136,12 +136,12 @@ exports[`Snapshot social login basic 1`] = `
       </span>
     </button>
     <button
-      className="r5-btn-social r5-btn-social-google c4"
+      className="r5-btn-social r5-btn-social-google c5 c3"
       onClick={[Function]}
       title="Google"
     >
       <span
-        className="r5-btn-social-icon c3"
+        className="r5-btn-social-icon c4"
       />
       <span
         className="r5-btn-social-text"
