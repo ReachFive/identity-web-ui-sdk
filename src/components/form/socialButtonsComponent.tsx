@@ -50,18 +50,14 @@ interface SocialBtn extends ButtonProps {
     height: string
 }
 
-const SocialBtn = styled(Button).attrs((props: SocialBtn) => {
-    const { provider } = props
-
-    return {
-        themePrefix: 'socialButton',
-        color: provider.btnTextColor || '#ffffff',
-        background: provider.btnBackgroundColor || provider.color,
-        border: provider.btnBorderColor || provider.color,
-        extendedClasses: classes(['r5-btn-social', `r5-btn-social-${provider.key}`]),
-        title: provider.name
-    }
-})<SocialBtn>`
+const SocialBtn = styled(Button).attrs<SocialBtn>(({ provider }) => ({
+    themePrefix: 'socialButton',
+    color: provider.btnTextColor || '#ffffff',
+    background: provider.btnBackgroundColor || provider.color,
+    border: provider.btnBorderColor || provider.color,
+    extendedClasses: classes(['r5-btn-social', `r5-btn-social-${provider.key}`]),
+    title: provider.name
+}))`
     margin-bottom: ${props => props.theme.spacing}px;
     position: relative;
 
