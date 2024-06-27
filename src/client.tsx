@@ -144,7 +144,7 @@ export class UiClient {
                 apiClient: this.core,
                 defaultI18n: this.defaultI18n
             });
-            
+
             root.render(WidgetComponent);
 
             if (options.onReady && typeof options.onReady === 'function') {
