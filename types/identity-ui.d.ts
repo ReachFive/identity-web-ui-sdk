@@ -1,6 +1,6 @@
 /**
  * @reachfive/identity-ui - v1.27.0
- * Compiled Mon, 24 Jun 2024 15:09:57 UTC
+ * Compiled Fri, 28 Jun 2024 13:41:28 UTC
  *
  * Copyright (c) ReachFive.
  *
@@ -375,6 +375,7 @@ type LoginViewProps = {
      * Tip: If you pass an empty array, social providers will not be displayed.
      */
     socialProviders?: string[];
+    allowAuthentMailPhone?: boolean;
 };
 
 interface LoginWithWebAuthnViewProps {
