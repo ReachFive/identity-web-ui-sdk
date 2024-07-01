@@ -1,6 +1,6 @@
 /**
  * @reachfive/identity-ui - v1.27.0
- * Compiled Fri, 28 Jun 2024 13:41:28 UTC
+ * Compiled Fri, 28 Jun 2024 14:05:12 UTC
  *
  * Copyright (c) ReachFive.
  *
@@ -296,6 +296,14 @@ type Field = {
    type?: 'hidden' | 'text' | 'number' | 'email' | 'tel'
 }
 
+type PhoneNumberOptions = {
+    /**
+     * If `withCountrySelect` property is `true` then the user can select the country for the phone number. Must be a supported {@link https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2#Officially_assigned_code_elements country code}.
+     * @default false
+     */
+    withCountrySelect?: boolean;
+};
+
 type LoginViewProps = {
     /**
      * @deprecated
@@ -422,6 +430,7 @@ interface PasswordSignupFormProps {
     auth?: AuthOptions;
     beforeSignup?: <T>(param: T) => T;
     canShowPassword?: boolean;
+    phoneNumberOptions?: PhoneNumberOptions;
     recaptcha_enabled?: boolean;
     recaptcha_site_key?: string;
     redirectUrl?: string;
@@ -505,6 +514,10 @@ interface SignupViewProps extends SignupWithPasswordViewProps, SignupWithWebAuth
      * Tip: If you pass an empty array, social providers will not be displayed.
      */
     socialProviders?: string[];
+    /**
+     * Phone number field options.
+     */
+    phoneNumberOptions?: PhoneNumberOptions;
 }
 
 interface ForgotPasswordViewProps {
@@ -739,14 +752,6 @@ type Authentication = {
     userId: string;
 };
 type PasswordEditorWidgetProps = Omit<PasswordEditorProps, 'authentication'>;
-
-type PhoneNumberOptions = {
-    /**
-     * If `withCountrySelect` property is `true` then the user can select the country for the phone number. Must be a supported {@link https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2#Officially_assigned_code_elements country code}.
-     * @default false
-     */
-    withCountrySelect?: boolean;
-};
 
 interface MainViewProps$4 {
     /**
