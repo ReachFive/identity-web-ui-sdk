@@ -85,12 +85,13 @@ interface Option {
 }
 
 interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
+    dataTestId?: string
     hasError?: boolean
     options: Option[]
 }
 
-export const Select = styled(({ options, placeholder = '', ...props }: SelectProps) => (
-    <select {...props}>
+export const Select = styled(({ dataTestId, hasError: _hasError, options, placeholder = '', ...props }: SelectProps) => (
+    <select data-testid={dataTestId} {...props}>
         <option value="" disabled>{placeholder}</option>
         {options.map(({ label: optionLabel, value: optionValue }) => (
             <option value={optionValue} key={optionValue}>

@@ -38,13 +38,14 @@
         "classnames": "^2.3.2",
         "libphonenumber-js": "^1.10.44",
         "luxon": "^3.4.3",
+        "react": "^16.9.24",
+        "react-dom": "^16.9.24",
+        "react-phone-number-input": "^3.4.3",
         "react-transition-group": "4.4.2",
         "remarkable": "2.0.1",
         "validator": "^13.11.0"
     },
     "peerDependencies": {
-        "react": "^16.9.24",
-        "react-dom": "^16.9.24",
         "styled-components": "5.1.1"
     },
     "devDependencies": {
@@ -54,6 +55,7 @@
         "@babel/preset-typescript": "^7.23.2",
         "@jest/globals": "^29.7.0",
         "@rollup/plugin-commonjs": "^25.0.7",
+        "@rollup/plugin-dynamic-import-vars": "^2.1.2",
         "@rollup/plugin-node-resolve": "^15.2.3",
         "@rollup/plugin-replace": "^5.0.5",
         "@rollup/plugin-terser": "^0.4.4",
@@ -73,7 +75,6 @@
         "@typescript-eslint/eslint-plugin": "^6.5.0",
         "@typescript-eslint/parser": "^6.5.0",
         "babel-jest": "^29.7.0",
-        "babel-plugin-dynamic-import-node": "2.3.3",
         "babel-preset-jest": "26.1.0",
         "cheerio": "1.0.0-rc.10",
         "core-js": "3.6.5",
@@ -89,6 +90,7 @@
         "rollup": "^4.1.4",
         "rollup-plugin-dts": "^6.1.0",
         "rollup-plugin-esbuild": "^6.1.0",
+        "rollup-plugin-import-css": "^3.5.0",
         "ts-jest": "^29.1.1",
         "ts-node": "^10.9.1",
         "typescript": "^5.2.2"

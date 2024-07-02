@@ -10,6 +10,7 @@ import { buildFormFields, computeFieldList } from '../../components/form/formFie
 import { useReachfive } from '../../contexts/reachfive';
 import { FieldCreator } from '../../components/form/fieldCreator';
 import { Field } from '../../components/form/formFieldFactory';
+import { PhoneNumberOptions } from '../../components/form/fields/phoneNumberField';
 
 type ProfileWithConsents = Profile & { consents?: Record<string, UserConsent> }
 
@@ -34,6 +35,10 @@ interface ProfileEditorProps {
      */
     onError?: () => void
     /**
+     * Phone number field options.
+     */
+    phoneNumberOptions?: PhoneNumberOptions
+    /**
      * 
      */
     profile: ProfileWithConsents
@@ -57,6 +62,7 @@ const ProfileEditor = ({
     accessToken,
     onSuccess = () => {},
     onError = () => {},
+    phoneNumberOptions,
     profile,
     redirectUrl,
     resolvedFields,
@@ -76,6 +82,9 @@ const ProfileEditor = ({
             handler={handleSubmit}
             initialModel={profile}
             fields={resolvedFields}
+            sharedProps={{
+                ...phoneNumberOptions,
+            }}
             showLabels={showLabels}
             onSuccess={onSuccess}
             onError={onError}

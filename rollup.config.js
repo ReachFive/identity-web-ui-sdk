@@ -1,10 +1,12 @@
 import commonjs from '@rollup/plugin-commonjs';
+import dynamicImportVars from '@rollup/plugin-dynamic-import-vars';
 import replace from '@rollup/plugin-replace';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
 import terser from '@rollup/plugin-terser';
 import url from '@rollup/plugin-url'
 import svg from '@svgr/rollup'
 import dts from 'rollup-plugin-dts'
+import css from 'rollup-plugin-import-css'
 import esbuild from 'rollup-plugin-esbuild'
 
 import pkg from './package.json' assert { type: 'json' }
@@ -48,7 +50,11 @@ const plugins = [
     svg(),
     // Add an inlined version of SVG files: https://www.smooth-code.com/open-source/svgr/docs/rollup/#using-with-url-plugin
     url({ limit: Infinity, include: ['**/*.svg'] }),
+    css(),
     esbuild(),
+    dynamicImportVars({
+        errorWhenNoFilesFound: true
+    }),
 ]
 
 export default [
@@ -61,18 +67,21 @@ export default [
                 file: 'cjs/identity-ui.js',
                 format: 'cjs',
                 sourcemap: true,
+                inlineDynamicImports: true,
             },
             {
                 banner,
                 file: 'es/identity-ui.js',
                 format: 'es',
                 sourcemap: true,
+                inlineDynamicImports: true,
             },
             {
                 file: 'es/identity-ui.min.js',
                 format: 'es',
                 plugins: [terser({ output: { preamble: banner } })],
                 sourcemap: true,
+                inlineDynamicImports: true,
             },
         ],
         onwarn: onWarn
@@ -86,6 +95,7 @@ export default [
                 format: 'umd',
                 name: 'reach5Widgets',
                 sourcemap: true,
+                inlineDynamicImports: true,
                 globals: { '@reachfive/identity-core': 'reach5' },
             },
             {
@@ -94,6 +104,7 @@ export default [
                 name: 'reach5Widgets',
                 plugins: [terser({ output: { preamble: banner } })],
                 sourcemap: true,
+                inlineDynamicImports: true,
                 globals: { '@reachfive/identity-core': 'reach5' },
             },
         ],
