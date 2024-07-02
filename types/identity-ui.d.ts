@@ -889,6 +889,10 @@ interface ProfileEditorProps {
      */
     onError?: () => void;
     /**
+     * Phone number field options.
+     */
+    phoneNumberOptions?: PhoneNumberOptions;
+    /**
      *
      */
     profile: ProfileWithConsents;
