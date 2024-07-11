@@ -3,8 +3,7 @@
  */
 
 import { describe, expect, test } from '@jest/globals';
-import renderer from 'react-test-renderer';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom'
 import 'jest-styled-components';
 
@@ -13,11 +12,13 @@ import passwordlessWidget from '../../../src/widgets/passwordless/passwordlessWi
 const defaultConfig = { domain: 'local.reach5.net' };
 
 describe('Snapshot', () => {
-    const generateSnapshot = (options = {}, config = defaultConfig) => () => {
-        const tree = passwordlessWidget(options, { config, apiClient: {} })
-            .then(result => renderer.create(result).toJSON());
+    const generateSnapshot = (options = {}, config = defaultConfig) => async () => {
+        const widget = await passwordlessWidget(options, { config, apiClient: {} })
 
-        expect(tree).resolves.toMatchSnapshot();
+        await waitFor(async () => {
+            const { container } = await render(widget);
+            expect(container).toMatchSnapshot();
+        })
     };
 
     describe('passwordless', () => {
@@ -33,13 +34,15 @@ describe('DOM testing', () => {
     const generateComponent = async (options = {}, config = defaultConfig) => {
         const result = await passwordlessWidget(options, { config, apiClient: {} });
 
-        return render(result);
+        return waitFor(async () => {
+            return render(result);
+        })
     };
 
     describe('passwordless', () => {
         test('default', async () => {
             expect.assertions(4);
-            await generateComponent({});
+            await generateComponent({})
 
             // Intro
             expect(screen.queryByText('passwordless.intro')).toBeInTheDocument();

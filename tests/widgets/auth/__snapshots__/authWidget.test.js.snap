@@ -620,7 +620,6 @@ exports[`Snapshot login view default 1`] = `
       </div>
       <div
         className="c12"
-        floating={false}
       >
         <a
           className="c13"
@@ -1053,7 +1052,6 @@ exports[`Snapshot login view inline social buttons 1`] = `
       </div>
       <div
         className="c12"
-        floating={false}
       >
         <a
           className="c13"
@@ -1908,7 +1906,6 @@ exports[`Snapshot login view no signup 1`] = `
       </div>
       <div
         className="c12"
-        floating={false}
       >
         <a
           className="c13"
@@ -2347,7 +2344,6 @@ exports[`Snapshot login view with canShowPassword 1`] = `
       </div>
       <div
         className="c13"
-        floating={false}
       >
         <a
           className="c14"
@@ -2806,7 +2802,6 @@ exports[`Snapshot login view with remember me 1`] = `
       </div>
       <div
         className="c12"
-        floating={true}
       >
         <a
           className="c13"
@@ -7212,7 +7207,6 @@ exports[`Snapshot with webauthn feature login new view with integradted webauthn
       </div>
       <div
         className="c12"
-        floating={false}
       >
         <a
           className="c13"

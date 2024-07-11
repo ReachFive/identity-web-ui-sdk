@@ -46,7 +46,7 @@ export const createField = ({
         return {
             key,
             render: ({ state, ...rest }) => {
-                const { key, ...props } = { ...rest, ...staticProps}
+                const { key, ...props } = { ...staticProps, ...rest}
                 return <Component key={key} {...state} {...props} />
             },
             initialize: model => {

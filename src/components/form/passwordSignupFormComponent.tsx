@@ -5,6 +5,7 @@ import { SignupParams } from '@reachfive/identity-core/es/main/oAuthClient';
 import { createForm } from './formComponent';
 import { buildFormFields, type Field } from './formFieldFactory';
 import { UserAggreementStyle } from './formControlsComponent'
+import { type PhoneNumberOptions } from './fields/phoneNumberField';
 
 import { MarkdownContent } from '../miscComponent';
 import { snakeCaseProperties } from '../../helpers/transformObjectProperties';
@@ -25,6 +26,7 @@ export interface PasswordSignupFormProps {
     auth?: AuthOptions
     beforeSignup?: <T>(param: T) => T
     canShowPassword?: boolean
+    phoneNumberOptions?: PhoneNumberOptions
     recaptcha_enabled?: boolean
     recaptcha_site_key?: string
     redirectUrl?: string
@@ -38,6 +40,7 @@ export const PasswordSignupForm = ({
     auth,
     beforeSignup = x => x,
     canShowPassword,
+    phoneNumberOptions,
     recaptcha_enabled = false,
     recaptcha_site_key,
     redirectUrl,
@@ -113,7 +116,10 @@ export const PasswordSignupForm = ({
         showLabels={showLabels}
         beforeSubmit={beforeSignup}
         onFieldChange={refreshBlacklist}
-        sharedProps={{ blacklist }}
+        sharedProps={{
+            blacklist,
+            ...phoneNumberOptions,
+        }}
         handler={(data: SignupParams['data']) => ReCaptcha.handle(data, { recaptcha_enabled, recaptcha_site_key }, callback, "signup")}
     />
 }

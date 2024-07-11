@@ -27,10 +27,16 @@
         "@typescript-eslint/no-unused-vars": [
             "error",
             {
+<<<<<<< HEAD
                 "varsIgnorePattern": "_",
                 "argsIgnorePattern": "^_",
                 "destructuredArrayIgnorePattern": "^_",
                 "ignoreRestSiblings": true
+=======
+                "argsIgnorePattern": "^_",
+                "destructuredArrayIgnorePattern": "^_",
+                "varsIgnorePattern": "^_"
+>>>>>>> master
             }
         ]
     },

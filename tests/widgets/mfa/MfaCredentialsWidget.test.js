@@ -3,22 +3,29 @@
  */
 
 import { describe, expect, jest, test } from '@jest/globals';
-import renderer from 'react-test-renderer';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom'
 import MfaCredentialsWidget from "../../../src/widgets/mfa/MfaCredentialsWidget";
 
 const defaultConfig = { domain: 'local.reach5.net', mfaEmailEnabled: true, mfaSmsEnabled: true };
 
 describe('Snapshot', () => {
-    const generateSnapshot = ({options = {showIntro: true}, config = defaultConfig, credentials }) => () => {
+    const generateSnapshot = ({options = {showIntro: true}, config = defaultConfig, credentials }) => async () => {
         const apiClient = {
             listMfaCredentials: jest.fn().mockReturnValueOnce(Promise.resolve({ credentials }))
         }
-        const tree = MfaCredentialsWidget(options, {config, apiClient} )
-            .then(result => renderer.create(result).toJSON());
+        
+        const widget = await MfaCredentialsWidget(options, {config, apiClient} )
 
-        expect(tree).resolves.toMatchSnapshot();
+        await waitFor(async () => {
+            const { container, rerender } = await render(widget);
+
+            await waitFor(() => expect(apiClient.listMfaCredentials).toHaveBeenCalled())
+    
+            await rerender(widget)
+
+            expect(container).toMatchSnapshot();
+        })
     };
 
     describe('mfaCredentials', () => {
@@ -38,8 +45,9 @@ describe('DOM testing', () => {
             listMfaCredentials: jest.fn().mockReturnValueOnce(Promise.resolve({ credentials }))
         }
         const result = await MfaCredentialsWidget(options, { config, apiClient });
-
-        return render(result);
+        return await waitFor(async () => {
+            return render(result);
+        })
     };
 
     describe('mfaCredentials', () => {

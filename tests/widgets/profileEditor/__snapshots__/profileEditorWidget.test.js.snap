@@ -117,68 +117,62 @@ exports[`Snapshot profile editor basic 1`] = `
   color: #868e96;
 }
 
-<div
-  className="c0"
->
-  <form
-    className="c1"
-    noValidate={true}
-    onSubmit={[Function]}
+<div>
+  <div
+    class="c0"
   >
-    <div
-      className="c2"
+    <form
+      class="c1"
+      novalidate=""
     >
-      <label
-        className="c3"
-        htmlFor="given_name"
+      <div
+        class="c2"
       >
-        givenName
-      </label>
-      <input
-        className="c4"
-        data-testid="given_name"
-        id="given_name"
-        name="given_name"
-        onBlur={[Function]}
-        onChange={[Function]}
-        placeholder="givenName"
-        readOnly={false}
-        required={true}
-        title="givenName"
-        value="John"
-      />
-    </div>
-    <div
-      className="c2"
-    >
-      <label
-        className="c3"
-        htmlFor="family_name"
+        <label
+          class="c3"
+          for="given_name"
+        >
+          givenName
+        </label>
+        <input
+          class="c4"
+          data-testid="given_name"
+          id="given_name"
+          name="given_name"
+          placeholder="givenName"
+          required=""
+          title="givenName"
+          value="John"
+        />
+      </div>
+      <div
+        class="c2"
       >
-        familyName
-      </label>
-      <input
-        className="c4"
-        data-testid="family_name"
-        id="family_name"
-        name="family_name"
-        onBlur={[Function]}
-        onChange={[Function]}
-        placeholder="familyName"
-        readOnly={false}
-        required={true}
-        title="familyName"
-        value="Do"
-      />
-    </div>
-    <button
-      className="c5"
-      data-testid="submit"
-      disabled={false}
-      type="submit"
-    >
-      save
-    </button>
-  </form>
+        <label
+          class="c3"
+          for="family_name"
+        >
+          familyName
+        </label>
+        <input
+          class="c4"
+          data-testid="family_name"
+          id="family_name"
+          name="family_name"
+          placeholder="familyName"
+          required=""
+          title="familyName"
+          value="Do"
+        />
+      </div>
+      <button
+        class="c5"
+        data-testid="submit"
+        type="submit"
+      >
+        save
+      </button>
+    </form>
+  </div>
 </div>
 `;

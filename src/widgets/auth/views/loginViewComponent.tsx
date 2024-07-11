@@ -21,7 +21,11 @@ import { useSession } from '../../../contexts/session';
 
 import { specializeIdentifierData } from '../../../helpers/utils';
 
-const ResetCredentialWrapper = styled.div<{ floating?: boolean }>`
+type Floating = { floating?: boolean }
+
+const ResetCredentialWrapper = styled.div.withConfig({
+    shouldForwardProp: (prop) => !['floating'].includes(prop)
+})<Floating>`
     margin-bottom: ${props => props.theme.spacing}px;
     text-align: right;
     ${props => props.floating && `
