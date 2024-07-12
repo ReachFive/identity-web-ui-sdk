@@ -30,6 +30,7 @@ import { default as linkedin } from './linkedin/linkedin'
 import { default as mailru } from './mailru/mailru'
 import { default as microsoft } from './microsoft/microsoft'
 import { default as naver } from './naver/naver'
+import { default as okta } from './okta/okta'
 import { default as oney } from './oney/oney'
 import { default as orange } from './orange/orange'
 import { default as paypal } from './paypal/paypal'
@@ -55,6 +56,7 @@ export const providers = {
     mailru: mailru,
     microsoft: microsoft,
     naver: naver,
+    okta: okta,
     oney: oney,
     orange: orange,
     paypal: paypal,

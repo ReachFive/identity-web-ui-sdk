@@ -7,6 +7,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+- Add Okta provider
+
 ## [1.27.0] - 2024-05-16
 
 ## Added
