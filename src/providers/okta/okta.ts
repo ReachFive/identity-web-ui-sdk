@@ -5,7 +5,9 @@ import type { Provider } from '../providers'
 export default {
     key: 'okta',
     name: 'Okta',
-    color: '#a4a4a491',
+    btnTextColor: '#58666e',
+    btnBackgroundColor: '#ffffff',
+    btnBorderColor: '#00000026',
     icon,
     windowSize: {
         width: 450,
