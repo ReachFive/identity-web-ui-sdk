@@ -3,9 +3,8 @@
 exports[`Snapshot profile editor basic 1`] = `
 .c0 {
   font-size: 14px;
-  -webkit-transition: -webkit-transform 400ms ease, opacity 400ms ease;
-  -webkit-transition: transform 400ms ease, opacity 400ms ease;
-  transition: transform 400ms ease, opacity 400ms ease;
+  -webkit-transition: -webkit-transform 400ms ease,opacity 400ms ease;
+  transition: transform 400ms ease,opacity 400ms ease;
   opacity: 0;
   padding: 20px;
   border-radius: 3px;
@@ -82,10 +81,13 @@ exports[`Snapshot profile editor basic 1`] = `
   background-color: #fff;
   background-image: none;
   padding: 9px 12px;
-  -webkit-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
-  transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+  -webkit-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+  transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
   box-shadow: none;
   -webkit-appearance: none;
+  -moz-appearance: none;
+  -ms-appearance: none;
+  appearance: none;
 }
 
 .c4:focus {
