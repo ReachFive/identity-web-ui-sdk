@@ -18,7 +18,7 @@ function isValidCountryCode(code?: string): code is Country {
 
 const PhoneInputStyles = styled.div`
     ${styles}
-    
+
     --PhoneInput-color--focus: ${props => props.theme.primaryColor};
     --PhoneInputCountrySelect-marginRight: ${props => props.theme.spacing}px;
     --PhoneInputCountrySelectArrow-marginLeft: var(--PhoneInputCountrySelect-marginRight);
@@ -26,7 +26,7 @@ const PhoneInputStyles = styled.div`
 	--PhoneInputCountrySelectArrow-transform: rotate(45deg);
     --PhoneInputCountrySelectArrow-width: 0.3em;
     --PhoneInputCountryFlag-height: ${props => props.theme.input.height - ((props.theme.input.paddingY + props.theme.input.borderWidth) * 2)}px;
-    
+
 `
 
 function importLocale(locale: string) {
@@ -52,7 +52,7 @@ export interface PhoneNumberFieldProps extends FieldComponentProps<Value>, Phone
      */
     defaultCountry?: Country
     /**
-     * If country is specified then the phone number can only be input in "national" (not "international") format, 
+     * If country is specified then the phone number can only be input in "national" (not "international") format,
      * and will be parsed as a phonenumber belonging to the country.
      */
     country?: Country
@@ -88,7 +88,7 @@ const PhoneNumberField = (props: PhoneNumberFieldProps) => {
                 setLabels(result)
             }
         }
-        /** 
+        /**
          * @node the ignore variable which is initialized to false, and is set to true during cleanup.
          * This ensures your code doesn’t suffer from “race conditions”: network responses may arrive in a different order than you sent them.
          */
@@ -161,6 +161,10 @@ const phoneNumberField = (
         format: {
             bind: (value) => {
                 const phoneNumber = value ? parsePhoneNumber(value) : undefined
+                console.log("VALUE: " +value)
+                console.log("PHONE NUMBER: " +phoneNumber)
+                console.log("PHNE NUMBER NUMBER" + phoneNumber?.number)
+                console.log("RAW" + (phoneNumber?.number ?? '' as Value))
                 return {
                     country: phoneNumber?.country,
                     raw: phoneNumber?.number ?? '' as Value,
@@ -168,7 +172,11 @@ const phoneNumberField = (
                 }
             },
             unbind: formValue => {
-                return (typeof formValue === 'object' && 'raw' in formValue ? formValue.raw : formValue) ?? null
+                console.log("FORM RAW" + JSON.stringify(formValue, null,2))
+                return (
+                    typeof formValue === 'object' && 'raw' in formValue ?
+                        (formValue.raw == '' ? null : formValue.raw) :
+                        formValue) ?? null
             }
         },
         validator: new Validator<Value>({
