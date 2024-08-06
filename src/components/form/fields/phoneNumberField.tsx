@@ -161,10 +161,6 @@ const phoneNumberField = (
         format: {
             bind: (value) => {
                 const phoneNumber = value ? parsePhoneNumber(value) : undefined
-                console.log("VALUE: " +value)
-                console.log("PHONE NUMBER: " +phoneNumber)
-                console.log("PHNE NUMBER NUMBER" + phoneNumber?.number)
-                console.log("RAW" + (phoneNumber?.number ?? '' as Value))
                 return {
                     country: phoneNumber?.country,
                     raw: phoneNumber?.number ?? '' as Value,
@@ -172,7 +168,6 @@ const phoneNumberField = (
                 }
             },
             unbind: formValue => {
-                console.log("FORM RAW" + JSON.stringify(formValue, null,2))
                 return (
                     typeof formValue === 'object' && 'raw' in formValue ?
                         (formValue.raw == '' ? null : formValue.raw) :
