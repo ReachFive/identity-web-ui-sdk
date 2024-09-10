@@ -34,6 +34,10 @@ export interface SignupViewProps extends SignupWithPasswordViewProps, SignupWith
      */
     allowWebAuthnSignup?: boolean
     /**
+     * Boolean that specifies whether password authentication is enabled.
+     */
+    enablePasswordAuthentication?: boolean
+    /**
      * Lists the available social providers. This is an array of strings.
      * Tip: If you pass an empty array, social providers will not be displayed.
      */
@@ -47,8 +51,9 @@ export interface SignupViewProps extends SignupWithPasswordViewProps, SignupWith
 export const SignupView = ({
     allowLogin = true,
     initialScreen,
-    allowWebAuthnLogin = false,
+    allowWebAuthnLogin = true,
     allowWebAuthnSignup = false,
+    enablePasswordAuthentication=true,
     socialProviders,
     ...props
 }: SignupViewProps) => {
@@ -65,6 +70,7 @@ export const SignupView = ({
 
             {allowWebAuthnSignup
                 ? <WebAuthnSignupViewButtons
+                    enablePasswordAuthentication={enablePasswordAuthentication}
                     onPasswordClick={() => goTo('signup-with-password')}
                     onBiometricClick={() => goTo('signup-with-web-authn')} />
                 : <PasswordSignupForm {...props} />
