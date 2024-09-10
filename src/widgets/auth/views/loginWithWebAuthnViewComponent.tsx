@@ -167,7 +167,7 @@ export const LoginWithWebAuthnView = ({ acceptTos, allowSignup = true, auth, ena
                 showAccountRecovery={allowAccountRecovery}
                 enablePasswordAuthentication={enablePasswordAuthentication}
             />
-            {allowSignup && enablePasswordAuthentication &&
+            {allowSignup &&
                 <Alternative>
                     <span>{i18n('login.signupLinkPrefix')}</span>
                     &nbsp;
