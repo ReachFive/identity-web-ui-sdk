@@ -73,7 +73,6 @@ export interface LoginWithWebAuthnViewProps {
      * List of authentication options
      */
     auth?: AuthOptions
-
     /**
      * Boolean that specifies whether password authentication is enabled.
      */
@@ -93,7 +92,7 @@ export interface LoginWithWebAuthnViewProps {
     allowAccountRecovery?: boolean
 }
 
-export const LoginWithWebAuthnView = ({ acceptTos, allowSignup = true, auth, enablePasswordAuthentication, showLabels = false, socialProviders, allowAccountRecovery }: LoginWithWebAuthnViewProps) => {
+export const LoginWithWebAuthnView = ({ acceptTos, allowSignup = true, auth, enablePasswordAuthentication = true, showLabels = false, socialProviders, allowAccountRecovery }: LoginWithWebAuthnViewProps) => {
     const coreClient = useReachfive()
     const { goTo } = useRouting()
     const i18n = useI18n()
