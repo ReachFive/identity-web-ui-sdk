@@ -1,6 +1,6 @@
 /**
  * @reachfive/identity-ui - v1.27.0
- * Compiled Tue, 10 Sep 2024 14:11:43 UTC
+ * Compiled Tue, 10 Sep 2024 14:45:08 UTC
  *
  * Copyright (c) ReachFive.
  *
@@ -513,6 +513,10 @@ interface SignupViewProps extends SignupWithPasswordViewProps, SignupWithWebAuth
      * @default false
      */
     allowWebAuthnSignup?: boolean;
+    /**
+     * Boolean that specifies whether password authentication is enabled.
+     */
+    enablePasswordAuthentication?: boolean;
     /**
      * Lists the available social providers. This is an array of strings.
      * Tip: If you pass an empty array, social providers will not be displayed.
