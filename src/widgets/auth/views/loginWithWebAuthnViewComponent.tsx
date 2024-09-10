@@ -73,6 +73,11 @@ export interface LoginWithWebAuthnViewProps {
      * List of authentication options
      */
     auth?: AuthOptions
+
+    /**
+     * Boolean that specifies whether password authentication is enabled.
+     */
+    enablePasswordAuthentication?: boolean
     /**
      * Whether the signup form fields' labels are displayed on the login view.
      *
@@ -88,7 +93,7 @@ export interface LoginWithWebAuthnViewProps {
     allowAccountRecovery?: boolean
 }
 
-export const LoginWithWebAuthnView = ({ acceptTos, allowSignup = true, auth, showLabels = false, socialProviders, allowAccountRecovery }: LoginWithWebAuthnViewProps) => {
+export const LoginWithWebAuthnView = ({ acceptTos, allowSignup = true, auth, enablePasswordAuthentication, showLabels = false, socialProviders, allowAccountRecovery }: LoginWithWebAuthnViewProps) => {
     const coreClient = useReachfive()
     const { goTo } = useRouting()
     const i18n = useI18n()
@@ -138,9 +143,10 @@ export const LoginWithWebAuthnView = ({ acceptTos, allowSignup = true, auth, sho
 
     const defaultIdentifier = session?.lastLoginType === 'password' ? session.email : undefined;
 
-    const webAuthnButtons = (disabled: boolean, handleClick: WebAuthnLoginViewButtonsProps['onPasswordClick']) =>
+    const webAuthnButtons = (disabled: boolean, enablePasswordAuthentication: boolean, handleClick: WebAuthnLoginViewButtonsProps['onPasswordClick']) =>
         <WebAuthnLoginViewButtons
             disabled={disabled}
+            enablePasswordAuthentication={enablePasswordAuthentication}
             onPasswordClick={handleClick}
         />
 
@@ -160,8 +166,9 @@ export const LoginWithWebAuthnView = ({ acceptTos, allowSignup = true, auth, sho
                 redirect={redirectToPasswordLoginView}
                 webAuthnButtons={webAuthnButtons}
                 showAccountRecovery={allowAccountRecovery}
+                enablePasswordAuthentication={enablePasswordAuthentication}
             />
-            {allowSignup &&
+            {allowSignup && enablePasswordAuthentication &&
                 <Alternative>
                     <span>{i18n('login.signupLinkPrefix')}</span>
                     &nbsp;

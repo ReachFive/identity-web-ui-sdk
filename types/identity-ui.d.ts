@@ -1,6 +1,6 @@
 /**
  * @reachfive/identity-ui - v1.27.0
- * Compiled Fri, 28 Jun 2024 14:05:12 UTC
+ * Compiled Tue, 10 Sep 2024 13:53:36 UTC
  *
  * Copyright (c) ReachFive.
  *
@@ -401,6 +401,7 @@ interface LoginWithWebAuthnViewProps {
      * List of authentication options
      */
     auth?: AuthOptions;
+    enablePasswordAuthentication?: boolean;
     /**
      * Whether the signup form fields' labels are displayed on the login view.
      *

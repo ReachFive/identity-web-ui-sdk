@@ -210,7 +210,7 @@ export function createForm(config) {
         }
 
         render() {
-            const { submitLabel, allowWebAuthnLogin, i18n, fieldValidationDebounce } = this.props;
+            const { submitLabel, enablePasswordAuthentication, allowWebAuthnLogin, i18n, fieldValidationDebounce } = this.props;
             const { errorMessage, isLoading, fields } = this.state;
 
             return <Form noValidate onSubmit={this.handleSubmit}>
@@ -232,7 +232,7 @@ export function createForm(config) {
                         {i18n(submitLabel)}
                     </PrimaryButton>
                 }
-                {allowWebAuthnLogin && this.props.webAuthnButtons(isLoading, this.handleClick)}
+                {allowWebAuthnLogin && this.props.webAuthnButtons(isLoading, enablePasswordAuthentication, this.handleClick)}
             </Form>;
         }
     }
