@@ -25,6 +25,10 @@ export const Error = styled(TextBase)`
     color: ${props => props.theme.dangerColor};
 `;
 
+export const MutedText = styled.span`
+    color: ${props => props.theme.mutedTextColor};
+`
+
 export const Intro = Info;
 
 const SeparatorInner = styled.div`
