@@ -28,11 +28,17 @@ class SimplePasswordField extends React.Component {
 
     render() {
         const {
+            autoComplete,
+            canShowPassword,
             path,
             validation = {},
             onChange,
             inputId,
-            label
+            label,
+            placeholder,
+            required,
+            showLabel,
+            value
         } = this.props;
 
         const { showPassword } = this.state;
@@ -41,22 +47,24 @@ class SimplePasswordField extends React.Component {
             inputId={inputId}
             labelText={label}
             {...(({ error }) => ({ error }))(validation)}
-            showLabel={this.props.showLabel}>
+            showLabel={showLabel}
+            required={required}
+        >
             <div style={{ position: 'relative' }}>
                 <Input
                     id={inputId}
                     name={path}
                     type={showPassword ? 'text' : 'password'}
-                    value={this.props.value || ''}
-                    placeholder={this.props.placeholder || label}
-                    autoComplete={this.props.autoComplete}
+                    value={value || ''}
+                    placeholder={placeholder || label}
+                    autoComplete={autoComplete}
                     title={label}
-                    required={this.props.required}
+                    required={required}
                     hasError={Boolean(validation.error)}
                     onChange={event => onChange({ value: event.target.value })}
                     onBlur={() => onChange({ isDirty: true })}
                     data-testid={path} />
-                {this.props.canShowPassword && (
+                {canShowPassword && (
                     showPassword
                         ? <HidePasswordIcon onClick={this.toggleShowPassword} />
                         : <ShowPasswordIcon onClick={this.toggleShowPassword} />)}

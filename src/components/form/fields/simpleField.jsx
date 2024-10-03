@@ -5,6 +5,7 @@ import { createField } from '../fieldCreator';
 
 const SimpleField = props => {
     const {
+        autoComplete,
         path,
         value,
         validation = {},
@@ -12,7 +13,10 @@ const SimpleField = props => {
         showLabel,
         inputId,
         label,
-        placeholder = label
+        placeholder = label,
+        readOnly,
+        required,
+        type
     } = props;
 
     return (
@@ -20,17 +24,19 @@ const SimpleField = props => {
             inputId={inputId}
             labelText={label}
             {...(({ error }) => ({ error }))(validation)}
-            showLabel={showLabel}>
+            showLabel={showLabel}
+            required={required}
+        >
             <Input
                 id={inputId}
                 name={path}
-                type={props.type}
+                type={type}
                 value={value || ''}
                 placeholder={placeholder}
-                autoComplete={props.autoComplete}
+                autoComplete={autoComplete}
                 title={label}
-                required={props.required}
-                readOnly={props.readOnly}
+                required={required}
+                readOnly={readOnly}
                 hasError={!!validation.error}
                 onChange={event => onChange({ value: event.target.value })}
                 onBlur={() => onChange({ isDirty: true })}

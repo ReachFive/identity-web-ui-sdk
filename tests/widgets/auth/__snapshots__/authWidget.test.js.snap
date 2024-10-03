@@ -100,6 +100,11 @@ exports[`Snapshot forgot password view default 1`] = `
   margin-bottom: 10px;
 }
 
+.c4 > label::after {
+  content: "\\A0*";
+  color: #dc4e41;
+}
+
 .c6 {
   display: block;
   width: 100%;
@@ -168,6 +173,7 @@ exports[`Snapshot forgot password view default 1`] = `
     >
       <div
         className="c4"
+        required={true}
       >
         <label
           className="c5"
@@ -448,6 +454,11 @@ exports[`Snapshot login view default 1`] = `
   margin-bottom: 10px;
 }
 
+.c8 > label::after {
+  content: "\\A0*";
+  color: #dc4e41;
+}
+
 .c10 {
   display: block;
   width: 100%;
@@ -555,6 +566,7 @@ exports[`Snapshot login view default 1`] = `
     >
       <div
         className="c8"
+        required={true}
       >
         <label
           className="c9"
@@ -580,6 +592,7 @@ exports[`Snapshot login view default 1`] = `
       </div>
       <div
         className="c8"
+        required={true}
       >
         <label
           className="c9"
@@ -889,6 +902,11 @@ exports[`Snapshot login view inline social buttons 1`] = `
   margin-bottom: 10px;
 }
 
+.c8 > label::after {
+  content: "\\A0*";
+  color: #dc4e41;
+}
+
 .c10 {
   display: block;
   width: 100%;
@@ -986,6 +1004,7 @@ exports[`Snapshot login view inline social buttons 1`] = `
     >
       <div
         className="c8"
+        required={true}
       >
         <label
           className="c9"
@@ -1011,6 +1030,7 @@ exports[`Snapshot login view inline social buttons 1`] = `
       </div>
       <div
         className="c8"
+        required={true}
       >
         <label
           className="c9"
@@ -1314,6 +1334,11 @@ exports[`Snapshot login view no forgot password 1`] = `
   margin-bottom: 10px;
 }
 
+.c8 > label::after {
+  content: "\\A0*";
+  color: #dc4e41;
+}
+
 .c10 {
   display: block;
   width: 100%;
@@ -1416,6 +1441,7 @@ exports[`Snapshot login view no forgot password 1`] = `
     >
       <div
         className="c8"
+        required={true}
       >
         <label
           className="c9"
@@ -1441,6 +1467,7 @@ exports[`Snapshot login view no forgot password 1`] = `
       </div>
       <div
         className="c8"
+        required={true}
       >
         <label
           className="c9"
@@ -1727,6 +1754,11 @@ exports[`Snapshot login view no signup 1`] = `
   margin-bottom: 10px;
 }
 
+.c8 > label::after {
+  content: "\\A0*";
+  color: #dc4e41;
+}
+
 .c10 {
   display: block;
   width: 100%;
@@ -1834,6 +1866,7 @@ exports[`Snapshot login view no signup 1`] = `
     >
       <div
         className="c8"
+        required={true}
       >
         <label
           className="c9"
@@ -1859,6 +1892,7 @@ exports[`Snapshot login view no signup 1`] = `
       </div>
       <div
         className="c8"
+        required={true}
       >
         <label
           className="c9"
@@ -2147,6 +2181,11 @@ exports[`Snapshot login view with canShowPassword 1`] = `
   margin-bottom: 10px;
 }
 
+.c8 > label::after {
+  content: "\\A0*";
+  color: #dc4e41;
+}
+
 .c10 {
   display: block;
   width: 100%;
@@ -2265,6 +2304,7 @@ exports[`Snapshot login view with canShowPassword 1`] = `
     >
       <div
         className="c8"
+        required={true}
       >
         <label
           className="c9"
@@ -2290,6 +2330,7 @@ exports[`Snapshot login view with canShowPassword 1`] = `
       </div>
       <div
         className="c8"
+        required={true}
       >
         <label
           className="c9"
@@ -2597,6 +2638,11 @@ exports[`Snapshot login view with remember me 1`] = `
   margin-bottom: 10px;
 }
 
+.c8 > label::after {
+  content: "\\A0*";
+  color: #dc4e41;
+}
+
 .c10 {
   display: block;
   width: 100%;
@@ -2724,6 +2770,7 @@ exports[`Snapshot login view with remember me 1`] = `
     >
       <div
         className="c8"
+        required={true}
       >
         <label
           className="c9"
@@ -2749,6 +2796,7 @@ exports[`Snapshot login view with remember me 1`] = `
       </div>
       <div
         className="c8"
+        required={true}
       >
         <label
           className="c9"
@@ -3069,6 +3117,11 @@ exports[`Snapshot signup view default 1`] = `
   margin-bottom: 10px;
 }
 
+.c8 > label::after {
+  content: "\\A0*";
+  color: #dc4e41;
+}
+
 .c10 {
   display: block;
   width: 100%;
@@ -3171,6 +3224,7 @@ exports[`Snapshot signup view default 1`] = `
     >
       <div
         className="c8"
+        required={true}
       >
         <label
           className="c9"
@@ -3194,6 +3248,7 @@ exports[`Snapshot signup view default 1`] = `
       </div>
       <div
         className="c8"
+        required={true}
       >
         <label
           className="c9"
@@ -3217,6 +3272,7 @@ exports[`Snapshot signup view default 1`] = `
       </div>
       <div
         className="c8"
+        required={true}
       >
         <label
           className="c9"
@@ -3241,7 +3297,13 @@ exports[`Snapshot signup view default 1`] = `
       </div>
       <div
         className="c8"
+        required={true}
       >
+        <label
+          className="c9"
+        >
+          password
+        </label>
         <div
           style={
             {
@@ -3249,35 +3311,24 @@ exports[`Snapshot signup view default 1`] = `
             }
           }
         >
-          <label
-            className="c9"
-          >
-            password
-          </label>
-          <div
-            style={
-              {
-                "position": "relative",
-              }
-            }
-          >
-            <input
-              className="c10"
-              data-testid="password"
-              name="password"
-              onBlur={[Function]}
-              onChange={[Function]}
-              onFocus={[Function]}
-              placeholder="password"
-              title="password"
-              type="password"
-              value=""
-            />
-          </div>
+          <input
+            className="c10"
+            data-testid="password"
+            name="password"
+            onBlur={[Function]}
+            onChange={[Function]}
+            onFocus={[Function]}
+            placeholder="password"
+            required={true}
+            title="password"
+            type="password"
+            value=""
+          />
         </div>
       </div>
       <div
         className="c8"
+        required={true}
       >
         <label
           className="c9"
@@ -3575,6 +3626,11 @@ exports[`Snapshot signup view inline social buttons 1`] = `
   margin-bottom: 10px;
 }
 
+.c8 > label::after {
+  content: "\\A0*";
+  color: #dc4e41;
+}
+
 .c10 {
   display: block;
   width: 100%;
@@ -3667,6 +3723,7 @@ exports[`Snapshot signup view inline social buttons 1`] = `
     >
       <div
         className="c8"
+        required={true}
       >
         <label
           className="c9"
@@ -3690,6 +3747,7 @@ exports[`Snapshot signup view inline social buttons 1`] = `
       </div>
       <div
         className="c8"
+        required={true}
       >
         <label
           className="c9"
@@ -3713,6 +3771,7 @@ exports[`Snapshot signup view inline social buttons 1`] = `
       </div>
       <div
         className="c8"
+        required={true}
       >
         <label
           className="c9"
@@ -3737,7 +3796,13 @@ exports[`Snapshot signup view inline social buttons 1`] = `
       </div>
       <div
         className="c8"
+        required={true}
       >
+        <label
+          className="c9"
+        >
+          password
+        </label>
         <div
           style={
             {
@@ -3745,35 +3810,24 @@ exports[`Snapshot signup view inline social buttons 1`] = `
             }
           }
         >
-          <label
-            className="c9"
-          >
-            password
-          </label>
-          <div
-            style={
-              {
-                "position": "relative",
-              }
-            }
-          >
-            <input
-              className="c10"
-              data-testid="password"
-              name="password"
-              onBlur={[Function]}
-              onChange={[Function]}
-              onFocus={[Function]}
-              placeholder="password"
-              title="password"
-              type="password"
-              value=""
-            />
-          </div>
+          <input
+            className="c10"
+            data-testid="password"
+            name="password"
+            onBlur={[Function]}
+            onChange={[Function]}
+            onFocus={[Function]}
+            placeholder="password"
+            required={true}
+            title="password"
+            type="password"
+            value=""
+          />
         </div>
       </div>
       <div
         className="c8"
+        required={true}
       >
         <label
           className="c9"
@@ -4047,6 +4101,11 @@ exports[`Snapshot signup view no login 1`] = `
   margin-bottom: 10px;
 }
 
+.c8 > label::after {
+  content: "\\A0*";
+  color: #dc4e41;
+}
+
 .c10 {
   display: block;
   width: 100%;
@@ -4149,6 +4208,7 @@ exports[`Snapshot signup view no login 1`] = `
     >
       <div
         className="c8"
+        required={true}
       >
         <label
           className="c9"
@@ -4172,6 +4232,7 @@ exports[`Snapshot signup view no login 1`] = `
       </div>
       <div
         className="c8"
+        required={true}
       >
         <label
           className="c9"
@@ -4195,6 +4256,7 @@ exports[`Snapshot signup view no login 1`] = `
       </div>
       <div
         className="c8"
+        required={true}
       >
         <label
           className="c9"
@@ -4219,7 +4281,13 @@ exports[`Snapshot signup view no login 1`] = `
       </div>
       <div
         className="c8"
+        required={true}
       >
+        <label
+          className="c9"
+        >
+          password
+        </label>
         <div
           style={
             {
@@ -4227,35 +4295,24 @@ exports[`Snapshot signup view no login 1`] = `
             }
           }
         >
-          <label
-            className="c9"
-          >
-            password
-          </label>
-          <div
-            style={
-              {
-                "position": "relative",
-              }
-            }
-          >
-            <input
-              className="c10"
-              data-testid="password"
-              name="password"
-              onBlur={[Function]}
-              onChange={[Function]}
-              onFocus={[Function]}
-              placeholder="password"
-              title="password"
-              type="password"
-              value=""
-            />
-          </div>
+          <input
+            className="c10"
+            data-testid="password"
+            name="password"
+            onBlur={[Function]}
+            onChange={[Function]}
+            onFocus={[Function]}
+            placeholder="password"
+            required={true}
+            title="password"
+            type="password"
+            value=""
+          />
         </div>
       </div>
       <div
         className="c8"
+        required={true}
       >
         <label
           className="c9"
@@ -4341,19 +4398,19 @@ exports[`Snapshot signup view show labels 1`] = `
   margin-left: 14px;
 }
 
-.c12 {
+.c13 {
   text-align: center;
   margin-top: 15px;
   color: #495057;
 }
 
-.c13 {
+.c14 {
   color: #229955;
   -webkit-text-decoration: none;
   text-decoration: none;
 }
 
-.c13:hover {
+.c14:hover {
   color: #145a32;
   -webkit-text-decoration: none;
   text-decoration: none;
@@ -4522,6 +4579,13 @@ exports[`Snapshot signup view show labels 1`] = `
   position: relative;
 }
 
+.c12 {
+  color: #adb5bd;
+  display: block;
+  padding: 9px 12px;
+  text-align: center;
+}
+
 .c9 {
   color: #495057;
   margin-bottom: 5px;
@@ -4530,6 +4594,11 @@ exports[`Snapshot signup view show labels 1`] = `
 
 .c8 {
   margin-bottom: 10px;
+}
+
+.c8 > label::after {
+  content: "\\A0*";
+  color: #dc4e41;
 }
 
 .c10 {
@@ -4634,6 +4703,7 @@ exports[`Snapshot signup view show labels 1`] = `
     >
       <div
         className="c8"
+        required={true}
       >
         <label
           className="c9"
@@ -4657,6 +4727,7 @@ exports[`Snapshot signup view show labels 1`] = `
       </div>
       <div
         className="c8"
+        required={true}
       >
         <label
           className="c9"
@@ -4680,6 +4751,7 @@ exports[`Snapshot signup view show labels 1`] = `
       </div>
       <div
         className="c8"
+        required={true}
       >
         <label
           className="c9"
@@ -4704,7 +4776,13 @@ exports[`Snapshot signup view show labels 1`] = `
       </div>
       <div
         className="c8"
+        required={true}
       >
+        <label
+          className="c9"
+        >
+          password
+        </label>
         <div
           style={
             {
@@ -4712,35 +4790,24 @@ exports[`Snapshot signup view show labels 1`] = `
             }
           }
         >
-          <label
-            className="c9"
-          >
-            password
-          </label>
-          <div
-            style={
-              {
-                "position": "relative",
-              }
-            }
-          >
-            <input
-              className="c10"
-              data-testid="password"
-              name="password"
-              onBlur={[Function]}
-              onChange={[Function]}
-              onFocus={[Function]}
-              placeholder="password"
-              title="password"
-              type="password"
-              value=""
-            />
-          </div>
+          <input
+            className="c10"
+            data-testid="password"
+            name="password"
+            onBlur={[Function]}
+            onChange={[Function]}
+            onFocus={[Function]}
+            placeholder="password"
+            required={true}
+            title="password"
+            type="password"
+            value=""
+          />
         </div>
       </div>
       <div
         className="c8"
+        required={true}
       >
         <label
           className="c9"
@@ -4778,16 +4845,22 @@ exports[`Snapshot signup view show labels 1`] = `
       >
         signup.submitLabel
       </button>
+      <span
+        className="c12"
+      >
+        *
+        form.required.fields
+      </span>
     </form>
     <div
-      className="c12"
+      className="c13"
     >
       <span>
         signup.loginLinkPrefix
       </span>
        
       <a
-        className="c13"
+        className="c14"
         href="#"
         onClick={[Function]}
       >
@@ -5032,6 +5105,11 @@ exports[`Snapshot signup view with consents 1`] = `
   margin-bottom: 10px;
 }
 
+.c8 > label::after {
+  content: "\\A0*";
+  color: #dc4e41;
+}
+
 .c10 {
   display: block;
   width: 100%;
@@ -5165,6 +5243,7 @@ exports[`Snapshot signup view with consents 1`] = `
     >
       <div
         className="c8"
+        required={true}
       >
         <label
           className="c9"
@@ -5189,7 +5268,13 @@ exports[`Snapshot signup view with consents 1`] = `
       </div>
       <div
         className="c8"
+        required={true}
       >
+        <label
+          className="c9"
+        >
+          password
+        </label>
         <div
           style={
             {
@@ -5197,31 +5282,19 @@ exports[`Snapshot signup view with consents 1`] = `
             }
           }
         >
-          <label
-            className="c9"
-          >
-            password
-          </label>
-          <div
-            style={
-              {
-                "position": "relative",
-              }
-            }
-          >
-            <input
-              className="c10"
-              data-testid="password"
-              name="password"
-              onBlur={[Function]}
-              onChange={[Function]}
-              onFocus={[Function]}
-              placeholder="password"
-              title="password"
-              type="password"
-              value=""
-            />
-          </div>
+          <input
+            className="c10"
+            data-testid="password"
+            name="password"
+            onBlur={[Function]}
+            onChange={[Function]}
+            onFocus={[Function]}
+            placeholder="password"
+            required={true}
+            title="password"
+            type="password"
+            value=""
+          />
         </div>
       </div>
       <div
@@ -5520,6 +5593,11 @@ exports[`Snapshot signup view with custom fields 1`] = `
   margin-bottom: 10px;
 }
 
+.c8 > label::after {
+  content: "\\A0*";
+  color: #dc4e41;
+}
+
 .c10 {
   display: block;
   width: 100%;
@@ -5640,6 +5718,7 @@ exports[`Snapshot signup view with custom fields 1`] = `
     >
       <div
         className="c8"
+        required={true}
       >
         <label
           className="c9"
@@ -5664,7 +5743,13 @@ exports[`Snapshot signup view with custom fields 1`] = `
       </div>
       <div
         className="c8"
+        required={true}
       >
+        <label
+          className="c9"
+        >
+          password
+        </label>
         <div
           style={
             {
@@ -5672,31 +5757,19 @@ exports[`Snapshot signup view with custom fields 1`] = `
             }
           }
         >
-          <label
-            className="c9"
-          >
-            password
-          </label>
-          <div
-            style={
-              {
-                "position": "relative",
-              }
-            }
-          >
-            <input
-              className="c10"
-              data-testid="password"
-              name="password"
-              onBlur={[Function]}
-              onChange={[Function]}
-              onFocus={[Function]}
-              placeholder="password"
-              title="password"
-              type="password"
-              value=""
-            />
-          </div>
+          <input
+            className="c10"
+            data-testid="password"
+            name="password"
+            onBlur={[Function]}
+            onChange={[Function]}
+            onFocus={[Function]}
+            placeholder="password"
+            required={true}
+            title="password"
+            type="password"
+            value=""
+          />
         </div>
       </div>
       <div
@@ -5978,6 +6051,11 @@ exports[`Snapshot signup view with mandatory consents 1`] = `
   margin-bottom: 10px;
 }
 
+.c8 > label::after {
+  content: "\\A0*";
+  color: #dc4e41;
+}
+
 .c10 {
   display: block;
   width: 100%;
@@ -6111,6 +6189,7 @@ exports[`Snapshot signup view with mandatory consents 1`] = `
     >
       <div
         className="c8"
+        required={true}
       >
         <label
           className="c9"
@@ -6135,7 +6214,13 @@ exports[`Snapshot signup view with mandatory consents 1`] = `
       </div>
       <div
         className="c8"
+        required={true}
       >
+        <label
+          className="c9"
+        >
+          password
+        </label>
         <div
           style={
             {
@@ -6143,31 +6228,19 @@ exports[`Snapshot signup view with mandatory consents 1`] = `
             }
           }
         >
-          <label
-            className="c9"
-          >
-            password
-          </label>
-          <div
-            style={
-              {
-                "position": "relative",
-              }
-            }
-          >
-            <input
-              className="c10"
-              data-testid="password"
-              name="password"
-              onBlur={[Function]}
-              onChange={[Function]}
-              onFocus={[Function]}
-              placeholder="password"
-              title="password"
-              type="password"
-              value=""
-            />
-          </div>
+          <input
+            className="c10"
+            data-testid="password"
+            name="password"
+            onBlur={[Function]}
+            onChange={[Function]}
+            onFocus={[Function]}
+            placeholder="password"
+            required={true}
+            title="password"
+            type="password"
+            value=""
+          />
         </div>
       </div>
       <div
@@ -6466,6 +6539,11 @@ exports[`Snapshot signup view with user agreement 1`] = `
   margin-bottom: 10px;
 }
 
+.c8 > label::after {
+  content: "\\A0*";
+  color: #dc4e41;
+}
+
 .c10 {
   display: block;
   width: 100%;
@@ -6589,6 +6667,7 @@ exports[`Snapshot signup view with user agreement 1`] = `
     >
       <div
         className="c8"
+        required={true}
       >
         <label
           className="c9"
@@ -6612,6 +6691,7 @@ exports[`Snapshot signup view with user agreement 1`] = `
       </div>
       <div
         className="c8"
+        required={true}
       >
         <label
           className="c9"
@@ -6635,6 +6715,7 @@ exports[`Snapshot signup view with user agreement 1`] = `
       </div>
       <div
         className="c8"
+        required={true}
       >
         <label
           className="c9"
@@ -6659,7 +6740,13 @@ exports[`Snapshot signup view with user agreement 1`] = `
       </div>
       <div
         className="c8"
+        required={true}
       >
+        <label
+          className="c9"
+        >
+          password
+        </label>
         <div
           style={
             {
@@ -6667,35 +6754,24 @@ exports[`Snapshot signup view with user agreement 1`] = `
             }
           }
         >
-          <label
-            className="c9"
-          >
-            password
-          </label>
-          <div
-            style={
-              {
-                "position": "relative",
-              }
-            }
-          >
-            <input
-              className="c10"
-              data-testid="password"
-              name="password"
-              onBlur={[Function]}
-              onChange={[Function]}
-              onFocus={[Function]}
-              placeholder="password"
-              title="password"
-              type="password"
-              value=""
-            />
-          </div>
+          <input
+            className="c10"
+            data-testid="password"
+            name="password"
+            onBlur={[Function]}
+            onChange={[Function]}
+            onFocus={[Function]}
+            placeholder="password"
+            required={true}
+            title="password"
+            type="password"
+            value=""
+          />
         </div>
       </div>
       <div
         className="c8"
+        required={true}
       >
         <label
           className="c9"
@@ -6997,6 +7073,11 @@ exports[`Snapshot with webauthn feature login new view with integradted webauthn
   margin-bottom: 10px;
 }
 
+.c8 > label::after {
+  content: "\\A0*";
+  color: #dc4e41;
+}
+
 .c10 {
   display: block;
   width: 100%;
@@ -7104,6 +7185,7 @@ exports[`Snapshot with webauthn feature login new view with integradted webauthn
     >
       <div
         className="c8"
+        required={true}
       >
         <label
           className="c9"
@@ -7129,6 +7211,7 @@ exports[`Snapshot with webauthn feature login new view with integradted webauthn
       </div>
       <div
         className="c8"
+        required={true}
       >
         <label
           className="c9"
@@ -7433,6 +7516,11 @@ exports[`Snapshot with webauthn feature login old view with webauthn or password
   margin-bottom: 10px;
 }
 
+.c8 > label::after {
+  content: "\\A0*";
+  color: #dc4e41;
+}
+
 .c10 {
   display: block;
   width: 100%;
@@ -7585,6 +7673,7 @@ exports[`Snapshot with webauthn feature login old view with webauthn or password
     >
       <div
         className="c8"
+        required={true}
       >
         <label
           className="c9"
@@ -7754,6 +7843,11 @@ exports[`Snapshot with webauthn feature signup form view with password 1`] = `
   margin-bottom: 10px;
 }
 
+.c3 > label::after {
+  content: "\\A0*";
+  color: #dc4e41;
+}
+
 .c5 {
   display: block;
   width: 100%;
@@ -7817,6 +7911,7 @@ exports[`Snapshot with webauthn feature signup form view with password 1`] = `
     >
       <div
         className="c3"
+        required={true}
       >
         <label
           className="c4"
@@ -7840,6 +7935,7 @@ exports[`Snapshot with webauthn feature signup form view with password 1`] = `
       </div>
       <div
         className="c3"
+        required={true}
       >
         <label
           className="c4"
@@ -7863,6 +7959,7 @@ exports[`Snapshot with webauthn feature signup form view with password 1`] = `
       </div>
       <div
         className="c3"
+        required={true}
       >
         <label
           className="c4"
@@ -7887,7 +7984,13 @@ exports[`Snapshot with webauthn feature signup form view with password 1`] = `
       </div>
       <div
         className="c3"
+        required={true}
       >
+        <label
+          className="c4"
+        >
+          password
+        </label>
         <div
           style={
             {
@@ -7895,35 +7998,24 @@ exports[`Snapshot with webauthn feature signup form view with password 1`] = `
             }
           }
         >
-          <label
-            className="c4"
-          >
-            password
-          </label>
-          <div
-            style={
-              {
-                "position": "relative",
-              }
-            }
-          >
-            <input
-              className="c5"
-              data-testid="password"
-              name="password"
-              onBlur={[Function]}
-              onChange={[Function]}
-              onFocus={[Function]}
-              placeholder="password"
-              title="password"
-              type="password"
-              value=""
-            />
-          </div>
+          <input
+            className="c5"
+            data-testid="password"
+            name="password"
+            onBlur={[Function]}
+            onChange={[Function]}
+            onFocus={[Function]}
+            placeholder="password"
+            required={true}
+            title="password"
+            type="password"
+            value=""
+          />
         </div>
       </div>
       <div
         className="c3"
+        required={true}
       >
         <label
           className="c4"
@@ -8071,6 +8163,11 @@ exports[`Snapshot with webauthn feature signup form view with webauthn 1`] = `
   margin-bottom: 10px;
 }
 
+.c3 > label::after {
+  content: "\\A0*";
+  color: #dc4e41;
+}
+
 .c5 {
   display: block;
   width: 100%;
@@ -8134,6 +8231,7 @@ exports[`Snapshot with webauthn feature signup form view with webauthn 1`] = `
     >
       <div
         className="c3"
+        required={true}
       >
         <label
           className="c4"
@@ -8157,6 +8255,7 @@ exports[`Snapshot with webauthn feature signup form view with webauthn 1`] = `
       </div>
       <div
         className="c3"
+        required={true}
       >
         <label
           className="c4"
@@ -8180,6 +8279,7 @@ exports[`Snapshot with webauthn feature signup form view with webauthn 1`] = `
       </div>
       <div
         className="c3"
+        required={true}
       >
         <label
           className="c4"

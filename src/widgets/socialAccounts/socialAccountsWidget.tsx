@@ -13,7 +13,7 @@ import { useRouting } from '../../contexts/routing';
 
 import { ErrorMessage } from '../../components/error';
 import { Card, CloseIcon } from '../../components/form/cardComponent';
-import { Link, Info, Alternative } from '../../components/miscComponent';
+import { Link, Info, Alternative, MutedText } from '../../components/miscComponent';
 import { createMultiViewWidget } from '../../components/widget/widget';
 import { SocialButtons } from '../../components/form/socialButtonsComponent';
 import { DefaultButton } from '../../components/form/buttonComponent';
@@ -108,11 +108,6 @@ const SocialIcon = styled.span<{ icon: string }>`
     background-size: ${props => props.theme._absoluteLineHeight}px ${props => props.theme._absoluteLineHeight}px;
     background-position: center center;
 `;
-
-
-const MutedText = styled.span`
-    color: ${props => props.theme.mutedTextColor}
-`
 
 interface IdentityListProps {
     identities?: Identity[]
