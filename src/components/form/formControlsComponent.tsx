@@ -19,8 +19,18 @@ export const Label = styled.label<{ visible?: boolean }>`
     display: ${props => props.visible ? 'inline-block' : 'none'};
 `;
 
-export const FormGroupContainer = styled.div`
+export const TextDanger = styled.span`
+    color: ${props => props.theme.dangerColor};
+`
+
+export const FormGroupContainer = styled.div<{ required?: boolean  }>`
     margin-bottom: ${props => props.theme.spacing}px;
+    ${({ required, theme }) => required && `
+        & > label::after {
+            content: "\\A0*";
+            color: ${theme.dangerColor};
+        }
+    `}
 `;
 
 interface FormGroupProps {
@@ -28,6 +38,7 @@ interface FormGroupProps {
     labelText: string
     showLabel?: boolean
     error?: string
+    required?: boolean
 }
 
 export const FormGroup = ({
@@ -35,8 +46,9 @@ export const FormGroup = ({
     labelText,
     showLabel,
     error,
+    required,
     children
-}: PropsWithChildren<FormGroupProps>) => <FormGroupContainer>
+}: PropsWithChildren<FormGroupProps>) => <FormGroupContainer required={required}>
         <Label visible={showLabel} htmlFor={inputId}>{labelText}</Label>
         {children}
         {error && <FormError>{error}</FormError>}

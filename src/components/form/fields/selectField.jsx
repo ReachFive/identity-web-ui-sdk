@@ -21,7 +21,9 @@ const SelectField = props => {
         inputId={inputId}
         labelText={label}
         {...(({ error }) => ({ error }))(validation)}
-        showLabel={props.showLabel}>
+        showLabel={props.showLabel}
+        required={props.required}
+    >
         <Select
             id={inputId}
             name={props.path}
