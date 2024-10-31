@@ -13,12 +13,29 @@ interface WidgetContentProps {
     transition?: TransitionStatus
 }
 
-const WidgetContent = styled(React.forwardRef(({ name, className, children }: PropsWithChildren<WidgetContentProps>, ref: ForwardedRef<HTMLDivElement>) => (
-    <div ref={ref} className={classes(className, {
-        [`r5-${name}`]: !!name,
-        'r5-widget-active': !!name
-    })}>{children}</div>
-)))`
+const WidgetContent = styled(
+    React.forwardRef(
+        function WidgetContent(
+            { name, className, children }: PropsWithChildren<WidgetContentProps>,
+            ref: ForwardedRef<HTMLDivElement>
+        ) {
+            return (
+                <div
+                    ref={ref}
+                    className={
+                        classes(
+                            className,
+                            {
+                                [`r5-${name}`]: !!name,
+                                'r5-widget-active': !!name
+                            }
+                        )
+                    }
+                >{children}</div>
+            )
+        }
+    )
+)`
     font-size: ${props => props.theme.fontSize}px;
     transition:
         transform 400ms ease,

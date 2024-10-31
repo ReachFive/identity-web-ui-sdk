@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import { debounce, find } from '../../helpers/utils';
 
 import { PrimaryButton } from './buttonComponent';
-import { Error } from '../miscComponent';
+import { Error, MutedText } from '../miscComponent';
 import { withConfig } from '../../contexts/config'
 import { withI18n } from '../../contexts/i18n';
 import { logError } from '../../helpers/logger';
@@ -14,6 +14,11 @@ const Form = styled.form`
     position: relative;
 `;
 
+const RequiredFields = styled(MutedText)`
+    display: block;
+    padding: ${props => `${props.theme.paddingY}px ${props.theme.paddingX}px`};
+    text-align: center;
+`
 
 export function createForm(config) {
     class FormComponent extends React.Component {
@@ -210,7 +215,7 @@ export function createForm(config) {
         }
 
         render() {
-            const { submitLabel, allowWebAuthnLogin, i18n, fieldValidationDebounce } = this.props;
+            const { showLabels, submitLabel, allowWebAuthnLogin, i18n, fieldValidationDebounce } = this.props;
             const { errorMessage, isLoading, fields } = this.state;
 
             return <Form noValidate onSubmit={this.handleSubmit}>
@@ -227,12 +232,13 @@ export function createForm(config) {
                         ...this.props.sharedProps
                     }) : field.staticContent)
                 }
-                {
-                    !allowWebAuthnLogin && <PrimaryButton disabled={isLoading}>
+                {!allowWebAuthnLogin && (
+                    <PrimaryButton disabled={isLoading}>
                         {i18n(submitLabel)}
                     </PrimaryButton>
-                }
+                )}
                 {allowWebAuthnLogin && this.props.webAuthnButtons(isLoading, this.handleClick)}
+                {showLabels && <RequiredFields>*{i18n('form.required.fields')}</RequiredFields>}
             </Form>;
         }
     }

@@ -11,6 +11,7 @@ import type { Provider, ProviderId } from '../../providers/providers';
 import { useReachfive } from '../../contexts/reachfive';
 
 import { Button, type ButtonProps } from './buttonComponent';
+import { useI18n } from '../../contexts/i18n';
 
 interface SocialButtonIconProps {
     className?: classes.Argument
@@ -50,14 +51,17 @@ interface SocialBtn extends ButtonProps {
     height: string
 }
 
-const SocialBtn = styled(Button).attrs<SocialBtn>(({ provider }) => ({
-    themePrefix: 'socialButton',
-    color: provider.btnTextColor || '#ffffff',
-    background: provider.btnBackgroundColor || provider.color,
-    border: provider.btnBorderColor || provider.color,
-    extendedClasses: classes(['r5-btn-social', `r5-btn-social-${provider.key}`]),
-    title: provider.name
-}))`
+const SocialBtn = styled(Button).attrs<SocialBtn>(({ provider }) => {
+    const i18n = useI18n()
+    return {
+        themePrefix: 'socialButton',
+        color: provider.btnTextColor || '#ffffff',
+        background: provider.btnBackgroundColor || provider.color,
+        border: provider.btnBorderColor || provider.color,
+        extendedClasses: classes(['r5-btn-social', `r5-btn-social-${provider.key}`]),
+        title: i18n(`socialButton.${provider.key}.title`, undefined, () => provider.name)
+    }
+})<SocialBtn>`
     margin-bottom: ${props => props.theme.spacing}px;
     position: relative;
 
@@ -85,6 +89,7 @@ interface SocialButtonProps {
 
 const SocialButton = ({ provider, onClick, count }: SocialButtonProps) => {
     const theme = useTheme()
+    const i18n = useI18n()
 
     const inline = theme.socialButton.inline;
     const textVisible = theme.socialButton.textVisible;
@@ -102,7 +107,7 @@ const SocialButton = ({ provider, onClick, count }: SocialButtonProps) => {
         height={height}
         onClick={() => onClick(provider.key)}>
         <SocialButtonIcon icon={provider.icon} textVisible={textVisible} />
-        {textVisible && <SocialButtonText>{provider.name}</SocialButtonText>}
+        {textVisible && <SocialButtonText>{i18n(`socialButton.${provider.key}.title`, undefined, () => provider.name)}</SocialButtonText>}
     </SocialBtn>;
 };
 

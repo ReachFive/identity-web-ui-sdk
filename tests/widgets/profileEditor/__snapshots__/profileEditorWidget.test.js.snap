@@ -1,6 +1,10 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Snapshot profile editor basic 1`] = `
+.c6 {
+  color: #adb5bd;
+}
+
 .c0 {
   font-size: 14px;
   -webkit-transition: -webkit-transform 400ms ease,opacity 400ms ease;
@@ -57,6 +61,12 @@ exports[`Snapshot profile editor basic 1`] = `
   position: relative;
 }
 
+.c7 {
+  display: block;
+  padding: 9px 12px;
+  text-align: center;
+}
+
 .c3 {
   color: #495057;
   margin-bottom: 5px;
@@ -65,6 +75,11 @@ exports[`Snapshot profile editor basic 1`] = `
 
 .c2 {
   margin-bottom: 10px;
+}
+
+.c2>label::after {
+  content: "\\A0*";
+  color: #dc4e41;
 }
 
 .c4 {
@@ -127,6 +142,7 @@ exports[`Snapshot profile editor basic 1`] = `
     >
       <div
         class="c2"
+        required=""
       >
         <label
           class="c3"
@@ -147,6 +163,7 @@ exports[`Snapshot profile editor basic 1`] = `
       </div>
       <div
         class="c2"
+        required=""
       >
         <label
           class="c3"
@@ -172,6 +189,12 @@ exports[`Snapshot profile editor basic 1`] = `
       >
         save
       </button>
+      <span
+        class="c6 c7"
+      >
+        *
+        form.required.fields
+      </span>
     </form>
   </div>
 </div>

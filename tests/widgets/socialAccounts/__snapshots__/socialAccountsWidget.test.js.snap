@@ -71,6 +71,10 @@ exports[`Snapshot basic 1`] = `
   border-bottom-width: 0;
 }
 
+.c3 {
+  color: #adb5bd;
+}
+
 .c0 {
   font-size: 14px;
   -webkit-transition: -webkit-transform 400ms ease,opacity 400ms ease;
@@ -137,10 +141,6 @@ exports[`Snapshot basic 1`] = `
   background-size: 20px 20px;
   -webkit-background-position: center center;
   background-position: center center;
-}
-
-.c3 {
-  color: #adb5bd;
 }
 
 .c5 {
