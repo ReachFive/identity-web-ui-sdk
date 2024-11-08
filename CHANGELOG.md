@@ -7,8 +7,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
-- Upgrade SDK Core dependency to 1.34.0
+## [1.29.0] - 2024-11-08
+
+## Changes
 - Display additional info on registered passkeys
+- Upgrade SDK Core dependency to 1.34.0
 
 ## [1.28.0] - 2024-10-10
 
@@ -490,7 +493,9 @@ The eye icon is now correctly displayed in the Auth widget.
 
 First version of the SDK Web UI.
 
-[Unreleased]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.28.0...HEAD
+[Unreleased]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.29.0...HEAD
+
+[1.29.0]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.28.0...v1.29.0
 
 [1.28.0]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.27.0...v1.28.0
 
