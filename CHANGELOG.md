@@ -7,6 +7,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+- Upgrade SDK Core dependency to 1.34.0
+- Display additional info on registered passkeys
+
 ## [1.28.0] - 2024-10-10
 
 ## Added
@@ -19,7 +22,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Fixes
 
-- [showSocialAccounts] Link : afficher le bon variant et non celui par défaut 
+- [showSocialAccounts] Link : afficher le bon variant et non celui par défaut
 
 ## [1.27.0] - 2024-05-16
 
