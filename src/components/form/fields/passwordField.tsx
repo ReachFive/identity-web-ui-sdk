@@ -251,7 +251,11 @@ export const passwordField = (
             blacklist,
             canShowPassword,
             enabledRules: enabledRules ?? listEnabledRules(i18n, passwordPolicy),
-            minStrength: minStrength ?? passwordPolicy.minStrength,
+            /** 
+             * @toto `passwordPolicy` should always be define. Remove default value when correction PR is merged.
+             * @see https://github.com/ReachFive/identity-web-core-sdk/pull/239
+             * */
+            minStrength: minStrength ?? passwordPolicy?.minStrength ?? 2,
         }),
         validator: validator ? validator.and(passwordValidatorChain(passwordPolicy)) : passwordValidatorChain(passwordPolicy)
     })
