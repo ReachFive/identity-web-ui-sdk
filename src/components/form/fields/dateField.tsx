@@ -100,7 +100,7 @@ const DateField = ({
             <InputCol key="day" width={20}>
                 <Select
                     name={`${path}.day`}
-                    value={day || ''}
+                    value={day ?? ''}
                     hasError={!!error}
                     required={required}
                     onChange={handleDayChange}
@@ -115,7 +115,7 @@ const DateField = ({
             <InputCol key="month" width={50}>
                 <Select
                     name={`${path}.month`}
-                    value={month || ''}
+                    value={month ?? ''}
                     hasError={!!error}
                     required={required}
                     onChange={handleMonthChange}
@@ -133,7 +133,7 @@ const DateField = ({
                     maxLength={4}
                     inputMode="numeric"
                     name={`${path}.year`}
-                    value={year || ''}
+                    value={year ?? ''}
                     hasError={!!error}
                     required={required}
                     onChange={handleYearChange}
