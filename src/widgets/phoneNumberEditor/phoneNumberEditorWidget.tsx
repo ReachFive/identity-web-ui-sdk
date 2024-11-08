@@ -6,7 +6,7 @@ import { createMultiViewWidget } from '../../components/widget/widget';
 import { Info, Intro } from '../../components/miscComponent';
 import { createForm } from '../../components/form/formComponent';
 import { simpleField } from '../../components/form/fields/simpleField';
-import phoneNumberField from '../../components/form/fields/phoneNumberField'
+import phoneNumberField, { type PhoneNumberOptions } from '../../components/form/fields/phoneNumberField'
 
 import { useReachfive } from '../../contexts/reachfive';
 import { useI18n } from '../../contexts/i18n';
@@ -44,9 +44,13 @@ interface MainViewProps {
      * @default false
      */
     showLabels?: boolean
+    /**
+     * Phone number field options.
+     */
+    phoneNumberOptions?: PhoneNumberOptions
 }
 
-const MainView = ({ accessToken, showLabels = false }: MainViewProps) => {
+const MainView = ({ accessToken, showLabels = false, phoneNumberOptions }: MainViewProps) => {
     const coreClient = useReachfive()
     const config = useConfig()
     const i18n = useI18n()
@@ -70,6 +74,9 @@ const MainView = ({ accessToken, showLabels = false }: MainViewProps) => {
                 showLabels={showLabels}
                 handler={handleSubmit}
                 onSuccess={handleSuccess}
+                sharedProps={{
+                    ...phoneNumberOptions,
+                }}
             />
         </div>
     )

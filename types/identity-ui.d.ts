@@ -1,6 +1,6 @@
 /**
- * @reachfive/identity-ui - v1.27.0
- * Compiled Fri, 08 Nov 2024 09:18:48 UTC
+ * @reachfive/identity-ui - v1.26.1
+ * Compiled Thu, 16 May 2024 08:48:31 UTC
  *
  * Copyright (c) ReachFive.
  *
@@ -216,7 +216,7 @@ type I18nMessages = {
     [k: string]: string;
 };
 type I18nMessageParams = Record<string, unknown>;
-type I18nResolver$1 = (key: string, params?: I18nMessageParams) => string;
+type I18nResolver$1 = (key: string, params?: I18nMessageParams, fallback?: (params?: I18nMessageParams) => string) => string;
 
 type I18nProps$1 = {
     i18n?: I18nMessages;
@@ -253,29 +253,33 @@ interface FieldCreateProps {
     showLabel: boolean
 }
 
-interface FieldCreator<T, P extends FieldComponentProps<T> = FieldComponentProps<T>, S = {}> {
+interface FieldCreator<T, P = {}, E = {}> {
     path: string,
-    create: (options: WithI18n<FieldCreateProps>) => Field$1<T, P, S>
+    create: (options: WithI18n<FieldCreateProps>) => Field$1<T, P, E>
 }
 
-interface Field$1<T, P extends FieldComponentProps<T>, S = {}> {
+interface Field$1<T, P = {}, E = {}> {
     key: string
-    render: (props: P & { state: S }) => React.ReactNode
-    initialize: (model: Record<string, unknown>) => FieldValue<T>
-    unbind: <M extends Record<string, unknown>>(model: M, state: P) => M
-    validate: (data: P, ctx: { isSubmitted: boolean }) => VaildatorResult
+    render: (props: P & Partial<FieldComponentProps<T>> & { state: FieldValue<T, E> }) => React.ReactNode
+    initialize: <M>(model: M) => FieldValue<T, E>
+    unbind: <M>(model: M, state: FieldValue<T, E>) => M
+    validate: <S extends { isSubmitted: boolean }>(data: FieldValue<T, E>, ctx: S) => VaildatorResult
 }
 
-type FieldValue<T> = {
-    value: T | null,
-    isDirty: boolean
+type FieldValue<T, E = {}> = E & {
+    value?: T
+    isDirty?: boolean
+    validation?: VaildatorResult
 }
 
-type FieldComponentProps<T, P = {}> = P & {
+type FieldComponentProps<T, P = {}, E = {}> = P & {
     inputId: string
     key: string
     path: string
     label: string
+    onChange: (value: FieldValue<T, E>) => void
+    placeholder?: string
+    autoComplete?: AutoFill
     required?: boolean
     readOnly?: boolean
     i18n: I18nResolver
@@ -291,6 +295,14 @@ type Field = {
    required?: boolean
    type?: 'hidden' | 'text' | 'number' | 'email' | 'tel'
 }
+
+type PhoneNumberOptions = {
+    /**
+     * If `withCountrySelect` property is `true` then the user can select the country for the phone number. Must be a supported {@link https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2#Officially_assigned_code_elements country code}.
+     * @default false
+     */
+    withCountrySelect?: boolean;
+};
 
 type LoginViewProps = {
     /**
@@ -371,6 +383,7 @@ type LoginViewProps = {
      * Tip: If you pass an empty array, social providers will not be displayed.
      */
     socialProviders?: string[];
+    allowAuthentMailPhone?: boolean;
 };
 
 interface LoginWithWebAuthnViewProps {
@@ -417,6 +430,7 @@ interface PasswordSignupFormProps {
     auth?: AuthOptions;
     beforeSignup?: <T>(param: T) => T;
     canShowPassword?: boolean;
+    phoneNumberOptions?: PhoneNumberOptions;
     recaptcha_enabled?: boolean;
     recaptcha_site_key?: string;
     redirectUrl?: string;
@@ -500,6 +514,10 @@ interface SignupViewProps extends SignupWithPasswordViewProps, SignupWithWebAuth
      * Tip: If you pass an empty array, social providers will not be displayed.
      */
     socialProviders?: string[];
+    /**
+     * Phone number field options.
+     */
+    phoneNumberOptions?: PhoneNumberOptions;
 }
 
 interface ForgotPasswordViewProps {
@@ -746,6 +764,10 @@ interface MainViewProps$4 {
     * @default false
     */
     showLabels?: boolean;
+    /**
+     * Phone number field options.
+     */
+    phoneNumberOptions?: PhoneNumberOptions;
 }
 type VerificationCodeViewProps$2 = {
     /**
@@ -826,6 +848,10 @@ interface MainViewProps$2 {
      * Tip:  If you pass an empty array, social providers will not be displayed.
      */
     socialProviders?: string[];
+    /**
+     * Phone number field options.
+     */
+    phoneNumberOptions?: PhoneNumberOptions;
 }
 interface VerificationCodeViewProps$1 {
     /**
@@ -862,6 +888,10 @@ interface ProfileEditorProps {
      * The callback is called with the widget instance.
      */
     onError?: () => void;
+    /**
+     * Phone number field options.
+     */
+    phoneNumberOptions?: PhoneNumberOptions;
     /**
      *
      */
@@ -975,6 +1005,10 @@ interface MainViewProps$1 {
      * @default true
      */
     showRemoveMfaCredentials?: boolean;
+    /**
+     * Phone number field options.
+     */
+    phoneNumberOptions?: PhoneNumberOptions;
 }
 interface VerificationCodeViewProps {
     /**

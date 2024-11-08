@@ -4,6 +4,7 @@ import { Heading, Link, Alternative, Separator } from '../../../components/miscC
 import { SocialButtons } from '../../../components/form/socialButtonsComponent';
 import PasswordSignupForm from '../../../components/form/passwordSignupFormComponent';
 import { WebAuthnSignupViewButtons } from '../../../components/form/webAuthAndPasswordButtonsComponent';
+import { type PhoneNumberOptions } from '../../../components/form/fields/phoneNumberField';
 import { useI18n } from '../../../contexts/i18n';
 import { useRouting } from '../../../contexts/routing';
 
@@ -37,6 +38,10 @@ export interface SignupViewProps extends SignupWithPasswordViewProps, SignupWith
      * Tip: If you pass an empty array, social providers will not be displayed.
      */
     socialProviders?: string[]
+    /**
+     * Phone number field options.
+     */
+    phoneNumberOptions?: PhoneNumberOptions
 }
 
 export const SignupView = ({

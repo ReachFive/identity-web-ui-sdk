@@ -7,6 +7,20 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.28.0] - 2024-10-10
+
+## Added
+
+- Add a `allowAuthentMailPhone` boolean option to hide email and password field (keep only custom identifier) on login widget
+- Add a possibility to display a country selector on phone number fields
+- Add Okta provider
+- Add visual marker to labels for required fields
+- Add possibility to define custom labels for social buttons
+
+## Fixes
+
+- [showSocialAccounts] Link : afficher le bon variant et non celui par défaut 
+
 ## [1.27.0] - 2024-05-16
 
 ## Added
@@ -473,7 +487,11 @@ The eye icon is now correctly displayed in the Auth widget.
 
 First version of the SDK Web UI.
 
-[Unreleased]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.26.1...HEAD
+[Unreleased]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.28.0...HEAD
+
+[1.28.0]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.27.0...v1.28.0
+
+[1.27.0]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.26.1...v1.27.0
 
 [1.26.1]:  https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.26.0...v1.26.1
 

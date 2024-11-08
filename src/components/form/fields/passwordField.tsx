@@ -74,13 +74,16 @@ const PasswordStrength = ({ score }: PasswordStrength) => {
     )
 }
 
-interface PasswordFieldProps extends FieldComponentProps<string> {
+type ExtraValues = {
+    strength?: PasswordStrengthScore,
+    isTouched?: boolean,
+}
+
+interface PasswordFieldProps extends FieldComponentProps<string, {}, ExtraValues> {
     blacklist: string[]
     isDirty?: boolean
     isTouched?: boolean
-    placeholder?: string
-    autoComplete?: string
-    onChange: (event: { value?: string, strength?: PasswordStrengthScore, isTouched?: boolean, isDirty?: boolean }) => void
+    // onChange: (event: { value?: string, strength?: PasswordStrengthScore, isTouched?: boolean, isDirty?: boolean }) => void
     canShowPassword?: boolean
     enabledRules: Record<string, PasswordRule>
     minStrength: PasswordStrengthScore
@@ -103,14 +106,20 @@ class PasswordField extends React.Component<PasswordFieldProps, PasswordFieldSta
         const blacklistUpdated = isEqual(prevProps.blacklist, this.props.blacklist);
         if (!blacklistUpdated) {
             const { value, onChange, blacklist } = this.props;
-            onChange({ strength: getPasswordStrength(blacklist, value) });
+            onChange({
+                strength: getPasswordStrength(blacklist, value),
+                value,
+            });
         }
     }
 
     componentDidMount() {
         const { value, onChange, blacklist } = this.props;
         this.setState({ ...this.state });
-        onChange({ strength: getPasswordStrength(blacklist, value) });
+        onChange({
+            strength: getPasswordStrength(blacklist, value),
+            value,
+        });
     }
 
     componentWillUnmount() {
@@ -124,21 +133,28 @@ class PasswordField extends React.Component<PasswordFieldProps, PasswordFieldSta
 
     render() {
         const {
-            validation = {} as VaildatorResult,
-            onChange,
-            inputId,
-            label,
-            isTouched,
-            value = '',
+            autoComplete,
             blacklist = [],
-            strength
+            canShowPassword,
+            enabledRules,
+            inputId,
+            isTouched,
+            label,
+            minStrength,
+            onChange,
+            placeholder,
+            required,
+            showLabel,
+            strength,
+            validation = {} as VaildatorResult,
+            value = '',
         } = this.props;
 
         const { showPassword } = this.state;
 
-        return <FormGroupContainer>
-            <div style={{ position: 'relative' }}>
-                <Label visible={this.props.showLabel} htmlFor={inputId}>
+        return (
+            <FormGroupContainer required={required}>
+                <Label visible={showLabel} htmlFor={inputId}>
                     {label}
                 </Label>
                 <div style={{ position: 'relative' }}>
@@ -147,32 +163,43 @@ class PasswordField extends React.Component<PasswordFieldProps, PasswordFieldSta
                         name="password"
                         type={showPassword ? 'text' : 'password'}
                         value={value}
-                        placeholder={this.props.placeholder || label}
-                        autoComplete={this.props.autoComplete}
+                        placeholder={placeholder || label}
+                        autoComplete={autoComplete}
                         title={label}
-                        required={this.props.required}
+                        required={required}
                         hasError={typeof validation === 'object' && 'error' in validation}
                         onChange={(event: React.ChangeEvent<HTMLInputElement>) => onChange({
                             value: event.target.value,
                             strength: getPasswordStrength(blacklist, event.target.value)
                         })}
-                        onFocus={() => onChange({ isTouched: true })}
-                        onBlur={() => onChange({ isDirty: true })}
-                        data-testid="password" />
-                    {this.props.canShowPassword && (showPassword
-                        ? <HidePasswordIcon onClick={this.toggleShowPassword} />
-                        : <ShowPasswordIcon onClick={this.toggleShowPassword} />)}
+                        onFocus={(event) => onChange({
+                            value: event.target.value,
+                            isTouched: true
+                        })}
+                        onBlur={(event) => onChange({
+                            value: event.target.value,
+                            isDirty: true
+                        })}
+                        data-testid="password"
+                    />
+                    {canShowPassword && (
+                        showPassword
+                            ? <HidePasswordIcon onClick={this.toggleShowPassword} />
+                            : <ShowPasswordIcon onClick={this.toggleShowPassword} />
+                    )}
                 </div>
                 {isTouched && <PasswordStrength score={strength || 0} />}
                 {typeof validation === 'object' && 'error' in validation && <FormError>{validation.error}</FormError>}
-                {isTouched && <PasswordPolicyRules
-                    value={value}
-                    strength={strength}
-                    minStrength={this.props.minStrength}
-                    rules={this.props.enabledRules} />
-                }
-            </div>
-        </FormGroupContainer>;
+                {isTouched && (
+                    <PasswordPolicyRules
+                        value={value}
+                        strength={strength}
+                        minStrength={minStrength}
+                        rules={enabledRules}
+                    />
+                )}
+            </FormGroupContainer>
+        )
     }
 }
 
@@ -215,7 +242,10 @@ function getPasswordStrength(blacklist: string[], fieldValue?: string) {
     return zxcvbn(sanitized, blacklist).score;
 }
 
-export const passwordField = ({ label = 'password', canShowPassword = false, ...staticProps }, { passwordPolicy }: Config): FieldCreator<string, PasswordFieldProps> => ({
+export const passwordField = (
+    { label = 'password', canShowPassword = false, required = true, ...staticProps }: Partial<PasswordFieldProps>,
+    { passwordPolicy }: Config
+): FieldCreator<string, PasswordFieldProps, ExtraValues> => ({
     path: 'password',
     create: ({ i18n, showLabel }) => {
         const actualLabel = i18n(label);
@@ -228,6 +258,7 @@ export const passwordField = ({ label = 'password', canShowPassword = false, ...
                     showLabel={showLabel}
                     canShowPassword={canShowPassword}
                     label={actualLabel}
+                    required={required}
                 />
             ),
             initialize: () => ({
@@ -248,7 +279,7 @@ export const passwordField = ({ label = 'password', canShowPassword = false, ...
                     errors.push(i18n('validation.required'));
                 }
                 else {
-                    if (passwordPolicy && strength < passwordPolicy.minStrength) {
+                    if (passwordPolicy && strength && strength < passwordPolicy.minStrength) {
                         errors.push(i18n('validation.password.minStrength'));
                     }
 

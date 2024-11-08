@@ -10,7 +10,7 @@ import { createMultiViewWidget } from '../../components/widget/widget';
 import { simpleField } from '../../components/form/fields/simpleField';
 import { Info, Intro, Separator } from '../../components/miscComponent';
 import { createForm } from '../../components/form/formComponent';
-import phoneNumberField from '../../components/form/fields/phoneNumberField';
+import phoneNumberField, { type PhoneNumberOptions } from '../../components/form/fields/phoneNumberField';
 
 import { UserError } from '../../helpers/errors';
 
@@ -90,9 +90,20 @@ interface MainViewProps {
      * @default true
      */
     showRemoveMfaCredentials?: boolean
+    /**
+     * Phone number field options.
+     */
+    phoneNumberOptions?: PhoneNumberOptions
 }
 
-const MainView = ({ accessToken, credentials, requireMfaRegistration = false, showIntro = true, showRemoveMfaCredentials = true }: MainViewProps) => {
+const MainView = ({
+    accessToken,
+    credentials,
+    requireMfaRegistration = false,
+    showIntro = true,
+    showRemoveMfaCredentials = true,
+    phoneNumberOptions,
+}: MainViewProps) => {
     const coreClient = useReachfive()
     const config = useConfig()
     const i18n = useI18n()
@@ -152,6 +163,9 @@ const MainView = ({ accessToken, credentials, requireMfaRegistration = false, sh
                         <PhoneNumberInputForm
                             handler={onPhoneNumberRegistering}
                             onSuccess={(data: Awaited<ReturnType<typeof onPhoneNumberRegistering>>) => goTo<VerificationCodeViewState>('verification-code', {...data, registrationType: 'sms'})}
+                            sharedProps={{
+                                ...phoneNumberOptions
+                            }}
                         />
                     </div>
                 }

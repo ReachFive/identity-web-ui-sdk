@@ -45,7 +45,7 @@ export const createField = ({
 
         return {
             key,
-            render: ({ state, ...props }) => (<Component {...state} {...props} {...staticProps} />),
+            render: ({ state, ...props }) => (<Component {...state} {...staticProps} {...props} />),
             initialize: model => {
                 const modelValue = mapping.bind(model);
                 const initValue = isValued(modelValue, rawProperty) ? modelValue : defaultValue;

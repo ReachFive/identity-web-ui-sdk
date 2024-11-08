@@ -3,7 +3,7 @@
  */
 
 import { describe, expect, jest, test } from '@jest/globals';
-import renderer from 'react-test-renderer';
+import { render, waitFor } from '@testing-library/react';
 import 'jest-styled-components';
 
 import profileEditorWidget from '../../../src/widgets/profileEditor/profileEditorWidget';
@@ -13,17 +13,25 @@ const defaultConfig = {
 };
 
 describe('Snapshot', () => {
-    const generateSnapshot = (options, user, config = defaultConfig) => () => {
+    const generateSnapshot = (options, user, config = defaultConfig) => async () => {
         const apiClient = {
             getUser: jest.fn().mockReturnValueOnce(Promise.resolve(user))
         };
 
-        const tree = profileEditorWidget(
+        const widget = await profileEditorWidget(
             { ...options, accessToken: 'azerty' },
             { config, apiClient }
-        ).then(result => renderer.create(result).toJSON());
+        )
 
-        expect(tree).resolves.toMatchSnapshot();
+        await waitFor(async () => {
+            const { container, rerender } = await render(widget);
+
+            await waitFor(() => expect(apiClient.getUser).toHaveBeenCalled())
+    
+            await rerender(widget)
+
+            expect(container).toMatchSnapshot();
+        })
     };
 
     describe('profile editor', () => {
