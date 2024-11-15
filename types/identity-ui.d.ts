@@ -1,6 +1,6 @@
 /**
- * @reachfive/identity-ui - v1.28.0
- * Compiled Fri, 08 Nov 2024 09:24:35 UTC
+ * @reachfive/identity-ui - v1.29.0
+ * Compiled Fri, 15 Nov 2024 16:35:46 UTC
  *
  * Copyright (c) ReachFive.
  *
@@ -298,6 +298,11 @@ type Field = {
 
 type PhoneNumberOptions = {
     /**
+     * If `withCountryCallingCode` property is explicitly set to true then the "country calling code" part (e.g. "+1" when country is "US") is included in the input field (but still isn't editable).
+     * @default true
+     */
+    withCountryCallingCode?: boolean;
+    /**
      * If `withCountrySelect` property is `true` then the user can select the country for the phone number. Must be a supported {@link https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2#Officially_assigned_code_elements country code}.
      * @default false
      */
@@ -528,6 +533,12 @@ interface ForgotPasswordViewProps {
      */
     allowLogin?: boolean;
     /**
+     * Boolean that specifies whether password reset with phone number is enabled.
+     *
+     * @default false
+     */
+    allowPhoneNumberResetPassword?: boolean;
+    /**
      * Whether or not to display a safe error message on password reset, given an invalid email address.
      * This mode ensures not to leak email addresses registered to the platform.
      *
@@ -566,11 +577,6 @@ interface ForgotPasswordViewProps {
      * Important: This parameter should only be used with Hosted Pages.
      */
     returnToAfterPasswordReset?: string;
-}
-interface ForgotPasswordSuccessViewProps {
-    allowLogin?: boolean;
-    initialScreen?: InitialScreen;
-    allowWebAuthnLogin?: boolean;
 }
 
 interface QuickLoginViewProps {
@@ -659,7 +665,7 @@ type VerificationCodeViewProps$3 = Prettify<Partial<StepUpHandlerResponse> & {
 type MfaStepUpProps = MainViewProps$6 & FaSelectionViewProps & VerificationCodeViewProps$3;
 type MfaStepUpWidgetProps = MfaStepUpProps;
 
-interface AuthWidgetProps extends LoginViewProps, LoginWithWebAuthnViewProps, LoginWithPasswordViewProps, SignupViewProps, SignupWithPasswordViewProps, SignupWithWebAuthnViewProps, ForgotPasswordViewProps, ForgotPasswordSuccessViewProps, QuickLoginViewProps, ReauthViewProps, Omit<FaSelectionViewProps, keyof FaSelectionViewState>, Omit<VerificationCodeViewProps$3, keyof VerificationCodeViewState> {
+interface AuthWidgetProps extends LoginViewProps, LoginWithWebAuthnViewProps, LoginWithPasswordViewProps, SignupViewProps, SignupWithPasswordViewProps, SignupWithWebAuthnViewProps, ForgotPasswordViewProps, QuickLoginViewProps, ReauthViewProps, Omit<FaSelectionViewProps, keyof FaSelectionViewState>, Omit<VerificationCodeViewProps$3, keyof VerificationCodeViewState> {
     /**
      * Boolean that specifies whether quick login is enabled.
      *

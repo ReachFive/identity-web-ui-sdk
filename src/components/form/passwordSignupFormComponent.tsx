@@ -2,7 +2,7 @@ import React, { useCallback, useLayoutEffect, useState } from 'react';
 import { AuthOptions } from '@reachfive/identity-core';
 import { SignupParams } from '@reachfive/identity-core/es/main/oAuthClient';
 
-import { createForm } from './formComponent';
+import { createForm, FieldValues } from './formComponent';
 import { buildFormFields, type Field } from './formFieldFactory';
 import { UserAggreementStyle } from './formControlsComponent'
 import { type PhoneNumberOptions } from './fields/phoneNumberField';
@@ -78,10 +78,10 @@ export const PasswordSignupForm = ({
     )
 
     const refreshBlacklist = useCallback(
-        (data: Record<string, { value?: string }>) => {
-            const email = data['email'] && data['email'].value || '';
-            const givenName = data['given_name'] && data['given_name'].value || '';
-            const lastName = data['family_name'] && data['family_name'].value || '';
+        (data: FieldValues<SignupParams['data']>) => {
+            const email = data.email?.value || '';
+            const givenName = data.givenName?.value || '';
+            const lastName = data.familyName?.value || '';
 
             const list = [
                 email.split('@'),
