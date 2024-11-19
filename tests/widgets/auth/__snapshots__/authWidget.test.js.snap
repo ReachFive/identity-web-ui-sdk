@@ -7073,6 +7073,11 @@ exports[`Snapshot with webauthn feature and without password login new view with
   margin-bottom: 10px;
 }
 
+.c8 > label::after {
+  content: "\\A0*";
+  color: #dc4e41;
+}
+
 .c10 {
   display: block;
   width: 100%;
@@ -7180,6 +7185,7 @@ exports[`Snapshot with webauthn feature and without password login new view with
     >
       <div
         className="c8"
+        required={true}
       >
         <label
           className="c9"
@@ -7205,6 +7211,7 @@ exports[`Snapshot with webauthn feature and without password login new view with
       </div>
       <div
         className="c8"
+        required={true}
       >
         <label
           className="c9"
@@ -7509,6 +7516,11 @@ exports[`Snapshot with webauthn feature and without password login old view with
   margin-bottom: 10px;
 }
 
+.c8 > label::after {
+  content: "\\A0*";
+  color: #dc4e41;
+}
+
 .c10 {
   display: block;
   width: 100%;
@@ -7651,6 +7663,7 @@ exports[`Snapshot with webauthn feature and without password login old view with
     >
       <div
         className="c8"
+        required={true}
       >
         <label
           className="c9"
@@ -7803,6 +7816,11 @@ exports[`Snapshot with webauthn feature and without password signup form view wi
   margin-bottom: 10px;
 }
 
+.c3 > label::after {
+  content: "\\A0*";
+  color: #dc4e41;
+}
+
 .c5 {
   display: block;
   width: 100%;
@@ -7866,6 +7884,7 @@ exports[`Snapshot with webauthn feature and without password signup form view wi
     >
       <div
         className="c3"
+        required={true}
       >
         <label
           className="c4"
@@ -7889,6 +7908,7 @@ exports[`Snapshot with webauthn feature and without password signup form view wi
       </div>
       <div
         className="c3"
+        required={true}
       >
         <label
           className="c4"
@@ -7912,6 +7932,7 @@ exports[`Snapshot with webauthn feature and without password signup form view wi
       </div>
       <div
         className="c3"
+        required={true}
       >
         <label
           className="c4"
@@ -7936,7 +7957,13 @@ exports[`Snapshot with webauthn feature and without password signup form view wi
       </div>
       <div
         className="c3"
+        required={true}
       >
+        <label
+          className="c4"
+        >
+          password
+        </label>
         <div
           style={
             {
@@ -7944,35 +7971,24 @@ exports[`Snapshot with webauthn feature and without password signup form view wi
             }
           }
         >
-          <label
-            className="c4"
-          >
-            password
-          </label>
-          <div
-            style={
-              {
-                "position": "relative",
-              }
-            }
-          >
-            <input
-              className="c5"
-              data-testid="password"
-              name="password"
-              onBlur={[Function]}
-              onChange={[Function]}
-              onFocus={[Function]}
-              placeholder="password"
-              title="password"
-              type="password"
-              value=""
-            />
-          </div>
+          <input
+            className="c5"
+            data-testid="password"
+            name="password"
+            onBlur={[Function]}
+            onChange={[Function]}
+            onFocus={[Function]}
+            placeholder="password"
+            required={true}
+            title="password"
+            type="password"
+            value=""
+          />
         </div>
       </div>
       <div
         className="c3"
+        required={true}
       >
         <label
           className="c4"
@@ -8120,6 +8136,11 @@ exports[`Snapshot with webauthn feature and without password signup form view wi
   margin-bottom: 10px;
 }
 
+.c3 > label::after {
+  content: "\\A0*";
+  color: #dc4e41;
+}
+
 .c5 {
   display: block;
   width: 100%;
@@ -8183,6 +8204,7 @@ exports[`Snapshot with webauthn feature and without password signup form view wi
     >
       <div
         className="c3"
+        required={true}
       >
         <label
           className="c4"
@@ -8206,6 +8228,7 @@ exports[`Snapshot with webauthn feature and without password signup form view wi
       </div>
       <div
         className="c3"
+        required={true}
       >
         <label
           className="c4"
@@ -8229,6 +8252,7 @@ exports[`Snapshot with webauthn feature and without password signup form view wi
       </div>
       <div
         className="c3"
+        required={true}
       >
         <label
           className="c4"
@@ -8369,6 +8393,11 @@ exports[`Snapshot with webauthn feature and without password signup form view wi
   margin-bottom: 10px;
 }
 
+.c3 > label::after {
+  content: "\\A0*";
+  color: #dc4e41;
+}
+
 .c5 {
   display: block;
   width: 100%;
@@ -8432,6 +8461,7 @@ exports[`Snapshot with webauthn feature and without password signup form view wi
     >
       <div
         className="c3"
+        required={true}
       >
         <label
           className="c4"
@@ -8455,6 +8485,7 @@ exports[`Snapshot with webauthn feature and without password signup form view wi
       </div>
       <div
         className="c3"
+        required={true}
       >
         <label
           className="c4"
@@ -8478,6 +8509,7 @@ exports[`Snapshot with webauthn feature and without password signup form view wi
       </div>
       <div
         className="c3"
+        required={true}
       >
         <label
           className="c4"
