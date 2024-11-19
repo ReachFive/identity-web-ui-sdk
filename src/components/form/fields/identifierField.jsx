@@ -93,6 +93,7 @@ class IdentifierField extends React.Component {
             inputId,
             required = true,
             label,
+            showLabel,
             placeholder = label,
             readOnly,
             withPhoneNumber,
@@ -103,7 +104,9 @@ class IdentifierField extends React.Component {
             inputId={inputId}
             labelText={label}
             {...(({ error }) => ({ error }))(validation)}
-            showLabel={this.props.showLabel}>
+            showLabel={showLabel}
+            required={required}
+        >
             <Input
                 id={inputId}
                 name={path}

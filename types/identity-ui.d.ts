@@ -1,6 +1,6 @@
 /**
- * @reachfive/identity-ui - v1.27.0
- * Compiled Tue, 10 Sep 2024 15:15:07 UTC
+ * @reachfive/identity-ui - v1.29.0
+ * Compiled Tue, 19 Nov 2024 07:18:44 UTC
  *
  * Copyright (c) ReachFive.
  *
@@ -216,7 +216,7 @@ type I18nMessages = {
     [k: string]: string;
 };
 type I18nMessageParams = Record<string, unknown>;
-type I18nResolver$1 = (key: string, params?: I18nMessageParams) => string;
+type I18nResolver$1 = (key: string, params?: I18nMessageParams, fallback?: (params?: I18nMessageParams) => string) => string;
 
 type I18nProps$1 = {
     i18n?: I18nMessages;

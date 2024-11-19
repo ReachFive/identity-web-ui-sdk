@@ -45,20 +45,23 @@ export const LoginWithPasswordForm = createForm<LoginWithPasswordFormData, Login
     prefix: 'r5-login-',
     fields({ username, showRememberMe, canShowPassword, showForgotPassword, showAccountRecovery, i18n, config }) {
         return [
-            (config.sms) ?
-                identifierField({
-                    key: 'identifier',
-                    defaultValue: username,
-                    withPhoneNumber: true,
-                    readOnly: true,
-                }, config)
-                :
-                identifierField({
-                    key: 'identifier',
-                    defaultValue: username,
-                    withPhoneNumber: false,
-                    readOnly: true
-                }, config),
+            (config.sms)
+                ? (
+                    identifierField({
+                        key: 'identifier',
+                        defaultValue: username,
+                        withPhoneNumber: true,
+                        readOnly: true,
+                    }, config)
+                )
+                : (
+                    identifierField({
+                        key: 'identifier',
+                        defaultValue: username,
+                        withPhoneNumber: false,
+                        readOnly: true
+                    }, config)
+                ),
             simplePasswordField({
                 key: 'password',
                 label: 'password',

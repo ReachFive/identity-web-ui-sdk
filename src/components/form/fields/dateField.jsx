@@ -124,6 +124,7 @@ const DateField = ({ i18n, inputId, label, locale, onChange, path, required, sho
             labelText={label}
             error={error}
             showLabel={showLabel}
+            required={required}
         >
             <InputRow>
                 {parts.map(part => fields[part])}
