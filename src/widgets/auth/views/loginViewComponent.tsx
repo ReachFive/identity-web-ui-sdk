@@ -43,6 +43,7 @@ export interface LoginFormOptions {
     allowAuthentMailPhone?: boolean
     canShowPassword?: boolean
     defaultIdentifier?: string
+    enablePasswordAuthentication?: boolean
     showEmail?: boolean
     showForgotPassword?: boolean
     showAccountRecovery?: boolean
@@ -55,6 +56,7 @@ export const LoginForm = createForm<LoginFormData, LoginFormOptions>({
     fields({
         allowCustomIdentifier,
         allowAuthentMailPhone = true,
+        enablePasswordAuthentication = true,
         canShowPassword,
         defaultIdentifier,
         showIdentifier = true,
@@ -84,7 +86,7 @@ export const LoginForm = createForm<LoginFormData, LoginFormOptions>({
                 autoComplete: 'current-password',
                 canShowPassword
             }),
-            showForgotPassword && !showAccountRecovery && {
+            enablePasswordAuthentication && showForgotPassword && !showAccountRecovery && {
                 staticContent: (
                     <ResetCredentialWrapper key="forgot-password" floating={showRememberMe}>
                         <Link target="forgot-password">{i18n('login.forgotPasswordLink')}</Link>

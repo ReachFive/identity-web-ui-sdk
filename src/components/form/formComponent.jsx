@@ -215,7 +215,7 @@ export function createForm(config) {
         }
 
         render() {
-            const { showLabels, submitLabel, allowWebAuthnLogin, i18n, fieldValidationDebounce } = this.props;
+            const { showLabels, submitLabel, enablePasswordAuthentication, allowWebAuthnLogin, i18n, fieldValidationDebounce } = this.props;
             const { errorMessage, isLoading, fields } = this.state;
 
             return <Form noValidate onSubmit={this.handleSubmit}>
@@ -237,7 +237,7 @@ export function createForm(config) {
                         {i18n(typeof submitLabel === 'function' ? submitLabel(this.props) : submitLabel)}
                     </PrimaryButton>
                 )}
-                {allowWebAuthnLogin && this.props.webAuthnButtons(isLoading, this.handleClick)}
+                {allowWebAuthnLogin && this.props.webAuthnButtons(isLoading, enablePasswordAuthentication, this.handleClick)}
                 {showLabels && <RequiredFields>*{i18n('form.required.fields')}</RequiredFields>}
             </Form>;
         }
