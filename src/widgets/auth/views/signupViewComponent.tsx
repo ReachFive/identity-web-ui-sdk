@@ -51,7 +51,7 @@ export interface SignupViewProps extends SignupWithPasswordViewProps, SignupWith
 export const SignupView = ({
     allowLogin = true,
     initialScreen,
-    allowWebAuthnLogin = true,
+    allowWebAuthnLogin = false,
     allowWebAuthnSignup = false,
     enablePasswordAuthentication=true,
     socialProviders,
