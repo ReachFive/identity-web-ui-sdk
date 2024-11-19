@@ -1,12 +1,12 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { parseQueryString } from '../../helpers/queryString'
 
 import { Heading, Info, Link } from '../../components/miscComponent';
-import { createMultiViewWidget } from '../../components/widget/widget';
+import { createRouterWidget } from '../../components/widget/widget';
 import { PasswordEditorForm, PasswordEditorFormData } from '../passwordEditor/passwordEditorWidget'
 import { useReachfive } from '../../contexts/reachfive';
-import { useRouting } from '../../contexts/routing';
 import { useI18n } from '../../contexts/i18n';
 
 interface MainViewProps {
@@ -40,7 +40,7 @@ const MainView = ({
 }: PropsWithAuthentication<MainViewProps>) => {
     const coreClient = useReachfive()
     const i18n = useI18n()
-    const { goTo } = useRouting()
+    const navigate = useNavigate()
 
     const handleSubmit = ({ password }: PasswordEditorFormData) => {
         return coreClient.updatePassword({
@@ -51,7 +51,7 @@ const MainView = ({
 
     const handleSuccess = () => {
         onSuccess();
-        goTo('success');
+        navigate('/success');
     };
 
     return (
@@ -89,7 +89,7 @@ const SuccessView = ({ loginLink }: SuccessViewProps) => {
 
 const resolveCode = () => {
     const qs = (window.location.search && window.location.search.length)
-        ? window.location.search.substr(1)
+        ? window.location.search.substring(1)
         : '';
     const { verificationCode, email } = parseQueryString(qs)
     return { authentication: { verificationCode, email } as Authentication };
@@ -100,9 +100,9 @@ type PropsWithAuthentication<P> = P & { authentication?: Authentication }
 
 export interface PasswordResetWidgetProps extends MainViewProps, SuccessViewProps {}
 
-export default createMultiViewWidget<PasswordResetWidgetProps, PropsWithAuthentication<PasswordResetWidgetProps>>({
+export default createRouterWidget<PasswordResetWidgetProps, PropsWithAuthentication<PasswordResetWidgetProps>>({
     initialView: 'main',
-    views: {
+    routes: {
         main: MainView,
         success: SuccessView
     },

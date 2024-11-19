@@ -1,15 +1,15 @@
 import React, { useLayoutEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { email } from '../../core/validation';
 
-import { createMultiViewWidget } from '../../components/widget/widget';
+import { createRouterWidget } from '../../components/widget/widget';
 import { Info, Intro } from '../../components/miscComponent';
 import { createForm } from '../../components/form/formComponent';
 import { simpleField } from '../../components/form/fields/simpleField';
 import ReCaptcha, { importGoogleRecaptchaScript, type WithCaptchaToken } from '../../components/reCaptcha'
 import { useI18n } from '../../contexts/i18n';
 import { useReachfive } from '../../contexts/reachfive';
-import { useRouting } from '../../contexts/routing';
 
 type EmailFormData = { email: string }
 
@@ -61,7 +61,7 @@ const MainView = ({
 }: MainViewProps) => {
     const coreClient = useReachfive()
     const i18n = useI18n()
-    const { goTo } = useRouting()
+    const navigate = useNavigate()
 
     useLayoutEffect(() => {
         importGoogleRecaptchaScript(recaptcha_site_key)
@@ -71,7 +71,7 @@ const MainView = ({
         return coreClient.updateEmail({ ...data, accessToken, redirectUrl });
     }
 
-    const handleSuccess = () => goTo('success');
+    const handleSuccess = () => navigate('/success');
 
     return (
         <div>
@@ -91,9 +91,9 @@ const SuccessView = () => {
 
 export interface EmailEditorWidgetProps extends MainViewProps {}
 
-export default createMultiViewWidget<EmailEditorWidgetProps>({
+export default createRouterWidget<EmailEditorWidgetProps>({
     initialView: 'main',
-    views: {
+    routes: {
         main: MainView,
         success: SuccessView
     }

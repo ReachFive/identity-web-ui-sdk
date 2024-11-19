@@ -1,7 +1,8 @@
 import React, { useCallback } from 'react';
 import type { AuthOptions, LoginWithWebAuthnParams } from '@reachfive/identity-core'
+import styled from 'styled-components'
+import { useNavigate } from 'react-router-dom';
 
-import { LoginWithPasswordViewState } from './loginWithPasswordViewComponent';
 import { Alternative, Heading, Link, Separator } from '../../../components/miscComponent';
 import { SocialButtons } from '../../../components/form/socialButtonsComponent';
 import {
@@ -13,11 +14,9 @@ import identifierField from '../../../components/form/fields/identifierField';
 
 import { useI18n } from '../../../contexts/i18n';
 import { useReachfive } from '../../../contexts/reachfive';
-import { useRouting } from '../../../contexts/routing';
 import { useSession } from '../../../contexts/session';
 
 import { isCustomIdentifier, specializeIdentifierData } from '../../../helpers/utils';
-import styled from 'styled-components'
 
 type LoginWithWebAuthnFormData = { identifier: string } | { email: string }
 
@@ -49,7 +48,7 @@ export const LoginWithWebAuthnForm = createForm<LoginWithWebAuthnFormData, Login
             showAccountRecovery && {
                 staticContent: (
                     <ResetCredentialWrapper key="account-recovery" floating={true}>
-                    <Link target="account-recovery">{i18n('accountRecovery.title')}</Link>
+                    <Link target="/account-recovery">{i18n('accountRecovery.title')}</Link>
                     </ResetCredentialWrapper>
                 )
             }
@@ -90,7 +89,7 @@ export interface LoginWithWebAuthnViewProps {
 
 export const LoginWithWebAuthnView = ({ acceptTos, allowSignup = true, auth, showLabels = false, socialProviders, allowAccountRecovery }: LoginWithWebAuthnViewProps) => {
     const coreClient = useReachfive()
-    const { goTo } = useRouting()
+    const navigate = useNavigate()
     const i18n = useI18n()
     const session = useSession()
 
@@ -131,9 +130,9 @@ export const LoginWithWebAuthnView = ({ acceptTos, allowSignup = true, auth, sho
     const redirectToPasswordLoginView = useCallback(
         (data: LoginWithWebAuthnFormData) => {
             const username = 'identifier' in data ? data.identifier : 'email' in data ? data.email : ''
-            goTo<LoginWithPasswordViewState>('login-with-password', { username })
+            navigate('/login-with-password', { state: { username }})
         },
-        [goTo]
+        [navigate]
     )
 
     const defaultIdentifier = session?.lastLoginType === 'password' ? session.email : undefined;

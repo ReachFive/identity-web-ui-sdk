@@ -1,7 +1,7 @@
 import { type SessionInfo } from '@reachfive/identity-core'
 
 import { UserError } from '../../helpers/errors';
-import { createMultiViewWidget } from '../../components/widget/widget';
+import { createRouterWidget } from '../../components/widget/widget';
 
 import LoginView, { type LoginViewProps } from './views/loginViewComponent'
 import LoginWithWebAuthnView, { type LoginWithWebAuthnViewProps } from './views/loginWithWebAuthnViewComponent'
@@ -57,7 +57,7 @@ export function selectLogin(initialScreen?: InitialScreen, allowWebAuthnLogin?: 
     return !allowWebAuthnLogin ? 'login' : 'login-with-web-authn'
 }
 
-export default createMultiViewWidget<AuthWidgetProps, PropsWithSession<AuthWidgetProps>>({
+export default createRouterWidget<AuthWidgetProps, PropsWithSession<AuthWidgetProps>>({
     initialView({
         initialScreen,
         allowLogin = true,
@@ -80,7 +80,7 @@ export default createMultiViewWidget<AuthWidgetProps, PropsWithSession<AuthWidge
             || (allowSignup && 'signup')
             || 'forgot-password';
     },
-    views: {
+    routes: {
         'login': LoginView,
         'login-with-web-authn': LoginWithWebAuthnView,
         'login-with-password': LoginWithPasswordView,

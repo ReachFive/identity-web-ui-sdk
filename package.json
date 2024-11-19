@@ -41,6 +41,7 @@
         "react": "^16.9.24",
         "react-dom": "^16.9.24",
         "react-phone-number-input": "^3.4.3",
+        "react-router-dom": "^6.28.0",
         "react-transition-group": "4.4.2",
         "remarkable": "2.0.1",
         "validator": "^13.11.0"

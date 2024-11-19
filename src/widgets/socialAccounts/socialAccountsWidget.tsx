@@ -1,6 +1,7 @@
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { AuthOptions, Identity as CoreIdentity, Profile } from '@reachfive/identity-core';
+import { useNavigate } from 'react-router-dom';
 
 import { UserError } from '../../helpers/errors';
 
@@ -8,12 +9,11 @@ import { ProviderId, providers as socialProviders } from '../../providers/provid
 
 import { useI18n } from '../../contexts/i18n';
 import { useReachfive } from '../../contexts/reachfive';
-import { useRouting } from '../../contexts/routing';
 
 import { ErrorMessage } from '../../components/error';
 import { Card, CloseIcon } from '../../components/form/cardComponent';
 import { Link, Info, Alternative, MutedText } from '../../components/miscComponent';
-import { createMultiViewWidget } from '../../components/widget/widget';
+import { createRouterWidget } from '../../components/widget/widget';
 import { SocialButtons } from '../../components/form/socialButtonsComponent';
 import { DefaultButton } from '../../components/form/buttonComponent';
 
@@ -41,8 +41,8 @@ const withIdentities = <T extends WithIdentitiesProps = WithIdentitiesProps>(
     const displayName = WrappedComponent.displayName || WrappedComponent.name || "Component";
 
     const ComponentWithIdentities = (props: Omit<T, 'identities' | 'unlink'>) => {
+        const navigate = useNavigate()
         const coreClient = useReachfive()
-        const { goTo } = useRouting()
         const [identities, setIdentities] = useState<Identity[]>([])
 
         const refresh = useCallback(() => {
@@ -70,8 +70,8 @@ const withIdentities = <T extends WithIdentitiesProps = WithIdentitiesProps>(
 
         const handleAuthenticated = useCallback(() => {
             refresh()
-            goTo('links')
-        }, [goTo, refresh])
+            navigate('/links')
+        }, [navigate, refresh])
 
         useEffect(() => {
             if (props.auth?.popupMode) {
@@ -159,14 +159,14 @@ interface SocialAccountsProps {
 
 const SocialAccounts = withIdentities(({ identities = [], providers, unlink }: SocialAccountsProps) => {
     const i18n = useI18n()
-    const { goTo } = useRouting()
+    const navigate = useNavigate()
     const availableProviders = findAvailableProviders(providers, identities)
     return (
         <Fragment>
             <IdentityList identities={identities} unlink={unlink} />
             {availableProviders.length > 0 && (
                 <AvailableProvider>
-                    <DefaultButton onClick={() => goTo('link-account')}>
+                    <DefaultButton onClick={() => navigate('/link-account')}>
                         {i18n('socialAccounts.linkNewAccount')}
                     </DefaultButton>
                 </AvailableProvider>
@@ -190,7 +190,7 @@ const LinkAccount = withIdentities(({ auth, accessToken, identities = [], provid
         <Fragment>
             <SocialButtons providers={availableProviders} auth={{ ...auth, accessToken }} />
             <Alternative>
-                <Link target="links">{i18n('back')}</Link>
+                <Link target="/links">{i18n('back')}</Link>
             </Alternative>
         </Fragment>
     )
@@ -218,14 +218,14 @@ interface SocialAccountsWidgetPropsPrepared extends
     Omit<LinkAccountProps, 'identities' | 'unlink'>
     {}
 
-export default createMultiViewWidget<SocialAccountsWidgetProps, SocialAccountsWidgetPropsPrepared>({
+export default createRouterWidget<SocialAccountsWidgetProps, SocialAccountsWidgetPropsPrepared>({
     initialView: 'links',
-    views: {
+    routes: {
         'links': SocialAccounts,
         'link-account': LinkAccount
     },
     prepare: (options, { config }) => ({
-        providers: options.providers || (config.socialProviders as string[]),
+        providers: options.providers || config.socialProviders,
         ...options,
     }),
 });

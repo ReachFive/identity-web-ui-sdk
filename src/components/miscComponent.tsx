@@ -2,7 +2,7 @@ import React, { AnchorHTMLAttributes, ComponentType, HTMLAttributes, MouseEvent 
 
 import { Remarkable } from 'remarkable';
 import styled from 'styled-components';
-import { useRouting } from '../contexts/routing'
+import { useNavigate } from 'react-router-dom';
 
 export const Heading = styled.div`
     margin-bottom: ${props => props.theme.spacing * 1.5}px;
@@ -74,12 +74,12 @@ export const Alternative = styled.div`
 `;
 
 export const Link = styled(({ target, href = '#', children, className, controller }: {controller?: AbortController} & AnchorHTMLAttributes<HTMLAnchorElement>) => {
-    const { goTo } = useRouting()
+    const navigate = useNavigate()
 
     const onClick = target ? ((e: MouseEvent<HTMLAnchorElement>) => {
         controller?.abort(`Going to ${target}`)
         e.preventDefault();
-        goTo(target);
+        navigate(target);
     }) : (() => { });
 
     return (

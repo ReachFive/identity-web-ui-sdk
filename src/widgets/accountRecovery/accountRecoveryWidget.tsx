@@ -1,16 +1,16 @@
 import React from 'react';
+import styled from 'styled-components'
+import { useNavigate } from 'react-router-dom';
 
 import { parseQueryString } from '../../helpers/queryString'
 
 import { Alternative, Heading, Info, Link, Intro, Separator } from '../../components/miscComponent';
-import { createMultiViewWidget } from '../../components/widget/widget';
+import { createRouterWidget } from '../../components/widget/widget';
 import { useReachfive } from '../../contexts/reachfive';
-import { useRouting } from '../../contexts/routing';
 import { useI18n } from '../../contexts/i18n';
 import { createForm } from '../../components/form/formComponent'
 import { PasswordEditorForm, PasswordEditorFormData } from '../passwordEditor/passwordEditorWidget.tsx'
 import { ReactComponent as Passkeys } from '../../icons/passkeys.svg'
-import styled from 'styled-components'
 
 
 interface MainViewProps {
@@ -79,7 +79,7 @@ const NewPasskey = ({
                     }: PropsWithAuthentication<MainViewProps>) => {
     const coreClient = useReachfive()
     const i18n = useI18n()
-    const {goTo} = useRouting()
+    const navigate = useNavigate()
 
     const handleSubmit = () => {
         return coreClient.resetPasskeys({
@@ -91,7 +91,7 @@ const NewPasskey = ({
 
     const handleSuccess = () => {
         onSuccess();
-        goTo('passkey-success');
+        navigate('/passkey-success');
     };
 
     return (
@@ -108,7 +108,7 @@ const NewPasskey = ({
             {allowCreatePassword &&
                 <Alternative>
                     <Separator text={i18n('or')} />
-                    <Intro><Link target="new-password">Create a new password</Link></Intro>
+                    <Intro><Link target="/new-password">Create a new password</Link></Intro>
                 </Alternative>
             }
         </div>
@@ -157,7 +157,7 @@ export const NewPasswordView = ({
                          }: PropsWithAuthentication<MainViewProps>) => {
     const coreClient = useReachfive()
     const i18n = useI18n()
-    const { goTo } = useRouting()
+    const navigate = useNavigate()
 
     const handleSubmit = ({ password }: PasswordEditorFormData) => {
         return coreClient.updatePassword({
@@ -168,7 +168,7 @@ export const NewPasswordView = ({
 
     const handleSuccess = () => {
         onSuccess();
-        goTo('password-success');
+        navigate('/password-success');
     };
 
     return (
@@ -181,7 +181,7 @@ export const NewPasswordView = ({
                 onSuccess={handleSuccess}
                 onError={onError} />
             <Alternative>
-                <Link target="new-passkey">Back</Link>
+                <Link target="/new-passkey">Back</Link>
             </Alternative>
         </div>
     )
@@ -189,7 +189,7 @@ export const NewPasswordView = ({
 
 const resolveCode = () => {
     const qs = (window.location.search && window.location.search.length)
-        ? window.location.search.substr(1)
+        ? window.location.search.substring(1)
         : '';
     const {verificationCode, email, clientId} = parseQueryString(qs)
     return {authentication: { verificationCode, email, clientId } as Authentication};
@@ -201,9 +201,9 @@ type PropsWithAuthentication<P> = P & { authentication: Authentication }
 export interface AccountRecoveryWidgetProps extends MainViewProps, SuccessViewProps {
 }
 
-export default createMultiViewWidget<AccountRecoveryWidgetProps, PropsWithAuthentication<AccountRecoveryWidgetProps>>({
+export default createRouterWidget<AccountRecoveryWidgetProps, PropsWithAuthentication<AccountRecoveryWidgetProps>>({
     initialView: 'new-passkey',
-    views: {
+    routes: {
         'new-passkey': NewPasskey,
         'new-password': NewPasswordView,
         'passkey-success': PasskeySuccessView,

@@ -1,10 +1,11 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { AuthOptions, MFA, PasswordlessResponse } from '@reachfive/identity-core';
 import { PasswordlessParams } from '@reachfive/identity-core/es/main/oAuthClient';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import { Prettify, RequiredProperty } from '../../types'
 
-import {createMultiViewWidget} from '../../components/widget/widget';
+import {createRouterWidget} from '../../components/widget/widget';
 import {createForm} from '../../components/form/formComponent';
 import radioboxField from '../../components/form/fields/radioboxField';
 import {Info, Intro} from '../../components/miscComponent';
@@ -13,7 +14,6 @@ import {simpleField} from '../../components/form/fields/simpleField';
 import { toQueryString } from '../../helpers/queryString';
 
 import { useReachfive } from '../../contexts/reachfive';
-import { useRouting } from '../../contexts/routing';
 import { useI18n } from '../../contexts/i18n';
 
 const StartStepUpMfaButton = createForm({
@@ -85,7 +85,7 @@ export interface MainViewProps {
 
 export const MainView = ({ accessToken, auth, showIntro = true, showStepUpStart = true }: MainViewProps) => {
     const coreClient = useReachfive()
-    const { goTo } = useRouting()
+    const navigate = useNavigate()
 
     const [response, setResponse] = useState<MFA.StepUpResponse | undefined>()
 
@@ -112,7 +112,7 @@ export const MainView = ({ accessToken, auth, showIntro = true, showStepUpStart 
         return (
             <StartStepUpMfaButton
                 handler={onGetStepUpToken}
-                onSuccess={(data: MFA.StepUpResponse) => goTo<FaSelectionViewState>('fa-selection', { ...data })}
+                onSuccess={(data: MFA.StepUpResponse) => navigate('/fa-selection', { state: { ...data } })}
             />
         )
     }
@@ -139,8 +139,8 @@ type StepUpHandlerResponse = StepUpResponse & StartPasswordlessFormData
 export const FaSelectionView = (props: FaSelectionViewProps) => {
     const coreClient = useReachfive()
     const i18n = useI18n()
-    const { params } = useRouting()
-    const state = params as FaSelectionViewState
+    const location = useLocation()
+    const state = location.state as FaSelectionViewState
 
     const { amr, showIntro = true, token } = { ...props, ...state }
 
@@ -192,8 +192,8 @@ export type VerificationCodeViewProps = Prettify<Partial<StepUpHandlerResponse> 
 export const VerificationCodeView = (props: VerificationCodeViewProps) => {
     const coreClient = useReachfive()
     const i18n = useI18n()
-    const { params } = useRouting()
-    const state = params as VerificationCodeViewState
+    const location = useLocation()
+    const state = location.state as VerificationCodeViewState
 
     const { auth, authType, challengeId } = { ...props, ...state }
 
@@ -216,9 +216,9 @@ export type MfaStepUpProps = MainViewProps & FaSelectionViewProps & Verification
 
 export type MfaStepUpWidgetProps = MfaStepUpProps
 
-export default createMultiViewWidget<MfaStepUpWidgetProps, MfaStepUpProps>({
+export default createRouterWidget<MfaStepUpWidgetProps, MfaStepUpProps>({
     initialView: 'main',
-    views: {
+    routes: {
         'main': MainView,
         'fa-selection': FaSelectionView,
         'verification-code': VerificationCodeView

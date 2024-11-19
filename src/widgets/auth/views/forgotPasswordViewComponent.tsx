@@ -1,5 +1,6 @@
 import React, { useCallback, useLayoutEffect } from 'react';
 import { RequestPasswordResetParams } from '@reachfive/identity-core/es/main/profileClient';
+import { useNavigate } from 'react-router-dom';
 
 import { AppError } from '../../../helpers/errors'
 
@@ -11,7 +12,6 @@ import { simpleField } from '../../../components/form/fields/simpleField';
 import ReCaptcha, {importGoogleRecaptchaScript} from '../../../components/reCaptcha';
 
 import { useI18n } from '../../../contexts/i18n'
-import { useRouting } from '../../../contexts/routing';
 import { useReachfive } from '../../../contexts/reachfive';
 import { selectLogin } from '../authWidget.tsx';
 import { InitialScreen } from '../../../../constants.ts';
@@ -92,7 +92,7 @@ export const ForgotPasswordView = ({
     returnToAfterPasswordReset,
 }: ForgotPasswordViewProps) => {
     const coreClient = useReachfive()
-    const { goTo } = useRouting()
+    const navigate = useNavigate()
     const i18n = useI18n()
 
     const callback = useCallback((data: RequestPasswordResetParams) =>
@@ -116,7 +116,7 @@ export const ForgotPasswordView = ({
             <ForgotPasswordForm
                 showLabels={showLabels}
                 handler={callback}
-                onSuccess={() => goTo('forgot-password-success')}
+                onSuccess={() => navigate('/forgot-password-success')}
                 skipError={displaySafeErrorMessage && skipError} />
             {allowLogin && <Alternative>
                 <Link target={selectLogin(initialScreen, allowWebAuthnLogin)}>{i18n('forgotPassword.backToLoginLink')}</Link>
