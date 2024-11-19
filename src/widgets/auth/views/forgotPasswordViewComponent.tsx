@@ -19,6 +19,7 @@ import passwordField from '../../../components/form/fields/passwordField.tsx';
 import simplePasswordField from '../../../components/form/fields/simplePasswordField';
 import { DefaultButton } from '../../../components/form/buttonComponent.tsx';
 import { Validator } from '../../../core/validation.ts';
+import { useConfig } from '../../../contexts/config.tsx';
 
 type EmailIdentifier = { email: string }
 type PhoneNumberIdentifier = { phoneNumber: string }
@@ -168,6 +169,7 @@ export const ForgotPasswordView = ({
     returnToAfterPasswordReset,
 }: ForgotPasswordViewProps) => {
     const coreClient = useReachfive()
+    const config = useConfig()
     const { goTo } = useRouting()
     const i18n = useI18n()
 
@@ -199,7 +201,7 @@ export const ForgotPasswordView = ({
                 onSuccess={onSuccess}
                 skipError={displaySafeErrorMessage && skipError}
             />
-            {allowPhoneNumberResetPassword && (
+            {allowPhoneNumberResetPassword && config.sms && (
                 <Alternative>
                     <DefaultButton onClick={() => goTo('forgot-password-phone-number')}>{i18n('forgotPassword.usePhoneNumberButton')}</DefaultButton>
                 </Alternative>
