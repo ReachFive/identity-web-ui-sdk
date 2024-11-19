@@ -61,11 +61,12 @@ const ButtonsSeparator = styled.div`
 
 export interface WebAuthnLoginViewButtonsProps {
     disabled?: ButtonProps['disabled']
+    enablePasswordAuthentication?: boolean
     onPasswordClick: ButtonProps['onClick']
     className?: classes.Argument
 }
 
-export const WebAuthnLoginViewButtons = styled(({ disabled, onPasswordClick, className, ...props }: WebAuthnLoginViewButtonsProps) => {
+export const WebAuthnLoginViewButtons = styled(({ disabled, enablePasswordAuthentication, onPasswordClick, className, ...props }: WebAuthnLoginViewButtonsProps) => {
     const i18n = useI18n()
     return (
         <div className={classes(['r5-webauthn-login-buttons'], className)}>
@@ -79,15 +80,18 @@ export const WebAuthnLoginViewButtons = styled(({ disabled, onPasswordClick, cla
                 <FingerPrintIcon />
             </PrimaryButtonWithIcon>
 
-            <ButtonsSeparator>{i18n('or')}</ButtonsSeparator>
+            { enablePasswordAuthentication && <>
+                    <ButtonsSeparator>{i18n('or')}</ButtonsSeparator>
 
-            <PrimaryButtonWithIcon
-                dataTestId="password-button"
-                title={i18n('login.withPassword')}
-                disabled={disabled}
-                onClick={onPasswordClick}>
-                <KeyboardIcon />
-            </PrimaryButtonWithIcon>
+                    <PrimaryButtonWithIcon
+                        dataTestId="password-button"
+                        title={i18n('login.withPassword')}
+                        disabled={disabled}
+                        onClick={onPasswordClick}>
+                        <KeyboardIcon />
+                    </PrimaryButtonWithIcon>
+                </>
+            }
         </div>
     )
 })`
@@ -100,12 +104,13 @@ export const WebAuthnLoginViewButtons = styled(({ disabled, onPasswordClick, cla
 `;
 
 export interface WebAuthnSignupViewButtonsProps {
+    enablePasswordAuthentication?: boolean,
     onBiometricClick: ButtonProps['onClick']
     onPasswordClick: ButtonProps['onClick']
     className?: classes.Argument
 }
 
-export const WebAuthnSignupViewButtons = styled(({ onBiometricClick, onPasswordClick, className }: WebAuthnSignupViewButtonsProps) => {
+export const WebAuthnSignupViewButtons = styled(({ enablePasswordAuthentication, onBiometricClick, onPasswordClick, className }: WebAuthnSignupViewButtonsProps) => {
     const i18n = useI18n()
     return (
         <div className={classes(['r5-webauthn-signup-buttons'], className)}>
@@ -117,15 +122,18 @@ export const WebAuthnSignupViewButtons = styled(({ onBiometricClick, onPasswordC
             <FingerPrintIcon />
         </PrimaryButtonWithIcon>
 
-        <Separator text={i18n('or')} />
+        { enablePasswordAuthentication && <>
+                <Separator text={i18n('or')} />
 
-        <PrimaryButtonWithIcon
-            dataTestId="password-button"
-            onClick={onPasswordClick}
-            title={i18n('signup.withPassword')}
-            text={i18n('password')}>
-            <KeyboardIcon />
-        </PrimaryButtonWithIcon>
+                <PrimaryButtonWithIcon
+                    dataTestId="password-button"
+                    onClick={onPasswordClick}
+                    title={i18n('signup.withPassword')}
+                    text={i18n('password')}>
+                    <KeyboardIcon />
+                </PrimaryButtonWithIcon>
+            </>
+        }
     </div>
     )
 })``;
