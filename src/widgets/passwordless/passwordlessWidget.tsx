@@ -35,9 +35,14 @@ const EmailInputForm = createForm<EmailFormData>({
 
 type PhoneNumberFormFata = { phoneNumber: string, captchaToken?: string }
 
-const phoneNumberInputForm = (config: Config) => createForm<PhoneNumberFormFata>({
+const phoneNumberInputForm = (config: Config) => createForm<PhoneNumberFormFata, { phoneNumberOptions?: PhoneNumberOptions }>({
     prefix: 'r5-passwordless-sms-',
-    fields: [phoneNumberField({ required: true }, config)]
+    fields: ({ phoneNumberOptions }) => ([
+        phoneNumberField({
+            required: true,
+            ...phoneNumberOptions,
+        }, config)
+    ])
 });
 
 type VerificationCodeFormData = { verificationCode: string }
@@ -145,9 +150,7 @@ const MainView = ({
             {!isEmail && <PhoneNumberInputForm
                 handler={(data: PhoneNumberFormFata) => ReCaptcha.handle(data, { recaptcha_enabled, recaptcha_site_key }, callback, "passwordless_phone")}
                 onSuccess={handleSuccess}
-                sharedProps={{
-                    ...phoneNumberOptions
-                }}
+                phoneNumberOptions={phoneNumberOptions}
             />}
         </div>
     )

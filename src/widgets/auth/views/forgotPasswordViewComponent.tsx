@@ -6,7 +6,7 @@ import { email } from '../../../core/validation';
 import { Heading, Intro, Info, Link, Alternative } from '../../../components/miscComponent';
 
 import { createForm, FormContext } from '../../../components/form/formComponent';
-import phoneNumberField from '../../../components/form/fields/phoneNumberField';
+import phoneNumberField, { type PhoneNumberOptions } from '../../../components/form/fields/phoneNumberField';
 import { simpleField } from '../../../components/form/fields/simpleField';
 import ReCaptcha, {importGoogleRecaptchaScript} from '../../../components/reCaptcha';
 
@@ -43,15 +43,16 @@ const ForgotPasswordEmailForm = createForm<ForgotPasswordEmailFormData>({
     submitLabel: 'forgotPassword.submitLabel'
 });
 
-const ForgotPasswordPhoneNumberForm = createForm<ForgotPasswordPhoneNumberFormData>({
+const ForgotPasswordPhoneNumberForm = createForm<ForgotPasswordPhoneNumberFormData, { phoneNumberOptions?: PhoneNumberOptions }>({
     prefix: 'r5-forgot-password-',
-    fields({ config }) {
+    fields({ config, phoneNumberOptions }) {
         return [
             phoneNumberField({
                 key: 'phoneNumber',
                 label: 'phoneNumber',
                 required: true,
                 withCountryCallingCode: false,
+                ...phoneNumberOptions,
             }, config)
         ]
     },
@@ -136,6 +137,10 @@ export interface ForgotPasswordViewProps {
      */
     allowWebAuthnLogin?: boolean
     /**
+     * Phone number field options.
+     */
+    phoneNumberOptions?: PhoneNumberOptions
+    /**
      * Boolean that specifies whether reCAPTCHA is enabled or not.
      */
     recaptcha_enabled?: boolean
@@ -162,8 +167,8 @@ export const ForgotPasswordView = ({
     displaySafeErrorMessage = false,
     showLabels = false,
     allowWebAuthnLogin = false,
-    recaptcha_enabled = false,
     initialScreen,
+    recaptcha_enabled = false,
     recaptcha_site_key,
     redirectUrl,
     returnToAfterPasswordReset,
@@ -220,8 +225,9 @@ export const ForgotPasswordPhoneNumberView = ({
     displaySafeErrorMessage = false,
     showLabels = false,
     allowWebAuthnLogin = false,
-    recaptcha_enabled = false,
     initialScreen,
+    phoneNumberOptions,
+    recaptcha_enabled = false,
     recaptcha_site_key,
     redirectUrl,
     returnToAfterPasswordReset,
@@ -260,6 +266,7 @@ export const ForgotPasswordPhoneNumberView = ({
                 handler={callback}
                 onSuccess={onSuccess}
                 skipError={displaySafeErrorMessage && skipError}
+                phoneNumberOptions={phoneNumberOptions}
             />
             <Alternative>
                 <DefaultButton onClick={() => goTo('forgot-password')}>{i18n('forgotPassword.useEmailButton')}</DefaultButton>
@@ -278,8 +285,6 @@ export const ForgotPasswordCodeView = ({
     displaySafeErrorMessage = false,
     initialScreen,
     allowWebAuthnLogin = false,
-    redirectUrl,
-    returnToAfterPasswordReset,
     showLabels = false
 }: ForgotPasswordViewProps) => {
     const coreClient = useReachfive()
@@ -288,9 +293,12 @@ export const ForgotPasswordCodeView = ({
 
     const callback = useCallback(
         ({ passwordConfirmation: _, ...data }: VerificationCodeFormData) => {
-            return coreClient.updatePassword({ ...(params as PhoneNumberIdentifier), ...data })
+            return coreClient.updatePassword({
+                ...(params as PhoneNumberIdentifier),
+                ...data,
+            })
         },
-        [coreClient, redirectUrl, returnToAfterPasswordReset]
+        [coreClient, params]
     )
 
     return (
