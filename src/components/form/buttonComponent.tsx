@@ -73,7 +73,11 @@ export const Button = styled(({ tagname = 'button', className, extendedClasses, 
     }
 `;
 
-export const DefaultButton = withTheme(props => (
+interface DefaultButtonProps extends Omit<ButtonProps, 'background' | 'border' | 'color'> {
+    theme: DefaultTheme
+}
+
+export const DefaultButton = withTheme((props: PropsWithChildren<DefaultButtonProps>) => (
     <Button {...props} background="#ffffff" border={props.theme.borderColor} color={props.theme.textColor} />
 ));
 

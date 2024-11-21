@@ -5,7 +5,20 @@ import type { WithI18n } from '../../contexts/i18n'
 
 import type { AppError } from '../../helpers/errors'
 
-import type { FieldCreator } from './fieldCreator'
+import type { FieldCreator, FieldValue } from './fieldCreator'
+
+/** @todo to refine */
+type FormContext<T> = {
+    errorMessage?: string
+    fields: FieldValues<T>
+    hasErrors?: boolean
+    isLoading?: boolean
+    isSubmitted: boolean,
+}
+
+type FieldValues<T> = {
+    [K in keyof T]: FieldValue<T[K]>
+}
 
 export interface PasswordPolicy {
     minLength: number
@@ -19,7 +32,7 @@ export interface FormOptions<P = {}> {
     fields?: FieldCreator[] | ((props: WithConfig<WithI18n<P>>) => FieldCreator[])
     resetAfterSuccess?: boolean
     resetAfterError?: boolean
-    submitLabel?: string
+    submitLabel?: string | ((props: WithConfig<P>) => string)
     supportMultipleSubmits?: boolean
     webAuthnButtons?: (disabled: boolean, enablePasswordAuthentication: boolean, clickHandler: (event: MouseEvent) => void) => ReactNode
 }
@@ -30,7 +43,7 @@ export type WithFormProps<T, P = {}> = P & FormOptions<P> & {
     handler?: (data: T) => Promise<unknown | void>
     initialModel?: T
     onError?: (error: Error | AppError) => void
-    onFieldChange?: (data: Record<string, { value?: string }>) => void
+    onFieldChange?: (data: FieldValues<T>) => void
     onSuccess?: (result) => void
     redirect?: (data: T) => void
     supportMultipleSubmits?: boolean

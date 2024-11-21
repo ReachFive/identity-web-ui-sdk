@@ -132,11 +132,11 @@ export function debounce(func: (...args: unknown[]) => void, delay: number, { le
     let timerId: NodeJS.Timeout
 
     return (...args: unknown[]) => {
-      if (!timerId && leading) {
-        func(...args)
-      }
-      clearTimeout(timerId)
+        if (!timerId && leading) {
+            func(...args)
+        }
+        clearTimeout(timerId)
 
-      timerId = setTimeout(() => func(...args), delay)
+        timerId = setTimeout(() => func(...args), delay)
     }
-  }
+}
