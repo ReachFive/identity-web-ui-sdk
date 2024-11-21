@@ -7,6 +7,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.30.0] - 2024-11-21
+
+## Added
+
+- Add a `allowPhoneNumberResetPassword` boolean option to the `showAuth` widget to allow the ability to process a password reset request by phone number
+
 ## [1.29.0] - 2024-11-08
 
 ## Changes
@@ -493,7 +499,9 @@ The eye icon is now correctly displayed in the Auth widget.
 
 First version of the SDK Web UI.
 
-[Unreleased]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.29.0...HEAD
+[Unreleased]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.30.0...HEAD
+
+[1.30.0]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.29.0...v1.30.0
 
 [1.29.0]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.28.0...v1.29.0
 
