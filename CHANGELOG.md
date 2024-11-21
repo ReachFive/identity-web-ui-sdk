@@ -9,19 +9,19 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [1.30.0] - 2024-11-21
 
-## Added
+### Added
 
 - Add a `allowPhoneNumberResetPassword` boolean option to the `showAuth` widget to allow the ability to process a password reset request by phone number
 
 ## [1.29.0] - 2024-11-08
 
-## Changes
+### Changed
 - Display additional info on registered passkeys
 - Upgrade SDK Core dependency to 1.34.0
 
 ## [1.28.0] - 2024-10-10
 
-## Added
+### Added
 
 - Add a `allowAuthentMailPhone` boolean option to hide email and password field (keep only custom identifier) on login widget
 - Add a possibility to display a country selector on phone number fields
@@ -29,29 +29,29 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Add visual marker to labels for required fields
 - Add possibility to define custom labels for social buttons
 
-## Fixes
+### Fixed
 
 - [showSocialAccounts] Link : afficher le bon variant et non celui par défaut
 
 ## [1.27.0] - 2024-05-16
 
-## Added
+### Added
 
 - Add new widgets for account recovery (Passkeys)
 
 ## [1.26.1] - 2024-04-19
 
-## Added
+### Added
 
 - Add a second UI for login with passkey: choose between integrated password and passkey with `initialScreen: 'login'` or separated password and passkey with `initialScreen: 'login-with-web-authn'`
 
 ## [1.26.0] - 2024-03-25
 
-## Added
+### Added
 
 - Discoverable login for passkey in `showAuth` when `allowWebAuthnLogin` is activated
 
-### Fixes
+### Fixed
 
 - MFA stepUp main view initialization and rendering conditions
 - Better global error message handling
@@ -59,31 +59,31 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [1.25.7] - 2024-04-03
 
-### Fixes
+### Fixed
 
 - Replace lookbehind regular exepression because it's not yet implemented on Safari iOS <16.4
 
 ## [1.25.6] - 2024-03-26
 
-### Fixes
+### Fixed
 
 - Don't override user form value with initial model form's prop
 
 ## [1.25.4] - 2024-03-22
 
-### Changes
+### Changed
 
 - Remove 'loadash' dependency
 - Use `CSSProperties` type from 'styled-components' instead of `CSS` from 'CSS'.
 
-### Fixes
+### Fixed
 
 - Field props should be updated when form's props changes.
 - Email validation should not be triggered when trying to login with a custom identifier
 
 ## [1.25.3] - 2024-03-08
 
-### Fixes
+### Fixed
 
 - Make `@rollup/rollup-linux-x64-gnu` dependency optional
 - Fix React hook warning due to mismatch of React versions
@@ -93,13 +93,13 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [1.25.2] - 2024-02-21
 
-### Fixes
+### Fixed
 
 - Fix types definitions bundling
 
 ## [1.25.1] - 2024-02-19
 
-### Fixes
+### Fixed
 
 - Fix bundle dependencies embeding
 
@@ -109,7 +109,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - TypeScript migration
 
-### Fixes
+### Fixed
 
 - Fix dateField validation when value is empty
 - Show API error when trying to unlink a social account with a non-fresh access_token
@@ -122,7 +122,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [1.23.1] - 2023-12-12
 
-### Fixes
+### Fixed
 
 - Handle provider variants correctly in showSocialAccount.
 
@@ -137,7 +137,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - User interface enhancement on date type field.
 
-### Fixes
+### Fixed
 
 - AccessToken is no more required in passwordless code verification workflow.
 
@@ -147,20 +147,20 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - Add Ping provider
 
-### Fixes
+### Fixed
 
 - Fix dateField validation import
 - Fix identifierField error when initilized with an empty value
 
 ## [1.20.2] - 2023-10-02
 
-### Fixes
+### Fixed
 
 - Set buffer as dependency instead of using Node module.
 
 ## [1.20.1] - 2023-09-29
 
-### Fixes
+### Fixed
 
 - Fix import types
 
@@ -179,7 +179,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Validation on birthdate month and day compatibility + add age restriction message [#141](https://github.com/ReachFive/identity-web-ui-sdk/pull/141)
 - Upgrade libphonenumber version to 1.10.44 [#146](https://github.com/ReachFive/identity-web-ui-sdk/pull/146)
 
-### Fixes
+### Fixed
 
 - Fix issue when consentField is missing [#144](https://github.com/ReachFive/identity-web-ui-sdk/pull/144)
 
@@ -188,7 +188,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Added
 Support the social provider Naver
 
-### Fixes
+### Fixed
 Wrong consent version from profile in signup/profile editor forms
 
 ## [1.18.0] - 2022-12-12
@@ -207,20 +207,20 @@ New widget for MFA credentials listing
 New widget for registering and/or removing MFA credentials
 New widget for MFA step up
 
-### Fixes
+### Fixed
 
 Use actual consent language in the signup payload.
 
 
 ## [1.16.2] - 2022-08-03
 
-### Fixes
+### Fixed
 
 Upgrade identity-web-core-sdk version to 1.24.1
 
 ## [1.16.1] - 2022-07-29
 
-### Fixes
+### Fixed
 
 Fix code validation in passwordless widget.
 
@@ -230,7 +230,7 @@ Fix code validation in passwordless widget.
 
 Upgrade identity-web-core-sdk version to 1.24.0
 
-### Fixes
+### Fixed
 
 Fix consents UI in profile editor component.
 
@@ -248,7 +248,7 @@ Fix consents UI in profile editor component.
 - If the SMS feature is enabled for the account, login forms accept a phone number as the identifier.
 - Version of consents can be displayed.
 
-### Fixes
+### Fixed
 
 Signup field `phone_number` for `showAuth` can now be made mandatory.
 
@@ -268,13 +268,13 @@ Upgrade identity-web-core-sdk version to 1.20.1
 
 ## [1.11.7] - 2020-03-09
 
-### Fixes
+### Fixed
 
 Fix the values of the `data-test-id` props for the `showAuth` widget.
 
 ## [1.11.6] - 2020-01-27
 
-### Fixes
+### Fixed
 
 The [`returnToAfterEmailConfirmation`](https://developer.reachfive.com/sdk-ui/showAuth.html#returnToAfterEmailConfirmation) parameter is now taken into account in the 'Signup with biometrics' form.
 
@@ -284,7 +284,7 @@ The Instagram social provider is removed.
 
 ## [1.11.5] - 2020-12-10
 
-### Fixes
+### Fixed
 
 - Update Apple social login button style.
 - Upgrade SDK Core dependency version.
@@ -295,13 +295,13 @@ Revamp of this changelog to follow [Keep a Changelog](https://keepachangelog.com
 
 ## [1.11.4] - 2020-11-12
 
-### Fixes
+### Fixed
 
 Temporary revert the SDK Core dependency version to solve the login with PKCE in hosted pages.
 
 ## [1.11.3] - 2020-11-10
 
-### Fixes
+### Fixed
 
 - The [showAuth](https://developer.reachfive.com/sdk-ui/showAuth.html) widget can now handle signup with biometrics if
   the `allowWebAuthnSignup` option is enabled. This Features is also available on the Hosted Pages.
@@ -317,7 +317,7 @@ the [showAuth](https://developer.reachfive.com/sdk-ui/showAuth.html) widget.
 
 ## [1.11.1] - 2020-10-28
 
-### Fixes
+### Fixed
 
 Revert the new check rule for password strength since the wordings are not yet deployed.
 
@@ -334,7 +334,7 @@ New changes were made on the [showAuth](https://developer.reachfive.com/sdk-ui/s
 
 ## [1.10.1] - 2020-10-19
 
-### Fixes
+### Fixed
 
 Revert the latest FIDO2 signup Features since it's breaking the style of Hosted Pages.
 
@@ -351,7 +351,7 @@ the `allowWebAuthnSignup` option is enabled.
 
 Always override account `opt-out` consents.
 
-### Fixes
+### Fixed
 
 Fixes the CircleCi job to deploy a new version.
 
@@ -386,7 +386,7 @@ management of the user’s registered FIDO2 devices.
 
 ## [1.4.1] - 2020-06-18
 
-### Fixes
+### Fixed
 
 The UI SDK now uses the latest version of the Core SDK.
 
@@ -399,7 +399,7 @@ allow a user to login with biometrics.
 
 ## [1.3.0] - 2020-05-29
 
-### Fixes
+### Fixed
 
 Call only the validation methods when the field is required or when the value is not empty.
 
@@ -410,20 +410,20 @@ Call only the validation methods when the field is required or when the value is
 
 ## [1.2.1] - 2020-04-20
 
-### Fixes
+### Fixed
 
 The `showRememberMe` check box now properly sets the boolean `persistent` field into `auth` options object with
 the `showAuth` component.
 
 ## [1.2.0] - 2020-04-17
 
-### Fixes
+### Fixed
 
 The UI SDK now uses the latest version of the Core SDK.
 
 ## [1.1.0] - 2020-04-16
 
-### Fixes
+### Fixed
 
 The [showRememberMe](https://developer.reachfive.com/sdk-ui/showAuth.html#showRememberMe) option is now taken into
 account.
@@ -446,7 +446,7 @@ The _display password in clear text_ option can now be enabled on the password r
 
 ## [1.0.0-alpha.8] - 2020-02-06
 
-### Fixes
+### Fixed
 
 The UI SDK uses now the latest version of the Core SDK.
 
@@ -459,13 +459,13 @@ signup.
 
 ## [1.0.0-alpha.6] - 2020-01-22
 
-### Fixes
+### Fixed
 
 The bundles are no longer in the `build` folder but in the folder associated with their format (`umd`, `cjs` and `es`).
 
 ## [1.0.0-alpha.5] - 2020-01-21
 
-### Fixes
+### Fixed
 
 Passwords in the French dictionary were considered good enough while they weren't.
 
@@ -484,7 +484,7 @@ Passwords in the French dictionary were considered good enough while they weren'
   the [CircleCI configuration file](.circleci/config.yml) for more details).
 - The widgets labels are now translated in the language specified in the client's configuration.
 
-### Fixes
+### Fixed
 
 The eye icon is now correctly displayed in the Auth widget.
 
