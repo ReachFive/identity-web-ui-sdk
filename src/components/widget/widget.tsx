@@ -1,6 +1,7 @@
 import React, { ComponentType } from 'react';
 import { ThemeProvider } from 'styled-components'
 import type { SessionInfo, Client as CoreClient } from '@reachfive/identity-core'
+import { createMemoryRouter, Navigate, RouterProvider } from 'react-router-dom';
 
 import type { Config, Prettify } from '../../types'
 import type { I18nMessages } from '../../core/i18n';
@@ -112,4 +113,37 @@ function multiViewWidget<P, U>({ initialView, views, initialState = {} as MultiW
             )
         }
     }
+}
+
+export interface RouterWidgetProps<P, U> {
+    fallbackElement?: React.ReactNode
+    initialView: ((props: Omit<U, 'theme'>) => string) | string
+    prepare?: PrepareFn<P, U>
+    routes: Record<string, React.ComponentType<Omit<U, 'theme'>>>
+}
+
+export function createRouterWidget<P, U = P>({ fallbackElement, initialView, prepare, routes }: RouterWidgetProps<P, U>) {
+    console.log(window.location)
+    return createWidget<P, U>({
+        component: (props: Omit<U, 'theme'>) => {
+            const initialRoute = typeof initialView === 'function' ? initialView(props) : initialView
+            const router = createMemoryRouter([
+                ...Object.entries(routes).map(([path, RouteComponent]) => ({
+                    path,
+                    element: <RouteComponent {...props} />,
+                    index: true,
+                })),
+                { path: '*', element: <Navigate to={initialRoute} replace /> }
+            ])
+            console.log(router)
+            return (
+                <RouterProvider
+                    router={router}
+                    fallbackElement={fallbackElement}
+                />
+            )
+        },
+        prepare: prepare,
+        noIntro: true
+    });
 }

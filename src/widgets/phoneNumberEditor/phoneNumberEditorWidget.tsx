@@ -1,8 +1,9 @@
 import React, { useMemo } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import type { Config, Prettify } from '../../types';
 
-import { createMultiViewWidget } from '../../components/widget/widget';
+import { createRouterWidget } from '../../components/widget/widget';
 import { Info, Intro } from '../../components/miscComponent';
 import { createForm } from '../../components/form/formComponent';
 import { simpleField } from '../../components/form/fields/simpleField';
@@ -10,7 +11,6 @@ import phoneNumberField, { type PhoneNumberOptions } from '../../components/form
 
 import { useReachfive } from '../../contexts/reachfive';
 import { useI18n } from '../../contexts/i18n';
-import { useRouting } from '../../contexts/routing';
 import { useConfig } from '../../contexts/config';
 
 type PhoneNumberFormData = { phoneNumber: string }
@@ -54,7 +54,7 @@ const MainView = ({ accessToken, showLabels = false, phoneNumberOptions }: MainV
     const coreClient = useReachfive()
     const config = useConfig()
     const i18n = useI18n()
-    const { goTo } = useRouting()
+    const navigate = useNavigate()
     
     const handleSubmit = (data: PhoneNumberFormData) => {
         return coreClient.updatePhoneNumber({
@@ -63,7 +63,7 @@ const MainView = ({ accessToken, showLabels = false, phoneNumberOptions }: MainV
         }).then(() => data);
     };
 
-    const handleSuccess = (data: PhoneNumberFormData) => goTo<VerificationCodeViewState>('verificationCode', data);
+    const handleSuccess = (data: PhoneNumberFormData) => navigate('/verificationCode', { state: data });
 
     const PhoneNumberInputForm = useMemo(() => phoneNumberInputForm(config), [config]);
 
@@ -112,8 +112,8 @@ const VerificationCodeView = ({
 }: VerificationCodeViewProps) => {
     const coreClient = useReachfive()
     const i18n = useI18n()
-    const { params } = useRouting()
-    const { phoneNumber } = params as VerificationCodeViewState
+    const location = useLocation()
+    const { phoneNumber } = location.state as VerificationCodeViewState
 
     const handleSubmit = (data: VerificationCodeFormData) => {
         return coreClient.verifyPhoneNumber({ ...data, phoneNumber, accessToken });
@@ -133,9 +133,9 @@ const VerificationCodeView = ({
 
 export type PhoneNumberEditorWidgetProps = Prettify<MainViewProps & VerificationCodeViewProps>
 
-export default createMultiViewWidget<PhoneNumberEditorWidgetProps>({
+export default createRouterWidget<PhoneNumberEditorWidgetProps>({
     initialView: 'main',
-    views: {
+    routes: {
         main: MainView,
         verificationCode: VerificationCodeView,
     }

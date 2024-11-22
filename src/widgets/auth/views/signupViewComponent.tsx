@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { Heading, Link, Alternative, Separator } from '../../../components/miscComponent';
 import { SocialButtons } from '../../../components/form/socialButtonsComponent';
@@ -6,7 +7,6 @@ import PasswordSignupForm from '../../../components/form/passwordSignupFormCompo
 import { WebAuthnSignupViewButtons } from '../../../components/form/webAuthAndPasswordButtonsComponent';
 import { type PhoneNumberOptions } from '../../../components/form/fields/phoneNumberField';
 import { useI18n } from '../../../contexts/i18n';
-import { useRouting } from '../../../contexts/routing';
 
 import type { SignupWithPasswordViewProps } from './signupWithPasswordViewComponent'
 import type { SignupWithWebAuthnViewProps } from './signupWithWebAuthnViewComponent'
@@ -58,7 +58,7 @@ export const SignupView = ({
     ...props
 }: SignupViewProps) => {
     const i18n = useI18n()
-    const { goTo } = useRouting()
+    const navigate = useNavigate()
 
     return (
         <div>
@@ -71,8 +71,9 @@ export const SignupView = ({
             {allowWebAuthnSignup
                 ? <WebAuthnSignupViewButtons
                     enablePasswordAuthentication={enablePasswordAuthentication}
-                    onPasswordClick={() => goTo('signup-with-password')}
-                    onBiometricClick={() => goTo('signup-with-web-authn')} />
+                    onPasswordClick={() => navigate('/signup-with-password')}
+                    onBiometricClick={() => navigate('/signup-with-web-authn')}
+                  />
                 : <PasswordSignupForm {...props} />
             }
 

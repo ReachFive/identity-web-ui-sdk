@@ -1,4 +1,5 @@
 import React, { useCallback, useLayoutEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import { AppError } from '../../../helpers/errors'
 
@@ -11,7 +12,6 @@ import { simpleField } from '../../../components/form/fields/simpleField';
 import ReCaptcha, {importGoogleRecaptchaScript} from '../../../components/reCaptcha';
 
 import { useI18n } from '../../../contexts/i18n'
-import { useRouting } from '../../../contexts/routing';
 import { useReachfive } from '../../../contexts/reachfive';
 import { selectLogin } from '../authWidget.tsx';
 import { InitialScreen } from '../../../../constants.ts';
@@ -170,7 +170,7 @@ export const ForgotPasswordView = ({
 }: ForgotPasswordViewProps) => {
     const coreClient = useReachfive()
     const config = useConfig()
-    const { goTo } = useRouting()
+    const navigate = useNavigate()
     const i18n = useI18n()
 
     const callback = useCallback(
@@ -185,7 +185,7 @@ export const ForgotPasswordView = ({
         [coreClient, recaptcha_enabled, recaptcha_site_key, redirectUrl, returnToAfterPasswordReset]
     )
 
-    const onSuccess = () => goTo('forgot-password-success')
+    const onSuccess = () => navigate('/forgot-password-success')
 
     useLayoutEffect(() => {
         importGoogleRecaptchaScript(recaptcha_site_key)
@@ -203,7 +203,7 @@ export const ForgotPasswordView = ({
             />
             {allowPhoneNumberResetPassword && config.sms && (
                 <Alternative>
-                    <DefaultButton onClick={() => goTo('forgot-password-phone-number')}>{i18n('forgotPassword.usePhoneNumberButton')}</DefaultButton>
+                    <DefaultButton onClick={() => navigate('/forgot-password-phone-number')}>{i18n('forgotPassword.usePhoneNumberButton')}</DefaultButton>
                 </Alternative>
             )}
             {allowLogin && (
@@ -227,7 +227,7 @@ export const ForgotPasswordPhoneNumberView = ({
     returnToAfterPasswordReset,
 }: ForgotPasswordViewProps) => {
     const coreClient = useReachfive()
-    const { goTo } = useRouting()
+    const navigate = useNavigate()
     const i18n = useI18n()
 
     const [phoneNumber, setPhoneNumber] = useState<string>('')
@@ -245,7 +245,7 @@ export const ForgotPasswordPhoneNumberView = ({
         [coreClient, recaptcha_enabled, recaptcha_site_key, redirectUrl, returnToAfterPasswordReset]
     )
 
-    const onSuccess = () => goTo<PhoneNumberIdentifier>('forgot-password-code', { phoneNumber })
+    const onSuccess = () => navigate('/forgot-password-code', { state: { phoneNumber } satisfies PhoneNumberIdentifier})
 
     useLayoutEffect(() => {
         importGoogleRecaptchaScript(recaptcha_site_key)
@@ -262,13 +262,11 @@ export const ForgotPasswordPhoneNumberView = ({
                 skipError={displaySafeErrorMessage && skipError}
             />
             <Alternative>
-                <DefaultButton onClick={() => goTo('forgot-password')}>{i18n('forgotPassword.useEmailButton')}</DefaultButton>
+                <DefaultButton onClick={() => navigate('/forgot-password')}>{i18n('forgotPassword.useEmailButton')}</DefaultButton>
             </Alternative>
-            {allowLogin && (
-                <Alternative>
-                    <Link target={selectLogin(initialScreen, allowWebAuthnLogin)}>{i18n('forgotPassword.backToLoginLink')}</Link>
-                </Alternative>
-            )}
+            {allowLogin && <Alternative>
+                <Link target={selectLogin(initialScreen, allowWebAuthnLogin)}>{i18n('forgotPassword.backToLoginLink')}</Link>
+            </Alternative>}
         </div>
     )
 }
@@ -283,14 +281,16 @@ export const ForgotPasswordCodeView = ({
     showLabels = false
 }: ForgotPasswordViewProps) => {
     const coreClient = useReachfive()
-    const { goTo, params } = useRouting()
+    const navigate = useNavigate()
+    const location = useLocation()
+    const params = location.state as PhoneNumberIdentifier
     const i18n = useI18n()
-
+    console.log(params)
     const callback = useCallback(
         ({ passwordConfirmation: _, ...data }: VerificationCodeFormData) => {
-            return coreClient.updatePassword({ ...(params as PhoneNumberIdentifier), ...data })
+            return coreClient.updatePassword({ ...params, ...data })
         },
-        [coreClient, redirectUrl, returnToAfterPasswordReset]
+        [coreClient, params, redirectUrl, returnToAfterPasswordReset]
     )
 
     return (
@@ -300,7 +300,7 @@ export const ForgotPasswordCodeView = ({
             <VerificationCodeForm
                 showLabels={showLabels}
                 handler={callback}
-                onSuccess={() => goTo('login')}
+                onSuccess={() => navigate('/login')}
                 skipError={displaySafeErrorMessage && skipError}
             />
             {allowLogin && (

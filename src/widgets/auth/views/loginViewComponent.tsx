@@ -1,6 +1,7 @@
 import React, { useLayoutEffect } from 'react';
 import { AuthOptions, LoginWithPasswordParams } from '@reachfive/identity-core'
 import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom';
 
 import { Heading, Link, Alternative, Separator } from '../../../components/miscComponent';
 
@@ -12,11 +13,8 @@ import identifierField from '../../../components/form/fields/identifierField';
 import ReCaptcha, { importGoogleRecaptchaScript, type WithCaptchaToken } from '../../../components/reCaptcha'
 import { simpleField } from '../../../components/form/fields/simpleField';
 
-import { FaSelectionViewState } from '../../stepUp/mfaStepUpWidget'
-
 import { useI18n } from '../../../contexts/i18n';
 import { useReachfive } from '../../../contexts/reachfive';
-import { useRouting } from '../../../contexts/routing';
 import { useSession } from '../../../contexts/session';
 
 import { specializeIdentifierData } from '../../../helpers/utils';
@@ -89,14 +87,14 @@ export const LoginForm = createForm<LoginFormData, LoginFormOptions>({
             enablePasswordAuthentication && showForgotPassword && !showAccountRecovery && {
                 staticContent: (
                     <ResetCredentialWrapper key="forgot-password" floating={showRememberMe}>
-                        <Link target="forgot-password">{i18n('login.forgotPasswordLink')}</Link>
+                        <Link target="/forgot-password">{i18n('login.forgotPasswordLink')}</Link>
                     </ResetCredentialWrapper>
                 )
             },
             showAccountRecovery && {
                 staticContent: (
                     <ResetCredentialWrapper key="account-recovery" floating={showRememberMe}>
-                        <Link target="account-recovery">{i18n('accountRecovery.title')}</Link>
+                        <Link target="/account-recovery">{i18n('accountRecovery.title')}</Link>
                     </ResetCredentialWrapper>
                 )
             },
@@ -210,7 +208,7 @@ export const LoginView = ({
 }: LoginViewProps) => {
     const i18n = useI18n()
     const coreClient = useReachfive()
-    const { goTo } = useRouting()
+    const navigate = useNavigate()
     const session = useSession()
 
     useLayoutEffect(() => {
@@ -240,7 +238,7 @@ export const LoginView = ({
                 ...auth,
             },
         })
-            .then(res => res?.stepUpToken ? goTo<FaSelectionViewState>('fa-selection', {token: res.stepUpToken, amr: res.amr ?? []}) : res)
+            .then(res => res?.stepUpToken ? navigate('/fa-selection', { state: { token: res.stepUpToken, amr: res.amr ?? [] } }) : res)
     }
 
     const defaultIdentifier = session?.lastLoginType === 'password' ? session.email : undefined;
@@ -269,7 +267,7 @@ export const LoginView = ({
                 <Alternative>
                     <span>{i18n('login.signupLinkPrefix')}</span>
                     &nbsp;
-                    <Link target="signup" controller={controller}>{i18n('login.signupLink')}</Link>
+                    <Link target="/signup" controller={controller}>{i18n('login.signupLink')}</Link>
                 </Alternative>
             }
         </div>

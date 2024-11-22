@@ -1,5 +1,6 @@
 import React, { useCallback, useLayoutEffect } from 'react';
 import { RequestAccountRecoveryParams } from '@reachfive/identity-core/es/main/profileClient';
+import { useNavigate } from 'react-router-dom';
 
 import { AppError } from '../../../helpers/errors'
 
@@ -11,7 +12,6 @@ import { simpleField } from '../../../components/form/fields/simpleField';
 import ReCaptcha, {importGoogleRecaptchaScript} from '../../../components/reCaptcha';
 
 import { useI18n } from '../../../contexts/i18n'
-import { useRouting } from '../../../contexts/routing';
 import { useReachfive } from '../../../contexts/reachfive';
 
 const AccountRecoveryForm = createForm<RequestAccountRecoveryParams>({
@@ -80,7 +80,7 @@ export const AccountRecoveryView = ({
     returnToAfterAccountRecovery,
 }: AccountRecoveryViewProps) => {
     const coreClient = useReachfive()
-    const { goTo } = useRouting()
+    const navigate = useNavigate()
     const i18n = useI18n()
 
     const callback = useCallback((data: RequestAccountRecoveryParams) =>
@@ -104,7 +104,7 @@ export const AccountRecoveryView = ({
             <AccountRecoveryForm
                 showLabels={showLabels}
                 handler={callback}
-                onSuccess={() => goTo('account-recovery-success')}
+                onSuccess={() => navigate('/account-recovery-success')}
                 skipError={displaySafeErrorMessage && skipError} />
             {allowLogin && <Alternative>
                 <Link target={'login'}>{i18n('accountRecovery.backToLoginLink')}</Link>

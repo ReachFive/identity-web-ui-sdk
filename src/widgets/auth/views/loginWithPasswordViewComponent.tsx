@@ -1,6 +1,7 @@
 import React, { useLayoutEffect } from 'react';
 import { type AuthOptions } from '@reachfive/identity-core'
 import { LoginWithPasswordParams } from '@reachfive/identity-core/es/main/oAuthClient'
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import styled from 'styled-components';
 
@@ -14,10 +15,8 @@ import ReCaptcha, {importGoogleRecaptchaScript} from '../../../components/reCapt
 
 import { useI18n } from '../../../contexts/i18n';
 import { useReachfive } from '../../../contexts/reachfive';
-import { useRouting } from '../../../contexts/routing';
 
 import { specializeIdentifierData } from '../../../helpers/utils';
-import { FaSelectionViewState } from '../../stepUp/mfaStepUpWidget';
 
 const ResetCredentialWrapper = styled.div<{ floating?: boolean }>`
     margin-bottom: ${props => props.theme.spacing}px;
@@ -60,14 +59,14 @@ export const LoginWithPasswordForm = createForm<LoginWithPasswordFormData, Login
             showForgotPassword && !showAccountRecovery && {
                 staticContent: (
                     <ResetCredentialWrapper key="forgot-password" floating={showRememberMe}>
-                        <Link target="forgot-password">{i18n('login.forgotPasswordLink')}</Link>
+                        <Link target="/forgot-password">{i18n('login.forgotPasswordLink')}</Link>
                     </ResetCredentialWrapper>
                 )
             },
             showAccountRecovery && {
                 staticContent: (
                     <ResetCredentialWrapper key="account-recovery" floating={showRememberMe}>
-                        <Link target="account-recovery">{i18n('accountRecovery.title')}</Link>
+                        <Link target="/account-recovery">{i18n('accountRecovery.title')}</Link>
                     </ResetCredentialWrapper>
                 )
             },
@@ -108,8 +107,9 @@ export const LoginWithPasswordView = ({
 }: LoginWithPasswordViewProps) => {
     const i18n = useI18n()
     const coreClient = useReachfive()
-    const { goTo, params } = useRouting()
-    const { username } = params as LoginWithPasswordViewState
+    const navigate = useNavigate()
+    const location = useLocation()
+    const { username } = location.state as LoginWithPasswordViewState
 
     useLayoutEffect(() => {
         importGoogleRecaptchaScript(recaptcha_site_key)
@@ -125,7 +125,7 @@ export const LoginWithPasswordView = ({
                 ...auth,
             },
         })
-            .then(res => res?.stepUpToken ? goTo<FaSelectionViewState>('fa-selection', {token: res.stepUpToken, amr: res.amr ?? []}) : res)
+            .then(res => res?.stepUpToken ? navigate('/fa-selection', { state: { token: res.stepUpToken, amr: res.amr ?? [] }}) : res)
     }
 
     return (
@@ -141,7 +141,7 @@ export const LoginWithPasswordView = ({
                 handler={(data: LoginWithPasswordFormData) => ReCaptcha.handle(data, { recaptcha_enabled, recaptcha_site_key }, callback, "login")}
             />
             <Alternative>
-                <Link target="login-with-web-authn">{i18n('login.password.userAnotherIdentifier')}</Link>
+                <Link target="/login-with-web-authn">{i18n('login.password.userAnotherIdentifier')}</Link>
             </Alternative>
         </div>
     );

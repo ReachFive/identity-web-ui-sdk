@@ -1,11 +1,12 @@
 import React, { useLayoutEffect } from 'react';
 import { AuthOptions, SingleFactorPasswordlessParams } from '@reachfive/identity-core';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import type { Config, Prettify } from '../../types';
 
 import { email } from '../../core/validation';
 
-import { createMultiViewWidget } from '../../components/widget/widget';
+import { createRouterWidget } from '../../components/widget/widget';
 import { Info, Intro, Separator } from '../../components/miscComponent';
 
 import { createForm } from '../../components/form/formComponent';
@@ -15,7 +16,6 @@ import { SocialButtons } from '../../components/form/socialButtonsComponent';
 import ReCaptcha, { importGoogleRecaptchaScript, type WithCaptchaToken } from '../../components/reCaptcha';
 
 import { useReachfive } from '../../contexts/reachfive';
-import { useRouting } from '../../contexts/routing';
 import { useI18n } from '../../contexts/i18n';
 import { useConfig } from '../../contexts/config';
 
@@ -107,7 +107,7 @@ const MainView = ({
     const coreClient = useReachfive()
     const config = useConfig()
     const i18n = useI18n()
-    const { goTo } = useRouting()
+    const navigate = useNavigate()
 
     useLayoutEffect(() => {
         importGoogleRecaptchaScript(recaptcha_site_key)
@@ -122,8 +122,8 @@ const MainView = ({
 
     const handleSuccess = (data: EmailFormData | PhoneNumberFormFata) =>
         'email' in data
-            ? goTo('emailSent')
-            : goTo<VerificationCodeViewState>('verificationCode', data)
+            ? navigate('/emailSent')
+            : navigate('/verificationCode', { state: data })
 
     const isEmail = authType === 'magic_link';
     const PhoneNumberInputForm = phoneNumberInputForm(config);
@@ -181,8 +181,8 @@ const VerificationCodeView = ({
 }: VerificationCodeViewProps) => {
     const coreClient = useReachfive()
     const i18n = useI18n()
-    const { params } = useRouting()
-    const { phoneNumber } = params as VerificationCodeViewState
+    const location = useLocation()
+    const { phoneNumber } = location.state as VerificationCodeViewState
 
     const handleSubmit = (data: WithCaptchaToken<VerificationCodeFormData>) => {
         return coreClient.verifyPasswordless({
@@ -209,9 +209,9 @@ const EmailSentView = () => {
 
 export type PasswordlessWidgetProps = Prettify<MainViewProps & VerificationCodeViewProps>
 
-export default createMultiViewWidget<PasswordlessWidgetProps>({
+export default createRouterWidget<PasswordlessWidgetProps>({
     initialView: 'main',
-    views: {
+    routes: {
         main: MainView,
         emailSent: EmailSentView,
         verificationCode: VerificationCodeView

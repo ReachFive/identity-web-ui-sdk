@@ -2,10 +2,11 @@ import React from 'react';
 import styled from 'styled-components';
 import { MFA } from '@reachfive/identity-core';
 import type { StartMfaEmailRegistrationResponse, StartMfaPhoneNumberRegistrationResponse } from '@reachfive/identity-core/es/main/mfaClient';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import type { Config, Prettify } from '../../types';
 
-import { createMultiViewWidget } from '../../components/widget/widget';
+import { createRouterWidget } from '../../components/widget/widget';
 
 import { simpleField } from '../../components/form/fields/simpleField';
 import { Info, Intro, Separator } from '../../components/miscComponent';
@@ -16,7 +17,6 @@ import { UserError } from '../../helpers/errors';
 
 import { useI18n } from '../../contexts/i18n';
 import { useReachfive } from '../../contexts/reachfive';
-import { useRouting } from '../../contexts/routing';
 import { useConfig } from '../../contexts/config';
 
 
@@ -107,7 +107,7 @@ const MainView = ({
     const coreClient = useReachfive()
     const config = useConfig()
     const i18n = useI18n()
-    const { goTo } = useRouting()
+    const navigate = useNavigate()
 
     const onEmailRegistering = () => {
         return coreClient.startMfaEmailRegistration({
@@ -150,7 +150,7 @@ const MainView = ({
                         {showIntro && <Intro>{requireMfaRegistration ? i18n('mfa.email.explain.required') :i18n('mfa.email.explain')}</Intro>}
                         <EmailRegisteringCredentialForm
                             handler={onEmailRegistering}
-                            onSuccess={(data: Awaited<ReturnType<typeof onEmailRegistering>>) => goTo<VerificationCodeViewState>('verification-code', {...data, registrationType: 'email'})}
+                            onSuccess={(data: Awaited<ReturnType<typeof onEmailRegistering>>) => navigate('/verification-code', { state: { ...data, registrationType: 'email' }})}
                         />
                     </div>
                 }
@@ -162,7 +162,7 @@ const MainView = ({
                         {showIntro && <Intro>{i18n('mfa.phoneNumber.explain')}</Intro>}
                         <PhoneNumberInputForm
                             handler={onPhoneNumberRegistering}
-                            onSuccess={(data: Awaited<ReturnType<typeof onPhoneNumberRegistering>>) => goTo<VerificationCodeViewState>('verification-code', {...data, registrationType: 'sms'})}
+                            onSuccess={(data: Awaited<ReturnType<typeof onPhoneNumberRegistering>>) => navigate('/verification-code', { state: { ...data, registrationType: 'sms' }})}
                             sharedProps={{
                                 ...phoneNumberOptions
                             }}
@@ -178,7 +178,7 @@ const MainView = ({
                         {showIntro && <Intro>{i18n('mfa.email.remove.explain')}</Intro>}
                         <EmailCredentialRemovalForm
                             handler={onEmailRemoval}
-                            onSuccess={() => goTo<CredentialRemovedViewState>('credential-removed', { credentialType: 'email' })}
+                            onSuccess={() => navigate('/credential-removed', { state: { credentialType: 'email' }})}
                         />
                     </div>
                 }
@@ -196,7 +196,7 @@ const MainView = ({
                         {showIntro && <Intro>{i18n('mfa.phoneNumber.remove.explain')}</Intro>}
                         <PhoneNumberCredentialRemovalForm
                             handler={() => onPhoneNumberRemoval({ ...phoneNumberCredentialRegistered })}
-                            onSuccess={() => goTo<CredentialRemovedViewState>('credential-removed', {credentialType: 'sms'})}
+                            onSuccess={() => navigate('/credential-removed', { state: { credentialType: 'sms' }})}
                         />
                     </div>
                 }
@@ -223,8 +223,9 @@ type VerificationCodeViewState =
 const VerificationCodeView = ({ accessToken, showIntro = true }: VerificationCodeViewProps) => {
     const coreClient = useReachfive()
     const i18n = useI18n()
-    const { goTo, params } = useRouting()
-    const { registrationType, status } = params as VerificationCodeViewState
+    const navigate = useNavigate()
+    const location = useLocation()
+    const { registrationType, status } = location.state as VerificationCodeViewState
 
     const onEmailCodeVerification = (data: VerificationCodeFormData) => {
         return coreClient.verifyMfaEmailRegistration({
@@ -241,7 +242,7 @@ const VerificationCodeView = ({ accessToken, showIntro = true }: VerificationCod
     }
 
     if (showIntro && status === 'enabled') {
-        goTo<CredentialRegisteredViewState>('credential-registered', { registrationType })
+        navigate('/credential-registered', { state: { registrationType }})
         return null
     }
 
@@ -251,7 +252,7 @@ const VerificationCodeView = ({ accessToken, showIntro = true }: VerificationCod
             {status === 'email_sent' &&
                 <VerificationCodeForm
                     handler={onEmailCodeVerification}
-                    onSuccess={() => goTo<CredentialRegisteredViewState>('credential-registered', { registrationType })}
+                    onSuccess={() => navigate('/credential-registered', { state: { registrationType }})}
                 />
             }
 
@@ -259,7 +260,7 @@ const VerificationCodeView = ({ accessToken, showIntro = true }: VerificationCod
             {status === 'sms_sent' &&
                 <VerificationCodeForm
                     handler={onSmsCodeVerification}
-                    onSuccess={() => goTo<CredentialRegisteredViewState>('credential-registered', { registrationType })}
+                    onSuccess={() => navigate('/credential-registered', { state: { registrationType }})}
                 />
             }
         </div>
@@ -274,8 +275,8 @@ type CredentialRegisteredViewState = {
 
 const CredentialRegisteredView = () => {
     const i18n = useI18n()
-    const { params } = useRouting()
-    const { registrationType } = params as CredentialRegisteredViewState
+    const location = useLocation()
+    const { registrationType } = location.state as CredentialRegisteredViewState
     return (
         <div>
             {registrationType === 'email' && <Info>{i18n('mfa.email.registered')}</Info>}
@@ -292,8 +293,8 @@ type CredentialRemovedViewState = {
 
 const CredentialRemovedView = () => {
     const i18n = useI18n()
-    const { params } = useRouting()
-    const { credentialType } = params as CredentialRemovedViewState
+    const location = useLocation()
+    const { credentialType } = location.state as CredentialRemovedViewState
     return (
         <div>
             {credentialType === 'email' && <Info>{i18n('mfa.email.removed')}</Info>}
@@ -306,9 +307,9 @@ type MfaCredentialsProps = Prettify<MainViewProps & CredentialRegisteredViewProp
 
 export type MfaCredentialsWidgetProps = Prettify<Omit<MfaCredentialsProps, 'credentials'>>
 
-export default createMultiViewWidget<MfaCredentialsWidgetProps, MfaCredentialsProps>({
+export default createRouterWidget<MfaCredentialsWidgetProps, MfaCredentialsProps>({
     initialView: 'main',
-    views: {
+    routes: {
         'main': MainView,
         'credential-registered': CredentialRegisteredView,
         'verification-code': VerificationCodeView,
