@@ -1,7 +1,7 @@
 import React, { ComponentType } from 'react';
 import { ThemeProvider } from 'styled-components'
 import type { SessionInfo, Client as CoreClient } from '@reachfive/identity-core'
-import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom';
+import { createMemoryRouter, Navigate, RouterProvider } from 'react-router-dom';
 
 import type { Config, Prettify } from '../../types'
 import type { I18nMessages } from '../../core/i18n';
@@ -127,7 +127,7 @@ export function createRouterWidget<P, U = P>({ fallbackElement, initialView, pre
     return createWidget<P, U>({
         component: (props: Omit<U, 'theme'>) => {
             const initialRoute = typeof initialView === 'function' ? initialView(props) : initialView
-            const router = createBrowserRouter([
+            const router = createMemoryRouter([
                 ...Object.entries(routes).map(([path, RouteComponent]) => ({
                     path,
                     element: <RouteComponent {...props} />,
