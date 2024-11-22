@@ -36,6 +36,11 @@ function importLocale(locale: string) {
 
 export type PhoneNumberOptions = {
     /**
+     * If `withCountryCallingCode` property is explicitly set to true then the "country calling code" part (e.g. "+1" when country is "US") is included in the input field (but still isn't editable).
+     * @default true
+     */
+    withCountryCallingCode?: boolean
+    /**
      * If `withCountrySelect` property is `true` then the user can select the country for the phone number. Must be a supported {@link https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2#Officially_assigned_code_elements country code}.
      * @default false
      */
@@ -76,6 +81,7 @@ const PhoneNumberField = (props: PhoneNumberFieldProps) => {
         showLabel,
         validation = {},
         value,
+        withCountryCallingCode = true,
         withCountrySelect = false,
     } = props;
 
@@ -128,7 +134,7 @@ const PhoneNumberField = (props: PhoneNumberFieldProps) => {
                     onChange={handlePhoneChange}
                     labels={labels}
                     international={true}
-                    withCountryCallingCode={true}
+                    withCountryCallingCode={withCountryCallingCode}
                     {...(withCountrySelect
                         ? ({
                             defaultCountry: country,
@@ -181,6 +187,7 @@ const phoneNumberField = (
         extendedParams: {
             country: isValidCountryCode(config.countryCode) ? config.countryCode : undefined,
             locale: config.language,
+            withCountryCallingCode: props.withCountryCallingCode,
         }
     });
 }
