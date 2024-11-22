@@ -1,6 +1,6 @@
 /**
- * @reachfive/identity-ui - v1.28.0
- * Compiled Thu, 31 Oct 2024 19:41:05 UTC
+ * @reachfive/identity-ui - v1.30.0
+ * Compiled Fri, 22 Nov 2024 14:31:20 UTC
  *
  * Copyright (c) ReachFive.
  *
@@ -298,6 +298,11 @@ type Field = {
 
 type PhoneNumberOptions = {
     /**
+     * If `withCountryCallingCode` property is explicitly set to true then the "country calling code" part (e.g. "+1" when country is "US") is included in the input field (but still isn't editable).
+     * @default true
+     */
+    withCountryCallingCode?: boolean;
+    /**
      * If `withCountrySelect` property is `true` then the user can select the country for the phone number. Must be a supported {@link https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2#Officially_assigned_code_elements country code}.
      * @default false
      */
@@ -405,6 +410,10 @@ interface LoginWithWebAuthnViewProps {
      * List of authentication options
      */
     auth?: AuthOptions;
+    /**
+     * Boolean that specifies whether password authentication is enabled.
+     */
+    enablePasswordAuthentication?: boolean;
     /**
      * Whether the signup form fields' labels are displayed on the login view.
      *
@@ -514,6 +523,10 @@ interface SignupViewProps extends SignupWithPasswordViewProps, SignupWithWebAuth
      */
     allowWebAuthnSignup?: boolean;
     /**
+     * Boolean that specifies whether password authentication is enabled.
+     */
+    enablePasswordAuthentication?: boolean;
+    /**
      * Lists the available social providers. This is an array of strings.
      * Tip: If you pass an empty array, social providers will not be displayed.
      */
@@ -531,6 +544,12 @@ interface ForgotPasswordViewProps {
      * @default true
      */
     allowLogin?: boolean;
+    /**
+     * Boolean that specifies whether password reset with phone number is enabled.
+     *
+     * @default false
+     */
+    allowPhoneNumberResetPassword?: boolean;
     /**
      * Whether or not to display a safe error message on password reset, given an invalid email address.
      * This mode ensures not to leak email addresses registered to the platform.
@@ -570,11 +589,6 @@ interface ForgotPasswordViewProps {
      * Important: This parameter should only be used with Hosted Pages.
      */
     returnToAfterPasswordReset?: string;
-}
-interface ForgotPasswordSuccessViewProps {
-    allowLogin?: boolean;
-    initialScreen?: InitialScreen;
-    allowWebAuthnLogin?: boolean;
 }
 
 interface QuickLoginViewProps {
@@ -663,7 +677,7 @@ type VerificationCodeViewProps$3 = Prettify<Partial<StepUpHandlerResponse> & {
 type MfaStepUpProps = MainViewProps$6 & FaSelectionViewProps & VerificationCodeViewProps$3;
 type MfaStepUpWidgetProps = MfaStepUpProps;
 
-interface AuthWidgetProps extends LoginViewProps, LoginWithWebAuthnViewProps, LoginWithPasswordViewProps, SignupViewProps, SignupWithPasswordViewProps, SignupWithWebAuthnViewProps, ForgotPasswordViewProps, ForgotPasswordSuccessViewProps, QuickLoginViewProps, ReauthViewProps, Omit<FaSelectionViewProps, keyof FaSelectionViewState>, Omit<VerificationCodeViewProps$3, keyof VerificationCodeViewState> {
+interface AuthWidgetProps extends LoginViewProps, LoginWithWebAuthnViewProps, LoginWithPasswordViewProps, SignupViewProps, SignupWithPasswordViewProps, SignupWithWebAuthnViewProps, ForgotPasswordViewProps, QuickLoginViewProps, ReauthViewProps, Omit<FaSelectionViewProps, keyof FaSelectionViewState>, Omit<VerificationCodeViewProps$3, keyof VerificationCodeViewState> {
     /**
      * Boolean that specifies whether quick login is enabled.
      *

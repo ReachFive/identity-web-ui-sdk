@@ -73,7 +73,7 @@ export const Button = styled(({ tagname = 'button', className, extendedClasses, 
     }
 `;
 
-interface DefaultButtonProps extends Omit<ButtonProps, 'background' | 'color'> {}
+interface DefaultButtonProps extends Omit<ButtonProps, 'background' | 'border' | 'color'> {}
 
 export const DefaultButton = ({ children, ...props }: PropsWithChildren<DefaultButtonProps>) => {
     const theme = useTheme()
@@ -84,14 +84,14 @@ export const DefaultButton = ({ children, ...props }: PropsWithChildren<DefaultB
     )
 };
 
-interface PrimaryButtonProps extends Omit<ButtonProps, 'type' | 'background' | 'border'> {}
+interface PrimaryButtonProps extends Omit<ButtonProps, 'background' | 'border'> {}
 
-export const PrimaryButton = ({ children, ...props }: PropsWithChildren<PrimaryButtonProps>) =>  {
+export const PrimaryButton = ({ children, type = "submit", ...props }: PropsWithChildren<PrimaryButtonProps>) =>  {
     const theme = useTheme()
     return (
         <Button
-            type="submit"
             {...props}
+            type={type}
             background={theme.primaryColor}
             border={theme.primaryColor}
         >

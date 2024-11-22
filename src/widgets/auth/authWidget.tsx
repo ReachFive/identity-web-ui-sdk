@@ -9,7 +9,7 @@ import LoginWithPasswordView, { type LoginWithPasswordViewProps } from './views/
 import SignupView, { type SignupViewProps } from './views/signupViewComponent'
 import SignupWithPasswordView, { type SignupWithPasswordViewProps } from './views/signupWithPasswordViewComponent'
 import SignupWithWebAuthnView, { type SignupWithWebAuthnViewProps} from './views/signupWithWebAuthnViewComponent'
-import { ForgotPasswordView, ForgotPasswordSuccessView, type ForgotPasswordViewProps, type ForgotPasswordSuccessViewProps } from './views/forgotPasswordViewComponent'
+import { ForgotPasswordView, ForgotPasswordCodeView, ForgotPasswordSuccessView, type ForgotPasswordViewProps, ForgotPasswordPhoneNumberView } from './views/forgotPasswordViewComponent'
 import QuickLoginView, { type QuickLoginViewProps } from './views/quickLoginViewComponent'
 import ReauthView, { type ReauthViewProps } from './views/reauthViewComponent'
 import { FaSelectionView, VerificationCodeView, } from '../stepUp/mfaStepUpWidget'
@@ -29,7 +29,6 @@ export interface AuthWidgetProps extends
     SignupWithPasswordViewProps,
     SignupWithWebAuthnViewProps,
     ForgotPasswordViewProps,
-    ForgotPasswordSuccessViewProps,
     QuickLoginViewProps,
     ReauthViewProps,
     Omit<FaSelectionViewProps, keyof FaSelectionViewState>,
@@ -88,7 +87,9 @@ export default createMultiViewWidget<AuthWidgetProps, PropsWithSession<AuthWidge
         'signup-with-password': SignupWithPasswordView,
         'signup-with-web-authn': SignupWithWebAuthnView,
         'forgot-password': ForgotPasswordView,
+        'forgot-password-phone-number': ForgotPasswordPhoneNumberView,
         'account-recovery': AccountRecoveryView,
+        'forgot-password-code': ForgotPasswordCodeView,
         'forgot-password-success': ForgotPasswordSuccessView,
         'account-recovery-success': AccountRecoverySuccessView,
         'quick-login': QuickLoginView,
@@ -100,7 +101,6 @@ export default createMultiViewWidget<AuthWidgetProps, PropsWithSession<AuthWidge
         if (!config.passwordPolicy) {
             throw new UserError('This feature is not available on your account.');
         }
-
         if (!config.webAuthn && options.allowWebAuthnLogin) {
             throw new UserError('The WebAuthn feature is not available on your account.');
         }

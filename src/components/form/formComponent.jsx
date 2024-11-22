@@ -105,10 +105,8 @@ export function createForm(config) {
         }
 
         handleFieldChange = (fieldName, stateUpdate) => {
-            this.props.onFieldChange(this.state.fields);
-
             this.setState(prevState => {
-                const currentState = prevState.fields[fieldName];
+                const { validation, ...currentState } = prevState.fields[fieldName] ?? {};
                 const newState = {
                     ...currentState,
                     ...(typeof stateUpdate === 'function' ? stateUpdate(currentState) : stateUpdate)
@@ -137,6 +135,8 @@ export function createForm(config) {
                         validation
                     }
                 };
+
+                this.props.onFieldChange(newFields);
 
                 return {
                     hasErrors: !!validation.error || find(newFields, ({ validation = {} }) => validation.error) !== undefined,
@@ -215,7 +215,7 @@ export function createForm(config) {
         }
 
         render() {
-            const { showLabels, submitLabel, allowWebAuthnLogin, i18n, fieldValidationDebounce } = this.props;
+            const { showLabels, submitLabel, enablePasswordAuthentication, allowWebAuthnLogin, i18n, fieldValidationDebounce } = this.props;
             const { errorMessage, isLoading, fields } = this.state;
 
             return <Form noValidate onSubmit={this.handleSubmit}>
@@ -234,10 +234,10 @@ export function createForm(config) {
                 }
                 {!allowWebAuthnLogin && (
                     <PrimaryButton disabled={isLoading}>
-                        {i18n(submitLabel)}
+                        {i18n(typeof submitLabel === 'function' ? submitLabel(this.props) : submitLabel)}
                     </PrimaryButton>
                 )}
-                {allowWebAuthnLogin && this.props.webAuthnButtons(isLoading, this.handleClick)}
+                {allowWebAuthnLogin && this.props.webAuthnButtons(isLoading, enablePasswordAuthentication, this.handleClick)}
                 {showLabels && <RequiredFields>*{i18n('form.required.fields')}</RequiredFields>}
             </Form>;
         }

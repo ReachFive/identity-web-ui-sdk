@@ -169,6 +169,43 @@ describe('Snapshot', () => {
         }, webauthnConfig))
     })
 
+    describe('with webauthn feature and without password', () => {
+        test('login old view with webauthn or password', generateSnapshot({
+            allowWebAuthnLogin: true,
+            enablePasswordAuthentication:false
+        }, webauthnConfig))
+
+        test('login new view with integrated webauthn and password', generateSnapshot({
+            allowWebAuthnLogin: true,
+            enablePasswordAuthentication:false,
+            initialScreen: 'login'
+        }, webauthnConfig))
+
+        test('signup view with webauthn or password', generateSnapshot({
+            allowWebAuthnSignup: true,
+            enablePasswordAuthentication:false,
+            initialScreen: 'signup'
+        }, webauthnConfig))
+
+        test('signup form view with password', generateSnapshot({
+            allowWebAuthnSignup: true,
+            enablePasswordAuthentication:false,
+            initialScreen: 'signup-with-password'
+        }, webauthnConfig))
+
+        test('signup form view with webauthn', generateSnapshot({
+            allowWebAuthnSignup: true,
+            enablePasswordAuthentication:false,
+            initialScreen: 'signup-with-web-authn'
+        }, webauthnConfig))
+
+        test('signup form view with webauthn and without password', generateSnapshot({
+            allowWebAuthnSignup: true,
+            enablePasswordAuthentication: false,
+            initialScreen: 'signup-with-web-authn'
+        }, webauthnConfig))
+    })
+
     describe('forgot password view', () => {
         test('default', generateSnapshot({
             initialScreen: 'forgot-password'
@@ -478,4 +515,63 @@ describe('DOM testing', () => {
             expect(screen.queryByText('back')).toBeInTheDocument();
         });
     });
+
+    describe('with webauthn feature and without password', () => {
+        test('old login view', async () => {
+            expect.assertions(6);
+            await generateComponent({ allowWebAuthnLogin: true, enablePasswordAuthentication:false, initialScreen: 'login-with-web-authn' }, webauthnConfig, {
+                loginWithWebAuthn: jest.fn().mockRejectedValue(new Error('This is a mock.'))
+            });
+
+            // Social buttons
+            expectSocialButtons(true)
+
+            // Email input
+            expect(screen.queryByTestId('identifier')).toBeInTheDocument();
+
+            // Form buttons
+            expect(screen.queryByTestId('webauthn-button')).toBeInTheDocument();
+            expect(screen.queryByTestId('password-button')).toBeNull();
+
+            // Sign in link
+            expect(screen.queryByText('login.signupLink')).toBeInTheDocument();
+        });
+
+        test('signup view without password and with webauthn', async () => {
+            expect.assertions(5);
+            await generateComponent(
+                { allowWebAuthnSignup: true,  enablePasswordAuthentication:false, initialScreen: 'signup' },
+                webauthnConfig
+            );
+
+            // Social buttons
+            expectSocialButtons(true)
+
+            // Form buttons
+            expect(screen.queryByTestId('webauthn-button')).toBeInTheDocument();
+            expect(screen.queryByTestId('password-button')).toBeNull();
+
+            // Login in link
+            expect(screen.queryByText('signup.loginLink')).toBeInTheDocument();
+        });
+
+        test('signup form view with webauthn and without password', async () => {
+            expect.assertions(5);
+            await generateComponent(
+                { allowWebAuthnSignup: true, enablePasswordAuthentication:false, initialScreen: 'signup-with-web-authn' },
+                webauthnConfig
+            );
+
+            // Form fields
+            expect(screen.queryByTestId('given_name')).toBeInTheDocument();
+            expect(screen.queryByTestId('family_name')).toBeInTheDocument();
+            expect(screen.queryByTestId('email')).toBeInTheDocument();
+
+            // Form button
+            expect(screen.queryByText('signup.submitLabel')).toBeInTheDocument();
+
+            // Back link
+            expect(screen.queryByText('back')).toBeInTheDocument();
+        });
+    })
 });

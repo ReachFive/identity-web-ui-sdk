@@ -74,6 +74,10 @@ export interface LoginWithWebAuthnViewProps {
      */
     auth?: AuthOptions
     /**
+     * Boolean that specifies whether password authentication is enabled.
+     */
+    enablePasswordAuthentication?: boolean
+    /**
      * Whether the signup form fields' labels are displayed on the login view.
      *
      * @default false
@@ -88,7 +92,7 @@ export interface LoginWithWebAuthnViewProps {
     allowAccountRecovery?: boolean
 }
 
-export const LoginWithWebAuthnView = ({ acceptTos, allowSignup = true, auth, showLabels = false, socialProviders, allowAccountRecovery }: LoginWithWebAuthnViewProps) => {
+export const LoginWithWebAuthnView = ({ acceptTos, allowSignup = true, auth, enablePasswordAuthentication = true, showLabels = false, socialProviders, allowAccountRecovery }: LoginWithWebAuthnViewProps) => {
     const coreClient = useReachfive()
     const { goTo } = useRouting()
     const i18n = useI18n()
@@ -138,9 +142,10 @@ export const LoginWithWebAuthnView = ({ acceptTos, allowSignup = true, auth, sho
 
     const defaultIdentifier = session?.lastLoginType === 'password' ? session.email : undefined;
 
-    const webAuthnButtons = (disabled: boolean, handleClick: WebAuthnLoginViewButtonsProps['onPasswordClick']) =>
+    const webAuthnButtons = (disabled: boolean, enablePasswordAuthentication: boolean, handleClick: WebAuthnLoginViewButtonsProps['onPasswordClick']) =>
         <WebAuthnLoginViewButtons
             disabled={disabled}
+            enablePasswordAuthentication={enablePasswordAuthentication}
             onPasswordClick={handleClick}
         />
 
@@ -160,6 +165,7 @@ export const LoginWithWebAuthnView = ({ acceptTos, allowSignup = true, auth, sho
                 redirect={redirectToPasswordLoginView}
                 webAuthnButtons={webAuthnButtons}
                 showAccountRecovery={allowAccountRecovery}
+                enablePasswordAuthentication={enablePasswordAuthentication}
             />
             {allowSignup &&
                 <Alternative>
