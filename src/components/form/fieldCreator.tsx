@@ -66,7 +66,6 @@ export interface Formatter<T, F, K extends string> {
 export interface FieldProps<T, F, P extends FieldComponentProps<F, ExtraParams, E, K>, ExtraParams extends Record<string, unknown> = {}, K extends string = 'raw', E extends Record<string, unknown> = {}> {
     key: string
     path?: string
-    type?: string
     label: string
     defaultValue?: T
     required?: boolean

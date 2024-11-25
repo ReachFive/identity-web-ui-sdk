@@ -79,7 +79,13 @@ export const LoginForm = createForm<LoginFormData, LoginFormOptions>({
                     <Separator text={i18n('or')} />
                 )
             },
-            allowCustomIdentifier && simpleField({key: 'customIdentifier', type: 'text', placeholder: i18n('customIdentifier'), required: false}),
+            allowCustomIdentifier && simpleField({
+                key: 'customIdentifier',
+                type: 'text',
+                label: 'customIdentifier',
+                placeholder: i18n('customIdentifier'),
+                required: false
+            }),
             simplePasswordField({
                 key: 'password',
                 label: 'password',

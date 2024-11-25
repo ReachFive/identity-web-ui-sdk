@@ -96,7 +96,7 @@ interface Option {
     value: string
 }
 
-interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
+export interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
     dataTestId?: string
     hasError?: boolean
     options: Option[]
