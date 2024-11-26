@@ -58,8 +58,8 @@ const SimpleField = (props: SimpleFieldProps) => {
     );
 };
 
-export const simpleField = ({ placeholder, type, ...props }: Omit<FieldProps<string, string, SimpleFieldProps>, 'component' | 'extendedParams'> & SimpleFieldOptions) => {
-    return createField<string, string, SimpleFieldProps>({
+export const simpleField = ({ placeholder, type, ...props }: Omit<FieldProps<string | number, string, SimpleFieldProps>, 'component' | 'extendedParams'> & SimpleFieldOptions) => {
+    return createField<string | number, string, SimpleFieldProps>({
         ...props,
         component: SimpleField,
         extendedParams: {
