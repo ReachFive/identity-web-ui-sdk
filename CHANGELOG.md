@@ -12,7 +12,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Fixed
 
 - MFA factor selection does not appear when multiple factors are activated.
-- Phone number field on reset password view whould handle `withCountrySelect` options.
+- Phone number field on reset password view should handle `withCountrySelect` options.
 
 ## [1.30.0] - 2024-11-21
 
