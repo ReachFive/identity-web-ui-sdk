@@ -7,6 +7,13 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.30.1] - 2024-11-26
+
+### Fixed
+
+- MFA factor selection does not appear when multiple factors are activated.
+- Phone number field on reset password view should handle `withCountrySelect` options.
+
 ## [1.30.0] - 2024-11-21
 
 ### Added
@@ -499,7 +506,9 @@ The eye icon is now correctly displayed in the Auth widget.
 
 First version of the SDK Web UI.
 
-[Unreleased]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.30.0...HEAD
+[Unreleased]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.30.1...HEAD
+
+[1.30.1]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.30.0...v1.30.1
 
 [1.30.0]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.29.0...v1.30.0
 
