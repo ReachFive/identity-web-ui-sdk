@@ -15,9 +15,14 @@ import { useConfig } from '../../contexts/config';
 
 type PhoneNumberFormData = { phoneNumber: string }
 
-const phoneNumberInputForm = (config: Config) => createForm<PhoneNumberFormData>({
+const phoneNumberInputForm = (config: Config) => createForm<PhoneNumberFormData, { phoneNumberOptions?: PhoneNumberOptions }>({
     prefix: 'r5-phonenumber-editor-',
-    fields: [phoneNumberField({ required: true }, config)]
+    fields: ({ phoneNumberOptions }) => ([
+        phoneNumberField({
+            required: true,
+            ...phoneNumberOptions,
+        }, config)
+    ])
 });
 
 type VerificationCodeFormData = { verificationCode: string }
@@ -74,9 +79,7 @@ const MainView = ({ accessToken, showLabels = false, phoneNumberOptions }: MainV
                 showLabels={showLabels}
                 handler={handleSubmit}
                 onSuccess={handleSuccess}
-                sharedProps={{
-                    ...phoneNumberOptions,
-                }}
+                phoneNumberOptions={phoneNumberOptions}
             />
         </div>
     )

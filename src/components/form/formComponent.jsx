@@ -106,7 +106,7 @@ export function createForm(config) {
 
         handleFieldChange = (fieldName, stateUpdate) => {
             this.setState(prevState => {
-                const { validation, ...currentState } = prevState.fields[fieldName] ?? {};
+                const { validation: _, ...currentState } = prevState.fields[fieldName] ?? {};
                 const newState = {
                     ...currentState,
                     ...(typeof stateUpdate === 'function' ? stateUpdate(currentState) : stateUpdate)

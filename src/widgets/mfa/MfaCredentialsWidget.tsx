@@ -50,11 +50,14 @@ const VerificationCodeForm = createForm<VerificationCodeFormData>({
 
 type PhoneNumberRegisteringCredentialFormData = { phoneNumber: string }
 
-const PhoneNumberRegisteringCredentialForm = (config: Config) => createForm<PhoneNumberRegisteringCredentialFormData>({
+const PhoneNumberRegisteringCredentialForm = (config: Config) => createForm<PhoneNumberRegisteringCredentialFormData, { phoneNumberOptions?: PhoneNumberOptions }>({
     prefix: 'r5-mfa-credentials-phone-number-',
-    fields: [
-        phoneNumberField({required: true}, config)
-    ],
+    fields: ({ phoneNumberOptions }) => ([
+        phoneNumberField({
+            required: true,
+            ...phoneNumberOptions,
+        }, config)
+    ]),
     submitLabel: 'mfa.register.phoneNumber'
 })
 
@@ -163,9 +166,7 @@ const MainView = ({
                         <PhoneNumberInputForm
                             handler={onPhoneNumberRegistering}
                             onSuccess={(data: Awaited<ReturnType<typeof onPhoneNumberRegistering>>) => goTo<VerificationCodeViewState>('verification-code', {...data, registrationType: 'sms'})}
-                            sharedProps={{
-                                ...phoneNumberOptions
-                            }}
+                            phoneNumberOptions={phoneNumberOptions}
                         />
                     </div>
                 }
