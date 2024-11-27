@@ -188,6 +188,7 @@ const phoneNumberField = (
             country: isValidCountryCode(config.countryCode) ? config.countryCode : undefined,
             locale: config.language,
             withCountryCallingCode: props.withCountryCallingCode,
+            withCountrySelect: props.withCountrySelect,
         }
     });
 }

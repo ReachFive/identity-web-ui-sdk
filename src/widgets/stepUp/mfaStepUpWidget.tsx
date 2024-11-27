@@ -167,14 +167,16 @@ export const FaSelectionView = (props: FaSelectionViewProps) => {
         return <VerificationCodeView {...response} auth={props.auth} />
     }
 
-    if (amr.length === 1) {
-        <div>
-            {showIntro && <Intro>{i18n('mfa.select.factor')}</Intro>}
-            <StartPasswordlessForm
-                options={amr.map(factor => ({key: factor, value: factor, label: factor}))}
-                handler={onChooseFa}
-            />
-        </div>
+    if (amr.length >= 1) {
+        return (
+            <div>
+                {showIntro && <Intro>{i18n('mfa.select.factor')}</Intro>}
+                <StartPasswordlessForm
+                    options={amr.map(factor => ({key: factor, value: factor, label: factor}))}
+                    handler={onChooseFa}
+                />
+            </div>
+        )
     }
 
     return null;

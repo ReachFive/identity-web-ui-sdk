@@ -1,6 +1,6 @@
 /**
- * @reachfive/identity-ui - v1.30.0
- * Compiled Fri, 22 Nov 2024 14:31:20 UTC
+ * @reachfive/identity-ui - v1.30.1
+ * Compiled Wed, 27 Nov 2024 13:22:07 UTC
  *
  * Copyright (c) ReachFive.
  *
@@ -570,6 +570,10 @@ interface ForgotPasswordViewProps {
      * @default false
      */
     allowWebAuthnLogin?: boolean;
+    /**
+     * Phone number field options.
+     */
+    phoneNumberOptions?: PhoneNumberOptions;
     /**
      * Boolean that specifies whether reCAPTCHA is enabled or not.
      */
