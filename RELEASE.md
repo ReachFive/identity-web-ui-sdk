@@ -44,5 +44,22 @@
 
    Refer to the [.circleci/config.yml](.circleci/config.yml) file to set up the integration.
 
-6. Draft a new release in the [Github releases tab](https://github.com/ReachFive/identity-web-ui-sdk/releases) (
+6. Purge the cache of a @latest or version aliased URL to force users to get the new updated version. Otherwise they might wait up to 7 days.
+
+   Copy and submit the following URLS in the [Purge jsDelivr CDN cache](https://www.jsdelivr.com/tools/purge) form.
+
+   ```
+   https://cdn.jsdelivr.net/npm/@reachfive/identity-ui@latest/es/identity-ui.js
+   https://cdn.jsdelivr.net/npm/@reachfive/identity-ui@latest/es/identity-ui.js.map
+   https://cdn.jsdelivr.net/npm/@reachfive/identity-ui@latest/es/identity-ui.min.js
+   https://cdn.jsdelivr.net/npm/@reachfive/identity-ui@latest/es/identity-ui.min.js.map
+   https://cdn.jsdelivr.net/npm/@reachfive/identity-ui@latest/cjs/identity-ui.js
+   https://cdn.jsdelivr.net/npm/@reachfive/identity-ui@latest/cjs/identity-ui.js.map
+   https://cdn.jsdelivr.net/npm/@reachfive/identity-ui@latest/umd/identity-ui.js
+   https://cdn.jsdelivr.net/npm/@reachfive/identity-ui@latest/umd/identity-ui.js.map
+   https://cdn.jsdelivr.net/npm/@reachfive/identity-ui@latest/umd/identity-ui.min.js
+   https://cdn.jsdelivr.net/npm/@reachfive/identity-ui@latest/umd/identity-ui.min.js.map
+   ```
+
+7. Draft a new release in the [Github releases tab](https://github.com/ReachFive/identity-web-ui-sdk/releases) (
    copy/paste the changelog in the release's description).
