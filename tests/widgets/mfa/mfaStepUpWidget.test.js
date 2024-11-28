@@ -91,7 +91,7 @@ describe('DOM testing', () => {
 
     describe('mfaStepUp', () => {
         test('showStepUpStart: true', async () => {
-            expect.assertions(9);
+            expect.assertions(11);
 
             const user = userEvent.setup()
 
@@ -112,7 +112,7 @@ describe('DOM testing', () => {
         })
 
         test('showStepUpStart: false', async () => {
-            expect.assertions(11);
+            expect.assertions(13);
 
             const user = userEvent.setup()
 
