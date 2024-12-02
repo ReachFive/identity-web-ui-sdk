@@ -4,7 +4,7 @@ import { createField, type FieldComponentProps, type FieldProps } from '../field
 import { Checkbox } from '../formControlsComponent';
 import { isRichFormValue } from '../../../helpers/utils';
 
-interface CheckboxFieldProps extends FieldComponentProps<boolean> {}
+export interface CheckboxFieldProps extends FieldComponentProps<boolean> {}
 
 function CheckboxField({ value, onChange, label, path, required, validation = {} }: CheckboxFieldProps) {
     const checked = isRichFormValue(value, 'raw') ? value.raw : value
@@ -29,8 +29,8 @@ function CheckboxField({ value, onChange, label, path, required, validation = {}
     )
 };
 
-export default function checkboxField(props: Omit<FieldProps<boolean, boolean, CheckboxFieldProps>, 'format' | 'component'>) {
-    return createField<boolean, boolean, CheckboxFieldProps>({
+export default function checkboxField(props: Omit<FieldProps<boolean | string, boolean, CheckboxFieldProps>, 'format' | 'component'>) {
+    return createField<boolean | string, boolean, CheckboxFieldProps>({
         ...props,
         format: {
             bind: value => !!value,

@@ -63,15 +63,25 @@ export interface Formatter<T, F, K extends string> {
     unbind: (value?: FormValue<F, K>) => T | null
 }
 
-export interface FieldProps<T, F, P extends FieldComponentProps<F, ExtraParams, E, K>, ExtraParams extends Record<string, unknown> = {}, K extends string = 'raw', E extends Record<string, unknown> = {}> {
+export type FieldDefinition<T, F = T, K extends string = 'raw'> = {
     key: string
     path?: string
     label: string
-    defaultValue?: T
     required?: boolean
     readOnly?: boolean
     autoComplete?: AutoFill
+    defaultValue?: T
+    format?: Formatter<T, F, K>
     validator?: Validator<F, any> | CompoundValidator<F, any>
+}
+
+export interface FieldProps<
+    T, F, P extends FieldComponentProps<F, ExtraParams, E, K>,
+    ExtraParams extends Record<string, unknown> = {},
+    K extends string = 'raw',
+    E extends Record<string, unknown> = {}
+> extends FieldDefinition<T, F, K> {
+    label: string
     mapping?: PathMapping
     format?: Formatter<T, F, K>
     rawProperty?: K
@@ -79,7 +89,14 @@ export interface FieldProps<T, F, P extends FieldComponentProps<F, ExtraParams, 
     extendedParams?: ExtraParams | ((i18n: I18nResolver) => ExtraParams)
 }
 
-export function createField<T, F, P extends FieldComponentProps<F, ExtraParams, E, K>, ExtraParams extends Record<string, unknown> = {}, K extends string = 'raw', E extends Record<string, unknown> = {}>({
+export function createField<
+    T,
+    F,
+    P extends FieldComponentProps<F, ExtraParams, E, K>,
+    ExtraParams extends Record<string, unknown> = {},
+    K extends string = 'raw',
+    E extends Record<string, unknown> = {}
+>({
     key,
     path = key,
     label,

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 
 import styled from 'styled-components';
 
-import { createField, FieldComponentProps, FieldProps } from '../fieldCreator'
+import { createField, type FieldComponentProps, type FieldDefinition } from '../fieldCreator'
 import { FormGroup, Input } from '../formControlsComponent';
 
 import { ReactComponent as EyeIcon } from '../../../icons/eye.svg';
@@ -29,7 +29,7 @@ type SimplePasswordFieldOptions = {
     placeholder?: React.HTMLAttributes<HTMLInputElement>['placeholder']
 }
 
-interface SimplePasswordFieldProps extends FieldComponentProps<string, SimplePasswordFieldOptions> {}
+export interface SimplePasswordFieldProps extends FieldComponentProps<string, SimplePasswordFieldOptions> {}
 
 function SimplePasswordField({
     autoComplete,
@@ -87,8 +87,8 @@ export const simplePasswordField = ({
     canShowPassword = false,
     placeholder,
     ...props
-}: Omit<FieldProps<string, string, SimplePasswordFieldProps>, 'component' | 'extendedParams'> & SimplePasswordFieldOptions) => {
-    return createField({
+}: FieldDefinition<string> & SimplePasswordFieldOptions) => {
+    return createField<string, string, SimplePasswordFieldProps>({
         ...props,
         component: SimplePasswordField,
         extendedParams: {

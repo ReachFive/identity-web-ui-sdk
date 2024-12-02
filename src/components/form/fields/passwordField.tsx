@@ -5,10 +5,10 @@ import type { PasswordPolicy } from '@reachfive/identity-core'
 import zxcvbn from '@reachfive/zxcvbn';
 import styled, { DefaultTheme } from 'styled-components';
 
-import type { Config } from '../../../types'
+import type { Config, Optional } from '../../../types'
 
 import { Input, Label, FormGroupContainer, FormError } from '../formControlsComponent';
-import type { FieldCreator, FieldComponentProps, FieldProps } from '../fieldCreator'
+import type { FieldCreator, FieldComponentProps, FieldDefinition } from '../fieldCreator'
 import { PasswordPolicyRules, type PasswordRule, type PasswordStrengthScore } from './passwordPolicyRules';
 
 import { ShowPasswordIcon, HidePasswordIcon } from './simplePasswordField';
@@ -80,13 +80,13 @@ type ExtraValues = {
 }
 
 type ExtraParams = {
-    blacklist: string[]
+    blacklist?: string[]
     canShowPassword?: boolean
     enabledRules: Record<RuleKeys, PasswordRule>
     minStrength: PasswordStrengthScore
 }
 
-interface PasswordFieldProps extends FieldComponentProps<string, ExtraParams, ExtraValues> {}
+export interface PasswordFieldProps extends FieldComponentProps<string, ExtraParams, ExtraValues> {}
 
 function PasswordField({
     autoComplete,
@@ -166,7 +166,7 @@ function PasswordField({
 
 type RuleKeys = Exclude<keyof PasswordPolicy, 'minStrength' | 'allowUpdateWithAccessTokenOnly'>
 
-function listEnabledRules(i18n: I18nResolver, passwordPolicy: Config['passwordPolicy']): Record<RuleKeys, PasswordRule> {
+export function listEnabledRules(i18n: I18nResolver, passwordPolicy: Config['passwordPolicy']): Record<RuleKeys, PasswordRule> {
     if (!passwordPolicy) return {} as Record<RuleKeys, PasswordRule>;
 
     const rules: Record<RuleKeys, PasswordRule> = {
@@ -238,7 +238,7 @@ export const passwordField = (
         required = true,
         validator,
         ...props
-    }: Partial<Omit<FieldProps<string, string, PasswordFieldProps, ExtraParams>, 'extendedParams'> & ExtraParams>,
+    }: Optional<FieldDefinition<string, string>, 'key' | 'label'> & Partial<ExtraParams>,
     { passwordPolicy }: Config
 ): FieldCreator<string, PasswordFieldProps, ExtraParams> =>
     createField<string, string, PasswordFieldProps, ExtraParams>({

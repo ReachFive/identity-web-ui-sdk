@@ -74,18 +74,16 @@ describe('DOM testing', () => {
         const Form = createForm<Model>({
             fields: [
                 consentField({
-                    label,
-                    extendedParams: {
-                        version: {
-                            versionId: 1,
-                            language: defaultConfig.language
-                        },
-                        description: 'Lorem ipsum sit amet',
-                        consentCannotBeGranted: false
-                    },
-                    type: 'opt-in',
                     key: `consents.myconsent.1`,
-                    path: `consents.myconsent` // Will target the same profile consent value for different versions of the consent
+                    path: `consents.myconsent`, // Will target the same profile consent value for different versions of the consent
+                    label,
+                    type: 'opt-in',
+                    version: {
+                        versionId: 1,
+                        language: defaultConfig.language
+                    },
+                    description: 'Lorem ipsum sit amet',
+                    consentCannotBeGranted: false
                 })
             ],
         })
@@ -108,6 +106,10 @@ describe('DOM testing', () => {
 
         const checkbox = screen.queryByLabelText(i18nResolver(label))
         expect(checkbox).not.toBeChecked()
+
+        const description = screen.queryByTestId('consents.myconsent.1.description')
+        expect(description).toBeInTheDocument()
+        expect(description).toHaveTextContent('Lorem ipsum sit amet')
         
         if (!checkbox) throw new Error('Input should be in document')
 
@@ -157,18 +159,16 @@ describe('DOM testing', () => {
             fields: [
                 consentField({
                     label,
-                    extendedParams: {
-                        version: {
-                            versionId: 1,
-                            language: defaultConfig.language
-                        },
-                        description: 'Lorem ipsum sit amet',
-                        consentCannotBeGranted: false,
-                    },
-                    type: 'opt-in',
                     key: `consents.myconsent.1`,
                     path: `consents.myconsent`, // Will target the same profile consent value for different versions of the consent
-                    defaultValue: true
+                    type: 'opt-in',
+                    version: {
+                        versionId: 1,
+                        language: defaultConfig.language
+                    },
+                    description: 'Lorem ipsum sit amet',
+                    consentCannotBeGranted: false,
+                    defaultValue: true,
                 })
             ],
         })

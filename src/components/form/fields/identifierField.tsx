@@ -6,8 +6,8 @@ import type { CountryCode } from 'libphonenumber-js';
 import { email, Validator } from '../../../core/validation';
 
 import { FormGroup, Input } from '../formControlsComponent';
-import { createField, FieldComponentProps, FieldProps } from '../fieldCreator';
-import { Config, Prettify } from '../../../types';
+import { createField, type FieldComponentProps, type FieldDefinition } from '../fieldCreator';
+import { Config, Optional } from '../../../types';
 import { isRichFormValue } from '../../../helpers/utils';
 
 /*
@@ -67,7 +67,7 @@ type IdentifierFieldExtraProps = {
     withPhoneNumber?: boolean
 }
 
-interface IdentifierFieldProps extends FieldComponentProps<IdentifierData, IdentifierFieldExtraProps> {}
+export interface IdentifierFieldProps extends FieldComponentProps<IdentifierData, IdentifierFieldExtraProps> {}
 
 function IdentifierField({
     autoComplete,
@@ -144,7 +144,7 @@ export default function identifierField(
         key = 'identifier',
         label = 'identifier',
         ...props
-    }: Prettify<Partial<FieldProps<string, IdentifierData, IdentifierFieldProps, IdentifierFieldExtraProps>> & IdentifierFieldExtraProps>,
+    }: Optional<FieldDefinition<string, IdentifierData>, 'key' | 'label'> & IdentifierFieldExtraProps,
     config: Config
 ) {
     return createField<string, IdentifierData, IdentifierFieldProps>({

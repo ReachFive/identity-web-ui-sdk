@@ -3,7 +3,7 @@ import React from 'react';
 import styled from 'styled-components';
 
 import { Checkbox } from '../formControlsComponent';
-import { createField, FieldComponentProps, FieldProps } from '../fieldCreator';
+import { createField, type FieldComponentProps, type FieldDefinition } from '../fieldCreator';
 import { MarkdownContent } from '../../miscComponent';
 
 import { checked, empty } from '../../../core/validation';
@@ -23,7 +23,8 @@ const Description = styled.div`
     }
 `;
 
-type ExtraParams = {
+type ConsentFieldOptions = {
+    type: ConsentType
     consentCannotBeGranted?: boolean
     description: string
     version: {
@@ -32,7 +33,7 @@ type ExtraParams = {
     }
 }
 
-interface ConsentFieldProps extends FieldComponentProps<boolean, ExtraParams, {}, 'granted'> {}
+export interface ConsentFieldProps extends FieldComponentProps<boolean, ConsentFieldOptions, {}, 'granted'> {}
 
 const ConsentField = ({ value, onChange, label, description, path, required, validation={}, consentCannotBeGranted }: ConsentFieldProps) => {
     const granted = (isRichFormValue(value, 'granted') ? value.granted : value) ?? false
@@ -50,15 +51,13 @@ const ConsentField = ({ value, onChange, label, description, path, required, val
             onToggle={onToggle}
             name={path}
             label={label}
-            data-testid={path}
+            dataTestId={path}
             required={required}
             error={error}
         />
-        <MarkdownContent root={Description} source={description} />
+        <MarkdownContent root={Description} source={description} data-testid={`${path}.description`} />
     </div>
 };
-
-type Props = { defaultValue?: boolean, extendedParams: ExtraParams, type: ConsentType } & Omit<FieldProps<boolean, boolean, ConsentFieldProps, ExtraParams, 'granted'>, 'defaultValue' | 'type' | 'format' | 'component' | 'extendedParams'>
 
 type Value = {
     consentType?: ConsentType
@@ -69,23 +68,36 @@ type Value = {
     granted: boolean
 }
 
-export default function consentField(config: Props) {
-    return createField<Value, boolean, ConsentFieldProps, ExtraParams, 'granted'>({
-        ...config,
-        required: !!config.required,
-        defaultValue: { granted: config.defaultValue ?? false },
+export default function consentField({
+    type,
+    required = false,
+    consentCannotBeGranted,
+    description,
+    version,
+    ...props
+}: Omit<FieldDefinition<Value, boolean>, 'defaultValue'> & { defaultValue?: boolean } & ConsentFieldOptions) {
+    return createField<Value, boolean, ConsentFieldProps, ConsentFieldOptions, 'granted'>({
+        ...props,
+        required,
+        defaultValue: { granted: props.defaultValue ?? false },
         format: {
             bind: value => value,
             unbind: value => value
                 ? {
                     granted: (isRichFormValue(value, 'granted') ? value.granted : value) ?? false,
-                    consentType: config.type,
-                    consentVersion: config.extendedParams?.version
+                    consentType: type,
+                    consentVersion: version
                 }
                 : null,
         },
-        validator: config.required ? checked : empty,
+        validator: required ? checked : empty,
         rawProperty: 'granted',
-        component: ConsentField
+        component: ConsentField,
+        extendedParams: {
+            consentCannotBeGranted,
+            description,
+            type,
+            version,
+        }
     });
 }

@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { FormGroup, Select, type SelectProps } from '../formControlsComponent';
-import { createField, FieldProps, type FieldComponentProps } from '../fieldCreator';
+import { createField, type FieldComponentProps, type FieldDefinition } from '../fieldCreator';
 import { isRichFormValue } from '../../../helpers/utils';
 
 type Value = SelectProps['value']
@@ -10,7 +10,7 @@ type SelectOptions = {
     values: SelectProps['options']
 }
 
-interface SelectFieldProps extends FieldComponentProps<Value>, SelectOptions {}
+export interface SelectFieldProps extends FieldComponentProps<Value, SelectOptions> {}
 
 const SelectField = (props: SelectFieldProps) => {
     const {
@@ -54,7 +54,7 @@ const SelectField = (props: SelectFieldProps) => {
     </FormGroup>;
 };
 
-export default function selectField({ values, ...config }: Omit<FieldProps<string, Value, SelectFieldProps>, 'component' | 'extendedParams'> & SelectOptions) {
+export default function selectField({ values, ...config }: FieldDefinition<string, Value> & SelectOptions) {
     return createField<string, Value, SelectFieldProps, SelectOptions>({
         ...config,
         component: SelectField,

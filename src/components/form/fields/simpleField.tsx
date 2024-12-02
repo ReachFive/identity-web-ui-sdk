@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { FormGroup, Input } from '../formControlsComponent';
-import { createField, FieldComponentProps, FieldProps } from '../fieldCreator';
+import { createField, type FieldComponentProps, type FieldDefinition } from '../fieldCreator';
 import { isRichFormValue } from '../../../helpers/utils';
 
 type SimpleFieldOptions = {
@@ -9,7 +9,7 @@ type SimpleFieldOptions = {
     type?: React.HTMLInputTypeAttribute
 }
 
-interface SimpleFieldProps extends FieldComponentProps<string, SimpleFieldOptions> {}
+export interface SimpleFieldProps extends FieldComponentProps<string, SimpleFieldOptions> {}
 
 const SimpleField = (props: SimpleFieldProps) => {
     const {
@@ -58,7 +58,7 @@ const SimpleField = (props: SimpleFieldProps) => {
     );
 };
 
-export const simpleField = ({ placeholder, type, ...props }: Omit<FieldProps<string | number, string, SimpleFieldProps>, 'component' | 'extendedParams'> & SimpleFieldOptions) => {
+export const simpleField = ({ placeholder, type, ...props }: FieldDefinition<string | number, string> & SimpleFieldOptions) => {
     return createField<string | number, string, SimpleFieldProps>({
         ...props,
         component: SimpleField,

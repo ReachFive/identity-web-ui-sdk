@@ -14,12 +14,12 @@ export const ageLimitValidator = (min = 6, max = 129) => new Validator<DateTime>
 })
 
 export default function birthdateField(
-    { min, max, label, ...props }: Parameters<typeof dateField>[0] & { min: number, max: number },
+    { min, max, label = 'birthdate', ...props }: Parameters<typeof dateField>[0] & { min?: number, max?: number },
     config: Config
 ) {
     return dateField({
         ...props,
-        label: label ?? 'birthdate',
+        label: label,
         validator: ageLimitValidator(min, max)
     }, config)
 }

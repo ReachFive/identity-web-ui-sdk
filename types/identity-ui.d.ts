@@ -1,6 +1,10 @@
 /**
  * @reachfive/identity-ui - v1.30.1
+<<<<<<< HEAD
  * Compiled Mon, 02 Dec 2024 14:42:15 UTC
+=======
+ * Compiled Wed, 27 Nov 2024 13:58:25 UTC
+>>>>>>> 35d9174 (buildFormFields)
  *
  * Copyright (c) ReachFive.
  *
@@ -946,7 +950,7 @@ interface ProfileEditorProps {
     /**
      *
      */
-    resolvedFields: FieldCreator<unknown>[];
+    resolvedFields: FieldCreator<any, any, any, any>[];
     /**
      * Whether the form fields' labels are displayed on the form view.
      * @default false

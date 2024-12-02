@@ -237,14 +237,14 @@ describe('DOM testing', () => {
             expect(formError).toHaveTextContent('validation.age.minimun')
         }, { timeout: yearDebounce })
 
-        expect(onFieldChange).toHaveBeenLastCalledWith(
+        await waitFor(() => expect(onFieldChange).toHaveBeenLastCalledWith(
             expect.objectContaining({
                 date: expect.objectContaining({
                     isDirty: true,
                     value: tenYearsOld.startOf('day'),
                 })
             })
-        )
+        ))
 
         onFieldChange.mockClear()
 
@@ -254,14 +254,14 @@ describe('DOM testing', () => {
 
         await waitFor(() => expect(onFieldChange).toHaveBeenCalled(), { timeout: yearDebounce * 2 })
 
-        expect(onFieldChange).toHaveBeenLastCalledWith(
+        await waitFor(() => expect(onFieldChange).toHaveBeenLastCalledWith(
             expect.objectContaining({
                 date: expect.objectContaining({
                     isDirty: true,
                     value: eighteenYearsOld.startOf('day'),
                 })
             })
-        )
+        ))
 
         await waitFor(() => {
             const formError = screen.queryByTestId('form-error')

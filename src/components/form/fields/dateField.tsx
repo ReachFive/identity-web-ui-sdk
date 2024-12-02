@@ -6,9 +6,9 @@ import { ValidatorResult, Validator } from '../../../core/validation';
 import { useDebounce } from '../../../helpers/useDebounce';
 import { isRichFormValue } from '../../../helpers/utils';
 
-import { createField, FieldComponentProps, FieldCreator, FieldProps } from '../fieldCreator';
+import { createField, type FieldComponentProps, type FieldCreator, type FieldDefinition } from '../fieldCreator';
 import { FormGroup, Input, Select } from '../formControlsComponent';
-import { Config } from '../../../types';
+import { Config, Optional } from '../../../types';
 
 const inputRowGutter = 10;
 
@@ -28,7 +28,7 @@ type ExtraParams = {
     yearDebounce?: number
 }
 
-interface DateFieldProps extends FieldComponentProps<DateTime, ExtraParams> {}
+export interface DateFieldProps extends FieldComponentProps<DateTime, ExtraParams> {}
 
 const DateField = ({
     i18n,
@@ -184,8 +184,9 @@ export default function dateField(
         key = 'date',
         label = 'date',
         yearDebounce,
+        locale,
         ...props
-    }: Partial<Omit<FieldProps<string, DateTime, DateFieldProps>, 'extendedParams'> & ExtraParams>,
+    }: Optional<FieldDefinition<string, DateTime>, 'key' | 'label'> & Optional<ExtraParams, 'locale'>,
     config: Config
 ): FieldCreator<DateTime, DateFieldProps, ExtraParams> {
     return createField<string, DateTime, DateFieldProps>({
@@ -202,7 +203,7 @@ export default function dateField(
         validator: props.validator ? datetimeValidator(config.language).and(props.validator) : datetimeValidator(config.language),
         component: DateField,
         extendedParams: {
-            locale: config.language,
+            locale: locale ?? config.language,
             yearDebounce
         }
     })

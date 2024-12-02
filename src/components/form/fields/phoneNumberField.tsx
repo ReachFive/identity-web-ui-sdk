@@ -6,10 +6,10 @@ import { createGlobalStyle } from 'styled-components';
 
 import styles from 'react-phone-number-input/style.css'; // import raw css using `rollup-plugin-import-css'`
 
-import { FieldComponentProps, FieldCreator, FieldProps, createField } from '../fieldCreator';
+import { createField, type FieldComponentProps, type FieldCreator, type FieldDefinition } from '../fieldCreator';
 import { FormGroup } from '../formControlsComponent';
 import { Validator } from '../../../core/validation';
-import { Config } from '../../../types';
+import { Config, Optional } from '../../../types';
 import { Input } from '../formControlsComponent';
 
 function isValidCountryCode(code?: string): code is Country {
@@ -22,12 +22,10 @@ const ReactPhoneNumberInputStyle = createGlobalStyle`
     :root {
         --PhoneInput-color--focus: ${props => props.theme.primaryColor};
         --PhoneInputCountrySelect-marginRight: ${props => props.theme.spacing}px;
-        --PhoneInputCountrySelectArrow-marginLeft: var(--PhoneInputCountrySelect-marginRight);
-        --PhoneInputCountrySelectArrow-borderWidth: 2px;
-        --PhoneInputCountrySelectArrow-transform: rotate(45deg);
-        --PhoneInputCountrySelectArrow-width: 0.3em;
+        --PhoneInputCountrySelectArrow-borderWidth: ${props => props.theme.borderWidth}px;
         --PhoneInputCountryFlag-height: ${props => props.theme.input.height - ((props.theme.input.paddingY + props.theme.input.borderWidth) * 2)}px;
     }
+
 `
 
 function importLocale(locale: string) {
@@ -148,7 +146,7 @@ const PhoneNumberField = (props: PhoneNumberFieldProps) => {
                 value={currentValue}
                 placeholder={placeholder}
                 required={required}
-                data-testid="phone_number"
+                data-testid={path}
                 onChange={handlePhoneChange}
                 labels={labels}
                 international={true}
@@ -178,7 +176,7 @@ const phoneNumberField = (
         withCountryCallingCode,
         withCountrySelect,
         ...props
-    }: Partial<Omit<FieldProps<string, Value, PhoneNumberFieldProps>, 'extendedParams'> & PhoneNumberOptions>,
+    }: Optional<FieldDefinition<string, Value>, 'key' | 'label'> & PhoneNumberOptions,
     config: Config
 ): FieldCreator<Value, PhoneNumberFieldProps> => {
     return createField<string, Value, PhoneNumberFieldProps, PhoneNumberOptions>({
