@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { default as PhoneInputWithCountrySelect, isSupportedCountry, parsePhoneNumber } from 'react-phone-number-input'
 import { default as PhoneInputWithoutCountrySelect } from 'react-phone-number-input/input';
 import type { Country, Labels, Value } from 'react-phone-number-input';
-import styled from 'styled-components';
+import { createGlobalStyle } from 'styled-components';
 
 import styles from 'react-phone-number-input/style.css'; // import raw css using `rollup-plugin-import-css'`
 
@@ -16,17 +16,18 @@ function isValidCountryCode(code?: string): code is Country {
     return typeof code === 'string' && isSupportedCountry(code)
 }
 
-const PhoneInputStyles = styled.div`
+const ReactPhoneNumberInputStyle = createGlobalStyle`
     ${styles}
 
-    --PhoneInput-color--focus: ${props => props.theme.primaryColor};
-    --PhoneInputCountrySelect-marginRight: ${props => props.theme.spacing}px;
-    --PhoneInputCountrySelectArrow-marginLeft: var(--PhoneInputCountrySelect-marginRight);
-    --PhoneInputCountrySelectArrow-borderWidth: 2px;
-	--PhoneInputCountrySelectArrow-transform: rotate(45deg);
-    --PhoneInputCountrySelectArrow-width: 0.3em;
-    --PhoneInputCountryFlag-height: ${props => props.theme.input.height - ((props.theme.input.paddingY + props.theme.input.borderWidth) * 2)}px;
-
+    :root {
+        --PhoneInput-color--focus: ${props => props.theme.primaryColor};
+        --PhoneInputCountrySelect-marginRight: ${props => props.theme.spacing}px;
+        --PhoneInputCountrySelectArrow-marginLeft: var(--PhoneInputCountrySelect-marginRight);
+        --PhoneInputCountrySelectArrow-borderWidth: 2px;
+        --PhoneInputCountrySelectArrow-transform: rotate(45deg);
+        --PhoneInputCountrySelectArrow-width: 0.3em;
+        --PhoneInputCountryFlag-height: ${props => props.theme.input.height - ((props.theme.input.paddingY + props.theme.input.borderWidth) * 2)}px;
+    }
 `
 
 function importLocale(locale: string) {
@@ -123,30 +124,29 @@ const PhoneNumberField = (props: PhoneNumberFieldProps) => {
             {...{ error }}
             showLabel={showLabel}
         >
-            <PhoneInputStyles>
-                <PhoneInput
-                    id={inputId}
-                    name={path}
-                    value={currentValue}
-                    placeholder={placeholder}
-                    required={required}
-                    data-testid="phone_number"
-                    onChange={handlePhoneChange}
-                    labels={labels}
-                    international={true}
-                    withCountryCallingCode={withCountryCallingCode}
-                    {...(withCountrySelect
-                        ? ({
-                            defaultCountry: country,
-                        })
-                        : ({
-                            country,
-                        })
-                    )}
-                    inputComponent={Input}
-                    hasError={!!error}
-                />
-            </PhoneInputStyles>
+            <ReactPhoneNumberInputStyle />
+            <PhoneInput
+                id={inputId}
+                name={path}
+                value={currentValue}
+                placeholder={placeholder}
+                required={required}
+                data-testid="phone_number"
+                onChange={handlePhoneChange}
+                labels={labels}
+                international={true}
+                withCountryCallingCode={withCountryCallingCode}
+                {...(withCountrySelect
+                    ? ({
+                        defaultCountry: country,
+                    })
+                    : ({
+                        country,
+                    })
+                )}
+                inputComponent={Input}
+                hasError={!!error}
+            />
         </FormGroup>
     );
 }
