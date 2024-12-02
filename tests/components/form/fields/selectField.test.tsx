@@ -127,11 +127,11 @@ describe('DOM testing', () => {
 
         await waitFor(() => expect(onSubmit).toHaveBeenCalled())
 
-        expect(onSubmit).toBeCalledWith(
+        await waitFor(() => expect(onSubmit).toBeCalledWith(
             expect.objectContaining({
                 selectbox: choice.value
             })
-        )
+        ))
     })
 
     test('initially selected value', async () => {
@@ -197,10 +197,10 @@ describe('DOM testing', () => {
 
         await waitFor(() => expect(onSubmit).toHaveBeenCalled())
 
-        expect(onSubmit).toBeCalledWith(
+        await waitFor(() => expect(onSubmit).toBeCalledWith(
             expect.objectContaining({
                 selectbox: choice.value
             })
-        )
+        ))
     })
 })

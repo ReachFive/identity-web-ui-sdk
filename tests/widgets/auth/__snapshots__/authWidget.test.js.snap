@@ -2361,6 +2361,7 @@ exports[`Snapshot login view with canShowPassword 1`] = `
           />
           <svg
             className="c11"
+            data-testid="show-password-btn"
             onClick={[Function]}
           />
         </div>

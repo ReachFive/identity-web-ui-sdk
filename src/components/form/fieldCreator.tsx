@@ -71,7 +71,7 @@ export interface FieldProps<T, F, P extends FieldComponentProps<F, ExtraParams, 
     required?: boolean
     readOnly?: boolean
     autoComplete?: AutoFill
-    validator?: Validator<F> | CompoundValidator<F>
+    validator?: Validator<F, any> | CompoundValidator<F, any>
     mapping?: PathMapping
     format?: Formatter<T, F, K>
     rawProperty?: K

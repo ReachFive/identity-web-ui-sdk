@@ -14,12 +14,11 @@ import type { Config } from '../../../../src/types';
 import type { Theme } from '../../../../src/types/styled'
 
 import { createForm } from '../../../../src/components/form/formComponent'
-import simpleField from '../../../../src/components/form/fields/simpleField'
+import simplePasswordField from '../../../../src/components/form/fields/simplePasswordField'
 import resolveI18n, { I18nMessages } from '../../../../src/core/i18n';
 import { buildTheme } from '../../../../src/core/theme';
 import { I18nProvider } from '../../../../src/contexts/i18n';
 import { ConfigProvider } from '../../../../src/contexts/config';
-import { Validator } from '../../../../src/core/validation';
 
 const defaultConfig: Config = {
     clientId: 'local',
@@ -40,7 +39,7 @@ const defaultConfig: Config = {
 };
 
 const defaultI18n: I18nMessages = {
-    simple: 'simple'
+    password: 'password'
 }
 
 const i18nResolver = resolveI18n(defaultI18n)
@@ -56,21 +55,21 @@ const theme: Theme = buildTheme({
     }
 })
 
-type Model = { simple: string }
+type Model = { password: string }
 
 describe('DOM testing', () => {
     test('default settings', async () => {
         const user = userEvent.setup()
 
-        const key = 'simple'
-        const label = 'simple'
+        const key = 'password'
+        const label = 'password'
 
         const onFieldChange = jest.fn()
         const onSubmit = jest.fn<(data: Model) => Promise<Model>>(data => Promise.resolve(data))
 
         const Form = createForm<Model>({
             fields: [
-                simpleField({ key, label })
+                simplePasswordField({ key, label })
             ],
         })
 
@@ -93,7 +92,119 @@ describe('DOM testing', () => {
         const input = screen.queryByLabelText(i18nResolver(label))
         expect(input).toBeInTheDocument()
         expect(input).toHaveAttribute('id', key)
+        expect(input).toHaveAttribute('type', 'password')
+        expect(input).toHaveAttribute('placeholder', i18nResolver(label))
         expect(input).toHaveValue('')
+
+        if (!input) throw new Error('Input should be in document')
+
+        expect(screen.queryByTestId('show-password-btn')).not.toBeInTheDocument()
+        expect(screen.queryByTestId('hide-password-btn')).not.toBeInTheDocument()
+
+        const newValue = 'azerty'
+        await user.clear(input)
+        await user.type(input, newValue)
+
+        expect(onFieldChange).toHaveBeenLastCalledWith(
+            expect.objectContaining({
+                password: expect.objectContaining({
+                    isDirty: false,
+                    value: newValue,
+                })
+            })
+        )
+
+        expect(screen.queryByTestId('show-password-btn')).not.toBeInTheDocument()
+        expect(screen.queryByTestId('hide-password-btn')).not.toBeInTheDocument()
+
+        const submitBtn = screen.getByRole('button')
+        user.click(submitBtn)
+
+        await waitFor(() => expect(onSubmit).toHaveBeenCalled())
+
+        await waitFor(() => expect(onSubmit).toBeCalledWith(
+            expect.objectContaining({
+                password: newValue
+            })
+        ))
+    })
+
+    test('custom type, placeholder and default value', async () => {
+        const key = 'password'
+        const label = 'password'
+        const placeholder = 'password placeholder'
+        const defaultValue = "my value"
+
+        const onFieldChange = jest.fn()
+        const onSubmit = jest.fn<(data: Model) => Promise<Model>>(data => Promise.resolve(data))
+
+        const Form = createForm<Model>({
+            fields: [
+                simplePasswordField({ key, label, placeholder, defaultValue })
+            ],
+        })
+
+        await waitFor(async () => {   
+            return render(
+                <ConfigProvider config={defaultConfig}>
+                    <ThemeProvider theme={theme}>
+                        <I18nProvider defaultMessages={defaultI18n}>
+                            <Form
+                                fieldValidationDebounce={0} // trigger validation instantly
+                                onFieldChange={onFieldChange}
+                                handler={onSubmit}
+                            />
+                        </I18nProvider>
+                    </ThemeProvider>
+                </ConfigProvider>
+            )
+        })
+
+        const input = screen.queryByLabelText(i18nResolver(label))
+        expect(input).toBeInTheDocument()
+        expect(input).toHaveAttribute('id', key)
+        expect(input).toHaveAttribute('placeholder', placeholder)
+        expect(input).toHaveValue(defaultValue)
+
+    })
+
+    test('with canShowPassword = true', async () => {
+        const user = userEvent.setup()
+
+        const key = 'password'
+        const label = 'password'
+
+        const onFieldChange = jest.fn()
+        const onSubmit = jest.fn<(data: Model) => Promise<Model>>(data => Promise.resolve(data))
+
+        const Form = createForm<Model>({
+            fields: [
+                simplePasswordField({ key, label, canShowPassword: true })
+            ],
+        })
+
+        await waitFor(async () => {   
+            return render(
+                <ConfigProvider config={defaultConfig}>
+                    <ThemeProvider theme={theme}>
+                        <I18nProvider defaultMessages={defaultI18n}>
+                            <Form
+                                fieldValidationDebounce={0} // trigger validation instantly
+                                onFieldChange={onFieldChange}
+                                handler={onSubmit}
+                            />
+                        </I18nProvider>
+                    </ThemeProvider>
+                </ConfigProvider>
+            )
+        })
+
+        const input = screen.queryByLabelText(i18nResolver(label))
+        expect(input).toBeInTheDocument()
+        expect(input).toHaveAttribute('type', 'password')
+
+        expect(screen.queryByTestId('show-password-btn')).toBeInTheDocument()
+        expect(screen.queryByTestId('hide-password-btn')).not.toBeInTheDocument()
 
         if (!input) throw new Error('Input should be in document')
 
@@ -103,125 +214,26 @@ describe('DOM testing', () => {
 
         expect(onFieldChange).toHaveBeenLastCalledWith(
             expect.objectContaining({
-                simple: expect.objectContaining({
+                password: expect.objectContaining({
                     isDirty: false,
                     value: newValue,
                 })
             })
         )
 
-        const submitBtn = screen.getByRole('button')
-        user.click(submitBtn)
+        expect(screen.queryByTestId('show-password-btn')).toBeInTheDocument()
+        expect(screen.queryByTestId('hide-password-btn')).not.toBeInTheDocument()
 
-        await waitFor(() => expect(onSubmit).toHaveBeenCalled())
+        await user.click(screen.queryByTestId('show-password-btn')!)
 
-        await waitFor(() => expect(onSubmit).toBeCalledWith(
-            expect.objectContaining({
-                simple: newValue
-            })
-        ))
-    })
+        expect(input).toHaveAttribute('type', 'text')
+        expect(screen.queryByTestId('show-password-btn')).not.toBeInTheDocument()
+        expect(screen.queryByTestId('hide-password-btn')).toBeInTheDocument()
 
-    test('custom type, placeholder and default value', async () => {
-        const key = 'simple'
-        const label = 'simple'
-        const type = 'email'
-        const placeholder = 'simple placeholder'
-        const defaultValue = "my value"
+        await user.click(screen.queryByTestId('hide-password-btn')!)
 
-        const onFieldChange = jest.fn()
-        const onSubmit = jest.fn<(data: Model) => Promise<Model>>(data => Promise.resolve(data))
-
-        const Form = createForm<Model>({
-            fields: [
-                simpleField({ key, label, type, placeholder, defaultValue })
-            ],
-        })
-
-        await waitFor(async () => {   
-            return render(
-                <ConfigProvider config={defaultConfig}>
-                    <ThemeProvider theme={theme}>
-                        <I18nProvider defaultMessages={defaultI18n}>
-                            <Form
-                                fieldValidationDebounce={0} // trigger validation instantly
-                                onFieldChange={onFieldChange}
-                                handler={onSubmit}
-                            />
-                        </I18nProvider>
-                    </ThemeProvider>
-                </ConfigProvider>
-            )
-        })
-
-        const input = screen.queryByLabelText(i18nResolver(label))
-        expect(input).toBeInTheDocument()
-        expect(input).toHaveAttribute('id', key)
-        expect(input).toHaveAttribute('type', type)
-        expect(input).toHaveAttribute('placeholder', placeholder)
-        expect(input).toHaveValue(defaultValue)
-
-    })
-
-    test('extends validators', async () => {
-        const matchValidator = (matchText: string) => new Validator<string>({
-            rule: value => value === matchText,
-            hint: 'value.match'
-        })
-
-        const user = userEvent.setup()
-
-        const key = 'simple'
-        const label = 'simple'
-        const matchPassword = "match value"
-
-        const onFieldChange = jest.fn()
-
-        const Form = createForm<Model>({
-            fields: [
-                simpleField({
-                    key,
-                    label,
-                    validator: matchValidator(matchPassword)
-                })
-            ],
-        })
-
-        await waitFor(async () => {   
-            return render(
-                <ConfigProvider config={defaultConfig}>
-                    <ThemeProvider theme={theme}>
-                        <I18nProvider defaultMessages={defaultI18n}>
-                            <Form
-                                fieldValidationDebounce={0} // trigger validation instantly
-                                onFieldChange={onFieldChange}
-                            />
-                        </I18nProvider>
-                    </ThemeProvider>
-                </ConfigProvider>
-            )
-        })
-
-        const input = screen.queryByLabelText(i18nResolver(label))
-        expect(input).toHaveAttribute('placeholder', i18nResolver(label))
-        expect(input).toBeInTheDocument()
-
-        if (!input) throw new Error('Input should be in document')
-
-        const invalidValue = 'ILoveApples'
-        await user.clear(input)
-        await user.type(input, invalidValue)
-
-        expect(onFieldChange).toHaveBeenLastCalledWith(
-            expect.objectContaining({
-                simple: expect.objectContaining({
-                    isDirty: false,
-                    value: invalidValue,
-                    validation: expect.objectContaining({
-                        error: "validation.value.match"
-                    })
-                })
-            })
-        )
+        expect(input).toHaveAttribute('type', 'password')
+        expect(screen.queryByTestId('show-password-btn')).toBeInTheDocument()
+        expect(screen.queryByTestId('hide-password-btn')).not.toBeInTheDocument()
     })
 })
