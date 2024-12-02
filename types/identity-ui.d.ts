@@ -1,6 +1,6 @@
 /**
  * @reachfive/identity-ui - v1.30.1
- * Compiled Mon, 02 Dec 2024 14:37:42 UTC
+ * Compiled Mon, 02 Dec 2024 14:40:28 UTC
  *
  * Copyright (c) ReachFive.
  *
@@ -10,7 +10,7 @@
 import { CSSProperties } from 'styled-components';
 import { Config as Config$1, RemoteSettings, ConsentVersions, CustomField, Client as Client$1, SessionInfo, AuthOptions, MFA, PasswordlessResponse, SingleFactorPasswordlessParams, Profile, UserConsent, DeviceCredential } from '@reachfive/identity-core';
 export { Config } from '@reachfive/identity-core';
-import React$1 from 'react';
+import React from 'react';
 import { Country } from 'react-phone-number-input';
 import { PasswordlessParams } from '@reachfive/identity-core/es/main/oAuthClient';
 
@@ -215,7 +215,7 @@ interface Theme extends BaseTheme {
 
 type I18nMessages = Record<string, string>;
 type I18nMessageParams = Record<string, unknown>;
-type I18nResolver$1 = (key: string, params?: I18nMessageParams, fallback?: (params?: I18nMessageParams) => string) => string;
+type I18nResolver = (key: string, params?: I18nMessageParams, fallback?: (params?: I18nMessageParams) => string) => string;
 
 type I18nProps$1 = {
     i18n?: I18nMessages;
@@ -231,7 +231,7 @@ type Context = {
 };
 
 interface I18nProps {
-    i18n: I18nResolver$1;
+    i18n: I18nResolver;
 }
 type WithI18n<P> = P & I18nProps;
 
@@ -241,50 +241,61 @@ type VaildatorError = {
 type ValidatorSuccess = {
     success?: true;
 };
-type VaildatorResult = boolean | VaildatorError | ValidatorSuccess;
+type ValidatorResult = boolean | VaildatorError | ValidatorSuccess;
 
 type FormValue<T, K extends string = 'raw'> = T | RichFormValue<T, K>;
 type RichFormValue<T, K extends string = 'raw'> = Record<K, T>;
 
+/** @todo to refine */
+type FormContext<T> = {
+    errorMessage?: string
+    fields: FieldValues<T>
+    hasErrors?: boolean
+    isLoading?: boolean
+    isSubmitted: boolean,
+}
+
+type FieldValues<T> = {
+    [K in keyof T]: FieldValue<T[K]>
+}
+
 interface FieldCreateProps {
-    showLabel: boolean
+    showLabel: boolean;
 }
-
-interface FieldCreator<T, P = {}, E = {}> {
-    path: string,
-    create: (options: WithI18n<FieldCreateProps>) => Field$1<T, P, E>
+interface FieldCreator<T, P = {}, E extends Record<string, unknown> = {}, K extends string = 'raw'> {
+    path: string;
+    create: (options: WithI18n<FieldCreateProps>) => Field$1<T, P, E, K>;
 }
-
-interface Field$1<T, P = {}, E = {}> {
-    key: string
-    render: (props: Partial<P> & Partial<FieldComponentProps<T, P, E>> & { state: FieldValue<T, E> }) => React.ReactNode
-    initialize: <M>(model: M) => FieldValue<T, E>
-    unbind: <M>(model: M, state: FieldValue<T, E>) => M
-    validate: <S extends { isSubmitted: boolean }>(data: FieldValue<T, E>, ctx: S) => VaildatorResult
+interface Field$1<T, P = {}, E extends Record<string, unknown> = {}, K extends string = 'raw'> {
+    key: string;
+    render: (props: Partial<P> & Partial<FieldComponentProps<T, {}, E, K>> & {
+        state: FieldValue<T, K, E>;
+    }) => React.ReactNode;
+    initialize: <M extends Record<PropertyKey, unknown>>(model: M) => FieldValue<T, K>;
+    unbind: <M extends Record<PropertyKey, unknown>>(model: M, state: FieldValue<T, K, E>) => M;
+    validate: (data: FieldValue<T, K, E>, ctx: FormContext<T>) => ValidatorResult;
 }
-
-type FieldValue<T, E = {}> = E & {
-    value?: T
-    isDirty?: boolean
-    validation?: VaildatorResult
-}
-
-type FieldComponentProps<T, P = {}, E = {}, K extends string = 'raw'> = P & {
-    inputId: string
-    key: string
-    path: string
-    label: string
-    onChange: (value: FieldValue<T, E>) => void
-    placeholder?: string
-    autoComplete?: AutoFill
-    rawProperty?: K
-    required?: boolean
-    readOnly?: boolean
-    i18n: I18nResolver
-    showLabel?: boolean
-    value?: FormValue<T, K>
-    validation?: VaildatorResult
-}
+type FieldValue<T, K extends string = 'raw', E extends Record<string, unknown> = {}> = E & {
+    value?: FormValue<T, K>;
+    isDirty?: boolean;
+    validation?: ValidatorResult;
+};
+type FieldComponentProps<T, P = {}, E extends Record<string, unknown> = {}, K extends string = 'raw'> = P & {
+    inputId: string;
+    key: string;
+    path: string;
+    label: string;
+    onChange: (value: FieldValue<T, K, E>) => void;
+    placeholder?: string;
+    autoComplete?: AutoFill;
+    rawProperty?: K;
+    required?: boolean;
+    readOnly?: boolean;
+    i18n: I18nResolver;
+    showLabel?: boolean;
+    value?: FormValue<T, K>;
+    validation?: ValidatorResult;
+};
 
 /** The field's representation. */
 type Field = {
@@ -1109,7 +1120,7 @@ interface WidgetProps {
     onReady?: (instance: WidgetInstance) => void;
 }
 type WidgetOptions<P> = Prettify<P & WidgetProps & I18nProps$1 & ThemeProps>;
-type Widget<P> = (props: P, ctx: Context) => Promise<React$1.JSX.Element>;
+type Widget<P> = (props: P, ctx: Context) => Promise<React.JSX.Element>;
 declare class UiClient {
     config: Config;
     core: Client$1;

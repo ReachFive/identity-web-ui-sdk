@@ -13,7 +13,7 @@ import { PasswordPolicyRules, type PasswordRule, type PasswordStrengthScore } fr
 
 import { ShowPasswordIcon, HidePasswordIcon } from './simplePasswordField';
 import { useI18n } from '../../../contexts/i18n';
-import { VaildatorResult, Validator } from '../../../core/validation';
+import { ValidatorResult, Validator } from '../../../core/validation';
 import { I18nResolver } from '../../../core/i18n';
 
 import { createField } from '../fieldCreator';
@@ -100,7 +100,7 @@ function PasswordField({
     placeholder,
     required,
     showLabel,
-    validation = {} as VaildatorResult,
+    validation = {} as ValidatorResult,
     value = '',
 }: PasswordFieldProps) {
     const [showPassword, setShowPassword] = useState(false)

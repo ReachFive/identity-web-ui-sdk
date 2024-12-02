@@ -3,11 +3,11 @@ import validator from 'validator';
 import { isValued } from '../helpers/utils'
 import { I18nResolver } from './i18n';
 
-class CompoundValidator<T, C> {
+export class CompoundValidator<T, C = {}> {
     current: Validator<T, C> | CompoundValidator<T, C>
-    next: Validator<T, C>
+    next: Validator<T, C> | CompoundValidator<T, C>
 
-    constructor(current: Validator<T, C> | CompoundValidator<T, C>, next: Validator<T, C>) {
+    constructor(current: Validator<T, C> | CompoundValidator<T, C>, next: Validator<T, C> | CompoundValidator<T, C>) {
         this.current = current;
         this.next = next;
     }
@@ -19,7 +19,7 @@ class CompoundValidator<T, C> {
         return (value: T, ctx: C) => current(value, ctx) || next(value, ctx);
     }
 
-    and(validator: Validator<T, C>) {
+    and(validator: Validator<T, C> | CompoundValidator<T, C>) {
         return new CompoundValidator(this, validator);
     }
 }
@@ -27,20 +27,20 @@ class CompoundValidator<T, C> {
 export type VaildatorError = { error: string }
 export type ValidatorSuccess = { success?: true }
 
-export type VaildatorResult = boolean | VaildatorError | ValidatorSuccess
+export type ValidatorResult = boolean | VaildatorError | ValidatorSuccess
 
-export type ValidatorInstance<T, C> = (value: T, ctx: C) => VaildatorResult
+export type ValidatorInstance<T, C> = (value: T, ctx: C) => ValidatorResult
 
 export type Rule<T, C> = (value: T, ctx: C) => boolean
 
 export type Hint<T> = (value: T) => (string | undefined)
 
-export function isVaildationError(result: VaildatorResult): result is VaildatorError {
+export function isVaildationError(result: ValidatorResult): result is VaildatorError {
     return (result as VaildatorError).error !== undefined;
 }
 
-export function isValidatorSuccess(result: VaildatorResult): result is ValidatorSuccess {
-    return (typeof result === 'boolean' && result === true) || (result as ValidatorSuccess).success !== undefined;
+export function isValidatorSuccess(result: ValidatorResult): result is ValidatorSuccess {
+    return (typeof result === 'boolean' && result === false) || (result as ValidatorSuccess).success !== undefined;
 }
 
 export interface ValidatorOptions<T, C> {
@@ -65,17 +65,17 @@ export class Validator<T, C = {}> {
         return (value: T, ctx: C) => !this.rule(value, ctx) && { error: errorMessage(value) };
     }
 
-    and(validator: Validator<T, C>) {
+    and(validator: Validator<T, C> | CompoundValidator<T, C>) {
         return new CompoundValidator(this, validator);
     }
 }
 
 export const empty = new Validator({
-    rule: () => true
+    rule: <T>(_value: T) => true
 });
 
-export const required = new Validator<unknown>({
-    rule: (value) => isValued(value),
+export const required = new Validator({
+    rule: <T>(value: T | undefined) => isValued(value),
     hint: 'required'
 });
 

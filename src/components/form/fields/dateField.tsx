@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react'
 import { DateTime, Info } from 'luxon'
 import styled from 'styled-components';
 
-import { VaildatorResult, Validator } from '../../../core/validation';
+import { ValidatorResult, Validator } from '../../../core/validation';
 import { useDebounce } from '../../../helpers/useDebounce';
 import { isRichFormValue } from '../../../helpers/utils';
 
@@ -39,7 +39,7 @@ const DateField = ({
     path,
     required,
     showLabel,
-    validation = {} as VaildatorResult,
+    validation = {} as ValidatorResult,
     value,
     yearDebounce = 1000
 }: DateFieldProps) => {
