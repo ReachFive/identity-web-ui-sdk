@@ -51,7 +51,7 @@ export const FormGroup = ({
 }: PropsWithChildren<FormGroupProps>) => <FormGroupContainer required={required}>
         <Label visible={showLabel} htmlFor={inputId}>{labelText}</Label>
         {children}
-        {error && <FormError>{error}</FormError>}
+        {error && <FormError data-testid="form-error">{error}</FormError>}
     </FormGroupContainer>;
 
 const inputMixin = css<{ hasError?: boolean }>`

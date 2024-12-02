@@ -65,7 +65,7 @@ export class Validator<T, C = {}> {
         return (value: T, ctx: C) => !this.rule(value, ctx) && { error: errorMessage(value) };
     }
 
-    and(validator: Validator<T>) {
+    and(validator: Validator<T, C>) {
         return new CompoundValidator(this, validator);
     }
 }

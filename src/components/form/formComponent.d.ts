@@ -8,7 +8,7 @@ import type { AppError } from '../../helpers/errors'
 import type { FieldCreator, FieldValue } from './fieldCreator'
 
 /** @todo to refine */
-type FormContext<T> = {
+export type FormContext<T> = {
     errorMessage?: string
     fields: FieldValues<T>
     hasErrors?: boolean
@@ -16,13 +16,8 @@ type FormContext<T> = {
     isSubmitted: boolean,
 }
 
-type FieldValues<T> = {
+export type FieldValues<T> = {
     [K in keyof T]: FieldValue<T[K]>
-}
-
-export interface PasswordPolicy {
-    minLength: number
-    minStrength: number
 }
 
 export interface FormOptions<P = {}> {
@@ -40,7 +35,7 @@ export interface FormOptions<P = {}> {
 export type WithFormProps<T, P = {}> = P & FormOptions<P> & {
     beforeSubmit?: (data: T) => T
     fieldValidationDebounce?: number
-    handler?: (data: T) => Promise<unknown | void>
+    handler?: (data: T) => Promise<unknown | void> | void
     initialModel?: T
     onError?: (error: Error | AppError) => void
     onFieldChange?: (data: FieldValues<T>) => void

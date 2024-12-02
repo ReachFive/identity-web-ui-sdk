@@ -1,6 +1,6 @@
 /**
  * @reachfive/identity-ui - v1.30.1
- * Compiled Thu, 28 Nov 2024 15:30:22 UTC
+ * Compiled Mon, 02 Dec 2024 14:33:42 UTC
  *
  * Copyright (c) ReachFive.
  *
@@ -212,9 +212,7 @@ interface Theme extends BaseTheme {
     passwordStrengthValidator: PasswordStrengthTheme
 }
 
-type I18nMessages = {
-    [k: string]: string;
-};
+type I18nMessages = Record<string, string>;
 type I18nMessageParams = Record<string, unknown>;
 type I18nResolver$1 = (key: string, params?: I18nMessageParams, fallback?: (params?: I18nMessageParams) => string) => string;
 
@@ -245,9 +243,7 @@ type ValidatorSuccess = {
 type VaildatorResult = boolean | VaildatorError | ValidatorSuccess;
 
 type FormValue<T> = T | RichFormValue<T>;
-type RichFormValue<T, K extends string = 'raw'> = {
-    [P in K]: T;
-};
+type RichFormValue<T, K extends string = 'raw'> = Record<K, T>;
 
 interface FieldCreateProps {
     showLabel: boolean
@@ -260,7 +256,7 @@ interface FieldCreator<T, P = {}, E = {}> {
 
 interface Field$1<T, P = {}, E = {}> {
     key: string
-    render: (props: P & Partial<FieldComponentProps<T>> & { state: FieldValue<T, E> }) => React.ReactNode
+    render: (props: Partial<P> & Partial<FieldComponentProps<T>> & { state: FieldValue<T, E> }) => React.ReactNode
     initialize: <M>(model: M) => FieldValue<T, E>
     unbind: <M>(model: M, state: FieldValue<T, E>) => M
     validate: <S extends { isSubmitted: boolean }>(data: FieldValue<T, E>, ctx: S) => VaildatorResult

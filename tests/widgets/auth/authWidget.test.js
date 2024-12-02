@@ -14,12 +14,20 @@ import authWidget from '../../../src/widgets/auth/authWidget';
 import { providers } from '../../../src/providers/providers';
 
 const defaultConfig = {
+    clientId: 'local',
     domain: 'local.reach5.net',
-    passwordPolicy: {
-        minLength: 8,
-        minStrength: 2
-    },
+    sso: false,
+    sms: false,
+    webAuthn: false,
+    language: 'fr',
+    pkceEnforced: false,
+    isPublic: true,
     socialProviders: ['facebook', 'google'],
+    customFields: [],
+    resourceBaseUrl: 'http://localhost',
+    mfaSmsEnabled: false,
+    mfaEmailEnabled: false,
+    rbaEnabled: false,
     consentsVersions: [{
         key: 'aConsent',
         versions: [{
@@ -27,7 +35,12 @@ const defaultConfig = {
             title: 'consent title',
             description: 'consent description'
         }]
-    }]
+    }],
+    passwordPolicy: {
+        minLength: 8,
+        minStrength: 2,
+        allowUpdateWithAccessTokenOnly: true,
+    }
 };
 
 const webauthnConfig = { ...defaultConfig, webAuthn: true };

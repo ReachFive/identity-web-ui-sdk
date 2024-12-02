@@ -3301,6 +3301,7 @@ exports[`Snapshot signup view default 1`] = `
       >
         <label
           className="c9"
+          htmlFor="password"
         >
           password
         </label>
@@ -3314,6 +3315,7 @@ exports[`Snapshot signup view default 1`] = `
           <input
             className="c10"
             data-testid="password"
+            id="password"
             name="password"
             onBlur={[Function]}
             onChange={[Function]}
@@ -3800,6 +3802,7 @@ exports[`Snapshot signup view inline social buttons 1`] = `
       >
         <label
           className="c9"
+          htmlFor="password"
         >
           password
         </label>
@@ -3813,6 +3816,7 @@ exports[`Snapshot signup view inline social buttons 1`] = `
           <input
             className="c10"
             data-testid="password"
+            id="password"
             name="password"
             onBlur={[Function]}
             onChange={[Function]}
@@ -4285,6 +4289,7 @@ exports[`Snapshot signup view no login 1`] = `
       >
         <label
           className="c9"
+          htmlFor="password"
         >
           password
         </label>
@@ -4298,6 +4303,7 @@ exports[`Snapshot signup view no login 1`] = `
           <input
             className="c10"
             data-testid="password"
+            id="password"
             name="password"
             onBlur={[Function]}
             onChange={[Function]}
@@ -4780,6 +4786,7 @@ exports[`Snapshot signup view show labels 1`] = `
       >
         <label
           className="c9"
+          htmlFor="password"
         >
           password
         </label>
@@ -4793,6 +4800,7 @@ exports[`Snapshot signup view show labels 1`] = `
           <input
             className="c10"
             data-testid="password"
+            id="password"
             name="password"
             onBlur={[Function]}
             onChange={[Function]}
@@ -5272,6 +5280,7 @@ exports[`Snapshot signup view with consents 1`] = `
       >
         <label
           className="c9"
+          htmlFor="password"
         >
           password
         </label>
@@ -5285,6 +5294,7 @@ exports[`Snapshot signup view with consents 1`] = `
           <input
             className="c10"
             data-testid="password"
+            id="password"
             name="password"
             onBlur={[Function]}
             onChange={[Function]}
@@ -5747,6 +5757,7 @@ exports[`Snapshot signup view with custom fields 1`] = `
       >
         <label
           className="c9"
+          htmlFor="password"
         >
           password
         </label>
@@ -5760,6 +5771,7 @@ exports[`Snapshot signup view with custom fields 1`] = `
           <input
             className="c10"
             data-testid="password"
+            id="password"
             name="password"
             onBlur={[Function]}
             onChange={[Function]}
@@ -6218,6 +6230,7 @@ exports[`Snapshot signup view with mandatory consents 1`] = `
       >
         <label
           className="c9"
+          htmlFor="password"
         >
           password
         </label>
@@ -6231,6 +6244,7 @@ exports[`Snapshot signup view with mandatory consents 1`] = `
           <input
             className="c10"
             data-testid="password"
+            id="password"
             name="password"
             onBlur={[Function]}
             onChange={[Function]}
@@ -6744,6 +6758,7 @@ exports[`Snapshot signup view with user agreement 1`] = `
       >
         <label
           className="c9"
+          htmlFor="password"
         >
           password
         </label>
@@ -6757,6 +6772,7 @@ exports[`Snapshot signup view with user agreement 1`] = `
           <input
             className="c10"
             data-testid="password"
+            id="password"
             name="password"
             onBlur={[Function]}
             onChange={[Function]}
@@ -10039,6 +10055,7 @@ exports[`Snapshot with webauthn feature signup form view with password 1`] = `
       >
         <label
           className="c4"
+          htmlFor="password"
         >
           password
         </label>
@@ -10052,6 +10069,7 @@ exports[`Snapshot with webauthn feature signup form view with password 1`] = `
           <input
             className="c5"
             data-testid="password"
+            id="password"
             name="password"
             onBlur={[Function]}
             onChange={[Function]}

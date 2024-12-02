@@ -18,7 +18,7 @@ export interface FieldCreator<T, P = {}, E = {}> {
 
 export interface Field<T, P = {}, E = {}> {
     key: string
-    render: (props: P & Partial<FieldComponentProps<T>> & { state: FieldValue<T, E> }) => React.ReactNode
+    render: (props: Partial<P> & Partial<FieldComponentProps<T>> & { state: FieldValue<T, E> }) => React.ReactNode
     initialize: <M>(model: M) => FieldValue<T, E>
     unbind: <M>(model: M, state: FieldValue<T, E>) => M
     validate: <S extends { isSubmitted: boolean }>(data: FieldValue<T, E>, ctx: S) => VaildatorResult
@@ -48,7 +48,7 @@ export type FieldComponentProps<T, P = {}, E = {}> = P & {
 
 
 export interface Formatter<T, F> {
-    bind: (value?: T) => FormValue<F>
+    bind: (value?: T) => FormValue<F> | undefined
     unbind: (value?: FormValue<F>) => T | null
 }
 
@@ -57,7 +57,7 @@ export interface FieldProps<T, F, P extends FieldComponentProps<F, ExtraParams>,
     path?: string
     type?: string
     label: string
-    defaultValue?: F
+    defaultValue?: T
     required?: boolean
     readOnly?: boolean
     autoComplete?: AutoFill

@@ -1,6 +1,6 @@
-export type I18nMessages = { [k: string]: string }
+export type I18nMessages = Record<string, string>
 
-export type I18nNestedMessages = { [k: string]: string | I18nMessages }
+export type I18nNestedMessages = Record<string, string | I18nMessages>
 
 export type I18nMessageParams = Record<string, unknown>
 
@@ -13,7 +13,7 @@ export function resolveI18n<T extends (Record<string, T> | string)>(defaultMessa
     };
 
     return (key: string, params?: I18nMessageParams, fallback?: (params?: I18nMessageParams) => string) => {
-        const template = mergedMessages[key] || fallback?.(params) || key;
+        const template = mergedMessages[key] ?? fallback?.(params) ?? key;
 
         return params
             ? Object.keys(params).reduce((acc, param) => acc.replace(`{${param}}`, params[param] as string), template)

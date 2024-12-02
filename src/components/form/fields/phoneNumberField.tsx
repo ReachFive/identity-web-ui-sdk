@@ -174,7 +174,7 @@ const phoneNumberField = (
                 }
             },
             unbind: formValue => {
-                return (typeof formValue === 'object' && 'raw' in formValue ? formValue.raw : formValue) || null
+                return (typeof formValue === 'object' && 'raw' in formValue ? formValue.raw : formValue) ?? null
             }
         },
         validator: new Validator<Value>({

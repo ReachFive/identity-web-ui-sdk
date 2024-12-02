@@ -1,5 +1,5 @@
 export function log(msg: string) {
-    if (window.console && window.console.log) window.console.log(msg);
+    window.console?.log?.(msg);
 }
 
 export function logError(messageOrException: string | Error, exception?: Error) {

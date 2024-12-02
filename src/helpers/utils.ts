@@ -3,7 +3,7 @@ import * as libphonenumber from 'libphonenumber-js';
 
 const CHARS = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
-export function getRandomToken(length: number = 8) {
+export function getRandomToken(length = 8) {
     const buf = [];
 
     for (let i = 0; i < length; i++) {
@@ -18,14 +18,18 @@ export function getRandomInt(min: number, max: number) {
 }
 
 export type FormValue<T> = T | RichFormValue<T>
-export type RichFormValue<T, K extends string = 'raw'> = { [P in K]: T }
+export type RichFormValue<T, K extends string = 'raw'> = Record<K, T>
+
+export function isRichFormValue<T>(value: FormValue<T>, rawProperty = 'raw'): value is RichFormValue<T> {
+    return value !== null && typeof value === 'object' && rawProperty in value;
+}
 
 /* Returns whether a form value has been set with a valid value.
 * If the user's input has been enriched as an object, raw input is expected
 * to be in a raw property field (named 'raw' by default).
 */
 export function isValued<T>(v: FormValue<T>, rawProperty = 'raw') {
-    const unwrap = v !== null && typeof v === 'object' ? (v as RichFormValue<T, typeof rawProperty>)[rawProperty] : v;
+    const unwrap = v !== null && typeof v === 'object' && rawProperty in v ? (v as RichFormValue<T, typeof rawProperty>)[rawProperty] : v;
     return (
         unwrap !== null &&
         unwrap !== undefined &&

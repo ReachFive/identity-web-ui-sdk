@@ -212,7 +212,7 @@ import { ReactComponent as SamsungPass } from '../../icons/webauthn/samsung-pass
 import { ReactComponent as Thales } from '../../icons/webauthn/thales.svg'
 import { ReactComponent as WindowsHello } from '../../icons/webauthn/windows-hello.svg'
 
-const providerData: Map<string, [string, React.FunctionComponent<React.SVGAttributes<SVGElement>> | null]> = new Map([
+const providerData = new Map<string, [string, React.FunctionComponent<React.SVGAttributes<SVGElement>> | null]>([
     ["ea9b8d66-4d01-1d21-3ce4-b6b48cb575d4", ["Google Password Manager", GooglePasswordManager]],
     ["adce0002-35bc-c60a-648b-0b25f1f05503", ["Chrome on Mac", Chrome]],
     ["08987058-cadc-4b81-b6e1-30de50dcbe96", ["Windows Hello", WindowsHello]],

@@ -57,9 +57,9 @@ const SocialBtn = styled(Button).attrs((props: SocialBtn) => {
 
     return {
         themePrefix: 'socialButton',
-        color: provider.btnTextColor || '#ffffff',
-        background: provider.btnBackgroundColor || provider.color,
-        border: provider.btnBorderColor || provider.color,
+        color: provider.btnTextColor ?? '#ffffff',
+        background: provider.btnBackgroundColor ?? provider.color,
+        border: provider.btnBorderColor ?? provider.color,
         extendedClasses: classes(['r5-btn-social', `r5-btn-social-${provider.key}`]),
         title: i18n(`socialButton.${provider.key}.title`, undefined, () => provider.name)
     }
@@ -147,7 +147,7 @@ export const SocialButtons = styled(({ auth, providers, className }: SocialButto
         <div className={classes(['r5-social-buttons', className])}>
             {providers.flatMap(providerKey => {
                 const [providerName] = providerKey.split(':')
-                if (providerName === 'bconnect' && queryParams['bconnectActivation'] !== 'true') return []
+                if (providerName === 'bconnect' && queryParams.bconnectActivation !== 'true') return []
                 else if (socialProviders[providerName as ProviderId] === undefined) {
                     console.error(`${providerName} provider not found.`)
                     return []

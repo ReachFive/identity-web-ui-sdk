@@ -101,7 +101,7 @@ export function createForm(config) {
                         }
                     };
                 }, { hasErrors: false, fields: [] });
-            }, () => callback && callback(!this.state.hasErrors));
+            }, () => callback?.(!this.state.hasErrors));
         }
 
         handleFieldChange = (fieldName, stateUpdate) => {
@@ -117,6 +117,8 @@ export function createForm(config) {
                         ...newState,
                     }
                 };
+
+                this.props.onFieldChange(newFields);
 
                 return {
                     fields: newFields
@@ -146,7 +148,7 @@ export function createForm(config) {
         };
 
         onSuccess = result => {
-            this.props.onSuccess && this.props.onSuccess(result);
+            this.props.onSuccess?.(result);
 
             if (this.unmounted) return;
 
@@ -158,7 +160,7 @@ export function createForm(config) {
         };
 
         onError = err => {
-            this.props.onError && this.props.onError(err);
+            this.props.onError?.(err);
 
             if (!err.errorUserMsg) {
                 if (err.errorDescription) {
