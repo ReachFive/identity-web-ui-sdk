@@ -174,7 +174,7 @@ const dateFormat = (locale: string) => DateTime.now().setLocale(locale).toLocale
 }).join('')
 
 export const datetimeValidator = (locale: string) => new Validator<DateTime>({
-    rule: (value) => isRichFormValue(value, 'raw') ? value.raw.isValid : value.isValid,
+    rule: (value) => value.isValid,
     hint: 'date',
     parameters: { format: dateFormat(locale) }
 })

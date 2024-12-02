@@ -1,6 +1,6 @@
 import validator from 'validator';
 
-import { isValued, FormValue } from '../helpers/utils'
+import { isValued } from '../helpers/utils'
 import { I18nResolver } from './i18n';
 
 class CompoundValidator<T, C> {
@@ -74,27 +74,27 @@ export const empty = new Validator({
     rule: () => true
 });
 
-export const required = new Validator({
-    rule: <T>(value: FormValue<T>) => isValued(value),
+export const required = new Validator<unknown>({
+    rule: (value) => isValued(value),
     hint: 'required'
 });
 
-export const checked = new Validator({
-    rule: value => typeof value === 'boolean' ? value === true : (value as string).toLowerCase() === 'true',
+export const checked = new Validator<boolean | string>({
+    rule: value => typeof value === 'boolean' ? value === true : value.toLowerCase() === 'true',
     hint: 'checked'
 });
 
-export const email = new Validator({
-    rule: value => validator.isEmail(value as string),
+export const email = new Validator<string>({
+    rule: value => validator.isEmail(value),
     hint: 'email'
 });
 
-export const integer = new Validator({
-    rule: value => validator.isInt(value as string),
+export const integer = new Validator<string>({
+    rule: value => validator.isInt(value),
     hint: 'integer'
 });
 
-export const float = new Validator({
-    rule: value => validator.isFloat(value as string),
+export const float = new Validator<string>({
+    rule: value => validator.isFloat(value),
     hint: 'float'
 });

@@ -170,7 +170,7 @@ export default function identifierField(
             rule: (value, ctx) => specializeRefinedIdentifier(
                 value,
                 v => v?.isValid ?? !props.withPhoneNumber,
-                v => email.rule(v?.value, ctx),
+                v => email.rule(v?.value ?? '', ctx),
                 v => v?.isValid
             ) ?? true,
             hint: value => specializeRefinedIdentifier(

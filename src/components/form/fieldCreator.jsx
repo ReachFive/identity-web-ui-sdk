@@ -2,7 +2,7 @@ import React from 'react';
 
 import { PathMapping } from '../../core/mapping';
 import { required as requiredRule, empty as emptyRule } from '../../core/validation';
-import { isEmpty, isValued } from '../../helpers/utils';
+import { isEmpty, isRichFormValue, isValued } from '../../helpers/utils';
 import generateId from '../../helpers/inputIdGenerator';
 import { camelCasePath } from '../../helpers/transformObjectProperties';
 
@@ -56,7 +56,7 @@ export const createField = ({
             },
             unbind: (model, { value }) => mapping.unbind(model, format.unbind(value)),
             validate: ({ value }, ctx) => (
-                (required || isValued(value)) ? fullValidator(value, ctx) : {}
+                (required || isValued(value)) ? fullValidator(isRichFormValue(value, 'raw') ? value.raw : value, ctx) : {}
             )
         };
     }
