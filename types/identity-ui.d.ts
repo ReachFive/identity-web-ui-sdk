@@ -1,6 +1,6 @@
 /**
  * @reachfive/identity-ui - v1.30.1
- * Compiled Mon, 02 Dec 2024 14:33:42 UTC
+ * Compiled Mon, 02 Dec 2024 14:36:10 UTC
  *
  * Copyright (c) ReachFive.
  *
@@ -11,6 +11,7 @@ import { CSSProperties } from 'styled-components';
 import { Config as Config$1, RemoteSettings, ConsentVersions, CustomField, Client as Client$1, SessionInfo, AuthOptions, MFA, PasswordlessResponse, SingleFactorPasswordlessParams, Profile, UserConsent, DeviceCredential } from '@reachfive/identity-core';
 export { Config } from '@reachfive/identity-core';
 import React$1 from 'react';
+import { Country } from 'react-phone-number-input';
 import { PasswordlessParams } from '@reachfive/identity-core/es/main/oAuthClient';
 
 type Prettify<T> = {
@@ -293,6 +294,21 @@ type Field = {
 }
 
 type PhoneNumberOptions = {
+    /**
+     * If defaultCountry is specified then the phone number can be input both in "international" format and "national" format.
+     * A phone number that's being input in "national" format will be parsed as a phone number belonging to the defaultCountry.
+     */
+    defaultCountry?: Country;
+    /**
+     * If country is specified then the phone number can only be input in "national" (not "international") format,
+     * and will be parsed as a phonenumber belonging to the country.
+     */
+    country?: Country;
+    /**
+     * If locale is specified then translate component using the given language.
+     * @see https://gitlab.com/catamphetamine/react-phone-number-input/tree/master/locale
+     */
+    locale?: string;
     /**
      * If `withCountryCallingCode` property is explicitly set to true then the "country calling code" part (e.g. "+1" when country is "US") is included in the input field (but still isn't editable).
      * @default true
