@@ -5,7 +5,6 @@ import { Validator } from '../../core/validation';
 import { PathMapping } from '../../core/mapping';
 import { VaildatorResult } from '../../core/validation'
 import { FormValue } from '../../helpers/utils';
-import { Prettify } from '../../types';
 
 interface FieldCreateProps {
     showLabel: boolean
@@ -18,7 +17,7 @@ export interface FieldCreator<T, P = {}, E = {}> {
 
 export interface Field<T, P = {}, E = {}> {
     key: string
-    render: (props: Partial<P> & Partial<FieldComponentProps<T>> & { state: FieldValue<T, E> }) => React.ReactNode
+    render: (props: Partial<P> & Partial<FieldComponentProps<T, P, E>> & { state: FieldValue<T, E> }) => React.ReactNode
     initialize: <M>(model: M) => FieldValue<T, E>
     unbind: <M>(model: M, state: FieldValue<T, E>) => M
     validate: <S extends { isSubmitted: boolean }>(data: FieldValue<T, E>, ctx: S) => VaildatorResult
@@ -30,7 +29,7 @@ export type FieldValue<T, E = {}> = E & {
     validation?: VaildatorResult
 }
 
-export type FieldComponentProps<T, P = {}, E = {}> = P & {
+export type FieldComponentProps<T, P = {}, E = {}, K extends string = 'raw'> = P & {
     inputId: string
     key: string
     path: string
@@ -38,21 +37,22 @@ export type FieldComponentProps<T, P = {}, E = {}> = P & {
     onChange: (value: FieldValue<T, E>) => void
     placeholder?: string
     autoComplete?: AutoFill
+    rawProperty?: K
     required?: boolean
     readOnly?: boolean
     i18n: I18nResolver
     showLabel?: boolean
-    value?: FormValue<T>
+    value?: FormValue<T, K>
     validation?: VaildatorResult
 }
 
 
-export interface Formatter<T, F> {
-    bind: (value?: T) => FormValue<F> | undefined
-    unbind: (value?: FormValue<F>) => T | null
+export interface Formatter<T, F, K extends string> {
+    bind: (value?: T) => FormValue<F, K> | undefined
+    unbind: (value?: FormValue<F, K>) => T | null
 }
 
-export interface FieldProps<T, F, P extends FieldComponentProps<F, ExtraParams>, ExtraParams extends Record<string, unknown> = {}> {
+export interface FieldProps<T, F, P extends FieldComponentProps<F, ExtraParams, {}, K>, ExtraParams extends Record<string, unknown> = {}, K extends string = 'raw'> {
     key: string
     path?: string
     type?: string
@@ -63,10 +63,10 @@ export interface FieldProps<T, F, P extends FieldComponentProps<F, ExtraParams>,
     autoComplete?: AutoFill
     validator?: Validator
     mapping?: PathMapping
-    format?: Formatter<T, F>
-    rawProperty?: string
+    format?: Formatter<T, F, K>
+    rawProperty?: K
     component: ComponentType<P>
-    extendedParams?: Prettify<Omit<P, keyof FieldComponentProps<F, ExtraParams>>> | ((i18n: I18nResolver) => Prettify<Omit<P, keyof FieldComponentProps<F, ExtraParams>>>)
+    extendedParams?: ExtraParams | ((i18n: I18nResolver) => ExtraParams)
 }
 
-export function createField<T, F, P extends FieldComponentProps<F, ExtraParams>, ExtraParams extends Record<string, unknown> = {}>(props: FieldProps<T, F, P, ExtraParams>): FieldCreator<F, P, ValueExtends>
+export function createField<T, F, P extends FieldComponentProps<F, ExtraParams, {}, K>, ExtraParams extends Record<string, unknown> = {}, K extends string = 'raw'>(props: FieldProps<T, F, P, ExtraParams, K>): FieldCreator<F, P, ValueExtends>

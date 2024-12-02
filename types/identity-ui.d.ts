@@ -1,6 +1,6 @@
 /**
  * @reachfive/identity-ui - v1.30.1
- * Compiled Mon, 02 Dec 2024 14:36:54 UTC
+ * Compiled Mon, 02 Dec 2024 14:37:42 UTC
  *
  * Copyright (c) ReachFive.
  *
@@ -243,7 +243,7 @@ type ValidatorSuccess = {
 };
 type VaildatorResult = boolean | VaildatorError | ValidatorSuccess;
 
-type FormValue<T> = T | RichFormValue<T>;
+type FormValue<T, K extends string = 'raw'> = T | RichFormValue<T, K>;
 type RichFormValue<T, K extends string = 'raw'> = Record<K, T>;
 
 interface FieldCreateProps {
@@ -257,7 +257,7 @@ interface FieldCreator<T, P = {}, E = {}> {
 
 interface Field$1<T, P = {}, E = {}> {
     key: string
-    render: (props: Partial<P> & Partial<FieldComponentProps<T>> & { state: FieldValue<T, E> }) => React.ReactNode
+    render: (props: Partial<P> & Partial<FieldComponentProps<T, P, E>> & { state: FieldValue<T, E> }) => React.ReactNode
     initialize: <M>(model: M) => FieldValue<T, E>
     unbind: <M>(model: M, state: FieldValue<T, E>) => M
     validate: <S extends { isSubmitted: boolean }>(data: FieldValue<T, E>, ctx: S) => VaildatorResult
@@ -269,7 +269,7 @@ type FieldValue<T, E = {}> = E & {
     validation?: VaildatorResult
 }
 
-type FieldComponentProps<T, P = {}, E = {}> = P & {
+type FieldComponentProps<T, P = {}, E = {}, K extends string = 'raw'> = P & {
     inputId: string
     key: string
     path: string
@@ -277,11 +277,12 @@ type FieldComponentProps<T, P = {}, E = {}> = P & {
     onChange: (value: FieldValue<T, E>) => void
     placeholder?: string
     autoComplete?: AutoFill
+    rawProperty?: K
     required?: boolean
     readOnly?: boolean
     i18n: I18nResolver
     showLabel?: boolean
-    value?: FormValue<T>
+    value?: FormValue<T, K>
     validation?: VaildatorResult
 }
 

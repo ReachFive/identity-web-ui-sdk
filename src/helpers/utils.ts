@@ -17,12 +17,13 @@ export function getRandomInt(min: number, max: number) {
     return Math.floor(Math.random() * (max - min)) + min;
 }
 
-export type FormValue<T> = T | RichFormValue<T>
+export type FormValue<T, K extends string = 'raw'> = T | RichFormValue<T, K>
 export type RichFormValue<T, K extends string = 'raw'> = Record<K, T>
 
-export function isRichFormValue<T>(value: FormValue<T>, rawProperty = 'raw'): value is RichFormValue<T> {
+export function isRichFormValue<T, K extends string = 'raw'>(value: FormValue<T, K>, rawProperty: K): value is RichFormValue<T, K> {
     return value !== null && typeof value === 'object' && rawProperty in value;
 }
+isRichFormValue({ granted: true }, 'granted')
 
 /* Returns whether a form value has been set with a valid value.
 * If the user's input has been enriched as an object, raw input is expected

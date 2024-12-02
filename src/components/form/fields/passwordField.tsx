@@ -238,10 +238,10 @@ export const passwordField = (
         required = true,
         validator,
         ...props
-    }: Partial<Omit<FieldProps<string, string, PasswordFieldProps, ExtraValues>, 'extendedParams'> & ExtraParams>,
+    }: Partial<Omit<FieldProps<string, string, PasswordFieldProps, ExtraParams>, 'extendedParams'> & ExtraParams>,
     { passwordPolicy }: Config
-): FieldCreator<string, PasswordFieldProps, ExtraValues> =>
-    createField<string, string, PasswordFieldProps, ExtraValues>({
+): FieldCreator<string, PasswordFieldProps, ExtraParams> =>
+    createField<string, string, PasswordFieldProps, ExtraParams>({
         key,
         label,
         required,
