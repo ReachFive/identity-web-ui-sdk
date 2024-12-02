@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { createField, FieldComponentProps, FieldProps } from '../fieldCreator';
+import { createField, type FieldComponentProps, type FieldProps } from '../fieldCreator';
 import { Checkbox } from '../formControlsComponent';
 import { isRichFormValue } from '../../../helpers/utils';
 

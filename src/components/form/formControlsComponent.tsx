@@ -135,6 +135,7 @@ const checkboxWidth = 20;
 interface CheckProps extends React.InputHTMLAttributes<HTMLInputElement> {
     inline?: boolean
     label?: ReactNode
+    value?: string | number
     radio?: boolean
     dataTestId?: string
 }
@@ -194,7 +195,7 @@ export const Checkbox = styled(({ value, onToggle, label, name, className, error
 `;
 
 export interface RadioGroupProps extends FormGroupProps {
-    options: (CheckProps & { key: string } )[]
+    options: CheckProps[]
     onChange: (event: { value: HTMLInputElement['value'] }) => void
     value?: HTMLInputElement['value']
     dataTestId?: string
@@ -206,16 +207,17 @@ export const RadioGroup = ({ options, onChange, value, inputId, ...props }: Radi
     };
     return (
         <FormGroup inputId={inputId} {...props}>
-            {options.map(({label: optionLabel, value: optionValue, key: optionKey}) => (
+            {options.map(({ label: optionLabel, value: optionValue }) => (
                 <Check
-                    key={optionKey}
+                    key={optionValue}
                     checked={value === optionValue}
                     onSelect={handleChange}
                     label={optionLabel}
-                    name={optionKey}
+                    name={String(optionValue)}
                     inline={true}
                     value={optionValue}
-                    radio/>
+                    radio
+                />
             ))}
         </FormGroup>
     );

@@ -50,6 +50,7 @@ const StartPasswordlessForm = createForm<StartPasswordlessFormData, StartPasswor
         return [
             radioboxField({
                 key: 'authType',
+                label: 'authType',
                 options
             }),
         ]

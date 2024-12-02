@@ -181,7 +181,7 @@ const phoneNumberField = (
     }: Partial<Omit<FieldProps<string, Value, PhoneNumberFieldProps>, 'extendedParams'> & PhoneNumberOptions>,
     config: Config
 ): FieldCreator<Value, PhoneNumberFieldProps> => {
-    return createField<string, Value, PhoneNumberFieldProps>({
+    return createField<string, Value, PhoneNumberFieldProps, PhoneNumberOptions>({
         component: PhoneNumberField,
         ...props,
         key,
