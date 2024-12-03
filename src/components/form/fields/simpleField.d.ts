@@ -14,7 +14,7 @@ export interface BaseOptions<T> {
     autoComplete?: HTMLInputElement['autocomplete']
     placeholder?: string
     readOnly?: boolean
-    validator?: Validator<T>
+    validator?: Validator<T, FormContext<unknown>>
     format?: Formatter<T>
     mapping?: Mapping
 }
