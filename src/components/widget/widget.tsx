@@ -1,5 +1,5 @@
 import React, { ComponentType } from 'react';
-import { ThemeProvider } from 'styled-components'
+import { StyleSheetManager, ThemeProvider } from 'styled-components'
 import type { SessionInfo, Client as CoreClient } from '@reachfive/identity-core'
 
 import type { Config, Prettify } from '../../types'
@@ -51,13 +51,15 @@ export function createWidget<P, U = P>({
                 <ConfigProvider config={context.config}>
                     <ReachfiveProvider client={context.apiClient}>
                         <SessionProvider session={context.session}>
-                            <ThemeProvider theme={theme}>
-                                <I18nProvider defaultMessages={context.defaultI18n} messages={preparedOptions.i18n}>
-                                    <WidgetContainer {...widgetAttrs}>
-                                        <Component {...preparedOptions} />
-                                    </WidgetContainer>
-                                </I18nProvider>
-                            </ThemeProvider>
+                            <StyleSheetManager enableVendorPrefixes>
+                                <ThemeProvider theme={theme}>
+                                    <I18nProvider defaultMessages={context.defaultI18n} messages={preparedOptions.i18n}>
+                                        <WidgetContainer {...widgetAttrs}>
+                                            <Component {...preparedOptions} />
+                                        </WidgetContainer>
+                                    </I18nProvider>
+                                </ThemeProvider>
+                            </StyleSheetManager>
                         </SessionProvider>
                     </ReachfiveProvider>
                 </ConfigProvider>

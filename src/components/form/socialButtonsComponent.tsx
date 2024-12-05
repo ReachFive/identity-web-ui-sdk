@@ -51,10 +51,8 @@ interface SocialBtn extends ButtonProps {
     height: string
 }
 
-const SocialBtn = styled(Button).attrs((props: SocialBtn) => {
-    const { provider } = props
+const SocialBtn = styled(Button).attrs<SocialBtn>(({ provider }) => {
     const i18n = useI18n()
-
     return {
         themePrefix: 'socialButton',
         color: provider.btnTextColor || '#ffffff',
