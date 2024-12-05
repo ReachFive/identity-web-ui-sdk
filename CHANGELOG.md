@@ -19,6 +19,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Added
 
 - Add a `allowPhoneNumberResetPassword` boolean option to the `showAuth` widget to allow the ability to process a password reset request by phone number
+- Add a `enablePasswordAuthentication` boolean option to the `showAuth` widget to hide/display the password form
 
 ## [1.29.0] - 2024-11-08
 
