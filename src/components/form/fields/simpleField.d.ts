@@ -15,6 +15,7 @@ export interface BaseOptions<T> {
     autoComplete?: HTMLInputElement['autocomplete']
     placeholder?: string
     readOnly?: boolean
+    /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
     validator?: Validator<T, FormContext<any>>
     format?: Formatter<T>
     mapping?: Mapping
