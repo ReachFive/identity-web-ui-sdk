@@ -19,11 +19,11 @@ const DeviceName = styled.div`
     line-height: 2;
 `;
 
-interface FormData {
+type DeviceInputFormData = {
     friendlyName: string
 }
 
-const DeviceInputForm = createForm<FormData>({
+const DeviceInputForm = createForm<DeviceInputFormData>({
     prefix: 'r5-device-editor-',
     submitLabel: 'add',
     supportMultipleSubmits: true,
@@ -139,7 +139,7 @@ function WebAuthnDevices ({
             });
     }
 
-    const addNewWebAuthnDevice = ({ friendlyName }: FormData) => {
+    const addNewWebAuthnDevice = ({ friendlyName }: DeviceInputFormData) => {
         return coreClient
             .addNewWebAuthnDevice(accessToken, friendlyName)
             .then(() => {

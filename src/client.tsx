@@ -2,13 +2,13 @@ import React from 'react';
 import { render, unmountComponentAtNode } from 'react-dom';
 import type { AuthOptions, Client as CoreClient, SessionInfo } from '@reachfive/identity-core'
 
-import { Config, Prettify } from './types'
+import type { Config, Prettify } from './types'
 
-import { I18nMessages } from './core/i18n';
+import { type I18nMessages } from './core/i18n';
 import { UserError } from './helpers/errors';
 import { logError } from './helpers/logger';
 
-import { ErrorMessage } from './components/error'
+import { ErrorText } from './components/miscComponent.tsx';
 import type { Context, I18nProps, ThemeProps } from './components/widget/widget'
 
 import authWidget, { type AuthWidgetProps } from './widgets/auth/authWidget';
@@ -152,7 +152,7 @@ export class UiClient {
             }
         } catch (error) {
             const message = this.adaptError(error);
-            render(<ErrorMessage>{message}</ErrorMessage>, container)
+            render(<ErrorText>{message}</ErrorText>, container)
             this.handleError(error)
         }
     }

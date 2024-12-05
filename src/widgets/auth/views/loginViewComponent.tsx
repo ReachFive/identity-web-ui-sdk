@@ -67,50 +67,73 @@ export const LoginForm = createForm<LoginFormData, LoginFormOptions>({
         config,
     }) {
         return [
-            allowAuthentMailPhone && identifierField({
-                defaultValue: defaultIdentifier,
-                withPhoneNumber: showIdentifier && config.sms,
-                required: !allowCustomIdentifier,
-                autoComplete: 'username webauthn'
-            },
-            config),
-            allowCustomIdentifier && allowAuthentMailPhone && {
-                staticContent: (
-                    <Separator text={i18n('or')} />
-                )
-            },
-            allowCustomIdentifier && simpleField({
-                key: 'customIdentifier',
-                type: 'text',
-                label: 'customIdentifier',
-                placeholder: i18n('customIdentifier'),
-                required: false
-            }),
+            ...(allowAuthentMailPhone
+                ? [
+                    identifierField({
+                        defaultValue: defaultIdentifier,
+                        withPhoneNumber: showIdentifier && config.sms,
+                        required: !allowCustomIdentifier,
+                        autoComplete: 'username webauthn'
+                    }, config)
+                ]
+                : []
+            ),
+            ...(allowCustomIdentifier && allowAuthentMailPhone
+                ? [{
+                    staticContent: (
+                        <Separator text={i18n('or')} />
+                    )
+                }]
+                : []
+            ),
+            ...(allowCustomIdentifier
+                ? [
+                    simpleField({
+                        key: 'customIdentifier',
+                        type: 'text',
+                        label: 'customIdentifier',
+                        placeholder: i18n('customIdentifier'),
+                        required: false
+                    })
+                ]
+                : []
+            ),
             simplePasswordField({
                 key: 'password',
                 label: 'password',
                 autoComplete: 'current-password',
                 canShowPassword
             }),
-            enablePasswordAuthentication && showForgotPassword && !showAccountRecovery && {
-                staticContent: (
-                    <ResetCredentialWrapper key="forgot-password" floating={showRememberMe}>
-                        <Link target="forgot-password">{i18n('login.forgotPasswordLink')}</Link>
-                    </ResetCredentialWrapper>
-                )
-            },
-            showAccountRecovery && {
-                staticContent: (
-                    <ResetCredentialWrapper key="account-recovery" floating={showRememberMe}>
-                        <Link target="account-recovery">{i18n('accountRecovery.title')}</Link>
-                    </ResetCredentialWrapper>
-                )
-            },
-            showRememberMe && checkboxField({
-                key: 'auth.persistent',
-                label: 'rememberMe',
-                defaultValue: false
-            })
+            ...(enablePasswordAuthentication && showForgotPassword && !showAccountRecovery
+                ? [{
+                    staticContent: (
+                        <ResetCredentialWrapper key="forgot-password" floating={showRememberMe}>
+                            <Link target="forgot-password">{i18n('login.forgotPasswordLink')}</Link>
+                        </ResetCredentialWrapper>
+                    )
+                }]
+                : []
+            ),
+            ...(showAccountRecovery
+                ? [{
+                    staticContent: (
+                        <ResetCredentialWrapper key="account-recovery" floating={showRememberMe}>
+                            <Link target="account-recovery">{i18n('accountRecovery.title')}</Link>
+                        </ResetCredentialWrapper>
+                    )
+                }]
+                : []
+            ),
+            ...(showRememberMe
+                ? [
+                    checkboxField({
+                        key: 'auth.persistent',
+                        label: 'rememberMe',
+                        defaultValue: false
+                    })
+                ]
+                : []
+            )
         ];
     },
     submitLabel: 'login.submitLabel'

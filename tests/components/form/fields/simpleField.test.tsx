@@ -81,8 +81,8 @@ describe('DOM testing', () => {
                         <I18nProvider defaultMessages={defaultI18n}>
                             <Form
                                 fieldValidationDebounce={0} // trigger validation instantly
-                                onFieldChange={onFieldChange}
                                 handler={onSubmit}
+                                onFieldChange={onFieldChange}
                             />
                         </I18nProvider>
                     </ThemeProvider>
@@ -111,7 +111,7 @@ describe('DOM testing', () => {
         )
 
         const submitBtn = screen.getByRole('button')
-        user.click(submitBtn)
+        await user.click(submitBtn)
 
         await waitFor(() => expect(onSubmit).toHaveBeenCalled())
 
@@ -145,8 +145,8 @@ describe('DOM testing', () => {
                         <I18nProvider defaultMessages={defaultI18n}>
                             <Form
                                 fieldValidationDebounce={0} // trigger validation instantly
-                                onFieldChange={onFieldChange}
                                 handler={onSubmit}
+                                onFieldChange={onFieldChange}
                             />
                         </I18nProvider>
                     </ThemeProvider>
@@ -176,6 +176,7 @@ describe('DOM testing', () => {
         const matchPassword = "match value"
 
         const onFieldChange = jest.fn()
+        const onSubmit = jest.fn<(data: Model) => Promise<Model>>(data => Promise.resolve(data))
 
         const Form = createForm<Model>({
             fields: [
@@ -194,6 +195,7 @@ describe('DOM testing', () => {
                         <I18nProvider defaultMessages={defaultI18n}>
                             <Form
                                 fieldValidationDebounce={0} // trigger validation instantly
+                                handler={onSubmit}
                                 onFieldChange={onFieldChange}
                             />
                         </I18nProvider>

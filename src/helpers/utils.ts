@@ -132,10 +132,10 @@ export function find<T>(collection: Record<string, T>, predicate: (item: T) => b
     return Object.values(collection ?? {}).find(value => predicate(value))
 }
 
-export function debounce(func: (...args: unknown[]) => void, delay: number, { leading }: { leading?: boolean } = {}) {
+export function debounce(func: (...args: any[]) => void, delay: number, { leading }: { leading?: boolean } = {}) {
     let timerId: NodeJS.Timeout
 
-    return (...args: unknown[]) => {
+    return (...args: any[]) => {
         if (!timerId && leading) {
             func(...args)
         }

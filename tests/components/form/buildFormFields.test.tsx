@@ -3,7 +3,7 @@
  */
 
 import React from 'react'
-import { describe, expect, test } from '@jest/globals';
+import { describe, expect, jest, test } from '@jest/globals';
 import { render, screen, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom/jest-globals'
 import 'jest-styled-components';
@@ -198,22 +198,24 @@ describe('DOM testing', () => {
             'address.country',
         ], defaultConfig)
 
+        const onSubmit = jest.fn<(data: Model) => Promise<Model>>(data => Promise.resolve(data))
+
         const Form = createForm<Model>({
             fields,
         })
 
-        const rendered = await waitFor(async () => {   
+        await waitFor(async () => {   
             return render(
                 <ConfigProvider config={defaultConfig}>
                     <ThemeProvider theme={theme}>
                         <I18nProvider defaultMessages={defaultI18n}>
-                            <Form />
+                            <Form handler={onSubmit} />
                         </I18nProvider>
                     </ThemeProvider>
                 </ConfigProvider>
             )
         })
-        rendered.debug()
+
         expect(screen.queryByTestId('customIdentifier')).toBeInTheDocument()
         expect(screen.queryByTestId('givenName')).toBeInTheDocument()
         expect(screen.queryByTestId('familyName')).toBeInTheDocument()
@@ -245,6 +247,8 @@ describe('DOM testing', () => {
             { key: "customFields.email" },
         ], defaultConfig)
 
+        const onSubmit = jest.fn<(data: Model) => Promise<Model>>(data => Promise.resolve(data))
+
         const Form = createForm<Model>({
             fields,
         })
@@ -254,7 +258,7 @@ describe('DOM testing', () => {
                 <ConfigProvider config={defaultConfig}>
                     <ThemeProvider theme={theme}>
                         <I18nProvider defaultMessages={defaultI18n}>
-                            <Form />
+                            <Form handler={onSubmit} />
                         </I18nProvider>
                     </ThemeProvider>
                 </ConfigProvider>
@@ -306,22 +310,24 @@ describe('DOM testing', () => {
             { key: "consents.oldconsent" },
         ], { ...defaultConfig })
 
+        const onSubmit = jest.fn<(data: Model) => Promise<Model>>(data => Promise.resolve(data))
+
         const Form = createForm<Model>({
             fields,
         })
 
-        const rendered = await waitFor(async () => {   
+        await waitFor(async () => {   
             return render(
                 <ConfigProvider config={defaultConfig}>
                     <ThemeProvider theme={theme}>
                         <I18nProvider defaultMessages={defaultI18n}>
-                            <Form />
+                            <Form handler={onSubmit} />
                         </I18nProvider>
                     </ThemeProvider>
                 </ConfigProvider>
             )
         })
-        rendered.debug()
+
         const myconsent = screen.getByLabelText('My Consent')
         expect(myconsent).toBeInTheDocument()
         expect(myconsent).toHaveAttribute('name', 'consents.myconsent.1')

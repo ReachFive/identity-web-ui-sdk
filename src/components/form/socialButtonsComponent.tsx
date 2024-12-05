@@ -44,43 +44,42 @@ const SocialButtonText = ({ children }: PropsWithChildren<{}>) => (
 );
 
 interface SocialBtn extends ButtonProps {
-    provider: Provider
-    inline: boolean
-    textVisible: boolean
-    width: string
-    height: string
+    $provider: Provider
+    $inline: boolean
+    $textVisible: boolean
+    $width: string
+    $height: string
 }
 
-const SocialBtn = styled(Button).attrs((props: SocialBtn) => {
-    const { provider } = props
+const SocialBtn = styled(Button).attrs<SocialBtn>(({ $provider, ...props }) => {
     const i18n = useI18n()
-
     return {
-        themePrefix: 'socialButton',
-        color: provider.btnTextColor ?? '#ffffff',
-        background: provider.btnBackgroundColor ?? provider.color,
-        border: provider.btnBorderColor ?? provider.color,
-        extendedClasses: classes(['r5-btn-social', `r5-btn-social-${provider.key}`]),
-        title: i18n(`socialButton.${provider.key}.title`, undefined, () => provider.name)
+        $themePrefix: 'socialButton',
+        $color: $provider.btnTextColor ?? '#ffffff',
+        $background: $provider.btnBackgroundColor ?? $provider.color,
+        $border: $provider.btnBorderColor ?? $provider.color,
+        className: classes(['r5-btn-social', `r5-btn-social-${$provider.key}`]),
+        title: i18n(`socialButton.${$provider.key}.title`, undefined, () => $provider.name),
+        ...props,
     }
 })<SocialBtn>`
     margin-bottom: ${props => props.theme.spacing}px;
     position: relative;
 
-    width: ${props => props.width};
-    height: ${props => props.height};
+    width: ${props => props.$width};
+    height: ${props => props.$height};
 
-    ${props => props.inline && `
+    ${props => props.$inline && `
         display: inline-block;
         margin: 0 4px;
     `}
 
-    ${props => props.inline && props.textVisible && `
+    ${props => props.$inline && props.$textVisible && `
         padding-left: ${props.theme.socialButton.paddingX + props.theme.socialButton.height / 2}px;
     `}
 
-    font-weight: ${props => props.provider.fontWeight};
-    font-family: ${props => props.provider.fontFamily};
+    font-weight: ${props => props.$provider.fontWeight};
+    font-family: ${props => props.$provider.fontFamily};
 `;
 
 interface SocialButtonProps {
@@ -102,11 +101,11 @@ const SocialButton = ({ provider, onClick, count }: SocialButtonProps) => {
         : inline ? `calc(${100 / count}% - 8px)` : '100%';
 
     return <SocialBtn
-        provider={provider}
-        inline={inline}
-        textVisible={textVisible}
-        width={width}
-        height={height}
+        $provider={provider}
+        $inline={inline}
+        $textVisible={textVisible}
+        $width={width}
+        $height={height}
         onClick={() => onClick(provider.key)}>
         <SocialButtonIcon icon={provider.icon} textVisible={textVisible} />
         {textVisible && <SocialButtonText>{i18n(`socialButton.${provider.key}.title`, undefined, () => provider.name)}</SocialButtonText>}

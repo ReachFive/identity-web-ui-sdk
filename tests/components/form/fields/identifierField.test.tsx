@@ -70,6 +70,7 @@ describe('DOM testing', () => {
         const key = 'identifier'
         const label = 'identifier'
         const onFieldChange = jest.fn()
+        const onSubmit = jest.fn<(data: Model) => Promise<Model>>(data => Promise.resolve(data))
 
         const Form = createForm<Model>({
             fields: [
@@ -84,6 +85,7 @@ describe('DOM testing', () => {
                         <I18nProvider defaultMessages={defaultI18n}>
                             <Form
                                 fieldValidationDebounce={0} // trigger validation instantly
+                                handler={onSubmit}
                                 onFieldChange={onFieldChange}
                             />
                         </I18nProvider>
@@ -157,6 +159,7 @@ describe('DOM testing', () => {
         const key = 'identifier'
         const label = 'identifier'
         const onFieldChange = jest.fn()
+        const onSubmit = jest.fn<(data: Model) => Promise<Model>>(data => Promise.resolve(data))
 
         const Form = createForm<Model>({
             fields: [
@@ -171,6 +174,7 @@ describe('DOM testing', () => {
                         <I18nProvider defaultMessages={defaultI18n}>
                             <Form
                                 fieldValidationDebounce={0} // trigger validation instantly
+                                handler={onSubmit}
                                 onFieldChange={onFieldChange}
                             />
                         </I18nProvider>
@@ -244,6 +248,7 @@ describe('DOM testing', () => {
         const defaultValue = 'alice@reach5.co'
 
         const onFieldChange = jest.fn()
+        const onSubmit = jest.fn<(data: Model) => Promise<Model>>(data => Promise.resolve(data))
 
         const Form = createForm<Model>({
             fields: [
@@ -258,6 +263,7 @@ describe('DOM testing', () => {
                         <I18nProvider defaultMessages={defaultI18n}>
                             <Form
                                 fieldValidationDebounce={0} // trigger validation instantly
+                                handler={onSubmit}
                                 onFieldChange={onFieldChange}
                             />
                         </I18nProvider>

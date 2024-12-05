@@ -77,7 +77,7 @@ describe('DOM testing', () => {
                 checkboxField({ key, label })
             ],
         })
-
+        
         await waitFor(async () => {   
             return render(
                 <ConfigProvider config={defaultConfig}>
@@ -96,32 +96,32 @@ describe('DOM testing', () => {
 
         const checkbox = screen.queryByLabelText(i18nResolver(label))
         expect(checkbox).not.toBeChecked()
-        
+            
         if (!checkbox) throw new Error('Input should be in document')
 
         await user.click(checkbox)
 
         expect(checkbox).toBeChecked()
 
-        expect(onFieldChange).toHaveBeenLastCalledWith(
+        await waitFor(() => expect(onFieldChange).toHaveBeenLastCalledWith(
             expect.objectContaining({
                 checkbox: expect.objectContaining({
                     isDirty: true,
                     value: true,
                 })
             })
-        )
+        ))
 
         const submitBtn = screen.getByRole('button')
         user.click(submitBtn)
 
         await waitFor(() => expect(onSubmit).toHaveBeenCalled())
-
-        expect(onSubmit).toBeCalledWith(
+    
+        await waitFor(() => expect(onSubmit).toBeCalledWith(
             expect.objectContaining({
                 checkbox: true
             })
-        )
+        ))
     })
 
     test('initially checked', async () => {
@@ -174,14 +174,14 @@ describe('DOM testing', () => {
         )
 
         const submitBtn = screen.getByRole('button')
-        user.click(submitBtn)
+        await user.click(submitBtn)
 
         await waitFor(() => expect(onSubmit).toHaveBeenCalled())
 
-        expect(onSubmit).toBeCalledWith(
+        await waitFor(() => expect(onSubmit).toBeCalledWith(
             expect.objectContaining({
                 checkbox: false
             })
-        )
+        ))
     })
 })

@@ -24,7 +24,7 @@ function CheckboxField({ value, onChange, label, path, required, validation = {}
             label={label}
             error={error}
             required={required}
-            dataTestId={path}
+            data-testid={path}
         />
     )
 };

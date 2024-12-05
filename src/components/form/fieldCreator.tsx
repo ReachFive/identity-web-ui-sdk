@@ -31,7 +31,7 @@ export interface Field<T, P = {}, E extends Record<string, unknown> = {}, K exte
     render: (props: Partial<P> & Partial<FieldComponentProps<T, {}, E, K>> & { state: FieldValue<T, K, E> }) => React.ReactNode
     initialize: <M extends Record<PropertyKey, unknown>>(model: M) => FieldValue<T, K>
     unbind: <M extends Record<PropertyKey, unknown>>(model: M, state: FieldValue<T, K, E>) => M
-    validate: (data: FieldValue<T, K, E>, ctx: FormContext<T>) => ValidatorResult
+    validate: (data: FieldValue<T, K, E>, ctx: FormContext<any>) => ValidatorResult
 }
 
 export type FieldValue<T, K extends string = 'raw', E extends Record<string, unknown> = {}> = E & {
@@ -147,7 +147,7 @@ export function createField<
                 unbind: <M extends Record<PropertyKey, unknown>>(model: M, { value }: FieldValue<F, K, E>): M => (
                     mapping.unbind(model, format.unbind(value)) as M
                 ),
-                validate: ({ value: formValue }: FieldValue<F, K, E>, ctx: FormContext<F>): ValidatorResult => {
+                validate: ({ value: formValue }: FieldValue<F, K, E>, ctx: FormContext<any>): ValidatorResult => {
                     const value = isRichFormValue(formValue, rawProperty) ? formValue[rawProperty] : formValue
                     const requireValidation = required ? requiredRule.create(i18n)(value, ctx) : { success: true } satisfies ValidatorSuccess
                     return isValidatorSuccess(requireValidation) && isValued(value) 

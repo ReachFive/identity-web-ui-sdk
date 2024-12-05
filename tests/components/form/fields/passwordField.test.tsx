@@ -71,6 +71,7 @@ describe('DOM testing', () => {
         const label = 'password'
 
         const onFieldChange = jest.fn()
+        const onSubmit = jest.fn<(data: Model) => Promise<Model>>(data => Promise.resolve(data))
 
         const Form = createForm<Model>({
             fields: [
@@ -85,6 +86,7 @@ describe('DOM testing', () => {
                         <I18nProvider defaultMessages={defaultI18n}>
                             <Form
                                 fieldValidationDebounce={0} // trigger validation instantly
+                                handler={onSubmit}
                                 onFieldChange={onFieldChange}
                             />
                         </I18nProvider>
@@ -161,6 +163,7 @@ describe('DOM testing', () => {
         const label = 'password'
 
         const onFieldChange = jest.fn()
+        const onSubmit = jest.fn<(data: Model) => Promise<Model>>(data => Promise.resolve(data))
 
         const Form = createForm<Model>({
             fields: [
@@ -175,6 +178,7 @@ describe('DOM testing', () => {
                         <I18nProvider defaultMessages={defaultI18n}>
                             <Form
                                 fieldValidationDebounce={0} // trigger validation instantly
+                                handler={onSubmit}
                                 onFieldChange={onFieldChange}
                             />
                         </I18nProvider>
@@ -222,6 +226,7 @@ describe('DOM testing', () => {
         const matchPassword = '1L0v38anana5'
 
         const onFieldChange = jest.fn()
+        const onSubmit = jest.fn<(data: Model) => Promise<Model>>(data => Promise.resolve(data))
 
         const Form = createForm<Model>({
             fields: [
@@ -241,6 +246,7 @@ describe('DOM testing', () => {
                             <Form
                                 fieldValidationDebounce={0} // trigger validation instantly
                                 onFieldChange={onFieldChange}
+                                handler={onSubmit}
                             />
                         </I18nProvider>
                     </ThemeProvider>

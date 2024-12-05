@@ -51,7 +51,7 @@ const ConsentField = ({ value, onChange, label, description, path, required, val
             onToggle={onToggle}
             name={path}
             label={label}
-            dataTestId={path}
+            data-testid={path}
             required={required}
             error={error}
         />

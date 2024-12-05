@@ -118,7 +118,7 @@ describe('DOM testing', () => {
         expect(screen.queryByTestId('hide-password-btn')).not.toBeInTheDocument()
 
         const submitBtn = screen.getByRole('button')
-        user.click(submitBtn)
+        await user.click(submitBtn)
 
         await waitFor(() => expect(onSubmit).toHaveBeenCalled())
 

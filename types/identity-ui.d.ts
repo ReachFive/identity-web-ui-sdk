@@ -1,10 +1,6 @@
 /**
  * @reachfive/identity-ui - v1.30.1
-<<<<<<< HEAD
- * Compiled Mon, 02 Dec 2024 14:42:15 UTC
-=======
- * Compiled Wed, 27 Nov 2024 13:58:25 UTC
->>>>>>> 35d9174 (buildFormFields)
+ * Compiled Wed, 04 Dec 2024 16:30:05 UTC
  *
  * Copyright (c) ReachFive.
  *
@@ -12,10 +8,13 @@
  * LICENSE file in the root directory of this source tree.
  **/
 import { CSSProperties } from 'styled-components';
-import { Config as Config$1, RemoteSettings, ConsentVersions, CustomField, Client as Client$1, SessionInfo, AuthOptions, MFA, PasswordlessResponse, SingleFactorPasswordlessParams, Profile, UserConsent, DeviceCredential } from '@reachfive/identity-core';
+import { Config as Config$1, RemoteSettings, ConsentVersions, CustomField, Client as Client$1, SessionInfo, ConsentType, PasswordPolicy, CustomFieldType, AuthOptions, MFA, PasswordlessResponse, SingleFactorPasswordlessParams, Profile, UserConsent, DeviceCredential } from '@reachfive/identity-core';
 export { Config } from '@reachfive/identity-core';
-import React from 'react';
-import { Country } from 'react-phone-number-input';
+import * as React from 'react';
+import React__default, { ComponentType } from 'react';
+import { Country, Value as Value$2 } from 'react-phone-number-input';
+import { DateTime } from 'luxon';
+import * as libphonenumber_js from 'libphonenumber-js';
 import { PasswordlessParams } from '@reachfive/identity-core/es/main/oAuthClient';
 
 type Prettify<T> = {
@@ -25,6 +24,12 @@ type Prettify<T> = {
 type RecursivePartial<T> = {
     [P in keyof T]?: RecursivePartial<T[P]>
 } & {}
+
+/**
+ * From T, make optional a set of properties whose keys are in the union K
+ * @example Optional<{ firstname: string, lastname: string }, 'lastname'> // => { firstname: string, lastname?: string }
+ */
+type Optional<T, K extends keyof T> = Pick<Partial<T>, K> & Omit<T, K>;
 
 type RequiredProperty<T, K extends keyof T> = T & {
     [P in K]-?: T[P];
@@ -239,6 +244,20 @@ interface I18nProps {
 }
 type WithI18n<P> = P & I18nProps;
 
+declare class PathMapping {
+    protected readonly modelPath: string;
+    constructor(modelPath: string);
+    bind<T extends Record<string, unknown>>(model: T): unknown;
+    unbind<T extends Record<string, unknown>, V>(model: T, value: V): T | V;
+}
+
+declare class CompoundValidator<T, C = {}> {
+    current: Validator<T, C> | CompoundValidator<T, C>;
+    next: Validator<T, C> | CompoundValidator<T, C>;
+    constructor(current: Validator<T, C> | CompoundValidator<T, C>, next: Validator<T, C> | CompoundValidator<T, C>);
+    create(i18n: I18nResolver): ValidatorInstance<T, C>;
+    and(validator: Validator<T, C> | CompoundValidator<T, C>): CompoundValidator<T, C>;
+}
 type VaildatorError = {
     error: string;
 };
@@ -246,22 +265,37 @@ type ValidatorSuccess = {
     success?: true;
 };
 type ValidatorResult = boolean | VaildatorError | ValidatorSuccess;
+type ValidatorInstance<T, C> = (value: T, ctx: C) => ValidatorResult;
+type Rule<T, C> = (value: T, ctx: C) => boolean;
+type Hint<T> = (value: T) => (string | undefined);
+interface ValidatorOptions<T, C> {
+    rule: Rule<T, C>;
+    hint?: Hint<T> | string;
+    parameters?: Record<string, unknown>;
+}
+declare class Validator<T, C = {}> {
+    rule: Rule<T, C>;
+    hint: Hint<T>;
+    parameters: Record<string, unknown>;
+    constructor({ rule, hint, parameters }: ValidatorOptions<T, C>);
+    create(i18n: I18nResolver): ValidatorInstance<T, C>;
+    and(validator: Validator<T, C> | CompoundValidator<T, C>): CompoundValidator<T, C>;
+}
 
 type FormValue<T, K extends string = 'raw'> = T | RichFormValue<T, K>;
 type RichFormValue<T, K extends string = 'raw'> = Record<K, T>;
 
 /** @todo to refine */
 type FormContext<T> = {
-    errorMessage?: string
-    fields: FieldValues<T>
-    hasErrors?: boolean
-    isLoading?: boolean
-    isSubmitted: boolean,
-}
-
+    errorMessage?: string;
+    fields: FieldValues<T>;
+    hasErrors?: boolean;
+    isLoading?: boolean;
+    isSubmitted: boolean;
+};
 type FieldValues<T> = {
-    [K in keyof T]: FieldValue<T[K]>
-}
+    [K in keyof T]: FieldValue<T[K]>;
+};
 
 interface FieldCreateProps {
     showLabel: boolean;
@@ -274,10 +308,10 @@ interface Field$1<T, P = {}, E extends Record<string, unknown> = {}, K extends s
     key: string;
     render: (props: Partial<P> & Partial<FieldComponentProps<T, {}, E, K>> & {
         state: FieldValue<T, K, E>;
-    }) => React.ReactNode;
+    }) => React__default.ReactNode;
     initialize: <M extends Record<PropertyKey, unknown>>(model: M) => FieldValue<T, K>;
     unbind: <M extends Record<PropertyKey, unknown>>(model: M, state: FieldValue<T, K, E>) => M;
-    validate: (data: FieldValue<T, K, E>, ctx: FormContext<T>) => ValidatorResult;
+    validate: (data: FieldValue<T, K, E>, ctx: FormContext<any>) => ValidatorResult;
 }
 type FieldValue<T, K extends string = 'raw', E extends Record<string, unknown> = {}> = E & {
     value?: FormValue<T, K>;
@@ -300,14 +334,110 @@ type FieldComponentProps<T, P = {}, E extends Record<string, unknown> = {}, K ex
     value?: FormValue<T, K>;
     validation?: ValidatorResult;
 };
-
-/** The field's representation. */
-type Field = {
-   key: string
-   label?: string
-   required?: boolean
-   type?: 'hidden' | 'text' | 'number' | 'email' | 'tel'
+interface Formatter<T, F, K extends string> {
+    bind: (value?: T) => FormValue<F, K> | undefined;
+    unbind: (value?: FormValue<F, K>) => T | null;
 }
+type FieldDefinition<T, F = T, K extends string = 'raw'> = {
+    key: string;
+    path?: string;
+    label: string;
+    required?: boolean;
+    readOnly?: boolean;
+    autoComplete?: AutoFill;
+    defaultValue?: T;
+    format?: Formatter<T, F, K>;
+    validator?: Validator<F, any> | CompoundValidator<F, any>;
+};
+interface FieldProps<T, F, P extends FieldComponentProps<F, ExtraParams, E, K>, ExtraParams extends Record<string, unknown> = {}, K extends string = 'raw', E extends Record<string, unknown> = {}> extends FieldDefinition<T, F, K> {
+    label: string;
+    mapping?: PathMapping;
+    format?: Formatter<T, F, K>;
+    rawProperty?: K;
+    component: ComponentType<P>;
+    extendedParams?: ExtraParams | ((i18n: I18nResolver) => ExtraParams);
+}
+
+type ConsentFieldOptions$1 = {
+    type: ConsentType;
+    consentCannotBeGranted?: boolean;
+    description: string;
+    version: {
+        language: string;
+        versionId: number;
+    };
+};
+interface ConsentFieldProps extends FieldComponentProps<boolean, ConsentFieldOptions$1, {}, 'granted'> {
+}
+type Value$1 = {
+    consentType?: ConsentType;
+    consentVersion?: {
+        language: string;
+        versionId: number;
+    };
+    granted: boolean;
+};
+declare function consentField({ type, required, consentCannotBeGranted, description, version, ...props }: Omit<FieldDefinition<Value$1, boolean>, 'defaultValue'> & {
+    defaultValue?: boolean;
+} & ConsentFieldOptions$1): FieldCreator<boolean, ConsentFieldProps, {}, "granted">;
+
+type ExtraParams$2 = {
+    locale: string;
+    yearDebounce?: number;
+};
+interface DateFieldProps extends FieldComponentProps<DateTime, ExtraParams$2> {
+}
+declare function dateField({ key, label, yearDebounce, locale, ...props }: Optional<FieldDefinition<string, DateTime>, 'key' | 'label'> & Optional<ExtraParams$2, 'locale'>, config: Config): FieldCreator<DateTime, DateFieldProps, ExtraParams$2>;
+
+interface Option {
+    label: string;
+    value: string;
+}
+interface SelectProps extends React__default.SelectHTMLAttributes<HTMLSelectElement> {
+    dataTestId?: string;
+    hasError?: boolean;
+    options: Option[];
+}
+
+type Value = SelectProps['value'];
+type SelectOptions = {
+    values: SelectProps['options'];
+};
+interface SelectFieldProps extends FieldComponentProps<Value, SelectOptions> {
+}
+declare function selectField({ values, ...config }: FieldDefinition<string, Value> & SelectOptions): FieldCreator<string | number | readonly string[] | undefined, SelectFieldProps, {}, "raw">;
+
+interface CheckboxFieldProps extends FieldComponentProps<boolean> {
+}
+declare function checkboxField(props: Omit<FieldProps<boolean | string, boolean, CheckboxFieldProps>, 'format' | 'component'>): FieldCreator<boolean, CheckboxFieldProps, {}, "raw">;
+
+type SimplePasswordFieldOptions = {
+    canShowPassword?: boolean;
+    placeholder?: React__default.HTMLAttributes<HTMLInputElement>['placeholder'];
+};
+interface SimplePasswordFieldProps extends FieldComponentProps<string, SimplePasswordFieldOptions> {
+}
+declare const simplePasswordField: ({ canShowPassword, placeholder, ...props }: FieldDefinition<string> & SimplePasswordFieldOptions) => FieldCreator<string, SimplePasswordFieldProps, {}, "raw">;
+
+type PasswordStrengthScore = 0 | 1 | 2 | 3 | 4;
+interface PasswordRule {
+    label: string;
+    verify: (value: string) => boolean;
+}
+
+type ExtraValues = {
+    strength?: PasswordStrengthScore;
+};
+type ExtraParams$1 = {
+    blacklist?: string[];
+    canShowPassword?: boolean;
+    enabledRules: Record<RuleKeys, PasswordRule>;
+    minStrength: PasswordStrengthScore;
+};
+interface PasswordFieldProps extends FieldComponentProps<string, ExtraParams$1, ExtraValues> {
+}
+type RuleKeys = Exclude<keyof PasswordPolicy, 'minStrength' | 'allowUpdateWithAccessTokenOnly'>;
+declare const passwordField: ({ key, label, blacklist, canShowPassword, enabledRules, minStrength, required, validator, ...props }: Optional<FieldDefinition<string, string>, 'key' | 'label'> & Partial<ExtraParams$1>, { passwordPolicy }: Config) => FieldCreator<string, PasswordFieldProps, ExtraParams$1>;
 
 type PhoneNumberOptions = {
     /**
@@ -336,6 +466,117 @@ type PhoneNumberOptions = {
      */
     withCountrySelect?: boolean;
 };
+/**
+ * If neither country nor defaultCountry are specified then the phone number can only be input in "international" format.
+ */
+interface PhoneNumberFieldProps extends FieldComponentProps<Value$2>, PhoneNumberOptions {
+}
+declare const phoneNumberField: ({ key, label, defaultCountry, country, locale, withCountryCallingCode, withCountrySelect, ...props }: Optional<FieldDefinition<string, Value$2>, 'key' | 'label'> & PhoneNumberOptions, config: Config) => FieldCreator<Value$2, PhoneNumberFieldProps>;
+
+type SimpleFieldOptions = {
+    placeholder?: React__default.HTMLAttributes<HTMLInputElement>['placeholder'];
+    type?: React__default.HTMLInputTypeAttribute;
+};
+interface SimpleFieldProps extends FieldComponentProps<string, SimpleFieldOptions> {
+}
+declare const simpleField: ({ placeholder, type, ...props }: FieldDefinition<string | number, string> & SimpleFieldOptions) => FieldCreator<string, SimpleFieldProps, {}, "raw">;
+
+declare function birthdateField({ min, max, label, ...props }: Parameters<typeof dateField>[0] & {
+    min?: number;
+    max?: number;
+}, config: Config): FieldCreator<DateTime<boolean>, DateFieldProps, {
+    locale: string;
+    yearDebounce?: number | undefined;
+}, "raw">;
+
+type FieldBuilder = typeof simpleField | typeof checkboxField | typeof selectField | typeof dateField | typeof birthdateField | typeof phoneNumberField | typeof passwordField | typeof simplePasswordField | typeof consentField;
+type FieldConfig<T extends FieldBuilder> = Parameters<T>[0];
+type PredefinedFieldConfig<T extends FieldBuilder> = Prettify<Omit<FieldConfig<T>, 'label'>>;
+type PredefinedFieldOptions = {
+    [K in keyof typeof predefinedFields]: Prettify<{
+        key: K;
+    } & Parameters<(typeof predefinedFields)[K]>[0]>;
+}[keyof typeof predefinedFields];
+type CustomFieldOptions = Prettify<{
+    key: string;
+} & FieldOptions>;
+type ConsentFieldOptions = {
+    key: string;
+    errorArchivedConsents?: boolean;
+};
+type DataType<T extends CustomFieldType> = {
+    dataType: T;
+};
+type FieldOptions = Prettify<DataType<'number'> & FieldConfig<typeof simpleField>> | Prettify<DataType<'integer'> & FieldConfig<typeof simpleField>> | Prettify<DataType<'decimal'> & FieldConfig<typeof simpleField>> | Prettify<DataType<'string'> & FieldConfig<typeof simpleField>> | Prettify<DataType<'date'> & FieldConfig<typeof dateField>> | Prettify<DataType<'checkbox'> & FieldConfig<typeof checkboxField>> | Prettify<DataType<'select'> & FieldConfig<typeof selectField>> | Prettify<DataType<'phone'> & FieldConfig<typeof phoneNumberField>> | Prettify<DataType<'email'> & FieldConfig<typeof simpleField>>;
+type PredefinedFieldBuilder<T extends FieldBuilder> = (props: PredefinedFieldConfig<T>, config: Config) => ReturnType<T>;
+declare const predefinedFields: {
+    customIdentifier: PredefinedFieldBuilder<({ placeholder, type, ...props }: FieldDefinition<string | number, string> & {
+        placeholder?: string | undefined;
+        type?: React.HTMLInputTypeAttribute | undefined;
+    }) => FieldCreator<string, SimpleFieldProps, {}, "raw">>;
+    givenName: PredefinedFieldBuilder<({ placeholder, type, ...props }: FieldDefinition<string | number, string> & {
+        placeholder?: string | undefined;
+        type?: React.HTMLInputTypeAttribute | undefined;
+    }) => FieldCreator<string, SimpleFieldProps, {}, "raw">>;
+    familyName: PredefinedFieldBuilder<({ placeholder, type, ...props }: FieldDefinition<string | number, string> & {
+        placeholder?: string | undefined;
+        type?: React.HTMLInputTypeAttribute | undefined;
+    }) => FieldCreator<string, SimpleFieldProps, {}, "raw">>;
+    email: PredefinedFieldBuilder<({ placeholder, type, ...props }: FieldDefinition<string | number, string> & {
+        placeholder?: string | undefined;
+        type?: React.HTMLInputTypeAttribute | undefined;
+    }) => FieldCreator<string, SimpleFieldProps, {}, "raw">>;
+    phoneNumber: PredefinedFieldBuilder<({ key, label, defaultCountry, country, locale, withCountryCallingCode, withCountrySelect, ...props }: Pick<Partial<FieldDefinition<string, libphonenumber_js.E164Number>>, "label" | "key"> & Omit<FieldDefinition<string, libphonenumber_js.E164Number>, "label" | "key"> & PhoneNumberOptions, config: Config) => FieldCreator<libphonenumber_js.E164Number, PhoneNumberFieldProps, {}, "raw">>;
+    password: PredefinedFieldBuilder<({ key, label, blacklist, canShowPassword, enabledRules, minStrength, required, validator, ...props }: Pick<Partial<FieldDefinition<string, string>>, "label" | "key"> & Omit<FieldDefinition<string, string>, "label" | "key"> & Partial<{
+        blacklist?: string[] | undefined;
+        canShowPassword?: boolean | undefined;
+        enabledRules: Record<"minLength" | "uppercaseCharacters" | "specialCharacters" | "lowercaseCharacters" | "digitCharacters", PasswordRule>;
+        minStrength: PasswordStrengthScore;
+    }>, { passwordPolicy }: Config) => FieldCreator<string, PasswordFieldProps, {
+        blacklist?: string[] | undefined;
+        canShowPassword?: boolean | undefined;
+        enabledRules: Record<"minLength" | "uppercaseCharacters" | "specialCharacters" | "lowercaseCharacters" | "digitCharacters", PasswordRule>;
+        minStrength: PasswordStrengthScore;
+    }, "raw">>;
+    passwordConfirmation: PredefinedFieldBuilder<({ canShowPassword, placeholder, ...props }: FieldDefinition<string> & {
+        canShowPassword?: boolean | undefined;
+        placeholder?: string | undefined;
+    }) => FieldCreator<string, SimplePasswordFieldProps, {}, "raw">>;
+    gender: PredefinedFieldBuilder<typeof selectField>;
+    birthdate: PredefinedFieldBuilder<typeof birthdateField>;
+    'address.streetAddress': PredefinedFieldBuilder<({ placeholder, type, ...props }: FieldDefinition<string | number, string> & {
+        placeholder?: string | undefined;
+        type?: React.HTMLInputTypeAttribute | undefined;
+    }) => FieldCreator<string, SimpleFieldProps, {}, "raw">>;
+    'address.locality': PredefinedFieldBuilder<({ placeholder, type, ...props }: FieldDefinition<string | number, string> & {
+        placeholder?: string | undefined;
+        type?: React.HTMLInputTypeAttribute | undefined;
+    }) => FieldCreator<string, SimpleFieldProps, {}, "raw">>;
+    'address.region': PredefinedFieldBuilder<({ placeholder, type, ...props }: FieldDefinition<string | number, string> & {
+        placeholder?: string | undefined;
+        type?: React.HTMLInputTypeAttribute | undefined;
+    }) => FieldCreator<string, SimpleFieldProps, {}, "raw">>;
+    'address.postalCode': PredefinedFieldBuilder<({ placeholder, type, ...props }: FieldDefinition<string | number, string> & {
+        placeholder?: string | undefined;
+        type?: React.HTMLInputTypeAttribute | undefined;
+    }) => FieldCreator<string, SimpleFieldProps, {}, "raw">>;
+    'address.country': PredefinedFieldBuilder<({ placeholder, type, ...props }: FieldDefinition<string | number, string> & {
+        placeholder?: string | undefined;
+        type?: React.HTMLInputTypeAttribute | undefined;
+    }) => FieldCreator<string, SimpleFieldProps, {}, "raw">>;
+    friendlyName: PredefinedFieldBuilder<({ placeholder, type, ...props }: FieldDefinition<string | number, string> & {
+        placeholder?: string | undefined;
+        type?: React.HTMLInputTypeAttribute | undefined;
+    }) => FieldCreator<string, SimpleFieldProps, {}, "raw">>;
+};
+/**
+ * @example { key: "email" }
+ * @example { key: "family_name", defaultValue: "Moreau", required": true }
+ * @example { key: "given_name", defaultValue: "Kylian", type: "hidden" }
+ * @example { key: "customFields.date", path: "date", dataType: "date" }
+ * @example { key: "consents.foo" }
+ */
+type Field = PredefinedFieldOptions | CustomFieldOptions | ConsentFieldOptions;
 
 type LoginViewProps = {
     /**
@@ -659,9 +900,9 @@ interface ReauthViewProps {
     socialProviders?: string[];
 }
 
-interface StartPasswordlessFormData {
+type StartPasswordlessFormData = {
     authType: PasswordlessParams['authType'];
-}
+};
 interface MainViewProps$6 {
     /**
      * **Not recommended**
@@ -1124,7 +1365,7 @@ interface WidgetProps {
     onReady?: (instance: WidgetInstance) => void;
 }
 type WidgetOptions<P> = Prettify<P & WidgetProps & I18nProps$1 & ThemeProps>;
-type Widget<P> = (props: P, ctx: Context) => Promise<React.JSX.Element>;
+type Widget<P> = (props: P, ctx: Context) => Promise<React__default.JSX.Element>;
 declare class UiClient {
     config: Config;
     core: Client$1;
