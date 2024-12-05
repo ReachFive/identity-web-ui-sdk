@@ -7,6 +7,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.30.2] - 2024-12-05
+
+### Fixed
+
+- Country selector on PhoneNumber field was displayed with wrong size.
+
 ## [1.30.1] - 2024-11-26
 
 ### Fixed
@@ -507,7 +513,9 @@ The eye icon is now correctly displayed in the Auth widget.
 
 First version of the SDK Web UI.
 
-[Unreleased]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.30.1...HEAD
+[Unreleased]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.30.2...HEAD
+
+[1.30.2]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.30.1...v1.30.2
 
 [1.30.1]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.30.0...v1.30.1
 
