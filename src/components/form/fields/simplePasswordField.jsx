@@ -66,8 +66,8 @@ class SimplePasswordField extends React.Component {
                     data-testid={path} />
                 {canShowPassword && (
                     showPassword
-                        ? <HidePasswordIcon onClick={this.toggleShowPassword} />
-                        : <ShowPasswordIcon onClick={this.toggleShowPassword} />)}
+                        ? <HidePasswordIcon data-testid="hide-password-btn" onClick={this.toggleShowPassword} />
+                        : <ShowPasswordIcon data-testid="show-password-btn" onClick={this.toggleShowPassword} />)}
             </div>
         </FormGroup>;
     }

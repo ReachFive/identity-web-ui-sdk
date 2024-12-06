@@ -22,13 +22,13 @@ const InputCol = styled.div`
     flex-basis: ${props => props.width}%;
 `;
 
-const DateField = ({ i18n, inputId, label, locale, onChange, path, required, showLabel, validation={}, value }) => {
+const DateField = ({ i18n, inputId, label, locale, onChange, path, required, showLabel, validation={}, value, yearDebounce = 1000 }) => {
     const [day, setDay] = useState(isValued(value) ? value.raw.day : undefined)
     const [month, setMonth] = useState(isValued(value) ? value.raw.month : undefined)
     const [year, setYear] = useState(isValued(value) ? value.raw.year : undefined)
 
     // debounce year value to delay value update when user is currently editing it
-    const debouncedYear = useDebounce(year, 1000)
+    const debouncedYear = useDebounce(year, yearDebounce)
 
     const setDatePart = (setter, value) => {
         if (Number.isNaN(Number(value))) return // only accept number value
@@ -52,7 +52,7 @@ const DateField = ({ i18n, inputId, label, locale, onChange, path, required, sho
 
     const months = useMemo(() => Info.months("long", { locale }), [locale])
     const daysInMonth = useMemo(() =>
-        Array.from({ length: DateTime.fromObject({ year: debouncedYear, month }).daysInMonth }, (_value, index) => index + 1),
+        [...Array(DateTime.fromObject({ year: debouncedYear, month }).daysInMonth ?? 31).keys()].map(v => v + 1),
         [debouncedYear, month]
     )
 
@@ -61,8 +61,13 @@ const DateField = ({ i18n, inputId, label, locale, onChange, path, required, sho
         setDay(undefined)
     }
 
+    // datetime parts ordered by locale 
     const parts = useMemo(() =>
-        DateTime.now().setLocale(locale).toLocaleParts().map(part => part.type).filter(type => type !== 'literal'),
+        DateTime.now()
+            .setLocale(locale)
+            .toLocaleParts()
+            .map(part => part.type)
+            .filter(type => ['day', 'month', 'year'].includes(type)),
         [locale]
     )
 
@@ -78,7 +83,7 @@ const DateField = ({ i18n, inputId, label, locale, onChange, path, required, sho
                     required={required}
                     onChange={handleDayChange}
                     placeholder={i18n('day')}
-                    options={daysInMonth.map(day => ({ value: day, label: day }))}
+                    options={daysInMonth.map(day => ({ value: `${day}`, label: `${day}` }))}
                     data-testid={`${path}.day`}
                     aria-label={i18n('day')}
                 />
@@ -93,7 +98,7 @@ const DateField = ({ i18n, inputId, label, locale, onChange, path, required, sho
                     required={required}
                     onChange={handleMonthChange}
                     placeholder={i18n('month')}
-                    options={months.map((month, index) => ({ value: index + 1, label: month }))}
+                    options={months.map((month, index) => ({ value: `${index + 1}`, label: month }))}
                     data-testid={`${path}.month`}
                     aria-label={i18n('month')}
                 />
@@ -103,15 +108,15 @@ const DateField = ({ i18n, inputId, label, locale, onChange, path, required, sho
             <InputCol key="year" width={30}>
                 <Input
                     type="number"
-                    maxlength="4"
-                    inputmode="numeric"
+                    maxLength={4}
+                    inputMode="numeric"
                     name={`${path}.year`}
                     value={year || ''}
                     hasError={error}
                     required={required}
                     onChange={handleYearChange}
                     placeholder={i18n('year')}
-                    dataTestId={`${path}.year`}
+                    data-testid={`${path}.year`}
                     aria-label={i18n('year')}
                 />
             </InputCol>
@@ -127,7 +132,7 @@ const DateField = ({ i18n, inputId, label, locale, onChange, path, required, sho
             required={required}
         >
             <InputRow>
-                {parts.map(part => fields[part])}
+                {parts.flatMap(part => fields[part])}
             </InputRow>
         </FormGroup>
     )
@@ -152,7 +157,7 @@ export const datetimeValidator = locale => new Validator({
     parameters: { format: dateFormat(locale) }
 })
 
-export default function dateField(props, config) {
+export default function dateField({ yearDebounce, ...props }, config) {
     return createField({
         ...props,
         format: {
@@ -164,6 +169,9 @@ export default function dateField(props, config) {
         },
         validator: props.validator ? datetimeValidator(config.language).and(props.validator) : datetimeValidator(config.language),
         component: DateField,
-        extendedParams: { locale: config.language }
+        extendedParams: {
+            locale: config.language,
+            yearDebounce,
+        }
     })
 }

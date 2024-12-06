@@ -93,7 +93,7 @@ interface PasswordPolicyRulesProps {
 export const PasswordPolicyRules = styled(({ className, ...props }: PasswordPolicyRulesProps) => {
     const i18n = useI18n()
     return (
-        <div className={className}>
+        <div className={className} data-testid="password-policy-rules">
             {props.minStrength !== 0 && <PasswordPolicyRule>
                 <RoundCheckbox checked={props.strength >= props.minStrength} />
                 <Label visible>
