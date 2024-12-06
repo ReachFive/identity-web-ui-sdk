@@ -266,7 +266,6 @@ describe('DOM testing', () => {
         })
 
         // const label = customFieldLabel('custom_fields.username', 'fr')
-        // console.log(label)
         // const input = screen.queryByLabelText(label!)
         // expect(input).toBeInTheDocument()
 

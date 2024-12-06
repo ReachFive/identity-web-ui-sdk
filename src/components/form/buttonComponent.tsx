@@ -66,13 +66,13 @@ export function DefaultButton({ children, ...props }: PropsWithChildren<DefaultB
     )
 }
 
-interface PrimaryButtonProps extends Omit<ButtonProps, 'type' | 'background' | 'border'> {}
+interface PrimaryButtonProps extends Omit<ButtonProps, 'background' | 'border'> {}
 
-export function PrimaryButton({ children, ...props }: PropsWithChildren<PrimaryButtonProps>) {
+export function PrimaryButton({ children, type = 'submit', ...props }: PropsWithChildren<PrimaryButtonProps>) {
     const theme = useTheme()
     return (
         <Button
-            type="submit"
+            type={type}
             {...props}
             $background={theme.primaryColor}
             $border={theme.primaryColor}

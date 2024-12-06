@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { PrimaryButton } from './buttonComponent';
@@ -127,6 +127,10 @@ export function createForm<Model extends Record<PropertyKey, unknown> = {}, P = 
 
         const [fieldValues, setFieldValues] = useState<FieldValues<Model>>(filledWithModel())
 
+        useEffect(() => {
+            onFieldChange && onFieldChange(fieldValues);
+        }, [fieldValues])
+
         const handleFieldChange = <T,>(fieldName: keyof typeof fieldValues, stateUpdate: FieldValue<T>) => {
             const currentState = fieldValues[fieldName];
             const newState = {
@@ -141,8 +145,6 @@ export function createForm<Model extends Record<PropertyKey, unknown> = {}, P = 
                     ...newState,
                 }
             } satisfies Record<string, FieldValue<unknown>>;
-
-            onFieldChange && onFieldChange(newFieldValues);
 
             setFieldValues(newFieldValues);
         }

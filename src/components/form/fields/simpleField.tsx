@@ -5,7 +5,7 @@ import { createField, type FieldComponentProps, type FieldDefinition } from '../
 import { isRichFormValue } from '../../../helpers/utils';
 
 type SimpleFieldOptions = {
-    placeholder?: React.HTMLAttributes<HTMLInputElement>['placeholder']
+    placeholder?: React.InputHTMLAttributes<HTMLInputElement>['placeholder']
     type?: React.HTMLInputTypeAttribute
 }
 

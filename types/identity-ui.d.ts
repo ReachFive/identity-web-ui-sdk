@@ -1,6 +1,6 @@
 /**
- * @reachfive/identity-ui - v1.30.1
- * Compiled Wed, 04 Dec 2024 16:30:05 UTC
+ * @reachfive/identity-ui - v1.30.2
+ * Compiled Thu, 05 Dec 2024 15:54:21 UTC
  *
  * Copyright (c) ReachFive.
  *
@@ -394,9 +394,9 @@ interface Option {
     value: string;
 }
 interface SelectProps extends React__default.SelectHTMLAttributes<HTMLSelectElement> {
-    dataTestId?: string;
     hasError?: boolean;
     options: Option[];
+    placeholder?: string;
 }
 
 type Value = SelectProps['value'];
@@ -413,7 +413,7 @@ declare function checkboxField(props: Omit<FieldProps<boolean | string, boolean,
 
 type SimplePasswordFieldOptions = {
     canShowPassword?: boolean;
-    placeholder?: React__default.HTMLAttributes<HTMLInputElement>['placeholder'];
+    placeholder?: React__default.InputHTMLAttributes<HTMLInputElement>['placeholder'];
 };
 interface SimplePasswordFieldProps extends FieldComponentProps<string, SimplePasswordFieldOptions> {
 }
@@ -474,7 +474,7 @@ interface PhoneNumberFieldProps extends FieldComponentProps<Value$2>, PhoneNumbe
 declare const phoneNumberField: ({ key, label, defaultCountry, country, locale, withCountryCallingCode, withCountrySelect, ...props }: Optional<FieldDefinition<string, Value$2>, 'key' | 'label'> & PhoneNumberOptions, config: Config) => FieldCreator<Value$2, PhoneNumberFieldProps>;
 
 type SimpleFieldOptions = {
-    placeholder?: React__default.HTMLAttributes<HTMLInputElement>['placeholder'];
+    placeholder?: React__default.InputHTMLAttributes<HTMLInputElement>['placeholder'];
     type?: React__default.HTMLInputTypeAttribute;
 };
 interface SimpleFieldProps extends FieldComponentProps<string, SimpleFieldOptions> {
@@ -657,6 +657,10 @@ type LoginViewProps = {
      * Tip: If you pass an empty array, social providers will not be displayed.
      */
     socialProviders?: string[];
+    /**
+     * If `allowCustomIdentifier` property is `true` then the email and phoneNumber fields can be hidden by specifying the `allowAuthentMailPhone` property to `false`.
+     * @default true
+     */
     allowAuthentMailPhone?: boolean;
 };
 

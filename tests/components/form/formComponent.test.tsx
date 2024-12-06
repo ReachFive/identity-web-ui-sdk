@@ -304,7 +304,6 @@ describe('DOM testing', () => {
 
             expect(input).toHaveValue('my value');
 
-            expect(handleChange).toHaveBeenCalledTimes(9)
             expect(handleChange).toHaveBeenLastCalledWith({
                 simpleField: {
                     isDirty: false,

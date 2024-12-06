@@ -73,7 +73,7 @@ describe('DOM testing', () => {
 
         const key = 'date'
         const label = 'date'
-        const yearDebounce = 100
+        const yearDebounce = 0
 
         const onFieldChange = jest.fn()
         const onSubmit = jest.fn<(data: Model) => Promise<Model>>(data => Promise.resolve(data))

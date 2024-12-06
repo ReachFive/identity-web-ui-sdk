@@ -21,7 +21,11 @@ import { useSession } from '../../../contexts/session';
 
 import { specializeIdentifierData } from '../../../helpers/utils';
 
-const ResetCredentialWrapper = styled.div<{ floating?: boolean }>`
+type Floating = { floating?: boolean }
+
+const ResetCredentialWrapper = styled.div.withConfig({
+    shouldForwardProp: (prop) => !['floating'].includes(prop)
+})<Floating>`
     margin-bottom: ${props => props.theme.spacing}px;
     text-align: right;
     ${props => props.floating && `
@@ -218,6 +222,10 @@ export type LoginViewProps = {
      * Tip: If you pass an empty array, social providers will not be displayed.
      */
     socialProviders?: string[]
+    /**
+     * If `allowCustomIdentifier` property is `true` then the email and phoneNumber fields can be hidden by specifying the `allowAuthentMailPhone` property to `false`.
+     * @default true
+     */
     allowAuthentMailPhone?: boolean
 }
 

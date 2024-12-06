@@ -26,7 +26,7 @@ export const HidePasswordIcon = styled(EyeSlashIcon)`${eyeStyle}`;
 
 type SimplePasswordFieldOptions = {
     canShowPassword?: boolean
-    placeholder?: React.HTMLAttributes<HTMLInputElement>['placeholder']
+    placeholder?: React.InputHTMLAttributes<HTMLInputElement>['placeholder']
 }
 
 export interface SimplePasswordFieldProps extends FieldComponentProps<string, SimplePasswordFieldOptions> {}
