@@ -32,7 +32,7 @@ export const  QuickLoginView = ({ initialScreen, allowWebAuthnLogin = false, aut
 
     return (
         <div>
-        <Heading>{session.name || session.email}</Heading>
+        <Heading>{session.name ?? session.email}</Heading>
         <Intro>{i18n('lastTimeYouLoggedInWith')}</Intro>
         <SocialButtons providers={session.lastLoginType ? [session.lastLoginType] : []} auth={auth} />
         <Alternative>

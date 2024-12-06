@@ -135,7 +135,7 @@ export class UiClient {
         try {
             const config = {
                 ...this.config,
-                countryCode: options.countryCode || this.config.countryCode || 'FR'
+                countryCode: options.countryCode ?? this.config.countryCode ?? 'FR'
             };
 
             const WidgetComponent = await widget(widgetProps, {
@@ -172,7 +172,7 @@ export class UiClient {
                     this.core
                         .getSessionInfo()
                         .then(session => {
-                            const reAuthenticate = auth && auth.prompt && auth.prompt === 'login'
+                            const reAuthenticate = auth?.prompt === 'login'
 
                             if (session.isAuthenticated && !reAuthenticate) {
                                 this.core.loginFromSession(auth);

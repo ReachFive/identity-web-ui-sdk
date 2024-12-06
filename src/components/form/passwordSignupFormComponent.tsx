@@ -79,9 +79,9 @@ export const PasswordSignupForm = ({
 
     const refreshBlacklist = useCallback(
         (data: FieldValues<SignupParams['data']>) => {
-            const email = data.email?.value || '';
-            const givenName = data.givenName?.value || '';
-            const lastName = data.familyName?.value || '';
+            const email = data.email?.value ?? '';
+            const givenName = data.givenName?.value ?? '';
+            const lastName = data.familyName?.value ?? '';
 
             const list = [
                 email.split('@'),

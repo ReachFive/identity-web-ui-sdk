@@ -47,7 +47,7 @@ export default function consentField(config) {
         required: !!config.required,
         defaultValue: config.defaultValue && { granted: config.defaultValue },
         format: {
-            bind: x => !!(x && x.granted),
+            bind: x => !!(x?.granted),
             unbind: x => ({
                 granted: x,
                 consentType: config.type,

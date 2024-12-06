@@ -4,7 +4,7 @@ export function parseQueryString(value: string) {
     const qs = value.split('&').reduce((acc, param) => {
         const [key, value = ''] = param.split('=');
 
-        return key && key.length
+        return key.length
             ? {
                 ...acc,
                 [key]: decodeURIComponent(value.replace(/\+/g, ' '))

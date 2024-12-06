@@ -33,7 +33,7 @@ export const Button = styled(({ tagname = 'button', className, extendedClasses, 
         <Tagname className={classes([extendedClasses, className])}
             disabled={disabled}
             type={type}
-            data-testid={dataTestId || type}
+            data-testid={dataTestId ?? type}
             onClick={onClick}
             {...(title ? { title } : {})}>{children}</Tagname>
     );
@@ -47,7 +47,7 @@ export const Button = styled(({ tagname = 'button', className, extendedClasses, 
     user-select: none;
     touch-action: manipulation;
     cursor: pointer;
-    color: ${props => props.color || '#ffffff'};
+    color: ${props => props.color ?? '#ffffff'};
     background-color: ${props => props.background};
     border: ${props => buttonTheme(props, 'borderWidth')}px solid ${props => props.border};
     padding: ${props => buttonTheme(props, 'paddingY')}px ${props => buttonTheme(props, 'paddingX')}px;
@@ -64,8 +64,8 @@ export const Button = styled(({ tagname = 'button', className, extendedClasses, 
     &:hover,
     &:active {
         color: ${props => props.color};
-        background-color: ${props => darken(0.08, props.background || props.theme.backgroundColor)};
-        border-color: ${props => darken(0.08, props.border || props.theme.borderColor)};
+        background-color: ${props => darken(0.08, props.background ?? props.theme.backgroundColor)};
+        border-color: ${props => darken(0.08, props.border ?? props.theme.borderColor)};
     }
 
     &[disabled] {

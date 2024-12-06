@@ -188,9 +188,7 @@ export const NewPasswordView = ({
 }
 
 const resolveCode = () => {
-    const qs = (window.location.search && window.location.search.length)
-        ? window.location.search.substr(1)
-        : '';
+    const qs = window.location.search.substring(1)
     const {verificationCode, email, clientId} = parseQueryString(qs)
     return {authentication: { verificationCode, email, clientId } as Authentication};
 };

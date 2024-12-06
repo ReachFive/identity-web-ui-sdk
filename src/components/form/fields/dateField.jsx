@@ -48,7 +48,7 @@ const DateField = ({ i18n, inputId, label, locale, onChange, path, required, sho
                 isDirty: true,
             }))
         }
-    }, [debouncedYear, month, day]) // eslint-disable-line react-hooks/exhaustive-deps
+    }, [debouncedYear, month, day])
 
     const months = useMemo(() => Info.months("long", { locale }), [locale])
     const daysInMonth = useMemo(() =>
@@ -160,7 +160,7 @@ export default function dateField(props, config) {
                 const dt = value ? DateTime.fromISO(value) : DateTime.invalid('empty value')
                 return dt.isValid ? { raw: dt } : undefined
             },
-            unbind: (value) => value && value.raw.toISODate()
+            unbind: (value) => value?.raw.toISODate()
         },
         validator: props.validator ? datetimeValidator(config.language).and(props.validator) : datetimeValidator(config.language),
         component: DateField,

@@ -30,7 +30,7 @@ export function createClient(creationConfig: Config): Client {
 
     const client = coreClient.remoteSettings.then(remoteSettings => {
         const remoteConfig = camelCaseProperties(remoteSettings) as RemoteSettings;
-        const language = creationConfig.language || remoteSettings.language;
+        const language = creationConfig.language ?? remoteSettings.language;
 
         return fetch(`https://${creationConfig.domain}/identity/v1/config/consents?${toQueryString({ lang: language })}`)
             .then(response => response.json())
