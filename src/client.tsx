@@ -2,13 +2,13 @@ import React from 'react';
 import { createRoot } from 'react-dom/client';
 import type { AuthOptions, Client as CoreClient, SessionInfo } from '@reachfive/identity-core'
 
-import { Config, Prettify } from './types'
+import type { Config, Prettify } from './types'
 
-import { I18nMessages } from './core/i18n';
+import { type I18nMessages } from './core/i18n';
 import { UserError } from './helpers/errors';
 import { logError } from './helpers/logger';
 
-import { ErrorMessage } from './components/error'
+import { ErrorText } from './components/miscComponent.tsx';
 import type { Context, I18nProps, ThemeProps } from './components/widget/widget'
 
 import authWidget, { type AuthWidgetProps } from './widgets/auth/authWidget';
@@ -135,7 +135,7 @@ export class UiClient {
         try {
             const config = {
                 ...this.config,
-                countryCode: options.countryCode || this.config.countryCode || 'FR'
+                countryCode: options.countryCode ?? this.config.countryCode ?? 'FR'
             };
 
             const WidgetComponent = await widget(widgetProps, {
@@ -154,7 +154,7 @@ export class UiClient {
             }
         } catch (error) {
             const message = this.adaptError(error);
-            root.render(<ErrorMessage>{message}</ErrorMessage>)
+            root.render(<ErrorText>{message}</ErrorText>)
             this.handleError(error)
         }
     }
@@ -172,7 +172,7 @@ export class UiClient {
                     this.core
                         .getSessionInfo()
                         .then(session => {
-                            const reAuthenticate = auth && auth.prompt && auth.prompt === 'login'
+                            const reAuthenticate = auth?.prompt === 'login'
 
                             if (session.isAuthenticated && !reAuthenticate) {
                                 this.core.loginFromSession(auth);

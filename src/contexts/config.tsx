@@ -25,7 +25,7 @@ export interface ConfigProps {
 export type WithConfig<P> = P & ConfigProps
 
 export function withConfig<T extends ConfigProps = ConfigProps>(WrappedComponent: ComponentType<T>) {
-  const displayName = WrappedComponent.displayName || WrappedComponent.name || "Component";
+  const displayName = WrappedComponent.displayName ?? WrappedComponent.name ?? "Component";
 
   const ComponentWithConfig = (props: Omit<T, keyof ConfigProps>) => {
     const config = useConfig();

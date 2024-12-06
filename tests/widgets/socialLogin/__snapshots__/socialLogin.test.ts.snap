@@ -122,7 +122,7 @@ exports[`Snapshot social login basic 1`] = `
     className="r5-social-buttons c1"
   >
     <button
-      className="r5-btn-social r5-btn-social-facebook c2 c3"
+      className="c2 c3"
       onClick={[Function]}
       title="Facebook"
     >
@@ -136,7 +136,7 @@ exports[`Snapshot social login basic 1`] = `
       </span>
     </button>
     <button
-      className="r5-btn-social r5-btn-social-google c5 c3"
+      className="c5 c3"
       onClick={[Function]}
       title="Google"
     >

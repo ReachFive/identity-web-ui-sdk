@@ -25,7 +25,7 @@ export interface I18nProps {
 export type WithI18n<P> = P & I18nProps
 
 export function withI18n<T extends I18nProps = I18nProps>(WrappedComponent: ComponentType<T>) {
-  const displayName = WrappedComponent.displayName || WrappedComponent.name || "Component";
+  const displayName = WrappedComponent.displayName ?? WrappedComponent.name ?? "Component";
 
   const ComponentWithI18n = (props: Omit<T, keyof I18nProps>) => {
     const i18n = useI18n();

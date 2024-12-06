@@ -88,8 +88,8 @@ const SuccessView = ({ loginLink }: SuccessViewProps) => {
 }
 
 const resolveCode = () => {
-    const qs = (window.location.search && window.location.search.length)
-        ? window.location.search.substr(1)
+    const qs = (window.location.search?.length)
+        ? window.location.search.substring(1)
         : '';
     const { verificationCode, email } = parseQueryString(qs)
     return { authentication: { verificationCode, email } as Authentication };

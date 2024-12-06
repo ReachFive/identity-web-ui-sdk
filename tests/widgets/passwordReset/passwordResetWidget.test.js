@@ -10,9 +10,32 @@ import 'jest-styled-components';
 
 import passwordResetWidget from '../../../src/widgets/passwordReset/passwordResetWidget';
 
+const defaultConfig = {
+    clientId: 'local',
+    domain: 'local.reach5.net',
+    sso: false,
+    sms: false,
+    webAuthn: false,
+    language: 'fr',
+    pkceEnforced: false,
+    isPublic: true,
+    socialProviders: ['facebook', 'google'],
+    customFields: [],
+    resourceBaseUrl: 'http://localhost',
+    mfaSmsEnabled: false,
+    mfaEmailEnabled: false,
+    rbaEnabled: false,
+    consentsVersions: {},
+    passwordPolicy: {
+        minLength: 8,
+        minStrength: 2,
+        allowUpdateWithAccessTokenOnly: true,
+    }
+};
+
 describe('Snapshot', () => {
     const generateSnapshot = (options = {}) => () => {
-        const tree = passwordResetWidget(options, { config: {}, apiClient: {} })
+        const tree = passwordResetWidget(options, { config: defaultConfig, apiClient: {} })
             .then(result => renderer.create(result).toJSON());
 
         expect(tree).resolves.toMatchSnapshot();
@@ -25,7 +48,7 @@ describe('Snapshot', () => {
 
 describe('DOM testing', () => {
     const generateComponent = async (options = {}) => {
-        const result = await passwordResetWidget(options, { config: {}, apiClient: {} });
+        const result = await passwordResetWidget(options, { config: defaultConfig, apiClient: {} });
 
         return render(result);
     };
