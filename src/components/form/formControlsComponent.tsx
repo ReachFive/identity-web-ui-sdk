@@ -162,7 +162,6 @@ export const Check = styled(({ checked, onSelect, label, radio, name, className,
         {label}
     </label>
 ))`
-    padding-left: ${checkboxWidth}px;
     margin-bottom: 0;
     cursor: pointer;
     font-weight: normal;
@@ -178,10 +177,8 @@ export const Check = styled(({ checked, onSelect, label, radio, name, className,
     `}
 
     & > input {
-        position: absolute;
-        margin-left: -${checkboxWidth}px;
-        margin-top: 2px;
-        line-height: normal;
+        margin-right: ${props => props.theme.input.paddingX / 2}px;
+        vertical-align: -1px;
     }
 `;
 

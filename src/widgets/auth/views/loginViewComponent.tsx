@@ -20,17 +20,17 @@ import { useRouting } from '../../../contexts/routing';
 import { useSession } from '../../../contexts/session';
 
 import { specializeIdentifierData } from '../../../helpers/utils';
+import { FormGroupContainer } from '../../../components/form/formControlsComponent';
 
 type Floating = { floating?: boolean }
 
-const ResetCredentialWrapper = styled.div.withConfig({
+const ResetCredentialWrapper = styled(FormGroupContainer).withConfig({
     shouldForwardProp: (prop) => !['floating'].includes(prop)
 })<Floating>`
-    margin-bottom: ${props => props.theme.spacing}px;
     text-align: right;
     ${props => props.floating && `
-        position: absolute;
-        right: 0;
+        float: right;
+        max-width: 50%;
     `};
 `;
 
