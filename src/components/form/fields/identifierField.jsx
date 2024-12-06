@@ -18,7 +18,7 @@ import { createField } from '../fieldCreator';
 * }
 */
 
-function specializeRawIdentifier(withPhoneNumber, inputValue, telCall = () => undefined, emailCall = () => undefined, otherCall = () => undefined) {
+function specializeRawIdentifier(withPhoneNumber, inputValue, telCall = () => ({}), emailCall = () => ({}), otherCall = () => ({})) {
     if (withPhoneNumber && (/^\+?[0-9]+$/.test(inputValue))) {
         return ({
             raw: inputValue,

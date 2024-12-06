@@ -69,15 +69,15 @@ export default createMultiViewWidget<AuthWidgetProps, PropsWithSession<AuthWidge
         const quickLogin = allowQuickLogin &&
             !session.isAuthenticated &&
             session.lastLoginType &&
-            socialProviders ? socialProviders.indexOf(session.lastLoginType as ProviderId) >= 0 : false;
+            socialProviders?.includes(session.lastLoginType as ProviderId);
 
         return initialScreen
-            || (quickLogin && 'quick-login')
-            || (session.isAuthenticated && 'reauth')
-            || (allowLogin && !allowWebAuthnLogin && 'login')
-            || (allowLogin && 'login-with-web-authn')
-            || (allowSignup && 'signup')
-            || 'forgot-password';
+            ?? (quickLogin ? 'quick-login' : undefined)
+            ?? (session.isAuthenticated ? 'reauth' : undefined)
+            ?? (allowLogin && !allowWebAuthnLogin ? 'login' : undefined)
+            ?? (allowLogin ? 'login-with-web-authn' : undefined)
+            ?? (allowSignup ? 'signup' : undefined)
+            ?? 'forgot-password';
     },
     views: {
         'login': LoginView,

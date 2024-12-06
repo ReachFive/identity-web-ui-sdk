@@ -8,7 +8,7 @@ export interface AppError {
 }
 
 export class UserError extends Error {
-    isUserError: boolean = true
+    isUserError = true
 
     constructor(message: string) {
         super(message)
@@ -16,6 +16,6 @@ export class UserError extends Error {
     }
 
     static fromAppError(appError: AppError) {
-        return new UserError(appError.errorUserMsg || appError.errorDescription || appError.error)
+        return new UserError(appError.errorUserMsg ?? appError.errorDescription ?? appError.error)
     }
 }
