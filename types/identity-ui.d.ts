@@ -1,6 +1,11 @@
 /**
+<<<<<<< HEAD
  * @reachfive/identity-ui - v1.30.1
  * Compiled Tue, 03 Dec 2024 15:39:37 UTC
+=======
+ * @reachfive/identity-ui - v1.30.2
+ * Compiled Thu, 05 Dec 2024 15:36:01 UTC
+>>>>>>> master
  *
  * Copyright (c) ReachFive.
  *
@@ -216,7 +221,7 @@ type I18nMessages = {
     [k: string]: string;
 };
 type I18nMessageParams = Record<string, unknown>;
-type I18nResolver$1 = (key: string, params?: I18nMessageParams, fallback?: (params?: I18nMessageParams) => string) => string;
+type I18nResolver = (key: string, params?: I18nMessageParams, fallback?: (params?: I18nMessageParams) => string) => string;
 
 type I18nProps$1 = {
     i18n?: I18nMessages;
@@ -232,7 +237,7 @@ type Context = {
 };
 
 interface I18nProps {
-    i18n: I18nResolver$1;
+    i18n: I18nResolver;
 }
 type WithI18n<P> = P & I18nProps;
 
@@ -388,6 +393,10 @@ type LoginViewProps = {
      * Tip: If you pass an empty array, social providers will not be displayed.
      */
     socialProviders?: string[];
+    /**
+     * If `allowCustomIdentifier` property is `true` then the email and phoneNumber fields can be hidden by specifying the `allowAuthentMailPhone` property to `false`.
+     * @default true
+     */
     allowAuthentMailPhone?: boolean;
 };
 

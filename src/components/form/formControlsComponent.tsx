@@ -13,7 +13,11 @@ export const FormError = styled.div`
     color: ${props => props.theme.dangerColor};
 `;
 
-export const Label = styled.label<{ visible?: boolean }>`
+type Visibility = { visible?: boolean }
+
+export const Label = styled.label.withConfig({
+    shouldForwardProp: (prop) => !['visible'].includes(prop)
+})<Visibility>`
     color: ${props => props.theme.textColor};
     margin-bottom: ${props => props.theme.spacing / 2}px;
     display: ${props => props.visible ? 'inline-block' : 'none'};
@@ -72,7 +76,7 @@ const inputMixin = css<{ hasError?: boolean }>`
           border-color ease-in-out .15s,
           box-shadow ease-in-out .15s;
     box-shadow: ${props => props.theme.input.boxShadow};
-    -webkit-appearance: none;
+    appearance: none;
 
     &:focus {
         border-color: ${props => props.hasError ? props.theme.dangerColor : props.theme.input.focusBorderColor};
@@ -89,7 +93,11 @@ const inputMixin = css<{ hasError?: boolean }>`
     }
 `;
 
-export const Input = styled.input`${inputMixin}`;
+type HasError = { hasError: boolean }
+
+export const Input = styled.input.withConfig({
+    shouldForwardProp: (prop) => !['hasError'].includes(prop)
+})<HasError>`${inputMixin}`
 
 interface Option {
     label: string
@@ -100,6 +108,7 @@ export interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElemen
     dataTestId?: string
     hasError?: boolean
     options: Option[]
+    placeholder?: string
 }
 
 export const Select = styled(({ dataTestId, hasError: _hasError, options, placeholder = '', ...props }: SelectProps) => (

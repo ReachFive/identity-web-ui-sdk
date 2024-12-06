@@ -32,14 +32,14 @@ const PasswordStrengthGaugeContainer = styled.div`
     background-color: ${props => props.theme.lightBackgroundColor};
 `;
 
-interface getPasswordStrengthColor {
+interface PasswordStrengthColorProps {
     theme: DefaultTheme
     score: PasswordStrengthScore
 }
 
-const getPasswordStrengthColor = ({ theme, score }: getPasswordStrengthColor) => theme.passwordStrengthValidator[`color${score}`];
+const getPasswordStrengthColor = ({ theme, score }: PasswordStrengthColorProps) => theme.passwordStrengthValidator[`color${score}`];
 
-const PasswordStrengthLabel = styled.div`
+const PasswordStrengthLabel = styled.div<{ score: PasswordStrengthScore }>`
     text-align: right;
     color: ${getPasswordStrengthColor};
     font-weight: bold;

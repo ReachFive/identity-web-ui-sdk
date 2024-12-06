@@ -1,6 +1,6 @@
 {
     "name": "@reachfive/identity-ui",
-    "version": "1.30.1",
+    "version": "1.30.2",
     "description": "ReachFive Identity Web UI SDK",
     "author": "ReachFive",
     "repository": {
@@ -38,15 +38,15 @@
         "classnames": "^2.3.2",
         "libphonenumber-js": "^1.10.44",
         "luxon": "^3.4.3",
-        "react": "^16.9.24",
-        "react-dom": "^16.9.24",
         "react-phone-number-input": "^3.4.3",
-        "react-transition-group": "4.4.2",
+        "react-transition-group": "4.4.5",
         "remarkable": "2.0.1",
         "validator": "^13.11.0"
     },
     "peerDependencies": {
-        "styled-components": "5.1.1"
+        "react": "^18.3.0",
+        "react-dom": "^18.3.0",
+        "styled-components": "6.1.11"
     },
     "devDependencies": {
         "@babel/core": "^7.23.2",
@@ -62,14 +62,14 @@
         "@rollup/plugin-url": "^8.0.2",
         "@svgr/rollup": "^8.1.0",
         "@testing-library/jest-dom": "^6.2.0",
-        "@testing-library/react": "^12.1.5",
+        "@testing-library/react": "^16.0.0",
         "@testing-library/user-event": "^14.5.2",
         "@types/babel__generator": "^7.6.6",
         "@types/luxon": "^3.4.2",
-        "@types/react": "^16.9.24",
-        "@types/react-dom": "^16.9.24",
-        "@types/react-test-renderer": "^16.9.12",
-        "@types/react-transition-group": "^4.4.6",
+        "@types/react": "^18.3.0",
+        "@types/react-dom": "^18.3.0",
+        "@types/react-test-renderer": "^18.3.0",
+        "@types/react-transition-group": "^4.4.10",
         "@types/remarkable": "^2.0.7",
         "@types/styled-components": "^5.1.28",
         "@types/validator": "^13.11.2",
@@ -87,7 +87,7 @@
         "jest-environment-jsdom": "^29.7.0",
         "jest-styled-components": "^7.2.0",
         "polished": "^4.2.2",
-        "react-test-renderer": "^16.14.0",
+        "react-test-renderer": "^18.3.0",
         "rollup": "^4.1.4",
         "rollup-plugin-dts": "^6.1.0",
         "rollup-plugin-esbuild": "^6.1.0",
