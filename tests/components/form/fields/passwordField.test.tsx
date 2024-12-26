@@ -266,7 +266,7 @@ describe('DOM testing', () => {
         await user.clear(input)
         await user.type(input, invalidPassword)
 
-        expect(onFieldChange).toHaveBeenLastCalledWith(
+        await waitFor(() => expect(onFieldChange).toHaveBeenLastCalledWith(
             expect.objectContaining({
                 password: expect.objectContaining({
                     isDirty: false,
@@ -277,6 +277,6 @@ describe('DOM testing', () => {
                     })
                 })
             })
-        )
+        ))
     })
 })
