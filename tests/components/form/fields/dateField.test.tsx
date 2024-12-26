@@ -73,7 +73,7 @@ describe('DOM testing', () => {
 
         const key = 'date'
         const label = 'date'
-        const yearDebounce = 0
+        const yearDebounce = 10
 
         const onFieldChange = jest.fn()
         const onSubmit = jest.fn<(data: Model) => Promise<Model>>(data => Promise.resolve(data))
@@ -187,7 +187,7 @@ describe('DOM testing', () => {
 
         const key = 'date'
         const label = 'date'
-        const yearDebounce = 100
+        const yearDebounce = 10
 
         const validator = new Validator<DateTime>({
             rule: (value) => value.diffNow('years').as('years') <= -18,
@@ -233,8 +233,6 @@ describe('DOM testing', () => {
         // handle year debounced value
         await waitFor(() => new Promise(resolve => setTimeout(resolve, yearDebounce * 2)))
 
-        expect(await screen.findByText('validation.age.minimun')).toBeInTheDocument()
-
         await waitFor(() => expect(onFieldChange).toHaveBeenLastCalledWith(
             expect.objectContaining({
                 date: expect.objectContaining({
@@ -245,6 +243,10 @@ describe('DOM testing', () => {
         ))
 
         onFieldChange.mockClear()
+
+        const formError = await screen.findByTestId('form-error')
+        expect(formError).toBeInTheDocument()
+        expect(formError).toHaveTextContent('validation.age.minimun')
 
         const eighteenYearsOld = DateTime.now().minus(Duration.fromObject({ year: 18 }))
         await user.clear(yearInput)
