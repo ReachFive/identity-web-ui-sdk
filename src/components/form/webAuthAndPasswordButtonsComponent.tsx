@@ -35,9 +35,9 @@ const PrimaryButtonWithIcon = styled(({
             disabled={disabled}
             {...props}
             className={classes(['r5-button-with-icon'], className)}
-            background={theme.backgroundColor}
-            border={theme.backgroundColor}
-            color={theme.primaryColor}
+            $background={theme.backgroundColor}
+            $border={theme.backgroundColor}
+            $color={theme.primaryColor}
         >
             {children}
             {text && <span className="r5-button-text">{text}</span>}
@@ -72,7 +72,7 @@ export const WebAuthnLoginViewButtons = styled(({ disabled, enablePasswordAuthen
         <div className={classes(['r5-webauthn-login-buttons'], className)}>
             <PrimaryButtonWithIcon
                 type="submit"
-                dataTestId="webauthn-button"
+                data-testid="webauthn-button"
                 title={i18n('login.withBiometrics')}
                 disabled={disabled}
                 {...props}
@@ -84,7 +84,7 @@ export const WebAuthnLoginViewButtons = styled(({ disabled, enablePasswordAuthen
                     <ButtonsSeparator>{i18n('or')}</ButtonsSeparator>
 
                     <PrimaryButtonWithIcon
-                        dataTestId="password-button"
+                        data-testid="password-button"
                         title={i18n('login.withPassword')}
                         disabled={disabled}
                         onClick={onPasswordClick}>
@@ -115,7 +115,7 @@ export const WebAuthnSignupViewButtons = styled(({ enablePasswordAuthentication,
     return (
         <div className={classes(['r5-webauthn-signup-buttons'], className)}>
         <PrimaryButtonWithIcon
-            dataTestId="webauthn-button"
+            data-testid="webauthn-button"
             onClick={onBiometricClick}
             title={i18n('signup.withBiometrics')}
             text={i18n('biometrics')}>
@@ -126,7 +126,7 @@ export const WebAuthnSignupViewButtons = styled(({ enablePasswordAuthentication,
                 <Separator text={i18n('or')} />
 
                 <PrimaryButtonWithIcon
-                    dataTestId="password-button"
+                    data-testid="password-button"
                     onClick={onPasswordClick}
                     title={i18n('signup.withPassword')}
                     text={i18n('password')}>

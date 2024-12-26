@@ -123,7 +123,7 @@ describe('DOM testing', () => {
         expect(screen.getByRole<HTMLOptionElement>('option', { name: choice.value }).selected).toBe(true)
 
         const submitBtn = screen.getByRole('button')
-        user.click(submitBtn)
+        await user.click(submitBtn)
 
         await waitFor(() => expect(onSubmit).toHaveBeenCalled())
 
@@ -193,7 +193,7 @@ describe('DOM testing', () => {
         expect(screen.getByRole<HTMLOptionElement>('option', { name: choice.value }).selected).toBe(true)
 
         const submitBtn = screen.getByRole('button')
-        user.click(submitBtn)
+        await user.click(submitBtn)
 
         await waitFor(() => expect(onSubmit).toHaveBeenCalled())
 

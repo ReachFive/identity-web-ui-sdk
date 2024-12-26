@@ -103,25 +103,25 @@ describe('DOM testing', () => {
 
         expect(checkbox).toBeChecked()
 
-        expect(onFieldChange).toHaveBeenLastCalledWith(
+        await waitFor(() => expect(onFieldChange).toHaveBeenLastCalledWith(
             expect.objectContaining({
                 checkbox: expect.objectContaining({
                     isDirty: true,
                     value: true,
                 })
             })
-        )
+        ))
 
         const submitBtn = screen.getByRole('button')
-        user.click(submitBtn)
+        await user.click(submitBtn)
 
         await waitFor(() => expect(onSubmit).toHaveBeenCalled())
 
-        expect(onSubmit).toBeCalledWith(
+        await waitFor(() => expect(onSubmit).toBeCalledWith(
             expect.objectContaining({
                 checkbox: true
             })
-        )
+        ))
     })
 
     test('initially checked', async () => {
@@ -164,24 +164,24 @@ describe('DOM testing', () => {
 
         expect(checkbox).not.toBeChecked()
 
-        expect(onFieldChange).toHaveBeenLastCalledWith(
+        await waitFor(() => expect(onFieldChange).toHaveBeenLastCalledWith(
             expect.objectContaining({
                 checkbox: expect.objectContaining({
                     isDirty: true,
                     value: false,
                 })
             })
-        )
+        ))
 
         const submitBtn = screen.getByRole('button')
-        user.click(submitBtn)
+        await user.click(submitBtn)
 
         await waitFor(() => expect(onSubmit).toHaveBeenCalled())
 
-        expect(onSubmit).toBeCalledWith(
+        await waitFor(() => expect(onSubmit).toBeCalledWith(
             expect.objectContaining({
                 checkbox: false
             })
-        )
+        ))
     })
 })

@@ -45,9 +45,7 @@ describe('DOM testing', () => {
             listMfaCredentials: jest.fn().mockReturnValueOnce(Promise.resolve({ credentials }))
         }
         const result = await MfaCredentialsWidget(options, { config, apiClient });
-        return await waitFor(async () => {
-            return render(result);
-        })
+        return await waitFor(async () => render(result))
     };
 
     describe('mfaCredentials', () => {
