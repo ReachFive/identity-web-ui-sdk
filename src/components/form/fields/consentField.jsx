@@ -37,7 +37,7 @@ const ConsentField = ({ value, onChange, label, description, path, required, val
             required={required}
             {...(({ error }) => ({ error }))(validation)}
         />
-        <MarkdownContent root={Description} source={description} />
+        <MarkdownContent root={Description} source={description} data-testid={`${path}.description`} />
     </div>
 };
 
@@ -47,7 +47,7 @@ export default function consentField(config) {
         required: !!config.required,
         defaultValue: config.defaultValue && { granted: config.defaultValue },
         format: {
-            bind: x => !!(x && x.granted),
+            bind: x => !!(x?.granted),
             unbind: x => ({
                 granted: x,
                 consentType: config.type,

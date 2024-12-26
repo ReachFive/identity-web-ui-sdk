@@ -38,7 +38,7 @@ function findAvailableProviders(providers: string[], identities: Identity[]): st
 const withIdentities = <T extends WithIdentitiesProps = WithIdentitiesProps>(
     WrappedComponent: React.ComponentType<T>
 ) => {
-    const displayName = WrappedComponent.displayName || WrappedComponent.name || "Component";
+    const displayName = WrappedComponent.displayName ?? WrappedComponent.name ?? "Component";
 
     const ComponentWithIdentities = (props: Omit<T, 'identities' | 'unlink'>) => {
         const coreClient = useReachfive()
@@ -225,7 +225,7 @@ export default createMultiViewWidget<SocialAccountsWidgetProps, SocialAccountsWi
         'link-account': LinkAccount
     },
     prepare: (options, { config }) => ({
-        providers: options.providers || (config.socialProviders as string[]),
+        providers: options.providers ?? config.socialProviders,
         ...options,
     }),
 });

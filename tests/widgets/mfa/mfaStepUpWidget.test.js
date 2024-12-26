@@ -16,29 +16,24 @@ const auth = {
     redirectUri: 'http://localhost/'
 };
 
-const authType = 'sms';
 const myStepUpToken = 'myStepUpToken';
 const myChallengeId = 'myChallengeId';
 const myVerificationCode = '1234';
 
 const apiClient = {
-    getMfaStepUpToken: jest.fn().mockResolvedValue({
-        amr: [authType],
-        token: myStepUpToken,
-    }),
-    startPasswordless: jest.fn().mockResolvedValue({
-        challengeId: myChallengeId,
-    }),
-    verifyMfaPasswordless: jest.fn().mockResolvedValue({})
+    getMfaStepUpToken: jest.fn(),
+    startPasswordless: jest.fn(),
+    verifyMfaPasswordless: jest.fn()
 };
 
 describe('DOM testing', () => {
     const { location } = window;
 
     afterEach(() => {
-        apiClient.getMfaStepUpToken?.mockClear();
-        apiClient.startPasswordless?.mockClear();
-        window.location.replace?.mockClear();
+        apiClient.getMfaStepUpToken.mockClear();
+        apiClient.startPasswordless.mockClear();
+        apiClient.verifyMfaPasswordless.mockClear();
+        window.location.replace.mockClear();
     })
 
     beforeAll(() => {
@@ -55,78 +50,131 @@ describe('DOM testing', () => {
         return render(result);
     };
 
-    const assertStepUpWorkflow = async (user) => {
-        return await waitFor(async () => {
-            expect(apiClient.getMfaStepUpToken).toHaveBeenCalledTimes(1);
+    const assertStepUpWorkflow = async (user, amr) => {
+        expect(apiClient.getMfaStepUpToken).toHaveBeenCalledTimes(1);
 
+        // When more than one amr options, display radio input selector
+        if (amr.length > 1) {
+            await waitFor(async () => {
+                amr.forEach(value => {
+                    expect(screen.getByLabelText(value)).toBeInTheDocument()
+                })
+            })
+            await user.click(screen.getByLabelText('sms'))
+            await user.click(screen.getByTestId('submit'))
+        }
+
+        await waitFor(async () => {
             expect(apiClient.startPasswordless).toHaveBeenNthCalledWith(1,
                 expect.objectContaining({
-                    authType: expect.stringMatching(authType),
-                    stepUp: expect.stringMatching(myStepUpToken),
+                    authType: 'sms',
+                    stepUp: myStepUpToken,
                 })
             );
-
-            expect(screen.queryByText('passwordless.sms.verification.intro')).toBeInTheDocument();
-            expect(screen.queryByLabelText('verificationCode')).toBeInTheDocument();
-            const input = screen.queryByPlaceholderText('verificationCode')
-            expect(input).toBeInTheDocument();
-            const submitBtn = screen.queryByTestId('submit')
-            expect(submitBtn).toBeInTheDocument();
-
-            await user.type(input, myVerificationCode);
-            await user.click(submitBtn);
-
-            expect(apiClient.verifyMfaPasswordless).toHaveBeenNthCalledWith(1,
-                expect.objectContaining({
-                    challengeId: expect.stringMatching(myChallengeId),
-                    verificationCode: expect.stringMatching(myVerificationCode),
-                })
-            )
-
-            expect(window.location.replace).toHaveBeenCalledWith(
-                expect.stringContaining(auth.redirectUri)
-            )
         })
+
+        // wait for view redirect to code verification view
+        expect(await screen.findByText('passwordless.sms.verification.intro')).toBeInTheDocument();
+
+        expect(screen.queryByLabelText('verificationCode')).toBeInTheDocument();
+        const input = screen.getByPlaceholderText('verificationCode')
+        expect(input).toBeInTheDocument();
+        const submitBtn = screen.getByTestId('submit')
+        expect(submitBtn).toBeInTheDocument();
+
+        await user.type(input, myVerificationCode);
+        await user.click(submitBtn);
+
+        expect(apiClient.verifyMfaPasswordless).toHaveBeenNthCalledWith(1,
+            expect.objectContaining({
+                challengeId: expect.stringMatching(myChallengeId),
+                verificationCode: expect.stringMatching(myVerificationCode),
+            })
+        )
+
+        expect(window.location.replace).toHaveBeenCalledWith(
+            expect.stringContaining(auth.redirectUri)
+        )
     }
 
-    describe('mfaStepUp', () => {
+    describe('with single amr (sms)', () => {
+
+        beforeAll(() => {
+            apiClient.getMfaStepUpToken.mockResolvedValue({
+                amr: ['sms'],
+                token: myStepUpToken,
+            })
+            apiClient.startPasswordless.mockResolvedValue({
+                challengeId: myChallengeId,
+            }),
+            apiClient.verifyMfaPasswordless.mockResolvedValue({})
+        })
+
         test('showStepUpStart: true', async () => {
+            expect.assertions(9);
+
+            const user = userEvent.setup()
+
+            await generateComponent({
+                auth,
+                showStepUpStart: true
+            });
+
+            // StepUp start button
+            const stepUpStartBtn = screen.getByText('mfa.stepUp.start')
+            expect(stepUpStartBtn).toBeInTheDocument();
+
+            await user.click(stepUpStartBtn);
+
+            await assertStepUpWorkflow(user, ['sms'])
+        })
+
+        test('showStepUpStart: false', async () => {
+            expect.assertions(10);
+
+            const user = userEvent.setup()
+
+            await generateComponent({
+                auth,
+                showStepUpStart: false
+            });
+
+            // StepUp start button
+            const stepUpStartBtn = screen.queryByText('mfa.stepUp.start')
+            expect(stepUpStartBtn).not.toBeInTheDocument();
+
+            await assertStepUpWorkflow(user, ['sms'])
+        })
+    })
+
+    describe('with multiple amr', () => {
+        
+        beforeAll(() => {
+            apiClient.getMfaStepUpToken.mockResolvedValue({
+                amr: ['email', 'sms'],
+                token: myStepUpToken,
+            })
+            apiClient.startPasswordless.mockResolvedValue({
+                challengeId: myChallengeId,
+            }),
+            apiClient.verifyMfaPasswordless.mockResolvedValue({})
+        })
+        
+        test('showStepUpStart: false', async () => {
             expect.assertions(11);
 
             const user = userEvent.setup()
 
-            await waitFor(async () => {
-                await generateComponent({
-                    auth,
-                    showStepUpStart: true
-                }, defaultConfig, []);
-                
-                // StepUp start button
-                const stepUpStartBtn = screen.queryByText('mfa.stepUp.start')
-                expect(stepUpStartBtn).toBeInTheDocument();
+            await generateComponent({
+                auth,
+                showStepUpStart: false
+            });
 
-                await user.click(stepUpStartBtn);
+            // StepUp start button
+            const stepUpStartBtn = screen.queryByText('mfa.stepUp.start')
+            expect(stepUpStartBtn).not.toBeInTheDocument();
 
-                await assertStepUpWorkflow(user)
-            })
-        })
-
-        test('showStepUpStart: false', async () => {
-            expect.assertions(13);
-
-            const user = userEvent.setup()
-
-            await waitFor(async () => {
-                await generateComponent({
-                    auth,
-                    showStepUpStart: false
-                }, defaultConfig, []);
-
-                // StepUp start button
-                expect(screen.queryByText('mfa.stepUp.start')).not.toBeInTheDocument();
-
-                await assertStepUpWorkflow(user)
-            })
+            await assertStepUpWorkflow(user, ['email', 'sms'])
         })
     })
 

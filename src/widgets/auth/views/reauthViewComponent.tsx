@@ -47,7 +47,7 @@ export const ReauthView = ({ allowForgotPassword = true, auth, session, showLabe
 
     const handlePasswordLogin = ({ password }: LoginFormData) => (
         coreClient.loginWithPassword({
-            email: session.email || '', /** @todo email must be define */
+            email: session.email ?? '', /** @todo email must be define */
             password,
             auth: auth
         })
