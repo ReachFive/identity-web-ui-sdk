@@ -10,4 +10,4 @@ export interface Options<T> extends BaseOptions<T> {
     values: SelectOption[]
 }
 
-export function selectField<T>(options: Options<T>): FieldCreator
+export default function selectField<T>(options: Options<T>): FieldCreator

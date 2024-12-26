@@ -1,6 +1,5 @@
 import { Validator } from '../../../core/validation'
 import type { FieldCreator, Formatter } from '../fieldCreator'
-import { FormContext } from '../formComponent'
 
 interface Mapping<T> {
     bind: () => undefined,
@@ -15,8 +14,7 @@ export interface BaseOptions<T> {
     autoComplete?: HTMLInputElement['autocomplete']
     placeholder?: string
     readOnly?: boolean
-    /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-    validator?: Validator<T, FormContext<any>>
+    validator?: Validator<T, FormContext<unknown>>
     format?: Formatter<T>
     mapping?: Mapping
 }

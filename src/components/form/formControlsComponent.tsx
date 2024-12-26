@@ -55,7 +55,7 @@ export const FormGroup = ({
 }: PropsWithChildren<FormGroupProps>) => <FormGroupContainer required={required}>
         <Label visible={showLabel} htmlFor={inputId}>{labelText}</Label>
         {children}
-        {error && <FormError>{error}</FormError>}
+        {error && <FormError data-testid="form-error">{error}</FormError>}
     </FormGroupContainer>;
 
 const inputMixin = css<{ hasError?: boolean }>`
@@ -104,7 +104,7 @@ interface Option {
     value: string
 }
 
-interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
+export interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
     dataTestId?: string
     hasError?: boolean
     options: Option[]
@@ -144,6 +144,7 @@ const checkboxWidth = 20;
 interface CheckProps extends React.InputHTMLAttributes<HTMLInputElement> {
     inline?: boolean
     label?: ReactNode
+    value?: string | number
     radio?: boolean
     dataTestId?: string
 }
@@ -196,14 +197,14 @@ interface CheckboxProps extends React.InputHTMLAttributes<HTMLInputElement> {
 export const Checkbox = styled(({ value, onToggle, label, name, className, error, required, dataTestId }: CheckboxProps) => (
     <div className={className}>
         <Check checked={!!value} onSelect={onToggle} label={label} name={name} required={required} dataTestId={dataTestId} />
-        {error && <FormError>{error}</FormError>}
+        {error && <FormError data-testid="form-error">{error}</FormError>}
     </div>
 ))`
     margin-bottom: ${props => props.theme.spacing}px;
 `;
 
 export interface RadioGroupProps extends FormGroupProps {
-    options: (CheckProps & { key: string } )[]
+    options: CheckProps[]
     onChange: (event: { value: HTMLInputElement['value'] }) => void
     value?: HTMLInputElement['value']
     dataTestId?: string
@@ -215,16 +216,17 @@ export const RadioGroup = ({ options, onChange, value, inputId, ...props }: Radi
     };
     return (
         <FormGroup inputId={inputId} {...props}>
-            {options.map(({label: optionLabel, value: optionValue, key: optionKey}) => (
+            {options.map(({ label: optionLabel, value: optionValue }) => (
                 <Check
-                    key={optionKey}
+                    key={optionValue}
                     checked={value === optionValue}
                     onSelect={handleChange}
                     label={optionLabel}
-                    name={optionKey}
+                    name={String(optionValue)}
                     inline={true}
                     value={optionValue}
-                    radio/>
+                    radio
+                />
             ))}
         </FormGroup>
     );

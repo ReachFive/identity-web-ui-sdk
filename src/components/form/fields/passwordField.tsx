@@ -63,7 +63,7 @@ interface PasswordStrength {
 const PasswordStrength = ({ score }: PasswordStrength) => {
     const i18n = useI18n()
     return (
-        <PasswordStrengthContainer>
+        <PasswordStrengthContainer data-testid="password-strength">
             <PasswordStrengthGaugeContainer>
                 <PasswordStrengthGauge score={score} />
             </PasswordStrengthGaugeContainer>
@@ -85,7 +85,7 @@ interface PasswordFieldProps extends FieldComponentProps<string, {}, ExtraValues
     isTouched?: boolean
     // onChange: (event: { value?: string, strength?: PasswordStrengthScore, isTouched?: boolean, isDirty?: boolean }) => void
     canShowPassword?: boolean
-    enabledRules: Record<string, PasswordRule>
+    enabledRules: Record<RuleKeys, PasswordRule>
     minStrength: PasswordStrengthScore
     strength: PasswordStrengthScore
     value?: string
@@ -138,6 +138,7 @@ class PasswordField extends React.Component<PasswordFieldProps, PasswordFieldSta
             canShowPassword,
             enabledRules,
             inputId,
+            path,
             isTouched,
             label,
             minStrength,
@@ -160,7 +161,7 @@ class PasswordField extends React.Component<PasswordFieldProps, PasswordFieldSta
                 <div style={{ position: 'relative' }}>
                     <Input
                         id={inputId}
-                        name="password"
+                        name={path}
                         type={showPassword ? 'text' : 'password'}
                         value={value}
                         placeholder={placeholder ?? label}
@@ -184,8 +185,8 @@ class PasswordField extends React.Component<PasswordFieldProps, PasswordFieldSta
                     />
                     {canShowPassword && (
                         showPassword
-                            ? <HidePasswordIcon onClick={this.toggleShowPassword} />
-                            : <ShowPasswordIcon onClick={this.toggleShowPassword} />
+                            ? <HidePasswordIcon data-testid="hide-password-btn" onClick={this.toggleShowPassword} />
+                            : <ShowPasswordIcon data-testid="show-password-btn" onClick={this.toggleShowPassword} />
                     )}
                 </div>
                 {isTouched && <PasswordStrength score={strength || 0} />}
@@ -237,8 +238,8 @@ function listEnabledRules(i18n: I18nResolver, passwordPolicy: Config['passwordPo
     }, {} as Record<RuleKeys, PasswordRule>);
 }
 
-function getPasswordStrength(blacklist: string[], fieldValue?: string) {
-    const sanitized = `${fieldValue ?? ""}`.toLowerCase().trim();
+export function getPasswordStrength(blacklist: string[], fieldValue?: string) {
+    const sanitized = (fieldValue ?? "").toLowerCase().trim();
     return zxcvbn(sanitized, blacklist).score;
 }
 
@@ -255,6 +256,8 @@ export const passwordField = (
             render: ({ state, ...props }) => (
                 <PasswordField {...state} {...props} {...staticProps}
                     key="password"
+                    path="password"
+                    inputId="password"
                     showLabel={showLabel}
                     canShowPassword={canShowPassword}
                     label={actualLabel}
