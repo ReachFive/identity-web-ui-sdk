@@ -53,14 +53,17 @@ describe('DOM testing', () => {
     describe('mfaCredentials', () => {
         test('no credentials', async () => {
             await generateComponent({showIntro: true, showRemoveMfaCredentials: true}, defaultConfig, []);
-            // Intro
+            // Email intro
             expect(screen.queryByText('mfa.email.explain')).toBeInTheDocument();
-
-            // Form button sms
-            expect(screen.queryByText('mfa.register.phoneNumber')).toBeInTheDocument();
 
             // Form button email
             expect(screen.queryByText('mfa.register.email')).toBeInTheDocument();
+            
+            // Sms intro
+            expect(screen.queryByText('mfa.phoneNumber.explain')).toBeInTheDocument();
+
+            // Form button sms
+            expect(screen.queryByText('mfa.register.phoneNumber')).toBeInTheDocument();
 
             // Form button remove email
             expect(screen.queryByText('mfa.remove.email')).not.toBeInTheDocument();
@@ -70,37 +73,64 @@ describe('DOM testing', () => {
         });
 
         test('requireMfaRegistration', async () => {
-            await generateComponent({showIntro: true, showRemoveMfaCredentials: true, requireMfaRegistration: true}, defaultConfig, [
-                { type: 'sms', phoneNumber: '33612345678', friendlyName: 'identifier', createdAt: '2022-09-21' },
-            ]);
-            // Intro
+            await generateComponent({showIntro: true, showRemoveMfaCredentials: true, requireMfaRegistration: true}, defaultConfig, []);
+            // Email intro
             expect(screen.queryByText('mfa.email.explain.required')).toBeInTheDocument();
-
-            // Form button sms
-            expect(screen.queryByText('mfa.register.phoneNumber')).toBeInTheDocument();
 
             // Form button email
             expect(screen.queryByText('mfa.register.email')).toBeInTheDocument();
+
+            // Sms intro
+            expect(screen.queryByText('mfa.phoneNumber.explain')).toBeInTheDocument();
+
+            // Form button sms
+            expect(screen.queryByText('mfa.register.phoneNumber')).toBeInTheDocument();
 
             // Form button remove email
             expect(screen.queryByText('mfa.remove.email')).not.toBeInTheDocument();
 
             // Form button remove phone number
-            expect(screen.queryByText('mfa.remove.phoneNumber')).toBeInTheDocument();
+            expect(screen.queryByText('mfa.remove.phoneNumber')).not.toBeInTheDocument();
+        });
+
+        test('only email credential', async () => {
+            await generateComponent({showIntro: true, showRemoveMfaCredentials: true}, defaultConfig, [
+                { type: 'email', email: 'alice@reach5.co', friendlyName: 'identifier', createdAt: '2022-09-21' },
+            ]);
+            // Email intro
+            expect(screen.queryByText('mfa.email.explain')).not.toBeInTheDocument();
+
+            // Form button email
+            expect(screen.queryByText('mfa.register.email')).not.toBeInTheDocument();
+
+            // Sms intro
+            expect(screen.queryByText('mfa.phoneNumber.explain')).toBeInTheDocument();
+
+            // Form button sms
+            expect(screen.queryByText('mfa.register.phoneNumber')).toBeInTheDocument();
+
+            // Form button remove email
+            expect(screen.queryByText('mfa.remove.email')).toBeInTheDocument();
+
+            // Form button remove phone number
+            expect(screen.queryByText('mfa.remove.phoneNumber')).not.toBeInTheDocument();
         });
 
         test('only sms credential', async () => {
             await generateComponent({showIntro: true, showRemoveMfaCredentials: true}, defaultConfig, [
                 { type: 'sms', phoneNumber: '33612345678', friendlyName: 'identifier', createdAt: '2022-09-21' },
             ]);
-            // Intro
+            // Email intro
             expect(screen.queryByText('mfa.email.explain')).toBeInTheDocument();
-
-            // Form button sms
-            expect(screen.queryByText('mfa.register.phoneNumber')).toBeInTheDocument();
 
             // Form button email
             expect(screen.queryByText('mfa.register.email')).toBeInTheDocument();
+            
+            // Sms intro
+            expect(screen.queryByText('mfa.phoneNumber.explain')).not.toBeInTheDocument();
+
+            // Form button sms
+            expect(screen.queryByText('mfa.register.phoneNumber')).not.toBeInTheDocument();
 
             // Form button remove email
             expect(screen.queryByText('mfa.remove.email')).not.toBeInTheDocument();
@@ -117,11 +147,14 @@ describe('DOM testing', () => {
             // Intro
             expect(screen.queryByText('mfa.email.explain')).not.toBeInTheDocument();
 
-            // Form button sms
-            expect(screen.queryByText('mfa.register.phoneNumber')).toBeInTheDocument();
-
             // Form button email
             expect(screen.queryByText('mfa.register.email')).not.toBeInTheDocument();
+
+            // Sms intro
+            expect(screen.queryByText('mfa.phoneNumber.explain')).not.toBeInTheDocument();
+            
+            // Form button sms
+            expect(screen.queryByText('mfa.register.phoneNumber')).not.toBeInTheDocument();
 
             // Form button remove email
             expect(screen.queryByText('mfa.remove.email')).toBeInTheDocument();

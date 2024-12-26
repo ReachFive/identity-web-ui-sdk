@@ -1,6 +1,6 @@
 /**
  * @reachfive/identity-ui - v1.30.2
- * Compiled Fri, 06 Dec 2024 19:18:35 UTC
+ * Compiled Thu, 26 Dec 2024 19:21:22 UTC
  *
  * Copyright (c) ReachFive.
  *
@@ -212,9 +212,7 @@ interface Theme extends BaseTheme {
     passwordStrengthValidator: PasswordStrengthTheme
 }
 
-type I18nMessages = {
-    [k: string]: string;
-};
+type I18nMessages = Record<string, string>;
 type I18nMessageParams = Record<string, unknown>;
 type I18nResolver = (key: string, params?: I18nMessageParams, fallback?: (params?: I18nMessageParams) => string) => string;
 
@@ -245,9 +243,7 @@ type ValidatorSuccess = {
 type VaildatorResult = boolean | VaildatorError | ValidatorSuccess;
 
 type FormValue<T> = T | RichFormValue<T>;
-type RichFormValue<T, K extends string = 'raw'> = {
-    [P in K]: T;
-};
+type RichFormValue<T, K extends string = 'raw'> = Record<K, T>;
 
 interface FieldCreateProps {
     showLabel: boolean
