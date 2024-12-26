@@ -8,7 +8,7 @@ import { I18nMessages } from './core/i18n';
 import { UserError } from './helpers/errors';
 import { logError } from './helpers/logger';
 
-import { ErrorMessage } from './components/error'
+import { ErrorText } from './components/miscComponent'
 import type { Context, I18nProps, ThemeProps } from './components/widget/widget'
 
 import authWidget, { type AuthWidgetProps } from './widgets/auth/authWidget';
@@ -154,7 +154,7 @@ export class UiClient {
             }
         } catch (error) {
             const message = this.adaptError(error);
-            root.render(<ErrorMessage>{message}</ErrorMessage>)
+            root.render(<ErrorText>{message}</ErrorText>)
             this.handleError(error)
         }
     }

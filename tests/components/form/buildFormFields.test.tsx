@@ -3,7 +3,7 @@
  */
 
 import React from 'react'
-import { describe, expect, test } from '@jest/globals';
+import { describe, expect, jest, test } from '@jest/globals';
 import { render, screen, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom/jest-globals'
 import 'jest-styled-components';
@@ -198,6 +198,8 @@ describe('DOM testing', () => {
             'address.country',
         ], defaultConfig)
 
+        const onSubmit = jest.fn<(data: Model) => Promise<Model>>(data => Promise.resolve(data))
+
         const Form = createForm<Model>({
             fields,
         })
@@ -207,7 +209,7 @@ describe('DOM testing', () => {
                 <ConfigProvider config={defaultConfig}>
                     <ThemeProvider theme={theme}>
                         <I18nProvider defaultMessages={defaultI18n}>
-                            <Form />
+                            <Form handler={onSubmit} />
                         </I18nProvider>
                     </ThemeProvider>
                 </ConfigProvider>
@@ -219,13 +221,13 @@ describe('DOM testing', () => {
         expect(screen.queryByTestId('familyName')).toBeInTheDocument()
         expect(screen.queryByTestId('friendlyName')).toBeInTheDocument()
         expect(screen.queryByTestId('email')).toBeInTheDocument()
-        expect(screen.queryByTestId('phone_number')).toBeInTheDocument()
+        expect(screen.queryByTestId('phoneNumber')).toBeInTheDocument()
         expect(screen.queryByTestId('password')).toBeInTheDocument()
         expect(screen.queryByTestId('passwordConfirmation')).toBeInTheDocument()
         expect(screen.queryByTestId('gender')).toBeInTheDocument()
         expect(screen.queryByTestId('birthdate.day')).toBeInTheDocument()
         expect(screen.queryByTestId('birthdate.month')).toBeInTheDocument()
-        // expect(screen.queryByTestId('birthdate.year')).toBeInTheDocument()
+        expect(screen.queryByTestId('birthdate.year')).toBeInTheDocument()
         expect(screen.queryByTestId('address.streetAddress')).toBeInTheDocument()
         expect(screen.queryByTestId('address.locality')).toBeInTheDocument()
         expect(screen.queryByTestId('address.region')).toBeInTheDocument()
@@ -245,6 +247,8 @@ describe('DOM testing', () => {
             { key: "customFields.email" },
         ], defaultConfig)
 
+        const onSubmit = jest.fn<(data: Model) => Promise<Model>>(data => Promise.resolve(data))
+
         const Form = createForm<Model>({
             fields,
         })
@@ -254,7 +258,7 @@ describe('DOM testing', () => {
                 <ConfigProvider config={defaultConfig}>
                     <ThemeProvider theme={theme}>
                         <I18nProvider defaultMessages={defaultI18n}>
-                            <Form />
+                            <Form handler={onSubmit} />
                         </I18nProvider>
                     </ThemeProvider>
                 </ConfigProvider>
@@ -278,7 +282,7 @@ describe('DOM testing', () => {
 
         expect(screen.queryByTestId('custom_fields.birthdate.day')).toBeInTheDocument()
         expect(screen.queryByTestId('custom_fields.birthdate.month')).toBeInTheDocument()
-        // expect(screen.queryByTestId('custom_fields.birthdate.year')).toBeInTheDocument()
+        expect(screen.queryByTestId('custom_fields.birthdate.year')).toBeInTheDocument()
 
         const checkbox = screen.queryByTestId('custom_fields.checkbox')
         expect(checkbox).toBeInTheDocument()
@@ -291,7 +295,7 @@ describe('DOM testing', () => {
 
         const phone = screen.queryByTestId('custom_fields.phone')
         expect(phone).toBeInTheDocument()
-        // expect(phone).toHaveAttribute('type', 'tel')
+        expect(phone).toHaveAttribute('type', 'tel')
 
         const email = screen.queryByTestId('custom_fields.email')
         expect(email).toBeInTheDocument()
@@ -305,6 +309,8 @@ describe('DOM testing', () => {
             { key: "consents.oldconsent" },
         ], { ...defaultConfig })
 
+        const onSubmit = jest.fn<(data: Model) => Promise<Model>>(data => Promise.resolve(data))
+
         const Form = createForm<Model>({
             fields,
         })
@@ -314,7 +320,7 @@ describe('DOM testing', () => {
                 <ConfigProvider config={defaultConfig}>
                     <ThemeProvider theme={theme}>
                         <I18nProvider defaultMessages={defaultI18n}>
-                            <Form />
+                            <Form handler={onSubmit} />
                         </I18nProvider>
                     </ThemeProvider>
                 </ConfigProvider>

@@ -8,7 +8,11 @@ export type RecursivePartial<T> = {
     [P in keyof T]?: RecursivePartial<T[P]>
 } & {}
 
-export type PartialExcept<T, K extends keyof T> = Prettify<RecursivePartial<T> & Pick<T, K>>
+/**
+ * From T, make optional a set of properties whose keys are in the union K
+ * @example Optional<{ firstname: string, lastname: string }, 'lastname'> // => { firstname: string, lastname?: string }
+ */
+export type Optional<T, K extends keyof T> = Pick<Partial<T>, K> & Omit<T, K>;
 
 export type RequiredProperty<T, K extends keyof T> = T & {
     [P in K]-?: T[P];

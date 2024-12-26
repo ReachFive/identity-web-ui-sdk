@@ -73,7 +73,7 @@ describe('DOM testing', () => {
 
         const key = 'date'
         const label = 'date'
-        const yearDebounce = 100
+        const yearDebounce = 10
 
         const onFieldChange = jest.fn()
         const onSubmit = jest.fn<(data: Model) => Promise<Model>>(data => Promise.resolve(data))
@@ -158,21 +158,19 @@ describe('DOM testing', () => {
         await user.selectOptions(dayInput, String(day))
         
         // handle year debounced value
-        await waitFor(() => expect(onFieldChange).toHaveBeenCalled(), { timeout: yearDebounce })
+        await waitFor(() => new Promise(resolve => setTimeout(resolve, yearDebounce * 2)))
     
         expect(onFieldChange).toHaveBeenLastCalledWith(
             expect.objectContaining({
                 date: expect.objectContaining({
                     isDirty: true,
-                    value: expect.objectContaining({
-                        raw: DateTime.fromObject({ year, month, day })
-                    }),
+                    value: DateTime.fromObject({ year, month, day }),
                 })
             })
         )
 
         const submitBtn = screen.getByRole('button')
-        user.click(submitBtn)
+        await user.click(submitBtn)
 
         await waitFor(() => expect(onSubmit).toHaveBeenCalled())
 
@@ -189,10 +187,10 @@ describe('DOM testing', () => {
 
         const key = 'date'
         const label = 'date'
-        const yearDebounce = 100
+        const yearDebounce = 10
 
-        const validator = new Validator<{ raw: DateTime }>({
-            rule: (value) => value.raw.diffNow('years').as('years') <= -18,
+        const validator = new Validator<DateTime>({
+            rule: (value) => value.diffNow('years').as('years') <= -18,
             hint: 'age.minimun'
         })
 
@@ -228,43 +226,40 @@ describe('DOM testing', () => {
         if (!yearInput || !monthInput || !dayInput) throw new Error('Input should be in document')
 
         const tenYearsOld = DateTime.now().minus(Duration.fromObject({ year: 10 }))
-        await user.type(yearInput, String(tenYearsOld.year))
-        await user.selectOptions(monthInput, String(tenYearsOld.month))
         await user.selectOptions(dayInput, String(tenYearsOld.day))
+        await user.selectOptions(monthInput, String(tenYearsOld.month))
+        await user.type(yearInput, String(tenYearsOld.year))
 
         // handle year debounced value
-        await waitFor(() => {
-            const formError = screen.queryByTestId('form-error')
-            expect(formError).toBeInTheDocument()
-            expect(formError).toHaveTextContent('validation.age.minimun')
-        }, { timeout: yearDebounce })
+        await waitFor(() => new Promise(resolve => setTimeout(resolve, yearDebounce * 2)))
 
         await waitFor(() => expect(onFieldChange).toHaveBeenLastCalledWith(
             expect.objectContaining({
                 date: expect.objectContaining({
                     isDirty: true,
-                    value: expect.objectContaining({
-                        raw: tenYearsOld.startOf('day')
-                    }),
+                    value: tenYearsOld.startOf('day'),
                 })
             })
         ))
 
         onFieldChange.mockClear()
 
+        const formError = await screen.findByTestId('form-error')
+        expect(formError).toBeInTheDocument()
+        expect(formError).toHaveTextContent('validation.age.minimun')
+
         const eighteenYearsOld = DateTime.now().minus(Duration.fromObject({ year: 18 }))
         await user.clear(yearInput)
         await user.type(yearInput, String(eighteenYearsOld.year))
-
-        await waitFor(() => expect(onFieldChange).toHaveBeenCalled(), { timeout: yearDebounce * 2 })
+        
+        // handle year debounced value
+        await waitFor(() => new Promise(resolve => setTimeout(resolve, yearDebounce * 2)))
 
         await waitFor(() => expect(onFieldChange).toHaveBeenLastCalledWith(
             expect.objectContaining({
                 date: expect.objectContaining({
                     isDirty: true,
-                    value: expect.objectContaining({
-                        raw: eighteenYearsOld.startOf('day')
-                    }),
+                    value: eighteenYearsOld.startOf('day'),
                 })
             })
         ))

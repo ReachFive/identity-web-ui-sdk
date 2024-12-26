@@ -19,7 +19,7 @@ const DeviceName = styled.div`
     line-height: 2;
 `;
 
-interface DeviceInputFormData {
+type DeviceInputFormData = {
     friendlyName: string
 }
 

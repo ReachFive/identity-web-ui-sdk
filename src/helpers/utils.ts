@@ -17,15 +17,19 @@ export function getRandomInt(min: number, max: number) {
     return Math.floor(Math.random() * (max - min)) + min;
 }
 
-export type FormValue<T> = T | RichFormValue<T>
+export type FormValue<T, K extends string = 'raw'> = T | RichFormValue<T, K>
 export type RichFormValue<T, K extends string = 'raw'> = Record<K, T>
+
+export function isRichFormValue<T, K extends string = 'raw'>(value: FormValue<T, K> | undefined, rawProperty: K = 'raw' as K): value is RichFormValue<T, K> {
+    return value !== null && typeof value === 'object' && rawProperty in value;
+}
 
 /* Returns whether a form value has been set with a valid value.
 * If the user's input has been enriched as an object, raw input is expected
 * to be in a raw property field (named 'raw' by default).
 */
-export function isValued<T>(v: FormValue<T>, rawProperty = 'raw') {
-    const unwrap = v !== null && typeof v === 'object' ? (v as RichFormValue<T, typeof rawProperty>)[rawProperty] : v;
+export function isValued<T, K extends string = 'raw'>(value?: FormValue<T, K>, rawProperty: K = 'raw' as K): value is NonNullable<FormValue<NonNullable<T>, K>> {
+    const unwrap = isRichFormValue(value, rawProperty) ? value[rawProperty] : value;
     return (
         unwrap !== null &&
         unwrap !== undefined &&
@@ -128,10 +132,10 @@ export function find<T>(collection: Record<string, T>, predicate: (item: T) => b
     return Object.values(collection ?? {}).find(value => predicate(value))
 }
 
-export function debounce(func: (...args: unknown[]) => void, delay: number, { leading }: { leading?: boolean } = {}) {
+export function debounce(func: (...args: any[]) => void, delay: number, { leading }: { leading?: boolean } = {}) {
     let timerId: NodeJS.Timeout
 
-    return (...args: unknown[]) => {
+    return (...args: any[]) => {
         if (!timerId && leading) {
             func(...args)
         }

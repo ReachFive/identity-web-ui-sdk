@@ -9,7 +9,7 @@ import { type PhoneNumberOptions } from './fields/phoneNumberField';
 
 import { MarkdownContent } from '../miscComponent';
 import { snakeCaseProperties } from '../../helpers/transformObjectProperties';
-import { isValued } from '../../helpers/utils';
+import { isRichFormValue, isValued } from '../../helpers/utils';
 import ReCaptcha, { extractCaptchaTokenFromData, importGoogleRecaptchaScript, type WithCaptchaToken } from '../reCaptcha';
 
 import { useReachfive } from '../../contexts/reachfive';
@@ -79,9 +79,9 @@ export const PasswordSignupForm = ({
 
     const refreshBlacklist = useCallback(
         (data: FieldValues<SignupParams['data']>) => {
-            const email = data.email?.value ?? '';
-            const givenName = data.givenName?.value ?? '';
-            const lastName = data.familyName?.value ?? '';
+            const email = (isRichFormValue(data.email?.value) ? data.email?.value.raw : data.email?.value) ?? '';
+            const givenName = (isRichFormValue(data.givenName?.value) ? data.givenName?.value.raw : data.givenName?.value) ?? '';
+            const lastName = (isRichFormValue(data.familyName?.value) ? data.familyName?.value.raw : data.familyName?.value) ?? '';
 
             const list = [
                 email.split('@'),

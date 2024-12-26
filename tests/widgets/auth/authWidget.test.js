@@ -14,12 +14,20 @@ import authWidget from '../../../src/widgets/auth/authWidget';
 import { providers } from '../../../src/providers/providers';
 
 const defaultConfig = {
+    clientId: 'local',
     domain: 'local.reach5.net',
-    passwordPolicy: {
-        minLength: 8,
-        minStrength: 2
-    },
+    sso: false,
+    sms: false,
+    webAuthn: false,
+    language: 'fr',
+    pkceEnforced: false,
+    isPublic: true,
     socialProviders: ['facebook', 'google'],
+    customFields: [],
+    resourceBaseUrl: 'http://localhost',
+    mfaSmsEnabled: false,
+    mfaEmailEnabled: false,
+    rbaEnabled: false,
     consentsVersions: [{
         key: 'aConsent',
         versions: [{
@@ -27,7 +35,12 @@ const defaultConfig = {
             title: 'consent title',
             description: 'consent description'
         }]
-    }]
+    }],
+    passwordPolicy: {
+        minLength: 8,
+        minStrength: 2,
+        allowUpdateWithAccessTokenOnly: true,
+    }
 };
 
 const webauthnConfig = { ...defaultConfig, webAuthn: true };
@@ -370,16 +383,16 @@ describe('DOM testing', () => {
             });
 
             // form inputs
-            expect(screen.queryByTestId('given_name')).toBeInTheDocument();
-            expect(screen.queryByTestId('family_name')).toBeInTheDocument();
+            expect(screen.queryByTestId('givenName')).toBeInTheDocument();
+            expect(screen.queryByTestId('familyName')).toBeInTheDocument();
             expect(screen.queryByTestId('email')).toBeInTheDocument();
             expect(screen.queryByTestId('password')).toBeInTheDocument();
-            expect(screen.queryByTestId('password_confirmation')).toBeInTheDocument();
+            expect(screen.queryByTestId('passwordConfirmation')).toBeInTheDocument();
         });
 
         test('signup fields selection', async () => {
             expect.assertions(3);
-            const signupFields = ['email', 'password', 'password_confirmation'];
+            const signupFields = ['email', 'password', 'passwordConfirmation'];
             await generateComponent({
                 initialScreen: 'signup',
                 signupFields
@@ -483,11 +496,11 @@ describe('DOM testing', () => {
             );
 
             // Form fields
-            expect(screen.queryByTestId('given_name')).toBeInTheDocument();
-            expect(screen.queryByTestId('family_name')).toBeInTheDocument();
+            expect(screen.queryByTestId('givenName')).toBeInTheDocument();
+            expect(screen.queryByTestId('familyName')).toBeInTheDocument();
             expect(screen.queryByTestId('email')).toBeInTheDocument();
             expect(screen.queryByTestId('password')).toBeInTheDocument();
-            expect(screen.queryByTestId('password_confirmation')).toBeInTheDocument();
+            expect(screen.queryByTestId('passwordConfirmation')).toBeInTheDocument();
 
             // Form button
             expect(screen.queryByText('signup.submitLabel')).toBeInTheDocument();
@@ -504,8 +517,8 @@ describe('DOM testing', () => {
             );
 
             // Form fields
-            expect(screen.queryByTestId('given_name')).toBeInTheDocument();
-            expect(screen.queryByTestId('family_name')).toBeInTheDocument();
+            expect(screen.queryByTestId('givenName')).toBeInTheDocument();
+            expect(screen.queryByTestId('familyName')).toBeInTheDocument();
             expect(screen.queryByTestId('email')).toBeInTheDocument();
 
             // Form button
@@ -563,8 +576,8 @@ describe('DOM testing', () => {
             );
 
             // Form fields
-            expect(screen.queryByTestId('given_name')).toBeInTheDocument();
-            expect(screen.queryByTestId('family_name')).toBeInTheDocument();
+            expect(screen.queryByTestId('givenName')).toBeInTheDocument();
+            expect(screen.queryByTestId('familyName')).toBeInTheDocument();
             expect(screen.queryByTestId('email')).toBeInTheDocument();
 
             // Form button

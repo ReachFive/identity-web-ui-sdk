@@ -111,17 +111,17 @@ describe('DOM testing', () => {
 
         expect(choiceInput).toBeChecked()
 
-        expect(onFieldChange).toHaveBeenLastCalledWith(
+        await waitFor(() => expect(onFieldChange).toHaveBeenLastCalledWith(
             expect.objectContaining({
                 radiobox: expect.objectContaining({
                     isDirty: false,
                     value: choice.value,
                 })
             })
-        )
+        ))
 
         const submitBtn = screen.getByRole('button')
-        user.click(submitBtn)
+        await user.click(submitBtn)
 
         await waitFor(() => expect(onSubmit).toHaveBeenCalled())
 
@@ -186,25 +186,25 @@ describe('DOM testing', () => {
 
         expect(choiceInput).toBeChecked()
 
-        expect(onFieldChange).toHaveBeenLastCalledWith(
+        await waitFor(() => expect(onFieldChange).toHaveBeenLastCalledWith(
             expect.objectContaining({
                 radiobox: expect.objectContaining({
                     isDirty: false,
                     value: choice.value,
                 })
             })
-        )
+        ))
 
         const submitBtn = screen.getByRole('button')
-        user.click(submitBtn)
+        await user.click(submitBtn)
 
         await waitFor(() => expect(onSubmit).toHaveBeenCalled())
 
-        expect(onSubmit).toBeCalledWith(
+        await waitFor(() => expect(onSubmit).toBeCalledWith(
             expect.objectContaining({
                 radiobox: choice.value
             })
-        )
+        ))
     })
 
     test('with ReactNode option\'s label', async () => {
@@ -255,24 +255,24 @@ describe('DOM testing', () => {
 
         expect(choiceInput).toBeChecked()
 
-        expect(onFieldChange).toHaveBeenLastCalledWith(
+        await waitFor(() => expect(onFieldChange).toHaveBeenLastCalledWith(
             expect.objectContaining({
                 radiobox: expect.objectContaining({
                     isDirty: false,
                     value: choice.value,
                 })
             })
-        )
+        ))
 
         const submitBtn = screen.getByRole('button')
-        user.click(submitBtn)
+        await user.click(submitBtn)
 
         await waitFor(() => expect(onSubmit).toHaveBeenCalled())
 
-        expect(onSubmit).toBeCalledWith(
+        await waitFor(() => expect(onSubmit).toBeCalledWith(
             expect.objectContaining({
                 radiobox: choice.value
             })
-        )
+        ))
     })
 })

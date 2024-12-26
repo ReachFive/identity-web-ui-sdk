@@ -4,10 +4,7 @@ import type { AuthOptions, LoginWithWebAuthnParams } from '@reachfive/identity-c
 import { LoginWithPasswordViewState } from './loginWithPasswordViewComponent';
 import { Alternative, Heading, Link, Separator } from '../../../components/miscComponent';
 import { SocialButtons } from '../../../components/form/socialButtonsComponent';
-import {
-    WebAuthnLoginViewButtons,
-    type WebAuthnLoginViewButtonsProps
-} from '../../../components/form/webAuthAndPasswordButtonsComponent';
+import { WebAuthnLoginViewButtons } from '../../../components/form/webAuthAndPasswordButtonsComponent';
 import { createForm } from '../../../components/form/formComponent';
 import identifierField from '../../../components/form/fields/identifierField';
 
@@ -21,7 +18,7 @@ import styled from 'styled-components'
 
 type LoginWithWebAuthnFormData = { identifier: string } | { email: string }
 
-interface LoginWithWebAuthnFormProps {
+type LoginWithWebAuthnFormProps = {
     defaultIdentifier?: string
     showIdentifier?: boolean
     showAccountRecovery?: boolean
@@ -39,23 +36,27 @@ export const LoginWithWebAuthnForm = createForm<LoginWithWebAuthnFormData, Login
     prefix: 'r5-login-',
     fields({ showIdentifier = true, defaultIdentifier, config, showAccountRecovery = false, i18n }) {
         return [
-            identifierField({
+            identifierField(
+                {
                     defaultValue: defaultIdentifier,
                     withPhoneNumber: showIdentifier && config.sms,
                     required: true,
                     autoComplete: 'username webauthn'
                 },
-                config),
-            showAccountRecovery && {
-                staticContent: (
-                    <ResetCredentialWrapper key="account-recovery" floating={true}>
-                    <Link target="account-recovery">{i18n('accountRecovery.title')}</Link>
-                    </ResetCredentialWrapper>
-                )
-            }
+                config
+            ),
+            ...(showAccountRecovery
+                ? [{
+                    staticContent: (
+                        <ResetCredentialWrapper key="account-recovery" floating={true}>
+                        <Link target="account-recovery">{i18n('accountRecovery.title')}</Link>
+                        </ResetCredentialWrapper>
+                    )
+                }]
+                : []
+            )
         ];
-    },
-    allowWebAuthnLogin: true
+    }
 });
 
 export interface LoginWithWebAuthnViewProps {
@@ -142,13 +143,6 @@ export const LoginWithWebAuthnView = ({ acceptTos, allowSignup = true, auth, ena
 
     const defaultIdentifier = session?.lastLoginType === 'password' ? session.email : undefined;
 
-    const webAuthnButtons = (disabled: boolean, enablePasswordAuthentication: boolean, handleClick: WebAuthnLoginViewButtonsProps['onPasswordClick']) =>
-        <WebAuthnLoginViewButtons
-            disabled={disabled}
-            enablePasswordAuthentication={enablePasswordAuthentication}
-            onPasswordClick={handleClick}
-        />
-
     return (
         <div>
             <Heading>{i18n('login.title')}</Heading>
@@ -162,10 +156,14 @@ export const LoginWithWebAuthnView = ({ acceptTos, allowSignup = true, auth, ena
                 showLabels={showLabels}
                 defaultIdentifier={defaultIdentifier}
                 handler={handleWebAuthnLogin}
-                redirect={redirectToPasswordLoginView}
-                webAuthnButtons={webAuthnButtons}
                 showAccountRecovery={allowAccountRecovery}
-                enablePasswordAuthentication={enablePasswordAuthentication}
+                SubmitComponent={({ disabled, onClick }) => (
+                    <WebAuthnLoginViewButtons
+                        disabled={disabled}
+                        enablePasswordAuthentication={enablePasswordAuthentication}
+                        onPasswordClick={() => onClick(redirectToPasswordLoginView)}
+                    />
+                )}
             />
             {allowSignup &&
                 <Alternative>
