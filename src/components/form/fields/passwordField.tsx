@@ -96,7 +96,7 @@ interface PasswordFieldState {
 }
 
 class PasswordField extends React.Component<PasswordFieldProps, PasswordFieldState> {
-    protected unmounted: boolean = false
+    protected unmounted = false
 
     state = {
         showPassword: false
@@ -164,7 +164,7 @@ class PasswordField extends React.Component<PasswordFieldProps, PasswordFieldSta
                         name={path}
                         type={showPassword ? 'text' : 'password'}
                         value={value}
-                        placeholder={placeholder || label}
+                        placeholder={placeholder ?? label}
                         autoComplete={autoComplete}
                         title={label}
                         required={required}
@@ -239,7 +239,7 @@ function listEnabledRules(i18n: I18nResolver, passwordPolicy: Config['passwordPo
 }
 
 export function getPasswordStrength(blacklist: string[], fieldValue?: string) {
-    const sanitized = `${fieldValue || ""}`.toLowerCase().trim();
+    const sanitized = (fieldValue ?? "").toLowerCase().trim();
     return zxcvbn(sanitized, blacklist).score;
 }
 
@@ -268,7 +268,7 @@ export const passwordField = (
                 value: '',
                 strength: 0,
                 enabledRules: listEnabledRules(i18n, passwordPolicy),
-                minStrength: passwordPolicy && passwordPolicy.minStrength,
+                minStrength: passwordPolicy?.minStrength,
                 isTouched: false,
                 isDirty: false,
                 blacklist: [],
