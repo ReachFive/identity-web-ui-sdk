@@ -158,7 +158,7 @@ describe('DOM testing', () => {
         await user.selectOptions(dayInput, String(day))
         
         // handle year debounced value
-        await waitFor(() => new Promise(resolve => setTimeout(resolve, yearDebounce)))
+        await waitFor(() => new Promise(resolve => setTimeout(resolve, yearDebounce * 2)))
     
         expect(onFieldChange).toHaveBeenLastCalledWith(
             expect.objectContaining({
@@ -226,12 +226,12 @@ describe('DOM testing', () => {
         if (!yearInput || !monthInput || !dayInput) throw new Error('Input should be in document')
 
         const tenYearsOld = DateTime.now().minus(Duration.fromObject({ year: 10 }))
-        await user.type(yearInput, String(tenYearsOld.year))
-        await user.selectOptions(monthInput, String(tenYearsOld.month))
         await user.selectOptions(dayInput, String(tenYearsOld.day))
+        await user.selectOptions(monthInput, String(tenYearsOld.month))
+        await user.type(yearInput, String(tenYearsOld.year))
 
         // handle year debounced value
-        await waitFor(() => new Promise(resolve => setTimeout(resolve, yearDebounce)))
+        await waitFor(() => new Promise(resolve => setTimeout(resolve, yearDebounce * 2)))
 
         expect(await screen.findByText('validation.age.minimun')).toBeInTheDocument()
 
@@ -251,7 +251,7 @@ describe('DOM testing', () => {
         await user.type(yearInput, String(eighteenYearsOld.year))
         
         // handle year debounced value
-        await waitFor(() => new Promise(resolve => setTimeout(resolve, yearDebounce)))
+        await waitFor(() => new Promise(resolve => setTimeout(resolve, yearDebounce * 2)))
 
         await waitFor(() => expect(onFieldChange).toHaveBeenLastCalledWith(
             expect.objectContaining({
