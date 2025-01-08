@@ -1,16 +1,15 @@
 /**
  * @reachfive/identity-ui - v1.30.2
- * Compiled Thu, 26 Dec 2024 19:21:22 UTC
+ * Compiled Wed, 08 Jan 2025 13:48:13 UTC
  *
  * Copyright (c) ReachFive.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  **/
-import { CSSProperties } from 'styled-components';
+import React$1, { CSSProperties } from 'react';
 import { Config as Config$1, RemoteSettings, ConsentVersions, CustomField, Client as Client$1, SessionInfo, AuthOptions, MFA, PasswordlessResponse, SingleFactorPasswordlessParams, Profile, UserConsent, DeviceCredential } from '@reachfive/identity-core';
 export { Config } from '@reachfive/identity-core';
-import React$1 from 'react';
 import { PasswordlessParams } from '@reachfive/identity-core/es/main/oAuthClient';
 
 type Prettify<T> = {
