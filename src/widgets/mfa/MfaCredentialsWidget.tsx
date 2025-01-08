@@ -144,6 +144,7 @@ const MainView = ({
         (credential): credential is MFA.PhoneCredential => MFA.isPhoneCredential(credential)
     )
     const isEmailCredentialRegistered = credentials.some(credential => MFA.isEmailCredential(credential))
+    const isPhoneCredentialRegistered = credentials.some(credential => MFA.isPhoneCredential(credential))
 
     return (
         <div>
@@ -158,9 +159,9 @@ const MainView = ({
                     </div>
                 }
 
-                {config.mfaEmailEnabled && config.mfaSmsEnabled && <Separator />}
+                {config.mfaEmailEnabled && config.mfaSmsEnabled && !isPhoneCredentialRegistered && <Separator text={i18n('or')} />}
 
-                {config.mfaSmsEnabled &&
+                {config.mfaSmsEnabled && !isPhoneCredentialRegistered &&
                     <div>
                         {showIntro && <Intro>{i18n('mfa.phoneNumber.explain')}</Intro>}
                         <PhoneNumberInputForm
@@ -188,7 +189,7 @@ const MainView = ({
                     && config.mfaSmsEnabled 
                     && phoneNumberCredentialRegistered 
                     && isEmailCredentialRegistered 
-                    && <Separator/>
+                    && <Separator text={i18n('or')} />
                 }
                 {showRemoveMfaCredentials &&
                     config.mfaSmsEnabled &&
