@@ -1,5 +1,5 @@
 import React, { useLayoutEffect } from 'react';
-import { AuthOptions, SingleFactorPasswordlessParams } from '@reachfive/identity-core';
+import { AuthOptions, AuthResult, SingleFactorPasswordlessParams } from '@reachfive/identity-core';
 
 import type { Config, Prettify } from '../../types';
 
@@ -171,6 +171,14 @@ interface VerificationCodeViewProps {
      * This must be paired with the appropriate secret key that you received when setting up reCAPTCHA.
      */
     recaptcha_site_key?: string
+    /**
+     * Callback function called when the request has succeed.
+     */
+    onSuccess?: () => void
+    /**
+     * Callback function called when the request has failed.
+     */
+    onError?: () => void
 }
 
 type VerificationCodeViewState = {
@@ -181,6 +189,8 @@ const VerificationCodeView = ({
     authType = 'magic_link',
     recaptcha_enabled = false,
     recaptcha_site_key,
+    onSuccess = () => {},
+    onError = () => {}
 }: VerificationCodeViewProps) => {
     const coreClient = useReachfive()
     const i18n = useI18n()
@@ -192,6 +202,12 @@ const VerificationCodeView = ({
             authType,
             phoneNumber,
             ...data
+        }).then(result => {
+            if (AuthResult.isAuthResult(result)) {
+                onSuccess()
+            } else {
+                onError()
+            }
         });
     };
 

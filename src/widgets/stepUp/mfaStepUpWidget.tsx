@@ -81,9 +81,19 @@ export interface MainViewProps {
      * @default true
      */
     showStepUpStart?: boolean
+    /**
+     * Callback function called when the request has failed.
+     */
+    onError?: (error: unknown) => void
 }
 
-export const MainView = ({ accessToken, auth, showIntro = true, showStepUpStart = true }: MainViewProps) => {
+export const MainView = ({
+    accessToken,
+    auth,
+    onError = () => {},
+    showIntro = true,
+    showStepUpStart = true
+}: MainViewProps) => {
     const coreClient = useReachfive()
     const { goTo } = useRouting()
 
@@ -94,6 +104,10 @@ export const MainView = ({ accessToken, auth, showIntro = true, showStepUpStart 
             .getMfaStepUpToken({
                 options: auth,
                 accessToken: accessToken
+            })
+            .catch(error => {
+                onError(error)
+                return Promise.reject(error)
             })
             .then(res => {
                 setResponse(res)
@@ -129,6 +143,10 @@ export type FaSelectionViewState = MFA.StepUpResponse
 export type FaSelectionViewProps = Prettify<Partial<MFA.StepUpResponse> & {
     showIntro?: boolean
     auth?: AuthOptions
+    /**
+     * Callback function called when the request has failed.
+     */
+    onError?: (error: unknown) => void
 }>
 
  // Unlike single factor authentication, StepUp request always returns a challengeId
@@ -142,7 +160,7 @@ export const FaSelectionView = (props: FaSelectionViewProps) => {
     const { params } = useRouting()
     const state = params as FaSelectionViewState
 
-    const { amr, showIntro = true, token } = { ...props, ...state }
+    const { amr, onError = () => {}, showIntro = true, token } = { ...props, ...state }
 
     const [response, setResponse] = useState<StepUpHandlerResponse | undefined>()
 
@@ -150,6 +168,10 @@ export const FaSelectionView = (props: FaSelectionViewProps) => {
         (factor: StartPasswordlessFormData): Promise<void> =>
             coreClient
                 .startPasswordless({ ...factor, stepUp: token, })
+                .catch(error => {
+                    onError(error)
+                    return Promise.reject(error)
+                })
                 .then(resp => setResponse({
                     ...(resp as StepUpResponse),
                     ...factor,
@@ -189,6 +211,14 @@ export type VerificationCodeViewProps = Prettify<Partial<StepUpHandlerResponse> 
      * List of authentication options
      */
     auth?: AuthOptions
+    /**
+     * Callback function called when the request has succeed.
+     */
+    onSuccess?: () => void
+    /**
+     * Callback function called when the request has failed.
+     */
+    onError?: (error: unknown) => void
 }>
 
 export const VerificationCodeView = (props: VerificationCodeViewProps) => {
@@ -197,13 +227,20 @@ export const VerificationCodeView = (props: VerificationCodeViewProps) => {
     const { params } = useRouting()
     const state = params as VerificationCodeViewState
 
-    const { auth, authType, challengeId } = { ...props, ...state }
+    const { auth, authType, challengeId, onError = () => {}, onSuccess = () => {} } = { ...props, ...state }
 
     const handleSubmit = (data: VerificationCodeInputFormData) =>
         coreClient
             .verifyMfaPasswordless({challengeId, verificationCode: data.verificationCode})
-            // @ts-expect-error AuthResult is too complex and is not representative of the real response of this request 
-            .then(resp => window.location.replace( auth?.redirectUri + "?" + toQueryString(resp)))
+            .catch(error => {
+                onError(error)
+                return Promise.reject(error)
+            })
+            .then(resp => {
+                onSuccess()
+                // @ts-expect-error AuthResult is too complex and is not representative of the real response of this request 
+                window.location.replace( auth?.redirectUri + "?" + toQueryString(resp))
+            })
 
     return (
         <div>

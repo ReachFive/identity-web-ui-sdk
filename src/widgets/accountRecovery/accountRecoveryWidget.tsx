@@ -21,12 +21,11 @@ interface MainViewProps {
      */
     allowCreatePassword?: boolean
     /**
-     * Callback function called when the request has failed.
+     * Callback function called when the request has succeed.
      */
     onSuccess?: () => void
     /**
-     * Callback function called after the widget has been successfully loaded and rendered inside the container.
-     * The callback is called with the widget instance.
+     * Callback function called when the request has failed.
      */
     onError?: () => void
     /**
@@ -72,11 +71,11 @@ const PasskeysExplanation = styled(() => {
 `;
 
 const NewPasskey = ({
-                        authentication,
-                        allowCreatePassword = true,
-                        onSuccess = () => {},
-                        onError = () => {},
-                    }: PropsWithAuthentication<MainViewProps>) => {
+    authentication,
+    allowCreatePassword = true,
+    onSuccess = () => {},
+    onError = () => {},
+}: PropsWithAuthentication<MainViewProps>) => {
     const coreClient = useReachfive()
     const i18n = useI18n()
     const {goTo} = useRouting()
@@ -150,11 +149,11 @@ const PasswordSuccessView = ({loginLink}: SuccessViewProps) => {
 }
 
 export const NewPasswordView = ({
-                             authentication,
-                             onSuccess = () => {},
-                             onError = () => {},
-                             showLabels = false,
-                         }: PropsWithAuthentication<MainViewProps>) => {
+    authentication,
+    onSuccess = () => {},
+    onError = () => {},
+    showLabels = false,
+}: PropsWithAuthentication<MainViewProps>) => {
     const coreClient = useReachfive()
     const i18n = useI18n()
     const { goTo } = useRouting()

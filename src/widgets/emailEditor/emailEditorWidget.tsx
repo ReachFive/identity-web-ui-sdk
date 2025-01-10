@@ -58,6 +58,7 @@ const MainView = ({
     recaptcha_site_key,
     redirectUrl,
     showLabels = false,
+    onSuccess,
 }: MainViewProps) => {
     const coreClient = useReachfive()
     const i18n = useI18n()
@@ -79,7 +80,8 @@ const MainView = ({
             <EmailEditorForm
                 showLabels={showLabels}
                 handler={(data: EmailFormData) => ReCaptcha.handle(data, { recaptcha_enabled, recaptcha_site_key }, callback, "update_email")}
-                onSuccess={handleSuccess} />
+                onSuccess={handleSuccess}
+            />
         </div>
     )
 }

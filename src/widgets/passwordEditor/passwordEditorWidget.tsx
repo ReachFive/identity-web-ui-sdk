@@ -75,12 +75,11 @@ export interface PasswordEditorProps extends PasswordEditorFormProps {
      */
     showLabels?: boolean
     /**
-     * Callback function called when the request has failed.
+     * Callback function called when the request has succeed.
      */
     onSuccess?: () => void
     /**
-     * Callback function called after the widget has been successfully loaded and rendered inside the container.
-     * The callback is called with the widget instance.
+     * Callback function called when the request has failed.
      */
     onError?: () => void
 }
