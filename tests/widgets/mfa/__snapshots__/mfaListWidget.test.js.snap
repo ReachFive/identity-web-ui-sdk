@@ -1,6 +1,38 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Snapshot basic 1`] = `
+.c0 {
+  font-size: 14px;
+  -webkit-transition: -webkit-transform 400ms ease, opacity 400ms ease;
+  -webkit-transition: transform 400ms ease, opacity 400ms ease;
+  transition: transform 400ms ease, opacity 400ms ease;
+  opacity: 0;
+  padding: 20px;
+  border-radius: 3px;
+  background-color: #ffffff;
+  max-width: 400px;
+  box-sizing: border-box;
+  margin: 0 auto;
+}
+
+.c4 {
+  width: 28px;
+  height: 28px;
+  fill: #495057;
+  -webkit-flex-shrink: 0;
+  -ms-flex-negative: 0;
+  flex-shrink: 0;
+}
+
+.c2 {
+  width: 28px;
+  height: 28px;
+  fill: #495057;
+  -webkit-flex-shrink: 0;
+  -ms-flex-negative: 0;
+  flex-shrink: 0;
+}
+
 .c1 {
   padding: 9px 38px;
   border: 1px solid #ced4da;
@@ -9,6 +41,19 @@ exports[`Snapshot basic 1`] = `
   white-space: nowrap;
   vertical-align: middle;
   position: relative;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: row;
+  -ms-flex-direction: row;
+  flex-direction: row;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  color: #495057;
+  line-height: 1.5;
 }
 
 .c1:only-child {
@@ -27,54 +72,7 @@ exports[`Snapshot basic 1`] = `
   border-bottom-width: 0;
 }
 
-.c0 {
-  font-size: 14px;
-  -webkit-transition: -webkit-transform 400ms ease,opacity 400ms ease;
-  transition: transform 400ms ease,opacity 400ms ease;
-  opacity: 0;
-  padding: 20px;
-  border-radius: 3px;
-  background-color: #ffffff;
-  max-width: 400px;
-  box-sizing: border-box;
-  margin: 0 auto;
-}
-
-.c5 {
-  width: 28px;
-  height: 28px;
-  fill: #495057;
-  -webkit-flex-shrink: 0;
-  -ms-flex-negative: 0;
-  flex-shrink: 0;
-}
-
 .c3 {
-  width: 28px;
-  height: 28px;
-  fill: #495057;
-  -webkit-flex-shrink: 0;
-  -ms-flex-negative: 0;
-  flex-shrink: 0;
-}
-
-.c2 {
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-flex-direction: row;
-  -ms-flex-direction: row;
-  flex-direction: row;
-  -webkit-align-items: center;
-  -webkit-box-align: center;
-  -ms-flex-align: center;
-  align-items: center;
-  color: #495057;
-  line-height: 1.5;
-}
-
-.c4 {
   margin-left: 38px;
   white-space: initial;
 }
@@ -84,13 +82,13 @@ exports[`Snapshot basic 1`] = `
 >
   <div>
     <div
-      className="c1 c2"
+      className="c1"
     >
       <svg
-        className="c3"
+        className="c2"
       />
       <div
-        className="c4"
+        className="c3"
       >
         <div
           style={
@@ -118,13 +116,13 @@ exports[`Snapshot basic 1`] = `
       </div>
     </div>
     <div
-      className="c1 c2"
+      className="c1"
     >
       <svg
-        className="c5"
+        className="c4"
       />
       <div
-        className="c4"
+        className="c3"
       >
         <div
           style={
@@ -159,16 +157,14 @@ exports[`Snapshot empty 1`] = `
 .c1 {
   text-align: center;
   margin-bottom: 10px;
-}
-
-.c2 {
   color: #495057;
 }
 
 .c0 {
   font-size: 14px;
-  -webkit-transition: -webkit-transform 400ms ease,opacity 400ms ease;
-  transition: transform 400ms ease,opacity 400ms ease;
+  -webkit-transition: -webkit-transform 400ms ease, opacity 400ms ease;
+  -webkit-transition: transform 400ms ease, opacity 400ms ease;
+  transition: transform 400ms ease, opacity 400ms ease;
   opacity: 0;
   padding: 20px;
   border-radius: 3px;
@@ -183,7 +179,7 @@ exports[`Snapshot empty 1`] = `
 >
   <div>
     <div
-      className="c1 c2"
+      className="c1"
     >
       mfaList.noCredentials
     </div>
