@@ -1,6 +1,6 @@
 {
     "name": "@reachfive/identity-ui",
-    "version": "1.31.0",
+    "version": "1.31.1",
     "description": "ReachFive Identity Web UI SDK",
     "author": "ReachFive",
     "repository": {
@@ -46,7 +46,7 @@
     "peerDependencies": {
         "react": "^18.3.0",
         "react-dom": "^18.3.0",
-        "styled-components": "6.1.11"
+        "styled-components": "5.1.1"
     },
     "devDependencies": {
         "@babel/core": "^7.23.2",
