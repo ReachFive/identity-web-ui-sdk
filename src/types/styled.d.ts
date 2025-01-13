@@ -1,5 +1,5 @@
 import 'styled-components';
-import { CSSProperties } from 'styled-components'
+import { CSSProperties } from 'react'
 
 import { RecursivePartial } from './index'
 

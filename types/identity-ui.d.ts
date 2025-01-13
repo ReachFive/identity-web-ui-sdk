@@ -1,16 +1,15 @@
 /**
- * @reachfive/identity-ui - v1.30.2
- * Compiled Fri, 06 Dec 2024 19:18:35 UTC
+ * @reachfive/identity-ui - v1.31.0
+ * Compiled Fri, 10 Jan 2025 18:54:24 UTC
  *
  * Copyright (c) ReachFive.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  **/
-import { CSSProperties } from 'styled-components';
+import React$1, { CSSProperties } from 'react';
 import { Config as Config$1, RemoteSettings, ConsentVersions, CustomField, Client as Client$1, SessionInfo, AuthOptions, MFA, PasswordlessResponse, SingleFactorPasswordlessParams, Profile, UserConsent, DeviceCredential } from '@reachfive/identity-core';
 export { Config } from '@reachfive/identity-core';
-import React$1 from 'react';
 import { PasswordlessParams } from '@reachfive/identity-core/es/main/oAuthClient';
 
 type Prettify<T> = {
@@ -212,9 +211,7 @@ interface Theme extends BaseTheme {
     passwordStrengthValidator: PasswordStrengthTheme
 }
 
-type I18nMessages = {
-    [k: string]: string;
-};
+type I18nMessages = Record<string, string>;
 type I18nMessageParams = Record<string, unknown>;
 type I18nResolver = (key: string, params?: I18nMessageParams, fallback?: (params?: I18nMessageParams) => string) => string;
 
@@ -245,9 +242,7 @@ type ValidatorSuccess = {
 type VaildatorResult = boolean | VaildatorError | ValidatorSuccess;
 
 type FormValue<T> = T | RichFormValue<T>;
-type RichFormValue<T, K extends string = 'raw'> = {
-    [P in K]: T;
-};
+type RichFormValue<T, K extends string = 'raw'> = Record<K, T>;
 
 interface FieldCreateProps {
     showLabel: boolean

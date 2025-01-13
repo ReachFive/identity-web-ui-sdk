@@ -7,6 +7,23 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.31.1] - 2025-01-10
+
+### Fixed
+
+- Fix phone number country select styles
+
+## [1.31.0] - 2025-01-08
+
+### Added
+
+- Upgrade react and react-dom from v16 to v18
+- Better theming options in password field
+
+### Fixed
+
+- Phone number input in MFA widget should only be displayed if no value is already defined
+
 ## [1.30.2] - 2024-12-05
 
 ### Fixed
@@ -513,7 +530,11 @@ The eye icon is now correctly displayed in the Auth widget.
 
 First version of the SDK Web UI.
 
-[Unreleased]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.30.2...HEAD
+[Unreleased]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.31.1...HEAD
+
+[1.31.1]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.31.0...v1.31.1
+
+[1.31.0]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.30.2...v1.31.0
 
 [1.30.2]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.30.1...v1.30.2
 

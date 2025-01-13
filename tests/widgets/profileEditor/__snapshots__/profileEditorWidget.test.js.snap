@@ -1,14 +1,11 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Snapshot profile editor basic 1`] = `
-.c6 {
-  color: #adb5bd;
-}
-
 .c0 {
   font-size: 14px;
-  -webkit-transition: -webkit-transform 400ms ease,opacity 400ms ease;
-  transition: transform 400ms ease,opacity 400ms ease;
+  -webkit-transition: -webkit-transform 400ms ease, opacity 400ms ease;
+  -webkit-transition: transform 400ms ease, opacity 400ms ease;
+  transition: transform 400ms ease, opacity 400ms ease;
   opacity: 0;
   padding: 20px;
   border-radius: 3px;
@@ -61,7 +58,8 @@ exports[`Snapshot profile editor basic 1`] = `
   position: relative;
 }
 
-.c7 {
+.c6 {
+  color: #adb5bd;
   display: block;
   padding: 9px 12px;
   text-align: center;
@@ -77,7 +75,7 @@ exports[`Snapshot profile editor basic 1`] = `
   margin-bottom: 10px;
 }
 
-.c2>label::after {
+.c2 > label::after {
   content: "\\A0*";
   color: #dc4e41;
 }
@@ -96,12 +94,11 @@ exports[`Snapshot profile editor basic 1`] = `
   background-color: #fff;
   background-image: none;
   padding: 9px 12px;
-  -webkit-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
-  transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+  -webkit-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+  transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
   box-shadow: none;
   -webkit-appearance: none;
   -moz-appearance: none;
-  -ms-appearance: none;
   appearance: none;
 }
 
@@ -190,7 +187,7 @@ exports[`Snapshot profile editor basic 1`] = `
         save
       </button>
       <span
-        class="c6 c7"
+        class="c6"
       >
         *
         form.required.fields

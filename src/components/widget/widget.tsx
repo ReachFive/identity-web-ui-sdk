@@ -51,7 +51,7 @@ export function createWidget<P, U = P>({
                 <ConfigProvider config={context.config}>
                     <ReachfiveProvider client={context.apiClient}>
                         <SessionProvider session={context.session}>
-                            <StyleSheetManager enableVendorPrefixes>
+                            <StyleSheetManager>
                                 <ThemeProvider theme={theme}>
                                     <I18nProvider defaultMessages={context.defaultI18n} messages={preparedOptions.i18n}>
                                         <WidgetContainer {...widgetAttrs}>

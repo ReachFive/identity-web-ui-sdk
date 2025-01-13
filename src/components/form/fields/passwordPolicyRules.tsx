@@ -20,8 +20,6 @@ const RoundCheckbox = styled(({ className, ...props }: RoundCheckboxProps) =>
     display: flex;
     align-items: center;
     position: relative;
-    margin-bottom: 5px;
-    margin-right: 5px;
 
     > label {
         position: absolute;
@@ -29,8 +27,8 @@ const RoundCheckbox = styled(({ className, ...props }: RoundCheckboxProps) =>
         left: 0;
         height: 15px;
         width: 15px;
-        background-color: #fff;
-        border: 1px solid #ccc;
+        background-color: ${props => props.theme.input.background};
+        border: 1px solid ${props => props.theme.input.borderColor};
         border-radius: 50%;
     }
 
@@ -40,7 +38,7 @@ const RoundCheckbox = styled(({ className, ...props }: RoundCheckboxProps) =>
         left: 3px;
         height: 3px;
         width: 7px;
-        border: 1px solid #fff;
+        border: 1px solid ${props => props.theme.input.color};
         border-top: none;
         border-right: none;
         content: "";
@@ -60,11 +58,19 @@ const RoundCheckbox = styled(({ className, ...props }: RoundCheckboxProps) =>
     > input[type="checkbox"]:checked + label:after {
         opacity: 1;
     }
+    
+    + label {
+        line-height: 1;
+    }
 `;
 
 const PasswordPolicyRule = styled.div`
     display: flex;
     align-items: center;
+<<<<<<< HEAD
+=======
+    gap: ${props => props.theme.spacing}px;
+>>>>>>> master
     margin-bottom: 2px;
 `;
 
