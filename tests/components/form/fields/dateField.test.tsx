@@ -231,6 +231,9 @@ describe('DOM testing', () => {
                 date: expect.objectContaining({
                     isDirty: true,
                     value: tenYearsOld.startOf('day'),
+                    validation: {
+                        error: "validation.age.minimun"
+                    }
                 })
             })
         ))
