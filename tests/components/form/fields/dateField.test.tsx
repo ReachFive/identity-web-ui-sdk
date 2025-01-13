@@ -103,37 +103,32 @@ describe('DOM testing', () => {
         const labelTag = screen.queryByText(i18nResolver(label))
         expect(labelTag).toBeInTheDocument()
 
-        const yearInput = screen.queryByTestId('date.year')
+        const yearInput = screen.getByTestId('date.year')
         expect(yearInput).toBeInTheDocument()
         expect(yearInput).toHaveAttribute('type', 'number')
         expect(yearInput).toHaveAttribute('inputMode', 'numeric')
         expect(yearInput).toHaveAttribute('aria-label', i18nResolver('year'))
         expect(yearInput).toHaveAttribute('placeholder', i18nResolver('year'))
         expect(yearInput).not.toHaveValue()
-        if (!yearInput) throw new Error('Year input should be in document')
         
-        const monthInput = screen.queryByTestId('date.month')
+        const monthInput = screen.getByTestId('date.month')
         expect(monthInput).toBeInTheDocument()
         expect(monthInput).toHaveAttribute('aria-label', i18nResolver('month'))
         expect(monthInput).not.toHaveValue()
-        if (!monthInput) throw new Error('Month input should be in document')
         const expectedMonthsOptions = ['', ...[...Array(12).keys()].map(value => String(value + 1))]
         expect(getAllByRole(monthInput, 'option').map(option => option.getAttribute('value'))).toEqual(
             expect.arrayContaining(expectedMonthsOptions)
         )
         
-        const dayInput = screen.queryByTestId('date.day')
+        const dayInput = screen.getByTestId('date.day')
         expect(dayInput).toBeInTheDocument()
         expect(dayInput).toHaveAttribute('aria-label', i18nResolver('day'))
         expect(dayInput).not.toHaveValue()
-        if (!dayInput) throw new Error('Day input should be in document')
         // default is based on current date
         const expectedDaysOptions = ['', ...[...Array(DateTime.now().month).keys()].map(value => String(value + 1))]
         expect(getAllByRole(dayInput, 'option').map(option => option.getAttribute('value'))).toEqual(
             expect.arrayContaining(expectedDaysOptions)
         )
-
-        if (!yearInput || !monthInput || !dayInput) throw new Error('Input should be in document')
 
         // fields should be ordered according to locale ([day|month|year] with "fr" locale)
         expect(yearInput.compareDocumentPosition(monthInput)).toEqual(Node.DOCUMENT_POSITION_PRECEDING)
@@ -219,16 +214,14 @@ describe('DOM testing', () => {
             )
         })
 
-        const yearInput = screen.queryByTestId('date.year')
-        const monthInput = screen.queryByTestId('date.month')
-        const dayInput = screen.queryByTestId('date.day')
-
-        if (!yearInput || !monthInput || !dayInput) throw new Error('Input should be in document')
+        const yearInput = screen.getByTestId('date.year')
+        const monthInput = screen.getByTestId('date.month')
+        const dayInput = screen.getByTestId('date.day')
 
         const tenYearsOld = DateTime.now().minus(Duration.fromObject({ year: 10 }))
-        await user.selectOptions(dayInput, String(tenYearsOld.day))
-        await user.selectOptions(monthInput, String(tenYearsOld.month))
         await user.type(yearInput, String(tenYearsOld.year))
+        await user.selectOptions(monthInput, String(tenYearsOld.month))
+        await user.selectOptions(dayInput, String(tenYearsOld.day))
 
         // handle year debounced value
         await waitFor(() => new Promise(resolve => setTimeout(resolve, yearDebounce * 2)))

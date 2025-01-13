@@ -104,15 +104,13 @@ describe('DOM testing', () => {
             )
         })
 
-        const checkbox = screen.queryByLabelText(i18nResolver(label))
+        const checkbox = screen.getByLabelText(i18nResolver(label))
         expect(checkbox).not.toBeChecked()
 
         const description = screen.queryByTestId('consents.myconsent.1.description')
         expect(description).toBeInTheDocument()
         expect(description).toHaveTextContent('Lorem ipsum sit amet')
         
-        if (!checkbox) throw new Error('Input should be in document')
-
         await user.click(checkbox)
 
         expect(checkbox).toBeChecked()
@@ -189,11 +187,9 @@ describe('DOM testing', () => {
             )
         })
 
-        const checkbox = screen.queryByLabelText(i18nResolver(label))
+        const checkbox = screen.getByLabelText(i18nResolver(label))
         expect(checkbox).toBeChecked()
         
-        if (!checkbox) throw new Error('Input should be in document')
-
         await user.click(checkbox)
 
         expect(checkbox).not.toBeChecked()

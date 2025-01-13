@@ -89,14 +89,12 @@ describe('DOM testing', () => {
             )
         })
 
-        const input = screen.queryByLabelText(i18nResolver(label))
+        const input = screen.getByLabelText(i18nResolver(label))
         expect(input).toBeInTheDocument()
         expect(input).toHaveAttribute('id', key)
         expect(input).toHaveAttribute('type', 'password')
         expect(input).toHaveAttribute('placeholder', i18nResolver(label))
         expect(input).toHaveValue('')
-
-        if (!input) throw new Error('Input should be in document')
 
         expect(screen.queryByTestId('show-password-btn')).not.toBeInTheDocument()
         expect(screen.queryByTestId('hide-password-btn')).not.toBeInTheDocument()
@@ -199,14 +197,12 @@ describe('DOM testing', () => {
             )
         })
 
-        const input = screen.queryByLabelText(i18nResolver(label))
+        const input = screen.getByLabelText(i18nResolver(label))
         expect(input).toBeInTheDocument()
         expect(input).toHaveAttribute('type', 'password')
 
         expect(screen.queryByTestId('show-password-btn')).toBeInTheDocument()
         expect(screen.queryByTestId('hide-password-btn')).not.toBeInTheDocument()
-
-        if (!input) throw new Error('Input should be in document')
 
         const newValue = 'azerty'
         await user.clear(input)

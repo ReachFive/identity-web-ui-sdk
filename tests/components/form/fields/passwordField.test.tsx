@@ -95,15 +95,13 @@ describe('DOM testing', () => {
             )
         })
 
-        const input = screen.queryByLabelText(i18nResolver(label))
+        const input = screen.getByLabelText(i18nResolver(label))
         expect(input).toBeInTheDocument()
         expect(input).toHaveAttribute('id', key)
         expect(input).toHaveValue('')
 
         expect(screen.queryByTestId('password-strength')).not.toBeInTheDocument()
         expect(screen.queryByTestId('password-policy-rules')).not.toBeInTheDocument()
-
-        if (!input) throw new Error('Input should be in document')
 
         const showPasswordBtn = screen.queryByTestId('show-password-btn')
         expect(showPasswordBtn).not.toBeInTheDocument()
@@ -187,26 +185,20 @@ describe('DOM testing', () => {
             )
         })
 
-        const input = screen.queryByLabelText(i18nResolver(label))
+        const input = screen.getByLabelText(i18nResolver(label))
         expect(input).toBeInTheDocument()
-
-        if (!input) throw new Error('Input should be in document')
 
         expect(input).toHaveAttribute('type', 'password')
 
-        const showPasswordBtn = screen.queryByTestId('show-password-btn')
+        const showPasswordBtn = screen.getByTestId('show-password-btn')
         expect(showPasswordBtn).toBeInTheDocument()
-
-        if (!showPasswordBtn) throw new Error('Show button should be in document')
 
         await user.click(showPasswordBtn)
 
         expect(input).toHaveAttribute('type', 'text')
 
-        const hidePasswordBtn = screen.queryByTestId('hide-password-btn')
+        const hidePasswordBtn = screen.getByTestId('hide-password-btn')
         expect(hidePasswordBtn).toBeInTheDocument()
-
-        if (!hidePasswordBtn) throw new Error('Hide button should be in document')
 
         await user.click(hidePasswordBtn)
 
@@ -254,13 +246,11 @@ describe('DOM testing', () => {
             )
         })
 
-        const input = screen.queryByLabelText(i18nResolver(label))
+        const input = screen.getByLabelText(i18nResolver(label))
         expect(input).toBeInTheDocument()
 
         expect(screen.queryByTestId('password-strength')).not.toBeInTheDocument()
         expect(screen.queryByTestId('password-policy-rules')).not.toBeInTheDocument()
-
-        if (!input) throw new Error('Input should be in document')
 
         const invalidPassword = 'ILoveApples'
         await user.clear(input)

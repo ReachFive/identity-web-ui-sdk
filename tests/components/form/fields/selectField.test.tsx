@@ -98,10 +98,8 @@ describe('DOM testing', () => {
             )
         })
 
-        const selectbox = screen.queryByLabelText(i18nResolver(label))
+        const selectbox = screen.getByLabelText(i18nResolver(label))
         
-        if (!selectbox) throw new Error('Input should be in document')
-
         expect(selectbox).toHaveValue('')
         options.forEach((option) => {
             expect(screen.getByRole<HTMLOptionElement>("option", { name: option.value }).selected).toBe(false)
@@ -170,10 +168,8 @@ describe('DOM testing', () => {
             )
         })
 
-        const selectbox = screen.queryByLabelText(i18nResolver(label))
+        const selectbox = screen.getByLabelText(i18nResolver(label))
         
-        if (!selectbox) throw new Error('Input should be in document')
-
         expect(selectbox).toHaveValue(defaultOption.value)
         expect(screen.getByRole<HTMLOptionElement>('option', { name: defaultOption.value }).selected).toBe(true)
 

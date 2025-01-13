@@ -105,8 +105,7 @@ describe('DOM testing', () => {
         })
 
         const choice = options[1]
-        const choiceInput = screen.queryByLabelText(i18nResolver(choice.label))
-        if (!choiceInput) throw new Error('Radio input should be in document')
+        const choiceInput = screen.getByLabelText(i18nResolver(choice.label))
         await user.click(choiceInput)
 
         expect(choiceInput).toBeChecked()
@@ -180,8 +179,7 @@ describe('DOM testing', () => {
 
 
         const choice = options[0]
-        const choiceInput = screen.queryByLabelText(i18nResolver(choice.label))
-        if (!choiceInput) throw new Error('Radio input should be in document')
+        const choiceInput = screen.getByLabelText(i18nResolver(choice.label))
         await user.click(choiceInput)
 
         expect(choiceInput).toBeChecked()
@@ -249,8 +247,7 @@ describe('DOM testing', () => {
         })
 
         const choice = options[1]
-        const choiceInput = screen.queryByDisplayValue(choice.value)
-        if (!choiceInput) throw new Error('Radio input should be in document')
+        const choiceInput = screen.getByDisplayValue(choice.value)
         await user.click(choiceInput)
 
         expect(choiceInput).toBeChecked()

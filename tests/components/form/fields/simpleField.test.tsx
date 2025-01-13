@@ -90,12 +90,10 @@ describe('DOM testing', () => {
             )
         })
 
-        const input = screen.queryByLabelText(i18nResolver(label))
+        const input = screen.getByLabelText(i18nResolver(label))
         expect(input).toBeInTheDocument()
         expect(input).toHaveAttribute('id', key)
         expect(input).toHaveValue('')
-
-        if (!input) throw new Error('Input should be in document')
 
         const newValue = 'azerty'
         await user.clear(input)
@@ -205,11 +203,9 @@ describe('DOM testing', () => {
             )
         })
 
-        const input = screen.queryByLabelText(i18nResolver(label))
+        const input = screen.getByLabelText(i18nResolver(label))
         expect(input).toHaveAttribute('placeholder', i18nResolver(label))
         expect(input).toBeInTheDocument()
-
-        if (!input) throw new Error('Input should be in document')
 
         const invalidValue = 'ILoveApples'
         await user.clear(input)
