@@ -158,7 +158,7 @@ export function createForm(config) {
         };
 
         onError = err => {
-            this.props.onError.onError?.(err);
+            this.props.onError?.(err);
 
             if (!err.errorUserMsg) {
                 if (err.errorDescription) {
