@@ -34,6 +34,14 @@ export interface PasswordSignupFormProps {
     showLabels?: boolean
     signupFields?: (string | Field)[]
     userAgreement?: string
+    /**
+     * Callback function called when the request has succeed.
+     */
+    onSuccess?: () => void
+    /**
+     * Callback function called when the request has failed.
+     */
+    onError?: (error?: unknown) => void
 }
 
 export const PasswordSignupForm = ({
@@ -54,6 +62,8 @@ export const PasswordSignupForm = ({
         'password_confirmation'
     ],
     userAgreement,
+    onError = () => {},
+    onSuccess = () => {},
 }: PasswordSignupFormProps) => {
     const coreClient = useReachfive()
     const config = useConfig()
@@ -121,6 +131,8 @@ export const PasswordSignupForm = ({
             ...phoneNumberOptions,
         }}
         handler={(data: SignupParams['data']) => ReCaptcha.handle(data, { recaptcha_enabled, recaptcha_site_key }, callback, "signup")}
+        onSuccess={onSuccess}
+        onError={onError}
     />
 }
 

@@ -31,7 +31,7 @@ interface WithIdentitiesProps {
     /**
      * Callback function called when the request has failed.
      */
-    onError?: (error: unknown) => void
+    onError?: (error?: unknown) => void
 }
 
 function findAvailableProviders(providers: string[], identities: Identity[]): string[] {
@@ -57,14 +57,8 @@ const withIdentities = <T extends WithIdentitiesProps = WithIdentitiesProps>(
                     accessToken: props.accessToken,
                     fields: 'social_identities{id,provider,username}'
                 })
-                .catch(error => {
-                    props.onError?.(error)
-                    return Promise.reject(error)
-                })
-                .then(({ socialIdentities }: Profile) => {
-                    setIdentities(socialIdentities)
-                    props.onSuccess?.()
-                });
+                .then(({ socialIdentities }: Profile) => setIdentities(socialIdentities))
+                .catch(props.onError)
         }, [props.accessToken, coreClient])
 
         const unlink = useCallback((identityId: string) => {
@@ -73,6 +67,7 @@ const withIdentities = <T extends WithIdentitiesProps = WithIdentitiesProps>(
             setIdentities(identities.filter(i => i.id !== identityId))
             // api call + catch failure
             return coreClient.unlink({ accessToken: props.accessToken, identityId })
+                .then(() => props.onSuccess?.())
                 .catch(error => {
                     props.onError?.(error)
                     // restore previous identities
@@ -127,7 +122,7 @@ interface IdentityListProps {
     /**
      * Callback function called when the request has failed.
      */
-    onError?: (error: unknown) => void
+    onError?: (error?: unknown) => void
 }
 
 const IdentityList = ({
@@ -235,6 +230,14 @@ export interface SocialAccountsWidgetProps {
      * Tip: If you pass an empty array, social providers will not be displayed.
      * */
     providers?: string[]
+    /**
+     * Callback function called when the request has succeed.
+     */
+    onSuccess?: () => void
+    /**
+     * Callback function called when the request has failed.
+     */
+    onError?: (error?: unknown) => void
 }
 
 interface SocialAccountsWidgetPropsPrepared extends

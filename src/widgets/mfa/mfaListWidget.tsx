@@ -63,7 +63,7 @@ export const MfaList = ({ credentials }: MfaListProps) => {
                 <Info>{i18n('mfaList.noCredentials')}</Info>
             )}
             {credentials.map((credential, index) => (
-                <Credential key={`credential-${index}`}>
+                <Credential key={`credential-${index}`} data-testid="credential">
                     {credentialIconByType(credential.type)}
                     <CardContent>
                         <div style={{fontWeight: 'bold'}}>{credential.friendlyName}</div>
@@ -87,19 +87,19 @@ export type MfaListWidgetProps = {
     /**
      * Callback function called when the request has failed.
      */
-    onError?: (error: unknown) => void
+    onError?: (error?: unknown) => void
 }
 
 export default createWidget<MfaListWidgetProps, MfaListProps>({
     component: MfaList,
     prepare: (options, { apiClient }) =>
         apiClient.listMfaCredentials(options.accessToken)
-            .catch(error => {
-                options.onError?.(error)
-                throw UserError.fromAppError(error)
-            })
             .then(({ credentials }) => ({
                 ...options,
                 credentials,
             }))
+            .catch(error => {
+                options.onError?.(error)
+                throw UserError.fromAppError(error)
+            })
 });

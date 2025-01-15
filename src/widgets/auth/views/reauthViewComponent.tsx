@@ -36,9 +36,25 @@ export interface ReauthViewProps {
      * Tip: If you pass an empty array, social providers will not be displayed.
      */
     socialProviders?: string[]
+    /**
+     * Callback function called when the request has succeed.
+     */
+    onSuccess?: () => void
+    /**
+     * Callback function called when the request has failed.
+     */
+    onError?: (error?: unknown) => void
 }
 
-export const ReauthView = ({ allowForgotPassword = true, auth, session, showLabels = false, socialProviders }: PropsWithSession<ReauthViewProps>) => {
+export const ReauthView = ({
+    allowForgotPassword = true,
+    auth,
+    session,
+    showLabels = false,
+    socialProviders,
+    onError = () => {},
+    onSuccess = () => {},
+}: PropsWithSession<ReauthViewProps>) => {
     const coreClient = useReachfive()
     const i18n = useI18n()
 
@@ -70,6 +86,8 @@ export const ReauthView = ({ allowForgotPassword = true, auth, session, showLabe
                     showForgotPassword={allowForgotPassword}
                     showEmail={false}
                     handler={handlePasswordLogin}
+                    onSuccess={onSuccess}
+                    onError={onError}
                 />
             }
         </div>

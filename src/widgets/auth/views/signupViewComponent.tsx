@@ -46,6 +46,14 @@ export interface SignupViewProps extends SignupWithPasswordViewProps, SignupWith
      * Phone number field options.
      */
     phoneNumberOptions?: PhoneNumberOptions
+    /**
+     * Callback function called when the request has succeed.
+     */
+    onSuccess?: () => void
+    /**
+     * Callback function called when the request has failed.
+     */
+    onError?: (error?: unknown) => void
 }
 
 export const SignupView = ({
@@ -55,6 +63,8 @@ export const SignupView = ({
     allowWebAuthnSignup = false,
     enablePasswordAuthentication=true,
     socialProviders,
+    onError = () => {},
+    onSuccess = () => {},
     ...props
 }: SignupViewProps) => {
     const i18n = useI18n()
@@ -64,8 +74,14 @@ export const SignupView = ({
         <div>
             <Heading>{i18n('signup.title')}</Heading>
 
-            {socialProviders && socialProviders.length > 0 &&
-                <SocialButtons providers={socialProviders} auth={props.auth} />}
+            {socialProviders && socialProviders.length > 0 && (
+                <SocialButtons
+                    providers={socialProviders}
+                    auth={props.auth}
+                    onSuccess={onSuccess}
+                    onError={onError}
+                />
+            )}
             {socialProviders && socialProviders.length > 0 && <Separator text={i18n('or')} />}
 
             {allowWebAuthnSignup

@@ -3,56 +3,81 @@
  */
 
 import { describe, expect, jest, test } from '@jest/globals';
-import renderer from 'react-test-renderer';
-import { render, screen } from '@testing-library/react';
-import '@testing-library/jest-dom';
+import { render, screen, waitFor } from '@testing-library/react';
+import '@testing-library/jest-dom/jest-globals'
 import 'jest-styled-components';
 
+import { type Client } from '@reachfive/identity-core';
+
+import { type I18nMessages } from '../../../src/core/i18n';
+import { type ProviderId, providers } from '../../../src/providers/providers';
+import type { Config } from '../../../src/types';
 import { randomString } from '../../../src/helpers/random';
+
 import authWidget from '../../../src/widgets/auth/authWidget';
 
-import { providers } from '../../../src/providers/providers';
-
-const defaultConfig = {
+const defaultConfig: Config = {
+    clientId: 'local',
     domain: 'local.reach5.net',
+    sso: false,
+    sms: false,
+    webAuthn: false,
+    language: 'fr',
+    pkceEnforced: false,
+    isPublic: true,
+    socialProviders: ['facebook', 'google'],
+    customFields: [],
+    resourceBaseUrl: 'http://localhost',
+    mfaSmsEnabled: false,
+    mfaEmailEnabled: false,
+    rbaEnabled: false,
+    consentsVersions: {
+        aConsent: {
+            key: 'aConsent',
+            versions: [{
+                versionId: 1,
+                title: 'consent title',
+                description: 'consent description',
+                language: 'fr',
+            }],
+            consentType: 'opt-in',
+            status: 'active'
+        }
+    },
     passwordPolicy: {
         minLength: 8,
-        minStrength: 2
+        minStrength: 2,
+        allowUpdateWithAccessTokenOnly: true,
     },
-    socialProviders: ['facebook', 'google'],
-    consentsVersions: [{
-        key: 'aConsent',
-        versions: [{
-            versionId: 1,
-            title: 'consent title',
-            description: 'consent description'
-        }]
-    }]
 };
+
+const defaultI18n: I18nMessages = {}
 
 const webauthnConfig = { ...defaultConfig, webAuthn: true };
 
 function expectSocialButtons(toBeInTheDocument = true) {
     return defaultConfig.socialProviders.forEach((provider) => {
         if (toBeInTheDocument) {
-            expect(screen.queryByTitle(providers[provider].name)).toBeInTheDocument()
+            expect(screen.queryByTitle(providers[provider as ProviderId].name)).toBeInTheDocument()
         } else {
-            expect(screen.queryByTitle(providers[provider].name)).not.toBeInTheDocument()
+            expect(screen.queryByTitle(providers[provider as ProviderId].name)).not.toBeInTheDocument()
         }
     })
 }
 
 describe('Snapshot', () => {
-    const apiClient = {
-        loginWithWebAuthn: jest.fn().mockRejectedValue(new Error('This is a mock.'))
-    }
+    const generateSnapshot = (options: Parameters<typeof authWidget>[0] = {}, config: Partial<Config> = {}) => async () => {
+        // @ts-expect-error partial Client
+        const apiClient: Client = {
+            loginWithWebAuthn: jest.fn<Client['loginWithWebAuthn']>().mockRejectedValue(new Error('This is a mock.'))
+        }
 
-    const generateSnapshot = (options, config = defaultConfig) => () => {
-        const tree = authWidget(options, { config, apiClient })
-            .then(result => renderer.create(result).toJSON())
-            .catch(e => console.error(e) || Promise.reject(e));
-
-        expect(tree).resolves.toMatchSnapshot();
+        const widget = await authWidget(options, {config: { ...defaultConfig, ...config }, apiClient, defaultI18n })
+                
+        await waitFor(async () => {
+            const { container } = await render(widget);
+            expect(container).toMatchSnapshot();
+        })
     };
 
     describe('login view', () => {
@@ -214,8 +239,14 @@ describe('Snapshot', () => {
 });
 
 describe('DOM testing', () => {
-    const generateComponent = async (options, config = defaultConfig, apiClient = {}) => {
-        const result = await authWidget(options, { config, apiClient });
+    const loginWithWebAuthn = jest.fn<Client['loginWithWebAuthn']>()
+
+    const generateComponent = async (options: Parameters<typeof authWidget>[0] = {}, config: Partial<Config> = {}) => {
+        // @ts-expect-error partial Client
+        const apiClient: Client = {
+            loginWithWebAuthn
+        }
+        const result = await authWidget(options, {config: { ...defaultConfig, ...config }, apiClient, defaultI18n });
         return render(result);
     };
 
@@ -275,7 +306,8 @@ describe('DOM testing', () => {
                 canShowPassword: true
             });
 
-            expect(screen.queryByTestId('password').parentElement.querySelector('svg')).toBeInTheDocument();
+            const password = screen.getByTestId('password')
+            expect(password.parentElement?.querySelector('svg')).toBeInTheDocument();
         });
 
         test('inline social buttons', async () => {
@@ -417,9 +449,10 @@ describe('DOM testing', () => {
     describe('with webauthn feature', () => {
         test('new login view', async () => {
             expect.assertions(6);
-            await generateComponent({ allowWebAuthnLogin: true, initialScreen: 'login' }, webauthnConfig, {
-                loginWithWebAuthn: jest.fn().mockRejectedValue(new Error('This is a mock.'))
-            });
+
+            loginWithWebAuthn.mockRejectedValue(new Error('This is a mock.'))
+
+            await generateComponent({ allowWebAuthnLogin: true, initialScreen: 'login' }, webauthnConfig);
 
             // Social buttons
             expectSocialButtons(true)
@@ -439,9 +472,10 @@ describe('DOM testing', () => {
 
         test('old login view', async () => {
             expect.assertions(6);
-            await generateComponent({ allowWebAuthnLogin: true, initialScreen: 'login-with-web-authn' }, webauthnConfig, {
-                loginWithWebAuthn: jest.fn().mockRejectedValue(new Error('This is a mock.'))
-            });
+
+            loginWithWebAuthn.mockRejectedValue(new Error('This is a mock.'))
+
+            await generateComponent({ allowWebAuthnLogin: true, initialScreen: 'login-with-web-authn' }, webauthnConfig);
 
             // Social buttons
             expectSocialButtons(true)
@@ -519,9 +553,10 @@ describe('DOM testing', () => {
     describe('with webauthn feature and without password', () => {
         test('old login view', async () => {
             expect.assertions(6);
-            await generateComponent({ allowWebAuthnLogin: true, enablePasswordAuthentication:false, initialScreen: 'login-with-web-authn' }, webauthnConfig, {
-                loginWithWebAuthn: jest.fn().mockRejectedValue(new Error('This is a mock.'))
-            });
+
+            loginWithWebAuthn.mockRejectedValue(new Error('This is a mock.'))
+
+            await generateComponent({ allowWebAuthnLogin: true, enablePasswordAuthentication:false, initialScreen: 'login-with-web-authn' }, webauthnConfig);
 
             // Social buttons
             expectSocialButtons(true)

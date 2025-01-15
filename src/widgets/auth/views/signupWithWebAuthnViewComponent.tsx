@@ -56,6 +56,14 @@ export interface SignupWithWebAuthnViewProps {
     signupFields?: (string | Field)[]
     /**  */
     userAgreement?: string
+    /**
+     * Callback function called when the request has succeed.
+     */
+    onSuccess?: () => void
+    /**
+     * Callback function called when the request has failed.
+     */
+    onError?: (error?: unknown) => void
 }
 
 export const SignupWithWebAuthnView = ({
@@ -70,6 +78,8 @@ export const SignupWithWebAuthnView = ({
     ],
     showLabels = false,
     userAgreement,
+    onError = () => {},
+    onSuccess = () => {},
 }: SignupWithWebAuthnViewProps) => {
     const coreClient = useReachfive()
     const config = useConfig()
@@ -108,7 +118,10 @@ export const SignupWithWebAuthnView = ({
                 fields={allFields}
                 showLabels={showLabels}
                 beforeSubmit={beforeSignup}
-                handler={handleSignup} />
+                handler={handleSignup}
+                onSuccess={onSuccess}
+                onError={onError}
+            />
             <Alternative>
                 <Link target={'signup'}>{i18n('back')}</Link>
             </Alternative>

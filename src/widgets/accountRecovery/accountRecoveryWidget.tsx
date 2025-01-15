@@ -27,7 +27,7 @@ interface MainViewProps {
     /**
      * Callback function called when the request has failed.
      */
-    onError?: () => void
+    onError?: (error?: unknown) => void
     /**
      * Whether the form fields' labels are displayed on the form view.
      * @default false
@@ -56,16 +56,16 @@ const PasskeysIcon = styled(Passkeys)`${iconStyle}`;
 const PasskeysExplanation = styled(() => {
     const i18n = useI18n()
     return (
+        <ul>
+            <li><b>{i18n('accountRecovery.passkeyReset.subtitle1')}</b></li>
             <ul>
-                <li><b>{i18n('accountRecovery.passkeyReset.subtitle1')}</b></li>
-                <ul>
-                    <li>{i18n('accountRecovery.passkeyReset.legend1')}</li>
-                </ul>
-                <li><b>{i18n('accountRecovery.passkeyReset.subtitle2')}</b></li>
-                <ul>
-                    <li>{i18n('accountRecovery.passkeyReset.legend2')}</li>
-                </ul>
+                <li>{i18n('accountRecovery.passkeyReset.legend1')}</li>
             </ul>
+            <li><b>{i18n('accountRecovery.passkeyReset.subtitle2')}</b></li>
+            <ul>
+                <li>{i18n('accountRecovery.passkeyReset.legend2')}</li>
+            </ul>
+        </ul>
     )
 })`
 `;
@@ -107,7 +107,7 @@ const NewPasskey = ({
             {allowCreatePassword &&
                 <Alternative>
                     <Separator text={i18n('or')} />
-                    <Intro><Link target="new-password">Create a new password</Link></Intro>
+                    <Intro><Link target="new-password">{i18n('accountRecovery.password.title')}</Link></Intro>
                 </Alternative>
             }
         </div>
@@ -178,9 +178,10 @@ export const NewPasswordView = ({
                 handler={handleSubmit}
                 showLabels={showLabels}
                 onSuccess={handleSuccess}
-                onError={onError} />
+                onError={onError}
+            />
             <Alternative>
-                <Link target="new-passkey">Back</Link>
+                <Link target="new-passkey">{i18n('back')}</Link>
             </Alternative>
         </div>
     )

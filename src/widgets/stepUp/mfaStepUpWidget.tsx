@@ -82,15 +82,20 @@ export interface MainViewProps {
      */
     showStepUpStart?: boolean
     /**
+     * Callback function called when the request has succeed.
+     */
+    onSuccess?: () => void
+    /**
      * Callback function called when the request has failed.
      */
-    onError?: (error: unknown) => void
+    onError?: (error?: unknown) => void
 }
 
 export const MainView = ({
     accessToken,
     auth,
     onError = () => {},
+    onSuccess = () => {},
     showIntro = true,
     showStepUpStart = true
 }: MainViewProps) => {
@@ -104,10 +109,6 @@ export const MainView = ({
             .getMfaStepUpToken({
                 options: auth,
                 accessToken: accessToken
-            })
-            .catch(error => {
-                onError(error)
-                return Promise.reject(error)
             })
             .then(res => {
                 setResponse(res)
@@ -127,12 +128,21 @@ export const MainView = ({
             <StartStepUpMfaButton
                 handler={onGetStepUpToken}
                 onSuccess={(data: MFA.StepUpResponse) => goTo<FaSelectionViewState>('fa-selection', { ...data })}
+                onError={onError}
             />
         )
     }
 
     if (response) {
-        return <FaSelectionView {...response} showIntro={showIntro} auth={auth} />
+        return (
+            <FaSelectionView
+                {...response}
+                showIntro={showIntro}
+                auth={auth}
+                onError={onError}
+                onSuccess={onSuccess}
+            />
+        )
     }
 
     return null
@@ -144,9 +154,13 @@ export type FaSelectionViewProps = Prettify<Partial<MFA.StepUpResponse> & {
     showIntro?: boolean
     auth?: AuthOptions
     /**
+     * Callback function called when the request has succeed.
+     */
+    onSuccess?: () => void
+    /**
      * Callback function called when the request has failed.
      */
-    onError?: (error: unknown) => void
+    onError?: (error?: unknown) => void
 }>
 
  // Unlike single factor authentication, StepUp request always returns a challengeId
@@ -168,10 +182,6 @@ export const FaSelectionView = (props: FaSelectionViewProps) => {
         (factor: StartPasswordlessFormData): Promise<void> =>
             coreClient
                 .startPasswordless({ ...factor, stepUp: token, })
-                .catch(error => {
-                    onError(error)
-                    return Promise.reject(error)
-                })
                 .then(resp => setResponse({
                     ...(resp as StepUpResponse),
                     ...factor,
@@ -186,7 +196,14 @@ export const FaSelectionView = (props: FaSelectionViewProps) => {
     }, [amr, onChooseFa])
 
     if (response) {
-        return <VerificationCodeView {...response} auth={props.auth} />
+        return (
+            <VerificationCodeView
+                {...response}
+                auth={props.auth}
+                onError={props.onError}
+                onSuccess={props.onSuccess}
+            />
+        )
     }
 
     if (amr.length > 1) {
@@ -196,6 +213,7 @@ export const FaSelectionView = (props: FaSelectionViewProps) => {
                 <StartPasswordlessForm
                     options={amr.map(factor => ({key: factor, value: factor, label: factor}))}
                     handler={onChooseFa}
+                    onError={onError}
                 />
             </div>
         )
@@ -218,7 +236,7 @@ export type VerificationCodeViewProps = Prettify<Partial<StepUpHandlerResponse> 
     /**
      * Callback function called when the request has failed.
      */
-    onError?: (error: unknown) => void
+    onError?: (error?: unknown) => void
 }>
 
 export const VerificationCodeView = (props: VerificationCodeViewProps) => {
@@ -232,21 +250,20 @@ export const VerificationCodeView = (props: VerificationCodeViewProps) => {
     const handleSubmit = (data: VerificationCodeInputFormData) =>
         coreClient
             .verifyMfaPasswordless({challengeId, verificationCode: data.verificationCode})
-            .catch(error => {
-                onError(error)
-                return Promise.reject(error)
-            })
             .then(resp => {
                 onSuccess()
                 // @ts-expect-error AuthResult is too complex and is not representative of the real response of this request 
-                window.location.replace( auth?.redirectUri + "?" + toQueryString(resp))
+                window.location.replace( (auth?.redirectUri ?? '') + "?" + toQueryString(resp))
             })
 
     return (
         <div>
             {authType === 'sms' && <Info>{i18n('passwordless.sms.verification.intro')}</Info>}
             {authType === 'email' && <Info>{i18n('passwordless.email.verification.intro')}</Info>}
-            <VerificationCodeInputForm handler={handleSubmit}/>
+            <VerificationCodeInputForm
+                handler={handleSubmit}
+                onError={onError}
+            />
         </div>
     )
 }

@@ -53,9 +53,13 @@ interface MainViewProps {
      * Phone number field options.
      */
     phoneNumberOptions?: PhoneNumberOptions
+    /**
+     * Callback function called when the request has failed.
+     */
+    onError?: (error?: unknown) => void
 }
 
-const MainView = ({ accessToken, showLabels = false, phoneNumberOptions }: MainViewProps) => {
+const MainView = ({ accessToken, showLabels = false, phoneNumberOptions, onError = () => {} }: MainViewProps) => {
     const coreClient = useReachfive()
     const config = useConfig()
     const i18n = useI18n()
@@ -79,6 +83,7 @@ const MainView = ({ accessToken, showLabels = false, phoneNumberOptions }: MainV
                 showLabels={showLabels}
                 handler={handleSubmit}
                 onSuccess={handleSuccess}
+                onError={onError}
                 phoneNumberOptions={phoneNumberOptions}
             />
         </div>
@@ -97,7 +102,7 @@ type VerificationCodeViewProps = {
     /**
      * Callback function called when the request has failed.
      */
-    onError?: () => void
+    onError?: (error?: unknown) => void
 }
 
 type VerificationCodeViewState = {

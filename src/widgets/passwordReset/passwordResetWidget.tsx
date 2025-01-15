@@ -22,7 +22,7 @@ interface MainViewProps {
     /**
      * Callback function called when the request has failed.
      */
-    onError?: () => void
+    onError?: (error?: unknown) => void
     /**
      * Whether the form fields' labels are displayed on the form view.
      * @default false

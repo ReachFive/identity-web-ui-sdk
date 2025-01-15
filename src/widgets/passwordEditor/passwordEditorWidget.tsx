@@ -81,7 +81,7 @@ export interface PasswordEditorProps extends PasswordEditorFormProps {
     /**
      * Callback function called when the request has failed.
      */
-    onError?: () => void
+    onError?: (error?: unknown) => void
 }
 
 const PasswordEditor = ({
@@ -97,7 +97,7 @@ const PasswordEditor = ({
     const handleSubmit = ({ password, oldPassword }: PasswordEditorFormData) => {
         return coreClient.updatePassword({
             password,
-            oldPassword,
+            ...(promptOldPassword ? { oldPassword } : {}),
             ...authentication,
         });
     };

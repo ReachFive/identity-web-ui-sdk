@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { MFA } from '@reachfive/identity-core';
 import type { StartMfaEmailRegistrationResponse, StartMfaPhoneNumberRegistrationResponse } from '@reachfive/identity-core/es/main/mfaClient';
 
-import type { Config, Prettify } from '../../types';
+import type { Prettify } from '../../types';
 
 import { createMultiViewWidget } from '../../components/widget/widget';
 
@@ -50,9 +50,9 @@ const VerificationCodeForm = createForm<VerificationCodeFormData>({
 
 type PhoneNumberRegisteringCredentialFormData = { phoneNumber: string }
 
-const PhoneNumberRegisteringCredentialForm = (config: Config) => createForm<PhoneNumberRegisteringCredentialFormData, { phoneNumberOptions?: PhoneNumberOptions }>({
+const PhoneNumberRegisteringCredentialForm = createForm<PhoneNumberRegisteringCredentialFormData, { phoneNumberOptions?: PhoneNumberOptions }>({
     prefix: 'r5-mfa-credentials-phone-number-',
-    fields: ({ phoneNumberOptions }) => ([
+    fields: ({ config, phoneNumberOptions }) => ([
         phoneNumberField({
             required: true,
             ...phoneNumberOptions,
@@ -100,7 +100,7 @@ interface MainViewProps {
     /**
      * Callback function called when the request has failed.
      */
-    onError?: (error: unknown) => void
+    onError?: (error?: unknown) => void
 }
 
 const MainView = ({
@@ -123,10 +123,6 @@ const MainView = ({
                     accessToken
                 }
             )
-            .catch(error => {
-                onError(error)
-                return Promise.reject(error)
-            })
     }
 
     const onPhoneNumberRegistering = (data: PhoneNumberRegisteringCredentialFormData) => {
@@ -135,20 +131,12 @@ const MainView = ({
                 accessToken,
                 ...data
             })
-            .catch(error => {
-                onError(error)
-                return Promise.reject(error)
-            })
     }
 
     const onEmailRemoval = () => {
         return coreClient
             .removeMfaEmail({
                 accessToken
-            })
-            .catch(error => {
-                onError(error)
-                return Promise.reject(error)
             })
     }
 
@@ -158,10 +146,8 @@ const MainView = ({
                 accessToken,
                 phoneNumber,
             })
-            .catch(onError)
     }
 
-    const PhoneNumberInputForm = PhoneNumberRegisteringCredentialForm(config);
     const phoneNumberCredentialRegistered = credentials.find<MFA.PhoneCredential>(
         (credential): credential is MFA.PhoneCredential => MFA.isPhoneCredential(credential)
     )
@@ -177,6 +163,7 @@ const MainView = ({
                         <EmailRegisteringCredentialForm
                             handler={onEmailRegistering}
                             onSuccess={(data: StartMfaEmailRegistrationResponse) => goTo<VerificationCodeViewState>('verification-code', {...data, registrationType: 'email'})}
+                            onError={onError}
                         />
                     </div>
                 }
@@ -186,9 +173,10 @@ const MainView = ({
                 {config.mfaSmsEnabled && !isPhoneCredentialRegistered &&
                     <div>
                         {showIntro && <Intro>{i18n('mfa.phoneNumber.explain')}</Intro>}
-                        <PhoneNumberInputForm
+                        <PhoneNumberRegisteringCredentialForm
                             handler={onPhoneNumberRegistering}
                             onSuccess={(data: StartMfaPhoneNumberRegistrationResponse) => goTo<VerificationCodeViewState>('verification-code', {...data, registrationType: 'sms'})}
+                            onError={onError}
                             phoneNumberOptions={phoneNumberOptions}
                         />
                     </div>
@@ -203,6 +191,7 @@ const MainView = ({
                         <EmailCredentialRemovalForm
                             handler={onEmailRemoval}
                             onSuccess={() => goTo<CredentialRemovedViewState>('credential-removed', { credentialType: 'email' })}
+                            onError={onError}
                         />
                     </div>
                 }
@@ -221,6 +210,7 @@ const MainView = ({
                         <PhoneNumberCredentialRemovalForm
                             handler={() => onPhoneNumberRemoval({ ...phoneNumberCredentialRegistered })}
                             onSuccess={() => goTo<CredentialRemovedViewState>('credential-removed', {credentialType: 'sms'})}
+                            onError={onError}
                         />
                     </div>
                 }
@@ -245,7 +235,7 @@ interface VerificationCodeViewProps {
     /**
      * Callback function called when the request has failed.
      */
-    onError?: (error: unknown) => void
+    onError?: (error?: unknown) => void
 }
 
 type VerificationCodeViewState = 
@@ -269,10 +259,6 @@ const VerificationCodeView = ({
                 ...data,
                 accessToken
             })
-            .catch(error => {
-                onError(error)
-                return Promise.reject(error)
-            })
     }
 
     const onSmsCodeVerification = (data: VerificationCodeFormData) => {
@@ -280,10 +266,6 @@ const VerificationCodeView = ({
             .verifyMfaPhoneNumberRegistration({
                 ...data,
                 accessToken
-            })
-            .catch(error => {
-                onError(error)
-                return Promise.reject(error)
             })
     }
 
@@ -304,6 +286,7 @@ const VerificationCodeView = ({
                 <VerificationCodeForm
                     handler={onEmailCodeVerification}
                     onSuccess={onCredentialRegistered}
+                    onError={onError}
                 />
             }
 
@@ -312,6 +295,7 @@ const VerificationCodeView = ({
                 <VerificationCodeForm
                     handler={onSmsCodeVerification}
                     onSuccess={onCredentialRegistered}
+                    onError={onError}
                 />
             }
         </div>
@@ -368,13 +352,13 @@ export default createMultiViewWidget<MfaCredentialsWidgetProps, MfaCredentialsPr
     },
     prepare: (options, { apiClient }) => {
         return apiClient.listMfaCredentials(options.accessToken)
-            .catch(error => {
-                options.onError?.(error)
-                throw UserError.fromAppError(error)
-            })
             .then(({ credentials }) => ({
                 ...options,
                 credentials,
             }))
+            .catch(error => {
+                options.onError?.(error)
+                throw UserError.fromAppError(error)
+            })
     }
 })

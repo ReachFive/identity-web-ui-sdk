@@ -32,7 +32,7 @@ interface ProfileEditorProps {
     /**
      * Callback function called when the request has failed.
      */
-    onError?: () => void
+    onError?: (error?: unknown) => void
     /**
      * Phone number field options.
      */
@@ -145,6 +145,10 @@ export default createWidget<ProfileEditorWidgetProps, ProfileEditorProps>({
                             && (field.path !== 'phone_number' || !config.sms || !filteredOutConsentsProfile.phoneNumber);
                     })
                 })
+            })
+            .catch((error: unknown) => {
+                options.onError?.(error)
+                return Promise.reject(error)
             });
     }
 });
