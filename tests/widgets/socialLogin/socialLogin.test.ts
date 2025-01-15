@@ -86,7 +86,7 @@ describe('DOM testing', () => {
     test('basic', async () => {
         const user = userEvent.setup()
 
-        loginWithSocialProvider.mockResolvedValue()
+        loginWithSocialProvider.mockResolvedValue({})
 
         await generateComponent({});
 
