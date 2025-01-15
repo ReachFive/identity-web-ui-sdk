@@ -3,7 +3,7 @@ import { StyleSheetManager, ThemeProvider } from 'styled-components'
 import type { SessionInfo, Client as CoreClient } from '@reachfive/identity-core'
 
 import type { Config, Prettify } from '../../types'
-import type { I18nMessages } from '../../core/i18n';
+import type { I18nMessages, I18nNestedMessages } from '../../core/i18n';
 
 import { ConfigProvider } from '../../contexts/config';
 import { I18nProvider } from '../../contexts/i18n'
@@ -16,7 +16,7 @@ import { buildTheme } from '../../core/theme'
 
 import WidgetContainer, { WidgetContainerProps } from './widgetContainerComponent';
 
-export type I18nProps = { i18n?: I18nMessages }
+export type I18nProps = { i18n?: I18nNestedMessages }
 export type ThemeProps = { theme?: ThemeOptions }
 
 export type PropsWithI18n<P> = Prettify<P & I18nProps>

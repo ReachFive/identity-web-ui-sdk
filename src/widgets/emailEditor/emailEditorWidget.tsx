@@ -50,6 +50,14 @@ interface MainViewProps {
      * @default false
      */
     showLabels?: boolean
+    /**
+     * Callback function called when the request has succeed.
+     */
+    onSuccess?: () => void
+    /**
+     * Callback function called when the request has failed.
+     */
+    onError?: (error?: unknown) => void
 }
 
 const MainView = ({
@@ -58,6 +66,8 @@ const MainView = ({
     recaptcha_site_key,
     redirectUrl,
     showLabels = false,
+    onError = () => {},
+    onSuccess = () => {},
 }: MainViewProps) => {
     const coreClient = useReachfive()
     const i18n = useI18n()
@@ -71,7 +81,10 @@ const MainView = ({
         return coreClient.updateEmail({ ...data, accessToken, redirectUrl });
     }
 
-    const handleSuccess = () => goTo('success');
+    const handleSuccess = () => {
+        onSuccess()
+        goTo('success')
+    };
 
     return (
         <div>
@@ -79,7 +92,9 @@ const MainView = ({
             <EmailEditorForm
                 showLabels={showLabels}
                 handler={(data: EmailFormData) => ReCaptcha.handle(data, { recaptcha_enabled, recaptcha_site_key }, callback, "update_email")}
-                onSuccess={handleSuccess} />
+                onSuccess={handleSuccess}
+                onError={onError}
+            />
         </div>
     )
 }

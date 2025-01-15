@@ -115,40 +115,40 @@ exports[`Snapshot social login basic 1`] = `
   text-align: center;
 }
 
-<div
-  className="c0 r5-social-login r5-widget-active"
->
+<div>
   <div
-    className="r5-social-buttons c1"
+    class="c0 r5-social-login r5-widget-active"
   >
-    <button
-      className="r5-btn-social r5-btn-social-facebook c2"
-      onClick={[Function]}
-      title="Facebook"
+    <div
+      class="r5-social-buttons c1"
     >
-      <span
-        className="r5-btn-social-icon c3"
-      />
-      <span
-        className="r5-btn-social-text"
+      <button
+        class="r5-btn-social r5-btn-social-facebook c2"
+        title="Facebook"
       >
-        Facebook
-      </span>
-    </button>
-    <button
-      className="r5-btn-social r5-btn-social-google c4"
-      onClick={[Function]}
-      title="Google"
-    >
-      <span
-        className="r5-btn-social-icon c3"
-      />
-      <span
-        className="r5-btn-social-text"
+        <span
+          class="r5-btn-social-icon c3"
+        />
+        <span
+          class="r5-btn-social-text"
+        >
+          Facebook
+        </span>
+      </button>
+      <button
+        class="r5-btn-social r5-btn-social-google c4"
+        title="Google"
       >
-        Google
-      </span>
-    </button>
+        <span
+          class="r5-btn-social-icon c3"
+        />
+        <span
+          class="r5-btn-social-text"
+        >
+          Google
+        </span>
+      </button>
+    </div>
   </div>
 </div>
 `;

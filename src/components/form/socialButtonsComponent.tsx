@@ -121,22 +121,30 @@ export interface SocialButtonsProps {
      */
     auth?: AuthOptions
     /**
-     * Classname
-     */
-    className?: string
-    /**
      * Lists the available social providers. This is an array of strings.
      * 
      * Tip: If you pass an empty array, social providers will not be displayed. 
      * */
     providers: string[]
+    /**
+     * Callback function called when the request has succeed.
+     */
+    onSuccess?: () => void
+    /**
+     * Callback function called when the request has failed.
+     */
+    onError?: (error?: unknown) => void
 }
 
-export const SocialButtons = styled(({ auth, providers, className }: SocialButtonsProps) => {
+export const SocialButtons = styled(({ auth, providers, className, onError = () => {}, onSuccess = () => {} }: SocialButtonsProps & { className?: string }) => {
     const coreClient = useReachfive()
 
     const clickHandler = useCallback(
-        (provider: string) => coreClient.loginWithSocialProvider(provider, auth),
+        (provider: string) => {
+            coreClient.loginWithSocialProvider(provider, auth)
+                .then(() => onSuccess())
+                .catch(onError)
+        },
         [coreClient, auth],
     )
 

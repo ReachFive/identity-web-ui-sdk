@@ -90,6 +90,14 @@ export interface LoginWithPasswordViewProps {
     recaptcha_site_key?: string
     showLabels?: boolean
     showRememberMe?: boolean
+    /**
+     * Callback function called when the request has succeed.
+     */
+    onSuccess?: () => void
+    /**
+     * Callback function called when the request has failed.
+     */
+    onError?: (error?: unknown) => void
 }
 
 export type LoginWithPasswordViewState = {
@@ -105,6 +113,8 @@ export const LoginWithPasswordView = ({
     recaptcha_site_key,
     showLabels,
     showRememberMe,
+    onError = () => {},
+    onSuccess = () => {},
 }: LoginWithPasswordViewProps) => {
     const i18n = useI18n()
     const coreClient = useReachfive()
@@ -139,6 +149,8 @@ export const LoginWithPasswordView = ({
                 showAccountRecovery={allowAccountRecovery}
                 canShowPassword={canShowPassword}
                 handler={(data: LoginWithPasswordFormData) => ReCaptcha.handle(data, { recaptcha_enabled, recaptcha_site_key }, callback, "login")}
+                onSuccess={onSuccess}
+                onError={onError}
             />
             <Alternative>
                 <Link target="login-with-web-authn">{i18n('login.password.userAnotherIdentifier')}</Link>
