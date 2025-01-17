@@ -37,6 +37,11 @@ const defaultConfig: Config = {
     mfaEmailEnabled: false,
     rbaEnabled: false,
     consentsVersions: {},
+    passwordPolicy: {
+        minLength: 8,
+        minStrength: 2,
+        allowUpdateWithAccessTokenOnly: true,
+    },
 };
 
 const defaultI18n: I18nMessages = {

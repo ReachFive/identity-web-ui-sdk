@@ -131,7 +131,7 @@ export function createForm<Model extends Record<PropertyKey, unknown> = {}, P = 
         }, [fieldValues])
 
         const handleFieldChange = <T,>(fieldName: keyof typeof fieldValues, stateUpdate: FieldValue<T>) => {
-            const currentState = fieldValues[fieldName];
+            const { validation: _, ...currentState } = fieldValues[fieldName];
             const newState = {
                 ...currentState,
                 // ...(typeof stateUpdate === 'function' ? stateUpdate(currentState) : stateUpdate)
@@ -210,7 +210,7 @@ export function createForm<Model extends Record<PropertyKey, unknown> = {}, P = 
         }
 
         const handleSuccess = (result: R) => {
-            onSuccess && onSuccess(result);
+            onSuccess?.(result);
 
             setIsLoading(!supportMultipleSubmits)
             setErrorMessage(undefined)
@@ -221,7 +221,7 @@ export function createForm<Model extends Record<PropertyKey, unknown> = {}, P = 
         };
 
         const handleError = (err: unknown) => {
-            onError && onError(err);
+            onError?.(err);
 
             if (isAppError(err) && !err.errorUserMsg) {
                 if (err.errorDescription) {
