@@ -177,14 +177,18 @@ export function createForm<Model extends Record<PropertyKey, unknown> = {}, P = 
         }
 
         const handleFieldValidation = useCallback(
-            (fieldName: keyof typeof fieldValues) => {
-                const currentState = fieldValues[fieldName];
-                const validation = validateField(fieldByKey[fieldName], currentState, { isSubmitted: false, fields: fieldValues });
+            <T,>(fieldName: keyof typeof fieldValues, stateUpdate: FieldValue<T>) => {
+                const { validation: _, ...currentState } = fieldValues[fieldName];
+                const newState = {
+                    ...currentState,
+                    ...stateUpdate
+                } satisfies FieldValue<T>
+                const validation = validateField(fieldByKey[fieldName], newState, { isSubmitted: false, fields: fieldValues });
 
                 const newFieldValues = {
                     ...fieldValues,
                     [fieldName]: {
-                        ...currentState,
+                        ...newState,
                         validation
                     } satisfies typeof currentState
                 }

@@ -187,7 +187,7 @@ describe('DOM testing', () => {
     })
 
     test('with custom validation', async () => {
-        const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime })
+        const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTimeAsync })
 
         const key = 'date'
         const label = 'date'
