@@ -219,12 +219,14 @@ describe('DOM testing', () => {
         const dayInput = screen.getByTestId('date.day')
 
         const tenYearsOld = DateTime.now().minus(Duration.fromObject({ year: 10 }))
+        await user.clear(yearInput)
         await user.type(yearInput, String(tenYearsOld.year))
-        await user.selectOptions(monthInput, String(tenYearsOld.month))
-        await user.selectOptions(dayInput, String(tenYearsOld.day))
 
         // handle year debounced value
         await waitFor(() => new Promise(resolve => setTimeout(resolve, yearDebounce * 2)))
+
+        await user.selectOptions(monthInput, String(tenYearsOld.month))
+        await user.selectOptions(dayInput, String(tenYearsOld.day))
 
         await waitFor(() => expect(onFieldChange).toHaveBeenLastCalledWith(
             expect.objectContaining({
@@ -258,7 +260,7 @@ describe('DOM testing', () => {
                     value: eighteenYearsOld.startOf('day'),
                 })
             })
-        ))
+        ), { timeout: yearDebounce * 2 })
 
         await waitFor(() => {
             const formError = screen.queryByTestId('form-error')
