@@ -10,9 +10,8 @@ import { useI18n } from '../../contexts/i18n';
 import { useReachfive } from '../../contexts/reachfive';
 import { useRouting } from '../../contexts/routing';
 
-import { ErrorMessage } from '../../components/error';
 import { Card, CloseIcon } from '../../components/form/cardComponent';
-import { Link, Info, Alternative, MutedText } from '../../components/miscComponent';
+import { ErrorText, Link, Info, Alternative, MutedText } from '../../components/miscComponent';
 import { createMultiViewWidget } from '../../components/widget/widget';
 import { SocialButtons } from '../../components/form/socialButtonsComponent';
 import { DefaultButton } from '../../components/form/buttonComponent';
@@ -128,7 +127,7 @@ const IdentityList = ({ identities = [], unlink }: IdentityListProps) => {
             {identities.length === 0 && (
                 <Info>{i18n('socialAccounts.noLinkedAccount')}</Info>
             )}
-            {error && <ErrorMessage style={{ marginBottom: '10px' }}>{error.message}</ErrorMessage>}
+            {error && <ErrorText style={{ marginBottom: '10px', textAlign: 'center' }}>{error.message}</ErrorText>}
             {identities.map(({ provider, id, username }) => {
                 const providerInfos = socialProviders[provider as ProviderId];
                 return (

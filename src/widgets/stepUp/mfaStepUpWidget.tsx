@@ -21,7 +21,7 @@ const StartStepUpMfaButton = createForm({
     submitLabel: 'mfa.stepUp.start',
 });
 
-interface VerificationCodeInputFormData {
+type VerificationCodeInputFormData = {
     verificationCode: string
 }
 
@@ -36,11 +36,11 @@ const VerificationCodeInputForm = createForm<VerificationCodeInputFormData>({
     ]
 });
 
-interface StartPasswordlessFormData {
+type StartPasswordlessFormData = {
     authType: PasswordlessParams['authType']
 }
 
-interface StartPasswordlessFormProps {
+type StartPasswordlessFormProps = {
     options: Parameters<typeof radioboxField>[0]['options']
 }
 
@@ -50,6 +50,7 @@ const StartPasswordlessForm = createForm<StartPasswordlessFormData, StartPasswor
         return [
             radioboxField({
                 key: 'authType',
+                label: 'authType',
                 options
             }),
         ]

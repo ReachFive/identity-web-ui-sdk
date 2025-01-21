@@ -78,14 +78,12 @@ describe('DOM testing', () => {
                     path: `consents.myconsent`, // Will target the same profile consent value for different versions of the consent
                     label,
                     type: 'opt-in',
-                    extendedParams: {
-                        version: {
-                            versionId: 1,
-                            language: defaultConfig.language
-                        },
-                        description: 'Lorem ipsum sit amet',
-                        consentCannotBeGranted: false
-                    }
+                    version: {
+                        versionId: 1,
+                        language: defaultConfig.language
+                    },
+                    description: 'Lorem ipsum sit amet',
+                    consentCannotBeGranted: false
                 })
             ],
         })
@@ -106,34 +104,32 @@ describe('DOM testing', () => {
             )
         })
 
-        const checkbox = screen.queryByLabelText(i18nResolver(label))
+        const checkbox = screen.getByLabelText(i18nResolver(label))
         expect(checkbox).not.toBeChecked()
 
         const description = screen.queryByTestId('consents.myconsent.1.description')
         expect(description).toBeInTheDocument()
-        // expect(description).toHaveTextContent('Lorem ipsum sit amet')
+        expect(description).toHaveTextContent('Lorem ipsum sit amet')
         
-        if (!checkbox) throw new Error('Input should be in document')
-
         await user.click(checkbox)
 
         expect(checkbox).toBeChecked()
 
-        expect(onFieldChange).toHaveBeenLastCalledWith(
+        await waitFor(() => expect(onFieldChange).toHaveBeenLastCalledWith(
             expect.objectContaining({
                 'consents.myconsent.1': expect.objectContaining({
                     isDirty: true,
                     value: true,
                 })
             })
-        )
+        ))
 
         const submitBtn = screen.getByRole('button')
-        user.click(submitBtn)
+        await user.click(submitBtn)
 
         await waitFor(() => expect(onSubmit).toHaveBeenCalled())
 
-        expect(onSubmit).toBeCalledWith(
+        await waitFor(() => expect(onSubmit).toBeCalledWith(
             expect.objectContaining({
                 consents: expect.objectContaining({
                     'myconsent': expect.objectContaining({
@@ -146,7 +142,7 @@ describe('DOM testing', () => {
                     })
                 })
             })
-        )
+        ))
     })
 
     test('initially checked', async () => {
@@ -164,14 +160,12 @@ describe('DOM testing', () => {
                     key: `consents.myconsent.1`,
                     path: `consents.myconsent`, // Will target the same profile consent value for different versions of the consent
                     type: 'opt-in',
-                    extendedParams: {
-                        version: {
-                            versionId: 1,
-                            language: defaultConfig.language
-                        },
-                        description: 'Lorem ipsum sit amet',
-                        consentCannotBeGranted: false,
+                    version: {
+                        versionId: 1,
+                        language: defaultConfig.language
                     },
+                    description: 'Lorem ipsum sit amet',
+                    consentCannotBeGranted: false,
                     defaultValue: true,
                 })
             ],
@@ -193,42 +187,40 @@ describe('DOM testing', () => {
             )
         })
 
-        const checkbox = screen.queryByLabelText(i18nResolver(label))
+        const checkbox = screen.getByLabelText(i18nResolver(label))
         expect(checkbox).toBeChecked()
         
-        if (!checkbox) throw new Error('Input should be in document')
-
         await user.click(checkbox)
 
         expect(checkbox).not.toBeChecked()
 
-        expect(onFieldChange).toHaveBeenLastCalledWith(
+        await waitFor(() => expect(onFieldChange).toHaveBeenLastCalledWith(
             expect.objectContaining({
                 'consents.myconsent.1': expect.objectContaining({
                     isDirty: true,
                     value: false,
                 })
             })
-        )
+        ))
 
         const submitBtn = screen.getByRole('button')
-        user.click(submitBtn)
+        await user.click(submitBtn)
 
         await waitFor(() => expect(onSubmit).toHaveBeenCalled())
 
-        expect(onSubmit).toBeCalledWith(
+        await waitFor(() => expect(onSubmit).toBeCalledWith(
             expect.objectContaining({
                 consents: expect.objectContaining({
                     'myconsent': expect.objectContaining({
                         consentType: 'opt-in',
-                        consentVersion: {
-                            language: "fr",
+                        consentVersion: expect.objectContaining({
+                            language: defaultConfig.language,
                             versionId: 1
-                        },
+                        }),
                         granted: false
                     })
                 })
             })
-        )
+        ))
     })
 })

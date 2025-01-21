@@ -143,15 +143,15 @@ exports[`Snapshot profile editor basic 1`] = `
       >
         <label
           class="c3"
-          for="given_name"
+          for="givenName"
         >
           givenName
         </label>
         <input
           class="c4"
-          data-testid="given_name"
-          id="given_name"
-          name="given_name"
+          data-testid="givenName"
+          id="givenName"
+          name="givenName"
           placeholder="givenName"
           required=""
           title="givenName"
@@ -164,15 +164,15 @@ exports[`Snapshot profile editor basic 1`] = `
       >
         <label
           class="c3"
-          for="family_name"
+          for="familyName"
         >
           familyName
         </label>
         <input
           class="c4"
-          data-testid="family_name"
-          id="family_name"
-          name="family_name"
+          data-testid="familyName"
+          id="familyName"
+          name="familyName"
           placeholder="familyName"
           required=""
           title="familyName"

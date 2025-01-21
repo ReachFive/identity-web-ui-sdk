@@ -73,7 +73,7 @@ describe('DOM testing', () => {
 
         const key = 'date'
         const label = 'date'
-        const yearDebounce = 100
+        const yearDebounce = 10
 
         const onFieldChange = jest.fn()
         const onSubmit = jest.fn<(data: Model) => Promise<Model>>(data => Promise.resolve(data))
@@ -103,37 +103,32 @@ describe('DOM testing', () => {
         const labelTag = screen.queryByText(i18nResolver(label))
         expect(labelTag).toBeInTheDocument()
 
-        const yearInput = screen.queryByTestId('date.year')
+        const yearInput = screen.getByTestId('date.year')
         expect(yearInput).toBeInTheDocument()
         expect(yearInput).toHaveAttribute('type', 'number')
         expect(yearInput).toHaveAttribute('inputMode', 'numeric')
         expect(yearInput).toHaveAttribute('aria-label', i18nResolver('year'))
         expect(yearInput).toHaveAttribute('placeholder', i18nResolver('year'))
         expect(yearInput).not.toHaveValue()
-        if (!yearInput) throw new Error('Year input should be in document')
         
-        const monthInput = screen.queryByTestId('date.month')
+        const monthInput = screen.getByTestId('date.month')
         expect(monthInput).toBeInTheDocument()
         expect(monthInput).toHaveAttribute('aria-label', i18nResolver('month'))
         expect(monthInput).not.toHaveValue()
-        if (!monthInput) throw new Error('Month input should be in document')
         const expectedMonthsOptions = ['', ...[...Array(12).keys()].map(value => String(value + 1))]
         expect(getAllByRole(monthInput, 'option').map(option => option.getAttribute('value'))).toEqual(
             expect.arrayContaining(expectedMonthsOptions)
         )
         
-        const dayInput = screen.queryByTestId('date.day')
+        const dayInput = screen.getByTestId('date.day')
         expect(dayInput).toBeInTheDocument()
         expect(dayInput).toHaveAttribute('aria-label', i18nResolver('day'))
         expect(dayInput).not.toHaveValue()
-        if (!dayInput) throw new Error('Day input should be in document')
         // default is based on current date
         const expectedDaysOptions = ['', ...[...Array(DateTime.now().month).keys()].map(value => String(value + 1))]
         expect(getAllByRole(dayInput, 'option').map(option => option.getAttribute('value'))).toEqual(
             expect.arrayContaining(expectedDaysOptions)
         )
-
-        if (!yearInput || !monthInput || !dayInput) throw new Error('Input should be in document')
 
         // fields should be ordered according to locale ([day|month|year] with "fr" locale)
         expect(yearInput.compareDocumentPosition(monthInput)).toEqual(Node.DOCUMENT_POSITION_PRECEDING)
@@ -158,21 +153,19 @@ describe('DOM testing', () => {
         await user.selectOptions(dayInput, String(day))
         
         // handle year debounced value
-        await waitFor(() => expect(onFieldChange).toHaveBeenCalled(), { timeout: yearDebounce })
+        await waitFor(() => new Promise(resolve => setTimeout(resolve, yearDebounce * 2)))
     
         expect(onFieldChange).toHaveBeenLastCalledWith(
             expect.objectContaining({
                 date: expect.objectContaining({
                     isDirty: true,
-                    value: expect.objectContaining({
-                        raw: DateTime.fromObject({ year, month, day })
-                    }),
+                    value: DateTime.fromObject({ year, month, day }),
                 })
             })
         )
 
         const submitBtn = screen.getByRole('button')
-        user.click(submitBtn)
+        await user.click(submitBtn)
 
         await waitFor(() => expect(onSubmit).toHaveBeenCalled())
 
@@ -189,10 +182,10 @@ describe('DOM testing', () => {
 
         const key = 'date'
         const label = 'date'
-        const yearDebounce = 100
+        const yearDebounce = 10
 
-        const validator = new Validator<{ raw: DateTime }>({
-            rule: (value) => value.raw.diffNow('years').as('years') <= -18,
+        const validator = new Validator<DateTime>({
+            rule: (value) => value.diffNow('years').as('years') <= -18,
             hint: 'age.minimun'
         })
 
@@ -221,53 +214,53 @@ describe('DOM testing', () => {
             )
         })
 
-        const yearInput = screen.queryByTestId('date.year')
-        const monthInput = screen.queryByTestId('date.month')
-        const dayInput = screen.queryByTestId('date.day')
-
-        if (!yearInput || !monthInput || !dayInput) throw new Error('Input should be in document')
+        const yearInput = screen.getByTestId('date.year')
+        const monthInput = screen.getByTestId('date.month')
+        const dayInput = screen.getByTestId('date.day')
 
         const tenYearsOld = DateTime.now().minus(Duration.fromObject({ year: 10 }))
+        await user.clear(yearInput)
         await user.type(yearInput, String(tenYearsOld.year))
-        await user.selectOptions(monthInput, String(tenYearsOld.month))
-        await user.selectOptions(dayInput, String(tenYearsOld.day))
 
         // handle year debounced value
-        await waitFor(() => {
-            const formError = screen.queryByTestId('form-error')
-            expect(formError).toBeInTheDocument()
-            expect(formError).toHaveTextContent('validation.age.minimun')
-        }, { timeout: yearDebounce })
+        await waitFor(() => new Promise(resolve => setTimeout(resolve, yearDebounce * 2)))
+
+        await user.selectOptions(monthInput, String(tenYearsOld.month))
+        await user.selectOptions(dayInput, String(tenYearsOld.day))
 
         await waitFor(() => expect(onFieldChange).toHaveBeenLastCalledWith(
             expect.objectContaining({
                 date: expect.objectContaining({
                     isDirty: true,
-                    value: expect.objectContaining({
-                        raw: tenYearsOld.startOf('day')
-                    }),
+                    value: tenYearsOld.startOf('day'),
+                    validation: {
+                        error: "validation.age.minimun"
+                    }
                 })
             })
         ))
 
         onFieldChange.mockClear()
 
+        const formError = await screen.findByTestId('form-error')
+        expect(formError).toBeInTheDocument()
+        expect(formError).toHaveTextContent('validation.age.minimun')
+
         const eighteenYearsOld = DateTime.now().minus(Duration.fromObject({ year: 18 }))
         await user.clear(yearInput)
         await user.type(yearInput, String(eighteenYearsOld.year))
-
-        await waitFor(() => expect(onFieldChange).toHaveBeenCalled(), { timeout: yearDebounce * 2 })
+        
+        // handle year debounced value
+        await waitFor(() => new Promise(resolve => setTimeout(resolve, yearDebounce * 2)))
 
         await waitFor(() => expect(onFieldChange).toHaveBeenLastCalledWith(
             expect.objectContaining({
                 date: expect.objectContaining({
                     isDirty: true,
-                    value: expect.objectContaining({
-                        raw: eighteenYearsOld.startOf('day')
-                    }),
+                    value: eighteenYearsOld.startOf('day'),
                 })
             })
-        ))
+        ), { timeout: yearDebounce * 2 })
 
         await waitFor(() => {
             const formError = screen.queryByTestId('form-error')

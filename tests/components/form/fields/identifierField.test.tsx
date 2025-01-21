@@ -70,6 +70,7 @@ describe('DOM testing', () => {
         const key = 'identifier'
         const label = 'identifier'
         const onFieldChange = jest.fn()
+        const onSubmit = jest.fn<(data: Model) => Promise<Model>>(data => Promise.resolve(data))
 
         const Form = createForm<Model>({
             fields: [
@@ -84,6 +85,7 @@ describe('DOM testing', () => {
                         <I18nProvider defaultMessages={defaultI18n}>
                             <Form
                                 fieldValidationDebounce={0} // trigger validation instantly
+                                handler={onSubmit}
                                 onFieldChange={onFieldChange}
                             />
                         </I18nProvider>
@@ -109,7 +111,7 @@ describe('DOM testing', () => {
                 identifier: expect.objectContaining({
                     value: expect.objectContaining({
                         type: 'email',
-                        raw: emailValue,
+                        value: emailValue,
                     })
                 })
             })
@@ -118,16 +120,16 @@ describe('DOM testing', () => {
         const phoneValue = '+33123456789'
         await user.clear(input)
         await user.type(input, phoneValue)
-        expect(input).toHaveValue(format(phoneValue, 'FR', 'INTERNATIONAL'))
+        expect(input).toHaveValue(phoneValue)
 
         expect(onFieldChange).toHaveBeenLastCalledWith(
             expect.objectContaining({
                 identifier: expect.objectContaining({
                     value: expect.objectContaining({
                         type: 'tel',
-                        country: undefined,
+                        country: 'FR',
                         formatted: format(phoneValue, 'FR', 'INTERNATIONAL'),
-                        raw: format(phoneValue, 'FR', 'INTERNATIONAL'),
+                        value: phoneValue,
                         isValid: true,
                     })
                 })
@@ -143,8 +145,8 @@ describe('DOM testing', () => {
             expect.objectContaining({
                 identifier: expect.objectContaining({
                     value: expect.objectContaining({
-                        raw: otherValue,
                         type: 'text',
+                        value: otherValue,
                     })
                 }) 
             })
@@ -157,6 +159,7 @@ describe('DOM testing', () => {
         const key = 'identifier'
         const label = 'identifier'
         const onFieldChange = jest.fn()
+        const onSubmit = jest.fn<(data: Model) => Promise<Model>>(data => Promise.resolve(data))
 
         const Form = createForm<Model>({
             fields: [
@@ -171,6 +174,7 @@ describe('DOM testing', () => {
                         <I18nProvider defaultMessages={defaultI18n}>
                             <Form
                                 fieldValidationDebounce={0} // trigger validation instantly
+                                handler={onSubmit}
                                 onFieldChange={onFieldChange}
                             />
                         </I18nProvider>
@@ -196,7 +200,7 @@ describe('DOM testing', () => {
                 identifier: expect.objectContaining({
                     value: expect.objectContaining({
                         type: 'email',
-                        raw: emailValue,
+                        value: emailValue,
                     })
                 })
             })
@@ -213,7 +217,7 @@ describe('DOM testing', () => {
                 identifier: expect.objectContaining({
                     value: expect.objectContaining({
                         type: 'text',
-                        raw: phoneValue,
+                        value: phoneValue,
                     })
                 })
             })
@@ -229,7 +233,7 @@ describe('DOM testing', () => {
                 identifier: expect.objectContaining({
                     value: expect.objectContaining({
                         type: 'text',
-                        raw: otherValue,
+                        value: otherValue,
                     })
                 })
             })
@@ -244,6 +248,7 @@ describe('DOM testing', () => {
         const defaultValue = 'alice@reach5.co'
 
         const onFieldChange = jest.fn()
+        const onSubmit = jest.fn<(data: Model) => Promise<Model>>(data => Promise.resolve(data))
 
         const Form = createForm<Model>({
             fields: [
@@ -258,6 +263,7 @@ describe('DOM testing', () => {
                         <I18nProvider defaultMessages={defaultI18n}>
                             <Form
                                 fieldValidationDebounce={0} // trigger validation instantly
+                                handler={onSubmit}
                                 onFieldChange={onFieldChange}
                             />
                         </I18nProvider>
@@ -276,16 +282,16 @@ describe('DOM testing', () => {
         const phoneValue = '+33123456789'
         await user.clear(input)
         await user.type(input, phoneValue)
-        expect(input).toHaveValue(format(phoneValue, 'FR', 'INTERNATIONAL'))
+        expect(input).toHaveValue(phoneValue)
 
         expect(onFieldChange).toHaveBeenLastCalledWith(
             expect.objectContaining({
                 identifier: expect.objectContaining({
                     value: expect.objectContaining({
                         type: 'tel',
-                        country: undefined,
+                        country: 'FR',
                         formatted: format(phoneValue, 'FR', 'INTERNATIONAL'),
-                        raw: format(phoneValue, 'FR', 'INTERNATIONAL'),
+                        value: phoneValue,
                         isValid: true,
                     })
                 })
@@ -302,7 +308,7 @@ describe('DOM testing', () => {
                 identifier: expect.objectContaining({
                     value: expect.objectContaining({
                         type: 'email',
-                        raw: emailValue,
+                        value: emailValue,
                     })
                 })
             })
@@ -318,7 +324,7 @@ describe('DOM testing', () => {
                 identifier: expect.objectContaining({
                     value: expect.objectContaining({
                         type: 'text',
-                        raw: otherValue,
+                        value: otherValue,
                     })
                 })
             })

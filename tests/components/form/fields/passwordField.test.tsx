@@ -4,7 +4,7 @@
 
 import React from 'react'
 import { describe, expect, jest, test } from '@jest/globals';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, queryByText } from '@testing-library/react';
 import userEvent from '@testing-library/user-event'
 import '@testing-library/jest-dom/jest-globals'
 import 'jest-styled-components';
@@ -19,7 +19,7 @@ import resolveI18n, { I18nMessages } from '../../../../src/core/i18n';
 import { buildTheme } from '../../../../src/core/theme';
 import { I18nProvider } from '../../../../src/contexts/i18n';
 import { ConfigProvider } from '../../../../src/contexts/config';
-// import { Validator } from '../../../../src/core/validation';
+import { Validator } from '../../../../src/core/validation';
 
 const defaultConfig: Config = {
     clientId: 'local',
@@ -71,6 +71,7 @@ describe('DOM testing', () => {
         const label = 'password'
 
         const onFieldChange = jest.fn()
+        const onSubmit = jest.fn<(data: Model) => Promise<Model>>(data => Promise.resolve(data))
 
         const Form = createForm<Model>({
             fields: [
@@ -84,8 +85,8 @@ describe('DOM testing', () => {
                     <ThemeProvider theme={theme}>
                         <I18nProvider defaultMessages={defaultI18n}>
                             <Form
-                                showLabels
                                 fieldValidationDebounce={0} // trigger validation instantly
+                                handler={onSubmit}
                                 onFieldChange={onFieldChange}
                             />
                         </I18nProvider>
@@ -94,15 +95,13 @@ describe('DOM testing', () => {
             )
         })
 
-        const input = screen.queryByLabelText(i18nResolver(label))
+        const input = screen.getByLabelText(i18nResolver(label))
         expect(input).toBeInTheDocument()
         expect(input).toHaveAttribute('id', key)
         expect(input).toHaveValue('')
 
         expect(screen.queryByTestId('password-strength')).not.toBeInTheDocument()
         expect(screen.queryByTestId('password-policy-rules')).not.toBeInTheDocument()
-
-        if (!input) throw new Error('Input should be in document')
 
         const showPasswordBtn = screen.queryByTestId('show-password-btn')
         expect(showPasswordBtn).not.toBeInTheDocument()
@@ -115,25 +114,24 @@ describe('DOM testing', () => {
 
         expect(screen.queryByTestId('password-strength')).toBeInTheDocument()
         expect(screen.queryByTestId('password-policy-rules')).toBeInTheDocument()
-        
-        expect(onFieldChange).toHaveBeenLastCalledWith(
+
+        await waitFor(() => expect(onFieldChange).toHaveBeenLastCalledWith(
             expect.objectContaining({
                 password: expect.objectContaining({
                     isDirty: false,
-                    isTouched: true,
                     strength: getPasswordStrength([], invalidPassword),
                     value: invalidPassword,
-                    // validation: expect.objectContaining({
-                    //     error: "validation.password.minStrength"
-                    // })
+                    validation: expect.objectContaining({
+                        error: "validation.password.minStrength"
+                    })
                 })
             })
-        )
+        ))
 
-        // expect(screen.queryAllByTestId('error').length).toBeGreaterThan(0)
-        // screen.queryAllByTestId('error').some((error) => {
-        //     queryByText(error, 'validation.password.minStrength')
-        // })
+        expect(screen.queryAllByTestId('error').length).toBeGreaterThan(0)
+        screen.queryAllByTestId('error').some((error) => {
+            queryByText(error, 'validation.password.minStrength')
+        })
 
         const validPassword = 'Wond3rFu11_Pa55w0rD*$'
         await user.clear(input)
@@ -141,8 +139,8 @@ describe('DOM testing', () => {
 
         expect(screen.queryByTestId('password-strength')).toBeInTheDocument()
         expect(screen.queryByTestId('password-policy-rules')).toBeInTheDocument()
-        
-        expect(onFieldChange).toHaveBeenLastCalledWith(
+
+        await waitFor(() => expect(onFieldChange).toHaveBeenLastCalledWith(
             expect.objectContaining({
                 password: expect.objectContaining({
                     isDirty: false,
@@ -151,7 +149,7 @@ describe('DOM testing', () => {
                     validation: {}
                 })
             })
-        )
+        ))
 
         expect(screen.queryByTestId('error')).not.toBeInTheDocument()
     })
@@ -163,6 +161,7 @@ describe('DOM testing', () => {
         const label = 'password'
 
         const onFieldChange = jest.fn()
+        const onSubmit = jest.fn<(data: Model) => Promise<Model>>(data => Promise.resolve(data))
 
         const Form = createForm<Model>({
             fields: [
@@ -177,6 +176,7 @@ describe('DOM testing', () => {
                         <I18nProvider defaultMessages={defaultI18n}>
                             <Form
                                 fieldValidationDebounce={0} // trigger validation instantly
+                                handler={onSubmit}
                                 onFieldChange={onFieldChange}
                             />
                         </I18nProvider>
@@ -185,94 +185,88 @@ describe('DOM testing', () => {
             )
         })
 
-        const input = screen.queryByLabelText(i18nResolver(label))
+        const input = screen.getByLabelText(i18nResolver(label))
         expect(input).toBeInTheDocument()
-
-        if (!input) throw new Error('Input should be in document')
 
         expect(input).toHaveAttribute('type', 'password')
 
-        const showPasswordBtn = screen.queryByTestId('show-password-btn')
+        const showPasswordBtn = screen.getByTestId('show-password-btn')
         expect(showPasswordBtn).toBeInTheDocument()
-
-        if (!showPasswordBtn) throw new Error('Show button should be in document')
 
         await user.click(showPasswordBtn)
 
         expect(input).toHaveAttribute('type', 'text')
 
-        const hidePasswordBtn = screen.queryByTestId('hide-password-btn')
+        const hidePasswordBtn = screen.getByTestId('hide-password-btn')
         expect(hidePasswordBtn).toBeInTheDocument()
 
-        if (!hidePasswordBtn) throw new Error('Hide button should be in document')
-
         await user.click(hidePasswordBtn)
-        
+
         expect(input).toHaveAttribute('type', 'password')
     })
 
-    // test('extends validators', async () => {
-    //     const passwordMatchValidator = (matchText: string) => new Validator<string>({
-    //         rule: value => value === matchText,
-    //         hint: 'password.match'
-    //     })
+    test('extends validators', async () => {
+        const passwordMatchValidator = (matchText: string) => new Validator<string>({
+            rule: value => value === matchText,
+            hint: 'password.match'
+        })
 
-    //     const user = userEvent.setup()
+        const user = userEvent.setup()
 
-    //     const key = 'password'
-    //     const label = 'password'
-    //     const matchPassword = '1L0v38anana5'
+        const key = 'password'
+        const label = 'password'
+        const matchPassword = '1L0v38anana5'
 
-    //     const onFieldChange = jest.fn()
+        const onFieldChange = jest.fn()
+        const onSubmit = jest.fn<(data: Model) => Promise<Model>>(data => Promise.resolve(data))
 
-    //     const Form = createForm<Model>({
-    //         fields: [
-    //             passwordField({
-    //                 key,
-    //                 label,
-    //                 validator: passwordMatchValidator(matchPassword)
-    //             }, defaultConfig)
-    //         ],
-    //     })
+        const Form = createForm<Model>({
+            fields: [
+                passwordField({
+                    key,
+                    label,
+                    validator: passwordMatchValidator(matchPassword)
+                }, defaultConfig)
+            ],
+        })
 
-    //     await waitFor(async () => {   
-    //         return render(
-    //             <ConfigProvider config={defaultConfig}>
-    //                 <ThemeProvider theme={theme}>
-    //                     <I18nProvider defaultMessages={defaultI18n}>
-    //                         <Form
-    //                             fieldValidationDebounce={0} // trigger validation instantly
-    //                             onFieldChange={onFieldChange}
-    //                         />
-    //                     </I18nProvider>
-    //                 </ThemeProvider>
-    //             </ConfigProvider>
-    //         )
-    //     })
+        await waitFor(async () => {   
+            return render(
+                <ConfigProvider config={defaultConfig}>
+                    <ThemeProvider theme={theme}>
+                        <I18nProvider defaultMessages={defaultI18n}>
+                            <Form
+                                fieldValidationDebounce={0} // trigger validation instantly
+                                onFieldChange={onFieldChange}
+                                handler={onSubmit}
+                            />
+                        </I18nProvider>
+                    </ThemeProvider>
+                </ConfigProvider>
+            )
+        })
 
-    //     const input = screen.queryByLabelText(i18nResolver(label))
-    //     expect(input).toBeInTheDocument()
+        const input = screen.getByLabelText(i18nResolver(label))
+        expect(input).toBeInTheDocument()
 
-    //     expect(screen.queryByTestId('password-strength')).not.toBeInTheDocument()
-    //     expect(screen.queryByTestId('password-policy-rules')).not.toBeInTheDocument()
+        expect(screen.queryByTestId('password-strength')).not.toBeInTheDocument()
+        expect(screen.queryByTestId('password-policy-rules')).not.toBeInTheDocument()
 
-    //     if (!input) throw new Error('Input should be in document')
+        const invalidPassword = 'ILoveApples'
+        await user.clear(input)
+        await user.type(input, invalidPassword)
 
-    //     const invalidPassword = 'ILoveApples'
-    //     await user.clear(input)
-    //     await user.type(input, invalidPassword)
-
-    //     expect(onFieldChange).toHaveBeenLastCalledWith(
-    //         expect.objectContaining({
-    //             password: expect.objectContaining({
-    //                 isDirty: false,
-    //                 strength: getPasswordStrength([], invalidPassword),
-    //                 value: invalidPassword,
-    //                 validation: expect.objectContaining({
-    //                     error: "validation.password.match"
-    //                 })
-    //             })
-    //         })
-    //     )
-    // })
+        await waitFor(() => expect(onFieldChange).toHaveBeenLastCalledWith(
+            expect.objectContaining({
+                password: expect.objectContaining({
+                    isDirty: false,
+                    strength: getPasswordStrength([], invalidPassword),
+                    value: invalidPassword,
+                    validation: expect.objectContaining({
+                        error: "validation.password.match"
+                    })
+                })
+            })
+        ))
+    })
 })

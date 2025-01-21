@@ -17,6 +17,8 @@ const RoundCheckbox = styled(({ className, ...props }: RoundCheckboxProps) =>
         <label />
     </div>
 )`
+    display: flex;
+    align-items: center;
     position: relative;
 
     > label {
@@ -65,7 +67,10 @@ const RoundCheckbox = styled(({ className, ...props }: RoundCheckboxProps) =>
 const PasswordPolicyRule = styled.div`
     display: flex;
     align-items: center;
+<<<<<<< HEAD
+=======
     gap: ${props => props.theme.spacing}px;
+>>>>>>> master
     margin-bottom: 2px;
 `;
 

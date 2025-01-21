@@ -17,6 +17,9 @@ import type { Theme } from '../../../../src/types/styled'
 import phoneNumberField from '../../../../src/components/form/fields/phoneNumberField'
 import resolveI18n, { I18nMessages } from '../../../../src/core/i18n';
 import { buildTheme } from '../../../../src/core/theme';
+import { createForm } from '../../../../src/components/form/formComponent';
+import { ConfigProvider } from '../../../../src/contexts/config';
+import { I18nProvider } from '../../../../src/contexts/i18n';
 
 const defaultConfig: Config = {
     clientId: 'local',
@@ -33,7 +36,12 @@ const defaultConfig: Config = {
     mfaSmsEnabled: false,
     mfaEmailEnabled: false,
     rbaEnabled: false,
-    consentsVersions: {}
+    consentsVersions: {},
+    passwordPolicy: {
+        minLength: 8,
+        minStrength: 2,
+        allowUpdateWithAccessTokenOnly: true,
+    }
 };
 
 const defaultI18n: I18nMessages = {
@@ -65,6 +73,8 @@ const queryByName = (renderResult: RenderResult, name: Matcher) => {
     return element
 }
 
+type Model = { phoneNumber: string }
+
 describe('DOM testing', () => {
     test('with country select', async () => {
         const user = userEvent.setup()
@@ -73,40 +83,35 @@ describe('DOM testing', () => {
         const initialValue = '+33123456789'
         const key = 'phone_number'
         const label = 'phone'
-        const onChange = jest.fn()
+        
+        const onFieldChange = jest.fn()
+        const onSubmit = jest.fn<(data: Model) => Promise<Model>>(data => Promise.resolve(data))
 
-        const renderResult = await waitFor(async () => {
-            const Field = phoneNumberField(
-                {
-                    country,
-                    i18n: i18nResolver,
+        const Form = createForm<Model>({
+            fields: [
+                phoneNumberField({
                     key,
                     label,
-                },
-                defaultConfig
-            )
-                .create({
-                    i18n: i18nResolver,
-                    showLabel: true
-                })
-                .render({
                     country,
-                    i18n: i18nResolver,
-                    inputId: key,
-                    key,
-                    label: i18nResolver(label),
-                    onChange,
-                    path: key,
-                    state: {
-                        value: initialValue as Value
-                    },
-                    withCountrySelect: true,
-                })
-            
+                    defaultValue: initialValue as Value,
+                    withCountrySelect: true
+                }, defaultConfig)
+            ],
+        })
+
+        const renderResult = await waitFor(async () => {   
             return render(
-                <ThemeProvider theme={theme}>
-                    {Field}
-                </ThemeProvider>
+                <ConfigProvider config={defaultConfig}>
+                    <ThemeProvider theme={theme}>
+                        <I18nProvider defaultMessages={defaultI18n}>
+                            <Form
+                                fieldValidationDebounce={0} // trigger validation instantly
+                                onFieldChange={onFieldChange}
+                                handler={onSubmit}
+                            />
+                        </I18nProvider>
+                    </ThemeProvider>
+                </ConfigProvider>
             )
         })
 
@@ -127,8 +132,23 @@ describe('DOM testing', () => {
         expect(input).toHaveValue(formatPhoneNumberIntl(newValue))
         expect(countrySelect).toHaveValue('US')
 
-        expect(onChange).toHaveBeenLastCalledWith({
-            value: newValue,
-        });
+        expect(onFieldChange).toHaveBeenLastCalledWith(
+            expect.objectContaining({
+                phone_number: expect.objectContaining({
+                    value: newValue,
+                })
+            })
+        );
+
+        const submitBtn = screen.getByRole('button')
+        await user.click(submitBtn)
+
+        await waitFor(() => expect(onSubmit).toHaveBeenCalled())
+
+        expect(onSubmit).toBeCalledWith(
+            expect.objectContaining({
+                phoneNumber: newValue
+            })
+        )
     })
 })

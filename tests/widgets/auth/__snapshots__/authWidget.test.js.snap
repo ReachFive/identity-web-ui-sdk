@@ -528,7 +528,7 @@ exports[`Snapshot login view default 1`] = `
       className="r5-social-buttons c2"
     >
       <button
-        className="r5-btn-social r5-btn-social-facebook c3"
+        className="c3 r5-btn-social r5-btn-social-facebook"
         onClick={[Function]}
         title="Facebook"
       >
@@ -542,7 +542,7 @@ exports[`Snapshot login view default 1`] = `
         </span>
       </button>
       <button
-        className="r5-btn-social r5-btn-social-google c5"
+        className="c5 r5-btn-social r5-btn-social-google"
         onClick={[Function]}
         title="Google"
       >
@@ -978,7 +978,7 @@ exports[`Snapshot login view inline social buttons 1`] = `
       className="r5-social-buttons c2"
     >
       <button
-        className="r5-btn-social r5-btn-social-facebook c3"
+        className="c3 r5-btn-social r5-btn-social-facebook"
         onClick={[Function]}
         title="Facebook"
       >
@@ -987,7 +987,7 @@ exports[`Snapshot login view inline social buttons 1`] = `
         />
       </button>
       <button
-        className="r5-btn-social r5-btn-social-google c5"
+        className="c5 r5-btn-social r5-btn-social-google"
         onClick={[Function]}
         title="Google"
       >
@@ -1407,7 +1407,7 @@ exports[`Snapshot login view no forgot password 1`] = `
       className="r5-social-buttons c2"
     >
       <button
-        className="r5-btn-social r5-btn-social-facebook c3"
+        className="c3 r5-btn-social r5-btn-social-facebook"
         onClick={[Function]}
         title="Facebook"
       >
@@ -1421,7 +1421,7 @@ exports[`Snapshot login view no forgot password 1`] = `
         </span>
       </button>
       <button
-        className="r5-btn-social r5-btn-social-google c5"
+        className="c5 r5-btn-social r5-btn-social-google"
         onClick={[Function]}
         title="Google"
       >
@@ -1834,7 +1834,7 @@ exports[`Snapshot login view no signup 1`] = `
       className="r5-social-buttons c2"
     >
       <button
-        className="r5-btn-social r5-btn-social-facebook c3"
+        className="c3 r5-btn-social r5-btn-social-facebook"
         onClick={[Function]}
         title="Facebook"
       >
@@ -1848,7 +1848,7 @@ exports[`Snapshot login view no signup 1`] = `
         </span>
       </button>
       <button
-        className="r5-btn-social r5-btn-social-google c5"
+        className="c5 r5-btn-social r5-btn-social-google"
         onClick={[Function]}
         title="Google"
       >
@@ -2274,7 +2274,7 @@ exports[`Snapshot login view with canShowPassword 1`] = `
       className="r5-social-buttons c2"
     >
       <button
-        className="r5-btn-social r5-btn-social-facebook c3"
+        className="c3 r5-btn-social r5-btn-social-facebook"
         onClick={[Function]}
         title="Facebook"
       >
@@ -2288,7 +2288,7 @@ exports[`Snapshot login view with canShowPassword 1`] = `
         </span>
       </button>
       <button
-        className="r5-btn-social r5-btn-social-google c5"
+        className="c5 r5-btn-social r5-btn-social-google"
         onClick={[Function]}
         title="Google"
       >
@@ -2743,7 +2743,7 @@ exports[`Snapshot login view with remember me 1`] = `
       className="r5-social-buttons c2"
     >
       <button
-        className="r5-btn-social r5-btn-social-facebook c3"
+        className="c3 r5-btn-social r5-btn-social-facebook"
         onClick={[Function]}
         title="Facebook"
       >
@@ -2757,7 +2757,7 @@ exports[`Snapshot login view with remember me 1`] = `
         </span>
       </button>
       <button
-        className="r5-btn-social r5-btn-social-google c5"
+        className="c5 r5-btn-social r5-btn-social-google"
         onClick={[Function]}
         title="Google"
       >
@@ -3199,7 +3199,7 @@ exports[`Snapshot signup view default 1`] = `
       className="r5-social-buttons c2"
     >
       <button
-        className="r5-btn-social r5-btn-social-facebook c3"
+        className="c3 r5-btn-social r5-btn-social-facebook"
         onClick={[Function]}
         title="Facebook"
       >
@@ -3213,7 +3213,7 @@ exports[`Snapshot signup view default 1`] = `
         </span>
       </button>
       <button
-        className="r5-btn-social r5-btn-social-google c5"
+        className="c5 r5-btn-social r5-btn-social-google"
         onClick={[Function]}
         title="Google"
       >
@@ -3245,15 +3245,15 @@ exports[`Snapshot signup view default 1`] = `
       >
         <label
           className="c9"
-          htmlFor="given_name"
+          htmlFor="givenName"
         >
           givenName
         </label>
         <input
           className="c10"
-          data-testid="given_name"
-          id="given_name"
-          name="given_name"
+          data-testid="givenName"
+          id="givenName"
+          name="givenName"
           onBlur={[Function]}
           onChange={[Function]}
           placeholder="givenName"
@@ -3269,15 +3269,15 @@ exports[`Snapshot signup view default 1`] = `
       >
         <label
           className="c9"
-          htmlFor="family_name"
+          htmlFor="familyName"
         >
           familyName
         </label>
         <input
           className="c10"
-          data-testid="family_name"
-          id="family_name"
-          name="family_name"
+          data-testid="familyName"
+          id="familyName"
+          name="familyName"
           onBlur={[Function]}
           onChange={[Function]}
           placeholder="familyName"
@@ -3351,7 +3351,7 @@ exports[`Snapshot signup view default 1`] = `
       >
         <label
           className="c9"
-          htmlFor="password_confirmation"
+          htmlFor="passwordConfirmation"
         >
           passwordConfirmation
         </label>
@@ -3364,9 +3364,9 @@ exports[`Snapshot signup view default 1`] = `
         >
           <input
             className="c10"
-            data-testid="password_confirmation"
-            id="password_confirmation"
-            name="password_confirmation"
+            data-testid="passwordConfirmation"
+            id="passwordConfirmation"
+            name="passwordConfirmation"
             onBlur={[Function]}
             onChange={[Function]}
             placeholder="passwordConfirmation"
@@ -3712,7 +3712,7 @@ exports[`Snapshot signup view inline social buttons 1`] = `
       className="r5-social-buttons c2"
     >
       <button
-        className="r5-btn-social r5-btn-social-facebook c3"
+        className="c3 r5-btn-social r5-btn-social-facebook"
         onClick={[Function]}
         title="Facebook"
       >
@@ -3721,7 +3721,7 @@ exports[`Snapshot signup view inline social buttons 1`] = `
         />
       </button>
       <button
-        className="r5-btn-social r5-btn-social-google c5"
+        className="c5 r5-btn-social r5-btn-social-google"
         onClick={[Function]}
         title="Google"
       >
@@ -3748,15 +3748,15 @@ exports[`Snapshot signup view inline social buttons 1`] = `
       >
         <label
           className="c9"
-          htmlFor="given_name"
+          htmlFor="givenName"
         >
           givenName
         </label>
         <input
           className="c10"
-          data-testid="given_name"
-          id="given_name"
-          name="given_name"
+          data-testid="givenName"
+          id="givenName"
+          name="givenName"
           onBlur={[Function]}
           onChange={[Function]}
           placeholder="givenName"
@@ -3772,15 +3772,15 @@ exports[`Snapshot signup view inline social buttons 1`] = `
       >
         <label
           className="c9"
-          htmlFor="family_name"
+          htmlFor="familyName"
         >
           familyName
         </label>
         <input
           className="c10"
-          data-testid="family_name"
-          id="family_name"
-          name="family_name"
+          data-testid="familyName"
+          id="familyName"
+          name="familyName"
           onBlur={[Function]}
           onChange={[Function]}
           placeholder="familyName"
@@ -3854,7 +3854,7 @@ exports[`Snapshot signup view inline social buttons 1`] = `
       >
         <label
           className="c9"
-          htmlFor="password_confirmation"
+          htmlFor="passwordConfirmation"
         >
           passwordConfirmation
         </label>
@@ -3867,9 +3867,9 @@ exports[`Snapshot signup view inline social buttons 1`] = `
         >
           <input
             className="c10"
-            data-testid="password_confirmation"
-            id="password_confirmation"
-            name="password_confirmation"
+            data-testid="passwordConfirmation"
+            id="passwordConfirmation"
+            name="passwordConfirmation"
             onBlur={[Function]}
             onChange={[Function]}
             placeholder="passwordConfirmation"
@@ -4191,7 +4191,7 @@ exports[`Snapshot signup view no login 1`] = `
       className="r5-social-buttons c2"
     >
       <button
-        className="r5-btn-social r5-btn-social-facebook c3"
+        className="c3 r5-btn-social r5-btn-social-facebook"
         onClick={[Function]}
         title="Facebook"
       >
@@ -4205,7 +4205,7 @@ exports[`Snapshot signup view no login 1`] = `
         </span>
       </button>
       <button
-        className="r5-btn-social r5-btn-social-google c5"
+        className="c5 r5-btn-social r5-btn-social-google"
         onClick={[Function]}
         title="Google"
       >
@@ -4237,15 +4237,15 @@ exports[`Snapshot signup view no login 1`] = `
       >
         <label
           className="c9"
-          htmlFor="given_name"
+          htmlFor="givenName"
         >
           givenName
         </label>
         <input
           className="c10"
-          data-testid="given_name"
-          id="given_name"
-          name="given_name"
+          data-testid="givenName"
+          id="givenName"
+          name="givenName"
           onBlur={[Function]}
           onChange={[Function]}
           placeholder="givenName"
@@ -4261,15 +4261,15 @@ exports[`Snapshot signup view no login 1`] = `
       >
         <label
           className="c9"
-          htmlFor="family_name"
+          htmlFor="familyName"
         >
           familyName
         </label>
         <input
           className="c10"
-          data-testid="family_name"
-          id="family_name"
-          name="family_name"
+          data-testid="familyName"
+          id="familyName"
+          name="familyName"
           onBlur={[Function]}
           onChange={[Function]}
           placeholder="familyName"
@@ -4343,7 +4343,7 @@ exports[`Snapshot signup view no login 1`] = `
       >
         <label
           className="c9"
-          htmlFor="password_confirmation"
+          htmlFor="passwordConfirmation"
         >
           passwordConfirmation
         </label>
@@ -4356,9 +4356,9 @@ exports[`Snapshot signup view no login 1`] = `
         >
           <input
             className="c10"
-            data-testid="password_confirmation"
-            id="password_confirmation"
-            name="password_confirmation"
+            data-testid="passwordConfirmation"
+            id="passwordConfirmation"
+            name="passwordConfirmation"
             onBlur={[Function]}
             onChange={[Function]}
             placeholder="passwordConfirmation"
@@ -4690,7 +4690,7 @@ exports[`Snapshot signup view show labels 1`] = `
       className="r5-social-buttons c2"
     >
       <button
-        className="r5-btn-social r5-btn-social-facebook c3"
+        className="c3 r5-btn-social r5-btn-social-facebook"
         onClick={[Function]}
         title="Facebook"
       >
@@ -4704,7 +4704,7 @@ exports[`Snapshot signup view show labels 1`] = `
         </span>
       </button>
       <button
-        className="r5-btn-social r5-btn-social-google c5"
+        className="c5 r5-btn-social r5-btn-social-google"
         onClick={[Function]}
         title="Google"
       >
@@ -4736,15 +4736,15 @@ exports[`Snapshot signup view show labels 1`] = `
       >
         <label
           className="c9"
-          htmlFor="given_name"
+          htmlFor="givenName"
         >
           givenName
         </label>
         <input
           className="c10"
-          data-testid="given_name"
-          id="given_name"
-          name="given_name"
+          data-testid="givenName"
+          id="givenName"
+          name="givenName"
           onBlur={[Function]}
           onChange={[Function]}
           placeholder="givenName"
@@ -4760,15 +4760,15 @@ exports[`Snapshot signup view show labels 1`] = `
       >
         <label
           className="c9"
-          htmlFor="family_name"
+          htmlFor="familyName"
         >
           familyName
         </label>
         <input
           className="c10"
-          data-testid="family_name"
-          id="family_name"
-          name="family_name"
+          data-testid="familyName"
+          id="familyName"
+          name="familyName"
           onBlur={[Function]}
           onChange={[Function]}
           placeholder="familyName"
@@ -4842,7 +4842,7 @@ exports[`Snapshot signup view show labels 1`] = `
       >
         <label
           className="c9"
-          htmlFor="password_confirmation"
+          htmlFor="passwordConfirmation"
         >
           passwordConfirmation
         </label>
@@ -4855,9 +4855,9 @@ exports[`Snapshot signup view show labels 1`] = `
         >
           <input
             className="c10"
-            data-testid="password_confirmation"
-            id="password_confirmation"
-            name="password_confirmation"
+            data-testid="passwordConfirmation"
+            id="passwordConfirmation"
+            name="passwordConfirmation"
             onBlur={[Function]}
             onChange={[Function]}
             placeholder="passwordConfirmation"
@@ -5234,7 +5234,7 @@ exports[`Snapshot signup view with consents 1`] = `
       className="r5-social-buttons c2"
     >
       <button
-        className="r5-btn-social r5-btn-social-facebook c3"
+        className="c3 r5-btn-social r5-btn-social-facebook"
         onClick={[Function]}
         title="Facebook"
       >
@@ -5248,7 +5248,7 @@ exports[`Snapshot signup view with consents 1`] = `
         </span>
       </button>
       <button
-        className="r5-btn-social r5-btn-social-google c5"
+        className="c5 r5-btn-social r5-btn-social-google"
         onClick={[Function]}
         title="Google"
       >
@@ -5347,6 +5347,7 @@ exports[`Snapshot signup view with consents 1`] = `
           >
             <input
               checked={false}
+              data-testid="consents.aConsent.1"
               name="consents.aConsent.1"
               onChange={[Function]}
               required={false}
@@ -5714,7 +5715,7 @@ exports[`Snapshot signup view with custom fields 1`] = `
       className="r5-social-buttons c2"
     >
       <button
-        className="r5-btn-social r5-btn-social-facebook c3"
+        className="c3 r5-btn-social r5-btn-social-facebook"
         onClick={[Function]}
         title="Facebook"
       >
@@ -5728,7 +5729,7 @@ exports[`Snapshot signup view with custom fields 1`] = `
         </span>
       </button>
       <button
-        className="r5-btn-social r5-btn-social-google c5"
+        className="c5 r5-btn-social r5-btn-social-google"
         onClick={[Function]}
         title="Google"
       >
@@ -6189,7 +6190,7 @@ exports[`Snapshot signup view with mandatory consents 1`] = `
       className="r5-social-buttons c2"
     >
       <button
-        className="r5-btn-social r5-btn-social-facebook c3"
+        className="c3 r5-btn-social r5-btn-social-facebook"
         onClick={[Function]}
         title="Facebook"
       >
@@ -6203,7 +6204,7 @@ exports[`Snapshot signup view with mandatory consents 1`] = `
         </span>
       </button>
       <button
-        className="r5-btn-social r5-btn-social-google c5"
+        className="c5 r5-btn-social r5-btn-social-google"
         onClick={[Function]}
         title="Google"
       >
@@ -6302,6 +6303,7 @@ exports[`Snapshot signup view with mandatory consents 1`] = `
           >
             <input
               checked={false}
+              data-testid="consents.aConsent.1"
               name="consents.aConsent.1"
               onChange={[Function]}
               required={true}
@@ -6672,7 +6674,7 @@ exports[`Snapshot signup view with user agreement 1`] = `
       className="r5-social-buttons c2"
     >
       <button
-        className="r5-btn-social r5-btn-social-facebook c3"
+        className="c3 r5-btn-social r5-btn-social-facebook"
         onClick={[Function]}
         title="Facebook"
       >
@@ -6686,7 +6688,7 @@ exports[`Snapshot signup view with user agreement 1`] = `
         </span>
       </button>
       <button
-        className="r5-btn-social r5-btn-social-google c5"
+        className="c5 r5-btn-social r5-btn-social-google"
         onClick={[Function]}
         title="Google"
       >
@@ -6718,15 +6720,15 @@ exports[`Snapshot signup view with user agreement 1`] = `
       >
         <label
           className="c9"
-          htmlFor="given_name"
+          htmlFor="givenName"
         >
           givenName
         </label>
         <input
           className="c10"
-          data-testid="given_name"
-          id="given_name"
-          name="given_name"
+          data-testid="givenName"
+          id="givenName"
+          name="givenName"
           onBlur={[Function]}
           onChange={[Function]}
           placeholder="givenName"
@@ -6742,15 +6744,15 @@ exports[`Snapshot signup view with user agreement 1`] = `
       >
         <label
           className="c9"
-          htmlFor="family_name"
+          htmlFor="familyName"
         >
           familyName
         </label>
         <input
           className="c10"
-          data-testid="family_name"
-          id="family_name"
-          name="family_name"
+          data-testid="familyName"
+          id="familyName"
+          name="familyName"
           onBlur={[Function]}
           onChange={[Function]}
           placeholder="familyName"
@@ -6824,7 +6826,7 @@ exports[`Snapshot signup view with user agreement 1`] = `
       >
         <label
           className="c9"
-          htmlFor="password_confirmation"
+          htmlFor="passwordConfirmation"
         >
           passwordConfirmation
         </label>
@@ -6837,9 +6839,9 @@ exports[`Snapshot signup view with user agreement 1`] = `
         >
           <input
             className="c10"
-            data-testid="password_confirmation"
-            id="password_confirmation"
-            name="password_confirmation"
+            data-testid="passwordConfirmation"
+            id="passwordConfirmation"
+            name="passwordConfirmation"
             onBlur={[Function]}
             onChange={[Function]}
             placeholder="passwordConfirmation"
@@ -7195,7 +7197,7 @@ exports[`Snapshot with webauthn feature and without password login new view with
       className="r5-social-buttons c2"
     >
       <button
-        className="r5-btn-social r5-btn-social-facebook c3"
+        className="c3 r5-btn-social r5-btn-social-facebook"
         onClick={[Function]}
         title="Facebook"
       >
@@ -7209,7 +7211,7 @@ exports[`Snapshot with webauthn feature and without password login new view with
         </span>
       </button>
       <button
-        className="r5-btn-social r5-btn-social-google c5"
+        className="c5 r5-btn-social r5-btn-social-google"
         onClick={[Function]}
         title="Google"
       >
@@ -7675,7 +7677,7 @@ exports[`Snapshot with webauthn feature and without password login old view with
       className="r5-social-buttons c2"
     >
       <button
-        className="r5-btn-social r5-btn-social-facebook c3"
+        className="c3 r5-btn-social r5-btn-social-facebook"
         onClick={[Function]}
         title="Facebook"
       >
@@ -7689,7 +7691,7 @@ exports[`Snapshot with webauthn feature and without password login old view with
         </span>
       </button>
       <button
-        className="r5-btn-social r5-btn-social-google c5"
+        className="c5 r5-btn-social r5-btn-social-google"
         onClick={[Function]}
         title="Google"
       >
@@ -7944,15 +7946,15 @@ exports[`Snapshot with webauthn feature and without password signup form view wi
       >
         <label
           className="c4"
-          htmlFor="given_name"
+          htmlFor="givenName"
         >
           givenName
         </label>
         <input
           className="c5"
-          data-testid="given_name"
-          id="given_name"
-          name="given_name"
+          data-testid="givenName"
+          id="givenName"
+          name="givenName"
           onBlur={[Function]}
           onChange={[Function]}
           placeholder="givenName"
@@ -7968,15 +7970,15 @@ exports[`Snapshot with webauthn feature and without password signup form view wi
       >
         <label
           className="c4"
-          htmlFor="family_name"
+          htmlFor="familyName"
         >
           familyName
         </label>
         <input
           className="c5"
-          data-testid="family_name"
-          id="family_name"
-          name="family_name"
+          data-testid="familyName"
+          id="familyName"
+          name="familyName"
           onBlur={[Function]}
           onChange={[Function]}
           placeholder="familyName"
@@ -8050,7 +8052,7 @@ exports[`Snapshot with webauthn feature and without password signup form view wi
       >
         <label
           className="c4"
-          htmlFor="password_confirmation"
+          htmlFor="passwordConfirmation"
         >
           passwordConfirmation
         </label>
@@ -8063,9 +8065,9 @@ exports[`Snapshot with webauthn feature and without password signup form view wi
         >
           <input
             className="c5"
-            data-testid="password_confirmation"
-            id="password_confirmation"
-            name="password_confirmation"
+            data-testid="passwordConfirmation"
+            id="passwordConfirmation"
+            name="passwordConfirmation"
             onBlur={[Function]}
             onChange={[Function]}
             placeholder="passwordConfirmation"
@@ -8268,15 +8270,15 @@ exports[`Snapshot with webauthn feature and without password signup form view wi
       >
         <label
           className="c4"
-          htmlFor="given_name"
+          htmlFor="givenName"
         >
           givenName
         </label>
         <input
           className="c5"
-          data-testid="given_name"
-          id="given_name"
-          name="given_name"
+          data-testid="givenName"
+          id="givenName"
+          name="givenName"
           onBlur={[Function]}
           onChange={[Function]}
           placeholder="givenName"
@@ -8292,15 +8294,15 @@ exports[`Snapshot with webauthn feature and without password signup form view wi
       >
         <label
           className="c4"
-          htmlFor="family_name"
+          htmlFor="familyName"
         >
           familyName
         </label>
         <input
           className="c5"
-          data-testid="family_name"
-          id="family_name"
-          name="family_name"
+          data-testid="familyName"
+          id="familyName"
+          name="familyName"
           onBlur={[Function]}
           onChange={[Function]}
           placeholder="familyName"
@@ -8527,15 +8529,15 @@ exports[`Snapshot with webauthn feature and without password signup form view wi
       >
         <label
           className="c4"
-          htmlFor="given_name"
+          htmlFor="givenName"
         >
           givenName
         </label>
         <input
           className="c5"
-          data-testid="given_name"
-          id="given_name"
-          name="given_name"
+          data-testid="givenName"
+          id="givenName"
+          name="givenName"
           onBlur={[Function]}
           onChange={[Function]}
           placeholder="givenName"
@@ -8551,15 +8553,15 @@ exports[`Snapshot with webauthn feature and without password signup form view wi
       >
         <label
           className="c4"
-          htmlFor="family_name"
+          htmlFor="familyName"
         >
           familyName
         </label>
         <input
           className="c5"
-          data-testid="family_name"
-          id="family_name"
-          name="family_name"
+          data-testid="familyName"
+          id="familyName"
+          name="familyName"
           onBlur={[Function]}
           onChange={[Function]}
           placeholder="familyName"
@@ -8877,7 +8879,7 @@ exports[`Snapshot with webauthn feature and without password signup view with we
       className="r5-social-buttons c2"
     >
       <button
-        className="r5-btn-social r5-btn-social-facebook c3"
+        className="c3 r5-btn-social r5-btn-social-facebook"
         onClick={[Function]}
         title="Facebook"
       >
@@ -8891,7 +8893,7 @@ exports[`Snapshot with webauthn feature and without password signup view with we
         </span>
       </button>
       <button
-        className="r5-btn-social r5-btn-social-google c5"
+        className="c5 r5-btn-social r5-btn-social-google"
         onClick={[Function]}
         title="Google"
       >
@@ -9258,7 +9260,7 @@ exports[`Snapshot with webauthn feature login new view with integradted webauthn
       className="r5-social-buttons c2"
     >
       <button
-        className="r5-btn-social r5-btn-social-facebook c3"
+        className="c3 r5-btn-social r5-btn-social-facebook"
         onClick={[Function]}
         title="Facebook"
       >
@@ -9272,7 +9274,7 @@ exports[`Snapshot with webauthn feature login new view with integradted webauthn
         </span>
       </button>
       <button
-        className="r5-btn-social r5-btn-social-google c5"
+        className="c5 r5-btn-social r5-btn-social-google"
         onClick={[Function]}
         title="Google"
       >
@@ -9748,7 +9750,7 @@ exports[`Snapshot with webauthn feature login old view with webauthn or password
       className="r5-social-buttons c2"
     >
       <button
-        className="r5-btn-social r5-btn-social-facebook c3"
+        className="c3 r5-btn-social r5-btn-social-facebook"
         onClick={[Function]}
         title="Facebook"
       >
@@ -9762,7 +9764,7 @@ exports[`Snapshot with webauthn feature login old view with webauthn or password
         </span>
       </button>
       <button
-        className="r5-btn-social r5-btn-social-google c5"
+        className="c5 r5-btn-social r5-btn-social-google"
         onClick={[Function]}
         title="Google"
       >
@@ -10034,15 +10036,15 @@ exports[`Snapshot with webauthn feature signup form view with password 1`] = `
       >
         <label
           className="c4"
-          htmlFor="given_name"
+          htmlFor="givenName"
         >
           givenName
         </label>
         <input
           className="c5"
-          data-testid="given_name"
-          id="given_name"
-          name="given_name"
+          data-testid="givenName"
+          id="givenName"
+          name="givenName"
           onBlur={[Function]}
           onChange={[Function]}
           placeholder="givenName"
@@ -10058,15 +10060,15 @@ exports[`Snapshot with webauthn feature signup form view with password 1`] = `
       >
         <label
           className="c4"
-          htmlFor="family_name"
+          htmlFor="familyName"
         >
           familyName
         </label>
         <input
           className="c5"
-          data-testid="family_name"
-          id="family_name"
-          name="family_name"
+          data-testid="familyName"
+          id="familyName"
+          name="familyName"
           onBlur={[Function]}
           onChange={[Function]}
           placeholder="familyName"
@@ -10140,7 +10142,7 @@ exports[`Snapshot with webauthn feature signup form view with password 1`] = `
       >
         <label
           className="c4"
-          htmlFor="password_confirmation"
+          htmlFor="passwordConfirmation"
         >
           passwordConfirmation
         </label>
@@ -10153,9 +10155,9 @@ exports[`Snapshot with webauthn feature signup form view with password 1`] = `
         >
           <input
             className="c5"
-            data-testid="password_confirmation"
-            id="password_confirmation"
-            name="password_confirmation"
+            data-testid="passwordConfirmation"
+            id="passwordConfirmation"
+            name="passwordConfirmation"
             onBlur={[Function]}
             onChange={[Function]}
             placeholder="passwordConfirmation"
@@ -10358,15 +10360,15 @@ exports[`Snapshot with webauthn feature signup form view with webauthn 1`] = `
       >
         <label
           className="c4"
-          htmlFor="given_name"
+          htmlFor="givenName"
         >
           givenName
         </label>
         <input
           className="c5"
-          data-testid="given_name"
-          id="given_name"
-          name="given_name"
+          data-testid="givenName"
+          id="givenName"
+          name="givenName"
           onBlur={[Function]}
           onChange={[Function]}
           placeholder="givenName"
@@ -10382,15 +10384,15 @@ exports[`Snapshot with webauthn feature signup form view with webauthn 1`] = `
       >
         <label
           className="c4"
-          htmlFor="family_name"
+          htmlFor="familyName"
         >
           familyName
         </label>
         <input
           className="c5"
-          data-testid="family_name"
-          id="family_name"
-          name="family_name"
+          data-testid="familyName"
+          id="familyName"
+          name="familyName"
           onBlur={[Function]}
           onChange={[Function]}
           placeholder="familyName"
@@ -10713,7 +10715,7 @@ exports[`Snapshot with webauthn feature signup view with webauthn or password 1`
       className="r5-social-buttons c2"
     >
       <button
-        className="r5-btn-social r5-btn-social-facebook c3"
+        className="c3 r5-btn-social r5-btn-social-facebook"
         onClick={[Function]}
         title="Facebook"
       >
@@ -10727,7 +10729,7 @@ exports[`Snapshot with webauthn feature signup view with webauthn or password 1`
         </span>
       </button>
       <button
-        className="r5-btn-social r5-btn-social-google c5"
+        className="c5 r5-btn-social r5-btn-social-google"
         onClick={[Function]}
         title="Google"
       >
