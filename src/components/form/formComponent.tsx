@@ -282,7 +282,7 @@ export function createForm<Model extends Record<PropertyKey, unknown> = {}, P = 
                         state: fieldValues[field.key as keyof Model],
                         onChange: newState => {
                             handleFieldChange(field.key as keyof Model, newState);
-                            handleFieldValidationDebounced(field.key as keyof Model);
+                            handleFieldValidationDebounced(field.key as keyof Model, newState);
                         },
                         ...sharedProps as P
                     }) : field.staticContent)
