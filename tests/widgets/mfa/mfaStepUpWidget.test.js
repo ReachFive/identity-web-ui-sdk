@@ -3,7 +3,7 @@
  */
 
 import { afterEach, afterAll, beforeAll, describe, expect, jest, test } from '@jest/globals';
-import { render, screen, waitFor } from '@testing-library/react';
+import { findByText, render, screen, waitFor } from '@testing-library/react';
 import userEvent from "@testing-library/user-event";
 import '@testing-library/jest-dom'
 import 'jest-styled-components';
@@ -47,18 +47,17 @@ describe('DOM testing', () => {
 
     const generateComponent = async (options = {}, config = defaultConfig) => {
         const result = await mfaStepUpWidget(options, { config, apiClient });
-        return render(result);
+        return await waitFor(async () => render(result));
     };
 
     const assertStepUpWorkflow = async (user, amr) => {
-        expect(apiClient.getMfaStepUpToken).toHaveBeenCalledTimes(1);
+        expect(apiClient.getMfaStepUpToken).toHaveBeenCalledTimes(1)
 
         // When more than one amr options, display radio input selector
         if (amr.length > 1) {
-            await waitFor(async () => {
-                amr.forEach(value => {
-                    expect(screen.getByLabelText(value)).toBeInTheDocument()
-                })
+            expect(await screen.findByText('mfa.select.factor')).toBeInTheDocument()
+            amr.forEach(value => {
+                expect(screen.getByLabelText(value)).toBeInTheDocument()
             })
             await user.click(screen.getByLabelText('sms'))
             await user.click(screen.getByTestId('submit'))
@@ -85,16 +84,16 @@ describe('DOM testing', () => {
         await user.type(input, myVerificationCode);
         await user.click(submitBtn);
 
-        expect(apiClient.verifyMfaPasswordless).toHaveBeenNthCalledWith(1,
+        await waitFor(() => expect(apiClient.verifyMfaPasswordless).toHaveBeenNthCalledWith(1,
             expect.objectContaining({
                 challengeId: expect.stringMatching(myChallengeId),
                 verificationCode: expect.stringMatching(myVerificationCode),
             })
-        )
+        ))
 
-        expect(window.location.replace).toHaveBeenCalledWith(
+        await waitFor(() => expect(window.location.replace).toHaveBeenCalledWith(
             expect.stringContaining(auth.redirectUri)
-        )
+        ))
     }
 
     describe('with single amr (sms)', () => {
@@ -130,7 +129,7 @@ describe('DOM testing', () => {
         })
 
         test('showStepUpStart: false', async () => {
-            expect.assertions(10);
+            expect.assertions(9);
 
             const user = userEvent.setup()
 
@@ -161,7 +160,7 @@ describe('DOM testing', () => {
         })
         
         test('showStepUpStart: false', async () => {
-            expect.assertions(11);
+            expect.assertions(12);
 
             const user = userEvent.setup()
 

@@ -1,6 +1,6 @@
 import React, { useCallback, useLayoutEffect, useState } from 'react';
 
-import { AppError } from '../../../helpers/errors'
+import { isAppError } from '../../../helpers/errors'
 
 import { email } from '../../../core/validation';
 import { Heading, Intro, Info, Link, Alternative } from '../../../components/miscComponent';
@@ -100,7 +100,7 @@ const VerificationCodeForm = createForm<VerificationCodeFormData, VerificationCo
     }
 })
 
-const skipError = (err: AppError) => err.error === 'resource_not_found';
+const skipError = (error: unknown) => isAppError(error) ? error.error === 'resource_not_found' : false;
 
 export interface ForgotPasswordViewProps {
     /**

@@ -37,6 +37,11 @@ const defaultConfig: Config = {
     mfaEmailEnabled: false,
     rbaEnabled: false,
     consentsVersions: {},
+    passwordPolicy: {
+        minLength: 8,
+        minStrength: 2,
+        allowUpdateWithAccessTokenOnly: true,
+    },
 };
 
 const defaultI18n: I18nMessages = {
@@ -90,12 +95,10 @@ describe('DOM testing', () => {
             )
         })
 
-        const input = screen.queryByLabelText(i18nResolver(label))
+        const input = screen.getByLabelText(i18nResolver(label))
         expect(input).toBeInTheDocument()
         expect(input).toHaveAttribute('id', key)
         expect(input).toHaveValue('')
-
-        if (!input) throw new Error('Input should be in document')
 
         const newValue = 'azerty'
         await user.clear(input)
@@ -111,7 +114,7 @@ describe('DOM testing', () => {
         )
 
         const submitBtn = screen.getByRole('button')
-        user.click(submitBtn)
+        await user.click(submitBtn)
 
         await waitFor(() => expect(onSubmit).toHaveBeenCalled())
 
@@ -176,6 +179,7 @@ describe('DOM testing', () => {
         const matchPassword = "match value"
 
         const onFieldChange = jest.fn()
+        const onSubmit = jest.fn<(data: Model) => Promise<Model>>(data => Promise.resolve(data))
 
         const Form = createForm<Model>({
             fields: [
@@ -195,6 +199,7 @@ describe('DOM testing', () => {
                         <I18nProvider defaultMessages={defaultI18n}>
                             <Form
                                 fieldValidationDebounce={0} // trigger validation instantly
+                                handler={onSubmit}
                                 onFieldChange={onFieldChange}
                             />
                         </I18nProvider>
@@ -203,11 +208,9 @@ describe('DOM testing', () => {
             )
         })
 
-        const input = screen.queryByLabelText(i18nResolver(label))
+        const input = screen.getByLabelText(i18nResolver(label))
         expect(input).toHaveAttribute('placeholder', i18nResolver(label))
         expect(input).toBeInTheDocument()
-
-        if (!input) throw new Error('Input should be in document')
 
         const invalidValue = 'ILoveApples'
         await user.clear(input)
