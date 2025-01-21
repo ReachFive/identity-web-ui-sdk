@@ -3,7 +3,7 @@
  */
 
 import React from 'react'
-import { describe, expect, jest, test } from '@jest/globals';
+import { afterEach, beforeEach, describe, expect, jest, test } from '@jest/globals';
 import { getAllByRole, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event'
 import '@testing-library/jest-dom/jest-globals'
@@ -68,19 +68,28 @@ const theme: Theme = buildTheme({
 type Model = { date: string }
 
 describe('DOM testing', () => {
+
+    beforeEach(() => {
+        jest.useFakeTimers();
+    })
+
+    afterEach(() => {
+        jest.runOnlyPendingTimers()
+        jest.useRealTimers();
+    });
+
     test('default settings', async () => {
-        const user = userEvent.setup()
+        const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime })
 
         const key = 'date'
         const label = 'date'
-        const yearDebounce = 10
 
         const onFieldChange = jest.fn()
         const onSubmit = jest.fn<(data: Model) => Promise<Model>>(data => Promise.resolve(data))
 
         const Form = createForm<Model>({
             fields: [
-                dateField({ key, label, yearDebounce }, defaultConfig)
+                dateField({ key, label }, defaultConfig)
             ],
         })
 
@@ -152,17 +161,17 @@ describe('DOM testing', () => {
         // await user.clear(dayInput)
         await user.selectOptions(dayInput, String(day))
         
-        // handle year debounced value
-        await waitFor(() => new Promise(resolve => setTimeout(resolve, yearDebounce * 2)))
+        // Fast-forward until all timers have been executed (handle year debounced value)
+        await jest.runOnlyPendingTimersAsync();
     
-        expect(onFieldChange).toHaveBeenLastCalledWith(
+        await waitFor(() => expect(onFieldChange).toHaveBeenLastCalledWith(
             expect.objectContaining({
                 date: expect.objectContaining({
                     isDirty: true,
                     value: DateTime.fromObject({ year, month, day }),
                 })
             })
-        )
+        ))
 
         const submitBtn = screen.getByRole('button')
         await user.click(submitBtn)
@@ -178,11 +187,10 @@ describe('DOM testing', () => {
     })
 
     test('with custom validation', async () => {
-        const user = userEvent.setup()
+        const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime })
 
         const key = 'date'
         const label = 'date'
-        const yearDebounce = 10
 
         const validator = new Validator<DateTime>({
             rule: (value) => value.diffNow('years').as('years') <= -18,
@@ -194,7 +202,7 @@ describe('DOM testing', () => {
 
         const Form = createForm<Model>({
             fields: [
-                dateField({ key, label, validator, yearDebounce }, defaultConfig)
+                dateField({ key, label, validator }, defaultConfig)
             ],
         })
 
@@ -222,8 +230,8 @@ describe('DOM testing', () => {
         await user.clear(yearInput)
         await user.type(yearInput, String(tenYearsOld.year))
 
-        // handle year debounced value
-        await waitFor(() => new Promise(resolve => setTimeout(resolve, yearDebounce * 2)))
+        // Fast-forward until all timers have been executed (handle year debounced value)
+        await jest.runOnlyPendingTimersAsync();
 
         await user.selectOptions(monthInput, String(tenYearsOld.month))
         await user.selectOptions(dayInput, String(tenYearsOld.day))
@@ -250,8 +258,8 @@ describe('DOM testing', () => {
         await user.clear(yearInput)
         await user.type(yearInput, String(eighteenYearsOld.year))
         
-        // handle year debounced value
-        await waitFor(() => new Promise(resolve => setTimeout(resolve, yearDebounce * 2)))
+        // Fast-forward until all timers have been executed (handle year debounced value)
+        await jest.runOnlyPendingTimersAsync();
 
         await waitFor(() => expect(onFieldChange).toHaveBeenLastCalledWith(
             expect.objectContaining({
@@ -260,7 +268,7 @@ describe('DOM testing', () => {
                     value: eighteenYearsOld.startOf('day'),
                 })
             })
-        ), { timeout: yearDebounce * 2 })
+        ))
 
         await waitFor(() => {
             const formError = screen.queryByTestId('form-error')
