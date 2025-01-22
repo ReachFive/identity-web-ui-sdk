@@ -8,6 +8,7 @@ import { FormGroup, Input } from '../formControlsComponent';
 import { ReactComponent as EyeIcon } from '../../../icons/eye.svg';
 import { ReactComponent as EyeSlashIcon } from '../../../icons/eye-slash.svg';
 import { isRichFormValue } from '../../../helpers/utils';
+import { isValidatorError } from '../../../core/validation';
 
 const eyeStyle = `
   position: absolute;
@@ -35,7 +36,7 @@ function SimplePasswordField({
     autoComplete,
     canShowPassword,
     path,
-    validation = {},
+    validation,
     onChange,
     inputId,
     label,
@@ -50,7 +51,7 @@ function SimplePasswordField({
 
     const toggleShowPassword = () => setShowPassword(showPassword => !showPassword)
 
-    const error = typeof validation === 'object' && 'error' in validation ? validation.error : undefined
+    const error = validation && isValidatorError(validation) ? validation.error : undefined
 
     return <FormGroup
         inputId={inputId}

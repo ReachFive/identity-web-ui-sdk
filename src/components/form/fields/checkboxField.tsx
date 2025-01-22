@@ -2,11 +2,12 @@ import React from 'react';
 
 import { createField, type FieldComponentProps, type FieldProps } from '../fieldCreator';
 import { Checkbox } from '../formControlsComponent';
+import { isValidatorError } from '../../../core/validation';
 import { isRichFormValue } from '../../../helpers/utils';
 
 export interface CheckboxFieldProps extends FieldComponentProps<boolean> {}
 
-function CheckboxField({ value, onChange, label, path, required, validation = {} }: CheckboxFieldProps) {
+function CheckboxField({ value, onChange, label, path, required, validation }: CheckboxFieldProps) {
     const checked = isRichFormValue(value, 'raw') ? value.raw : value
 
     const onToggle = () => onChange({
@@ -14,7 +15,7 @@ function CheckboxField({ value, onChange, label, path, required, validation = {}
         isDirty: true
     })
 
-    const error = typeof validation === 'object' && 'error' in validation ? validation.error : undefined
+    const error = validation && isValidatorError(validation) ? validation.error : undefined
 
     return (
         <Checkbox

@@ -1,14 +1,18 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
+import { Client } from '@reachfive/identity-core';
 
 import { PrimaryButton } from './buttonComponent';
-import { Field, FieldCreator, FieldValue } from './fieldCreator';
+import type { Field, FieldCreator, FieldValue } from './fieldCreator';
 import { ErrorText, MutedText } from '../miscComponent';
-import { WithConfig, useConfig } from '../../contexts/config';
-import { WithI18n, useI18n } from '../../contexts/i18n';
+import { type WithConfig, useConfig } from '../../contexts/config';
+import { type WithI18n, useI18n } from '../../contexts/i18n';
+import { useReachfive } from '../../contexts/reachfive';
 import { isAppError } from '../../helpers/errors';
 import { logError } from '../../helpers/logger';
 import { useDebounceCallback } from '../../helpers/useDebounceCallback';
+import { type ValidatorResult } from '../../core/validation';
+import { type Config } from '../../types';
 
 const Form = styled.form`
     position: relative;
@@ -26,6 +30,8 @@ export type StaticContent = {
 
 /** @todo to refine */
 export type FormContext<T> = {
+    client: Client
+    config: Config
     errorMessage?: string
     fields: FieldValues<T>
     hasErrors?: boolean
@@ -70,6 +76,7 @@ export function createForm<Model extends Record<PropertyKey, unknown> = {}, P = 
     function FormComponent<R = void>(props: FormProps<Model, P, R>) {
         const config = useConfig();
         const i18n = useI18n();
+        const client = useReachfive()
 
         const {
             beforeSubmit,
@@ -148,18 +155,18 @@ export function createForm<Model extends Record<PropertyKey, unknown> = {}, P = 
             setFieldValues(newFieldValues);
         }
 
-        const validateField = <T, P>(field: Field<T, P>, fieldState: FieldValue<T>, ctx: FormContext<Model>) =>
-            field.validate(fieldState, ctx) || {};
+        const validateField = async <T, P>(field: Field<T, P>, fieldState: FieldValue<T>, ctx: FormContext<Model>) =>
+            await field.validate(fieldState, ctx) || {} as ValidatorResult;
 
-        const validateAllFields = (callback: (isValid: boolean) => void) => {
-            const { hasErrors, values: newFieldValues } = inputFields.reduce(
-                (acc, field) => {
+        const validateAllFields = async (callback: (isValid: boolean) => void) => {
+            const { hasErrors, values: newFieldValues } = await inputFields.reduce(
+                async (acc, field) => {
                     const fieldState = fieldValues[field.key as keyof Model];
-                    const validation = validateField(field, fieldState, { isSubmitted: true, fields: fieldValues });
+                    const validation = await validateField(field, fieldState, { client, config, isSubmitted: true, fields: fieldValues });
                     return {
-                        hasErrors: acc.hasErrors || (typeof validation === 'object' && 'error' in validation),
+                        hasErrors: (await acc).hasErrors || (typeof validation === 'object' && 'error' in validation),
                         values: {
-                            ...acc.values,
+                            ...(await acc).values,
                             [field.key]: {
                                 ...fieldState,
                                 validation
@@ -167,7 +174,7 @@ export function createForm<Model extends Record<PropertyKey, unknown> = {}, P = 
                         }
                     }
                 },
-                { hasErrors: false, values: {} as FieldValues<Model> }
+                Promise.resolve({ hasErrors: false, values: {} as FieldValues<Model> })
             )
 
             setHasErrors(hasErrors);
@@ -177,14 +184,20 @@ export function createForm<Model extends Record<PropertyKey, unknown> = {}, P = 
         }
 
         const handleFieldValidation = useCallback(
-            <T,>(fieldName: keyof typeof fieldValues, stateUpdate: FieldValue<T>) => {
+            async <T,>(fieldName: keyof typeof fieldValues, stateUpdate: FieldValue<T>) => {
                 const { validation: _, ...currentState } = fieldValues[fieldName];
+                
                 const newState = {
                     ...currentState,
                     ...stateUpdate
                 } satisfies FieldValue<T>
-                const validation = validateField(fieldByKey[fieldName], newState, { isSubmitted: false, fields: fieldValues });
-
+                
+                const validation = await validateField(
+                    fieldByKey[fieldName],
+                    newState,
+                    { client, config, isSubmitted: false, fields: fieldValues }
+                );
+                
                 const newFieldValues = {
                     ...fieldValues,
                     [fieldName]: {
@@ -244,8 +257,8 @@ export function createForm<Model extends Record<PropertyKey, unknown> = {}, P = 
             }
         };
 
-        const processData = (callback: (data: Model) => void) => {
-            validateAllFields(isValid => {
+        const processData = async (callback: (data: Model) => void) => {
+            await validateAllFields(isValid => {
                 if (isValid) {
                     setIsLoading(true)
 
@@ -260,10 +273,10 @@ export function createForm<Model extends Record<PropertyKey, unknown> = {}, P = 
             })
         }
 
-        const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+        const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
             event.preventDefault();
 
-            processData(processedData => {
+            await processData(processedData => {
                 handler(processedData)
                     .then(handleSuccess)
                     .catch((err: unknown) => {

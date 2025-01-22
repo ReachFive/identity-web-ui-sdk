@@ -1,6 +1,6 @@
 import React from 'react';
-
 import styled from 'styled-components';
+import { PasswordStrengthScore } from '@reachfive/identity-core';
 
 import { Label } from '../formControlsComponent';
 
@@ -57,6 +57,7 @@ const RoundCheckbox = styled(({ className, ...props }: RoundCheckboxProps) =>
 
     > input[type="checkbox"]:checked + label:after {
         opacity: 1;
+        border-color: ${props => props.theme.backgroundColor};
     }
     
     + label {
@@ -67,10 +68,7 @@ const RoundCheckbox = styled(({ className, ...props }: RoundCheckboxProps) =>
 const PasswordPolicyRule = styled.div`
     display: flex;
     align-items: center;
-<<<<<<< HEAD
-=======
     gap: ${props => props.theme.spacing}px;
->>>>>>> master
     margin-bottom: 2px;
 `;
 
@@ -84,8 +82,6 @@ const PasswordPolicyIntro = styled(({ className }: PasswordPolicyIntroProps) => 
 })`
     margin-bottom: ${props => props.theme.spacing}px;
 `;
-
-export type PasswordStrengthScore = 0 | 1 | 2 | 3 | 4
 
 export interface PasswordRule {
     label: string

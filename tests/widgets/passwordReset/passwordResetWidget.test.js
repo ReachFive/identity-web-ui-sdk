@@ -11,8 +11,26 @@ import 'jest-styled-components';
 import passwordResetWidget from '../../../src/widgets/passwordReset/passwordResetWidget';
 
 describe('Snapshot', () => {
+    const getPasswordStrength = jest.fn().mockImplementation((password) => {
+        let score = 0
+        if (password.match(/[a-z]+/)) score++
+        if (password.match(/[0-9]+/)) score++
+        if (password.match(/[^a-z0-9]+/)) score++
+        if (password.length > 8) score++
+        return Promise.resolve({ score })
+    })
+    
+    // @ts-expect-error partial Client
+    const apiClient = {
+        getPasswordStrength,
+    }
+
+    beforeEach(() => {
+        getPasswordStrength.mockClear()
+    })
+
     const generateSnapshot = (options = {}) => () => {
-        const tree = passwordResetWidget(options, { config: {}, apiClient: {} })
+        const tree = passwordResetWidget(options, { config: {}, apiClient })
             .then(result => renderer.create(result).toJSON());
 
         expect(tree).resolves.toMatchSnapshot();
@@ -24,8 +42,27 @@ describe('Snapshot', () => {
 });
 
 describe('DOM testing', () => {
+
+    const getPasswordStrength = jest.fn().mockImplementation((password) => {
+        let score = 0
+        if (password.match(/[a-z]+/)) score++
+        if (password.match(/[0-9]+/)) score++
+        if (password.match(/[^a-z0-9]+/)) score++
+        if (password.length > 8) score++
+        return Promise.resolve({ score })
+    })
+    
+    // @ts-expect-error partial Client
+    const apiClient = {
+        getPasswordStrength,
+    }
+
+    beforeEach(() => {
+        getPasswordStrength.mockClear()
+    })
+    
     const generateComponent = async (options = {}) => {
-        const result = await passwordResetWidget(options, { config: {}, apiClient: {} });
+        const result = await passwordResetWidget(options, { config: {}, apiClient });
 
         return render(result);
     };

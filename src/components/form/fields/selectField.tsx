@@ -3,6 +3,7 @@ import React from 'react';
 import { FormGroup, Select, type SelectProps } from '../formControlsComponent';
 import { createField, type FieldComponentProps, type FieldDefinition } from '../fieldCreator';
 import { isRichFormValue } from '../../../helpers/utils';
+import { isValidatorError } from '../../../core/validation';
 
 type Value = SelectProps['value']
 
@@ -15,7 +16,7 @@ export interface SelectFieldProps extends FieldComponentProps<Value, SelectOptio
 const SelectField = (props: SelectFieldProps) => {
     const {
         value = '',
-        validation = {},
+        validation,
         onChange,
         inputId,
         label,
@@ -30,7 +31,7 @@ const SelectField = (props: SelectFieldProps) => {
 
     const handleBlur = () => onChange({ isDirty: true });
 
-    const error = typeof validation === 'object' && 'error' in validation ? validation.error : undefined
+    const error = validation && isValidatorError(validation) ? validation.error : undefined
 
     return <FormGroup
         inputId={inputId}

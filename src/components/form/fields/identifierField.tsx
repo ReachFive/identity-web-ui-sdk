@@ -3,7 +3,7 @@ import React from 'react';
 import * as libphonenumber from 'libphonenumber-js';
 import type { CountryCode } from 'libphonenumber-js';
 
-import { email, Validator } from '../../../core/validation';
+import { email, isValidatorError, Validator } from '../../../core/validation';
 
 import { FormGroup, Input } from '../formControlsComponent';
 import { createField, type FieldComponentProps, type FieldDefinition } from '../fieldCreator';
@@ -79,7 +79,7 @@ function IdentifierField({
     required = true,
     showLabel,
     readOnly,
-    validation = {},
+    validation,
     value,
     withPhoneNumber,
 }: IdentifierFieldProps) {
@@ -108,7 +108,7 @@ function IdentifierField({
         onChange({ value: newValue, isDirty: false })
     }
 
-    const error = typeof validation === 'object' && 'error' in validation ? validation.error : undefined
+    const error = validation && isValidatorError(validation) ? validation.error : undefined
 
     return <FormGroup
         inputId={inputId}

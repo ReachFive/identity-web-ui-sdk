@@ -31,7 +31,7 @@ export interface Field<T, P = {}, E extends Record<string, unknown> = {}, K exte
     render: (props: Partial<P> & Partial<FieldComponentProps<T, {}, E, K>> & { state: FieldValue<T, K, E> }) => React.ReactNode
     initialize: <M extends Record<PropertyKey, unknown>>(model: M) => FieldValue<T, K>
     unbind: <M extends Record<PropertyKey, unknown>>(model: M, state: FieldValue<T, K, E>) => M
-    validate: (data: FieldValue<T, K, E>, ctx: FormContext<any>) => ValidatorResult
+    validate: (data: FieldValue<T, K, E>, ctx: FormContext<any>) => Promise<ValidatorResult>
 }
 
 export type FieldValue<T, K extends string = 'raw', E extends Record<string, unknown> = {}> = E & {
@@ -54,7 +54,7 @@ export type FieldComponentProps<T, P = {}, E extends Record<string, unknown> = {
     i18n: I18nResolver
     showLabel?: boolean
     value?: FormValue<T, K>
-    validation?: ValidatorResult
+    validation?: ValidatorResult<E>
 }
 
 
@@ -147,11 +147,11 @@ export function createField<
                 unbind: <M extends Record<PropertyKey, unknown>>(model: M, { value }: FieldValue<F, K, E>): M => (
                     mapping.unbind(model, format.unbind(value)) as M
                 ),
-                validate: ({ value: formValue }: FieldValue<F, K, E>, ctx: FormContext<any>): ValidatorResult => {
+                validate: async ({ value: formValue }: FieldValue<F, K, E>, ctx: FormContext<any>): Promise<ValidatorResult<E>> => {
                     const value = isRichFormValue(formValue, rawProperty) ? formValue[rawProperty] : formValue
-                    const requireValidation = required ? requiredRule.create(i18n)(value, ctx) : { success: true } satisfies ValidatorSuccess
+                    const requireValidation = required ? await requiredRule.create(i18n)(value, ctx) : { valid: true } as ValidatorSuccess<E>
                     return isValidatorSuccess(requireValidation) && isValued(value) 
-                        ? validator.create(i18n)(value, ctx)
+                        ? await validator.create(i18n)(value, ctx)
                         : requireValidation
                 }
             };

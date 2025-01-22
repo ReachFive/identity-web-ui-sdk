@@ -56,9 +56,27 @@ function expectSocialButtons(toBeInTheDocument = true) {
 }
 
 describe('Snapshot', () => {
+    const getPasswordStrength = jest.fn().mockImplementation((password) => {
+        let score = 0
+        if (password.match(/[a-z]+/)) score++
+        if (password.match(/[0-9]+/)) score++
+        if (password.match(/[^a-z0-9]+/)) score++
+        if (password.length > 8) score++
+        return Promise.resolve({ score })
+    })
+    
+    const loginWithWebAuthn = jest.fn().mockRejectedValue(new Error('This is a mock.'))
+
+    // @ts-expect-error partial Client
     const apiClient = {
-        loginWithWebAuthn: jest.fn().mockRejectedValue(new Error('This is a mock.'))
+        getPasswordStrength,
+        loginWithWebAuthn,
     }
+
+    beforeEach(() => {
+        getPasswordStrength.mockClear()
+        loginWithWebAuthn.mockClear()
+    })
 
     const generateSnapshot = (options, config = defaultConfig) => () => {
         const tree = authWidget(options, { config, apiClient })
@@ -227,7 +245,29 @@ describe('Snapshot', () => {
 });
 
 describe('DOM testing', () => {
-    const generateComponent = async (options, config = defaultConfig, apiClient = {}) => {
+    const getPasswordStrength = jest.fn().mockImplementation((password) => {
+        let score = 0
+        if (password.match(/[a-z]+/)) score++
+        if (password.match(/[0-9]+/)) score++
+        if (password.match(/[^a-z0-9]+/)) score++
+        if (password.length > 8) score++
+        return Promise.resolve({ score })
+    })
+    
+    const loginWithWebAuthn = jest.fn().mockRejectedValue(new Error('This is a mock.'))
+
+    // @ts-expect-error partial Client
+    const apiClient = {
+        getPasswordStrength,
+        loginWithWebAuthn,
+    }
+
+    beforeEach(() => {
+        getPasswordStrength.mockClear()
+        loginWithWebAuthn.mockClear()
+    })
+    
+    const generateComponent = async (options, config = defaultConfig) => {
         const result = await authWidget(options, { config, apiClient });
         return render(result);
     };
@@ -430,9 +470,10 @@ describe('DOM testing', () => {
     describe('with webauthn feature', () => {
         test('new login view', async () => {
             expect.assertions(6);
-            await generateComponent({ allowWebAuthnLogin: true, initialScreen: 'login' }, webauthnConfig, {
-                loginWithWebAuthn: jest.fn().mockRejectedValue(new Error('This is a mock.'))
-            });
+
+            loginWithWebAuthn
+
+            await generateComponent({ allowWebAuthnLogin: true, initialScreen: 'login' }, webauthnConfig);
 
             // Social buttons
             expectSocialButtons(true)
@@ -452,9 +493,7 @@ describe('DOM testing', () => {
 
         test('old login view', async () => {
             expect.assertions(6);
-            await generateComponent({ allowWebAuthnLogin: true, initialScreen: 'login-with-web-authn' }, webauthnConfig, {
-                loginWithWebAuthn: jest.fn().mockRejectedValue(new Error('This is a mock.'))
-            });
+            await generateComponent({ allowWebAuthnLogin: true, initialScreen: 'login-with-web-authn' }, webauthnConfig);
 
             // Social buttons
             expectSocialButtons(true)
@@ -532,9 +571,11 @@ describe('DOM testing', () => {
     describe('with webauthn feature and without password', () => {
         test('old login view', async () => {
             expect.assertions(6);
-            await generateComponent({ allowWebAuthnLogin: true, enablePasswordAuthentication:false, initialScreen: 'login-with-web-authn' }, webauthnConfig, {
-                loginWithWebAuthn: jest.fn().mockRejectedValue(new Error('This is a mock.'))
-            });
+            await generateComponent({
+                allowWebAuthnLogin: true,
+                enablePasswordAuthentication:false,
+                initialScreen: 'login-with-web-authn'
+            }, webauthnConfig);
 
             // Social buttons
             expectSocialButtons(true)

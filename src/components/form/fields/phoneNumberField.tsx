@@ -8,7 +8,7 @@ import styles from 'react-phone-number-input/style.css'; // import raw css using
 
 import { createField, type FieldComponentProps, type FieldCreator, type FieldDefinition } from '../fieldCreator';
 import { FormGroup } from '../formControlsComponent';
-import { Validator } from '../../../core/validation';
+import { isValidatorError, Validator } from '../../../core/validation';
 import { Config, Optional } from '../../../types';
 import { Input } from '../formControlsComponent';
 
@@ -79,7 +79,7 @@ const PhoneNumberField = (props: PhoneNumberFieldProps) => {
         placeholder = label,
         required = true,
         showLabel,
-        validation = {},
+        validation,
         value,
         withCountryCallingCode = true,
         withCountrySelect = false,
@@ -106,7 +106,7 @@ const PhoneNumberField = (props: PhoneNumberFieldProps) => {
     }, [locale])
 
     const currentValue = value !== null && typeof value === 'object' && 'raw' in value ? value.raw : value
-    const error = typeof validation === 'object' && 'error' in validation ? validation.error : undefined
+    const error = validation && isValidatorError(validation) ? validation.error : undefined
 
     const handlePhoneChange = (value: Value) => {
         onChange({

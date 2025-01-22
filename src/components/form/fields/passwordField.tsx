@@ -1,23 +1,23 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { isLower, isUpper, isDigit } from 'char-info';
-import type { PasswordPolicy } from '@reachfive/identity-core'
-import zxcvbn from '@reachfive/zxcvbn';
+import type { PasswordPolicy, PasswordStrengthScore } from '@reachfive/identity-core'
 import styled, { DefaultTheme } from 'styled-components';
 
 import type { Config, Optional } from '../../../types'
 
 import { Input, Label, FormGroupContainer, FormError } from '../formControlsComponent';
 import type { FieldCreator, FieldComponentProps, FieldDefinition } from '../fieldCreator'
-import { PasswordPolicyRules, type PasswordRule, type PasswordStrengthScore } from './passwordPolicyRules';
+import { PasswordPolicyRules, type PasswordRule } from './passwordPolicyRules';
 
 import { ShowPasswordIcon, HidePasswordIcon } from './simplePasswordField';
 import { useI18n } from '../../../contexts/i18n';
-import { ValidatorResult, Validator } from '../../../core/validation';
+import { isValidatorError, Validator } from '../../../core/validation';
 import { I18nResolver } from '../../../core/i18n';
 
 import { createField } from '../fieldCreator';
 import { isRichFormValue } from '../../../helpers/utils';
+import { FormContext } from '../formComponent';
 
 const SPECIAL_CHARACTERS = " !\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~";
 const MAX_PASSWORD_LENGTH = 255;
@@ -90,7 +90,7 @@ export interface PasswordFieldProps extends FieldComponentProps<string, ExtraPar
 
 function PasswordField({
     autoComplete,
-    blacklist = [],
+    blacklist: _ = [],
     canShowPassword,
     enabledRules,
     inputId,
@@ -100,16 +100,21 @@ function PasswordField({
     placeholder,
     required,
     showLabel,
-    validation = {} as ValidatorResult,
+    validation,
     value = '',
 }: PasswordFieldProps) {
     const [showPassword, setShowPassword] = useState(false)
-
     const [isTouched, setIsTouched] = useState(false)
+    const [strength, setStrength] = useState<PasswordStrengthScore>(validation?.strength ?? 0)
 
     const currentValue = isRichFormValue(value, 'raw') ? value.raw : value
     
-    const strength = getPasswordStrength(blacklist, currentValue)
+    useEffect(() => {
+        // only update strength if defined in validation to avoid strength to be reset on field change event
+        if (validation?.strength) {
+            setStrength(validation.strength)
+        }
+    }, [validation])
 
     const toggleShowPassword = () => {
         setShowPassword(showPassword => !showPassword)
@@ -131,17 +136,19 @@ function PasswordField({
                     title={label}
                     required={required}
                     hasError={typeof validation === 'object' && 'error' in validation}
-                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                    onChange={event => {
                         onChange({
                             value: event.target.value,
-                            strength: getPasswordStrength(blacklist, event.target.value)
                         })
                     }}
                     onFocus={() => setIsTouched(true)}
-                    onBlur={(event) => onChange({
-                        value: event.target.value,
-                        isDirty: true
-                    })}
+                    onBlur={event => {
+                        event?.target.value !== currentValue && onChange({
+                            value: event?.target.value,
+                            validation,
+                            isDirty: true
+                        })
+                    }}
                     data-testid="password"
                 />
                 {canShowPassword && (
@@ -150,8 +157,8 @@ function PasswordField({
                         : <ShowPasswordIcon data-testid="show-password-btn" onClick={toggleShowPassword} />
                 )}
             </div>
-            {isTouched && <PasswordStrength score={strength || 0} />}
-            {typeof validation === 'object' && 'error' in validation && <FormError data-testid="error">{validation.error}</FormError>}
+            {isTouched && <PasswordStrength score={strength} />}
+            {validation && isValidatorError(validation) && <FormError data-testid="error">{validation.error}</FormError>}
             {isTouched && (
                 <PasswordPolicyRules
                     value={currentValue}
@@ -198,23 +205,21 @@ export function listEnabledRules(i18n: I18nResolver, passwordPolicy: Config['pas
     }, {} as Record<RuleKeys, PasswordRule>);
 }
 
-export function getPasswordStrength(blacklist: string[], fieldValue?: string) {
-    const sanitized = `${fieldValue ?? ""}`.toLowerCase().trim();
-    return zxcvbn(sanitized, blacklist).score;
-}
-
-export function passwordStrengthValidator(passwordPolicy?: PasswordPolicy, blacklist: string[] = []) {
-    return new Validator<string>({
-        rule: (value) => {
-            const strength = getPasswordStrength(blacklist, value)
-            if (passwordPolicy && strength < passwordPolicy.minStrength) return false
-            return true
+export function passwordStrengthValidator(passwordPolicy?: PasswordPolicy) {
+    return new Validator<string, FormContext<any>>({
+        rule: async (value, ctx) => {
+            if (value.length === 0) return false
+            const strength = await ctx.client.getPasswordStrength(value)
+            if (passwordPolicy && strength.score < passwordPolicy.minStrength) {
+                return { valid: false, strength: strength.score }
+            }
+            return { valid: true, strength: strength.score }
         },
         hint: 'password.minStrength'
     })
 }
 
-export const passwordLengthValidator = new Validator<string>({
+export const passwordLengthValidator = new Validator<string, FormContext<any>>({
     rule: (value) => {
         if (value.length > MAX_PASSWORD_LENGTH) return false
         return true
@@ -251,11 +256,7 @@ export const passwordField = (
             blacklist,
             canShowPassword,
             enabledRules: enabledRules ?? listEnabledRules(i18n, passwordPolicy),
-            /** 
-             * @toto `passwordPolicy` should always be define. Remove default value when correction PR is merged.
-             * @see https://github.com/ReachFive/identity-web-core-sdk/pull/239
-             * */
-            minStrength: minStrength ?? passwordPolicy?.minStrength ?? 2,
+            minStrength: minStrength ?? passwordPolicy.minStrength,
         }),
         validator: validator ? validator.and(passwordValidatorChain(passwordPolicy)) : passwordValidatorChain(passwordPolicy)
     })
