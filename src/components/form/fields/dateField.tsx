@@ -69,7 +69,6 @@ const DateField = ({
     const handleYearChange = (event: React.ChangeEvent<HTMLInputElement>) => setDatePart(setYear, event.target.value)
 
     const error = typeof validation === 'object' && 'error' in validation ? validation.error : undefined
-    console.log(date, error)
 
     useEffect(() => {
         async function loadLocale() {
@@ -81,7 +80,6 @@ const DateField = ({
 
     useEffect(() => {
         if (typeof day !== 'undefined' && typeof month !== 'undefined' && typeof debouncedYear !== 'undefined') {
-            console.log('onChange', new Date(debouncedYear, month, day))
             onChange({
                 value: new Date(debouncedYear, month, day),
                 isDirty: true,
