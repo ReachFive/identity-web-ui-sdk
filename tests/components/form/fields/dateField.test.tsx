@@ -125,8 +125,18 @@ describe('DOM testing', () => {
         expect(monthInput).toHaveAttribute('aria-label', i18nResolver('month'))
         expect(monthInput).not.toHaveValue()
         const expectedMonthsOptions = ['', ...[...Array(12).keys()].map(value => String(value))]
-        expect(getAllByRole(monthInput, 'option').map(option => option.getAttribute('value'))).toEqual(
+        const options = getAllByRole(monthInput, 'option')
+        expect(options.map(option => option.getAttribute('value'))).toEqual(
             expect.arrayContaining(expectedMonthsOptions)
+        )
+        const expectedMonthsOptionsIntl = [
+            i18nResolver('month'),
+            ...[...Array(12).keys()].map(value =>
+                new Intl.DateTimeFormat(defaultConfig.language, { month: "long" }).format(new Date(2025, Number(value), 1))
+            )
+        ]
+        expect(options.map(option => option.textContent)).toEqual(
+            expect.arrayContaining(expectedMonthsOptionsIntl)
         )
         
         const dayInput = screen.getByTestId('date.day')
