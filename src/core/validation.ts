@@ -1,6 +1,6 @@
-import isEmail from 'validator/es/lib/isEmail';
-import isInt from 'validator/es/lib/isEmail';
-import isFloat from 'validator/es/lib/isEmail';
+import isEmail from 'validator/lib/isEmail';
+import isInt from 'validator/lib/isInt';
+import isFloat from 'validator/lib/isFloat';
 
 import { isValued } from '../helpers/utils'
 import { I18nResolver } from './i18n';
