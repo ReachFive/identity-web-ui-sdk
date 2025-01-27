@@ -34,7 +34,7 @@ const DateField = ({
     i18n,
     inputId,
     label,
-    locale: localeCode,
+    locale,
     onChange,
     path,
     required,
@@ -77,8 +77,8 @@ const DateField = ({
         eachMonthOfInterval({
             start: startOfYear(new Date()),
             end: endOfYear(new Date())
-        }).map(month => intlFormat(month, { month: "long" }, { locale: localeCode })),
-        [localeCode]
+        }).map(month => intlFormat(month, { month: "long" }, { locale })),
+        [locale]
     )
 
     const daysInMonth = useMemo(() =>
@@ -96,7 +96,7 @@ const DateField = ({
     // datetime parts ordered by locale 
     const parts = useMemo(
         () => (
-            new Intl.DateTimeFormat(localeCode, {
+            new Intl.DateTimeFormat(locale, {
                 weekday: 'long',
                 year: 'numeric',
                 month: 'long',
@@ -106,7 +106,7 @@ const DateField = ({
                 .map(part => part.type)
                 .filter(type => ['day', 'month', 'year'].includes(type))
         ),
-        [localeCode]
+        [locale]
     )
 
     const fields: Partial<Record<(typeof parts)[number], React.ReactNode>> = {
