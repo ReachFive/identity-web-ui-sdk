@@ -23,6 +23,3 @@ type ConsentsVersions = { consentsVersions: Record<string, ConsentVersions> }
 type CustomFields = { customFields?: CustomField[] }
 
 export type Config = CoreConfig & RemoteSettings & ConsentsVersions & CustomFields
-
-const _allowedLocales = ["en", "fr", "es", "it", "nl", "de", "ru", "pt", "hu", "sk", "ar", "ja", "ko", "zh", "zh-CN", "zh-Hans", "zh-Hant", "zh-HK", "zh-MO", "zh-SG", "zh-TW"] as const
-export type AllowedLocale = (typeof _allowedLocales)[number]

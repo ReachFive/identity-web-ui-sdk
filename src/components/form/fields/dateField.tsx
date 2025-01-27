@@ -8,7 +8,7 @@ import { isRichFormValue } from '../../../helpers/utils';
 
 import { createField, type FieldComponentProps, type FieldCreator, type FieldDefinition } from '../fieldCreator';
 import { FormGroup, Input, Select } from '../formControlsComponent';
-import type { AllowedLocale, Config, Optional } from '../../../types';
+import type { Config, Optional } from '../../../types';
 
 const inputRowGutter = 10;
 
@@ -24,7 +24,7 @@ const InputCol = styled.div<{ width: number }>`
 `;
 
 type ExtraParams = {
-    locale: AllowedLocale
+    locale: string
     yearDebounce?: number
 }
 
