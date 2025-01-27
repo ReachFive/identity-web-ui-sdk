@@ -7,10 +7,6 @@ const config: JestConfigWithTsJest = {
     transform: {
         "^.+\\.jsx?$": "babel-jest"
     },
-    transformIgnorePatterns: [
-        "/node_modules/(?!(date-fns/locale)/)",
-        "\\.pnp\\.[^\\\/]+$"
-    ],
     moduleNameMapper: {
         '.css$': '<rootDir>/mocks/css.js',
         '.svg$': '<rootDir>/mocks/svg.js',

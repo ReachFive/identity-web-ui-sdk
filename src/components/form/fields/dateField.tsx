@@ -1,8 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { eachMonthOfInterval, endOfYear, intlFormat, formatISO, getDate, getDaysInMonth, getMonth, getYear, isValid, parseISO, startOfYear } from "date-fns"
-// import type { Locale } from "date-fns/locale"
-// ["en", "fr", "es", "it", "nl", "de", "ru", "pt", "hu", "sk", "ar", "ja", "ko", "zh", "zh-CN", "zh-Hans", "zh-Hant", "zh-HK", "zh-MO", "zh-SG", "zh-TW"]
-// import { enUS, es, fr, it, nl, de, ru, pt, hu, sk, ar, ja, ko, zhCN, zhHK, zhTW } from 'date-fns/locale'
 import styled from 'styled-components';
 
 import { ValidatorResult, Validator } from '../../../core/validation';
@@ -12,30 +9,6 @@ import { isRichFormValue } from '../../../helpers/utils';
 import { createField, type FieldComponentProps, type FieldCreator, type FieldDefinition } from '../fieldCreator';
 import { FormGroup, Input, Select } from '../formControlsComponent';
 import type { AllowedLocale, Config, Optional } from '../../../types';
-
-// const locales: Record<AllowedLocale, Locale> = {
-//     "en": enUS,
-//     "es": es,
-//     "fr": fr,
-//     "it": it,
-//     "nl": nl,
-//     "de": de,
-//     "ru": ru,
-//     "pt": pt,
-//     "hu": hu,
-//     "sk": sk,
-//     "ar": ar,
-//     "ja": ja,
-//     "ko": ko,
-//     "zh": zhCN,
-//     "zh-CN": zhCN,
-//     "zh-Hans": zhCN,
-//     "zh-Hant": zhHK,
-//     "zh-HK": zhHK,
-//     "zh-MO": zhHK,
-//     "zh-SG": zhCN,
-//     "zh-TW": zhTW,
-// }
 
 const inputRowGutter = 10;
 
@@ -54,11 +27,6 @@ type ExtraParams = {
     locale: AllowedLocale
     yearDebounce?: number
 }
-
-// function importLocale(locale: AllowedLocale) {
-//     return import(`../../../../node_modules/date-fns/locale/${locale}.js`)
-//         .then(module => module[locale] as Locale);
-// }
 
 export interface DateFieldProps extends FieldComponentProps<Date, ExtraParams> {}
 
@@ -79,7 +47,6 @@ const DateField = ({
     const [day, setDay] = useState(date ? getDate(date) : undefined)
     const [month, setMonth] = useState(date ? getMonth(date) : undefined)
     const [year, setYear] = useState(date ? getYear(date) : undefined)
-    // const [locale, setLocale] = useState<Locale>()
 
     // debounce year value to delay value update when user is currently editing it
     const debouncedYear = useDebounce(year, yearDebounce)
@@ -96,14 +63,6 @@ const DateField = ({
     const handleYearChange = (event: React.ChangeEvent<HTMLInputElement>) => setDatePart(setYear, event.target.value)
 
     const error = typeof validation === 'object' && 'error' in validation ? validation.error : undefined
-
-    // useEffect(() => {
-    //     async function loadLocale() {
-    //         const result = await importLocale(localeCode)
-    //         setLocale(result)
-    //     }
-    //     loadLocale()
-    // }, [locale])
 
     useEffect(() => {
         if (typeof day !== 'undefined' && typeof month !== 'undefined' && typeof debouncedYear !== 'undefined') {
