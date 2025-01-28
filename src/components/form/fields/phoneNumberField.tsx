@@ -86,6 +86,8 @@ const PhoneNumberField = (props: PhoneNumberFieldProps) => {
     } = props;
 
     const [labels, setLabels] = useState<Labels>()
+    const currentValue = value !== null && typeof value === 'object' && 'raw' in value ? value.raw : value
+    const error = typeof validation === 'object' && 'error' in validation ? validation.error : undefined
 
     useEffect(() => {
         async function fetchLabels() {
@@ -100,13 +102,13 @@ const PhoneNumberField = (props: PhoneNumberFieldProps) => {
          */
         let ignore = false;
         fetchLabels();
+        onChange({
+            value: undefined
+        })
         return () => {
             ignore = true;
         }
     }, [locale])
-
-    const currentValue = value !== null && typeof value === 'object' && 'raw' in value ? value.raw : value
-    const error = typeof validation === 'object' && 'error' in validation ? validation.error : undefined
 
     const handlePhoneChange = (value: Value) => {
         onChange({
