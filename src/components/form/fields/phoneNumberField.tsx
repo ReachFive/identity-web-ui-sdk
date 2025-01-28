@@ -103,7 +103,7 @@ const PhoneNumberField = (props: PhoneNumberFieldProps) => {
         let ignore = false;
         fetchLabels();
         onChange({
-            value: undefined
+            value: currentValue == "" ? undefined: currentValue
         })
         return () => {
             ignore = true;
