@@ -34,7 +34,7 @@ interface VerificationCodeFormOptions {
 
 const VerificationCodeInputForm = createForm<VerificationCodeInputFormData, VerificationCodeFormOptions>({
     prefix: 'r5-passwordless-sms-',
-    fields({allowTrustDevice }) {
+    fields({ allowTrustDevice }) {
         return [
             simpleField({
                 key: 'verification_code',
@@ -189,7 +189,13 @@ export const FaSelectionView = (props: FaSelectionViewProps) => {
     }, [amr, onChooseFa])
 
     if (response) {
-        return <VerificationCodeView {...response} auth={props.auth} allowTrustDevice={props.allowTrustDevice}/>
+        return (
+            <VerificationCodeView
+                {...response}
+                auth={props.auth}
+                allowTrustDevice={props.allowTrustDevice}
+            />
+        )
     }
 
     if (amr.length > 1) {
@@ -226,14 +232,18 @@ export const VerificationCodeView = (props: VerificationCodeViewProps) => {
     const coreClient = useReachfive()
     const i18n = useI18n()
     const { params } = useRouting()
-    const { rbaEnabled} = useConfig()
+    const { rbaEnabled } = useConfig()
     const state = params as VerificationCodeViewState
 
     const { auth, authType, challengeId, allowTrustDevice } = { ...props, ...state }
 
     const handleSubmit = (data: VerificationCodeInputFormData) =>
         coreClient
-            .verifyMfaPasswordless({challengeId, verificationCode: data.verificationCode, trustDevice: data.trustDevice})
+            .verifyMfaPasswordless({
+                challengeId,
+                verificationCode: data.verificationCode,
+                trustDevice: data.trustDevice
+            })
             // @ts-expect-error AuthResult is too complex and is not representative of the real response of this request
             .then(resp => window.location.replace( auth?.redirectUri + "?" + toQueryString(resp)))
 
