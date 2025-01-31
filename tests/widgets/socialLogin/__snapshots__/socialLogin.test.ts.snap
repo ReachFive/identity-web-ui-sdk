@@ -123,7 +123,7 @@ exports[`Snapshot social login basic 1`] = `
       class="r5-social-buttons c1"
     >
       <button
-        class="r5-btn-social r5-btn-social-facebook c2"
+        class="c2 r5-btn-social r5-btn-social-facebook"
         title="Facebook"
       >
         <span
@@ -136,7 +136,7 @@ exports[`Snapshot social login basic 1`] = `
         </span>
       </button>
       <button
-        class="r5-btn-social r5-btn-social-google c4"
+        class="c4 r5-btn-social r5-btn-social-google"
         title="Google"
       >
         <span

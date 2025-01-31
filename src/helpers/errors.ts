@@ -7,6 +7,10 @@ export interface AppError {
     errorMessageKey?: string
 }
 
+export function isAppError(err: unknown): err is AppError {
+    return typeof err === 'object' && err !== null && 'errorMessageKey' in err
+}
+
 export class UserError extends Error {
     isUserError = true
 

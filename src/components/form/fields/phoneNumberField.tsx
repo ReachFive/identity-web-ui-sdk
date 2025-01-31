@@ -6,11 +6,12 @@ import { createGlobalStyle } from 'styled-components';
 
 import styles from 'react-phone-number-input/style.css'; // import raw css using `rollup-plugin-import-css'`
 
-import { FieldComponentProps, FieldCreator, createField } from '../fieldCreator';
+import { createField, type FieldComponentProps, type FieldCreator, type FieldDefinition } from '../fieldCreator';
 import { FormGroup } from '../formControlsComponent';
 import { Validator } from '../../../core/validation';
-import { Config } from '../../../types';
+import { Config, Optional } from '../../../types';
 import { Input } from '../formControlsComponent';
+import {isRichFormValue} from "../../../helpers/utils.ts";
 
 function isValidCountryCode(code?: string): code is Country {
     return typeof code === 'string' && isSupportedCountry(code)
@@ -37,22 +38,6 @@ function importLocale(locale: string) {
 
 export type PhoneNumberOptions = {
     /**
-     * If `withCountryCallingCode` property is explicitly set to true then the "country calling code" part (e.g. "+1" when country is "US") is included in the input field (but still isn't editable).
-     * @default true
-     */
-    withCountryCallingCode?: boolean
-    /**
-     * If `withCountrySelect` property is `true` then the user can select the country for the phone number. Must be a supported {@link https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2#Officially_assigned_code_elements country code}.
-     * @default false
-     */
-    withCountrySelect?: boolean
-}
-
-/**
- * If neither country nor defaultCountry are specified then the phone number can only be input in "international" format.
- */
-export interface PhoneNumberFieldProps extends FieldComponentProps<Value>, PhoneNumberOptions {
-    /**
      * If defaultCountry is specified then the phone number can be input both in "international" format and "national" format.
      * A phone number that's being input in "national" format will be parsed as a phone number belonging to the defaultCountry.
      */
@@ -67,7 +52,22 @@ export interface PhoneNumberFieldProps extends FieldComponentProps<Value>, Phone
      * @see https://gitlab.com/catamphetamine/react-phone-number-input/tree/master/locale
      */
     locale?: string
+    /**
+     * If `withCountryCallingCode` property is explicitly set to true then the "country calling code" part (e.g. "+1" when country is "US") is included in the input field (but still isn't editable).
+     * @default true
+     */
+    withCountryCallingCode?: boolean
+    /**
+     * If `withCountrySelect` property is `true` then the user can select the country for the phone number. Must be a supported {@link https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2#Officially_assigned_code_elements country code}.
+     * @default false
+     */
+    withCountrySelect?: boolean
 }
+
+/**
+ * If neither country nor defaultCountry are specified then the phone number can only be input in "international" format.
+ */
+export interface PhoneNumberFieldProps extends FieldComponentProps<Value>, PhoneNumberOptions {}
 
 const PhoneNumberField = (props: PhoneNumberFieldProps) => {
     const {
@@ -87,6 +87,8 @@ const PhoneNumberField = (props: PhoneNumberFieldProps) => {
     } = props;
 
     const [labels, setLabels] = useState<Labels>()
+    const currentValue = isRichFormValue(value, 'raw') ? value.raw : value
+    const error = typeof validation === 'object' && 'error' in validation ? validation.error : undefined
 
     useEffect(() => {
         async function fetchLabels() {
@@ -101,13 +103,13 @@ const PhoneNumberField = (props: PhoneNumberFieldProps) => {
          */
         let ignore = false;
         fetchLabels();
+        onChange({
+            value: currentValue == "" ? undefined: currentValue
+        })
         return () => {
             ignore = true;
         }
     }, [locale])
-
-    const currentValue = value !== null && typeof value === 'object' && 'raw' in value ? value.raw : value
-    const error = typeof validation === 'object' && 'error' in validation ? validation.error : undefined
 
     const handlePhoneChange = (value: Value) => {
         onChange({
@@ -131,7 +133,7 @@ const PhoneNumberField = (props: PhoneNumberFieldProps) => {
                 value={currentValue}
                 placeholder={placeholder}
                 required={required}
-                data-testid="phone_number"
+                data-testid={path}
                 onChange={handlePhoneChange}
                 labels={labels}
                 international={true}
@@ -155,8 +157,13 @@ const phoneNumberField = (
     {
         key = 'phone_number',
         label = 'phoneNumber',
+        defaultCountry,
+        country,
+        locale,
+        withCountryCallingCode,
+        withCountrySelect,
         ...props
-    }: Partial<PhoneNumberFieldProps>,
+    }: Optional<FieldDefinition<string, Value>, 'key' | 'label'> & PhoneNumberOptions,
     config: Config
 ): FieldCreator<Value, PhoneNumberFieldProps> => {
     return createField<string, Value, PhoneNumberFieldProps>({
@@ -185,10 +192,11 @@ const phoneNumberField = (
             hint: 'phone'
         }),
         extendedParams: {
-            country: isValidCountryCode(config.countryCode) ? config.countryCode : undefined,
-            locale: config.language,
-            withCountryCallingCode: props.withCountryCallingCode,
-            withCountrySelect: props.withCountrySelect,
+            defaultCountry,
+            country: country ?? (isValidCountryCode(config.countryCode) ? config.countryCode : undefined),
+            locale: locale ?? config.language,
+            withCountryCallingCode,
+            withCountrySelect,
         }
     });
 }

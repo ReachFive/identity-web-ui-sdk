@@ -68,8 +68,8 @@ describe('Snapshot', () => {
             generateSnapshot(
                 {
                     fields: [
-                        'given_name',
-                        'family_name'
+                        'givenName',
+                        'familyName'
                     ]
                 },
                 {
@@ -135,7 +135,7 @@ describe('DOM testing', () => {
             expect(getUser).toBeCalledWith(
                 expect.objectContaining({
                     accessToken: 'azerty',
-                    fields: 'given_name,family_name',
+                    fields: 'givenName,familyName',
                 })
             )
 

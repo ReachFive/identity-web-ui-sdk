@@ -135,7 +135,6 @@ const MainView = ({
                 ...data,
             }, auth)
             .then(() => data)
-            .catch(onError);
 
     const handleSuccess = (data: EmailFormData | PhoneNumberFormFata) => {
         if ('email' in data) {
@@ -161,11 +160,13 @@ const MainView = ({
             {isEmail && <EmailInputForm
                 handler={(data: EmailFormData) => ReCaptcha.handle(data, { recaptcha_enabled, recaptcha_site_key }, callback, "passwordless_email")}
                 onSuccess={handleSuccess}
+                onError={onError}
             />}
             {!isEmail && showIntro && <Intro>{i18n('passwordless.sms.intro')}</Intro>}
             {!isEmail && <PhoneNumberInputForm
                 handler={(data: PhoneNumberFormFata) => ReCaptcha.handle(data, { recaptcha_enabled, recaptcha_site_key }, callback, "passwordless_phone")}
                 onSuccess={handleSuccess}
+                onError={onError}
                 phoneNumberOptions={phoneNumberOptions}
             />}
         </div>
@@ -227,7 +228,6 @@ const VerificationCodeView = ({
                     onError()
                 }
             })
-            .catch(onError);
     };
 
     return (

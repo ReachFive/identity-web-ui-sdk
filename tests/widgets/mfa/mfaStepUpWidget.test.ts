@@ -99,10 +99,9 @@ describe('DOM testing', () => {
 
         // When more than one amr options, display radio input selector
         if (amr.length > 1) {
-            await waitFor(async () => {
-                amr.forEach(value => {
-                    expect(screen.getByLabelText(value)).toBeInTheDocument()
-                })
+            expect(await screen.findByText('mfa.select.factor')).toBeInTheDocument()
+            amr.forEach(value => {
+                expect(screen.getByLabelText(value)).toBeInTheDocument()
             })
             await user.click(screen.getByLabelText('sms'))
             await user.click(screen.getByTestId('submit'))
@@ -129,19 +128,19 @@ describe('DOM testing', () => {
         await user.type(input, myVerificationCode);
         await user.click(submitBtn);
 
-        expect(verifyMfaPasswordless).toHaveBeenNthCalledWith(1,
+        await waitFor(() => expect(verifyMfaPasswordless).toHaveBeenNthCalledWith(1,
             expect.objectContaining({
                 challengeId: expect.stringMatching(myChallengeId),
                 verificationCode: expect.stringMatching(myVerificationCode),
             })
-        )
+        ))
 
         expect(onSuccess).toBeCalled()
         expect(onError).not.toBeCalled()
 
-        expect(window.location.replace).toHaveBeenCalledWith(
+        await waitFor(() => expect(window.location.replace).toHaveBeenCalledWith(
             expect.stringContaining(auth.redirectUri)
-        )
+        ))
     }
 
     describe('with single amr (sms)', () => {
@@ -208,7 +207,7 @@ describe('DOM testing', () => {
         })
         
         test('showStepUpStart: false', async () => {
-            expect.assertions(13);
+            expect.assertions(14);
 
             const user = userEvent.setup()
 

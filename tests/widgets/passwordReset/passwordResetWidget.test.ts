@@ -101,12 +101,12 @@ describe('DOM testing', () => {
             const submitBtn = screen.getByTestId('submit')
             expect(submitBtn).toHaveTextContent('send');
 
-            await user.type(password, 'azerty')
-            await user.type(passwordConfirmation, 'azerty')
+            await user.type(password, 'Wond3rFu11_Pa55w0rD*$')
+            await user.type(passwordConfirmation, 'Wond3rFu11_Pa55w0rD*$')
             await user.click(submitBtn)
 
             expect(updatePassword).toBeCalledWith({
-                password: 'azerty',
+                password: 'Wond3rFu11_Pa55w0rD*$',
                 email: 'alice@reach5.co', /** @see @jest-environment-options on top of file */
                 verificationCode: '123456', /** @see @jest-environment-options on top of file */
             })
@@ -126,8 +126,8 @@ describe('DOM testing', () => {
             const passwordConfirmation = screen.getByTestId('password_confirmation')
             const submitBtn = screen.getByTestId('submit')
 
-            await user.type(password, 'azerty')
-            await user.type(passwordConfirmation, 'azerty')
+            await user.type(password, 'Wond3rFu11_Pa55w0rD*$')
+            await user.type(passwordConfirmation, 'Wond3rFu11_Pa55w0rD*$')
             await user.click(submitBtn)
 
             expect(updatePassword).toBeCalled()

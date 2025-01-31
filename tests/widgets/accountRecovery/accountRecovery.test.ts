@@ -123,11 +123,11 @@ describe('DOM testing', () => {
     
             const newPasswordInput = screen.getByLabelText('newPassword')
             await user.clear(newPasswordInput)
-            await user.type(newPasswordInput, 'azerty')
+            await user.type(newPasswordInput, 'Wond3rFu11_Pa55w0rD*$')
     
             const passwordConfirmationInput = screen.getByLabelText('passwordConfirmation')
             await user.clear(passwordConfirmationInput)
-            await user.type(passwordConfirmationInput, 'azerty')
+            await user.type(passwordConfirmationInput, 'Wond3rFu11_Pa55w0rD*$')
             
             const submitBtn = screen.getByRole('button', { name: 'send'})
             expect(submitBtn).toBeInTheDocument()
@@ -136,7 +136,7 @@ describe('DOM testing', () => {
     
             expect(updatePassword).toBeCalledWith(
                 expect.objectContaining({
-                    password: 'azerty',
+                    password: 'Wond3rFu11_Pa55w0rD*$',
                     email: 'alice@reach5.co', /** @see @jest-environment-options on top of file */
                     verificationCode: '123456', /** @see @jest-environment-options on top of file */
                     clientId: 'local' /** @see @jest-environment-options on top of file */
@@ -179,11 +179,11 @@ describe('DOM testing', () => {
 
             const newPasswordInput = screen.getByLabelText('newPassword')
             await user.clear(newPasswordInput)
-            await user.type(newPasswordInput, 'azerty')
+            await user.type(newPasswordInput, 'Wond3rFu11_Pa55w0rD*$')
     
             const passwordConfirmationInput = screen.getByLabelText('passwordConfirmation')
             await user.clear(passwordConfirmationInput)
-            await user.type(passwordConfirmationInput, 'azerty')
+            await user.type(passwordConfirmationInput, 'Wond3rFu11_Pa55w0rD*$')
             
             const submitBtn = screen.getByRole('button', { name: 'send'})
             expect(submitBtn).toBeInTheDocument()

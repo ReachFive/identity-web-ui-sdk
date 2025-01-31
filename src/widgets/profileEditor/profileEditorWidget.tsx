@@ -6,7 +6,7 @@ import { camelCaseProperties } from '../../helpers/transformObjectProperties';
 
 import { createWidget } from '../../components/widget/widget';
 import { createForm } from '../../components/form/formComponent';
-import { buildFormFields, computeFieldList } from '../../components/form/formFieldFactory';
+import { buildFormFields } from '../../components/form/formFieldFactory';
 import { useReachfive } from '../../contexts/reachfive';
 import { FieldCreator } from '../../components/form/fieldCreator';
 import { Field } from '../../components/form/formFieldFactory';
@@ -49,7 +49,7 @@ interface ProfileEditorProps {
     /**
      * 
      */
-    resolvedFields: FieldCreator<unknown>[]
+    resolvedFields: FieldCreator<any, any, any, any>[]
     /**
      * Whether the form fields' labels are displayed on the form view.
      * @default false
@@ -131,7 +131,7 @@ export default createWidget<ProfileEditorWidgetProps, ProfileEditorProps>({
         return apiClient
             .getUser({
                 accessToken,
-                fields: computeFieldList(resolvedFields)
+                fields: resolvedFields.map(({ path }) => path).join(',')
             })
             .then(profile => camelCaseProperties(profile) as Profile) /** @todo check api response key format in sdk core */
             .then((profile: Profile) => {
@@ -144,7 +144,7 @@ export default createWidget<ProfileEditorWidgetProps, ProfileEditorProps>({
                         return (field.path !== 'email' || !filteredOutConsentsProfile.email)
                             && (field.path !== 'phone_number' || !config.sms || !filteredOutConsentsProfile.phoneNumber);
                     })
-                })
+                } satisfies ProfileEditorProps)
             })
             .catch((error: unknown) => {
                 options.onError?.(error)

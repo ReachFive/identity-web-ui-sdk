@@ -109,10 +109,20 @@ describe('DOM testing', () => {
             verifyMfaEmailRegistration: verifyMfaEmailRegistration.mockResolvedValue(),
             verifyMfaPhoneNumberRegistration: verifyMfaEmailRegistration.mockResolvedValue(),
         }
-        const result = await mfaCredentialsWidget({ accessToken: 'azerty', onError, onSuccess, ...options }, { apiClient,config: { ...defaultConfig, ...config }, defaultI18n });
-        return await waitFor(async () => {
-            return render(result);
-        })
+        const result = await mfaCredentialsWidget(
+            {
+                accessToken: 'azerty',
+                onError,
+                onSuccess,
+                ...options
+            },
+            {
+                apiClient,
+                config: { ...defaultConfig, ...config },
+                defaultI18n
+            }
+        );
+        return await waitFor(async () => render(result))
     };
 
     describe('mfaCredentials', () => {

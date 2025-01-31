@@ -32,10 +32,15 @@ export const PasswordEditorForm = createForm<PasswordEditorFormData, PasswordEdi
     prefix: 'r5-password-editor-',
     fields({ promptOldPassword = false, canShowPassword = false, config }) {
         return [
-            promptOldPassword && simplePasswordField({
-                key: 'old_password',
-                label: 'oldPassword'
-            }),
+            ...(promptOldPassword
+                ? [
+                    simplePasswordField({
+                        key: 'old_password',
+                        label: 'oldPassword'
+                    })
+                ]
+                : []
+            ),
             passwordField({
                 label: 'newPassword',
                 autoComplete: 'new-password',
@@ -50,7 +55,7 @@ export const PasswordEditorForm = createForm<PasswordEditorFormData, PasswordEdi
                     hint: 'passwordMatch'
                 })
             })
-        ].filter(x => !!x);
+        ];
     },
     resetAfterSuccess: true,
     resetAfterError: true

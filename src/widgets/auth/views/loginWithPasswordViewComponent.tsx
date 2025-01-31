@@ -57,25 +57,36 @@ export const LoginWithPasswordForm = createForm<LoginWithPasswordFormData, Login
                 autoComplete: 'current-password',
                 canShowPassword
             }),
-            showForgotPassword && !showAccountRecovery && {
-                staticContent: (
-                    <ResetCredentialWrapper key="forgot-password" floating={showRememberMe}>
-                        <Link target="forgot-password">{i18n('login.forgotPasswordLink')}</Link>
-                    </ResetCredentialWrapper>
-                )
-            },
-            showAccountRecovery && {
-                staticContent: (
-                    <ResetCredentialWrapper key="account-recovery" floating={showRememberMe}>
-                        <Link target="account-recovery">{i18n('accountRecovery.title')}</Link>
-                    </ResetCredentialWrapper>
-                )
-            },
-            showRememberMe && checkboxField({
-                key: 'auth.persistent',
-                label: 'rememberMe',
-                defaultValue: false
-            })
+            ...(showForgotPassword && !showAccountRecovery
+                ? [{
+                    staticContent: (
+                        <ResetCredentialWrapper key="forgot-password" floating={showRememberMe}>
+                            <Link target="forgot-password">{i18n('login.forgotPasswordLink')}</Link>
+                        </ResetCredentialWrapper>
+                    )
+                }]
+                : []
+            ),
+            ...(showAccountRecovery
+                ? [{
+                    staticContent: (
+                        <ResetCredentialWrapper key="account-recovery" floating={showRememberMe}>
+                            <Link target="account-recovery">{i18n('accountRecovery.title')}</Link>
+                        </ResetCredentialWrapper>
+                    )
+                }]
+                : []
+            ),
+            ...(showRememberMe
+                ? [
+                    checkboxField({
+                        key: 'auth.persistent',
+                        label: 'rememberMe',
+                        defaultValue: false
+                    })
+                ]
+                : []
+            )
         ];
     },
     submitLabel: 'login.submitLabel'

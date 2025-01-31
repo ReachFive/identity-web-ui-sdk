@@ -105,23 +105,22 @@ describe('DOM testing', () => {
         })
 
         const choice = options[1]
-        const choiceInput = screen.queryByLabelText(i18nResolver(choice.label))
-        if (!choiceInput) throw new Error('Radio input should be in document')
+        const choiceInput = screen.getByLabelText(i18nResolver(choice.label))
         await user.click(choiceInput)
 
         expect(choiceInput).toBeChecked()
 
-        expect(onFieldChange).toHaveBeenLastCalledWith(
+        await waitFor(() => expect(onFieldChange).toHaveBeenLastCalledWith(
             expect.objectContaining({
                 radiobox: expect.objectContaining({
                     isDirty: false,
                     value: choice.value,
                 })
             })
-        )
+        ))
 
         const submitBtn = screen.getByRole('button')
-        user.click(submitBtn)
+        await user.click(submitBtn)
 
         await waitFor(() => expect(onSubmit).toHaveBeenCalled())
 
@@ -180,31 +179,30 @@ describe('DOM testing', () => {
 
 
         const choice = options[0]
-        const choiceInput = screen.queryByLabelText(i18nResolver(choice.label))
-        if (!choiceInput) throw new Error('Radio input should be in document')
+        const choiceInput = screen.getByLabelText(i18nResolver(choice.label))
         await user.click(choiceInput)
 
         expect(choiceInput).toBeChecked()
 
-        expect(onFieldChange).toHaveBeenLastCalledWith(
+        await waitFor(() => expect(onFieldChange).toHaveBeenLastCalledWith(
             expect.objectContaining({
                 radiobox: expect.objectContaining({
                     isDirty: false,
                     value: choice.value,
                 })
             })
-        )
+        ))
 
         const submitBtn = screen.getByRole('button')
-        user.click(submitBtn)
+        await user.click(submitBtn)
 
         await waitFor(() => expect(onSubmit).toHaveBeenCalled())
 
-        expect(onSubmit).toBeCalledWith(
+        await waitFor(() => expect(onSubmit).toBeCalledWith(
             expect.objectContaining({
                 radiobox: choice.value
             })
-        )
+        ))
     })
 
     test('with ReactNode option\'s label', async () => {
@@ -249,30 +247,29 @@ describe('DOM testing', () => {
         })
 
         const choice = options[1]
-        const choiceInput = screen.queryByDisplayValue(choice.value)
-        if (!choiceInput) throw new Error('Radio input should be in document')
+        const choiceInput = screen.getByDisplayValue(choice.value)
         await user.click(choiceInput)
 
         expect(choiceInput).toBeChecked()
 
-        expect(onFieldChange).toHaveBeenLastCalledWith(
+        await waitFor(() => expect(onFieldChange).toHaveBeenLastCalledWith(
             expect.objectContaining({
                 radiobox: expect.objectContaining({
                     isDirty: false,
                     value: choice.value,
                 })
             })
-        )
+        ))
 
         const submitBtn = screen.getByRole('button')
-        user.click(submitBtn)
+        await user.click(submitBtn)
 
         await waitFor(() => expect(onSubmit).toHaveBeenCalled())
 
-        expect(onSubmit).toBeCalledWith(
+        await waitFor(() => expect(onSubmit).toBeCalledWith(
             expect.objectContaining({
                 radiobox: choice.value
             })
-        )
+        ))
     })
 })

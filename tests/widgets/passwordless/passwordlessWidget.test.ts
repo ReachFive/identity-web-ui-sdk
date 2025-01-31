@@ -85,9 +85,7 @@ describe('DOM testing', () => {
 
         const result = await passwordlessWidget({ onError, onSuccess, ...options }, {config: { ...defaultConfig, ...config }, apiClient, defaultI18n });
 
-        return waitFor(async () => {
-            return render(result);
-        })
+        return waitFor(async () => render(result))
     };
 
     describe('passwordless', () => {

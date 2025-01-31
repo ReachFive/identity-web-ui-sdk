@@ -62,7 +62,8 @@ const MainView = ({
                 canShowPassword={canShowPassword}
                 showLabels={showLabels}
                 onSuccess={handleSuccess}
-                onError={onError} />
+                onError={onError}
+            />
         </div>
     )
 }

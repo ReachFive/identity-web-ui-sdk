@@ -21,7 +21,7 @@ export const Info = styled(TextBase)`
     color: ${props => props.theme.textColor};
 `;
 
-export const Error = styled(TextBase)`
+export const ErrorText = styled(TextBase)`
     color: ${props => props.theme.dangerColor};
 `;
 
@@ -112,5 +112,11 @@ function buildMarkdownParser() {
 
 const markdownParser = buildMarkdownParser();
 
-export const MarkdownContent = <T,>({ source, root: Root, ...props }: { source: string, root: ComponentType<HTMLAttributes<T>> & HTMLAttributes<T> }) =>
-    <Root data-text='md' dangerouslySetInnerHTML={{ __html: markdownParser.render(source) }} {...props} />;
+interface MarkdownContentProps<T> extends HTMLAttributes<T> {
+    root: ComponentType<HTMLAttributes<T>>
+    source: string,
+}
+
+export function MarkdownContent<T>({ root: Root, source, ...props }: MarkdownContentProps<T>) {
+    return <Root data-text='md' dangerouslySetInnerHTML={{ __html: markdownParser.render(source) }} {...props} />
+}
