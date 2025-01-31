@@ -168,7 +168,7 @@ const MainView = ({
                     </div>
                 }
 
-                {config.mfaEmailEnabled && config.mfaSmsEnabled && !isPhoneCredentialRegistered && <Separator text={i18n('or')} />}
+                {config.mfaEmailEnabled && !isEmailCredentialRegistered && config.mfaSmsEnabled && !isPhoneCredentialRegistered && <Separator text={i18n('or')} />}
 
                 {config.mfaSmsEnabled && !isPhoneCredentialRegistered &&
                     <div>

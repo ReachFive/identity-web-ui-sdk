@@ -85,6 +85,10 @@ export type MfaListWidgetProps = {
      */
     accessToken: string
     /**
+     * Callback function called when the request has succeed.
+     */
+    onSuccess?: () => void
+    /**
      * Callback function called when the request has failed.
      */
     onError?: (error?: unknown) => void
@@ -94,10 +98,13 @@ export default createWidget<MfaListWidgetProps, MfaListProps>({
     component: MfaList,
     prepare: (options, { apiClient }) =>
         apiClient.listMfaCredentials(options.accessToken)
-            .then(({ credentials }) => ({
-                ...options,
-                credentials,
-            }))
+            .then(({ credentials }) => {
+                options.onSuccess?.()
+                return {
+                    ...options,
+                    credentials,
+                }
+            })
             .catch(error => {
                 options.onError?.(error)
                 throw UserError.fromAppError(error)

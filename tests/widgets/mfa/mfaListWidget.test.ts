@@ -95,7 +95,7 @@ describe('DOM testing', () => {
         const apiClient: Client = {
             listMfaCredentials,
         }
-        const result = await mfaListWidget({ accessToken: 'azerty', onError, ...options }, { apiClient,config: { ...defaultConfig, ...config }, defaultI18n });
+        const result = await mfaListWidget({ accessToken: 'azerty', onError, onSuccess, ...options }, { apiClient,config: { ...defaultConfig, ...config }, defaultI18n });
         return await waitFor(async () => {
             return render(result);
         })
@@ -111,6 +111,9 @@ describe('DOM testing', () => {
 
             const credential = screen.queryAllByTestId('credential')
             expect(credential).toHaveLength(0)
+
+            expect(onSuccess).toBeCalled()
+            expect(onError).not.toBeCalled()
         })
 
         test('with credentials', async () => {
@@ -125,6 +128,9 @@ describe('DOM testing', () => {
 
             const credential = screen.queryAllByTestId('credential')
             expect(credential).toHaveLength(2)
+
+            expect(onSuccess).toBeCalled()
+            expect(onError).not.toBeCalled()
         })
 
         test('api error', async () => {

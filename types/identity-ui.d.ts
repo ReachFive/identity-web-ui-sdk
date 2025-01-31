@@ -1,6 +1,6 @@
 /**
  * @reachfive/identity-ui - v1.31.3
- * Compiled Fri, 31 Jan 2025 13:36:32 UTC
+ * Compiled Fri, 31 Jan 2025 14:43:05 UTC
  *
  * Copyright (c) ReachFive.
  *
@@ -1487,6 +1487,10 @@ type MfaListWidgetProps = {
     * The authorization credential JSON Web Token (JWT) used to access the ReachFive API, less than five minutes old.
     */
     accessToken: string;
+    /**
+     * Callback function called when the request has succeed.
+     */
+    onSuccess?: () => void;
     /**
      * Callback function called when the request has failed.
      */
