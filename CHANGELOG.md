@@ -7,6 +7,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.31.3] - 2025-01-28
+
+### Fixed
+- Fix form phone number field when optional and not valued
+
 ## [1.31.2] - 2025-01-14
 
 ### Fixed
@@ -536,7 +541,9 @@ The eye icon is now correctly displayed in the Auth widget.
 
 First version of the SDK Web UI.
 
-[Unreleased]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.31.2...HEAD
+[Unreleased]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.31.3...HEAD
+
+[1.31.3]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.31.2...v1.31.3
 
 [1.31.2]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.31.1...v1.31.2
 
