@@ -3,7 +3,7 @@
  */
 
 import React from 'react'
-import { describe, expect, jest, test } from '@jest/globals';
+import { afterEach, beforeEach, describe, expect, jest, test } from '@jest/globals';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event'
 import '@testing-library/jest-dom/jest-globals'
@@ -64,6 +64,16 @@ const theme: Theme = buildTheme({
 type Model = { simple: string }
 
 describe('DOM testing', () => {
+
+    beforeEach(() => {
+        jest.useFakeTimers();
+    })
+
+    afterEach(() => {
+        jest.runOnlyPendingTimers()
+        jest.useRealTimers();
+    });
+
     test('default settings', async () => {
         const user = userEvent.setup()
 
@@ -215,6 +225,9 @@ describe('DOM testing', () => {
         const invalidValue = 'ILoveApples'
         await user.clear(input)
         await user.type(input, invalidValue)
+                
+        // Fast-forward until all timers have been executed (handle year debounced value)
+        await jest.runOnlyPendingTimersAsync();
 
         expect(onFieldChange).toHaveBeenLastCalledWith(
             expect.objectContaining({
