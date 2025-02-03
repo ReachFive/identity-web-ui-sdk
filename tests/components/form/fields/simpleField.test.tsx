@@ -75,7 +75,7 @@ describe('DOM testing', () => {
     });
 
     test('default settings', async () => {
-        const user = userEvent.setup()
+        const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime })
 
         const key = 'simple'
         const label = 'simple'
@@ -182,7 +182,7 @@ describe('DOM testing', () => {
             hint: 'value.match'
         })
 
-        const user = userEvent.setup()
+        const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime })
 
         const key = 'simple'
         const label = 'simple'
