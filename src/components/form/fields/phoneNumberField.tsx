@@ -11,6 +11,7 @@ import { FormGroup } from '../formControlsComponent';
 import { isValidatorError, Validator } from '../../../core/validation';
 import { Config, Optional } from '../../../types';
 import { Input } from '../formControlsComponent';
+import {isRichFormValue} from "../../../helpers/utils.ts";
 
 function isValidCountryCode(code?: string): code is Country {
     return typeof code === 'string' && isSupportedCountry(code)
@@ -86,6 +87,8 @@ const PhoneNumberField = (props: PhoneNumberFieldProps) => {
     } = props;
 
     const [labels, setLabels] = useState<Labels>()
+    const currentValue = isRichFormValue(value, 'raw') ? value.raw : value
+    const error = validation && isValidatorError(validation) ? validation.error : undefined
 
     useEffect(() => {
         async function fetchLabels() {
@@ -100,13 +103,13 @@ const PhoneNumberField = (props: PhoneNumberFieldProps) => {
          */
         let ignore = false;
         fetchLabels();
+        onChange({
+            value: currentValue == "" ? undefined: currentValue
+        })
         return () => {
             ignore = true;
         }
     }, [locale])
-
-    const currentValue = value !== null && typeof value === 'object' && 'raw' in value ? value.raw : value
-    const error = validation && isValidatorError(validation) ? validation.error : undefined
 
     const handlePhoneChange = (value: Value) => {
         onChange({
