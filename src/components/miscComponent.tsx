@@ -101,7 +101,33 @@ marked.use({
         link({ href, text }) {
             return '<a href="'+ href +'" target="_blank" rel="nofollow noreferrer noopener">' + text + '</a>';
         }
-    }
+    },
+    extensions: [
+        // specific underline markup is missed in marked module
+        // see https://marked.js.org/using_pro#extensions
+        {
+            name: 'underline',
+            level: 'inline',
+            start(src) {
+                return /\+{2}/.exec(src)?.index; // starts with ++
+            },
+            tokenizer(src) {
+                const rule = /^\+{2}([^+\n]+)\+{2}/;
+                const match = rule.exec(src);
+                if (match) {
+                    return {
+                        type: 'underline',
+                        raw: match[0],
+                        text: match[1],
+                        tokens: this.lexer.inlineTokens(match[1])
+                    };
+                }
+            },
+            renderer(token) {
+                return `<u>${token.text}</u>`;
+            },
+        }
+    ]
 })
 
 interface MarkdownContentProps<T> extends HTMLAttributes<T> {
