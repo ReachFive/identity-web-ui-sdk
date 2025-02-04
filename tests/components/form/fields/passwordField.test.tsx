@@ -3,7 +3,7 @@
  */
 
 import React from 'react'
-import { beforeEach, describe, expect, jest, test } from '@jest/globals';
+import { afterEach, beforeEach, describe, expect, jest, test } from '@jest/globals';
 import { render, screen, waitFor, queryByText } from '@testing-library/react';
 import userEvent from '@testing-library/user-event'
 import '@testing-library/jest-dom/jest-globals'
@@ -66,13 +66,19 @@ describe('DOM testing', () => {
     const apiClient: Client = {
         getPasswordStrength,
     }
-
+    
     beforeEach(() => {
         getPasswordStrength.mockClear()
+        jest.useFakeTimers();
     })
 
+    afterEach(() => {
+        jest.runOnlyPendingTimers()
+        jest.useRealTimers();
+    });
+
     test('default settings', async () => {
-        const user = userEvent.setup()
+        const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTimeAsync })
 
         const key = 'password'
         const label = 'password'
@@ -166,7 +172,7 @@ describe('DOM testing', () => {
     })
 
     test('with canShowPassword enabled', async () => {
-        const user = userEvent.setup()
+        const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTimeAsync })
 
         const key = 'password'
         const label = 'password'
@@ -222,7 +228,7 @@ describe('DOM testing', () => {
             hint: 'password.match'
         })
 
-        const user = userEvent.setup()
+        const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTimeAsync })
 
         const key = 'password'
         const label = 'password'
@@ -266,6 +272,9 @@ describe('DOM testing', () => {
         const invalidPassword = 'ILoveApples'
         await user.clear(input)
         await user.type(input, invalidPassword)
+
+        // Fast-forward until all timers have been executed
+        await jest.runOnlyPendingTimersAsync()
 
         await waitFor(() => expect(onFieldChange).toHaveBeenLastCalledWith(
             expect.objectContaining({

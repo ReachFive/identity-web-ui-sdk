@@ -8,7 +8,7 @@ import { getAllByRole, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event'
 import '@testing-library/jest-dom/jest-globals'
 import 'jest-styled-components';
-import { DateTime, Duration } from 'luxon';
+import { differenceInYears, formatISO, getDate, getDaysInMonth, getMonth, getYear, startOfDay, subYears } from 'date-fns';
 
 import type { Config } from '../../../../src/types';
 
@@ -108,9 +108,19 @@ describe('DOM testing', () => {
         expect(monthInput).toBeInTheDocument()
         expect(monthInput).toHaveAttribute('aria-label', i18nResolver('month'))
         expect(monthInput).not.toHaveValue()
-        const expectedMonthsOptions = ['', ...[...Array(12).keys()].map(value => String(value + 1))]
-        expect(getAllByRole(monthInput, 'option').map(option => option.getAttribute('value'))).toEqual(
+        const expectedMonthsOptions = ['', ...[...Array(12).keys()].map(value => String(value))]
+        const options = getAllByRole(monthInput, 'option')
+        expect(options.map(option => option.getAttribute('value'))).toEqual(
             expect.arrayContaining(expectedMonthsOptions)
+        )
+        const expectedMonthsOptionsIntl = [
+            i18nResolver('month'),
+            ...[...Array(12).keys()].map(value =>
+                new Intl.DateTimeFormat(defaultConfig.language, { month: "long" }).format(new Date(2025, Number(value), 1))
+            )
+        ]
+        expect(options.map(option => option.textContent)).toEqual(
+            expect.arrayContaining(expectedMonthsOptionsIntl)
         )
         
         const dayInput = screen.getByTestId('date.day')
@@ -118,7 +128,7 @@ describe('DOM testing', () => {
         expect(dayInput).toHaveAttribute('aria-label', i18nResolver('day'))
         expect(dayInput).not.toHaveValue()
         // default is based on current date
-        const expectedDaysOptions = ['', ...[...Array(DateTime.now().month).keys()].map(value => String(value + 1))]
+        const expectedDaysOptions = ['', ...[...Array(getDaysInMonth(new Date())).keys()].map(value => String(value + 1))]
         expect(getAllByRole(dayInput, 'option').map(option => option.getAttribute('value'))).toEqual(
             expect.arrayContaining(expectedDaysOptions)
         )
@@ -131,12 +141,12 @@ describe('DOM testing', () => {
         // await user.clear(yearInput)
         await user.type(yearInput, String(year))
 
-        const month = 12
+        const month = 11 // December
         // await user.clear(monthInput)
         await user.selectOptions(monthInput, String(month))
 
         // month options should be updated
-        const decemberExpectedDaysOptions = ['', ...[...Array(month).keys()].map(value => String(value + 1))]
+        const decemberExpectedDaysOptions = ['', ...[...Array(getDaysInMonth(new Date(year, month, 1))).keys()].map(value => String(value + 1))]
         expect(getAllByRole(dayInput, 'option').map(option => option.getAttribute('value'))).toEqual(
             expect.arrayContaining(decemberExpectedDaysOptions)
         )
@@ -152,7 +162,7 @@ describe('DOM testing', () => {
             expect.objectContaining({
                 date: expect.objectContaining({
                     isDirty: true,
-                    value: DateTime.fromObject({ year, month, day }),
+                    value: new Date(year, month, day),
                 })
             })
         ))
@@ -164,7 +174,7 @@ describe('DOM testing', () => {
 
         expect(onSubmit).toBeCalledWith(
             expect.objectContaining({
-                date: DateTime.fromObject({ year, month, day }).toISODate() // value is formatted in handler data
+                date: formatISO(new Date(year, month, day)) // value is formatted in handler data
             })
         )
 
@@ -176,8 +186,11 @@ describe('DOM testing', () => {
         const key = 'date'
         const label = 'date'
 
-        const validator = new Validator<DateTime>({
-            rule: (value) => value.diffNow('years').as('years') <= -18,
+        const validator = new Validator<Date>({
+            rule: (value) => {
+                console.log(value, differenceInYears(new Date(), value))
+                return differenceInYears(new Date(), value) >= 18
+            },
             hint: 'age.minimun'
         })
 
@@ -209,21 +222,21 @@ describe('DOM testing', () => {
         const monthInput = screen.getByTestId('date.month')
         const dayInput = screen.getByTestId('date.day')
 
-        const tenYearsOld = DateTime.now().minus(Duration.fromObject({ year: 10 }))
+        const tenYearsOld = subYears(new Date(), 10)
         await user.clear(yearInput)
-        await user.type(yearInput, String(tenYearsOld.year))
+        await user.type(yearInput, String(getYear(tenYearsOld)))
 
         // Fast-forward until all timers have been executed (handle year debounced value)
         await jest.runOnlyPendingTimersAsync();
 
-        await user.selectOptions(monthInput, String(tenYearsOld.month))
-        await user.selectOptions(dayInput, String(tenYearsOld.day))
+        await user.selectOptions(monthInput, String(getMonth(tenYearsOld)))
+        await user.selectOptions(dayInput, String(getDate(tenYearsOld)))
 
         await waitFor(() => expect(onFieldChange).toHaveBeenLastCalledWith(
             expect.objectContaining({
                 date: expect.objectContaining({
                     isDirty: true,
-                    value: tenYearsOld.startOf('day'),
+                    value: startOfDay(tenYearsOld),
                     validation: {
                         valid: false,
                         error: "validation.age.minimun"
@@ -238,9 +251,9 @@ describe('DOM testing', () => {
         expect(formError).toBeInTheDocument()
         expect(formError).toHaveTextContent('validation.age.minimun')
 
-        const eighteenYearsOld = DateTime.now().minus(Duration.fromObject({ year: 18 }))
+        const eighteenYearsOld = subYears(new Date(), 18)
         await user.clear(yearInput)
-        await user.type(yearInput, String(eighteenYearsOld.year))
+        await user.type(yearInput, String(getYear(eighteenYearsOld)))
         
         // Fast-forward until all timers have been executed (handle year debounced value)
         await jest.runOnlyPendingTimersAsync();
@@ -249,7 +262,7 @@ describe('DOM testing', () => {
             expect.objectContaining({
                 date: expect.objectContaining({
                     isDirty: true,
-                    value: eighteenYearsOld.startOf('day'),
+                    value: startOfDay(eighteenYearsOld),
                 })
             })
         ))

@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react'
-import { DateTime, Info } from 'luxon'
+import { eachMonthOfInterval, endOfYear, intlFormat, formatISO, getDate, getDaysInMonth, getMonth, getYear, isValid, parseISO, startOfYear } from "date-fns"
 import styled from 'styled-components';
 
 import { ValidatorResult, Validator, isValidatorError } from '../../../core/validation';
@@ -8,7 +8,7 @@ import { isRichFormValue } from '../../../helpers/utils';
 
 import { createField, type FieldComponentProps, type FieldCreator, type FieldDefinition } from '../fieldCreator';
 import { FormGroup, Input, Select } from '../formControlsComponent';
-import { Config, Optional } from '../../../types';
+import type { Config, Optional } from '../../../types';
 
 const inputRowGutter = 10;
 
@@ -28,7 +28,7 @@ type ExtraParams = {
     yearDebounce?: number
 }
 
-export interface DateFieldProps extends FieldComponentProps<DateTime, ExtraParams> {}
+export interface DateFieldProps extends FieldComponentProps<Date, ExtraParams> {}
 
 const DateField = ({
     i18n,
@@ -44,9 +44,9 @@ const DateField = ({
     yearDebounce = 1000
 }: DateFieldProps) => {
     const date = isRichFormValue(value, 'raw') ? value.raw : value
-    const [day, setDay] = useState(date?.day)
-    const [month, setMonth] = useState(date?.month)
-    const [year, setYear] = useState(date?.year)
+    const [day, setDay] = useState(date ? getDate(date) : undefined)
+    const [month, setMonth] = useState(date ? getMonth(date) : undefined)
+    const [year, setYear] = useState(date ? getYear(date) : undefined)
 
     // debounce year value to delay value update when user is currently editing it
     const debouncedYear = useDebounce(year, yearDebounce)
@@ -65,18 +65,26 @@ const DateField = ({
     const error = validation && isValidatorError(validation) ? validation.error : undefined
 
     useEffect(() => {
-        if (day && month && debouncedYear) {
+        if (typeof day !== 'undefined' && typeof month !== 'undefined' && typeof debouncedYear !== 'undefined') {
             onChange({
-                value: DateTime.fromObject({ year: debouncedYear, month, day }),
+                value: new Date(debouncedYear, month, day),
                 isDirty: true,
             })
         }
     }, [debouncedYear, month, day])
 
-    const months = useMemo(() => Info.months("long", { locale }), [locale])
+    const months = useMemo(() =>
+        eachMonthOfInterval({
+            start: startOfYear(new Date()),
+            end: endOfYear(new Date())
+        }).map(month => intlFormat(month, { month: "long" }, { locale })),
+        [locale]
+    )
 
     const daysInMonth = useMemo(() =>
-        [...Array(DateTime.fromObject({ year: debouncedYear, month }).daysInMonth ?? 31).keys()].map(v => v + 1),
+        [...Array(
+            debouncedYear && month ? getDaysInMonth(new Date(debouncedYear, month, 1)) : 31
+        ).keys()].map(v => v + 1),
         [debouncedYear, month]
     )
 
@@ -86,12 +94,18 @@ const DateField = ({
     }
 
     // datetime parts ordered by locale 
-    const parts = useMemo(() =>
-        DateTime.now()
-            .setLocale(locale)
-            .toLocaleParts()
-            .map(part => part.type)
-            .filter(type => ['day', 'month', 'year'].includes(type)),
+    const parts = useMemo(
+        () => (
+            new Intl.DateTimeFormat(locale, {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+            })
+                .formatToParts()
+                .map(part => part.type)
+                .filter(type => ['day', 'month', 'year'].includes(type))
+        ),
         [locale]
     )
 
@@ -120,7 +134,7 @@ const DateField = ({
                     required={required}
                     onChange={handleMonthChange}
                     placeholder={i18n('month')}
-                    options={months.map((month, index) => ({ value: `${index + 1}`, label: month }))}
+                    options={months.map((month, index) => ({ value: `${index}`, label: month }))}
                     data-testid={`${path}.month`}
                     aria-label={i18n('month')}
                 />
@@ -160,21 +174,25 @@ const DateField = ({
     )
 }
 
-const dateFormat = (locale: string) => DateTime.now().setLocale(locale).toLocaleParts().map(part => {
-    switch (part.type) {
-        case 'day':
-            return 'dd'
-        case 'month':
-            return 'mm';
-        case 'year':
-            return 'yyyy'
-        case 'literal':
-            return part.value;
-    }
-}).join('')
+const dateFormat = (locale: string) =>
+    new Intl.DateTimeFormat(locale)
+        .formatToParts()
+        .map(part => {
+            switch (part.type) {
+                case 'day':
+                    return 'dd'
+                case 'month':
+                    return 'mm';
+                case 'year':
+                    return 'yyyy'
+                case 'literal':
+                    return part.value;
+            }
+        })
+        .join('')
 
-export const datetimeValidator = (locale: string) => new Validator<DateTime>({
-    rule: (value) => value.isValid,
+export const datetimeValidator = (locale: string) => new Validator<Date>({
+    rule: (value) => isValid(value),
     hint: 'date',
     parameters: { format: dateFormat(locale) }
 })
@@ -186,19 +204,25 @@ export default function dateField(
         yearDebounce,
         locale,
         ...props
-    }: Optional<FieldDefinition<string, DateTime>, 'key' | 'label'> & Optional<ExtraParams, 'locale'>,
+    }: Optional<FieldDefinition<string, Date>, 'key' | 'label'> & Optional<ExtraParams, 'locale'>,
     config: Config
-): FieldCreator<DateTime, DateFieldProps, ExtraParams> {
-    return createField<string, DateTime, DateFieldProps>({
+): FieldCreator<Date, DateFieldProps, ExtraParams> {
+    return createField<string, Date, DateFieldProps>({
         key,
         label,
         ...props,
         format: {
             bind: (value) => {
-                const dt = value ? DateTime.fromISO(value) : DateTime.invalid('empty value')
-                return dt.isValid ? { raw: dt } : undefined
+                const dt = value ? parseISO(value) : undefined
+                return dt && isValid(dt) ? { raw: dt } : undefined
             },
-            unbind: (value) => isRichFormValue(value, 'raw') ? value.raw.toISODate() : value?.toISODate() ?? null
+            unbind: (value) => {
+                return isRichFormValue(value, 'raw') 
+                    ? formatISO(value.raw) 
+                    : value 
+                        ? formatISO(value)
+                        : null
+            }
         },
         validator: props.validator ? datetimeValidator(config.language).and(props.validator) : datetimeValidator(config.language),
         component: DateField,
