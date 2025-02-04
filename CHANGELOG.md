@@ -7,6 +7,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+- Allow to trust a device during step up when RBA is enabled and the new box is checked
+
 ## [1.31.3] - 2025-01-28
 
 ### Fixed
