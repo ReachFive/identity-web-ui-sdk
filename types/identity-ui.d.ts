@@ -1,6 +1,6 @@
 /**
- * @reachfive/identity-ui - v1.31.222
- * Compiled Tue, 28 Jan 2025 13:28:17 UTC
+ * @reachfive/identity-ui - v1.31.3-develop
+ * Compiled Tue, 04 Feb 2025 14:37:11 UTC
  *
  * Copyright (c) ReachFive.
  *
@@ -661,6 +661,12 @@ type LoginViewProps = {
      * @default true
      */
     allowAuthentMailPhone?: boolean;
+    /**
+     * Boolean that specifies whether a device can be trusted during step up.
+     *
+     * @default false
+     */
+    allowTrustDevice?: boolean;
 };
 
 interface LoginWithWebAuthnViewProps {
@@ -705,6 +711,7 @@ interface LoginWithPasswordViewProps {
     recaptcha_site_key?: string;
     showLabels?: boolean;
     showRememberMe?: boolean;
+    allowTrustDevice?: boolean;
 }
 
 interface PasswordSignupFormProps {
@@ -931,11 +938,20 @@ interface MainViewProps$6 {
      * @default true
      */
     showStepUpStart?: boolean;
+    /**
+     * Boolean that specifies whether a device can be trusted during step up.
+     *
+     * @default false
+     */
+    allowTrustDevice?: boolean;
 }
-type FaSelectionViewState = MFA.StepUpResponse;
+type FaSelectionViewState = MFA.StepUpResponse & {
+    allowTrustDevice?: boolean;
+};
 type FaSelectionViewProps = Prettify<Partial<MFA.StepUpResponse> & {
     showIntro?: boolean;
     auth?: AuthOptions;
+    allowTrustDevice?: boolean;
 }>;
 type StepUpResponse = RequiredProperty<PasswordlessResponse, 'challengeId'>;
 type StepUpHandlerResponse = StepUpResponse & StartPasswordlessFormData;
@@ -945,6 +961,12 @@ type VerificationCodeViewProps$3 = Prettify<Partial<StepUpHandlerResponse> & {
      * List of authentication options
      */
     auth?: AuthOptions;
+    /**
+     * Boolean that specifies whether a device can be trusted during step up.
+     *
+     * @default false
+     */
+    allowTrustDevice?: boolean;
 }>;
 type MfaStepUpProps = MainViewProps$6 & FaSelectionViewProps & VerificationCodeViewProps$3;
 type MfaStepUpWidgetProps = MfaStepUpProps;

@@ -227,6 +227,12 @@ export type LoginViewProps = {
      * @default true
      */
     allowAuthentMailPhone?: boolean
+    /**
+     * Boolean that specifies whether a device can be trusted during step up.
+     *
+     * @default false
+     */
+    allowTrustDevice?: boolean
 }
 
 export const LoginView = ({
@@ -244,6 +250,7 @@ export const LoginView = ({
     recaptcha_enabled = false,
     recaptcha_site_key,
     allowAuthentMailPhone = true,
+    allowTrustDevice
 }: LoginViewProps) => {
     const i18n = useI18n()
     const coreClient = useReachfive()
@@ -277,7 +284,7 @@ export const LoginView = ({
                 ...auth,
             },
         })
-            .then(res => res?.stepUpToken ? goTo<FaSelectionViewState>('fa-selection', {token: res.stepUpToken, amr: res.amr ?? []}) : res)
+            .then(res => res?.stepUpToken ? goTo<FaSelectionViewState>('fa-selection', {token: res.stepUpToken, amr: res.amr ?? [], allowTrustDevice}) : res)
     }
 
     const defaultIdentifier = session?.lastLoginType === 'password' ? session.email : undefined;

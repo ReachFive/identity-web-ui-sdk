@@ -101,6 +101,7 @@ export interface LoginWithPasswordViewProps {
     recaptcha_site_key?: string
     showLabels?: boolean
     showRememberMe?: boolean
+    allowTrustDevice?: boolean
 }
 
 export type LoginWithPasswordViewState = {
@@ -116,6 +117,7 @@ export const LoginWithPasswordView = ({
     recaptcha_site_key,
     showLabels,
     showRememberMe,
+    allowTrustDevice
 }: LoginWithPasswordViewProps) => {
     const i18n = useI18n()
     const coreClient = useReachfive()
@@ -136,7 +138,7 @@ export const LoginWithPasswordView = ({
                 ...auth,
             },
         })
-            .then(res => res?.stepUpToken ? goTo<FaSelectionViewState>('fa-selection', {token: res.stepUpToken, amr: res.amr ?? []}) : res)
+            .then(res => res?.stepUpToken ? goTo<FaSelectionViewState>('fa-selection', {token: res.stepUpToken, amr: res.amr ?? [], allowTrustDevice}) : res)
     }
 
     return (
