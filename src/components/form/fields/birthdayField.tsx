@@ -1,13 +1,13 @@
-import { DateTime } from 'luxon'
+import { differenceInYears } from "date-fns"
 
 import dateField from './dateField'
 import { Validator } from '../../../core/validation';
 import { Config } from '../../../types';
 
-export const ageLimitValidator = (min = 6, max = 129) => new Validator<DateTime>({
+export const ageLimitValidator = (min = 6, max = 129) => new Validator<Date>({
     rule: (value) => {
-        const age = DateTime.now().diff(value, 'years').years
-        return min < age && age < max
+        const age = differenceInYears(new Date(), value)
+        return min <= age && age <= max
     },
     hint: 'birthdate.yearLimit',
     parameters: { min, max }
