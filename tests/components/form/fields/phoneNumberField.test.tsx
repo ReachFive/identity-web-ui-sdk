@@ -8,18 +8,14 @@ import { render, screen, queryHelpers, Matcher, RenderResult, waitFor } from '@t
 import userEvent from '@testing-library/user-event'
 import '@testing-library/jest-dom/jest-globals'
 import 'jest-styled-components';
-import { ThemeProvider } from 'styled-components';
 import { formatPhoneNumberIntl, type Value } from 'react-phone-number-input';
 
 import type { Config } from '../../../../src/types';
-import type { Theme } from '../../../../src/types/styled'
 
 import phoneNumberField from '../../../../src/components/form/fields/phoneNumberField'
 import resolveI18n, { I18nMessages } from '../../../../src/core/i18n';
-import { buildTheme } from '../../../../src/core/theme';
 import { createForm } from '../../../../src/components/form/formComponent';
-import { ConfigProvider } from '../../../../src/contexts/config';
-import { I18nProvider } from '../../../../src/contexts/i18n';
+import { WidgetContext } from '../WidgetContext';
 
 const defaultConfig: Config = {
     clientId: 'local',
@@ -50,17 +46,6 @@ const defaultI18n: I18nMessages = {
 
 const i18nResolver = resolveI18n(defaultI18n)
 
-const theme: Theme = buildTheme({
-    primaryColor: '#ff0000',
-    spacing: 20,
-    input: {
-        borderWidth: 1,
-        paddingX: 16,
-        paddingY: 8,
-        height: 40,
-    }
-})
-
 const queryByName = (renderResult: RenderResult, name: Matcher) => {
     const query = queryHelpers.queryByAttribute.bind(null, 'name')
     const element = query(renderResult.container, name)
@@ -76,6 +61,10 @@ const queryByName = (renderResult: RenderResult, name: Matcher) => {
 type Model = { phoneNumber: string }
 
 describe('DOM testing', () => {
+
+    // @ts-expect-error partial Client
+    const apiClient: Client = {}
+
     test('with country select', async () => {
         const user = userEvent.setup()
 
@@ -101,17 +90,17 @@ describe('DOM testing', () => {
 
         const renderResult = await waitFor(async () => {   
             return render(
-                <ConfigProvider config={defaultConfig}>
-                    <ThemeProvider theme={theme}>
-                        <I18nProvider defaultMessages={defaultI18n}>
-                            <Form
-                                fieldValidationDebounce={0} // trigger validation instantly
-                                onFieldChange={onFieldChange}
-                                handler={onSubmit}
-                            />
-                        </I18nProvider>
-                    </ThemeProvider>
-                </ConfigProvider>
+                <WidgetContext
+                    client={apiClient}
+                    config={defaultConfig}
+                    defaultMessages={defaultI18n}
+                >
+                    <Form
+                        fieldValidationDebounce={0} // trigger validation instantly
+                        onFieldChange={onFieldChange}
+                        handler={onSubmit}
+                    />
+                </WidgetContext>
             )
         })
 

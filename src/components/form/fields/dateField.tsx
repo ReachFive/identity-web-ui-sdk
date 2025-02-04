@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react'
 import { eachMonthOfInterval, endOfYear, intlFormat, formatISO, getDate, getDaysInMonth, getMonth, getYear, isValid, parseISO, startOfYear } from "date-fns"
 import styled from 'styled-components';
 
-import { ValidatorResult, Validator } from '../../../core/validation';
+import { ValidatorResult, Validator, isValidatorError } from '../../../core/validation';
 import { useDebounce } from '../../../helpers/useDebounce';
 import { isRichFormValue } from '../../../helpers/utils';
 
@@ -62,7 +62,7 @@ const DateField = ({
 
     const handleYearChange = (event: React.ChangeEvent<HTMLInputElement>) => setDatePart(setYear, event.target.value)
 
-    const error = typeof validation === 'object' && 'error' in validation ? validation.error : undefined
+    const error = validation && isValidatorError(validation) ? validation.error : undefined
 
     useEffect(() => {
         if (typeof day !== 'undefined' && typeof month !== 'undefined' && typeof debouncedYear !== 'undefined') {
