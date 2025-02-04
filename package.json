@@ -38,11 +38,11 @@
         "classnames": "^2.3.2",
         "date-fns": "^4.1.0",
         "libphonenumber-js": "^1.10.44",
+        "marked": "^15.0.6",
         "react": "^18.3.1",
         "react-dom": "^18.3.1",
         "react-phone-number-input": "^3.4.3",
         "react-transition-group": "4.4.5",
-        "remarkable": "2.0.1",
         "validator": "^13.11.0"
     },
     "peerDependencies": {
@@ -72,7 +72,6 @@
         "@types/react-dom": "^18.3.0",
         "@types/react-test-renderer": "^18.3.0",
         "@types/react-transition-group": "^4.4.10",
-        "@types/remarkable": "^2.0.7",
         "@types/styled-components": "^5.1.28",
         "@types/validator": "^13.11.2",
         "@typescript-eslint/eslint-plugin": "^6.5.0",
