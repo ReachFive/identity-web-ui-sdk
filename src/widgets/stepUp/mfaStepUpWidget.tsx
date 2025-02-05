@@ -15,25 +15,39 @@ import { toQueryString } from '../../helpers/queryString';
 import { useReachfive } from '../../contexts/reachfive';
 import { useRouting } from '../../contexts/routing';
 import { useI18n } from '../../contexts/i18n';
+import checkboxField from "../../components/form/fields/checkboxField";
+import { useConfig } from "../../contexts/config.tsx";
 
 const StartStepUpMfaButton = createForm({
     prefix: 'r5-mfa-start-step-up-',
     submitLabel: 'mfa.stepUp.start',
 });
 
-type VerificationCodeInputFormData = {
+export type VerificationCodeInputFormData = {
     verificationCode: string
+    trustDevice?: boolean
 }
 
-const VerificationCodeInputForm = createForm<VerificationCodeInputFormData>({
+interface VerificationCodeFormOptions {
+    allowTrustDevice?: boolean
+}
+
+const VerificationCodeInputForm = createForm<VerificationCodeInputFormData, VerificationCodeFormOptions>({
     prefix: 'r5-passwordless-sms-',
-    fields: [
-        simpleField({
-            key: 'verification_code',
-            label: 'verificationCode',
-            type: 'text'
-        })
-    ]
+    fields({ allowTrustDevice }) {
+        return [
+            simpleField({
+                key: 'verification_code',
+                label: 'verificationCode',
+                type: 'text'
+            }),
+        ...(allowTrustDevice ? [ checkboxField({
+                key: 'trust_device',
+                label: 'mfa.stepUp.trustDevice',
+                defaultValue: false
+            })] : [])
+        ]
+    }
 });
 
 type StartPasswordlessFormData = {
@@ -60,9 +74,9 @@ const StartPasswordlessForm = createForm<StartPasswordlessFormData, StartPasswor
 export interface MainViewProps {
     /**
      * **Not recommended**
-     * 
+     *
      * The authorization credential JSON Web Token (JWT) used to access the ReachFive API, less than five minutes old.
-     * 
+     *
      * If empty, using an existing SSO session cookie.
      */
     accessToken?: string
@@ -72,16 +86,22 @@ export interface MainViewProps {
     auth?: AuthOptions
     /**
      * Show the introduction text.
-     * 
+     *
      * @default true
      */
     showIntro?: boolean
     /**
      * Show the stepup button. Unnecessary for console use
-     * 
+     *
      * @default true
      */
     showStepUpStart?: boolean
+    /**
+     * Boolean that specifies whether a device can be trusted during step up.
+     *
+     * @default false
+     */
+    allowTrustDevice?: boolean
     /**
      * Callback function called when the request has succeed.
      */
@@ -98,7 +118,8 @@ export const MainView = ({
     onError = () => {},
     onSuccess = () => {},
     showIntro = true,
-    showStepUpStart = true
+    showStepUpStart = true,
+    allowTrustDevice = false
 }: MainViewProps) => {
     const coreClient = useReachfive()
     const { goTo } = useRouting()
@@ -128,7 +149,7 @@ export const MainView = ({
         return (
             <StartStepUpMfaButton
                 handler={onGetStepUpToken}
-                onSuccess={(data: MFA.StepUpResponse) => goTo<FaSelectionViewState>('fa-selection', { ...data })}
+                onSuccess={(data: MFA.StepUpResponse) => goTo<FaSelectionViewState>('fa-selection', { ...data, allowTrustDevice })}
                 onError={onError}
             />
         )
@@ -140,6 +161,7 @@ export const MainView = ({
                 {...response}
                 showIntro={showIntro}
                 auth={auth}
+                allowTrustDevice={allowTrustDevice}
                 onError={onError}
                 onSuccess={onSuccess}
             />
@@ -149,11 +171,14 @@ export const MainView = ({
     return null
 }
 
-export type FaSelectionViewState = MFA.StepUpResponse
+export type FaSelectionViewState = MFA.StepUpResponse & {
+    allowTrustDevice?: boolean
+}
 
 export type FaSelectionViewProps = Prettify<Partial<MFA.StepUpResponse> & {
     showIntro?: boolean
     auth?: AuthOptions
+    allowTrustDevice?: boolean
     /**
      * Callback function called when the request has succeed.
      */
@@ -201,6 +226,7 @@ export const FaSelectionView = (props: FaSelectionViewProps) => {
             <VerificationCodeView
                 {...response}
                 auth={props.auth}
+                allowTrustDevice={props.allowTrustDevice}
                 onError={props.onError}
                 onSuccess={props.onSuccess}
             />
@@ -231,6 +257,12 @@ export type VerificationCodeViewProps = Prettify<Partial<StepUpHandlerResponse> 
      */
     auth?: AuthOptions
     /**
+     * Boolean that specifies whether a device can be trusted during step up.
+     *
+     * @default false
+     */
+    allowTrustDevice?: boolean
+    /**
      * Callback function called when the request has succeed.
      */
     onSuccess?: () => void
@@ -244,16 +276,21 @@ export const VerificationCodeView = (props: VerificationCodeViewProps) => {
     const coreClient = useReachfive()
     const i18n = useI18n()
     const { params } = useRouting()
+    const { rbaEnabled } = useConfig()
     const state = params as VerificationCodeViewState
 
-    const { auth, authType, challengeId, onError = () => {}, onSuccess = () => {} } = { ...props, ...state }
+    const { auth, authType, challengeId, allowTrustDevice, onError = () => {}, onSuccess = () => {} } = { ...props, ...state }
 
     const handleSubmit = (data: VerificationCodeInputFormData) =>
         coreClient
-            .verifyMfaPasswordless({challengeId, verificationCode: data.verificationCode})
+            .verifyMfaPasswordless({
+                challengeId,
+                verificationCode: data.verificationCode,
+                trustDevice: data.trustDevice
+            })
             .then(resp => {
                 onSuccess()
-                // @ts-expect-error AuthResult is too complex and is not representative of the real response of this request 
+                // @ts-expect-error AuthResult is too complex and is not representative of the real response of this request
                 window.location.replace( (auth?.redirectUri ?? '') + "?" + toQueryString(resp))
             })
 
@@ -262,6 +299,7 @@ export const VerificationCodeView = (props: VerificationCodeViewProps) => {
             {authType === 'sms' && <Info>{i18n('passwordless.sms.verification.intro')}</Info>}
             {authType === 'email' && <Info>{i18n('passwordless.email.verification.intro')}</Info>}
             <VerificationCodeInputForm
+                allowTrustDevice={rbaEnabled && allowTrustDevice}
                 handler={handleSubmit}
                 onError={onError}
             />

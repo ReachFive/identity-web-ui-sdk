@@ -7,9 +7,28 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.32.0] - 2025-02-05
+
+### Added
+
+- Allow to trust a device during step up when RBA is enabled and the new box is checked
+
+### Changed
+
+- Replace remarkable with marked
+- Replace luxon with date-fns
+- Removed zxcvbn dependency and use new `getPasswordStrength` SDK Core's method instead.
+
+### Fixed
+
+- Dedupe React dependencies
+- Display asterix on phone number field's label when required
+- Set a min width on date field's day and year select
+
 ## [1.31.3] - 2025-01-28
 
 ### Fixed
+
 - Fix form phone number field when optional and not valued
 
 ## [1.31.2] - 2025-01-14
@@ -541,7 +560,9 @@ The eye icon is now correctly displayed in the Auth widget.
 
 First version of the SDK Web UI.
 
-[Unreleased]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.31.3...HEAD
+[Unreleased]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.32.0...HEAD
+
+[1.32.0]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.31.3...v1.32.0
 
 [1.31.3]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.31.2...v1.31.3
 

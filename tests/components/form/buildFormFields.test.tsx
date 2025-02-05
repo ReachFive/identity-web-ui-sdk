@@ -3,21 +3,18 @@
  */
 
 import React from 'react'
-import { describe, expect, jest, test } from '@jest/globals';
+import { beforeEach, describe, expect, jest, test } from '@jest/globals';
 import { render, screen, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom/jest-globals'
 import 'jest-styled-components';
-import { ThemeProvider } from 'styled-components';
 
 import type { Config } from '../../../src/types';
-import type { Theme } from '../../../src/types/styled'
 
 import { createForm } from '../../../src/components/form/formComponent'
 import { buildFormFields } from '../../../src/components/form/formFieldFactory'
 import { I18nMessages } from '../../../src/core/i18n';
-import { buildTheme } from '../../../src/core/theme';
-import { I18nProvider } from '../../../src/contexts/i18n';
-import { ConfigProvider } from '../../../src/contexts/config';
+import { WidgetContext } from './WidgetContext';
+import { Client, PasswordStrengthScore } from '@reachfive/identity-core';
 
 const defaultConfig: Config = {
     clientId: 'local',
@@ -154,17 +151,6 @@ const defaultI18n: I18nMessages = {
     simple: 'simple'
 }
 
-const theme: Theme = buildTheme({
-    primaryColor: '#ff0000',
-    spacing: 20,
-    input: {
-        borderWidth: 1,
-        paddingX: 16,
-        paddingY: 8,
-        height: 40,
-    }
-})
-
 type Model = {
     'customIdentifier': string
     'givenName': string
@@ -184,6 +170,26 @@ type Model = {
 }
 
 describe('DOM testing', () => {
+    const getPasswordStrength = jest.fn<Client['getPasswordStrength']>()
+    
+    getPasswordStrength.mockImplementation((password: string) => {
+        let score = 0
+        if (password.match(/[a-z]+/)) score++
+        if (password.match(/[0-9]+/)) score++
+        if (password.match(/[^a-z0-9]+/)) score++
+        if (password.length > 8) score++
+        return Promise.resolve({ score: score as PasswordStrengthScore })
+    })
+    
+    // @ts-expect-error partial Client
+    const apiClient: Client = {
+        getPasswordStrength,
+    }
+
+    beforeEach(() => {
+        getPasswordStrength.mockClear()
+    })
+    
     test('build predefined fields', async () => {
         const fields = buildFormFields([
             'customIdentifier',
@@ -211,13 +217,13 @@ describe('DOM testing', () => {
 
         await waitFor(async () => {   
             return render(
-                <ConfigProvider config={defaultConfig}>
-                    <ThemeProvider theme={theme}>
-                        <I18nProvider defaultMessages={defaultI18n}>
-                            <Form handler={onSubmit} />
-                        </I18nProvider>
-                    </ThemeProvider>
-                </ConfigProvider>
+                <WidgetContext
+                    client={apiClient}
+                    config={defaultConfig}
+                    defaultMessages={defaultI18n}
+                >
+                    <Form handler={onSubmit} />
+                </WidgetContext>
             )
         })
 
@@ -260,13 +266,12 @@ describe('DOM testing', () => {
 
         await waitFor(async () => {   
             return render(
-                <ConfigProvider config={defaultConfig}>
-                    <ThemeProvider theme={theme}>
-                        <I18nProvider defaultMessages={defaultI18n}>
-                            <Form handler={onSubmit} />
-                        </I18nProvider>
-                    </ThemeProvider>
-                </ConfigProvider>
+                <WidgetContext
+                    config={defaultConfig}
+                    defaultMessages={defaultI18n}
+                >
+                    <Form handler={onSubmit} />
+                </WidgetContext>
             )
         })
 
@@ -322,13 +327,12 @@ describe('DOM testing', () => {
 
         await waitFor(async () => {   
             return render(
-                <ConfigProvider config={defaultConfig}>
-                    <ThemeProvider theme={theme}>
-                        <I18nProvider defaultMessages={defaultI18n}>
-                            <Form handler={onSubmit} />
-                        </I18nProvider>
-                    </ThemeProvider>
-                </ConfigProvider>
+                <WidgetContext
+                    config={defaultConfig}
+                    defaultMessages={defaultI18n}
+                >
+                    <Form handler={onSubmit} />
+                </WidgetContext>
             )
         })
 

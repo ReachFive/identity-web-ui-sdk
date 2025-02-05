@@ -6,7 +6,7 @@ import { Checkbox } from '../formControlsComponent';
 import { createField, type FieldComponentProps, type FieldDefinition } from '../fieldCreator';
 import { MarkdownContent } from '../../miscComponent';
 
-import { checked, empty } from '../../../core/validation';
+import { checked, empty, isValidatorError } from '../../../core/validation';
 import { isRichFormValue } from '../../../helpers/utils';
 import { ConsentType } from '@reachfive/identity-core';
 
@@ -35,7 +35,7 @@ type ConsentFieldOptions = {
 
 export interface ConsentFieldProps extends FieldComponentProps<boolean, ConsentFieldOptions, {}, 'granted'> {}
 
-const ConsentField = ({ value, onChange, label, description, path, required, validation={}, consentCannotBeGranted }: ConsentFieldProps) => {
+const ConsentField = ({ value, onChange, label, description, path, required, validation, consentCannotBeGranted }: ConsentFieldProps) => {
     const granted = (isRichFormValue(value, 'granted') ? value.granted : value) ?? false
 
     const onToggle = () => onChange({
@@ -43,7 +43,7 @@ const ConsentField = ({ value, onChange, label, description, path, required, val
         isDirty: true
     });
 
-    const error = typeof validation === 'object' && 'error' in validation ? validation.error : undefined
+    const error = validation && isValidatorError(validation) ? validation.error : undefined
 
     return <div style={{ position: "relative" }}>
         <Checkbox

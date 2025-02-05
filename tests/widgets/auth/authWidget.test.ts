@@ -7,7 +7,7 @@ import { render, screen, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom/jest-globals'
 import 'jest-styled-components';
 
-import { type Client } from '@reachfive/identity-core';
+import type { PasswordStrengthScore, Client } from '@reachfive/identity-core';
 
 import { type I18nMessages } from '../../../src/core/i18n';
 import { type ProviderId, providers } from '../../../src/providers/providers';
@@ -15,6 +15,7 @@ import type { Config } from '../../../src/types';
 import { randomString } from '../../../src/helpers/random';
 
 import authWidget from '../../../src/widgets/auth/authWidget';
+import { beforeEach } from 'node:test';
 
 const defaultConfig: Config = {
     clientId: 'local',
@@ -66,12 +67,29 @@ function expectSocialButtons(toBeInTheDocument = true) {
 }
 
 describe('Snapshot', () => {
-    const generateSnapshot = (options: Parameters<typeof authWidget>[0] = {}, config: Partial<Config> = {}) => async () => {
-        // @ts-expect-error partial Client
-        const apiClient: Client = {
-            loginWithWebAuthn: jest.fn<Client['loginWithWebAuthn']>().mockRejectedValue(new Error('This is a mock.'))
-        }
+    const getPasswordStrength = jest.fn<Client['getPasswordStrength']>().mockImplementation((password) => {
+        let score = 0
+        if (password.match(/[a-z]+/)) score++
+        if (password.match(/[0-9]+/)) score++
+        if (password.match(/[^a-z0-9]+/)) score++
+        if (password.length > 8) score++
+        return Promise.resolve({ score: score as PasswordStrengthScore })
+    })
+    
+    const loginWithWebAuthn = jest.fn<Client['loginWithWebAuthn']>().mockRejectedValue(new Error('This is a mock.'))
 
+    // @ts-expect-error partial Client
+    const apiClient: Client = {
+        getPasswordStrength,
+        loginWithWebAuthn,
+    }
+
+    beforeEach(() => {
+        getPasswordStrength.mockClear()
+        loginWithWebAuthn.mockClear()
+    })
+
+    const generateSnapshot = (options: Parameters<typeof authWidget>[0] = {}, config: Partial<Config> = {}) => async () => {
         const widget = await authWidget(options, {config: { ...defaultConfig, ...config }, apiClient, defaultI18n })
                 
         await waitFor(async () => {
@@ -239,11 +257,26 @@ describe('Snapshot', () => {
 });
 
 describe('DOM testing', () => {
-    const loginWithWebAuthn = jest.fn<Client['loginWithWebAuthn']>()
+    const getPasswordStrength = jest.fn<Client['getPasswordStrength']>().mockImplementation((password) => {
+        let score = 0
+        if (password.match(/[a-z]+/)) score++
+        if (password.match(/[0-9]+/)) score++
+        if (password.match(/[^a-z0-9]+/)) score++
+        if (password.length > 8) score++
+        return Promise.resolve({ score: score as PasswordStrengthScore })
+    })
+    
+    const loginWithWebAuthn = jest.fn<Client['loginWithWebAuthn']>().mockRejectedValue(new Error('This is a mock.'))
 
+    beforeEach(() => {
+        getPasswordStrength.mockClear()
+        loginWithWebAuthn.mockClear()
+    })
+    
     const generateComponent = async (options: Parameters<typeof authWidget>[0] = {}, config: Partial<Config> = {}) => {
         // @ts-expect-error partial Client
         const apiClient: Client = {
+            getPasswordStrength,
             loginWithWebAuthn
         }
         const result = await authWidget(options, {config: { ...defaultConfig, ...config }, apiClient, defaultI18n });
@@ -556,7 +589,11 @@ describe('DOM testing', () => {
 
             loginWithWebAuthn.mockRejectedValue(new Error('This is a mock.'))
 
-            await generateComponent({ allowWebAuthnLogin: true, enablePasswordAuthentication:false, initialScreen: 'login-with-web-authn' }, webauthnConfig);
+            await generateComponent({
+                allowWebAuthnLogin: true,
+                enablePasswordAuthentication:false,
+                initialScreen: 'login-with-web-authn'
+            }, webauthnConfig);
 
             // Social buttons
             expectSocialButtons(true)

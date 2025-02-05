@@ -3,23 +3,20 @@
  */
 
 import React from 'react'
-import { describe, expect, jest, test } from '@jest/globals';
+import { afterEach, beforeEach, describe, expect, jest, test } from '@jest/globals';
 import { render, screen, waitFor, queryByText } from '@testing-library/react';
 import userEvent from '@testing-library/user-event'
 import '@testing-library/jest-dom/jest-globals'
 import 'jest-styled-components';
-import { ThemeProvider } from 'styled-components';
+import { PasswordStrengthScore, type Client } from '@reachfive/identity-core';
 
 import type { Config } from '../../../../src/types';
-import type { Theme } from '../../../../src/types/styled'
 
 import { createForm } from '../../../../src/components/form/formComponent'
-import passwordField, { getPasswordStrength } from '../../../../src/components/form/fields/passwordField'
+import passwordField from '../../../../src/components/form/fields/passwordField'
 import resolveI18n, { I18nMessages } from '../../../../src/core/i18n';
-import { buildTheme } from '../../../../src/core/theme';
-import { I18nProvider } from '../../../../src/contexts/i18n';
-import { ConfigProvider } from '../../../../src/contexts/config';
 import { Validator } from '../../../../src/core/validation';
+import { WidgetContext } from '../WidgetContext';
 
 const defaultConfig: Config = {
     clientId: 'local',
@@ -50,22 +47,38 @@ const defaultI18n: I18nMessages = {
 
 const i18nResolver = resolveI18n(defaultI18n)
 
-const theme: Theme = buildTheme({
-    primaryColor: '#ff0000',
-    spacing: 20,
-    input: {
-        borderWidth: 1,
-        paddingX: 16,
-        paddingY: 8,
-        height: 40,
-    }
-})
-
 type Model = { password: string }
 
 describe('DOM testing', () => {
+
+    const getPasswordStrength = jest.fn<Client['getPasswordStrength']>()
+
+    getPasswordStrength.mockImplementation((password: string) => {
+        let score = 0
+        if (password.match(/[a-z]+/)) score++
+        if (password.match(/[0-9]+/)) score++
+        if (password.match(/[^a-z0-9]+/)) score++
+        if (password.length > 8) score++
+        return Promise.resolve({ score: score as PasswordStrengthScore })
+    })
+
+    // @ts-expect-error partial Client
+    const apiClient: Client = {
+        getPasswordStrength,
+    }
+    
+    beforeEach(() => {
+        getPasswordStrength.mockClear()
+        jest.useFakeTimers();
+    })
+
+    afterEach(() => {
+        jest.runOnlyPendingTimers()
+        jest.useRealTimers();
+    });
+
     test('default settings', async () => {
-        const user = userEvent.setup()
+        const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTimeAsync })
 
         const key = 'password'
         const label = 'password'
@@ -81,17 +94,17 @@ describe('DOM testing', () => {
 
         await waitFor(async () => {   
             return render(
-                <ConfigProvider config={defaultConfig}>
-                    <ThemeProvider theme={theme}>
-                        <I18nProvider defaultMessages={defaultI18n}>
-                            <Form
-                                fieldValidationDebounce={0} // trigger validation instantly
-                                handler={onSubmit}
-                                onFieldChange={onFieldChange}
-                            />
-                        </I18nProvider>
-                    </ThemeProvider>
-                </ConfigProvider>
+                <WidgetContext
+                    client={apiClient}
+                    config={defaultConfig}
+                    defaultMessages={defaultI18n}
+                >
+                    <Form
+                        fieldValidationDebounce={0} // trigger validation instantly
+                        handler={onSubmit}
+                        onFieldChange={onFieldChange}
+                    />
+                </WidgetContext>
             )
         })
 
@@ -119,9 +132,11 @@ describe('DOM testing', () => {
             expect.objectContaining({
                 password: expect.objectContaining({
                     isDirty: false,
-                    strength: getPasswordStrength([], invalidPassword),
+                    // strength: getPasswordStrength([], invalidPassword),
                     value: invalidPassword,
                     validation: expect.objectContaining({
+                        strength: 1,
+                        valid: false,
                         error: "validation.password.minStrength"
                     })
                 })
@@ -144,9 +159,11 @@ describe('DOM testing', () => {
             expect.objectContaining({
                 password: expect.objectContaining({
                     isDirty: false,
-                    strength: getPasswordStrength([], validPassword),
                     value: validPassword,
-                    validation: {}
+                    validation: expect.objectContaining({
+                        strength: 4,
+                        valid: true
+                    })
                 })
             })
         ))
@@ -155,7 +172,7 @@ describe('DOM testing', () => {
     })
 
     test('with canShowPassword enabled', async () => {
-        const user = userEvent.setup()
+        const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTimeAsync })
 
         const key = 'password'
         const label = 'password'
@@ -171,17 +188,17 @@ describe('DOM testing', () => {
 
         await waitFor(async () => {   
             return render(
-                <ConfigProvider config={defaultConfig}>
-                    <ThemeProvider theme={theme}>
-                        <I18nProvider defaultMessages={defaultI18n}>
-                            <Form
-                                fieldValidationDebounce={0} // trigger validation instantly
-                                handler={onSubmit}
-                                onFieldChange={onFieldChange}
-                            />
-                        </I18nProvider>
-                    </ThemeProvider>
-                </ConfigProvider>
+                <WidgetContext
+                    client={apiClient}
+                    config={defaultConfig}
+                    defaultMessages={defaultI18n}
+                >
+                    <Form
+                        fieldValidationDebounce={0} // trigger validation instantly
+                        handler={onSubmit}
+                        onFieldChange={onFieldChange}
+                    />
+                </WidgetContext>
             )
         })
 
@@ -211,7 +228,7 @@ describe('DOM testing', () => {
             hint: 'password.match'
         })
 
-        const user = userEvent.setup()
+        const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTimeAsync })
 
         const key = 'password'
         const label = 'password'
@@ -232,17 +249,17 @@ describe('DOM testing', () => {
 
         await waitFor(async () => {   
             return render(
-                <ConfigProvider config={defaultConfig}>
-                    <ThemeProvider theme={theme}>
-                        <I18nProvider defaultMessages={defaultI18n}>
-                            <Form
-                                fieldValidationDebounce={0} // trigger validation instantly
-                                onFieldChange={onFieldChange}
-                                handler={onSubmit}
-                            />
-                        </I18nProvider>
-                    </ThemeProvider>
-                </ConfigProvider>
+                <WidgetContext
+                    client={apiClient}
+                    config={defaultConfig}
+                    defaultMessages={defaultI18n}
+                >
+                    <Form
+                        fieldValidationDebounce={0} // trigger validation instantly
+                        onFieldChange={onFieldChange}
+                        handler={onSubmit}
+                    />
+                </WidgetContext>
             )
         })
 
@@ -256,11 +273,14 @@ describe('DOM testing', () => {
         await user.clear(input)
         await user.type(input, invalidPassword)
 
+        // Fast-forward until all timers have been executed
+        await jest.runOnlyPendingTimersAsync()
+
         await waitFor(() => expect(onFieldChange).toHaveBeenLastCalledWith(
             expect.objectContaining({
                 password: expect.objectContaining({
                     isDirty: false,
-                    strength: getPasswordStrength([], invalidPassword),
+                    // strength: getPasswordStrength([], invalidPassword),
                     value: invalidPassword,
                     validation: expect.objectContaining({
                         error: "validation.password.match"

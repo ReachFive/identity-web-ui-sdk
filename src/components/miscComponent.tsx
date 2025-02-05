@@ -1,6 +1,6 @@
 import React, { AnchorHTMLAttributes, ComponentType, HTMLAttributes, MouseEvent } from 'react';
 
-import { Remarkable } from 'remarkable';
+import { marked } from 'marked';
 import styled from 'styled-components';
 import { useRouting } from '../contexts/routing'
 
@@ -96,21 +96,39 @@ export const Link = styled(({ target, href = '#', children, className, controlle
     }
 `;
 
-function buildMarkdownParser() {
-    const md = new Remarkable();
-    const originalLinkRender = md.renderer.rules.link_open;
-
-    md.inline.ruler.enable(['text', 'newline', 'emphasis', 'links', 'ins']);
-    md.block.ruler.enable(['list']);
-    md.renderer.rules.link_open = function (...args: Parameters<Remarkable.Rule<Remarkable.LinkOpenToken>>) {
-        return originalLinkRender(...args)
-            .replace('>', ` target="_blank" rel="nofollow noreferrer noopener">`);
-    };
-
-    return md;
-}
-
-const markdownParser = buildMarkdownParser();
+marked.use({
+    renderer: {
+        link({ href, text }) {
+            return '<a href="'+ href +'" target="_blank" rel="nofollow noreferrer noopener">' + text + '</a>';
+        }
+    },
+    extensions: [
+        // specific underline markup is missed in marked module
+        // see https://marked.js.org/using_pro#extensions
+        {
+            name: 'underline',
+            level: 'inline',
+            start(src) {
+                return /\+{2}/.exec(src)?.index; // starts with ++
+            },
+            tokenizer(src) {
+                const rule = /^\+{2}([^+\n]+)\+{2}/;
+                const match = rule.exec(src);
+                if (match) {
+                    return {
+                        type: 'underline',
+                        raw: match[0],
+                        text: match[1],
+                        tokens: this.lexer.inlineTokens(match[1])
+                    };
+                }
+            },
+            renderer(token) {
+                return `<u>${token.text}</u>`;
+            },
+        }
+    ]
+})
 
 interface MarkdownContentProps<T> extends HTMLAttributes<T> {
     root: ComponentType<HTMLAttributes<T>>
@@ -118,5 +136,5 @@ interface MarkdownContentProps<T> extends HTMLAttributes<T> {
 }
 
 export function MarkdownContent<T>({ root: Root, source, ...props }: MarkdownContentProps<T>) {
-    return <Root data-text='md' dangerouslySetInnerHTML={{ __html: markdownParser.render(source) }} {...props} />
+    return <Root data-text='md' dangerouslySetInnerHTML={{ __html: marked.parse(source) }} {...props} />
 }

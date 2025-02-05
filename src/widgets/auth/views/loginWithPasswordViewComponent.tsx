@@ -101,6 +101,7 @@ export interface LoginWithPasswordViewProps {
     recaptcha_site_key?: string
     showLabels?: boolean
     showRememberMe?: boolean
+    allowTrustDevice?: boolean
     /**
      * Callback function called when the request has succeed.
      */
@@ -124,6 +125,7 @@ export const LoginWithPasswordView = ({
     recaptcha_site_key,
     showLabels,
     showRememberMe,
+    allowTrustDevice,
     onError = () => {},
     onSuccess = () => {},
 }: LoginWithPasswordViewProps) => {
@@ -146,7 +148,7 @@ export const LoginWithPasswordView = ({
                 ...auth,
             },
         })
-            .then(res => res?.stepUpToken ? goTo<FaSelectionViewState>('fa-selection', {token: res.stepUpToken, amr: res.amr ?? []}) : res)
+            .then(res => res?.stepUpToken ? goTo<FaSelectionViewState>('fa-selection', {token: res.stepUpToken, amr: res.amr ?? [], allowTrustDevice}) : res)
     }
 
     return (

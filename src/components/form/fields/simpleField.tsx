@@ -3,6 +3,7 @@ import React from 'react';
 import { FormGroup, Input } from '../formControlsComponent';
 import { createField, type FieldComponentProps, type FieldDefinition } from '../fieldCreator';
 import { isRichFormValue } from '../../../helpers/utils';
+import { isValidatorError } from '../../../core/validation';
 
 type SimpleFieldOptions = {
     placeholder?: React.InputHTMLAttributes<HTMLInputElement>['placeholder']
@@ -16,7 +17,7 @@ const SimpleField = (props: SimpleFieldProps) => {
         autoComplete,
         path,
         value,
-        validation = {},
+        validation,
         onChange,
         showLabel,
         inputId,
@@ -29,7 +30,7 @@ const SimpleField = (props: SimpleFieldProps) => {
 
     const currentValue = isRichFormValue(value, 'raw') ? value.raw : value
 
-    const error = typeof validation === 'object' && 'error' in validation ? validation.error : undefined
+    const error = validation && isValidatorError(validation) ? validation.error : undefined
 
     return (
         <FormGroup

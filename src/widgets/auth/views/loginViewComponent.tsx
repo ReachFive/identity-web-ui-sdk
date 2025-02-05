@@ -228,6 +228,12 @@ export type LoginViewProps = {
      */
     allowAuthentMailPhone?: boolean
     /**
+     * Boolean that specifies whether a device can be trusted during step up.
+     *
+     * @default false
+     */
+    allowTrustDevice?: boolean
+    /**
      * Callback function called when the request has succeed.
      */
     onSuccess?: () => void
@@ -252,6 +258,7 @@ export const LoginView = ({
     recaptcha_enabled = false,
     recaptcha_site_key,
     allowAuthentMailPhone = true,
+    allowTrustDevice,
     onError = () => {},
     onSuccess = () => {},
 }: LoginViewProps) => {
@@ -290,7 +297,7 @@ export const LoginView = ({
                 ...auth,
             },
         })
-            .then(res => res?.stepUpToken ? goTo<FaSelectionViewState>('fa-selection', {token: res.stepUpToken, amr: res.amr ?? []}) : res)
+            .then(res => res?.stepUpToken ? goTo<FaSelectionViewState>('fa-selection', {token: res.stepUpToken, amr: res.amr ?? [], allowTrustDevice}) : res)
     }
 
     const defaultIdentifier = session?.lastLoginType === 'password' ? session.email : undefined;

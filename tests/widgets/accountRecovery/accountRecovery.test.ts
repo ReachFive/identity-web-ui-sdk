@@ -9,7 +9,7 @@ import userEvent from '@testing-library/user-event'
 import '@testing-library/jest-dom/jest-globals'
 import 'jest-styled-components';
 
-import { type Client } from '@reachfive/identity-core';
+import type { PasswordStrengthScore, Client } from '@reachfive/identity-core';
 
 import { type I18nMessages } from '../../../src/core/i18n';
 import type { Config } from '../../../src/types';
@@ -41,7 +41,17 @@ const defaultConfig: Config = {
 
 const defaultI18n: I18nMessages = {}
 
+const getPasswordStrengthImplementation = (password: string) => {
+    let score = 0
+    if (password.match(/[a-z]+/)) score++
+    if (password.match(/[0-9]+/)) score++
+    if (password.match(/[^a-z0-9]+/)) score++
+    if (password.length > 8) score++
+    return Promise.resolve({ score: score as PasswordStrengthScore })
+}
+
 describe('DOM testing', () => {
+    const getPasswordStrength = jest.fn<Client['getPasswordStrength']>().mockImplementation(getPasswordStrengthImplementation)
     const resetPasskeys = jest.fn<Client['resetPasskeys']>()
     const updatePassword = jest.fn<Client['updatePassword']>()
 
@@ -49,6 +59,7 @@ describe('DOM testing', () => {
     const onSuccess = jest.fn()
     
     beforeEach(() => {
+        getPasswordStrength.mockClear()
         resetPasskeys.mockClear()
         updatePassword.mockClear()
         onError.mockClear()
@@ -58,6 +69,7 @@ describe('DOM testing', () => {
     const generateComponent = async (options: Partial<Parameters<typeof accountRecoveryWidget>[0]> = {}, config: Partial<Config> = {}) => {
         // @ts-expect-error partial Client
         const apiClient: Client = {
+            getPasswordStrength,
             resetPasskeys,
             updatePassword,
         }

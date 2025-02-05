@@ -8,7 +8,7 @@ import styles from 'react-phone-number-input/style.css'; // import raw css using
 
 import { createField, type FieldComponentProps, type FieldCreator, type FieldDefinition } from '../fieldCreator';
 import { FormGroup } from '../formControlsComponent';
-import { Validator } from '../../../core/validation';
+import { isValidatorError, Validator } from '../../../core/validation';
 import { Config, Optional } from '../../../types';
 import { Input } from '../formControlsComponent';
 import {isRichFormValue} from "../../../helpers/utils.ts";
@@ -80,7 +80,7 @@ const PhoneNumberField = (props: PhoneNumberFieldProps) => {
         placeholder = label,
         required = true,
         showLabel,
-        validation = {},
+        validation,
         value,
         withCountryCallingCode = true,
         withCountrySelect = false,
@@ -88,7 +88,7 @@ const PhoneNumberField = (props: PhoneNumberFieldProps) => {
 
     const [labels, setLabels] = useState<Labels>()
     const currentValue = isRichFormValue(value, 'raw') ? value.raw : value
-    const error = typeof validation === 'object' && 'error' in validation ? validation.error : undefined
+    const error = validation && isValidatorError(validation) ? validation.error : undefined
 
     useEffect(() => {
         async function fetchLabels() {
@@ -125,6 +125,7 @@ const PhoneNumberField = (props: PhoneNumberFieldProps) => {
             labelText={label}
             {...{ error }}
             showLabel={showLabel}
+            required={required}
         >
             <ReactPhoneNumberInputStyle />
             <PhoneInput

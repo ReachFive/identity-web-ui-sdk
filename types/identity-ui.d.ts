@@ -1,6 +1,6 @@
 /**
- * @reachfive/identity-ui - v1.31.3
- * Compiled Fri, 31 Jan 2025 14:43:05 UTC
+ * @reachfive/identity-ui - v1.32.0
+ * Compiled Wed, 05 Feb 2025 17:19:55 UTC
  *
  * Copyright (c) ReachFive.
  *
@@ -9,10 +9,10 @@
  **/
 import * as React from 'react';
 import React__default, { CSSProperties, ComponentType } from 'react';
-import { Config as Config$1, RemoteSettings, ConsentVersions, CustomField, Client as Client$1, SessionInfo, ConsentType, PasswordPolicy, CustomFieldType, AuthOptions, MFA, PasswordlessResponse, SingleFactorPasswordlessParams, Profile, UserConsent, DeviceCredential } from '@reachfive/identity-core';
+import * as _reachfive_identity_core from '@reachfive/identity-core';
+import { Config as Config$1, RemoteSettings, ConsentVersions, CustomField, Client as Client$1, SessionInfo, ConsentType, PasswordStrengthScore, PasswordPolicy, CustomFieldType, AuthOptions, MFA, PasswordlessResponse, SingleFactorPasswordlessParams, Profile, UserConsent, DeviceCredential } from '@reachfive/identity-core';
 export { Config } from '@reachfive/identity-core';
 import { Country, Value as Value$2 } from 'react-phone-number-input';
-import { DateTime } from 'luxon';
 import * as libphonenumber_js from 'libphonenumber-js';
 import { PasswordlessParams } from '@reachfive/identity-core/es/main/oAuthClient';
 
@@ -258,27 +258,29 @@ declare class CompoundValidator<T, C = {}> {
     create(i18n: I18nResolver): ValidatorInstance<T, C>;
     and(validator: Validator<T, C> | CompoundValidator<T, C>): CompoundValidator<T, C>;
 }
-type VaildatorError = {
-    error: string;
-};
-type ValidatorSuccess = {
-    success?: true;
-};
-type ValidatorResult = boolean | VaildatorError | ValidatorSuccess;
-type ValidatorInstance<T, C> = (value: T, ctx: C) => ValidatorResult;
-type Rule<T, C> = (value: T, ctx: C) => boolean;
+type VaildatorError<Extra = {}> = {
+    valid: false;
+    error?: string;
+} & Extra;
+type ValidatorSuccess<Extra = {}> = {
+    valid: true;
+} & Extra;
+type ValidatorResult<Extra = {}> = VaildatorError<Extra> | ValidatorSuccess<Extra>;
+type ValidatorInstance<T, C, Extra = {}> = (value: T, ctx: C) => Promise<ValidatorResult<Extra>>;
+type RuleResult<E = {}> = boolean | ValidatorSuccess<E> | VaildatorError<E>;
+type Rule<T, C, E = {}> = (value: T, ctx: C) => RuleResult<E> | Promise<RuleResult<E>>;
 type Hint<T> = (value: T) => (string | undefined);
-interface ValidatorOptions<T, C> {
-    rule: Rule<T, C>;
+interface ValidatorOptions<T, C, E = {}> {
+    rule: Rule<T, C, E>;
     hint?: Hint<T> | string;
     parameters?: Record<string, unknown>;
 }
-declare class Validator<T, C = {}> {
-    rule: Rule<T, C>;
+declare class Validator<T, C = {}, E = {}> {
+    rule: Rule<T, C, E>;
     hint: Hint<T>;
     parameters: Record<string, unknown>;
-    constructor({ rule, hint, parameters }: ValidatorOptions<T, C>);
-    create(i18n: I18nResolver): ValidatorInstance<T, C>;
+    constructor({ rule, hint, parameters }: ValidatorOptions<T, C, E>);
+    create(i18n: I18nResolver): ValidatorInstance<T, C, E>;
     and(validator: Validator<T, C> | CompoundValidator<T, C>): CompoundValidator<T, C>;
 }
 
@@ -287,6 +289,8 @@ type RichFormValue<T, K extends string = 'raw'> = Record<K, T>;
 
 /** @todo to refine */
 type FormContext<T> = {
+    client: Client$1;
+    config: Config;
     errorMessage?: string;
     fields: FieldValues<T>;
     hasErrors?: boolean;
@@ -311,7 +315,7 @@ interface Field$1<T, P = {}, E extends Record<string, unknown> = {}, K extends s
     }) => React__default.ReactNode;
     initialize: <M extends Record<PropertyKey, unknown>>(model: M) => FieldValue<T, K>;
     unbind: <M extends Record<PropertyKey, unknown>>(model: M, state: FieldValue<T, K, E>) => M;
-    validate: (data: FieldValue<T, K, E>, ctx: FormContext<any>) => ValidatorResult;
+    validate: (data: FieldValue<T, K, E>, ctx: FormContext<any>) => Promise<ValidatorResult>;
 }
 type FieldValue<T, K extends string = 'raw', E extends Record<string, unknown> = {}> = E & {
     value?: FormValue<T, K>;
@@ -332,7 +336,7 @@ type FieldComponentProps<T, P = {}, E extends Record<string, unknown> = {}, K ex
     i18n: I18nResolver;
     showLabel?: boolean;
     value?: FormValue<T, K>;
-    validation?: ValidatorResult;
+    validation?: ValidatorResult<E>;
 };
 interface Formatter<T, F, K extends string> {
     bind: (value?: T) => FormValue<F, K> | undefined;
@@ -385,9 +389,9 @@ type ExtraParams$2 = {
     locale: string;
     yearDebounce?: number;
 };
-interface DateFieldProps extends FieldComponentProps<DateTime, ExtraParams$2> {
+interface DateFieldProps extends FieldComponentProps<Date, ExtraParams$2> {
 }
-declare function dateField({ key, label, yearDebounce, locale, ...props }: Optional<FieldDefinition<string, DateTime>, 'key' | 'label'> & Optional<ExtraParams$2, 'locale'>, config: Config): FieldCreator<DateTime, DateFieldProps, ExtraParams$2>;
+declare function dateField({ key, label, yearDebounce, locale, ...props }: Optional<FieldDefinition<string, Date>, 'key' | 'label'> & Optional<ExtraParams$2, 'locale'>, config: Config): FieldCreator<Date, DateFieldProps, ExtraParams$2>;
 
 interface Option {
     label: string;
@@ -419,7 +423,6 @@ interface SimplePasswordFieldProps extends FieldComponentProps<string, SimplePas
 }
 declare const simplePasswordField: ({ canShowPassword, placeholder, ...props }: FieldDefinition<string> & SimplePasswordFieldOptions) => FieldCreator<string, SimplePasswordFieldProps, {}, "raw">;
 
-type PasswordStrengthScore = 0 | 1 | 2 | 3 | 4;
 interface PasswordRule {
     label: string;
     verify: (value: string) => boolean;
@@ -484,7 +487,7 @@ declare const simpleField: ({ placeholder, type, ...props }: FieldDefinition<str
 declare function birthdateField({ min, max, label, ...props }: Parameters<typeof dateField>[0] & {
     min?: number;
     max?: number;
-}, config: Config): FieldCreator<DateTime<boolean>, DateFieldProps, {
+}, config: Config): FieldCreator<Date, DateFieldProps, {
     locale: string;
     yearDebounce?: number | undefined;
 }, "raw">;
@@ -531,12 +534,12 @@ declare const predefinedFields: {
         blacklist?: string[] | undefined;
         canShowPassword?: boolean | undefined;
         enabledRules: Record<"minLength" | "uppercaseCharacters" | "specialCharacters" | "lowercaseCharacters" | "digitCharacters", PasswordRule>;
-        minStrength: PasswordStrengthScore;
+        minStrength: _reachfive_identity_core.PasswordStrengthScore;
     }>, { passwordPolicy }: Config) => FieldCreator<string, PasswordFieldProps, {
         blacklist?: string[] | undefined;
         canShowPassword?: boolean | undefined;
         enabledRules: Record<"minLength" | "uppercaseCharacters" | "specialCharacters" | "lowercaseCharacters" | "digitCharacters", PasswordRule>;
-        minStrength: PasswordStrengthScore;
+        minStrength: _reachfive_identity_core.PasswordStrengthScore;
     }, "raw">>;
     passwordConfirmation: PredefinedFieldBuilder<({ canShowPassword, placeholder, ...props }: FieldDefinition<string> & {
         canShowPassword?: boolean | undefined;
@@ -663,6 +666,12 @@ type LoginViewProps = {
      */
     allowAuthentMailPhone?: boolean;
     /**
+     * Boolean that specifies whether a device can be trusted during step up.
+     *
+     * @default false
+     */
+    allowTrustDevice?: boolean;
+    /**
      * Callback function called when the request has succeed.
      */
     onSuccess?: () => void;
@@ -722,6 +731,7 @@ interface LoginWithPasswordViewProps {
     recaptcha_site_key?: string;
     showLabels?: boolean;
     showRememberMe?: boolean;
+    allowTrustDevice?: boolean;
     /**
      * Callback function called when the request has succeed.
      */
@@ -1005,6 +1015,12 @@ interface MainViewProps$6 {
      */
     showStepUpStart?: boolean;
     /**
+     * Boolean that specifies whether a device can be trusted during step up.
+     *
+     * @default false
+     */
+    allowTrustDevice?: boolean;
+    /**
      * Callback function called when the request has succeed.
      */
     onSuccess?: () => void;
@@ -1013,10 +1029,13 @@ interface MainViewProps$6 {
      */
     onError?: (error?: unknown) => void;
 }
-type FaSelectionViewState = MFA.StepUpResponse;
+type FaSelectionViewState = MFA.StepUpResponse & {
+    allowTrustDevice?: boolean;
+};
 type FaSelectionViewProps = Prettify<Partial<MFA.StepUpResponse> & {
     showIntro?: boolean;
     auth?: AuthOptions;
+    allowTrustDevice?: boolean;
     /**
      * Callback function called when the request has succeed.
      */
@@ -1034,6 +1053,12 @@ type VerificationCodeViewProps$3 = Prettify<Partial<StepUpHandlerResponse> & {
      * List of authentication options
      */
     auth?: AuthOptions;
+    /**
+     * Boolean that specifies whether a device can be trusted during step up.
+     *
+     * @default false
+     */
+    allowTrustDevice?: boolean;
     /**
      * Callback function called when the request has succeed.
      */
