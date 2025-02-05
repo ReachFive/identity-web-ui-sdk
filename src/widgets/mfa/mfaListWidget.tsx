@@ -13,6 +13,7 @@ import { ReactComponent as CommentAltDots } from '../../icons/comment-alt-dots.s
 
 import { useI18n } from '../../contexts/i18n';
 import { useConfig } from '../../contexts/config';
+import {dateFormat} from "../../helpers/utils.ts";
 
 const iconStyle = css`
     width: ${props => props.theme.fontSize * 2}px;
@@ -45,10 +46,6 @@ const CardContent = styled.div`
     margin-left: ${props => props.theme._blockInnerHeight}px;
     white-space: initial;
 `;
-
-const dateFormat = (dateString: string, locales?: Intl.LocalesArgument) => (
-    (new Date(dateString)).toLocaleDateString(locales, { timeZone: 'UTC' })
-)
 
 export interface MfaListProps {
     credentials: MFA.CredentialsResponse['credentials']

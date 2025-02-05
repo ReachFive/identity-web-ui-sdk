@@ -8,8 +8,10 @@ import svg from '@svgr/rollup'
 import dts from 'rollup-plugin-dts'
 import css from 'rollup-plugin-import-css'
 import esbuild from 'rollup-plugin-esbuild'
+import postcss from "rollup-plugin-postcss";
 
 import pkg from './package.json' with { type: 'json' }
+import scss from "rollup-plugin-scss";
 const dependencies = Object.keys(pkg.dependencies)
 
 const banner = [
@@ -22,11 +24,12 @@ const banner = [
     ` * This source code is licensed under the MIT license found in the`,
     ` * LICENSE file in the root directory of this source tree.`,
     ` **/`,
+    `import "./identity-ui.css";`
 ].join('\n');
 
 // Ignore Luxon library's circular dependencies
 function onWarn(message) {
-    if ( message.code === 'CIRCULAR_DEPENDENCY' ) return;
+    if ( message.code === 'CIRCULAR_DEPENDENCY' || message.code === 'MODULE_LEVEL_DIRECTIVE') return;
     console.warn( message);
 }
 
@@ -48,6 +51,10 @@ const plugins = [
     }),
     commonjs({ include: /node_modules/ }),
     svg(),
+    postcss({
+        inject: true,
+        extract: true,
+    }),
     // Add an inlined version of SVG files: https://www.smooth-code.com/open-source/svgr/docs/rollup/#using-with-url-plugin
     url({ limit: Infinity, include: ['**/*.svg'] }),
     css(),
@@ -58,6 +65,16 @@ const plugins = [
 ]
 
 export default [
+    // {
+    //     input: "src/index.css",
+    //     output: [{ file: "dist/output.css", format: "cjs"}],
+    //     plugins: [
+    //         postcss({
+    //             extract: true,
+    //             minimize: true
+    //         })
+    //     ],
+    // },
     bundle({
         plugins,
         external: dependencies,
@@ -82,7 +99,7 @@ export default [
                 plugins: [terser({ output: { preamble: banner } })],
                 sourcemap: true,
                 inlineDynamicImports: true,
-            },
+            }
         ],
         onwarn: onWarn
     }),
