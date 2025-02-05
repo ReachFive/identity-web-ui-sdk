@@ -19,8 +19,9 @@ const InputRow = styled.div`
     gap: ${inputRowGutter}px;
 `;
 
-const InputCol = styled.div<{ width: number }>`
+const InputCol = styled.div<{ width: number, minWidth?: number }>`
     flex-basis: ${props => props.width}%;
+    ${props => props.minWidth ? `min-width: ${props.minWidth}px;` : undefined}
 `;
 
 type ExtraParams = {
@@ -111,7 +112,7 @@ const DateField = ({
 
     const fields: Partial<Record<(typeof parts)[number], React.ReactNode>> = {
         day: (
-            <InputCol key="day" width={20}>
+            <InputCol key="day" width={20} minWidth={70}>
                 <Select
                     name={`${path}.day`}
                     value={day ?? ''}
@@ -141,7 +142,7 @@ const DateField = ({
             </InputCol>
         ),
         year: (
-            <InputCol key="year" width={30}>
+            <InputCol key="year" width={30} minWidth={100}>
                 <Input
                     type="number"
                     maxLength={4}
