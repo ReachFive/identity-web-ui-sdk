@@ -22,6 +22,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Fixed
 
 - Dedupe React dependencies
+- Display asterix on phone number field's label when required
+- Set a min width on date field's day and year select
 
 ## [1.31.3] - 2025-01-28
 
