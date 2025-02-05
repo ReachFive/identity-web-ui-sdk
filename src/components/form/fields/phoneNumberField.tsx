@@ -125,6 +125,7 @@ const PhoneNumberField = (props: PhoneNumberFieldProps) => {
             labelText={label}
             {...{ error }}
             showLabel={showLabel}
+            required={required}
         >
             <ReactPhoneNumberInputStyle />
             <PhoneInput
