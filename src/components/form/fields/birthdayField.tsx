@@ -1,8 +1,9 @@
-import { differenceInYears } from "date-fns"
+import { differenceInYears, formatISO, isValid, parseISO } from "date-fns"
 
 import dateField from './dateField'
 import { Validator } from '../../../core/validation';
 import { Config } from '../../../types';
+import { isRichFormValue } from "../../../helpers/utils";
 
 export const ageLimitValidator = (min = 6, max = 129) => new Validator<Date>({
     rule: (value) => {
@@ -20,6 +21,19 @@ export default function birthdateField(
     return dateField({
         ...props,
         label: label,
+        format: {
+            bind: (value) => {
+                const dt = value ? parseISO(value) : undefined
+                return dt && isValid(dt) ? { raw: dt } : undefined
+            },
+            unbind: (value) => {
+                return isRichFormValue(value, 'raw') 
+                    ? formatISO(value.raw, { representation: 'date' }) 
+                    : value 
+                        ? formatISO(value, { representation: 'date' })
+                        : null
+            }
+        },
         validator: ageLimitValidator(min, max)
     }, config)
 }
