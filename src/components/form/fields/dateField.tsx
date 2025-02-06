@@ -200,10 +200,12 @@ export const datetimeValidator = (locale: string) => new Validator<Date>({
 
 export default function dateField(
     {
+        format,
         key = 'date',
         label = 'date',
-        yearDebounce,
         locale,
+        validator,
+        yearDebounce,
         ...props
     }: Optional<FieldDefinition<string, Date>, 'key' | 'label'> & Optional<ExtraParams, 'locale'>,
     config: Config
@@ -212,7 +214,7 @@ export default function dateField(
         key,
         label,
         ...props,
-        format: {
+        format: format ?? {
             bind: (value) => {
                 const dt = value ? parseISO(value) : undefined
                 return dt && isValid(dt) ? { raw: dt } : undefined
@@ -225,7 +227,7 @@ export default function dateField(
                         : null
             }
         },
-        validator: props.validator ? datetimeValidator(config.language).and(props.validator) : datetimeValidator(config.language),
+        validator: validator ? datetimeValidator(config.language).and(validator) : datetimeValidator(config.language),
         component: DateField,
         extendedParams: {
             locale: locale ?? config.language,
