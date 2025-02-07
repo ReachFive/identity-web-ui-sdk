@@ -32,7 +32,6 @@
     },
     "dependencies": {
         "@reachfive/identity-core": "^1.35.1",
-        "@tailwindcss/cli": "^4.0.3",
         "@tailwindcss/postcss": "^4.0.3",
         "buffer": "^6.0.3",
         "char-info": "0.3.2",
@@ -45,10 +44,7 @@
         "radix-ui": "^1.1.2",
         "react-phone-number-input": "^3.4.3",
         "react-transition-group": "4.4.5",
-        "rollup-plugin-scss": "^4.0.1",
-        "tailwind-merge": "2.3.0",
         "tailwindcss": "^3.4.17",
-        "tailwindcss-animate": "1.0.7",
         "validator": "^13.11.0"
     },
     "peerDependencies": {
@@ -98,7 +94,6 @@
         "jest-styled-components": "^7.2.0",
         "polished": "^4.2.2",
         "postcss": "^8.5.1",
-        "postcss-import": "^16.1.0",
         "react-test-renderer": "^18.3.0",
         "rollup": "^4.1.4",
         "rollup-plugin-dts": "^6.1.0",

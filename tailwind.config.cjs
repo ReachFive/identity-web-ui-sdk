@@ -3,12 +3,18 @@ module.exports = {
     content: {
         relative: true,
         files: [
-            "./src/widgets/mfa/*.{js,ts,jsx,tsx}",
             "./src/**/*.{js,ts,jsx,tsx}",
         ]
     },
     theme: {
-        extend: {},
+        extend: {
+            colors: {
+                primaryColor: "var(--primary-color)",
+                dangerColor: "var(--danger-color)",
+                textColor: "var(--text-color)",
+                borderColor: "var(--border-color)",
+                lightBackgroundColor: "var(--light-background-color)",
+            },
+        },
     },
-    plugins: [],
 };
