@@ -1,5 +1,5 @@
 import React, { ComponentType } from 'react';
-import { StyleSheetManager, ThemeProvider } from 'styled-components'
+import {createGlobalStyle, StyleSheetManager, ThemeProvider} from 'styled-components'
 import type { SessionInfo, Client as CoreClient } from '@reachfive/identity-core'
 
 import type { Config, Prettify } from '../../types'
@@ -36,6 +36,21 @@ type CreateWidget<P, U> = {
     prepare?: PrepareFn<P, U>
 } & WidgetContainerProps
 
+const GlobalStyle = createGlobalStyle`
+:root {
+    --primary-color: ${props => props.theme.primaryColor};
+    --danger-color: ${props => props.theme.dangerColor};
+    --text-color: ${props => props.theme.textColor};
+    --padding-y: ${props => props.theme.paddingY};
+    --block-inner-height: ${props => props.theme._blockInnerHeight};
+    --border-width: ${props => props.theme.borderWidth};
+    --border-radius: ${props => props.theme.borderRadius};
+    --border-color: ${props => props.theme.borderColor};
+    --light-background-color: ${props => props.theme.lightBackgroundColor};
+}
+`
+
+
 export function createWidget<P, U = P>({
     component,
     prepare = (options: PropsWithI18n<PropsWithTheme<P>>) => options as unknown as PropsWithI18n<PropsWithTheme<U>>,
@@ -53,6 +68,7 @@ export function createWidget<P, U = P>({
                         <SessionProvider session={context.session}>
                             <StyleSheetManager>
                                 <ThemeProvider theme={theme}>
+                                    <GlobalStyle />
                                     <I18nProvider defaultMessages={context.defaultI18n} messages={preparedOptions.i18n}>
                                         <WidgetContainer {...widgetAttrs}>
                                             <Component {...preparedOptions} />
