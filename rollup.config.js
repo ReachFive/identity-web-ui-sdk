@@ -6,8 +6,8 @@ import terser from '@rollup/plugin-terser';
 import url from '@rollup/plugin-url'
 import svg from '@svgr/rollup'
 import dts from 'rollup-plugin-dts'
-import css from 'rollup-plugin-import-css'
 import esbuild from 'rollup-plugin-esbuild'
+import postcss from "rollup-plugin-postcss";
 
 import pkg from './package.json' with { type: 'json' }
 const dependencies = Object.keys(pkg.dependencies)
@@ -26,7 +26,7 @@ const banner = [
 
 // Ignore Luxon library's circular dependencies
 function onWarn(message) {
-    if ( message.code === 'CIRCULAR_DEPENDENCY' ) return;
+    if ( message.code === 'CIRCULAR_DEPENDENCY' || message.code === 'MODULE_LEVEL_DIRECTIVE') return;
     console.warn( message);
 }
 
@@ -48,9 +48,12 @@ const plugins = [
     }),
     commonjs({ include: /node_modules/ }),
     svg(),
+    postcss({
+        extract: false,
+        minimize: true
+    }),
     // Add an inlined version of SVG files: https://www.smooth-code.com/open-source/svgr/docs/rollup/#using-with-url-plugin
     url({ limit: Infinity, include: ['**/*.svg'] }),
-    css(),
     esbuild(),
     dynamicImportVars({
         errorWhenNoFilesFound: true
