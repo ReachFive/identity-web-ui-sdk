@@ -47,6 +47,10 @@ export function formatISO8601Date(year: string | number, month: string | number,
     return null
 }
 
+export function dateFormat (dateString: string, locales?: Intl.LocalesArgument) {
+    return (new Date(dateString)).toLocaleDateString(locales, {timeZone: 'UTC'})
+}
+
 export type Identifier = { identifier: string }
 export type EmailIdentifier = { email: string }
 export type PhoneNumberIdentifier = { phoneNumber: string }

@@ -1,6 +1,5 @@
 import { createClient as createCoreClient } from '@reachfive/identity-core';
 import type { Client as CoreClient, Config, ConsentVersions, RemoteSettings } from '@reachfive/identity-core';
-
 import { UiClient } from './client';
 import { camelCaseProperties } from './helpers/transformObjectProperties';
 import { toQueryString } from './helpers/queryString';
@@ -23,6 +22,7 @@ export type Client = {
     showMfa: InstanceType<typeof UiClient>['showMfa']
     showMfaCredentials: InstanceType<typeof UiClient>['showMfaCredentials']
     showStepUp: InstanceType<typeof UiClient>['showStepUp']
+    showTrustedDevices: InstanceType<typeof UiClient>['showTrustedDevices']
 }
 
 export function createClient(creationConfig: Config): Client {
@@ -63,6 +63,7 @@ export function createClient(creationConfig: Config): Client {
         showWebAuthnDevices: (options: Parameters<Awaited<typeof client>['showWebAuthnDevices']>[0]) => client.then(client => client.showWebAuthnDevices(options)),
         showMfa: (options: Parameters<Awaited<typeof client>['showMfa']>[0]) => client.then(client => client.showMfa(options)),
         showMfaCredentials: (options: Parameters<Awaited<typeof client>['showMfaCredentials']>[0]) => client.then(client => client.showMfaCredentials(options)),
-        showStepUp: (options: Parameters<Awaited<typeof client>['showStepUp']>[0]) => client.then(client => client.showStepUp(options))
+        showStepUp: (options: Parameters<Awaited<typeof client>['showStepUp']>[0]) => client.then(client => client.showStepUp(options)),
+        showTrustedDevices: (options: Parameters<Awaited<typeof client>['showTrustedDevices']>[0]) => client.then(client => client.showTrustedDevices(options))
     };
 }

@@ -7,6 +7,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+- Allow to list and remove trusted devices
+
 ## [1.32.1] - 2025-02-06
 
 ### Fixed
