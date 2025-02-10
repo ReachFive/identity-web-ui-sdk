@@ -221,9 +221,9 @@ export default function dateField(
             },
             unbind: (value) => {
                 return isRichFormValue(value, 'raw') 
-                    ? formatISO(value.raw) 
+                    ? formatISO(value.raw, { representation: 'date' }) 
                     : value 
-                        ? formatISO(value)
+                        ? formatISO(value, { representation: 'date' })
                         : null
             }
         },
