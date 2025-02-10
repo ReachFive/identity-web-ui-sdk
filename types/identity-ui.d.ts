@@ -1,6 +1,6 @@
 /**
- * @reachfive/identity-ui - v1.31.3-develop
- * Compiled Fri, 07 Feb 2025 15:20:53 UTC
+ * @reachfive/identity-ui - v1.32.1-develop
+ * Compiled Mon, 10 Feb 2025 09:29:41 UTC
  *
  * Copyright (c) ReachFive.
  *
@@ -1375,6 +1375,12 @@ interface SuccessViewProps {
 interface AccountRecoveryWidgetProps extends MainViewProps, SuccessViewProps {
 }
 
+type TrustedDevicesWidgetProps = {
+    accessToken: string;
+    showRemoveTrustedDevice?: boolean;
+    onError?: () => void;
+};
+
 interface WidgetInstance {
     destroy(): void;
 }
@@ -1413,6 +1419,7 @@ declare class UiClient {
     showMfa(options: WidgetOptions<MfaCredentialsWidgetProps>): void;
     showStepUp(options: WidgetOptions<MfaStepUpWidgetProps>): void;
     showMfaCredentials(options: WidgetOptions<MfaListWidgetProps>): void;
+    showTrustedDevices(options: WidgetOptions<TrustedDevicesWidgetProps>): void;
     _showWidget<P extends WidgetProps>(widget: Widget<Omit<P, keyof WidgetProps>>, options?: P, props?: {}): Promise<void>;
     _ssoCheck<P extends WidgetProps>(widget: Widget<Omit<P, keyof WidgetProps>>, options: P & {
         auth?: AuthOptions;
@@ -1437,6 +1444,7 @@ type Client = {
     showMfa: InstanceType<typeof UiClient>['showMfa'];
     showMfaCredentials: InstanceType<typeof UiClient>['showMfaCredentials'];
     showStepUp: InstanceType<typeof UiClient>['showStepUp'];
+    showTrustedDevices: InstanceType<typeof UiClient>['showTrustedDevices'];
 };
 declare function createClient(creationConfig: Config$1): Client;
 
