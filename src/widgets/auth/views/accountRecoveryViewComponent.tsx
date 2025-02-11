@@ -68,6 +68,14 @@ export interface AccountRecoveryViewProps {
      * Important: This parameter should only be used with Hosted Pages.
      */
     returnToAfterAccountRecovery?: string,
+    /**
+     * Callback function called when the request has succeed.
+     */
+    onSuccess?: () => void
+    /**
+     * Callback function called when the request has failed.
+     */
+    onError?: (error?: unknown) => void
 }
 
 export const AccountRecoveryView = ({
@@ -78,6 +86,8 @@ export const AccountRecoveryView = ({
     recaptcha_site_key,
     redirectUrl,
     returnToAfterAccountRecovery,
+    onError = () => {},
+    onSuccess = () => {},
 }: AccountRecoveryViewProps) => {
     const coreClient = useReachfive()
     const { goTo } = useRouting()
@@ -104,8 +114,13 @@ export const AccountRecoveryView = ({
             <AccountRecoveryForm
                 showLabels={showLabels}
                 handler={callback}
-                onSuccess={() => goTo('account-recovery-success')}
-                skipError={displaySafeErrorMessage && skipError} />
+                onSuccess={() => {
+                    onSuccess()
+                    goTo('account-recovery-success')
+                }}
+                onError={onError}
+                skipError={displaySafeErrorMessage && skipError}
+            />
             {allowLogin && <Alternative>
                 <Link target={'login'}>{i18n('accountRecovery.backToLoginLink')}</Link>
             </Alternative>}

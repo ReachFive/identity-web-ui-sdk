@@ -81,17 +81,21 @@ const DevicesList = ({ devices, removeWebAuthnDevice }: DevicesListProps) => {
                     const [ provider, icon ] = getProviderData(aaguid ?? "")
                     const Icon = icon && styled(icon)`${iconStyle}`
 
-                    return <Card key={id}>
+                    return <Card key={id} data-testid="device">
                         <CardContent>
                             <CardIcon><Icon/></CardIcon>
                             <CardText>
-                                <DeviceName>{friendlyName}</DeviceName>
-                                {provider && <div>{provider}</div>}
-                                {createdAt && <div>{i18n('webauthn.registredDevices.createdAt')}:&nbsp;<time dateTime={createdAt}>{dateFormat(createdAt, config.language)}</time></div>}
-                                {lastUsedAt && <div>{i18n('webauthn.registredDevices.lastUsedAt')}:&nbsp;<time dateTime={lastUsedAt}>{dateFormat(lastUsedAt, config.language)}</time></div>}
+                                <DeviceName data-testid="device-name">{friendlyName}</DeviceName>
+                                {provider && <div data-testid="device-provider">{provider}</div>}
+                                {createdAt && <div data-testid="device-created-at">{i18n('webauthn.registredDevices.createdAt')}:&nbsp;<time dateTime={createdAt}>{dateFormat(createdAt, config.language)}</time></div>}
+                                {lastUsedAt && <div data-testid="device-last-used-at">{i18n('webauthn.registredDevices.lastUsedAt')}:&nbsp;<time dateTime={lastUsedAt}>{dateFormat(lastUsedAt, config.language)}</time></div>}
                             </CardText>
                         </CardContent>
-                        <CloseIcon title={i18n('remove')} onClick={() => removeWebAuthnDevice(id)}/>
+                        <CloseIcon
+                            title={i18n('remove')}
+                            onClick={() => removeWebAuthnDevice(id)}
+                            data-testid="device-remove"
+                        />
                     </Card>})
                 }
             </div>
@@ -114,12 +118,22 @@ export interface WebAuthnDevicesProps {
      * @default false
      */
     showLabels?: boolean
+    /**
+     * Callback function called when the request has succeed.
+     */
+    onSuccess?: () => void
+    /**
+     * Callback function called when the request has failed.
+     */
+    onError?: (error?: unknown) => void
 }
 
 function WebAuthnDevices ({
     accessToken,
     devices: initDevices,
     showLabels = false,
+    onError = () => {},
+    onSuccess = () => {},
 }: WebAuthnDevicesProps) {
     const coreClient = useReachfive()
     const config = useConfig()
@@ -136,13 +150,15 @@ function WebAuthnDevices ({
                 return coreClient.
                     listWebAuthnDevices(accessToken)
                     .then(newDevices => setDevices(newDevices));
-            });
+            })
+            .catch(onError)
     }
 
     const addNewWebAuthnDevice = ({ friendlyName }: DeviceInputFormData) => {
         return coreClient
             .addNewWebAuthnDevice(accessToken, friendlyName)
             .then(() => {
+                onSuccess()
                 return coreClient.
                     listWebAuthnDevices(accessToken)
                     .then(newDevices => setDevices(newDevices));
@@ -164,7 +180,9 @@ function WebAuthnDevices ({
         <DeviceInputForm
             fields={fields}
             showLabels={showLabels}
-            handler={addNewWebAuthnDevice} />
+            handler={addNewWebAuthnDevice}
+            onError={onError}
+        />
     </div>
 }
 
@@ -177,11 +195,15 @@ export default createWidget<WebAuthnWidgetProps, WebAuthnDevicesProps>({
         const { accessToken } = options;
 
         if (!config.webAuthn) {
-            throw new UserError('The WebAuthn feature is not available on your account.');
+            const error = new UserError('The WebAuthn feature is not available on your account.');
+            options.onError?.(error)
+            throw error;
         }
 
         if (!accessToken) {
-            throw new UserError('You must be logged in to manage the FIDO2 devices.');
+            const error = new UserError('You must be logged in to manage the FIDO2 devices.')
+            options.onError?.(error)
+            throw error;
         }
 
         return apiClient
@@ -189,7 +211,11 @@ export default createWidget<WebAuthnWidgetProps, WebAuthnDevicesProps>({
             .then(devices => ({
                 ...options,
                 devices
-            }));
+            }))
+            .catch(err => {
+                options.onError?.(err)
+                throw err
+            });
     }
 });
 

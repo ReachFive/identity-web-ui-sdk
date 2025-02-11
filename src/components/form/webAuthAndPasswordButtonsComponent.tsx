@@ -118,7 +118,8 @@ export const WebAuthnSignupViewButtons = styled(({ enablePasswordAuthentication,
             data-testid="webauthn-button"
             onClick={onBiometricClick}
             title={i18n('signup.withBiometrics')}
-            text={i18n('biometrics')}>
+            text={i18n('biometrics')}
+        >
             <FingerPrintIcon />
         </PrimaryButtonWithIcon>
 
@@ -129,7 +130,8 @@ export const WebAuthnSignupViewButtons = styled(({ enablePasswordAuthentication,
                     data-testid="password-button"
                     onClick={onPasswordClick}
                     title={i18n('signup.withPassword')}
-                    text={i18n('password')}>
+                    text={i18n('password')}
+                >
                     <KeyboardIcon />
                 </PrimaryButtonWithIcon>
             </>

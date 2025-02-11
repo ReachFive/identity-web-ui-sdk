@@ -26,14 +26,13 @@ interface ProfileEditorProps {
      */
     accessToken: string
     /**
-     * Callback function called when the request has failed.
+     * Callback function called when the request has succeed.
      */
     onSuccess?: () => void
     /**
-     * Callback function called after the widget has been successfully loaded and rendered inside the container.
-     * The callback is called with the widget instance.
+     * Callback function called when the request has failed.
      */
-    onError?: () => void
+    onError?: (error?: unknown) => void
     /**
      * Phone number field options.
      */
@@ -146,6 +145,10 @@ export default createWidget<ProfileEditorWidgetProps, ProfileEditorProps>({
                             && (field.path !== 'phone_number' || !config.sms || !filteredOutConsentsProfile.phoneNumber);
                     })
                 } satisfies ProfileEditorProps)
+            })
+            .catch((error: unknown) => {
+                options.onError?.(error)
+                return Promise.reject(error)
             });
     }
 });

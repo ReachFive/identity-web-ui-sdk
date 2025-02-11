@@ -136,7 +136,7 @@ const defaultConfig: Config = {
         minLength: 8,
         minStrength: 2,
         allowUpdateWithAccessTokenOnly: true,
-    },
+    }
 };
 
 // function customFieldLabel(path: string, langCode: string) {

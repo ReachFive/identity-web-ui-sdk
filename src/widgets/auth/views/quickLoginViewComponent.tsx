@@ -22,9 +22,24 @@ export interface QuickLoginViewProps {
      * List of authentication options
      */
     auth?: AuthOptions
+    /**
+     * Callback function called when the request has succeed.
+     */
+    onSuccess?: () => void
+    /**
+     * Callback function called when the request has failed.
+     */
+    onError?: (error?: unknown) => void
 }
 
-export const  QuickLoginView = ({ initialScreen, allowWebAuthnLogin = false, auth, session }: PropsWithSession<QuickLoginViewProps>) => {
+export const  QuickLoginView = ({
+    initialScreen,
+    allowWebAuthnLogin = false,
+    auth,
+    session,
+    onError = () => {},
+    onSuccess = () => {},
+}: PropsWithSession<QuickLoginViewProps>) => {
     const i18n = useI18n()
 
     // this component should never be display without session infos defined
@@ -34,7 +49,12 @@ export const  QuickLoginView = ({ initialScreen, allowWebAuthnLogin = false, aut
         <div>
         <Heading>{session.name ?? session.email}</Heading>
         <Intro>{i18n('lastTimeYouLoggedInWith')}</Intro>
-        <SocialButtons providers={session.lastLoginType ? [session.lastLoginType] : []} auth={auth} />
+        <SocialButtons
+            providers={session.lastLoginType ? [session.lastLoginType] : []}
+            auth={auth}
+            onSuccess={onSuccess}
+            onError={onError}
+        />
         <Alternative>
             <Link target={selectLogin(initialScreen, allowWebAuthnLogin)}>{i18n('notYourAccount')}</Link>
         </Alternative>

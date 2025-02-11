@@ -233,6 +233,14 @@ export type LoginViewProps = {
      * @default false
      */
     allowTrustDevice?: boolean
+    /**
+     * Callback function called when the request has succeed.
+     */
+    onSuccess?: () => void
+    /**
+     * Callback function called when the request has failed.
+     */
+    onError?: (error?: unknown) => void
 }
 
 export const LoginView = ({
@@ -250,7 +258,9 @@ export const LoginView = ({
     recaptcha_enabled = false,
     recaptcha_site_key,
     allowAuthentMailPhone = true,
-    allowTrustDevice
+    allowTrustDevice,
+    onError = () => {},
+    onSuccess = () => {},
 }: LoginViewProps) => {
     const i18n = useI18n()
     const coreClient = useReachfive()
@@ -263,15 +273,18 @@ export const LoginView = ({
 
     const controller = new AbortController();
     const signal = controller.signal;
+    
     React.useEffect(() => {
         if (allowWebAuthnLogin) {
-            coreClient.loginWithWebAuthn({
-                conditionalMediation: 'preferred',
-                auth: {
-                    ...auth
-                },
-                signal: signal
-            }).catch(() => undefined)
+            coreClient
+                .loginWithWebAuthn({
+                    conditionalMediation: 'preferred',
+                    auth: {
+                        ...auth
+                    },
+                    signal: signal
+                })
+                .catch(onError)
         }
     }, [coreClient, auth, allowWebAuthnLogin, signal])
 
@@ -308,6 +321,8 @@ export const LoginView = ({
                 allowCustomIdentifier={allowCustomIdentifier}
                 allowAuthentMailPhone={allowAuthentMailPhone}
                 handler={(data: LoginFormData) => ReCaptcha.handle(data, { recaptcha_enabled, recaptcha_site_key }, callback, "login")}
+                onSuccess={onSuccess}
+                onError={onError}
             />
             {allowSignup &&
                 <Alternative>

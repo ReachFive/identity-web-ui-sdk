@@ -3,17 +3,21 @@
  */
 
 import { describe, expect, jest, test } from '@jest/globals';
-import renderer from 'react-test-renderer';
-import { render, screen } from '@testing-library/react';
-import '@testing-library/jest-dom';
+import { render, screen, waitFor } from '@testing-library/react';
+import '@testing-library/jest-dom/jest-globals'
 import 'jest-styled-components';
 
+import type { PasswordStrengthScore, Client } from '@reachfive/identity-core';
+
+import { type I18nMessages } from '../../../src/core/i18n';
+import { type ProviderId, providers } from '../../../src/providers/providers';
+import type { Config } from '../../../src/types';
 import { randomString } from '../../../src/helpers/random';
+
 import authWidget from '../../../src/widgets/auth/authWidget';
+import { beforeEach } from 'node:test';
 
-import { providers } from '../../../src/providers/providers';
-
-const defaultConfig = {
+const defaultConfig: Config = {
     clientId: 'local',
     domain: 'local.reach5.net',
     sso: false,
@@ -28,14 +32,19 @@ const defaultConfig = {
     mfaSmsEnabled: false,
     mfaEmailEnabled: false,
     rbaEnabled: false,
-    consentsVersions: [{
-        key: 'aConsent',
-        versions: [{
-            versionId: 1,
-            title: 'consent title',
-            description: 'consent description'
-        }]
-    }],
+    consentsVersions: {
+        aConsent: {
+            key: 'aConsent',
+            versions: [{
+                versionId: 1,
+                title: 'consent title',
+                description: 'consent description',
+                language: 'fr',
+            }],
+            consentType: 'opt-in',
+            status: 'active'
+        }
+    },
     passwordPolicy: {
         minLength: 8,
         minStrength: 2,
@@ -43,32 +52,34 @@ const defaultConfig = {
     }
 };
 
+const defaultI18n: I18nMessages = {}
+
 const webauthnConfig = { ...defaultConfig, webAuthn: true };
 
 function expectSocialButtons(toBeInTheDocument = true) {
     return defaultConfig.socialProviders.forEach((provider) => {
         if (toBeInTheDocument) {
-            expect(screen.queryByTitle(providers[provider].name)).toBeInTheDocument()
+            expect(screen.queryByTitle(providers[provider as ProviderId].name)).toBeInTheDocument()
         } else {
-            expect(screen.queryByTitle(providers[provider].name)).not.toBeInTheDocument()
+            expect(screen.queryByTitle(providers[provider as ProviderId].name)).not.toBeInTheDocument()
         }
     })
 }
 
 describe('Snapshot', () => {
-    const getPasswordStrength = jest.fn().mockImplementation((password) => {
+    const getPasswordStrength = jest.fn<Client['getPasswordStrength']>().mockImplementation((password) => {
         let score = 0
         if (password.match(/[a-z]+/)) score++
         if (password.match(/[0-9]+/)) score++
         if (password.match(/[^a-z0-9]+/)) score++
         if (password.length > 8) score++
-        return Promise.resolve({ score })
+        return Promise.resolve({ score: score as PasswordStrengthScore })
     })
     
-    const loginWithWebAuthn = jest.fn().mockRejectedValue(new Error('This is a mock.'))
+    const loginWithWebAuthn = jest.fn<Client['loginWithWebAuthn']>().mockRejectedValue(new Error('This is a mock.'))
 
     // @ts-expect-error partial Client
-    const apiClient = {
+    const apiClient: Client = {
         getPasswordStrength,
         loginWithWebAuthn,
     }
@@ -78,12 +89,13 @@ describe('Snapshot', () => {
         loginWithWebAuthn.mockClear()
     })
 
-    const generateSnapshot = (options, config = defaultConfig) => () => {
-        const tree = authWidget(options, { config, apiClient })
-            .then(result => renderer.create(result).toJSON())
-            .catch(e => console.error(e) || Promise.reject(e));
-
-        expect(tree).resolves.toMatchSnapshot();
+    const generateSnapshot = (options: Parameters<typeof authWidget>[0] = {}, config: Partial<Config> = {}) => async () => {
+        const widget = await authWidget(options, {config: { ...defaultConfig, ...config }, apiClient, defaultI18n })
+                
+        await waitFor(async () => {
+            const { container } = await render(widget);
+            expect(container).toMatchSnapshot();
+        })
     };
 
     describe('login view', () => {
@@ -245,30 +257,29 @@ describe('Snapshot', () => {
 });
 
 describe('DOM testing', () => {
-    const getPasswordStrength = jest.fn().mockImplementation((password) => {
+    const getPasswordStrength = jest.fn<Client['getPasswordStrength']>().mockImplementation((password) => {
         let score = 0
         if (password.match(/[a-z]+/)) score++
         if (password.match(/[0-9]+/)) score++
         if (password.match(/[^a-z0-9]+/)) score++
         if (password.length > 8) score++
-        return Promise.resolve({ score })
+        return Promise.resolve({ score: score as PasswordStrengthScore })
     })
     
-    const loginWithWebAuthn = jest.fn().mockRejectedValue(new Error('This is a mock.'))
-
-    // @ts-expect-error partial Client
-    const apiClient = {
-        getPasswordStrength,
-        loginWithWebAuthn,
-    }
+    const loginWithWebAuthn = jest.fn<Client['loginWithWebAuthn']>().mockRejectedValue(new Error('This is a mock.'))
 
     beforeEach(() => {
         getPasswordStrength.mockClear()
         loginWithWebAuthn.mockClear()
     })
     
-    const generateComponent = async (options, config = defaultConfig) => {
-        const result = await authWidget(options, { config, apiClient });
+    const generateComponent = async (options: Parameters<typeof authWidget>[0] = {}, config: Partial<Config> = {}) => {
+        // @ts-expect-error partial Client
+        const apiClient: Client = {
+            getPasswordStrength,
+            loginWithWebAuthn
+        }
+        const result = await authWidget(options, {config: { ...defaultConfig, ...config }, apiClient, defaultI18n });
         return render(result);
     };
 
@@ -328,7 +339,8 @@ describe('DOM testing', () => {
                 canShowPassword: true
             });
 
-            expect(screen.queryByTestId('password').parentElement.querySelector('svg')).toBeInTheDocument();
+            const password = screen.getByTestId('password')
+            expect(password.parentElement?.querySelector('svg')).toBeInTheDocument();
         });
 
         test('inline social buttons', async () => {
@@ -471,7 +483,7 @@ describe('DOM testing', () => {
         test('new login view', async () => {
             expect.assertions(6);
 
-            loginWithWebAuthn
+            loginWithWebAuthn.mockRejectedValue(new Error('This is a mock.'))
 
             await generateComponent({ allowWebAuthnLogin: true, initialScreen: 'login' }, webauthnConfig);
 
@@ -493,6 +505,9 @@ describe('DOM testing', () => {
 
         test('old login view', async () => {
             expect.assertions(6);
+
+            loginWithWebAuthn.mockRejectedValue(new Error('This is a mock.'))
+
             await generateComponent({ allowWebAuthnLogin: true, initialScreen: 'login-with-web-authn' }, webauthnConfig);
 
             // Social buttons
@@ -571,6 +586,9 @@ describe('DOM testing', () => {
     describe('with webauthn feature and without password', () => {
         test('old login view', async () => {
             expect.assertions(6);
+
+            loginWithWebAuthn.mockRejectedValue(new Error('This is a mock.'))
+
             await generateComponent({
                 allowWebAuthnLogin: true,
                 enablePasswordAuthentication:false,
