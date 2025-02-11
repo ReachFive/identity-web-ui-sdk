@@ -4,6 +4,9 @@ exports[`Snapshot email editor basic 1`] = `
 .c1 {
   text-align: center;
   margin-bottom: 10px;
+}
+
+.c2 {
   color: #495057;
 }
 
@@ -21,7 +24,7 @@ exports[`Snapshot email editor basic 1`] = `
   margin: 0 auto;
 }
 
-.c6 {
+.c7 {
   display: block;
   width: 100%;
   box-sizing: border-box;
@@ -45,41 +48,41 @@ exports[`Snapshot email editor basic 1`] = `
   transition: all .15s ease-in-out;
 }
 
-.c6:focus {
+.c7:focus {
   outline: 0;
   box-shadow: 0 0 0 3px rgba(34,153,85,0.5);
 }
 
-.c6:hover,
-.c6:active {
+.c7:hover,
+.c7:active {
   background-color: #1b7842;
   border-color: #1b7842;
 }
 
-.c6[disabled] {
+.c7[disabled] {
   opacity: .65;
 }
 
-.c2 {
+.c3 {
   position: relative;
 }
 
-.c4 {
+.c5 {
   color: #495057;
   margin-bottom: 5px;
   display: none;
 }
 
-.c3 {
+.c4 {
   margin-bottom: 10px;
 }
 
-.c3 > label::after {
+.c4 > label::after {
   content: "\\A0*";
   color: #dc4e41;
 }
 
-.c5 {
+.c6 {
   display: block;
   width: 100%;
   box-sizing: border-box;
@@ -101,30 +104,30 @@ exports[`Snapshot email editor basic 1`] = `
   appearance: none;
 }
 
-.c5:focus {
+.c6:focus {
   border-color: #5fdb94;
   box-shadow: 0 0 0 3px rgba(95,219,148,0.5);
   outline: 0;
 }
 
-.c5:disabled,
-.c5[readonly] {
+.c6:disabled,
+.c6[readonly] {
   background-color: #e9ecef;
 }
 
-.c5::-webkit-input-placeholder {
+.c6::-webkit-input-placeholder {
   color: #868e96;
 }
 
-.c5::-moz-placeholder {
+.c6::-moz-placeholder {
   color: #868e96;
 }
 
-.c5:-ms-input-placeholder {
+.c6:-ms-input-placeholder {
   color: #868e96;
 }
 
-.c5::placeholder {
+.c6::placeholder {
   color: #868e96;
 }
 
@@ -134,26 +137,26 @@ exports[`Snapshot email editor basic 1`] = `
   >
     <div>
       <div
-        class="c1"
+        class="c1 c2"
       >
         emailEditor.intro
       </div>
       <form
-        class="c2"
+        class="c3"
         novalidate=""
       >
         <div
-          class="c3"
+          class="c4"
           required=""
         >
           <label
-            class="c4"
+            class="c5"
             for="email"
           >
             email
           </label>
           <input
-            class="c5"
+            class="c6"
             data-testid="email"
             id="email"
             name="email"
@@ -165,7 +168,7 @@ exports[`Snapshot email editor basic 1`] = `
           />
         </div>
         <button
-          class="c6"
+          class="c7"
           data-testid="submit"
           type="submit"
         >

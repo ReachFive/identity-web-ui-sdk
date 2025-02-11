@@ -4,6 +4,9 @@ exports[`Snapshot basic 1`] = `
 .c1 {
   text-align: center;
   margin-bottom: 10px;
+}
+
+.c2 {
   color: #495057;
 }
 
@@ -21,7 +24,7 @@ exports[`Snapshot basic 1`] = `
   margin: 0 auto;
 }
 
-.c3 {
+.c4 {
   display: block;
   width: 100%;
   box-sizing: border-box;
@@ -45,23 +48,23 @@ exports[`Snapshot basic 1`] = `
   transition: all .15s ease-in-out;
 }
 
-.c3:focus {
+.c4:focus {
   outline: 0;
   box-shadow: 0 0 0 3px rgba(206,212,218,0.5);
 }
 
-.c3:hover,
-.c3:active {
+.c4:hover,
+.c4:active {
   color: #495057;
   background-color: #ebebeb;
   border-color: #b7c0c8;
 }
 
-.c3[disabled] {
+.c4[disabled] {
   opacity: .65;
 }
 
-.c2 {
+.c3 {
   margin-top: 10px;
 }
 
@@ -71,16 +74,16 @@ exports[`Snapshot basic 1`] = `
   >
     <div>
       <div
-        class="c1"
+        class="c1 c2"
       >
         socialAccounts.noLinkedAccount
       </div>
     </div>
     <div
-      class="c2"
+      class="c3"
     >
       <button
-        class="c3"
+        class="c4"
       >
         socialAccounts.linkNewAccount
       </button>
