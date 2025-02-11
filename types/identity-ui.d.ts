@@ -1,6 +1,6 @@
 /**
- * @reachfive/identity-ui - v1.32.0
- * Compiled Thu, 06 Feb 2025 14:40:46 UTC
+ * @reachfive/identity-ui - v1.32.2
+ * Compiled Tue, 11 Feb 2025 09:15:56 UTC
  *
  * Copyright (c) ReachFive.
  *
@@ -473,7 +473,7 @@ type PhoneNumberOptions = {
  */
 interface PhoneNumberFieldProps extends FieldComponentProps<Value$2>, PhoneNumberOptions {
 }
-declare const phoneNumberField: ({ key, label, defaultCountry, country, locale, withCountryCallingCode, withCountrySelect, ...props }: Optional<FieldDefinition<string, Value$2>, 'key' | 'label'> & PhoneNumberOptions, config: Config) => FieldCreator<Value$2, PhoneNumberFieldProps>;
+declare const phoneNumberField: ({ key, label, defaultCountry, country, locale, withCountryCallingCode, withCountrySelect, ...props }: Optional<FieldDefinition<string | undefined, Value$2>, 'key' | 'label'> & PhoneNumberOptions, config: Config) => FieldCreator<Value$2, PhoneNumberFieldProps>;
 
 type SimpleFieldOptions = {
     placeholder?: React__default.InputHTMLAttributes<HTMLInputElement>['placeholder'];
@@ -528,7 +528,7 @@ declare const predefinedFields: {
         placeholder?: string | undefined;
         type?: React.HTMLInputTypeAttribute | undefined;
     }) => FieldCreator<string, SimpleFieldProps, {}, "raw">>;
-    phoneNumber: PredefinedFieldBuilder<({ key, label, defaultCountry, country, locale, withCountryCallingCode, withCountrySelect, ...props }: Pick<Partial<FieldDefinition<string, libphonenumber_js.E164Number>>, "label" | "key"> & Omit<FieldDefinition<string, libphonenumber_js.E164Number>, "label" | "key"> & PhoneNumberOptions, config: Config) => FieldCreator<libphonenumber_js.E164Number, PhoneNumberFieldProps, {}, "raw">>;
+    phoneNumber: PredefinedFieldBuilder<({ key, label, defaultCountry, country, locale, withCountryCallingCode, withCountrySelect, ...props }: Pick<Partial<FieldDefinition<string | undefined, libphonenumber_js.E164Number>>, "label" | "key"> & Omit<FieldDefinition<string | undefined, libphonenumber_js.E164Number>, "label" | "key"> & PhoneNumberOptions, config: Config) => FieldCreator<libphonenumber_js.E164Number, PhoneNumberFieldProps, {}, "raw">>;
     password: PredefinedFieldBuilder<({ key, label, blacklist, canShowPassword, enabledRules, minStrength, required, validator, ...props }: Pick<Partial<FieldDefinition<string, string>>, "label" | "key"> & Omit<FieldDefinition<string, string>, "label" | "key"> & Partial<{
         blacklist?: string[] | undefined;
         canShowPassword?: boolean | undefined;

@@ -164,10 +164,10 @@ const phoneNumberField = (
         withCountryCallingCode,
         withCountrySelect,
         ...props
-    }: Optional<FieldDefinition<string, Value>, 'key' | 'label'> & PhoneNumberOptions,
+    }: Optional<FieldDefinition<string | undefined, Value>, 'key' | 'label'> & PhoneNumberOptions,
     config: Config
 ): FieldCreator<Value, PhoneNumberFieldProps> => {
-    return createField<string, Value, PhoneNumberFieldProps>({
+    return createField<string | undefined, Value, PhoneNumberFieldProps>({
         component: PhoneNumberField,
         ...props,
         key,
@@ -182,7 +182,7 @@ const phoneNumberField = (
                 }
             },
             unbind: formValue => {
-                return (typeof formValue === 'object' && 'raw' in formValue ? formValue.raw : formValue) ?? null
+                return (typeof formValue === 'object' && 'raw' in formValue ? formValue.raw : formValue)
             }
         },
         validator: new Validator<Value>({
