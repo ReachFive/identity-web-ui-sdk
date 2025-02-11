@@ -1,6 +1,6 @@
 /**
- * @reachfive/identity-ui - v1.32.0
- * Compiled Wed, 05 Feb 2025 20:22:21 UTC
+ * @reachfive/identity-ui - v1.32.2
+ * Compiled Tue, 11 Feb 2025 18:05:42 UTC
  *
  * Copyright (c) ReachFive.
  *
@@ -390,7 +390,7 @@ type ExtraParams$2 = {
 };
 interface DateFieldProps extends FieldComponentProps<Date, ExtraParams$2> {
 }
-declare function dateField({ key, label, yearDebounce, locale, ...props }: Optional<FieldDefinition<string, Date>, 'key' | 'label'> & Optional<ExtraParams$2, 'locale'>, config: Config): FieldCreator<Date, DateFieldProps, ExtraParams$2>;
+declare function dateField({ format, key, label, locale, validator, yearDebounce, ...props }: Optional<FieldDefinition<string, Date>, 'key' | 'label'> & Optional<ExtraParams$2, 'locale'>, config: Config): FieldCreator<Date, DateFieldProps, ExtraParams$2>;
 
 interface Option {
     label: string;
