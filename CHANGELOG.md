@@ -7,6 +7,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Fixed
+
+- Fix phoneNumberField so phone number is not in the payload instead of always valuating it to null
+
 ## [1.32.2] - 2025-02-10
 
 ### Fixed
