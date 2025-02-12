@@ -1,6 +1,10 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Snapshot profile editor basic 1`] = `
+.c6 {
+  color: #adb5bd;
+}
+
 .c0 {
   font-size: 14px;
   -webkit-transition: -webkit-transform 400ms ease, opacity 400ms ease;
@@ -58,8 +62,7 @@ exports[`Snapshot profile editor basic 1`] = `
   position: relative;
 }
 
-.c6 {
-  color: #adb5bd;
+.c7 {
   display: block;
   padding: 9px 12px;
   text-align: center;
@@ -187,7 +190,7 @@ exports[`Snapshot profile editor basic 1`] = `
         save
       </button>
       <span
-        class="c6"
+        class="c6 c7"
       >
         *
         form.required.fields

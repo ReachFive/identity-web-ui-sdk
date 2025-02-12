@@ -43,6 +43,7 @@ const plugins = [
         }
     }),
     nodeResolve({
+        browser: true,
         extensions: ['.jsx', '.js', '.json'],
         preferBuiltins: true
     }),
