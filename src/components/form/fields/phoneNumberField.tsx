@@ -164,10 +164,10 @@ const phoneNumberField = (
         withCountryCallingCode,
         withCountrySelect,
         ...props
-    }: Optional<FieldDefinition<string | undefined, Value>, 'key' | 'label'> & PhoneNumberOptions,
+    }: Optional<FieldDefinition<string, Value>, 'key' | 'label'> & PhoneNumberOptions,
     config: Config
 ): FieldCreator<Value, PhoneNumberFieldProps> => {
-    return createField<string | undefined, Value, PhoneNumberFieldProps>({
+    return createField<string, Value, PhoneNumberFieldProps>({
         component: PhoneNumberField,
         ...props,
         key,
