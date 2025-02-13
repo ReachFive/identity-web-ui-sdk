@@ -60,7 +60,7 @@ export type FieldComponentProps<T, P = {}, E extends Record<string, unknown> = {
 
 export interface Formatter<T, F, K extends string> {
     bind: (value?: T) => FormValue<F, K> | undefined
-    unbind: (value?: FormValue<F, K>) => T | null
+    unbind: (value?: FormValue<F, K>) => T | null | undefined
 }
 
 export type FieldDefinition<T, F = T, K extends string = 'raw'> = {
@@ -108,7 +108,7 @@ export function createField<
     mapping = new PathMapping(camelCasePath(path)),
     format = {
         bind: x => isValued(x) ? x as F : undefined,
-        unbind: x => (isValued(x) && isRichFormValue(x, rawProperty) ? x[rawProperty] as T : x as T) 
+        unbind: x => (isValued(x) && isRichFormValue(x, rawProperty) ? x[rawProperty] as T : x as T)
     },
     rawProperty = 'raw' as K,
     component: Component,
@@ -131,7 +131,7 @@ export function createField<
                 ...extParams
             };
 
-            return { 
+            return {
                 key,
                 render: ({ state: { value, validation }, ...props }: Partial<P> & { state: FieldValue<F, K, E> }) => (
                     <Component value={value} validation={validation} {...{...staticProps as P, ...props} as P} />
@@ -150,7 +150,7 @@ export function createField<
                 validate: async ({ value: formValue }: FieldValue<F, K, E>, ctx: FormContext<any>): Promise<ValidatorResult<E>> => {
                     const value = isRichFormValue(formValue, rawProperty) ? formValue[rawProperty] : formValue
                     const requireValidation = required ? await requiredRule.create(i18n)(value, ctx) : { valid: true } as ValidatorSuccess<E>
-                    return isValidatorSuccess(requireValidation) && isValued(value) 
+                    return isValidatorSuccess(requireValidation) && isValued(value)
                         ? await validator.create(i18n)(value, ctx)
                         : requireValidation
                 }

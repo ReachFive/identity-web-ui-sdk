@@ -72,7 +72,7 @@ describe('DOM testing', () => {
         const initialValue = '+33123456789'
         const key = 'phone_number'
         const label = 'phone'
-        
+
         const onFieldChange = jest.fn()
         const onSubmit = jest.fn<(data: Model) => Promise<Model>>(data => Promise.resolve(data))
 
@@ -88,7 +88,7 @@ describe('DOM testing', () => {
             ],
         })
 
-        const renderResult = await waitFor(async () => {   
+        const renderResult = await waitFor(async () => {
             return render(
                 <WidgetContext
                     client={apiClient}
@@ -139,5 +139,51 @@ describe('DOM testing', () => {
                 phoneNumber: newValue
             })
         )
+    })
+
+    test('optional', async () => {
+        const user = userEvent.setup()
+
+        const country = 'FR'
+        const key = 'phone_number'
+        const label = 'phone'
+
+        const onFieldChange = jest.fn()
+        const onSubmit = jest.fn<(data: Model) => Promise<Model>>(data => Promise.resolve(data))
+
+        const Form = createForm<Model>({
+            fields: [
+                phoneNumberField({
+                    key,
+                    label,
+                    country,
+                    withCountrySelect: true,
+                    required: false
+                }, defaultConfig)
+            ],
+        })
+
+        await waitFor(async () => {
+            return render(
+                <WidgetContext
+                    client={apiClient}
+                    config={defaultConfig}
+                    defaultMessages={defaultI18n}
+                >
+                    <Form
+                        fieldValidationDebounce={0} // trigger validation instantly
+                        onFieldChange={onFieldChange}
+                        handler={onSubmit}
+                    />
+                </WidgetContext>
+            )
+        })
+
+        const submitBtn = screen.getByRole('button')
+        await user.click(submitBtn)
+
+        await waitFor(() => expect(onSubmit).toHaveBeenCalled())
+
+        expect(onSubmit).toBeCalledWith({})
     })
 })
