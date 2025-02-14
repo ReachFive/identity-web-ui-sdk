@@ -1,5 +1,6 @@
 import { LoginWithPasswordParams, LoginWithWebAuthnParams } from '@reachfive/identity-core';
 import * as libphonenumber from 'libphonenumber-js';
+import { intlFormat } from "date-fns";
 
 const CHARS = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
@@ -47,8 +48,8 @@ export function formatISO8601Date(year: string | number, month: string | number,
     return null
 }
 
-export function dateFormat (dateString: string, locales?: Intl.LocalesArgument) {
-    return (new Date(dateString)).toLocaleDateString(locales, {timeZone: 'UTC'})
+export function dateFormat (dateString: string, locales: string) {
+    return intlFormat(new Date(dateString), { timeZone: "UTC" }, { locale: locales })
 }
 
 export type Identifier = { identifier: string }
