@@ -25,7 +25,7 @@ import mfaCredentialsWidget, { type MfaCredentialsWidgetProps } from './widgets/
 import mfaListWidget, { type MfaListWidgetProps } from './widgets/mfa/mfaListWidget'
 import mfaStepUpWidget, { type MfaStepUpWidgetProps } from './widgets/stepUp/mfaStepUpWidget';
 import accountRecoveryWidget, { type AccountRecoveryWidgetProps } from './widgets/accountRecovery/accountRecoveryWidget.tsx'
-import trustedDevicesWidget, { type TrustedDevicesWidgetProps } from "./widgets/mfa/trustedDevicesWidget.tsx";
+import trustedDevicesWidget, { type TrustedDeviceWidgetProps } from "./widgets/mfa/trustedDevicesWidget.tsx";
 
 export interface WidgetInstance {
     destroy(): void
@@ -120,7 +120,7 @@ export class UiClient {
         this._showWidget(mfaListWidget, options);
     }
 
-    showTrustedDevices(options: WidgetOptions<TrustedDevicesWidgetProps>) {
+    showTrustedDevices(options: WidgetOptions<TrustedDeviceWidgetProps>) {
         this._showWidget(trustedDevicesWidget, options);
     }
 

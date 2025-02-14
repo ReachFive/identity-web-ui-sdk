@@ -21,12 +21,12 @@ import { Button } from "../../components/ui/button"
 import { X } from "lucide-react";
 
 
-export type TrustedDevicesWidgetProps = {
+export type TrustedDeviceWidgetProps = {
     accessToken: string
 
     showRemoveTrustedDevice?: boolean
 
-    onError?: () => void
+    onError?: (error?: unknown) => void
 }
 
 export interface TrustedDeviceProps {
@@ -141,6 +141,6 @@ export const TrustedDeviceList = ({
     );
 }
 
-export default createWidget<TrustedDevicesWidgetProps, TrustedDeviceProps>({
+export default createWidget<TrustedDeviceWidgetProps, TrustedDeviceProps>({
     component: TrustedDeviceList,
 })
