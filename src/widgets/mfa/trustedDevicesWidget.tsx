@@ -2,7 +2,6 @@ import React, {useEffect} from 'react';
 import { TrustedDevice } from "@reachfive/identity-core";
 import { createWidget } from "../../components/widget/widget.tsx";
 import { UserError } from "../../helpers/errors.ts";
-import { ReactComponent as Delete } from '../../icons/delete.svg';
 import {useI18n} from "../../contexts/i18n.tsx";
 import {Info} from "../../components/miscComponent.tsx";
 import {dateFormat} from "../../helpers/utils.ts";
@@ -19,6 +18,7 @@ import {
     AlertDialogTrigger,
 } from "../../components/ui/alert-dialog"
 import { Button } from "../../components/ui/button"
+import { X } from "lucide-react";
 
 
 export type TrustedDevicesWidgetProps = {
@@ -97,7 +97,7 @@ export const TrustedDeviceList = ({
         return (
             <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
                 <AlertDialogTrigger asChild>
-                    <Button variant="destructive" size="icon" className="ml-1"><Delete /></Button>
+                    <Button variant="destructive" size="icon" className="ml-1"><X /></Button>
                 </AlertDialogTrigger>
                 <AlertDialogContent>
                     <AlertDialogHeader>
