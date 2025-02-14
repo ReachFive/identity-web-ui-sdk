@@ -174,7 +174,7 @@ describe('DOM testing', () => {
 
         expect(onSubmit).toBeCalledWith(
             expect.objectContaining({
-                date: formatISO(new Date(year, month, day)) // value is formatted in handler data
+                date: formatISO(new Date(year, month, day), { representation: 'date' }) // value is formatted in handler data
             })
         )
 

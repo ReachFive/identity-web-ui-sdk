@@ -43,6 +43,7 @@ const plugins = [
         }
     }),
     nodeResolve({
+        browser: true,
         extensions: ['.jsx', '.js', '.json'],
         preferBuiltins: true
     }),
@@ -63,7 +64,7 @@ const plugins = [
 export default [
     bundle({
         plugins,
-        external: dependencies,
+        external: dependencies.concat(['@/lib/utils']),
         output: [
             {
                 banner,
@@ -91,6 +92,7 @@ export default [
     }),
     bundle({
         plugins,
+        external: ['@/lib/utils'],
         output: [
             {
                 banner,
@@ -99,7 +101,7 @@ export default [
                 name: 'reach5Widgets',
                 sourcemap: true,
                 inlineDynamicImports: true,
-                globals: { '@reachfive/identity-core': 'reach5' },
+                globals: { '@reachfive/identity-core': 'reach5', "@/lib/utils": "tw-cl-merge" },
             },
             {
                 file: 'umd/identity-ui.min.js',
@@ -108,7 +110,7 @@ export default [
                 plugins: [terser({ output: { preamble: banner } })],
                 sourcemap: true,
                 inlineDynamicImports: true,
-                globals: { '@reachfive/identity-core': 'reach5' },
+                globals: { '@reachfive/identity-core': 'reach5', "@/lib/utils": "tw-cl-merge" },
             },
         ],
         onwarn: onWarn

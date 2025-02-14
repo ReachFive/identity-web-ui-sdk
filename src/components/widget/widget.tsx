@@ -22,6 +22,26 @@ export type ThemeProps = { theme?: ThemeOptions }
 export type PropsWithI18n<P> = Prettify<P & I18nProps>
 export type PropsWithTheme<P> = Prettify<P & ThemeProps>
 
+const GlobalStyle = createGlobalStyle`
+
+:root {
+    --color-primary: ${props => props.theme.primaryColor};
+    --color-destructive: ${props => props.theme.dangerColor};
+    --color-background: ${props => props.theme.backgroundColor};
+    --color-text: ${props => props.theme.textColor};
+    --color-border: ${props => props.theme.borderColor};
+
+    --spacing-padding-y: ${props => props.theme.paddingY};
+    --spacing-padding-x: ${props => props.theme.paddingX};
+    --spacing-block-inner-height: ${props => props.theme._blockInnerHeight};
+
+    --font-generic: ${props => props.theme.fontSize};
+
+    --border-width: ${props => props.theme.borderWidth};
+    --radius: ${props => props.theme.borderRadius};
+}
+`
+
 export type Context = {
     config: Config
     apiClient: CoreClient
@@ -35,20 +55,6 @@ type CreateWidget<P, U> = {
     component: ComponentType<Omit<U, 'theme'>>
     prepare?: PrepareFn<P, U>
 } & WidgetContainerProps
-
-const GlobalStyle = createGlobalStyle`
-:root {
-    --primary-color: ${props => props.theme.primaryColor};
-    --danger-color: ${props => props.theme.dangerColor};
-    --text-color: ${props => props.theme.textColor};
-    --padding-y: ${props => props.theme.paddingY};
-    --block-inner-height: ${props => props.theme._blockInnerHeight};
-    --border-width: ${props => props.theme.borderWidth};
-    --border-radius: ${props => props.theme.borderRadius};
-    --border-color: ${props => props.theme.borderColor};
-    --light-background-color: ${props => props.theme.lightBackgroundColor};
-}
-`
 
 
 export function createWidget<P, U = P>({

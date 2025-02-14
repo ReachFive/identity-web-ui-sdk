@@ -339,7 +339,7 @@ type FieldComponentProps<T, P = {}, E extends Record<string, unknown> = {}, K ex
 };
 interface Formatter<T, F, K extends string> {
     bind: (value?: T) => FormValue<F, K> | undefined;
-    unbind: (value?: FormValue<F, K>) => T | null;
+    unbind: (value?: FormValue<F, K>) => T | null | undefined;
 }
 type FieldDefinition<T, F = T, K extends string = 'raw'> = {
     key: string;
