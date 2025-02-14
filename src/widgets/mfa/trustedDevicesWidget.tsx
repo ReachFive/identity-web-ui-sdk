@@ -1,7 +1,7 @@
 import React, {useEffect} from 'react';
-import { TrustedDevice } from "@reachfive/identity-core";
-import { createWidget } from "../../components/widget/widget.tsx";
-import { UserError } from "../../helpers/errors.ts";
+import {TrustedDevice} from "@reachfive/identity-core";
+import {createWidget} from "../../components/widget/widget.tsx";
+import {UserError} from "../../helpers/errors.ts";
 import {useI18n} from "../../contexts/i18n.tsx";
 import {Info} from "../../components/miscComponent.tsx";
 import {dateFormat} from "../../helpers/utils.ts";
@@ -17,8 +17,8 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from "../../components/ui/alert-dialog"
-import { Button } from "../../components/ui/button"
-import { X } from "lucide-react";
+import {Button} from "../../components/ui/button"
+import {X} from "lucide-react";
 
 
 export type TrustedDeviceWidgetProps = {
@@ -51,11 +51,14 @@ export interface TrustedDeviceProps {
     onError?: (error?: unknown) => void
 }
 
+interface DeleteButtonProps {
+    device: TrustedDevice
+}
 
 export const TrustedDeviceList = ({
     accessToken,
     showRemoveTrustedDevice,
-    onError = () => {},
+    onError = (_) => {},
 }: TrustedDeviceProps) => {
     const [isOpen, setIsOpen] = React.useState(false)
     const [trustedDevices, setTrustedDevices] = React.useState<TrustedDevice[]>([])
@@ -93,11 +96,11 @@ export const TrustedDeviceList = ({
             })
     }
 
-    const deleteButton = (device: TrustedDevice) => {
+    const DeleteButton = ({ device }: DeleteButtonProps) => {
         return (
             <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
                 <AlertDialogTrigger asChild>
-                    <Button variant="destructive" size="icon" className="ml-1"><X /></Button>
+                    <Button variant="destructive" size="icon" className="ml-1"><X/></Button>
                 </AlertDialogTrigger>
                 <AlertDialogContent>
                     <AlertDialogHeader>
@@ -106,8 +109,8 @@ export const TrustedDeviceList = ({
                         </AlertDialogTitle>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                        <AlertDialogAction variant="destructive" onClick={_ => onDelete(device)}>Yes</AlertDialogAction>
+                        <AlertDialogCancel>{i18n('confirmation.cancel')}</AlertDialogCancel>
+                        <AlertDialogAction variant="destructive" onClick={_ => onDelete(device)}>{i18n('confirmation.yes')}</AlertDialogAction>
                     </AlertDialogFooter>
                 </AlertDialogContent>
             </AlertDialog>
@@ -121,8 +124,10 @@ export const TrustedDeviceList = ({
                 <Info>{i18n('trustedDevices.empty')}</Info>
             )}
             {trustedDevices.map((trustedDevice, index) => (
-                <div id={`trusted-device-${index}`} key={`trusted-device-${index}`} className={`flex items-center ${isOpen ? 'opacity-15' : ''}`}>
-                    <div className="flex flex-col items-center basis-full line-height-1 align-middle whitespace-nowrap box-border p-[calc(var(--padding-y)*1px)] border-solid border-[calc(var(--border-width)*1px)] rounded-[calc(var(--border-radius)*1px)]" >
+                <div id={`trusted-device-${index}`} key={`trusted-device-${index}`}
+                     className={`flex items-center ${isOpen ? 'opacity-15' : ''}`}>
+                    <div
+                        className="flex flex-col items-center basis-full line-height-1 align-middle whitespace-nowrap box-border p-[calc(var(--padding-y)*1px)] border-solid border-[calc(var(--border-width)*1px)] rounded-[calc(var(--border-radius)*1px)]">
                         <div className="font-bold ">{trustedDevice.metadata.deviceName}</div>
                         <div className="font-bold">{trustedDevice.metadata.ip}</div>
                         <div className="font-bold">{trustedDevice.metadata.deviceClass}</div>
@@ -134,7 +139,7 @@ export const TrustedDeviceList = ({
                                 dateTime={trustedDevice.createdAt}>{dateFormat(trustedDevice.createdAt, config.language)}</time>
                         </div>
                     </div>
-                    {showRemoveTrustedDevice && deleteButton(trustedDevice)}
+                    {showRemoveTrustedDevice && <DeleteButton device={trustedDevice}/>}
                 </div>
             ))}
         </div>
