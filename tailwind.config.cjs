@@ -1,0 +1,45 @@
+module.exports = {
+    content: {
+        relative: true,
+        files: [
+            "./src/**/*.{js,ts,jsx,tsx}"
+        ]
+    },
+    theme: {
+        extend: {
+            colors: {
+                primary: {
+                    DEFAULT: "var(--color-primary)",
+                    foreground: "var(--color-primary)",
+                },
+                destructive: {
+                    DEFAULT: "var(--color-destructive)",
+                    foreground: "var(--color-destructive)",
+                },
+                background: "var(--color-background)",
+                border: "var(--color-border)"
+            },
+            borderRadius: {
+                    DEFAULT: "calc(var(--radius)*1px)"
+            },
+            fontSize: {
+                generic: ['calc(var(--generic)*1px)', {lineHeight: '1.5'}],
+            },
+            width: {
+                icon: `calc(var(--font-generic)*2px)`
+            },
+            height: {
+                icon: "calc(var(--font-generic)*2px)"
+            },
+            padding: {
+                generic: "calc(var(--spacing-padding-y)*1px) calc(var(--spacing-padding-x)*1px) calc(var(--spacing-padding-y)*1px) calc(var(--spacing-padding-x)*1px)"//"calc(var(--spacing-padding-y)*1px) calc(var(--spacing-padding-x)*1px) calc(var(--spacing-padding-y)*1px) calc(var(--spacing-padding-x)*1px)",
+            },
+            margin: {
+                innerBlock: "calc(var(--spacing-block-inner-height)*1px)"
+            },
+            borderWidth: {
+                generic: "calc(var(--border-width)*1px)"
+            }
+        },
+    },
+};

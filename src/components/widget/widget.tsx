@@ -1,5 +1,5 @@
 import React, { ComponentType } from 'react';
-import { StyleSheetManager, ThemeProvider } from 'styled-components'
+import {createGlobalStyle, StyleSheetManager, ThemeProvider} from 'styled-components'
 import type { SessionInfo, Client as CoreClient } from '@reachfive/identity-core'
 
 import type { Config, Prettify } from '../../types'
@@ -22,6 +22,26 @@ export type ThemeProps = { theme?: ThemeOptions }
 export type PropsWithI18n<P> = Prettify<P & I18nProps>
 export type PropsWithTheme<P> = Prettify<P & ThemeProps>
 
+const GlobalStyle = createGlobalStyle`
+
+:root {
+    --color-primary: ${props => props.theme.primaryColor};
+    --color-destructive: ${props => props.theme.dangerColor};
+    --color-background: ${props => props.theme.backgroundColor};
+    --color-text: ${props => props.theme.textColor};
+    --color-border: ${props => props.theme.borderColor};
+
+    --spacing-padding-y: ${props => props.theme.paddingY};
+    --spacing-padding-x: ${props => props.theme.paddingX};
+    --spacing-block-inner-height: ${props => props.theme._blockInnerHeight};
+
+    --font-generic: ${props => props.theme.fontSize};
+
+    --border-width: ${props => props.theme.borderWidth};
+    --radius: ${props => props.theme.borderRadius};
+}
+`
+
 export type Context = {
     config: Config
     apiClient: CoreClient
@@ -35,6 +55,7 @@ type CreateWidget<P, U> = {
     component: ComponentType<Omit<U, 'theme'>>
     prepare?: PrepareFn<P, U>
 } & WidgetContainerProps
+
 
 export function createWidget<P, U = P>({
     component,
@@ -53,6 +74,7 @@ export function createWidget<P, U = P>({
                         <SessionProvider session={context.session}>
                             <StyleSheetManager>
                                 <ThemeProvider theme={theme}>
+                                    <GlobalStyle />
                                     <I18nProvider defaultMessages={context.defaultI18n} messages={preparedOptions.i18n}>
                                         <WidgetContainer {...widgetAttrs}>
                                             <Component {...preparedOptions} />
