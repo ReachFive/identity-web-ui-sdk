@@ -1,9 +1,7 @@
 import React, {useEffect} from 'react';
 import {TrustedDevice} from "@reachfive/identity-core";
 import {createWidget} from "../../components/widget/widget.tsx";
-import {UserError} from "../../helpers/errors.ts";
 import {useI18n} from "../../contexts/i18n.tsx";
-import {Info} from "../../components/miscComponent.tsx";
 import {dateFormat} from "../../helpers/utils.ts";
 import {useConfig} from "../../contexts/config.tsx";
 import {useReachfive} from "../../contexts/reachfive.tsx";
@@ -20,13 +18,14 @@ import {
 import {Button} from "../../components/ui/button"
 import {X} from "lucide-react";
 
-
 export type TrustedDeviceWidgetProps = {
     accessToken: string
 
     showRemoveTrustedDevice?: boolean
 
     onError?: (error?: unknown) => void
+
+    onSuccess?: () => void
 }
 
 export interface TrustedDeviceProps {
@@ -59,23 +58,25 @@ export const TrustedDeviceList = ({
     accessToken,
     showRemoveTrustedDevice,
     onError = (_) => {},
+    onSuccess = () => {}
 }: TrustedDeviceProps) => {
     const [isOpen, setIsOpen] = React.useState(false)
     const [trustedDevices, setTrustedDevices] = React.useState<TrustedDevice[]>([])
+    const [loading, setLoading] = React.useState(true)
 
     const i18n = useI18n()
     const config = useConfig()
     const client = useReachfive()
 
     const fetchTrustedDevices = () => {
+        setLoading(true)
         client.listTrustedDevices(accessToken)
             .then(trustedDevicesResponse => {
                 setTrustedDevices(trustedDevicesResponse.trustedDevices)
+                setLoading(false)
+                onSuccess()
             })
-            .catch(error => {
-                onError(error)
-                throw UserError.fromAppError(error)
-            })
+            .catch(onError)
     }
 
     useEffect(() => {
@@ -86,17 +87,17 @@ export const TrustedDeviceList = ({
         client
             .removeTrustedDevice
             ({
-                accessToken,
+                accessToken: accessToken,
                 trustedDeviceId: device.id
             })
-            .then(_ => fetchTrustedDevices())
-            .catch(error => {
-                onError(error)
-                throw UserError.fromAppError(error)
+            .then(_ => {
+                fetchTrustedDevices()
+                onSuccess()
             })
+            .catch(onError)
     }
 
-    const DeleteButton = ({ device }: DeleteButtonProps) => {
+    const DeleteButton = ({ device }: DeleteButtonProps)  => {
         return (
             <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
                 <AlertDialogTrigger asChild>
@@ -117,11 +118,14 @@ export const TrustedDeviceList = ({
         )
     }
 
+    if(loading) {
+        return <></>
+    }
 
     return (
         <div>
             {(trustedDevices.length === 0) && (
-                <Info>{i18n('trustedDevices.empty')}</Info>
+                <div className="text-textColor mb-1 text-center">{i18n('trustedDevices.empty')}</div>
             )}
             {trustedDevices.map((trustedDevice, index) => (
                 <div id={`trusted-device-${index}`} key={`trusted-device-${index}`}
