@@ -10,6 +10,7 @@ import {
     AlertDialogAction,
     AlertDialogCancel,
     AlertDialogContent,
+    AlertDialogDescription,
     AlertDialogFooter,
     AlertDialogHeader,
     AlertDialogTitle,
@@ -108,6 +109,7 @@ export const TrustedDeviceList = ({
                         <AlertDialogTitle>
                             {i18n('trustDevice.delete.confirmation')}
                         </AlertDialogTitle>
+                        <AlertDialogDescription />
                     </AlertDialogHeader>
                     <AlertDialogFooter>
                         <AlertDialogCancel>{i18n('confirmation.cancel')}</AlertDialogCancel>
