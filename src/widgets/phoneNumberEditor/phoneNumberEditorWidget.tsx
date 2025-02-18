@@ -13,6 +13,8 @@ import { useI18n } from '../../contexts/i18n';
 import { useRouting } from '../../contexts/routing';
 import { useConfig } from '../../contexts/config';
 
+import type { OnError, OnSuccess } from '../../types';
+
 type PhoneNumberFormData = { phoneNumber: string }
 
 const phoneNumberInputForm = (config: Config) => createForm<PhoneNumberFormData, { phoneNumberOptions?: PhoneNumberOptions }>({
@@ -56,10 +58,10 @@ interface MainViewProps {
     /**
      * Callback function called when the request has failed.
      */
-    onError?: (error?: unknown) => void
+    onError?: OnError
 }
 
-const MainView = ({ accessToken, showLabels = false, phoneNumberOptions, onError = () => {} }: MainViewProps) => {
+const MainView = ({ accessToken, showLabels = false, phoneNumberOptions, onError = (() => {}) as OnError }: MainViewProps) => {
     const coreClient = useReachfive()
     const config = useConfig()
     const i18n = useI18n()
@@ -98,11 +100,11 @@ type VerificationCodeViewProps = {
     /**
      * Callback function called when the request has succeed.
      */
-    onSuccess?: () => void
+    onSuccess?: OnSuccess
     /**
      * Callback function called when the request has failed.
      */
-    onError?: (error?: unknown) => void
+    onError?: OnError
 }
 
 type VerificationCodeViewState = {
@@ -114,8 +116,8 @@ type VerificationCodeViewState = {
 
 const VerificationCodeView = ({
     accessToken,
-    onSuccess = () => {},
-    onError = () => {},
+    onSuccess = (() => {}) as OnSuccess,
+    onError = (() => {}) as OnError,
 }: VerificationCodeViewProps) => {
     const coreClient = useReachfive()
     const i18n = useI18n()

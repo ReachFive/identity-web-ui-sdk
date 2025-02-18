@@ -10,6 +10,8 @@ import { PropsWithSession  } from '../../../contexts/session'
 import { selectLogin } from '../authWidget.tsx';
 import { InitialScreen } from '../../../../constants.ts';
 
+import type { OnError, OnSuccess } from '../../../types';
+
 export interface QuickLoginViewProps {
     initialScreen?: InitialScreen
     /**
@@ -25,11 +27,11 @@ export interface QuickLoginViewProps {
     /**
      * Callback function called when the request has succeed.
      */
-    onSuccess?: () => void
+    onSuccess?: OnSuccess
     /**
      * Callback function called when the request has failed.
      */
-    onError?: (error?: unknown) => void
+    onError?: OnError
 }
 
 export const  QuickLoginView = ({
@@ -37,8 +39,8 @@ export const  QuickLoginView = ({
     allowWebAuthnLogin = false,
     auth,
     session,
-    onError = () => {},
-    onSuccess = () => {},
+    onError = (() => {}) as OnError,
+    onSuccess = (() => {}) as OnSuccess,
 }: PropsWithSession<QuickLoginViewProps>) => {
     const i18n = useI18n()
 

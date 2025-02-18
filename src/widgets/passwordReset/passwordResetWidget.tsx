@@ -9,6 +9,8 @@ import { useReachfive } from '../../contexts/reachfive';
 import { useRouting } from '../../contexts/routing';
 import { useI18n } from '../../contexts/i18n';
 
+import type { OnError, OnSuccess } from '../../types';
+
 interface MainViewProps {
     /**
      * Whether or not to provide the display password in clear text option.
@@ -18,11 +20,11 @@ interface MainViewProps {
     /**
      * Callback function called when the request has succeed.
      */
-    onSuccess?: () => void
+    onSuccess?: OnSuccess
     /**
      * Callback function called when the request has failed.
      */
-    onError?: (error?: unknown) => void
+    onError?: OnError
     /**
      * Whether the form fields' labels are displayed on the form view.
      * @default false
@@ -33,8 +35,8 @@ interface MainViewProps {
 const MainView = ({
     authentication,
     canShowPassword = false,
-    onSuccess = () => {},
-    onError = () => {},
+    onSuccess = (() => {}) as OnSuccess,
+    onError = (() => {}) as OnError,
     showLabels = false,
 }: PropsWithAuthentication<MainViewProps>) => {
     const coreClient = useReachfive()

@@ -11,6 +11,8 @@ import { snakeCaseProperties } from '../../../helpers/transformObjectProperties'
 import { useI18n } from '../../../contexts/i18n';
 import { useConfig } from '../../../contexts/config';
 
+import type { OnError, OnSuccess } from '../../../types';
+
 type SignupFormData = Parameters<CoreClient['signupWithWebAuthn']>[0]['profile'] & { friendlyName?: string }
 
 const SignupForm = createForm({
@@ -59,11 +61,11 @@ export interface SignupWithWebAuthnViewProps {
     /**
      * Callback function called when the request has succeed.
      */
-    onSuccess?: () => void
+    onSuccess?: OnSuccess
     /**
      * Callback function called when the request has failed.
      */
-    onError?: (error?: unknown) => void
+    onError?: OnError
 }
 
 export const SignupWithWebAuthnView = ({
@@ -78,8 +80,8 @@ export const SignupWithWebAuthnView = ({
     ],
     showLabels = false,
     userAgreement,
-    onError = () => {},
-    onSuccess = () => {},
+    onError = (() => {}) as OnError,
+    onSuccess = (() => {}) as OnSuccess,
 }: SignupWithWebAuthnViewProps) => {
     const coreClient = useReachfive()
     const config = useConfig()

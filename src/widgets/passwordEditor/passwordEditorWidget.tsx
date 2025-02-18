@@ -9,6 +9,8 @@ import simplePasswordField from '../../components/form/fields/simplePasswordFiel
 
 import { useReachfive } from '../../contexts/reachfive';
 
+import type { OnError, OnSuccess } from '../../types';
+
 export type PasswordEditorFormData = {
     password: string,
     passwordConfirmation: string
@@ -82,11 +84,11 @@ export interface PasswordEditorProps extends PasswordEditorFormProps {
     /**
      * Callback function called when the request has succeed.
      */
-    onSuccess?: () => void
+    onSuccess?: OnSuccess
     /**
      * Callback function called when the request has failed.
      */
-    onError?: (error?: unknown) => void
+    onError?: OnError
 }
 
 const PasswordEditor = ({

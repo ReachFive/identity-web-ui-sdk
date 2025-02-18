@@ -11,6 +11,8 @@ import { useI18n } from '../../contexts/i18n';
 import { useReachfive } from '../../contexts/reachfive';
 import { useRouting } from '../../contexts/routing';
 
+import type { OnError, OnSuccess } from '../../types';
+
 type EmailFormData = { email: string }
 
 const EmailEditorForm = createForm<EmailFormData>({
@@ -53,11 +55,11 @@ interface MainViewProps {
     /**
      * Callback function called when the request has succeed.
      */
-    onSuccess?: () => void
+    onSuccess?: OnSuccess
     /**
      * Callback function called when the request has failed.
      */
-    onError?: (error?: unknown) => void
+    onError?: OnError
 }
 
 const MainView = ({
@@ -66,8 +68,8 @@ const MainView = ({
     recaptcha_site_key,
     redirectUrl,
     showLabels = false,
-    onError = () => {},
-    onSuccess = () => {},
+    onError = (() => {}) as OnError,
+    onSuccess = (() => {}) as OnSuccess,
 }: MainViewProps) => {
     const coreClient = useReachfive()
     const i18n = useI18n()

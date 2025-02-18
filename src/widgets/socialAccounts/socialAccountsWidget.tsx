@@ -16,6 +16,8 @@ import { createMultiViewWidget } from '../../components/widget/widget';
 import { SocialButtons } from '../../components/form/socialButtonsComponent';
 import { DefaultButton } from '../../components/form/buttonComponent';
 
+import type { OnError, OnSuccess } from '../../types';
+
 type Unlink = (id: string) => Promise<void>
 
 interface WithIdentitiesProps {
@@ -26,11 +28,11 @@ interface WithIdentitiesProps {
     /**
      * Callback function called when the request has succeed.
      */
-    onSuccess?: () => void
+    onSuccess?: OnSuccess
     /**
      * Callback function called when the request has failed.
      */
-    onError?: (error?: unknown) => void
+    onError?: OnError
 }
 
 function findAvailableProviders(providers: string[], identities: Identity[]): string[] {
@@ -121,12 +123,12 @@ interface IdentityListProps {
     /**
      * Callback function called when the request has failed.
      */
-    onError?: (error?: unknown) => void
+    onError?: OnError
 }
 
 const IdentityList = ({
     identities = [],
-    onError = () => {},
+    onError = (() => {}) as OnError,
     unlink
 }: IdentityListProps) => {
     const i18n = useI18n()
@@ -232,11 +234,11 @@ export interface SocialAccountsWidgetProps {
     /**
      * Callback function called when the request has succeed.
      */
-    onSuccess?: () => void
+    onSuccess?: OnSuccess
     /**
      * Callback function called when the request has failed.
      */
-    onError?: (error?: unknown) => void
+    onError?: OnError
 }
 
 interface SocialAccountsWidgetPropsPrepared extends

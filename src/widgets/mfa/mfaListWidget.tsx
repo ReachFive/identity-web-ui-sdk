@@ -14,6 +14,8 @@ import { ReactComponent as CommentAltDots } from '../../icons/comment-alt-dots.s
 import { useI18n } from '../../contexts/i18n';
 import { useConfig } from '../../contexts/config';
 
+import type { OnError, OnSuccess } from '../../types';
+
 const iconStyle = css`
     width: ${props => props.theme.fontSize * 2}px;
     height: ${props => props.theme.fontSize * 2}px;
@@ -87,11 +89,11 @@ export type MfaListWidgetProps = {
     /**
      * Callback function called when the request has succeed.
      */
-    onSuccess?: () => void
+    onSuccess?: OnSuccess
     /**
      * Callback function called when the request has failed.
      */
-    onError?: (error?: unknown) => void
+    onError?: OnError
 }
 
 export default createWidget<MfaListWidgetProps, MfaListProps>({

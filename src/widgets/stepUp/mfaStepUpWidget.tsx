@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { AuthOptions, MFA, PasswordlessResponse } from '@reachfive/identity-core';
 import { PasswordlessParams } from '@reachfive/identity-core/es/main/oAuthClient';
 
-import { Prettify, RequiredProperty } from '../../types'
+import type { OnError, OnSuccess, Prettify, RequiredProperty } from '../../types'
 
 import {createMultiViewWidget} from '../../components/widget/widget';
 import {createForm} from '../../components/form/formComponent';
@@ -105,18 +105,18 @@ export interface MainViewProps {
     /**
      * Callback function called when the request has succeed.
      */
-    onSuccess?: () => void
+    onSuccess?: OnSuccess
     /**
      * Callback function called when the request has failed.
      */
-    onError?: (error?: unknown) => void
+    onError?: OnError
 }
 
 export const MainView = ({
     accessToken,
     auth,
-    onError = () => {},
-    onSuccess = () => {},
+    onError = (() => {}) as OnSuccess,
+    onSuccess = (() => {}) as OnError,
     showIntro = true,
     showStepUpStart = true,
     allowTrustDevice = false
@@ -182,11 +182,11 @@ export type FaSelectionViewProps = Prettify<Partial<MFA.StepUpResponse> & {
     /**
      * Callback function called when the request has succeed.
      */
-    onSuccess?: () => void
+    onSuccess?: OnSuccess
     /**
      * Callback function called when the request has failed.
      */
-    onError?: (error?: unknown) => void
+    onError?: OnError
 }>
 
  // Unlike single factor authentication, StepUp request always returns a challengeId
@@ -200,7 +200,11 @@ export const FaSelectionView = (props: FaSelectionViewProps) => {
     const { params } = useRouting()
     const state = params as FaSelectionViewState
 
-    const { amr, onError = () => {}, showIntro = true, token } = { ...props, ...state }
+    const {
+        amr, onError = (() => {}) as OnError,
+        showIntro = true,
+        token
+    } = { ...props, ...state }
 
     const [response, setResponse] = useState<StepUpHandlerResponse | undefined>()
 
@@ -265,11 +269,11 @@ export type VerificationCodeViewProps = Prettify<Partial<StepUpHandlerResponse> 
     /**
      * Callback function called when the request has succeed.
      */
-    onSuccess?: () => void
+    onSuccess?: OnSuccess
     /**
      * Callback function called when the request has failed.
      */
-    onError?: (error?: unknown) => void
+    onError?: OnError
 }>
 
 export const VerificationCodeView = (props: VerificationCodeViewProps) => {
@@ -279,7 +283,14 @@ export const VerificationCodeView = (props: VerificationCodeViewProps) => {
     const { rbaEnabled } = useConfig()
     const state = params as VerificationCodeViewState
 
-    const { auth, authType, challengeId, allowTrustDevice, onError = () => {}, onSuccess = () => {} } = { ...props, ...state }
+    const {
+        auth,
+        authType,
+        challengeId,
+        allowTrustDevice,
+        onError = (() => {}) as OnError,
+        onSuccess = (() => {}) as OnSuccess
+    } = { ...props, ...state }
 
     const handleSubmit = (data: VerificationCodeInputFormData) =>
         coreClient

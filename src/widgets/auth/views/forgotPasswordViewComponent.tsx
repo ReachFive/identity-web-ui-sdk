@@ -21,6 +21,8 @@ import { DefaultButton } from '../../../components/form/buttonComponent.tsx';
 import { Validator } from '../../../core/validation.ts';
 import { useConfig } from '../../../contexts/config.tsx';
 
+import type { OnError, OnSuccess } from '../../../types';
+
 type EmailIdentifier = { email: string }
 type PhoneNumberIdentifier = { phoneNumber: string }
 
@@ -162,11 +164,11 @@ export interface ForgotPasswordViewProps {
     /**
      * Callback function called when the request has succeed.
      */
-    onSuccess?: () => void
+    onSuccess?: OnSuccess
     /**
      * Callback function called when the request has failed.
      */
-    onError?: (error?: unknown) => void
+    onError?: OnError
 }
 
 export const ForgotPasswordView = ({
@@ -180,8 +182,8 @@ export const ForgotPasswordView = ({
     recaptcha_site_key,
     redirectUrl,
     returnToAfterPasswordReset,
-    onError = () => {},
-    onSuccess = () => {},
+    onError = (() => {}) as OnError,
+    onSuccess = (() => {}) as OnSuccess,
 }: ForgotPasswordViewProps) => {
     const coreClient = useReachfive()
     const config = useConfig()
@@ -243,7 +245,7 @@ export const ForgotPasswordPhoneNumberView = ({
     recaptcha_site_key,
     redirectUrl,
     returnToAfterPasswordReset,
-    onError = () => {},
+    onError = (() => {}) as OnError,
 }: ForgotPasswordViewProps) => {
     const coreClient = useReachfive()
     const { goTo } = useRouting()
@@ -300,8 +302,8 @@ export const ForgotPasswordCodeView = ({
     initialScreen,
     allowWebAuthnLogin = false,
     showLabels = false,
-    onError = () => {},
-    onSuccess = () => {},
+    onError = (() => {}) as OnError,
+    onSuccess = (() => {}) as OnSuccess,
 }: ForgotPasswordViewProps) => {
     const coreClient = useReachfive()
     const { goTo, params } = useRouting()

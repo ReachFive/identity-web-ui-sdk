@@ -13,6 +13,8 @@ import { useReachfive } from '../../contexts/reachfive';
 import { Button, type ButtonProps } from './buttonComponent';
 import { useI18n } from '../../contexts/i18n';
 
+import type { OnError, OnSuccess } from '../../types';
+
 interface SocialButtonIconProps {
     className?: classes.Argument
     icon: string
@@ -130,14 +132,14 @@ export interface SocialButtonsProps {
     /**
      * Callback function called when the request has succeed.
      */
-    onSuccess?: () => void
+    onSuccess?: OnSuccess
     /**
      * Callback function called when the request has failed.
      */
-    onError?: (error?: unknown) => void
+    onError?: OnError
 }
 
-export const SocialButtons = styled(({ auth, providers, className, onError = () => {}, onSuccess = () => {} }: SocialButtonsProps & { className?: string }) => {
+export const SocialButtons = styled(({ auth, providers, className, onError = (() => {}) as OnError, onSuccess = (() => {}) as OnSuccess }: SocialButtonsProps & { className?: string }) => {
     const coreClient = useReachfive()
 
     const clickHandler = useCallback(

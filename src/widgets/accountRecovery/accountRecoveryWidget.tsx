@@ -1,17 +1,20 @@
 import React from 'react';
+import styled from 'styled-components'
 
 import { parseQueryString } from '../../helpers/queryString'
 
 import { Alternative, Heading, Info, Link, Intro, Separator } from '../../components/miscComponent';
 import { createMultiViewWidget } from '../../components/widget/widget';
+import { createForm } from '../../components/form/formComponent'
 import { useReachfive } from '../../contexts/reachfive';
 import { useRouting } from '../../contexts/routing';
 import { useI18n } from '../../contexts/i18n';
-import { createForm } from '../../components/form/formComponent'
-import { PasswordEditorForm, PasswordEditorFormData } from '../passwordEditor/passwordEditorWidget.tsx'
-import { ReactComponent as Passkeys } from '../../icons/passkeys.svg'
-import styled from 'styled-components'
 
+import { PasswordEditorForm, PasswordEditorFormData } from '../passwordEditor/passwordEditorWidget.tsx'
+
+import { ReactComponent as Passkeys } from '../../icons/passkeys.svg'
+
+import type { OnError, OnSuccess } from '../../types';
 
 interface MainViewProps {
 
@@ -23,11 +26,11 @@ interface MainViewProps {
     /**
      * Callback function called when the request has succeed.
      */
-    onSuccess?: () => void
+    onSuccess?: OnSuccess
     /**
      * Callback function called when the request has failed.
      */
-    onError?: (error?: unknown) => void
+    onError?: OnError
     /**
      * Whether the form fields' labels are displayed on the form view.
      * @default false
@@ -73,8 +76,8 @@ const PasskeysExplanation = styled(() => {
 const NewPasskey = ({
     authentication,
     allowCreatePassword = true,
-    onSuccess = () => {},
-    onError = () => {},
+    onSuccess = (() => {}) as OnSuccess,
+    onError = (() => {}) as OnError,
 }: PropsWithAuthentication<MainViewProps>) => {
     const coreClient = useReachfive()
     const i18n = useI18n()
@@ -150,8 +153,8 @@ const PasswordSuccessView = ({loginLink}: SuccessViewProps) => {
 
 export const NewPasswordView = ({
     authentication,
-    onSuccess = () => {},
-    onError = () => {},
+    onSuccess = (() => {}) as OnSuccess,
+    onError = (() => {}) as OnError,
     showLabels = false,
 }: PropsWithAuthentication<MainViewProps>) => {
     const coreClient = useReachfive()

@@ -14,6 +14,8 @@ import { useConfig } from '../../contexts/config';
 
 import { UserError } from '../../helpers/errors';
 
+import type { OnError, OnSuccess } from '../../types';
+
 const DeviceName = styled.div`
     font-weight: bold;
     line-height: 2;
@@ -121,19 +123,19 @@ export interface WebAuthnDevicesProps {
     /**
      * Callback function called when the request has succeed.
      */
-    onSuccess?: () => void
+    onSuccess?: OnSuccess
     /**
      * Callback function called when the request has failed.
      */
-    onError?: (error?: unknown) => void
+    onError?: OnError
 }
 
 function WebAuthnDevices ({
     accessToken,
     devices: initDevices,
     showLabels = false,
-    onError = () => {},
-    onSuccess = () => {},
+    onError = (() => {}) as OnError,
+    onSuccess = (() => {}) as OnSuccess,
 }: WebAuthnDevicesProps) {
     const coreClient = useReachfive()
     const config = useConfig()

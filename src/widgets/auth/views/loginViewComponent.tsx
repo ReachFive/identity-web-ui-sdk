@@ -21,6 +21,8 @@ import { useSession } from '../../../contexts/session';
 
 import { specializeIdentifierData } from '../../../helpers/utils';
 
+import type { OnError, OnSuccess } from '../../../types';
+
 type Floating = { floating?: boolean }
 
 const ResetCredentialWrapper = styled.div.withConfig({
@@ -236,11 +238,11 @@ export type LoginViewProps = {
     /**
      * Callback function called when the request has succeed.
      */
-    onSuccess?: () => void
+    onSuccess?: OnSuccess
     /**
      * Callback function called when the request has failed.
      */
-    onError?: (error?: unknown) => void
+    onError?: OnError
 }
 
 export const LoginView = ({
@@ -259,8 +261,8 @@ export const LoginView = ({
     recaptcha_site_key,
     allowAuthentMailPhone = true,
     allowTrustDevice,
-    onError = () => {},
-    onSuccess = () => {},
+    onError = (() => {}) as OnError,
+    onSuccess = (() => {}) as OnSuccess,
 }: LoginViewProps) => {
     const i18n = useI18n()
     const coreClient = useReachfive()

@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { MFA } from '@reachfive/identity-core';
 import type { StartMfaEmailRegistrationResponse, StartMfaPhoneNumberRegistrationResponse } from '@reachfive/identity-core/es/main/mfaClient';
 
-import type { Prettify } from '../../types';
+import type { OnError, OnSuccess, Prettify } from '../../types';
 
 import { createMultiViewWidget } from '../../components/widget/widget';
 
@@ -100,13 +100,13 @@ interface MainViewProps {
     /**
      * Callback function called when the request has failed.
      */
-    onError?: (error?: unknown) => void
+    onError?: OnError
 }
 
 const MainView = ({
     accessToken,
     credentials,
-    onError = () => {},
+    onError = (() => {}) as OnError,
     phoneNumberOptions,
     requireMfaRegistration = false,
     showIntro = true,
@@ -231,11 +231,11 @@ interface VerificationCodeViewProps {
     /**
      * Callback function called when the request has succeed.
      */
-    onSuccess?: () => void
+    onSuccess?: OnSuccess
     /**
      * Callback function called when the request has failed.
      */
-    onError?: (error?: unknown) => void
+    onError?: OnError
 }
 
 type VerificationCodeViewState = 
@@ -244,8 +244,8 @@ type VerificationCodeViewState =
 
 const VerificationCodeView = ({
     accessToken,
-    onError = () => {},
-    onSuccess = () => {},
+    onError = (() => {}) as OnError,
+    onSuccess = (() => {}) as OnSuccess,
     showIntro = true
 }: VerificationCodeViewProps) => {
     const coreClient = useReachfive()

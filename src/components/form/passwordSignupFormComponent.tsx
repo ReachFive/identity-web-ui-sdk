@@ -17,6 +17,8 @@ import { useConfig } from '../../contexts/config';
 
 import { isEqual } from '../../helpers/utils';
 
+import type { OnError, OnSuccess } from '../../types';
+
 const SignupForm = createForm<SignupParams['data']>({
     prefix: 'r5-signup-',
     submitLabel: 'signup.submitLabel'
@@ -37,11 +39,11 @@ export interface PasswordSignupFormProps {
     /**
      * Callback function called when the request has succeed.
      */
-    onSuccess?: () => void
+    onSuccess?: OnSuccess
     /**
      * Callback function called when the request has failed.
      */
-    onError?: (error?: unknown) => void
+    onError?: OnError
 }
 
 export const PasswordSignupForm = ({
@@ -62,8 +64,8 @@ export const PasswordSignupForm = ({
         'password_confirmation'
     ],
     userAgreement,
-    onError = () => {},
-    onSuccess = () => {},
+    onError = (() => {}) as OnError,
+    onSuccess = (() => {}) as OnSuccess,
 }: PasswordSignupFormProps) => {
     const coreClient = useReachfive()
     const config = useConfig()

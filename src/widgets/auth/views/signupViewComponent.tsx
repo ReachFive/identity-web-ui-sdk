@@ -13,6 +13,8 @@ import type { SignupWithWebAuthnViewProps } from './signupWithWebAuthnViewCompon
 import { selectLogin } from '../authWidget.tsx';
 import { InitialScreen } from '../../../../constants.ts';
 
+import type { OnError, OnSuccess } from '../../../types';
+
 export interface SignupViewProps extends SignupWithPasswordViewProps, SignupWithWebAuthnViewProps {
     /**
      * Boolean that specifies whether login is enabled.
@@ -49,11 +51,11 @@ export interface SignupViewProps extends SignupWithPasswordViewProps, SignupWith
     /**
      * Callback function called when the request has succeed.
      */
-    onSuccess?: () => void
+    onSuccess?: OnSuccess
     /**
      * Callback function called when the request has failed.
      */
-    onError?: (error?: unknown) => void
+    onError?: OnError
 }
 
 export const SignupView = ({
@@ -63,8 +65,8 @@ export const SignupView = ({
     allowWebAuthnSignup = false,
     enablePasswordAuthentication=true,
     socialProviders,
-    onError = () => {},
-    onSuccess = () => {},
+    onError = (() => {}) as OnError,
+    onSuccess = (() => {}) as OnSuccess,
     ...props
 }: SignupViewProps) => {
     const i18n = useI18n()

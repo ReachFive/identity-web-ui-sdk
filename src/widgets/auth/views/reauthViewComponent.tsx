@@ -12,6 +12,8 @@ import { useReachfive } from '../../../contexts/reachfive';
 
 import { PropsWithSession } from '../../../contexts/session'
 
+import type { OnError, OnSuccess } from '../../../types';
+
 export interface ReauthViewProps {
     /**
      * Boolean that specifies if the forgot password option is enabled.
@@ -39,11 +41,11 @@ export interface ReauthViewProps {
     /**
      * Callback function called when the request has succeed.
      */
-    onSuccess?: () => void
+    onSuccess?: OnSuccess
     /**
      * Callback function called when the request has failed.
      */
-    onError?: (error?: unknown) => void
+    onError?: OnError
 }
 
 export const ReauthView = ({
@@ -52,8 +54,8 @@ export const ReauthView = ({
     session,
     showLabels = false,
     socialProviders,
-    onError = () => {},
-    onSuccess = () => {},
+    onError = (() => {}) as OnError,
+    onSuccess = (() => {}) as OnSuccess,
 }: PropsWithSession<ReauthViewProps>) => {
     const coreClient = useReachfive()
     const i18n = useI18n()

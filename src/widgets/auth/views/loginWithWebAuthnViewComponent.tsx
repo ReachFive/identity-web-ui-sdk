@@ -1,5 +1,6 @@
 import React, { useCallback } from 'react';
 import type { AuthOptions, LoginWithWebAuthnParams } from '@reachfive/identity-core'
+import styled from 'styled-components'
 
 import { LoginWithPasswordViewState } from './loginWithPasswordViewComponent';
 import { Alternative, Heading, Link, Separator } from '../../../components/miscComponent';
@@ -14,7 +15,8 @@ import { useRouting } from '../../../contexts/routing';
 import { useSession } from '../../../contexts/session';
 
 import { isCustomIdentifier, specializeIdentifierData } from '../../../helpers/utils';
-import styled from 'styled-components'
+
+import type { OnError, OnSuccess } from '../../../types';
 
 type LoginWithWebAuthnFormData = { identifier: string } | { email: string }
 
@@ -95,11 +97,11 @@ export interface LoginWithWebAuthnViewProps {
     /**
      * Callback function called when the request has succeed.
      */
-    onSuccess?: () => void
+    onSuccess?: OnSuccess
     /**
      * Callback function called when the request has failed.
      */
-    onError?: (error?: unknown) => void
+    onError?: OnError
 }
 
 export const LoginWithWebAuthnView = ({
@@ -110,8 +112,8 @@ export const LoginWithWebAuthnView = ({
     showLabels = false,
     socialProviders,
     allowAccountRecovery,
-    onError = () => {},
-    onSuccess = () => {},
+    onError = (() => {}) as OnError,
+    onSuccess = (() => {}) as OnSuccess,
 }: LoginWithWebAuthnViewProps) => {
     const coreClient = useReachfive()
     const { goTo } = useRouting()

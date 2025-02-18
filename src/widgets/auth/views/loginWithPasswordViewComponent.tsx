@@ -19,6 +19,8 @@ import { useRouting } from '../../../contexts/routing';
 import { specializeIdentifierData } from '../../../helpers/utils';
 import { FaSelectionViewState } from '../../stepUp/mfaStepUpWidget';
 
+import type { OnError, OnSuccess } from '../../../types';
+
 const ResetCredentialWrapper = styled.div<{ floating?: boolean }>`
     margin-bottom: ${props => props.theme.spacing}px;
     text-align: right;
@@ -105,11 +107,11 @@ export interface LoginWithPasswordViewProps {
     /**
      * Callback function called when the request has succeed.
      */
-    onSuccess?: () => void
+    onSuccess?: OnSuccess
     /**
      * Callback function called when the request has failed.
      */
-    onError?: (error?: unknown) => void
+    onError?: OnError
 }
 
 export type LoginWithPasswordViewState = {
@@ -126,8 +128,8 @@ export const LoginWithPasswordView = ({
     showLabels,
     showRememberMe,
     allowTrustDevice,
-    onError = () => {},
-    onSuccess = () => {},
+    onError = (() => {}) as OnError,
+    onSuccess = (() => {}) as OnSuccess,
 }: LoginWithPasswordViewProps) => {
     const i18n = useI18n()
     const coreClient = useReachfive()

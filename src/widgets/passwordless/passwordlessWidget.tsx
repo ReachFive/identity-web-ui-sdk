@@ -1,7 +1,7 @@
 import React, { useLayoutEffect } from 'react';
 import { AuthOptions, AuthResult, SingleFactorPasswordlessParams } from '@reachfive/identity-core';
 
-import type { Config, Prettify } from '../../types';
+import type { Config, OnError, OnSuccess, Prettify } from '../../types';
 
 import { email } from '../../core/validation';
 
@@ -100,11 +100,11 @@ interface MainViewProps {
     /**
      * Callback function called when the request has succeed.
      */
-    onSuccess?: () => void
+    onSuccess?: OnSuccess
     /**
      * Callback function called when the request has failed.
      */
-    onError?: (error?: unknown) => void
+    onError?: OnError
 }
 
 const MainView = ({
@@ -116,8 +116,8 @@ const MainView = ({
     showSocialLogins = false,
     socialProviders,
     phoneNumberOptions,
-    onError = () => {},
-    onSuccess = () => {},
+    onError = (() => {}) as OnError,
+    onSuccess = (() => {}) as OnSuccess,
 }: MainViewProps) => {
     const coreClient = useReachfive()
     const config = useConfig()
@@ -191,11 +191,11 @@ interface VerificationCodeViewProps {
     /**
      * Callback function called when the request has succeed.
      */
-    onSuccess?: () => void
+    onSuccess?: OnSuccess
     /**
      * Callback function called when the request has failed.
      */
-    onError?: (error?: unknown) => void
+    onError?: OnError
 }
 
 type VerificationCodeViewState = {
@@ -206,8 +206,8 @@ const VerificationCodeView = ({
     authType = 'magic_link',
     recaptcha_enabled = false,
     recaptcha_site_key,
-    onSuccess = () => {},
-    onError = () => {}
+    onSuccess = (() => {}) as OnSuccess,
+    onError = (() => {}) as OnError
 }: VerificationCodeViewProps) => {
     const coreClient = useReachfive()
     const i18n = useI18n()

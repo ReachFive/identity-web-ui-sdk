@@ -12,6 +12,8 @@ import { FieldCreator } from '../../components/form/fieldCreator';
 import { Field } from '../../components/form/formFieldFactory';
 import { PhoneNumberOptions } from '../../components/form/fields/phoneNumberField';
 
+import type { OnError, OnSuccess } from '../../types';
+
 type ProfileWithConsents = Profile & { consents?: Record<string, UserConsent> }
 
 const ProfileEditorForm = createForm<ProfileWithConsents>({
@@ -28,11 +30,11 @@ interface ProfileEditorProps {
     /**
      * Callback function called when the request has succeed.
      */
-    onSuccess?: () => void
+    onSuccess?: OnSuccess
     /**
      * Callback function called when the request has failed.
      */
-    onError?: (error?: unknown) => void
+    onError?: OnError
     /**
      * Phone number field options.
      */
@@ -59,8 +61,8 @@ interface ProfileEditorProps {
 
 const ProfileEditor = ({
     accessToken,
-    onSuccess = () => {},
-    onError = () => {},
+    onSuccess = (() => {}) as OnSuccess,
+    onError = (() => {}) as OnError,
     phoneNumberOptions,
     profile,
     redirectUrl,

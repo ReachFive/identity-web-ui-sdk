@@ -1,6 +1,6 @@
 /**
  * @reachfive/identity-ui - v1.32.2
- * Compiled Tue, 11 Feb 2025 19:15:17 UTC
+ * Compiled Tue, 18 Feb 2025 15:01:57 UTC
  *
  * Copyright (c) ReachFive.
  *
@@ -674,11 +674,11 @@ type LoginViewProps = {
     /**
      * Callback function called when the request has succeed.
      */
-    onSuccess?: () => void;
+    onSuccess?: OnSuccess;
     /**
      * Callback function called when the request has failed.
      */
-    onError?: (error?: unknown) => void;
+    onError?: OnError;
 };
 
 interface LoginWithWebAuthnViewProps {
@@ -715,11 +715,11 @@ interface LoginWithWebAuthnViewProps {
     /**
      * Callback function called when the request has succeed.
      */
-    onSuccess?: () => void;
+    onSuccess?: OnSuccess;
     /**
      * Callback function called when the request has failed.
      */
-    onError?: (error?: unknown) => void;
+    onError?: OnError;
 }
 
 interface LoginWithPasswordViewProps {
@@ -735,11 +735,11 @@ interface LoginWithPasswordViewProps {
     /**
      * Callback function called when the request has succeed.
      */
-    onSuccess?: () => void;
+    onSuccess?: OnSuccess;
     /**
      * Callback function called when the request has failed.
      */
-    onError?: (error?: unknown) => void;
+    onError?: OnError;
 }
 
 interface PasswordSignupFormProps {
@@ -757,11 +757,11 @@ interface PasswordSignupFormProps {
     /**
      * Callback function called when the request has succeed.
      */
-    onSuccess?: () => void;
+    onSuccess?: OnSuccess;
     /**
      * Callback function called when the request has failed.
      */
-    onError?: (error?: unknown) => void;
+    onError?: OnError;
 }
 
 interface SignupWithPasswordViewProps extends PasswordSignupFormProps {
@@ -808,11 +808,11 @@ interface SignupWithWebAuthnViewProps {
     /**
      * Callback function called when the request has succeed.
      */
-    onSuccess?: () => void;
+    onSuccess?: OnSuccess;
     /**
      * Callback function called when the request has failed.
      */
-    onError?: (error?: unknown) => void;
+    onError?: OnError;
 }
 
 /**
@@ -857,11 +857,11 @@ interface SignupViewProps extends SignupWithPasswordViewProps, SignupWithWebAuth
     /**
      * Callback function called when the request has succeed.
      */
-    onSuccess?: () => void;
+    onSuccess?: OnSuccess;
     /**
      * Callback function called when the request has failed.
      */
-    onError?: (error?: unknown) => void;
+    onError?: OnError;
 }
 
 interface ForgotPasswordViewProps {
@@ -923,11 +923,11 @@ interface ForgotPasswordViewProps {
     /**
      * Callback function called when the request has succeed.
      */
-    onSuccess?: () => void;
+    onSuccess?: OnSuccess;
     /**
      * Callback function called when the request has failed.
      */
-    onError?: (error?: unknown) => void;
+    onError?: OnError;
 }
 
 interface QuickLoginViewProps {
@@ -945,11 +945,11 @@ interface QuickLoginViewProps {
     /**
      * Callback function called when the request has succeed.
      */
-    onSuccess?: () => void;
+    onSuccess?: OnSuccess;
     /**
      * Callback function called when the request has failed.
      */
-    onError?: (error?: unknown) => void;
+    onError?: OnError;
 }
 
 interface ReauthViewProps {
@@ -979,11 +979,11 @@ interface ReauthViewProps {
     /**
      * Callback function called when the request has succeed.
      */
-    onSuccess?: () => void;
+    onSuccess?: OnSuccess;
     /**
      * Callback function called when the request has failed.
      */
-    onError?: (error?: unknown) => void;
+    onError?: OnError;
 }
 
 type StartPasswordlessFormData = {
@@ -1023,11 +1023,11 @@ interface MainViewProps$6 {
     /**
      * Callback function called when the request has succeed.
      */
-    onSuccess?: () => void;
+    onSuccess?: OnSuccess;
     /**
      * Callback function called when the request has failed.
      */
-    onError?: (error?: unknown) => void;
+    onError?: OnError;
 }
 type FaSelectionViewState = MFA.StepUpResponse & {
     allowTrustDevice?: boolean;
@@ -1039,11 +1039,11 @@ type FaSelectionViewProps = Prettify<Partial<MFA.StepUpResponse> & {
     /**
      * Callback function called when the request has succeed.
      */
-    onSuccess?: () => void;
+    onSuccess?: OnSuccess;
     /**
      * Callback function called when the request has failed.
      */
-    onError?: (error?: unknown) => void;
+    onError?: OnError;
 }>;
 type StepUpResponse = RequiredProperty<PasswordlessResponse, 'challengeId'>;
 type StepUpHandlerResponse = StepUpResponse & StartPasswordlessFormData;
@@ -1062,11 +1062,11 @@ type VerificationCodeViewProps$3 = Prettify<Partial<StepUpHandlerResponse> & {
     /**
      * Callback function called when the request has succeed.
      */
-    onSuccess?: () => void;
+    onSuccess?: OnSuccess;
     /**
      * Callback function called when the request has failed.
      */
-    onError?: (error?: unknown) => void;
+    onError?: OnError;
 }>;
 type MfaStepUpProps = MainViewProps$6 & FaSelectionViewProps & VerificationCodeViewProps$3;
 type MfaStepUpWidgetProps = MfaStepUpProps;
@@ -1117,11 +1117,11 @@ interface MainViewProps$5 {
     /**
      * Callback function called when the request has succeed.
      */
-    onSuccess?: () => void;
+    onSuccess?: OnSuccess;
     /**
      * Callback function called when the request has failed.
      */
-    onError?: (error?: unknown) => void;
+    onError?: OnError;
 }
 interface EmailEditorWidgetProps extends MainViewProps$5 {
 }
@@ -1159,11 +1159,11 @@ interface PasswordEditorProps extends PasswordEditorFormProps {
     /**
      * Callback function called when the request has succeed.
      */
-    onSuccess?: () => void;
+    onSuccess?: OnSuccess;
     /**
      * Callback function called when the request has failed.
      */
-    onError?: (error?: unknown) => void;
+    onError?: OnError;
 }
 type Authentication = {
     accessToken: string;
@@ -1190,7 +1190,7 @@ interface MainViewProps$4 {
     /**
      * Callback function called when the request has failed.
      */
-    onError?: (error?: unknown) => void;
+    onError?: OnError;
 }
 type VerificationCodeViewProps$2 = {
     /**
@@ -1200,11 +1200,11 @@ type VerificationCodeViewProps$2 = {
     /**
      * Callback function called when the request has succeed.
      */
-    onSuccess?: () => void;
+    onSuccess?: OnSuccess;
     /**
      * Callback function called when the request has failed.
      */
-    onError?: (error?: unknown) => void;
+    onError?: OnError;
 };
 type PhoneNumberEditorWidgetProps = Prettify<MainViewProps$4 & VerificationCodeViewProps$2>;
 
@@ -1217,11 +1217,11 @@ interface MainViewProps$3 {
     /**
      * Callback function called when the request has succeed.
      */
-    onSuccess?: () => void;
+    onSuccess?: OnSuccess;
     /**
      * Callback function called when the request has failed.
      */
-    onError?: (error?: unknown) => void;
+    onError?: OnError;
     /**
      * Whether the form fields' labels are displayed on the form view.
      * @default false
@@ -1276,11 +1276,11 @@ interface MainViewProps$2 {
     /**
      * Callback function called when the request has succeed.
      */
-    onSuccess?: () => void;
+    onSuccess?: OnSuccess;
     /**
      * Callback function called when the request has failed.
      */
-    onError?: (error?: unknown) => void;
+    onError?: OnError;
 }
 interface VerificationCodeViewProps$1 {
     /**
@@ -1300,11 +1300,11 @@ interface VerificationCodeViewProps$1 {
     /**
      * Callback function called when the request has succeed.
      */
-    onSuccess?: () => void;
+    onSuccess?: OnSuccess;
     /**
      * Callback function called when the request has failed.
      */
-    onError?: (error?: unknown) => void;
+    onError?: OnError;
 }
 type PasswordlessWidgetProps = Prettify<MainViewProps$2 & VerificationCodeViewProps$1>;
 
@@ -1319,11 +1319,11 @@ interface ProfileEditorProps {
     /**
      * Callback function called when the request has succeed.
      */
-    onSuccess?: () => void;
+    onSuccess?: OnSuccess;
     /**
      * Callback function called when the request has failed.
      */
-    onError?: (error?: unknown) => void;
+    onError?: OnError;
     /**
      * Phone number field options.
      */
@@ -1380,11 +1380,11 @@ interface SocialAccountsWidgetProps {
     /**
      * Callback function called when the request has succeed.
      */
-    onSuccess?: () => void;
+    onSuccess?: OnSuccess;
     /**
      * Callback function called when the request has failed.
      */
-    onError?: (error?: unknown) => void;
+    onError?: OnError;
 }
 
 interface SocialButtonsProps {
@@ -1405,11 +1405,11 @@ interface SocialButtonsProps {
     /**
      * Callback function called when the request has succeed.
      */
-    onSuccess?: () => void;
+    onSuccess?: OnSuccess;
     /**
      * Callback function called when the request has failed.
      */
-    onError?: (error?: unknown) => void;
+    onError?: OnError;
 }
 
 interface SocialLoginWidgetProps extends Omit<SocialButtonsProps, 'providers'> {
@@ -1439,11 +1439,11 @@ interface WebAuthnDevicesProps {
     /**
      * Callback function called when the request has succeed.
      */
-    onSuccess?: () => void;
+    onSuccess?: OnSuccess;
     /**
      * Callback function called when the request has failed.
      */
-    onError?: (error?: unknown) => void;
+    onError?: OnError;
 }
 type WebAuthnWidgetProps = Omit<WebAuthnDevicesProps, 'devices'>;
 
@@ -1481,7 +1481,7 @@ interface MainViewProps$1 {
     /**
      * Callback function called when the request has failed.
      */
-    onError?: (error?: unknown) => void;
+    onError?: OnError;
 }
 interface VerificationCodeViewProps {
     /**
@@ -1495,11 +1495,11 @@ interface VerificationCodeViewProps {
     /**
      * Callback function called when the request has succeed.
      */
-    onSuccess?: () => void;
+    onSuccess?: OnSuccess;
     /**
      * Callback function called when the request has failed.
      */
-    onError?: (error?: unknown) => void;
+    onError?: OnError;
 }
 interface CredentialRegisteredViewProps {
 }
@@ -1515,11 +1515,11 @@ type MfaListWidgetProps = {
     /**
      * Callback function called when the request has succeed.
      */
-    onSuccess?: () => void;
+    onSuccess?: OnSuccess;
     /**
      * Callback function called when the request has failed.
      */
-    onError?: (error?: unknown) => void;
+    onError?: OnError;
 };
 
 interface MainViewProps {
@@ -1531,11 +1531,11 @@ interface MainViewProps {
     /**
      * Callback function called when the request has succeed.
      */
-    onSuccess?: () => void;
+    onSuccess?: OnSuccess;
     /**
      * Callback function called when the request has failed.
      */
-    onError?: (error?: unknown) => void;
+    onError?: OnError;
     /**
      * Whether the form fields' labels are displayed on the form view.
      * @default false
