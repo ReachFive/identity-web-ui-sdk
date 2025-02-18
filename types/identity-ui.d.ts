@@ -1,6 +1,6 @@
 /**
- * @reachfive/identity-ui - v1.32.1-develop
- * Compiled Mon, 10 Feb 2025 09:29:41 UTC
+ * @reachfive/identity-ui - v1.32.2-develop
+ * Compiled Tue, 18 Feb 2025 09:31:55 UTC
  *
  * Copyright (c) ReachFive.
  *
@@ -1346,6 +1346,18 @@ type MfaListWidgetProps = {
     * The authorization credential JSON Web Token (JWT) used to access the ReachFive API, less than five minutes old.
     */
     accessToken: string;
+    /**
+     * Callback function called when the request has succeeded.
+     */
+    onSuccess?: () => void
+    /**
+     * Callback function called when the request has failed.
+     */
+    onError?: (error?: unknown) => void
+    /**
+     * Indicates whether delete mfa credential button is displayed
+     */
+    showRemoveMfaCredential?: boolean
 };
 
 interface MainViewProps {
@@ -1375,10 +1387,11 @@ interface SuccessViewProps {
 interface AccountRecoveryWidgetProps extends MainViewProps, SuccessViewProps {
 }
 
-type TrustedDevicesWidgetProps = {
+type TrustedDeviceWidgetProps = {
     accessToken: string;
     showRemoveTrustedDevice?: boolean;
-    onError?: () => void;
+    onError?: (error?: unknown) => void;
+    onSuccess?: () => void;
 };
 
 interface WidgetInstance {
@@ -1419,7 +1432,7 @@ declare class UiClient {
     showMfa(options: WidgetOptions<MfaCredentialsWidgetProps>): void;
     showStepUp(options: WidgetOptions<MfaStepUpWidgetProps>): void;
     showMfaCredentials(options: WidgetOptions<MfaListWidgetProps>): void;
-    showTrustedDevices(options: WidgetOptions<TrustedDevicesWidgetProps>): void;
+    showTrustedDevices(options: WidgetOptions<TrustedDeviceWidgetProps>): void;
     _showWidget<P extends WidgetProps>(widget: Widget<Omit<P, keyof WidgetProps>>, options?: P, props?: {}): Promise<void>;
     _ssoCheck<P extends WidgetProps>(widget: Widget<Omit<P, keyof WidgetProps>>, options: P & {
         auth?: AuthOptions;
