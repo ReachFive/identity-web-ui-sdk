@@ -1,10 +1,10 @@
-import React, {useEffect} from 'react';
-import {TrustedDevice} from "@reachfive/identity-core";
-import {createWidget} from "../../components/widget/widget.tsx";
-import {useI18n} from "../../contexts/i18n.tsx";
-import {dateFormat} from "../../helpers/utils.ts";
-import {useConfig} from "../../contexts/config.tsx";
-import {useReachfive} from "../../contexts/reachfive.tsx";
+import React, { useEffect } from 'react';
+import { TrustedDevice } from "@reachfive/identity-core";
+import { createWidget } from "../../components/widget/widget.tsx";
+import { useI18n } from "../../contexts/i18n.tsx";
+import { dateFormat } from "../../helpers/utils.ts";
+import { useConfig } from "../../contexts/config.tsx";
+import { useReachfive } from "../../contexts/reachfive.tsx";
 import {
     AlertDialog,
     AlertDialogAction,
@@ -15,8 +15,8 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from "../../components/ui/alert-dialog"
-import {Button} from "../../components/ui/button"
-import {X} from "lucide-react";
+import { Button } from "../../components/ui/button"
+import { X } from "lucide-react";
 
 export type TrustedDeviceWidgetProps = {
     accessToken: string
@@ -73,10 +73,10 @@ export const TrustedDeviceList = ({
         client.listTrustedDevices(accessToken)
             .then(trustedDevicesResponse => {
                 setTrustedDevices(trustedDevicesResponse.trustedDevices)
-                setLoading(false)
                 onSuccess()
             })
             .catch(onError)
+            .finally(() => setLoading(false))
     }
 
     useEffect(() => {
