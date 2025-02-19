@@ -1,6 +1,6 @@
 /**
- * @reachfive/identity-ui - v1.32.1-develop
- * Compiled Mon, 10 Feb 2025 09:29:41 UTC
+ * @reachfive/identity-ui - v1.32.2
+ * Compiled Wed, 19 Feb 2025 08:51:21 UTC
  *
  * Copyright (c) ReachFive.
  *
@@ -1375,10 +1375,11 @@ interface SuccessViewProps {
 interface AccountRecoveryWidgetProps extends MainViewProps, SuccessViewProps {
 }
 
-type TrustedDevicesWidgetProps = {
+type TrustedDeviceWidgetProps = {
     accessToken: string;
     showRemoveTrustedDevice?: boolean;
-    onError?: () => void;
+    onError?: (error?: unknown) => void;
+    onSuccess?: () => void;
 };
 
 interface WidgetInstance {
@@ -1419,7 +1420,7 @@ declare class UiClient {
     showMfa(options: WidgetOptions<MfaCredentialsWidgetProps>): void;
     showStepUp(options: WidgetOptions<MfaStepUpWidgetProps>): void;
     showMfaCredentials(options: WidgetOptions<MfaListWidgetProps>): void;
-    showTrustedDevices(options: WidgetOptions<TrustedDevicesWidgetProps>): void;
+    showTrustedDevices(options: WidgetOptions<TrustedDeviceWidgetProps>): void;
     _showWidget<P extends WidgetProps>(widget: Widget<Omit<P, keyof WidgetProps>>, options?: P, props?: {}): Promise<void>;
     _ssoCheck<P extends WidgetProps>(widget: Widget<Omit<P, keyof WidgetProps>>, options: P & {
         auth?: AuthOptions;

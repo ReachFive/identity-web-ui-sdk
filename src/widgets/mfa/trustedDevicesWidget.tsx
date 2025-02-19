@@ -17,7 +17,7 @@ import {
     AlertDialogTrigger,
 } from "../../components/ui/alert-dialog"
 import { Button } from "../../components/ui/button"
-import { X } from "lucide-react";
+import { X, LoaderCircle } from "lucide-react";
 
 export type TrustedDeviceWidgetProps = {
     accessToken: string
@@ -121,19 +121,19 @@ export const TrustedDeviceList = ({
     }
 
     if(loading) {
-        return <></>
+        return <LoaderCircle className="animate-spin" />
     }
 
     return (
         <div>
             {(trustedDevices.length === 0) && (
-                <div className="text-textColor mb-1 text-center">{i18n('trustedDevices.empty')}</div>
+                <div className="text-theme mb-1 text-center">{i18n('trustedDevices.empty')}</div>
             )}
             {trustedDevices.map((trustedDevice, index) => (
                 <div id={`trusted-device-${index}`} key={`trusted-device-${index}`}
                      className={`flex items-center ${isOpen ? 'opacity-15' : ''}`}>
                     <div
-                        className="flex flex-col items-center basis-full line-height-1 align-middle whitespace-nowrap box-border p-[calc(var(--padding-y)*1px)] border-solid border-[calc(var(--border-width)*1px)] rounded-[calc(var(--border-radius)*1px)]">
+                        className="flex text-theme flex-col items-center basis-full line-height-1 align-middle whitespace-nowrap box-border p-[calc(var(--padding-y)*1px)] border-solid border-[calc(var(--border-width)*1px)] rounded-[calc(var(--border-radius)*1px)]">
                         <div className="font-bold ">{trustedDevice.metadata.deviceName}</div>
                         <div className="font-bold">{trustedDevice.metadata.ip}</div>
                         <div className="font-bold">{trustedDevice.metadata.deviceClass}</div>

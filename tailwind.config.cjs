@@ -18,7 +18,7 @@ module.exports = {
                 },
                 background: "var(--color-background)",
                 border: "var(--color-border)",
-                textColor: "var(--color-text)"
+                theme: "var(--color-text)"
             },
             spacing: {
               DEFAULT: "calc(var(--spacing)*1px)",
