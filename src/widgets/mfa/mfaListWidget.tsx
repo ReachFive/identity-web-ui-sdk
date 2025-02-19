@@ -60,6 +60,7 @@ export const MfaList = ({
     }: MfaListProps) => {
     const [isOpen, setIsOpen] = React.useState(false)
     const [loading, setLoading] = React.useState(true)
+    const [deleteConfirmationTitle, setDeleteConfirmationTitle] = React.useState('')
     const [credentials, setCredentials] = React.useState<MFA.Credential[]>([])
     const i18n = useI18n()
     const config = useConfig()
@@ -101,12 +102,18 @@ export const MfaList = ({
             return (
                 <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
                     <AlertDialogTrigger asChild>
-                        <Button variant="destructive" size="icon" className="ml-1"><X /></Button>
+                        <Button
+                            variant="destructive"
+                            size="icon"
+                            className="ml-1"
+                            onClick={_ => setDeleteConfirmationTitle(credential.type === 'email' ? 'mfa.remove.email': 'mfa.remove.phoneNumber' )}>
+                            <X />
+                        </Button>
                     </AlertDialogTrigger>
                     <AlertDialogContent>
                         <AlertDialogHeader>
                             <AlertDialogTitle>
-                                {i18n('mfa.credential.delete.confirmation')}
+                                {i18n(deleteConfirmationTitle)}
                             </AlertDialogTitle>
                             <AlertDialogDescription />
                         </AlertDialogHeader>
