@@ -1,32 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Snapshot basic 1`] = `
-.c1 {
-  padding: 9px 38px;
-  border: 1px solid #ced4da;
-  color: #495057;
-  box-sizing: border-box;
-  white-space: nowrap;
-  vertical-align: middle;
-  position: relative;
-}
-
-.c1:only-child {
-  border-radius: 3px;
-}
-
-.c1:not(:only-child):first-child {
-  border-radius: 3px 3px 0 0;
-}
-
-.c1:not(:only-child):last-child {
-  border-radius: 0 0 3px 3px;
-}
-
-.c1:not(:only-child):not(:last-child) {
-  border-bottom-width: 0;
-}
-
 .c0 {
   font-size: 14px;
   -webkit-transition: -webkit-transform 400ms ease, opacity 400ms ease;
@@ -41,131 +15,12 @@ exports[`Snapshot basic 1`] = `
   margin: 0 auto;
 }
 
-.c5 {
-  width: 28px;
-  height: 28px;
-  fill: #495057;
-  -webkit-flex-shrink: 0;
-  -ms-flex-negative: 0;
-  flex-shrink: 0;
-}
-
-.c3 {
-  width: 28px;
-  height: 28px;
-  fill: #495057;
-  -webkit-flex-shrink: 0;
-  -ms-flex-negative: 0;
-  flex-shrink: 0;
-}
-
-.c2 {
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-flex-direction: row;
-  -ms-flex-direction: row;
-  flex-direction: row;
-  -webkit-align-items: center;
-  -webkit-box-align: center;
-  -ms-flex-align: center;
-  align-items: center;
-  color: #495057;
-  line-height: 1.5;
-}
-
-.c4 {
-  margin-left: 38px;
-  white-space: initial;
-}
-
 <div
   className="c0"
->
-  <div>
-    <div
-      className="c1 c2"
-    >
-      <svg
-        className="c3"
-      />
-      <div
-        className="c4"
-      >
-        <div
-          style={
-            {
-              "fontWeight": "bold",
-            }
-          }
-        >
-          identifier
-        </div>
-        <div>
-          33612345678
-        </div>
-        <div>
-          <span>
-            mfaList.createdAt
-             : 
-          </span>
-          <time
-            dateTime="2022-09-21"
-          >
-            21/09/2022
-          </time>
-        </div>
-      </div>
-    </div>
-    <div
-      className="c1 c2"
-    >
-      <svg
-        className="c5"
-      />
-      <div
-        className="c4"
-      >
-        <div
-          style={
-            {
-              "fontWeight": "bold",
-            }
-          }
-        >
-          identifier
-        </div>
-        <div>
-          root@reach5.co
-        </div>
-        <div>
-          <span>
-            mfaList.createdAt
-             : 
-          </span>
-          <time
-            dateTime="2022-09-21"
-          >
-            21/09/2022
-          </time>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
+/>
 `;
 
 exports[`Snapshot empty 1`] = `
-.c1 {
-  text-align: center;
-  margin-bottom: 10px;
-}
-
-.c2 {
-  color: #495057;
-}
-
 .c0 {
   font-size: 14px;
   -webkit-transition: -webkit-transform 400ms ease, opacity 400ms ease;
@@ -182,13 +37,5 @@ exports[`Snapshot empty 1`] = `
 
 <div
   className="c0"
->
-  <div>
-    <div
-      className="c1 c2"
-    >
-      mfaList.noCredentials
-    </div>
-  </div>
-</div>
+/>
 `;

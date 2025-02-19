@@ -126,7 +126,7 @@ export const MfaList = ({
     return (
         <div>
             {(credentials.length === 0) && (
-                <div className="text-textColor mb-1 text-center">{i18n('mfa.credentials.empty')}</div>
+                <div className="text-textColor mb-1 text-center">{i18n('mfaList.noCredentials')}</div>
             )}
             {credentials.map((credential, index) => (
                 <div id={`credential-${index}`} key={`credential-${index}`} className={`flex flex-col ${isOpen ? 'opacity-15' : ''}`}>

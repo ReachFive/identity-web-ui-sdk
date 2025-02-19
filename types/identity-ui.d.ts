@@ -1349,15 +1349,15 @@ type MfaListWidgetProps = {
     /**
      * Callback function called when the request has succeeded.
      */
-    onSuccess?: () => void
+    onSuccess?: () => void;
     /**
      * Callback function called when the request has failed.
      */
-    onError?: (error?: unknown) => void
+    onError?: (error?: unknown) => void;
     /**
      * Indicates whether delete mfa credential button is displayed
      */
-    showRemoveMfaCredential?: boolean
+    showRemoveMfaCredential?: boolean;
 };
 
 interface MainViewProps {
