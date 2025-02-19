@@ -17,6 +17,8 @@ import { useConfig } from '../../contexts/config';
 
 import { isEqual } from '../../helpers/utils';
 
+import type { OnError, OnSuccess } from '../../types';
+
 const SignupForm = createForm<SignupParams['data']>({
     prefix: 'r5-signup-',
     submitLabel: 'signup.submitLabel'
@@ -34,6 +36,14 @@ export interface PasswordSignupFormProps {
     showLabels?: boolean
     signupFields?: (string | Field)[]
     userAgreement?: string
+    /**
+     * Callback function called when the request has succeed.
+     */
+    onSuccess?: OnSuccess
+    /**
+     * Callback function called when the request has failed.
+     */
+    onError?: OnError
 }
 
 export const PasswordSignupForm = ({
@@ -54,6 +64,8 @@ export const PasswordSignupForm = ({
         'password_confirmation'
     ],
     userAgreement,
+    onError = (() => {}) as OnError,
+    onSuccess = (() => {}) as OnSuccess,
 }: PasswordSignupFormProps) => {
     const coreClient = useReachfive()
     const config = useConfig()
@@ -121,6 +133,8 @@ export const PasswordSignupForm = ({
             ...phoneNumberOptions,
         }}
         handler={(data: SignupParams['data']) => ReCaptcha.handle(data, { recaptcha_enabled, recaptcha_site_key }, callback, "signup")}
+        onSuccess={onSuccess}
+        onError={onError}
     />
 }
 

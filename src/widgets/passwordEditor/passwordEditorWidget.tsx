@@ -9,6 +9,8 @@ import simplePasswordField from '../../components/form/fields/simplePasswordFiel
 
 import { useReachfive } from '../../contexts/reachfive';
 
+import type { OnError, OnSuccess } from '../../types';
+
 export type PasswordEditorFormData = {
     password: string,
     passwordConfirmation: string
@@ -80,14 +82,13 @@ export interface PasswordEditorProps extends PasswordEditorFormProps {
      */
     showLabels?: boolean
     /**
+     * Callback function called when the request has succeed.
+     */
+    onSuccess?: OnSuccess
+    /**
      * Callback function called when the request has failed.
      */
-    onSuccess?: () => void
-    /**
-     * Callback function called after the widget has been successfully loaded and rendered inside the container.
-     * The callback is called with the widget instance.
-     */
-    onError?: () => void
+    onError?: OnError
 }
 
 const PasswordEditor = ({
@@ -103,7 +104,7 @@ const PasswordEditor = ({
     const handleSubmit = ({ password, oldPassword }: PasswordEditorFormData) => {
         return coreClient.updatePassword({
             password,
-            oldPassword,
+            ...(promptOldPassword ? { oldPassword } : {}),
             ...authentication,
         });
     };

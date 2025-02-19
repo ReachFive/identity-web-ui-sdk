@@ -1,6 +1,6 @@
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { AuthOptions, Identity as CoreIdentity, Profile } from '@reachfive/identity-core';
+import { AuthOptions, Identity, Profile } from '@reachfive/identity-core';
 
 import { UserError } from '../../helpers/errors';
 
@@ -16,7 +16,7 @@ import { createMultiViewWidget } from '../../components/widget/widget';
 import { SocialButtons } from '../../components/form/socialButtonsComponent';
 import { DefaultButton } from '../../components/form/buttonComponent';
 
-type Identity = CoreIdentity & { id: string }
+import type { OnError, OnSuccess } from '../../types';
 
 type Unlink = (id: string) => Promise<void>
 
@@ -25,6 +25,14 @@ interface WithIdentitiesProps {
     auth?: AuthOptions
     identities?: Identity[]
     unlink: Unlink
+    /**
+     * Callback function called when the request has succeed.
+     */
+    onSuccess?: OnSuccess
+    /**
+     * Callback function called when the request has failed.
+     */
+    onError?: OnError
 }
 
 function findAvailableProviders(providers: string[], identities: Identity[]): string[] {
@@ -50,9 +58,8 @@ const withIdentities = <T extends WithIdentitiesProps = WithIdentitiesProps>(
                     accessToken: props.accessToken,
                     fields: 'social_identities{id,provider,username}'
                 })
-                .then(({ socialIdentities }: Profile) => {
-                    setIdentities(socialIdentities as Identity[])
-                });
+                .then(({ socialIdentities }: Profile) => setIdentities(socialIdentities))
+                .catch(props.onError)
         }, [props.accessToken, coreClient])
 
         const unlink = useCallback((identityId: string) => {
@@ -60,11 +67,14 @@ const withIdentities = <T extends WithIdentitiesProps = WithIdentitiesProps>(
             // Optimistic update
             setIdentities(identities.filter(i => i.id !== identityId))
             // api call + catch failure
-            return coreClient.unlink({ accessToken: props.accessToken, identityId }).catch(error => {
-                // restore previous identities
-                setIdentities(prevIdentities)
-                return Promise.reject(error)
-            })
+            return coreClient.unlink({ accessToken: props.accessToken, identityId })
+                .then(() => props.onSuccess?.())
+                .catch(error => {
+                    props.onError?.(error)
+                    // restore previous identities
+                    setIdentities(prevIdentities)
+                    return Promise.reject(error)
+                })
         }, [props.accessToken, coreClient, identities])
 
         const handleAuthenticated = useCallback(() => {
@@ -110,16 +120,27 @@ const SocialIcon = styled.span<{ icon: string }>`
 interface IdentityListProps {
     identities?: Identity[]
     unlink: Unlink
+    /**
+     * Callback function called when the request has failed.
+     */
+    onError?: OnError
 }
 
-const IdentityList = ({ identities = [], unlink }: IdentityListProps) => {
+const IdentityList = ({
+    identities = [],
+    onError = (() => {}) as OnError,
+    unlink
+}: IdentityListProps) => {
     const i18n = useI18n()
     const [error, setError] = useState<UserError | undefined>()
 
     const onRemove = (id: string) => {
         unlink(id)
             .then(() => setError(undefined))
-            .catch(error => setError(UserError.fromAppError(error)))
+            .catch(error => {
+                onError(error)
+                setError(UserError.fromAppError(error))
+            })
     }
 
     return (
@@ -136,7 +157,7 @@ const IdentityList = ({ identities = [], unlink }: IdentityListProps) => {
                         <span>{providerInfos.name}</span>
                         &nbsp;
                         <MutedText>-&nbsp;{username}</MutedText>
-                        <CloseIcon title={i18n('remove')} onClick={() => onRemove(id)} data-testid={`identity-${provider}-unlink`} />
+                        <CloseIcon title={i18n('remove')} onClick={() => onRemove(id!)} data-testid={`identity-${provider}-unlink`} />
                     </Card>
                 );
             })}
@@ -210,6 +231,14 @@ export interface SocialAccountsWidgetProps {
      * Tip: If you pass an empty array, social providers will not be displayed.
      * */
     providers?: string[]
+    /**
+     * Callback function called when the request has succeed.
+     */
+    onSuccess?: OnSuccess
+    /**
+     * Callback function called when the request has failed.
+     */
+    onError?: OnError
 }
 
 interface SocialAccountsWidgetPropsPrepared extends

@@ -14,6 +14,8 @@ import { useI18n } from '../../../contexts/i18n'
 import { useRouting } from '../../../contexts/routing';
 import { useReachfive } from '../../../contexts/reachfive';
 
+import type { OnError, OnSuccess } from '../../../types';
+
 const AccountRecoveryForm = createForm<RequestAccountRecoveryParams>({
     prefix: 'r5-account-recovery-',
     fields: [
@@ -68,6 +70,14 @@ export interface AccountRecoveryViewProps {
      * Important: This parameter should only be used with Hosted Pages.
      */
     returnToAfterAccountRecovery?: string,
+    /**
+     * Callback function called when the request has succeed.
+     */
+    onSuccess?: OnSuccess
+    /**
+     * Callback function called when the request has failed.
+     */
+    onError?: OnError
 }
 
 export const AccountRecoveryView = ({
@@ -78,6 +88,8 @@ export const AccountRecoveryView = ({
     recaptcha_site_key,
     redirectUrl,
     returnToAfterAccountRecovery,
+    onError = (() => {}) as OnError,
+    onSuccess = (() => {}) as OnSuccess,
 }: AccountRecoveryViewProps) => {
     const coreClient = useReachfive()
     const { goTo } = useRouting()
@@ -104,8 +116,13 @@ export const AccountRecoveryView = ({
             <AccountRecoveryForm
                 showLabels={showLabels}
                 handler={callback}
-                onSuccess={() => goTo('account-recovery-success')}
-                skipError={displaySafeErrorMessage && skipError} />
+                onSuccess={() => {
+                    onSuccess()
+                    goTo('account-recovery-success')
+                }}
+                onError={onError}
+                skipError={displaySafeErrorMessage && skipError}
+            />
             {allowLogin && <Alternative>
                 <Link target={'login'}>{i18n('accountRecovery.backToLoginLink')}</Link>
             </Alternative>}

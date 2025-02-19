@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { MFA } from '@reachfive/identity-core';
 import type { StartMfaEmailRegistrationResponse, StartMfaPhoneNumberRegistrationResponse } from '@reachfive/identity-core/es/main/mfaClient';
 
-import type { Config, Prettify } from '../../types';
+import type { OnError, OnSuccess, Prettify } from '../../types';
 
 import { createMultiViewWidget } from '../../components/widget/widget';
 
@@ -50,9 +50,9 @@ const VerificationCodeForm = createForm<VerificationCodeFormData>({
 
 type PhoneNumberRegisteringCredentialFormData = { phoneNumber: string }
 
-const PhoneNumberRegisteringCredentialForm = (config: Config) => createForm<PhoneNumberRegisteringCredentialFormData, { phoneNumberOptions?: PhoneNumberOptions }>({
+const PhoneNumberRegisteringCredentialForm = createForm<PhoneNumberRegisteringCredentialFormData, { phoneNumberOptions?: PhoneNumberOptions }>({
     prefix: 'r5-mfa-credentials-phone-number-',
-    fields: ({ phoneNumberOptions }) => ([
+    fields: ({ config, phoneNumberOptions }) => ([
         phoneNumberField({
             required: true,
             ...phoneNumberOptions,
@@ -97,15 +97,20 @@ interface MainViewProps {
      * Phone number field options.
      */
     phoneNumberOptions?: PhoneNumberOptions
+    /**
+     * Callback function called when the request has failed.
+     */
+    onError?: OnError
 }
 
 const MainView = ({
     accessToken,
     credentials,
+    onError = (() => {}) as OnError,
+    phoneNumberOptions,
     requireMfaRegistration = false,
     showIntro = true,
     showRemoveMfaCredentials = true,
-    phoneNumberOptions,
 }: MainViewProps) => {
     const coreClient = useReachfive()
     const config = useConfig()
@@ -113,33 +118,36 @@ const MainView = ({
     const { goTo } = useRouting()
 
     const onEmailRegistering = () => {
-        return coreClient.startMfaEmailRegistration({
-                accessToken
-            }
-        )
+        return coreClient
+            .startMfaEmailRegistration({
+                    accessToken
+                }
+            )
     }
 
     const onPhoneNumberRegistering = (data: PhoneNumberRegisteringCredentialFormData) => {
-        return coreClient.startMfaPhoneNumberRegistration({
-            accessToken,
-            ...data
-        })
+        return coreClient
+            .startMfaPhoneNumberRegistration({
+                accessToken,
+                ...data
+            })
     }
 
     const onEmailRemoval = () => {
-        return coreClient.removeMfaEmail({
-            accessToken
-        })
+        return coreClient
+            .removeMfaEmail({
+                accessToken
+            })
     }
 
     const onPhoneNumberRemoval = ({ phoneNumber }: MFA.PhoneCredential) => {
-        return coreClient.removeMfaPhoneNumber({
-            accessToken,
-            phoneNumber,
-        })
+        return coreClient
+            .removeMfaPhoneNumber({
+                accessToken,
+                phoneNumber,
+            })
     }
 
-    const PhoneNumberInputForm = PhoneNumberRegisteringCredentialForm(config);
     const phoneNumberCredentialRegistered = credentials.find<MFA.PhoneCredential>(
         (credential): credential is MFA.PhoneCredential => MFA.isPhoneCredential(credential)
     )
@@ -154,19 +162,21 @@ const MainView = ({
                         {showIntro && <Intro>{requireMfaRegistration ? i18n('mfa.email.explain.required') :i18n('mfa.email.explain')}</Intro>}
                         <EmailRegisteringCredentialForm
                             handler={onEmailRegistering}
-                            onSuccess={(data: Awaited<ReturnType<typeof onEmailRegistering>>) => goTo<VerificationCodeViewState>('verification-code', {...data, registrationType: 'email'})}
+                            onSuccess={(data: StartMfaEmailRegistrationResponse) => goTo<VerificationCodeViewState>('verification-code', {...data, registrationType: 'email'})}
+                            onError={onError}
                         />
                     </div>
                 }
 
-                {config.mfaEmailEnabled && config.mfaSmsEnabled && !isPhoneCredentialRegistered && <Separator text={i18n('or')} />}
+                {config.mfaEmailEnabled && !isEmailCredentialRegistered && config.mfaSmsEnabled && !isPhoneCredentialRegistered && <Separator text={i18n('or')} />}
 
                 {config.mfaSmsEnabled && !isPhoneCredentialRegistered &&
                     <div>
                         {showIntro && <Intro>{i18n('mfa.phoneNumber.explain')}</Intro>}
-                        <PhoneNumberInputForm
+                        <PhoneNumberRegisteringCredentialForm
                             handler={onPhoneNumberRegistering}
-                            onSuccess={(data: Awaited<ReturnType<typeof onPhoneNumberRegistering>>) => goTo<VerificationCodeViewState>('verification-code', {...data, registrationType: 'sms'})}
+                            onSuccess={(data: StartMfaPhoneNumberRegistrationResponse) => goTo<VerificationCodeViewState>('verification-code', {...data, registrationType: 'sms'})}
+                            onError={onError}
                             phoneNumberOptions={phoneNumberOptions}
                         />
                     </div>
@@ -181,6 +191,7 @@ const MainView = ({
                         <EmailCredentialRemovalForm
                             handler={onEmailRemoval}
                             onSuccess={() => goTo<CredentialRemovedViewState>('credential-removed', { credentialType: 'email' })}
+                            onError={onError}
                         />
                     </div>
                 }
@@ -199,6 +210,7 @@ const MainView = ({
                         <PhoneNumberCredentialRemovalForm
                             handler={() => onPhoneNumberRemoval({ ...phoneNumberCredentialRegistered })}
                             onSuccess={() => goTo<CredentialRemovedViewState>('credential-removed', {credentialType: 'sms'})}
+                            onError={onError}
                         />
                     </div>
                 }
@@ -216,30 +228,50 @@ interface VerificationCodeViewProps {
      * Show the introduction text.
      */
     showIntro?: boolean
+    /**
+     * Callback function called when the request has succeed.
+     */
+    onSuccess?: OnSuccess
+    /**
+     * Callback function called when the request has failed.
+     */
+    onError?: OnError
 }
 
 type VerificationCodeViewState = 
     ({ registrationType: 'email' } & StartMfaEmailRegistrationResponse) | 
     ({ registrationType: 'sms' } & StartMfaPhoneNumberRegistrationResponse)
 
-const VerificationCodeView = ({ accessToken, showIntro = true }: VerificationCodeViewProps) => {
+const VerificationCodeView = ({
+    accessToken,
+    onError = (() => {}) as OnError,
+    onSuccess = (() => {}) as OnSuccess,
+    showIntro = true
+}: VerificationCodeViewProps) => {
     const coreClient = useReachfive()
     const i18n = useI18n()
     const { goTo, params } = useRouting()
     const { registrationType, status } = params as VerificationCodeViewState
 
     const onEmailCodeVerification = (data: VerificationCodeFormData) => {
-        return coreClient.verifyMfaEmailRegistration({
-            ...data,
-            accessToken
-        })
+        return coreClient
+            .verifyMfaEmailRegistration({
+                ...data,
+                accessToken
+            })
     }
 
     const onSmsCodeVerification = (data: VerificationCodeFormData) => {
-        return coreClient.verifyMfaPhoneNumberRegistration({
-            ...data,
-            accessToken
-        })
+        return coreClient
+            .verifyMfaPhoneNumberRegistration({
+                ...data,
+                accessToken
+            })
+    }
+
+    const onCredentialRegistered = () => {
+        onSuccess()
+        goTo<CredentialRegisteredViewState>('credential-registered', { registrationType })
     }
 
     if (showIntro && status === 'enabled') {
@@ -253,7 +285,8 @@ const VerificationCodeView = ({ accessToken, showIntro = true }: VerificationCod
             {status === 'email_sent' &&
                 <VerificationCodeForm
                     handler={onEmailCodeVerification}
-                    onSuccess={() => goTo<CredentialRegisteredViewState>('credential-registered', { registrationType })}
+                    onSuccess={onCredentialRegistered}
+                    onError={onError}
                 />
             }
 
@@ -261,7 +294,8 @@ const VerificationCodeView = ({ accessToken, showIntro = true }: VerificationCod
             {status === 'sms_sent' &&
                 <VerificationCodeForm
                     handler={onSmsCodeVerification}
-                    onSuccess={() => goTo<CredentialRegisteredViewState>('credential-registered', { registrationType })}
+                    onSuccess={onCredentialRegistered}
+                    onError={onError}
                 />
             }
         </div>
@@ -318,12 +352,13 @@ export default createMultiViewWidget<MfaCredentialsWidgetProps, MfaCredentialsPr
     },
     prepare: (options, { apiClient }) => {
         return apiClient.listMfaCredentials(options.accessToken)
-            .catch(error => {
-                throw UserError.fromAppError(error)
-            })
             .then(({ credentials }) => ({
                 ...options,
                 credentials,
             }))
+            .catch(error => {
+                options.onError?.(error)
+                throw UserError.fromAppError(error)
+            })
     }
 })

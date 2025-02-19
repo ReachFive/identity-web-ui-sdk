@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { AuthOptions, MFA, PasswordlessResponse } from '@reachfive/identity-core';
 import { PasswordlessParams } from '@reachfive/identity-core/es/main/oAuthClient';
 
-import { Prettify, RequiredProperty } from '../../types'
+import type { OnError, OnSuccess, Prettify, RequiredProperty } from '../../types'
 
 import {createMultiViewWidget} from '../../components/widget/widget';
 import {createForm} from '../../components/form/formComponent';
@@ -101,11 +101,26 @@ export interface MainViewProps {
      *
      * @default false
      */
-
     allowTrustDevice?: boolean
+    /**
+     * Callback function called when the request has succeed.
+     */
+    onSuccess?: OnSuccess
+    /**
+     * Callback function called when the request has failed.
+     */
+    onError?: OnError
 }
 
-export const MainView = ({ accessToken, auth, showIntro = true, showStepUpStart = true, allowTrustDevice = false }: MainViewProps) => {
+export const MainView = ({
+    accessToken,
+    auth,
+    onError = (() => {}) as OnSuccess,
+    onSuccess = (() => {}) as OnError,
+    showIntro = true,
+    showStepUpStart = true,
+    allowTrustDevice = false
+}: MainViewProps) => {
     const coreClient = useReachfive()
     const { goTo } = useRouting()
 
@@ -134,13 +149,23 @@ export const MainView = ({ accessToken, auth, showIntro = true, showStepUpStart 
         return (
             <StartStepUpMfaButton
                 handler={onGetStepUpToken}
-                onSuccess={(data: MFA.StepUpResponse) => goTo<FaSelectionViewState>('fa-selection', { ...data, allowTrustDevice})}
+                onSuccess={(data: MFA.StepUpResponse) => goTo<FaSelectionViewState>('fa-selection', { ...data, allowTrustDevice })}
+                onError={onError}
             />
         )
     }
 
     if (response) {
-        return <FaSelectionView {...response} showIntro={showIntro} auth={auth} allowTrustDevice={allowTrustDevice}/>
+        return (
+            <FaSelectionView
+                {...response}
+                showIntro={showIntro}
+                auth={auth}
+                allowTrustDevice={allowTrustDevice}
+                onError={onError}
+                onSuccess={onSuccess}
+            />
+        )
     }
 
     return null
@@ -154,6 +179,14 @@ export type FaSelectionViewProps = Prettify<Partial<MFA.StepUpResponse> & {
     showIntro?: boolean
     auth?: AuthOptions
     allowTrustDevice?: boolean
+    /**
+     * Callback function called when the request has succeed.
+     */
+    onSuccess?: OnSuccess
+    /**
+     * Callback function called when the request has failed.
+     */
+    onError?: OnError
 }>
 
  // Unlike single factor authentication, StepUp request always returns a challengeId
@@ -167,7 +200,11 @@ export const FaSelectionView = (props: FaSelectionViewProps) => {
     const { params } = useRouting()
     const state = params as FaSelectionViewState
 
-    const { amr, showIntro = true, token } = { ...props, ...state }
+    const {
+        amr, onError = (() => {}) as OnError,
+        showIntro = true,
+        token
+    } = { ...props, ...state }
 
     const [response, setResponse] = useState<StepUpHandlerResponse | undefined>()
 
@@ -194,6 +231,8 @@ export const FaSelectionView = (props: FaSelectionViewProps) => {
                 {...response}
                 auth={props.auth}
                 allowTrustDevice={props.allowTrustDevice}
+                onError={props.onError}
+                onSuccess={props.onSuccess}
             />
         )
     }
@@ -205,6 +244,7 @@ export const FaSelectionView = (props: FaSelectionViewProps) => {
                 <StartPasswordlessForm
                     options={amr.map(factor => ({key: factor, value: factor, label: factor}))}
                     handler={onChooseFa}
+                    onError={onError}
                 />
             </div>
         )
@@ -226,6 +266,14 @@ export type VerificationCodeViewProps = Prettify<Partial<StepUpHandlerResponse> 
      * @default false
      */
     allowTrustDevice?: boolean
+    /**
+     * Callback function called when the request has succeed.
+     */
+    onSuccess?: OnSuccess
+    /**
+     * Callback function called when the request has failed.
+     */
+    onError?: OnError
 }>
 
 export const VerificationCodeView = (props: VerificationCodeViewProps) => {
@@ -235,7 +283,14 @@ export const VerificationCodeView = (props: VerificationCodeViewProps) => {
     const { rbaEnabled } = useConfig()
     const state = params as VerificationCodeViewState
 
-    const { auth, authType, challengeId, allowTrustDevice } = { ...props, ...state }
+    const {
+        auth,
+        authType,
+        challengeId,
+        allowTrustDevice,
+        onError = (() => {}) as OnError,
+        onSuccess = (() => {}) as OnSuccess
+    } = { ...props, ...state }
 
     const handleSubmit = (data: VerificationCodeInputFormData) =>
         coreClient
@@ -244,14 +299,21 @@ export const VerificationCodeView = (props: VerificationCodeViewProps) => {
                 verificationCode: data.verificationCode,
                 trustDevice: data.trustDevice
             })
-            // @ts-expect-error AuthResult is too complex and is not representative of the real response of this request
-            .then(resp => window.location.replace( auth?.redirectUri + "?" + toQueryString(resp)))
+            .then(resp => {
+                onSuccess()
+                // @ts-expect-error AuthResult is too complex and is not representative of the real response of this request
+                window.location.replace( (auth?.redirectUri ?? '') + "?" + toQueryString(resp))
+            })
 
     return (
         <div>
             {authType === 'sms' && <Info>{i18n('passwordless.sms.verification.intro')}</Info>}
             {authType === 'email' && <Info>{i18n('passwordless.email.verification.intro')}</Info>}
-            <VerificationCodeInputForm allowTrustDevice={rbaEnabled && allowTrustDevice} handler={handleSubmit}/>
+            <VerificationCodeInputForm
+                allowTrustDevice={rbaEnabled && allowTrustDevice}
+                handler={handleSubmit}
+                onError={onError}
+            />
         </div>
     )
 }

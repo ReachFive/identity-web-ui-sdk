@@ -27,4 +27,4 @@ export type ProviderId = typeof providerKeys[number]
  * The widget’s initial screen.
  * @enum {('login' | 'login-with-web-authn' | 'signup' | 'forgot-password')}
  */
-export type InitialScreen = 'login' | 'login-with-web-authn' | 'signup' | 'forgot-password'
+export type InitialScreen = 'login' | 'login-with-web-authn' | 'signup' | 'signup-with-password' | 'signup-with-web-authn' | 'forgot-password'

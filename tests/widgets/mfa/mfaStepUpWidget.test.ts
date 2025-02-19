@@ -2,15 +2,41 @@
  * @jest-environment jsdom
  */
 
-import { afterEach, afterAll, beforeAll, describe, expect, jest, test } from '@jest/globals';
-import { findByText, render, screen, waitFor } from '@testing-library/react';
-import userEvent from "@testing-library/user-event";
-import '@testing-library/jest-dom'
+import { beforeEach, afterAll, beforeAll, describe, expect, jest, test } from '@jest/globals';
+import { render, screen, waitFor } from '@testing-library/react';
+import userEvent, { UserEvent } from '@testing-library/user-event'
+import '@testing-library/jest-dom/jest-globals'
 import 'jest-styled-components';
 
 import mfaStepUpWidget from '../../../src/widgets/stepUp/mfaStepUpWidget';
+import { Config } from '../../../src/types';
+import { I18nMessages } from '../../../src/core/i18n';
+import { Client } from '@reachfive/identity-core';
 
-const defaultConfig = { domain: 'local.reach5.net', language: 'fr' };
+const defaultConfig: Config = {
+    clientId: 'local',
+    domain: 'local.reach5.net',
+    sso: false,
+    sms: false,
+    webAuthn: false,
+    language: 'fr',
+    pkceEnforced: false,
+    isPublic: true,
+    socialProviders: ['facebook', 'google'],
+    customFields: [],
+    resourceBaseUrl: 'http://localhost',
+    mfaSmsEnabled: true,
+    mfaEmailEnabled: true,
+    rbaEnabled: false,
+    consentsVersions: {},
+    passwordPolicy: {
+        minLength: 8,
+        minStrength: 2,
+        allowUpdateWithAccessTokenOnly: true,
+    }
+};
+
+const defaultI18n: I18nMessages = {}
 
 const auth = {
     redirectUri: 'http://localhost/'
@@ -20,38 +46,56 @@ const myStepUpToken = 'myStepUpToken';
 const myChallengeId = 'myChallengeId';
 const myVerificationCode = '1234';
 
-const apiClient = {
-    getMfaStepUpToken: jest.fn(),
-    startPasswordless: jest.fn(),
-    verifyMfaPasswordless: jest.fn()
-};
-
 describe('DOM testing', () => {
     const { location } = window;
 
-    afterEach(() => {
-        apiClient.getMfaStepUpToken.mockClear();
-        apiClient.startPasswordless.mockClear();
-        apiClient.verifyMfaPasswordless.mockClear();
-        window.location.replace.mockClear();
+    const replaceMock = jest.fn()
+
+    const getMfaStepUpToken = jest.fn<Client['getMfaStepUpToken']>()
+    const startPasswordless = jest.fn<Client['startPasswordless']>()
+    const verifyMfaPasswordless = jest.fn<Client['verifyMfaPasswordless']>()
+
+    const onError = jest.fn()
+    const onSuccess = jest.fn()
+
+    beforeEach(() => {
+        replaceMock.mockClear();
+        onError.mockClear()
+        onSuccess.mockClear()
+        getMfaStepUpToken.mockClear()
+        startPasswordless.mockClear()
+        verifyMfaPasswordless.mockClear()
     })
 
     beforeAll(() => {
-        delete window.location;
-        window.location = { replace: jest.fn() };
+        Object.defineProperty(window, 'location', {
+            value: {
+                replace: replaceMock
+            },
+            writable: true
+        });
     })
 
     afterAll(() => {
         window.location = location;
     })
 
-    const generateComponent = async (options = {}, config = defaultConfig) => {
-        const result = await mfaStepUpWidget(options, { config, apiClient });
-        return await waitFor(async () => render(result));
+    const generateComponent = async (
+        options: Partial<Parameters<typeof mfaStepUpWidget>[0]>,
+        config: Partial<Config> = {},
+    ) => {
+        // @ts-expect-error partial Client
+        const apiClient: Client = {
+            getMfaStepUpToken,
+            startPasswordless,
+            verifyMfaPasswordless,
+        }
+        const result = await mfaStepUpWidget({ onError, onSuccess, ...options }, { apiClient,config: { ...defaultConfig, ...config }, defaultI18n });
+        return render(result);
     };
 
-    const assertStepUpWorkflow = async (user, amr) => {
-        expect(apiClient.getMfaStepUpToken).toHaveBeenCalledTimes(1)
+    const assertStepUpWorkflow = async (user: UserEvent, amr: string[]) => {
+        expect(getMfaStepUpToken).toHaveBeenCalledTimes(1);
 
         // When more than one amr options, display radio input selector
         if (amr.length > 1) {
@@ -64,7 +108,7 @@ describe('DOM testing', () => {
         }
 
         await waitFor(async () => {
-            expect(apiClient.startPasswordless).toHaveBeenNthCalledWith(1,
+            expect(startPasswordless).toHaveBeenNthCalledWith(1,
                 expect.objectContaining({
                     authType: 'sms',
                     stepUp: myStepUpToken,
@@ -84,12 +128,15 @@ describe('DOM testing', () => {
         await user.type(input, myVerificationCode);
         await user.click(submitBtn);
 
-        await waitFor(() => expect(apiClient.verifyMfaPasswordless).toHaveBeenNthCalledWith(1,
+        await waitFor(() => expect(verifyMfaPasswordless).toHaveBeenNthCalledWith(1,
             expect.objectContaining({
                 challengeId: expect.stringMatching(myChallengeId),
                 verificationCode: expect.stringMatching(myVerificationCode),
             })
         ))
+
+        expect(onSuccess).toBeCalled()
+        expect(onError).not.toBeCalled()
 
         await waitFor(() => expect(window.location.replace).toHaveBeenCalledWith(
             expect.stringContaining(auth.redirectUri)
@@ -99,18 +146,18 @@ describe('DOM testing', () => {
     describe('with single amr (sms)', () => {
 
         beforeAll(() => {
-            apiClient.getMfaStepUpToken.mockResolvedValue({
+            getMfaStepUpToken.mockResolvedValue({
                 amr: ['sms'],
                 token: myStepUpToken,
             })
-            apiClient.startPasswordless.mockResolvedValue({
+            startPasswordless.mockResolvedValue({
                 challengeId: myChallengeId,
             }),
-            apiClient.verifyMfaPasswordless.mockResolvedValue({})
+            verifyMfaPasswordless.mockResolvedValue({})
         })
 
         test('showStepUpStart: true', async () => {
-            expect.assertions(9);
+            expect.assertions(11);
 
             const user = userEvent.setup()
 
@@ -129,7 +176,7 @@ describe('DOM testing', () => {
         })
 
         test('showStepUpStart: false', async () => {
-            expect.assertions(9);
+            expect.assertions(12);
 
             const user = userEvent.setup()
 
@@ -149,18 +196,18 @@ describe('DOM testing', () => {
     describe('with multiple amr', () => {
         
         beforeAll(() => {
-            apiClient.getMfaStepUpToken.mockResolvedValue({
+            getMfaStepUpToken.mockResolvedValue({
                 amr: ['email', 'sms'],
                 token: myStepUpToken,
             })
-            apiClient.startPasswordless.mockResolvedValue({
+            startPasswordless.mockResolvedValue({
                 challengeId: myChallengeId,
             }),
-            apiClient.verifyMfaPasswordless.mockResolvedValue({})
+            verifyMfaPasswordless.mockResolvedValue({})
         })
         
         test('showStepUpStart: false', async () => {
-            expect.assertions(12);
+            expect.assertions(14);
 
             const user = userEvent.setup()
 

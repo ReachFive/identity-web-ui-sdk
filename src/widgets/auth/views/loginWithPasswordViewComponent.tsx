@@ -19,6 +19,8 @@ import { useRouting } from '../../../contexts/routing';
 import { specializeIdentifierData } from '../../../helpers/utils';
 import { FaSelectionViewState } from '../../stepUp/mfaStepUpWidget';
 
+import type { OnError, OnSuccess } from '../../../types';
+
 const ResetCredentialWrapper = styled.div<{ floating?: boolean }>`
     margin-bottom: ${props => props.theme.spacing}px;
     text-align: right;
@@ -102,6 +104,14 @@ export interface LoginWithPasswordViewProps {
     showLabels?: boolean
     showRememberMe?: boolean
     allowTrustDevice?: boolean
+    /**
+     * Callback function called when the request has succeed.
+     */
+    onSuccess?: OnSuccess
+    /**
+     * Callback function called when the request has failed.
+     */
+    onError?: OnError
 }
 
 export type LoginWithPasswordViewState = {
@@ -117,7 +127,9 @@ export const LoginWithPasswordView = ({
     recaptcha_site_key,
     showLabels,
     showRememberMe,
-    allowTrustDevice
+    allowTrustDevice,
+    onError = (() => {}) as OnError,
+    onSuccess = (() => {}) as OnSuccess,
 }: LoginWithPasswordViewProps) => {
     const i18n = useI18n()
     const coreClient = useReachfive()
@@ -152,6 +164,8 @@ export const LoginWithPasswordView = ({
                 showAccountRecovery={allowAccountRecovery}
                 canShowPassword={canShowPassword}
                 handler={(data: LoginWithPasswordFormData) => ReCaptcha.handle(data, { recaptcha_enabled, recaptcha_site_key }, callback, "login")}
+                onSuccess={onSuccess}
+                onError={onError}
             />
             <Alternative>
                 <Link target="login-with-web-authn">{i18n('login.password.userAnotherIdentifier')}</Link>

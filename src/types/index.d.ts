@@ -23,3 +23,7 @@ type ConsentsVersions = { consentsVersions: Record<string, ConsentVersions> }
 type CustomFields = { customFields?: CustomField[] }
 
 export type Config = CoreConfig & RemoteSettings & ConsentsVersions & CustomFields
+
+export type OnSuccess = (...args: any[]) => void
+
+export type OnError = (error?: unknown) => void

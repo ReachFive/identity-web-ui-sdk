@@ -11,6 +11,8 @@ import { snakeCaseProperties } from '../../../helpers/transformObjectProperties'
 import { useI18n } from '../../../contexts/i18n';
 import { useConfig } from '../../../contexts/config';
 
+import type { OnError, OnSuccess } from '../../../types';
+
 type SignupFormData = Parameters<CoreClient['signupWithWebAuthn']>[0]['profile'] & { friendlyName?: string }
 
 const SignupForm = createForm({
@@ -56,6 +58,14 @@ export interface SignupWithWebAuthnViewProps {
     signupFields?: (string | Field)[]
     /**  */
     userAgreement?: string
+    /**
+     * Callback function called when the request has succeed.
+     */
+    onSuccess?: OnSuccess
+    /**
+     * Callback function called when the request has failed.
+     */
+    onError?: OnError
 }
 
 export const SignupWithWebAuthnView = ({
@@ -70,6 +80,8 @@ export const SignupWithWebAuthnView = ({
     ],
     showLabels = false,
     userAgreement,
+    onError = (() => {}) as OnError,
+    onSuccess = (() => {}) as OnSuccess,
 }: SignupWithWebAuthnViewProps) => {
     const coreClient = useReachfive()
     const config = useConfig()
@@ -108,7 +120,10 @@ export const SignupWithWebAuthnView = ({
                 fields={allFields}
                 showLabels={showLabels}
                 beforeSubmit={beforeSignup}
-                handler={handleSignup} />
+                handler={handleSignup}
+                onSuccess={onSuccess}
+                onError={onError}
+            />
             <Alternative>
                 <Link target={'signup'}>{i18n('back')}</Link>
             </Alternative>

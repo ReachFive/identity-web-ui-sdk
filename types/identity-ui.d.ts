@@ -1,6 +1,6 @@
 /**
  * @reachfive/identity-ui - v1.32.2
- * Compiled Tue, 11 Feb 2025 18:05:42 UTC
+ * Compiled Tue, 18 Feb 2025 15:01:57 UTC
  *
  * Copyright (c) ReachFive.
  *
@@ -222,11 +222,12 @@ interface Theme extends BaseTheme {
 }
 
 type I18nMessages = Record<string, string>;
+type I18nNestedMessages = Record<string, string | I18nMessages>;
 type I18nMessageParams = Record<string, unknown>;
 type I18nResolver = (key: string, params?: I18nMessageParams, fallback?: (params?: I18nMessageParams) => string) => string;
 
 type I18nProps$1 = {
-    i18n?: I18nMessages;
+    i18n?: I18nNestedMessages;
 };
 type ThemeProps = {
     theme?: ThemeOptions;
@@ -670,6 +671,14 @@ type LoginViewProps = {
      * @default false
      */
     allowTrustDevice?: boolean;
+    /**
+     * Callback function called when the request has succeed.
+     */
+    onSuccess?: OnSuccess;
+    /**
+     * Callback function called when the request has failed.
+     */
+    onError?: OnError;
 };
 
 interface LoginWithWebAuthnViewProps {
@@ -703,6 +712,14 @@ interface LoginWithWebAuthnViewProps {
      */
     socialProviders?: string[];
     allowAccountRecovery?: boolean;
+    /**
+     * Callback function called when the request has succeed.
+     */
+    onSuccess?: OnSuccess;
+    /**
+     * Callback function called when the request has failed.
+     */
+    onError?: OnError;
 }
 
 interface LoginWithPasswordViewProps {
@@ -715,6 +732,14 @@ interface LoginWithPasswordViewProps {
     showLabels?: boolean;
     showRememberMe?: boolean;
     allowTrustDevice?: boolean;
+    /**
+     * Callback function called when the request has succeed.
+     */
+    onSuccess?: OnSuccess;
+    /**
+     * Callback function called when the request has failed.
+     */
+    onError?: OnError;
 }
 
 interface PasswordSignupFormProps {
@@ -729,6 +754,14 @@ interface PasswordSignupFormProps {
     showLabels?: boolean;
     signupFields?: (string | Field)[];
     userAgreement?: string;
+    /**
+     * Callback function called when the request has succeed.
+     */
+    onSuccess?: OnSuccess;
+    /**
+     * Callback function called when the request has failed.
+     */
+    onError?: OnError;
 }
 
 interface SignupWithPasswordViewProps extends PasswordSignupFormProps {
@@ -772,13 +805,21 @@ interface SignupWithWebAuthnViewProps {
     signupFields?: (string | Field)[];
     /**  */
     userAgreement?: string;
+    /**
+     * Callback function called when the request has succeed.
+     */
+    onSuccess?: OnSuccess;
+    /**
+     * Callback function called when the request has failed.
+     */
+    onError?: OnError;
 }
 
 /**
  * The widget’s initial screen.
  * @enum {('login' | 'login-with-web-authn' | 'signup' | 'forgot-password')}
  */
-type InitialScreen = 'login' | 'login-with-web-authn' | 'signup' | 'forgot-password';
+type InitialScreen = 'login' | 'login-with-web-authn' | 'signup' | 'signup-with-password' | 'signup-with-web-authn' | 'forgot-password';
 
 interface SignupViewProps extends SignupWithPasswordViewProps, SignupWithWebAuthnViewProps {
     /**
@@ -813,6 +854,14 @@ interface SignupViewProps extends SignupWithPasswordViewProps, SignupWithWebAuth
      * Phone number field options.
      */
     phoneNumberOptions?: PhoneNumberOptions;
+    /**
+     * Callback function called when the request has succeed.
+     */
+    onSuccess?: OnSuccess;
+    /**
+     * Callback function called when the request has failed.
+     */
+    onError?: OnError;
 }
 
 interface ForgotPasswordViewProps {
@@ -871,6 +920,14 @@ interface ForgotPasswordViewProps {
      * Important: This parameter should only be used with Hosted Pages.
      */
     returnToAfterPasswordReset?: string;
+    /**
+     * Callback function called when the request has succeed.
+     */
+    onSuccess?: OnSuccess;
+    /**
+     * Callback function called when the request has failed.
+     */
+    onError?: OnError;
 }
 
 interface QuickLoginViewProps {
@@ -885,6 +942,14 @@ interface QuickLoginViewProps {
      * List of authentication options
      */
     auth?: AuthOptions;
+    /**
+     * Callback function called when the request has succeed.
+     */
+    onSuccess?: OnSuccess;
+    /**
+     * Callback function called when the request has failed.
+     */
+    onError?: OnError;
 }
 
 interface ReauthViewProps {
@@ -911,6 +976,14 @@ interface ReauthViewProps {
      * Tip: If you pass an empty array, social providers will not be displayed.
      */
     socialProviders?: string[];
+    /**
+     * Callback function called when the request has succeed.
+     */
+    onSuccess?: OnSuccess;
+    /**
+     * Callback function called when the request has failed.
+     */
+    onError?: OnError;
 }
 
 type StartPasswordlessFormData = {
@@ -947,6 +1020,14 @@ interface MainViewProps$6 {
      * @default false
      */
     allowTrustDevice?: boolean;
+    /**
+     * Callback function called when the request has succeed.
+     */
+    onSuccess?: OnSuccess;
+    /**
+     * Callback function called when the request has failed.
+     */
+    onError?: OnError;
 }
 type FaSelectionViewState = MFA.StepUpResponse & {
     allowTrustDevice?: boolean;
@@ -955,6 +1036,14 @@ type FaSelectionViewProps = Prettify<Partial<MFA.StepUpResponse> & {
     showIntro?: boolean;
     auth?: AuthOptions;
     allowTrustDevice?: boolean;
+    /**
+     * Callback function called when the request has succeed.
+     */
+    onSuccess?: OnSuccess;
+    /**
+     * Callback function called when the request has failed.
+     */
+    onError?: OnError;
 }>;
 type StepUpResponse = RequiredProperty<PasswordlessResponse, 'challengeId'>;
 type StepUpHandlerResponse = StepUpResponse & StartPasswordlessFormData;
@@ -970,6 +1059,14 @@ type VerificationCodeViewProps$3 = Prettify<Partial<StepUpHandlerResponse> & {
      * @default false
      */
     allowTrustDevice?: boolean;
+    /**
+     * Callback function called when the request has succeed.
+     */
+    onSuccess?: OnSuccess;
+    /**
+     * Callback function called when the request has failed.
+     */
+    onError?: OnError;
 }>;
 type MfaStepUpProps = MainViewProps$6 & FaSelectionViewProps & VerificationCodeViewProps$3;
 type MfaStepUpWidgetProps = MfaStepUpProps;
@@ -1017,6 +1114,14 @@ interface MainViewProps$5 {
      * @default false
      */
     showLabels?: boolean;
+    /**
+     * Callback function called when the request has succeed.
+     */
+    onSuccess?: OnSuccess;
+    /**
+     * Callback function called when the request has failed.
+     */
+    onError?: OnError;
 }
 interface EmailEditorWidgetProps extends MainViewProps$5 {
 }
@@ -1052,14 +1157,13 @@ interface PasswordEditorProps extends PasswordEditorFormProps {
      */
     showLabels?: boolean;
     /**
+     * Callback function called when the request has succeed.
+     */
+    onSuccess?: OnSuccess;
+    /**
      * Callback function called when the request has failed.
      */
-    onSuccess?: () => void;
-    /**
-     * Callback function called after the widget has been successfully loaded and rendered inside the container.
-     * The callback is called with the widget instance.
-     */
-    onError?: () => void;
+    onError?: OnError;
 }
 type Authentication = {
     accessToken: string;
@@ -1083,6 +1187,10 @@ interface MainViewProps$4 {
      * Phone number field options.
      */
     phoneNumberOptions?: PhoneNumberOptions;
+    /**
+     * Callback function called when the request has failed.
+     */
+    onError?: OnError;
 }
 type VerificationCodeViewProps$2 = {
     /**
@@ -1090,14 +1198,13 @@ type VerificationCodeViewProps$2 = {
      */
     accessToken: string;
     /**
+     * Callback function called when the request has succeed.
+     */
+    onSuccess?: OnSuccess;
+    /**
      * Callback function called when the request has failed.
      */
-    onSuccess?: () => void;
-    /**
-     * Callback function called after the widget has been successfully loaded and rendered inside the container.
-     * The callback is called with the widget instance.
-     */
-    onError?: () => void;
+    onError?: OnError;
 };
 type PhoneNumberEditorWidgetProps = Prettify<MainViewProps$4 & VerificationCodeViewProps$2>;
 
@@ -1108,14 +1215,13 @@ interface MainViewProps$3 {
      */
     canShowPassword?: boolean;
     /**
+     * Callback function called when the request has succeed.
+     */
+    onSuccess?: OnSuccess;
+    /**
      * Callback function called when the request has failed.
      */
-    onSuccess?: () => void;
-    /**
-     * Callback function called after the widget has been successfully loaded and rendered inside the container.
-     * The callback is called with the widget instance.
-     */
-    onError?: () => void;
+    onError?: OnError;
     /**
      * Whether the form fields' labels are displayed on the form view.
      * @default false
@@ -1167,6 +1273,14 @@ interface MainViewProps$2 {
      * Phone number field options.
      */
     phoneNumberOptions?: PhoneNumberOptions;
+    /**
+     * Callback function called when the request has succeed.
+     */
+    onSuccess?: OnSuccess;
+    /**
+     * Callback function called when the request has failed.
+     */
+    onError?: OnError;
 }
 interface VerificationCodeViewProps$1 {
     /**
@@ -1183,6 +1297,14 @@ interface VerificationCodeViewProps$1 {
      * This must be paired with the appropriate secret key that you received when setting up reCAPTCHA.
      */
     recaptcha_site_key?: string;
+    /**
+     * Callback function called when the request has succeed.
+     */
+    onSuccess?: OnSuccess;
+    /**
+     * Callback function called when the request has failed.
+     */
+    onError?: OnError;
 }
 type PasswordlessWidgetProps = Prettify<MainViewProps$2 & VerificationCodeViewProps$1>;
 
@@ -1195,14 +1317,13 @@ interface ProfileEditorProps {
      */
     accessToken: string;
     /**
+     * Callback function called when the request has succeed.
+     */
+    onSuccess?: OnSuccess;
+    /**
      * Callback function called when the request has failed.
      */
-    onSuccess?: () => void;
-    /**
-     * Callback function called after the widget has been successfully loaded and rendered inside the container.
-     * The callback is called with the widget instance.
-     */
-    onError?: () => void;
+    onError?: OnError;
     /**
      * Phone number field options.
      */
@@ -1256,9 +1377,17 @@ interface SocialAccountsWidgetProps {
      * Tip: If you pass an empty array, social providers will not be displayed.
      * */
     providers?: string[];
+    /**
+     * Callback function called when the request has succeed.
+     */
+    onSuccess?: OnSuccess;
+    /**
+     * Callback function called when the request has failed.
+     */
+    onError?: OnError;
 }
 
-interface SocialLoginWidgetProps {
+interface SocialButtonsProps {
     /**
      * @deprecated
      */
@@ -1272,7 +1401,24 @@ interface SocialLoginWidgetProps {
      *
      * Tip: If you pass an empty array, social providers will not be displayed.
      * */
-    socialProviders?: string[];
+    providers: string[];
+    /**
+     * Callback function called when the request has succeed.
+     */
+    onSuccess?: OnSuccess;
+    /**
+     * Callback function called when the request has failed.
+     */
+    onError?: OnError;
+}
+
+interface SocialLoginWidgetProps extends Omit<SocialButtonsProps, 'providers'> {
+    /**
+     * Lists the available social providers. This is an array of strings.
+     *
+     * Tip: If you pass an empty array, social providers will not be displayed.
+     * */
+    socialProviders?: SocialButtonsProps['providers'];
 }
 
 interface WebAuthnDevicesProps {
@@ -1290,6 +1436,14 @@ interface WebAuthnDevicesProps {
      * @default false
      */
     showLabels?: boolean;
+    /**
+     * Callback function called when the request has succeed.
+     */
+    onSuccess?: OnSuccess;
+    /**
+     * Callback function called when the request has failed.
+     */
+    onError?: OnError;
 }
 type WebAuthnWidgetProps = Omit<WebAuthnDevicesProps, 'devices'>;
 
@@ -1324,6 +1478,10 @@ interface MainViewProps$1 {
      * Phone number field options.
      */
     phoneNumberOptions?: PhoneNumberOptions;
+    /**
+     * Callback function called when the request has failed.
+     */
+    onError?: OnError;
 }
 interface VerificationCodeViewProps {
     /**
@@ -1334,6 +1492,14 @@ interface VerificationCodeViewProps {
      * Show the introduction text.
      */
     showIntro?: boolean;
+    /**
+     * Callback function called when the request has succeed.
+     */
+    onSuccess?: OnSuccess;
+    /**
+     * Callback function called when the request has failed.
+     */
+    onError?: OnError;
 }
 interface CredentialRegisteredViewProps {
 }
@@ -1346,6 +1512,14 @@ type MfaListWidgetProps = {
     * The authorization credential JSON Web Token (JWT) used to access the ReachFive API, less than five minutes old.
     */
     accessToken: string;
+    /**
+     * Callback function called when the request has succeed.
+     */
+    onSuccess?: OnSuccess;
+    /**
+     * Callback function called when the request has failed.
+     */
+    onError?: OnError;
 };
 
 interface MainViewProps {
@@ -1355,14 +1529,13 @@ interface MainViewProps {
      */
     allowCreatePassword?: boolean;
     /**
+     * Callback function called when the request has succeed.
+     */
+    onSuccess?: OnSuccess;
+    /**
      * Callback function called when the request has failed.
      */
-    onSuccess?: () => void;
-    /**
-     * Callback function called after the widget has been successfully loaded and rendered inside the container.
-     * The callback is called with the widget instance.
-     */
-    onError?: () => void;
+    onError?: OnError;
     /**
      * Whether the form fields' labels are displayed on the form view.
      * @default false

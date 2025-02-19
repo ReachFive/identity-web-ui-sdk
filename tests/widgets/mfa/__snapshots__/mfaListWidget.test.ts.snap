@@ -80,75 +80,71 @@ exports[`Snapshot basic 1`] = `
   white-space: initial;
 }
 
-<div
-  className="c0"
->
-  <div>
-    <div
-      className="c1 c2"
-    >
-      <svg
-        className="c3"
-      />
+<div>
+  <div
+    class="c0"
+  >
+    <div>
       <div
-        className="c4"
+        class="c1 c2"
+        data-testid="credential"
       >
+        <svg
+          class="c3"
+        />
         <div
-          style={
-            {
-              "fontWeight": "bold",
-            }
-          }
+          class="c4"
         >
-          identifier
-        </div>
-        <div>
-          33612345678
-        </div>
-        <div>
-          <span>
-            mfaList.createdAt
-             : 
-          </span>
-          <time
-            dateTime="2022-09-21"
+          <div
+            style="font-weight: bold;"
           >
-            21/09/2022
-          </time>
+            identifier
+          </div>
+          <div>
+            33612345678
+          </div>
+          <div>
+            <span>
+              mfaList.createdAt
+               : 
+            </span>
+            <time
+              datetime="2022-09-21"
+            >
+              21/09/2022
+            </time>
+          </div>
         </div>
       </div>
-    </div>
-    <div
-      className="c1 c2"
-    >
-      <svg
-        className="c5"
-      />
       <div
-        className="c4"
+        class="c1 c2"
+        data-testid="credential"
       >
+        <svg
+          class="c5"
+        />
         <div
-          style={
-            {
-              "fontWeight": "bold",
-            }
-          }
+          class="c4"
         >
-          identifier
-        </div>
-        <div>
-          root@reach5.co
-        </div>
-        <div>
-          <span>
-            mfaList.createdAt
-             : 
-          </span>
-          <time
-            dateTime="2022-09-21"
+          <div
+            style="font-weight: bold;"
           >
-            21/09/2022
-          </time>
+            identifier
+          </div>
+          <div>
+            root@reach5.co
+          </div>
+          <div>
+            <span>
+              mfaList.createdAt
+               : 
+            </span>
+            <time
+              datetime="2022-09-21"
+            >
+              21/09/2022
+            </time>
+          </div>
         </div>
       </div>
     </div>
@@ -180,14 +176,16 @@ exports[`Snapshot empty 1`] = `
   margin: 0 auto;
 }
 
-<div
-  className="c0"
->
-  <div>
-    <div
-      className="c1 c2"
-    >
-      mfaList.noCredentials
+<div>
+  <div
+    class="c0"
+  >
+    <div>
+      <div
+        class="c1 c2"
+      >
+        mfaList.noCredentials
+      </div>
     </div>
   </div>
 </div>
