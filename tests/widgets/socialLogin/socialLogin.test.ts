@@ -2,9 +2,9 @@
  * @jest-environment jsdom
  */
 
-import { describe, expect, test } from '@jest/globals';
-import renderer from 'react-test-renderer';
-import { render, screen } from '@testing-library/react';
+import { beforeEach, describe, expect, jest, test } from '@jest/globals';
+import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event'
 import '@testing-library/jest-dom/jest-globals'
 import 'jest-styled-components';
 
@@ -36,41 +36,72 @@ const defaultConfig: Config = {
         minLength: 8,
         minStrength: 2,
         allowUpdateWithAccessTokenOnly: true,
-    },
+    }
 };
 
 const defaultI18n: I18nMessages = {}
 
 describe('Snapshot', () => {
-    const generateSnapshot = (options: Parameters<typeof socialLoginWidget>[0] = {}, config: Config = defaultConfig) => () => {
-        const apiClient = {} as Client;
 
-        const tree = socialLoginWidget(options, { config, apiClient, defaultI18n })
-            .then(result => renderer.create(result).toJSON());
+    const generateSnapshot = (options: Parameters<typeof socialLoginWidget>[0] = {}, config: Partial<Config> = {}) => async () => {
+        // @ts-expect-error partial Client
+        const apiClient: Client = {}
 
-        expect(tree).resolves.toMatchSnapshot();
+        const widget = await socialLoginWidget(options, {config: { ...defaultConfig, ...config }, apiClient, defaultI18n })
+        
+        await waitFor(async () => {
+            const { container } = await render(widget);
+            expect(container).toMatchSnapshot();
+        })
     };
 
     describe('social login', () => {
-        test('basic',
-            generateSnapshot()
-        );
+        test('basic', generateSnapshot());
     });
 })
 
 describe('DOM testing', () => {
-    const generateComponent = async (options: Parameters<typeof socialLoginWidget>[0] = {}, config: Config = defaultConfig) => {
-        const result = await socialLoginWidget(options, { config, apiClient: {} as Client, defaultI18n });
+    const loginWithSocialProvider = jest.fn<Client['loginWithSocialProvider']>()
+
+    const onError = jest.fn()
+    const onSuccess = jest.fn()
+    
+    beforeEach(() => {
+        loginWithSocialProvider.mockClear()
+        onError.mockClear()
+        onSuccess.mockClear()
+    })
+
+    const generateComponent = async (options: Parameters<typeof socialLoginWidget>[0] = {}, config: Partial<Config> = {}) => {
+        // @ts-expect-error partial Client
+        const apiClient: Client = {
+            loginWithSocialProvider
+        }
+
+        const result = await socialLoginWidget({ onError, onSuccess, ...options }, {config: { ...defaultConfig, ...config }, apiClient, defaultI18n });
 
         return render(result);
     };
 
     test('basic', async () => {
+        const user = userEvent.setup()
+
+        loginWithSocialProvider.mockResolvedValue({})
+
         await generateComponent({});
 
         defaultConfig.socialProviders.forEach((provider) => {
             expect(screen.queryByTitle(providers[provider as ProviderId].name)).toBeInTheDocument()
         })
+
+        const provider = defaultConfig.socialProviders[0] as ProviderId
+        const button = screen.getByTitle(providers[provider].name)
+        await user.click(button)
+
+        expect(loginWithSocialProvider).toBeCalledWith(provider, undefined)
+
+        expect(onSuccess).toBeCalled()
+        expect(onError).not.toBeCalled()
     })
 
     test('themed', async () => {
@@ -83,5 +114,27 @@ describe('DOM testing', () => {
         defaultConfig.socialProviders.forEach((provider) => {
             expect(screen.queryByTitle(providers[provider as ProviderId].name)).toBeInTheDocument()
         })
+    })
+
+    test('login with social failure', async () => {
+        const user = userEvent.setup()
+
+        const error = { error: 'Unexpected error' }
+        loginWithSocialProvider.mockRejectedValue(error)
+
+        await generateComponent({});
+
+        defaultConfig.socialProviders.forEach((provider) => {
+            expect(screen.queryByTitle(providers[provider as ProviderId].name)).toBeInTheDocument()
+        })
+
+        const provider = defaultConfig.socialProviders[0] as ProviderId
+        const button = screen.getByTitle(providers[provider].name)
+        await user.click(button)
+
+        expect(loginWithSocialProvider).toBeCalledWith(provider, undefined)
+
+        expect(onSuccess).not.toBeCalled()
+        expect(onError).toBeCalledWith(error)
     })
 })

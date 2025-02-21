@@ -1,5 +1,6 @@
 import React, { useCallback } from 'react';
 import type { AuthOptions, LoginWithWebAuthnParams } from '@reachfive/identity-core'
+import styled from 'styled-components'
 
 import { LoginWithPasswordViewState } from './loginWithPasswordViewComponent';
 import { Alternative, Heading, Link, Separator } from '../../../components/miscComponent';
@@ -14,7 +15,8 @@ import { useRouting } from '../../../contexts/routing';
 import { useSession } from '../../../contexts/session';
 
 import { isCustomIdentifier, specializeIdentifierData } from '../../../helpers/utils';
-import styled from 'styled-components'
+
+import type { OnError, OnSuccess } from '../../../types';
 
 type LoginWithWebAuthnFormData = { identifier: string } | { email: string }
 
@@ -91,9 +93,28 @@ export interface LoginWithWebAuthnViewProps {
     socialProviders?: string[]
 
     allowAccountRecovery?: boolean
+
+    /**
+     * Callback function called when the request has succeed.
+     */
+    onSuccess?: OnSuccess
+    /**
+     * Callback function called when the request has failed.
+     */
+    onError?: OnError
 }
 
-export const LoginWithWebAuthnView = ({ acceptTos, allowSignup = true, auth, enablePasswordAuthentication = true, showLabels = false, socialProviders, allowAccountRecovery }: LoginWithWebAuthnViewProps) => {
+export const LoginWithWebAuthnView = ({
+    acceptTos,
+    allowSignup = true,
+    auth,
+    enablePasswordAuthentication = true,
+    showLabels = false,
+    socialProviders,
+    allowAccountRecovery,
+    onError = (() => {}) as OnError,
+    onSuccess = (() => {}) as OnSuccess,
+}: LoginWithWebAuthnViewProps) => {
     const coreClient = useReachfive()
     const { goTo } = useRouting()
     const i18n = useI18n()
@@ -103,13 +124,15 @@ export const LoginWithWebAuthnView = ({ acceptTos, allowSignup = true, auth, ena
     const controller = new AbortController();
     const signal = controller.signal;
     React.useEffect(() => {
-        coreClient.loginWithWebAuthn({
-            conditionalMediation: 'preferred',
-            auth: {
-                ...auth
-            },
-            signal: signal
-        }).catch(() => undefined)
+        coreClient
+            .loginWithWebAuthn({
+                conditionalMediation: 'preferred',
+                auth: {
+                    ...auth
+                },
+                signal: signal
+            })
+            .catch(onError)
     }, [coreClient, auth, signal])
 
 
@@ -156,6 +179,8 @@ export const LoginWithWebAuthnView = ({ acceptTos, allowSignup = true, auth, ena
                 showLabels={showLabels}
                 defaultIdentifier={defaultIdentifier}
                 handler={handleWebAuthnLogin}
+                onSuccess={onSuccess}
+                onError={onError}
                 showAccountRecovery={allowAccountRecovery}
                 SubmitComponent={({ disabled, onClick }) => (
                     <WebAuthnLoginViewButtons

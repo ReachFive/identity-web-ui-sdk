@@ -21,6 +21,8 @@ import { DefaultButton } from '../../../components/form/buttonComponent.tsx';
 import { Validator } from '../../../core/validation.ts';
 import { useConfig } from '../../../contexts/config.tsx';
 
+import type { OnError, OnSuccess } from '../../../types';
+
 type EmailIdentifier = { email: string }
 type PhoneNumberIdentifier = { phoneNumber: string }
 
@@ -159,6 +161,14 @@ export interface ForgotPasswordViewProps {
      * Important: This parameter should only be used with Hosted Pages.
      */
     returnToAfterPasswordReset?: string,
+    /**
+     * Callback function called when the request has succeed.
+     */
+    onSuccess?: OnSuccess
+    /**
+     * Callback function called when the request has failed.
+     */
+    onError?: OnError
 }
 
 export const ForgotPasswordView = ({
@@ -172,6 +182,8 @@ export const ForgotPasswordView = ({
     recaptcha_site_key,
     redirectUrl,
     returnToAfterPasswordReset,
+    onError = (() => {}) as OnError,
+    onSuccess = (() => {}) as OnSuccess,
 }: ForgotPasswordViewProps) => {
     const coreClient = useReachfive()
     const config = useConfig()
@@ -190,8 +202,6 @@ export const ForgotPasswordView = ({
         [coreClient, recaptcha_enabled, recaptcha_site_key, redirectUrl, returnToAfterPasswordReset]
     )
 
-    const onSuccess = () => goTo('forgot-password-success')
-
     useLayoutEffect(() => {
         importGoogleRecaptchaScript(recaptcha_site_key)
     }, [recaptcha_site_key])
@@ -203,7 +213,11 @@ export const ForgotPasswordView = ({
             <ForgotPasswordEmailForm
                 showLabels={showLabels}
                 handler={callback}
-                onSuccess={onSuccess}
+                onSuccess={() => {
+                    onSuccess()
+                    goTo('forgot-password-success')
+                }}
+                onError={onError}
                 skipError={displaySafeErrorMessage && skipError}
             />
             {allowPhoneNumberResetPassword && config.sms && (
@@ -231,6 +245,7 @@ export const ForgotPasswordPhoneNumberView = ({
     recaptcha_site_key,
     redirectUrl,
     returnToAfterPasswordReset,
+    onError = (() => {}) as OnError,
 }: ForgotPasswordViewProps) => {
     const coreClient = useReachfive()
     const { goTo } = useRouting()
@@ -265,6 +280,7 @@ export const ForgotPasswordPhoneNumberView = ({
                 showLabels={showLabels}
                 handler={callback}
                 onSuccess={onSuccess}
+                onError={onError}
                 skipError={displaySafeErrorMessage && skipError}
                 phoneNumberOptions={phoneNumberOptions}
             />
@@ -285,7 +301,9 @@ export const ForgotPasswordCodeView = ({
     displaySafeErrorMessage = false,
     initialScreen,
     allowWebAuthnLogin = false,
-    showLabels = false
+    showLabels = false,
+    onError = (() => {}) as OnError,
+    onSuccess = (() => {}) as OnSuccess,
 }: ForgotPasswordViewProps) => {
     const coreClient = useReachfive()
     const { goTo, params } = useRouting()
@@ -308,7 +326,11 @@ export const ForgotPasswordCodeView = ({
             <VerificationCodeForm
                 showLabels={showLabels}
                 handler={callback}
-                onSuccess={() => goTo('login')}
+                onSuccess={() => {
+                    onSuccess()
+                    goTo('login')
+                }}
+                onError={onError}
                 skipError={displaySafeErrorMessage && skipError}
             />
             {allowLogin && (

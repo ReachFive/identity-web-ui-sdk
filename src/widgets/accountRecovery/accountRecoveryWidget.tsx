@@ -1,17 +1,20 @@
 import React from 'react';
+import styled from 'styled-components'
 
 import { parseQueryString } from '../../helpers/queryString'
 
 import { Alternative, Heading, Info, Link, Intro, Separator } from '../../components/miscComponent';
 import { createMultiViewWidget } from '../../components/widget/widget';
+import { createForm } from '../../components/form/formComponent'
 import { useReachfive } from '../../contexts/reachfive';
 import { useRouting } from '../../contexts/routing';
 import { useI18n } from '../../contexts/i18n';
-import { createForm } from '../../components/form/formComponent'
-import { PasswordEditorForm, PasswordEditorFormData } from '../passwordEditor/passwordEditorWidget.tsx'
-import { ReactComponent as Passkeys } from '../../icons/passkeys.svg'
-import styled from 'styled-components'
 
+import { PasswordEditorForm, PasswordEditorFormData } from '../passwordEditor/passwordEditorWidget.tsx'
+
+import { ReactComponent as Passkeys } from '../../icons/passkeys.svg'
+
+import type { OnError, OnSuccess } from '../../types';
 
 interface MainViewProps {
 
@@ -21,14 +24,13 @@ interface MainViewProps {
      */
     allowCreatePassword?: boolean
     /**
+     * Callback function called when the request has succeed.
+     */
+    onSuccess?: OnSuccess
+    /**
      * Callback function called when the request has failed.
      */
-    onSuccess?: () => void
-    /**
-     * Callback function called after the widget has been successfully loaded and rendered inside the container.
-     * The callback is called with the widget instance.
-     */
-    onError?: () => void
+    onError?: OnError
     /**
      * Whether the form fields' labels are displayed on the form view.
      * @default false
@@ -57,26 +59,26 @@ const PasskeysIcon = styled(Passkeys)`${iconStyle}`;
 const PasskeysExplanation = styled(() => {
     const i18n = useI18n()
     return (
+        <ul>
+            <li><b>{i18n('accountRecovery.passkeyReset.subtitle1')}</b></li>
             <ul>
-                <li><b>{i18n('accountRecovery.passkeyReset.subtitle1')}</b></li>
-                <ul>
-                    <li>{i18n('accountRecovery.passkeyReset.legend1')}</li>
-                </ul>
-                <li><b>{i18n('accountRecovery.passkeyReset.subtitle2')}</b></li>
-                <ul>
-                    <li>{i18n('accountRecovery.passkeyReset.legend2')}</li>
-                </ul>
+                <li>{i18n('accountRecovery.passkeyReset.legend1')}</li>
             </ul>
+            <li><b>{i18n('accountRecovery.passkeyReset.subtitle2')}</b></li>
+            <ul>
+                <li>{i18n('accountRecovery.passkeyReset.legend2')}</li>
+            </ul>
+        </ul>
     )
 })`
 `;
 
 const NewPasskey = ({
-                        authentication,
-                        allowCreatePassword = true,
-                        onSuccess = () => {},
-                        onError = () => {},
-                    }: PropsWithAuthentication<MainViewProps>) => {
+    authentication,
+    allowCreatePassword = true,
+    onSuccess = (() => {}) as OnSuccess,
+    onError = (() => {}) as OnError,
+}: PropsWithAuthentication<MainViewProps>) => {
     const coreClient = useReachfive()
     const i18n = useI18n()
     const {goTo} = useRouting()
@@ -108,7 +110,7 @@ const NewPasskey = ({
             {allowCreatePassword &&
                 <Alternative>
                     <Separator text={i18n('or')} />
-                    <Intro><Link target="new-password">Create a new password</Link></Intro>
+                    <Intro><Link target="new-password">{i18n('accountRecovery.password.title')}</Link></Intro>
                 </Alternative>
             }
         </div>
@@ -150,11 +152,11 @@ const PasswordSuccessView = ({loginLink}: SuccessViewProps) => {
 }
 
 export const NewPasswordView = ({
-                             authentication,
-                             onSuccess = () => {},
-                             onError = () => {},
-                             showLabels = false,
-                         }: PropsWithAuthentication<MainViewProps>) => {
+    authentication,
+    onSuccess = (() => {}) as OnSuccess,
+    onError = (() => {}) as OnError,
+    showLabels = false,
+}: PropsWithAuthentication<MainViewProps>) => {
     const coreClient = useReachfive()
     const i18n = useI18n()
     const { goTo } = useRouting()
@@ -179,9 +181,10 @@ export const NewPasswordView = ({
                 handler={handleSubmit}
                 showLabels={showLabels}
                 onSuccess={handleSuccess}
-                onError={onError} />
+                onError={onError}
+            />
             <Alternative>
-                <Link target="new-passkey">Back</Link>
+                <Link target="new-passkey">{i18n('back')}</Link>
             </Alternative>
         </div>
     )
