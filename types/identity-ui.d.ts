@@ -1,6 +1,6 @@
 /**
  * @reachfive/identity-ui - v1.32.2
- * Compiled Tue, 18 Feb 2025 15:01:57 UTC
+ * Compiled Fri, 21 Feb 2025 13:11:28 UTC
  *
  * Copyright (c) ReachFive.
  *
@@ -39,6 +39,10 @@ type ConsentsVersions = { consentsVersions: Record<string, ConsentVersions> }
 type CustomFields = { customFields?: CustomField[] }
 
 type Config = Config$1 & RemoteSettings & ConsentsVersions & CustomFields
+
+type OnSuccess = (...args: any[]) => void
+
+type OnError = (error?: unknown) => void
 
 declare module 'styled-components' {
     export interface DefaultTheme extends Theme {}
@@ -1551,8 +1555,8 @@ interface AccountRecoveryWidgetProps extends MainViewProps, SuccessViewProps {
 type TrustedDeviceWidgetProps = {
     accessToken: string;
     showRemoveTrustedDevice?: boolean;
-    onError?: (error?: unknown) => void;
-    onSuccess?: () => void;
+    onError?: OnError;
+    onSuccess?: OnSuccess;
 };
 
 interface WidgetInstance {

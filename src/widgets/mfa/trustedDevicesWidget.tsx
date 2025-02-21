@@ -18,15 +18,16 @@ import {
 } from "../../components/ui/alert-dialog"
 import { Button } from "../../components/ui/button"
 import { X, LoaderCircle } from "lucide-react";
+import { OnError, OnSuccess} from "../../types";
 
 export type TrustedDeviceWidgetProps = {
     accessToken: string
 
     showRemoveTrustedDevice?: boolean
 
-    onError?: (error?: unknown) => void
+    onError?: OnError
 
-    onSuccess?: () => void
+    onSuccess?: OnSuccess
 }
 
 export interface TrustedDeviceProps {
@@ -43,12 +44,12 @@ export interface TrustedDeviceProps {
     /**
      * Callback function called when the request has succeeded.
      */
-    onSuccess?: () => void
+    onSuccess?: OnSuccess
 
     /**
      * Callback function called when the request has failed.
      */
-    onError?: (error?: unknown) => void
+    onError?: OnError
 }
 
 interface DeleteButtonProps {
@@ -58,8 +59,8 @@ interface DeleteButtonProps {
 export const TrustedDeviceList = ({
     accessToken,
     showRemoveTrustedDevice,
-    onError = (_) => {},
-    onSuccess = () => {}
+    onError = (() => {}) as OnError,
+    onSuccess = (() => {}) as OnSuccess
 }: TrustedDeviceProps) => {
     const [isOpen, setIsOpen] = React.useState(false)
     const [trustedDevices, setTrustedDevices] = React.useState<TrustedDevice[]>([])
@@ -74,7 +75,7 @@ export const TrustedDeviceList = ({
         client.listTrustedDevices(accessToken)
             .then(trustedDevicesResponse => {
                 setTrustedDevices(trustedDevicesResponse.trustedDevices)
-                onSuccess()
+                onSuccess(trustedDevicesResponse)
             })
             .catch(onError)
             .finally(() => setLoading(false))
@@ -91,9 +92,9 @@ export const TrustedDeviceList = ({
                 accessToken: accessToken,
                 trustedDeviceId: device.id
             })
-            .then(_ => {
+            .then(res => {
                 fetchTrustedDevices()
-                onSuccess()
+                onSuccess(res)
             })
             .catch(onError)
     }
