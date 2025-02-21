@@ -144,8 +144,8 @@ export const MfaList = ({
                 <div className="text-textColor mb-1 text-center">{i18n('mfaList.noCredentials')}</div>
             )}
             {credentials.map((credential, index) => (
-                <div id={`credential-${index}`} key={`credential-${index}`} className={`flex flex-col ${isOpen ? 'opacity-15' : ''}`}>
-                    <div id={`toModify-${index}`} className="flex flex-row items-center rounded">
+                <div id={`credential-${index}`} data-testid="credential" key={`credential-${index}`} className={`flex flex-col ${isOpen ? 'opacity-15' : ''}`}>
+                    <div className="flex flex-row items-center rounded">
                         <div className="flex flex-row basis-full items-center rounded align-middle whitespace-nowrap box-border p-generic border-solid border-generic border-border" >
                             {credentialIconByType(credential.type)}
                             <div className="ml-innerBlock w-max justify-items-stretch text-textColor">
