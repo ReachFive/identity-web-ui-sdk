@@ -55,12 +55,12 @@ describe('Snapshot', () => {
             { accessToken: 'azerty', ...options },
             { apiClient,config: { ...defaultConfig, ...config }, defaultI18n }
         )
-        
+
         await waitFor(async () => {
             const { container, rerender } = await render(widget);
 
             await waitFor(() => expect(apiClient.listMfaCredentials).toHaveBeenCalled())
-    
+
             await rerender(widget)
 
             expect(container).toMatchSnapshot();
@@ -136,9 +136,9 @@ describe('DOM testing', () => {
         test('api error', async () => {
             const error: AppError = { errorId: '0', error: 'unexpected_error', errorDescription: "Unexpected error" }
             listMfaCredentials.mockRejectedValue(error)
-            await expect(async () => await generateComponent({}, defaultConfig)).rejects.toThrow(error.errorDescription)
+            await generateComponent({}, defaultConfig)
             expect(onSuccess).not.toBeCalled()
-            expect(onError).toBeCalled()
+            expect(onError).toBeCalledWith(error)
         })
     })
 
