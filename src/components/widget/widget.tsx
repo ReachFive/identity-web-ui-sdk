@@ -34,6 +34,7 @@ const GlobalStyle = createGlobalStyle`
     --spacing-padding-y: ${props => props.theme.paddingY};
     --spacing-padding-x: ${props => props.theme.paddingX};
     --spacing-block-inner-height: ${props => props.theme._blockInnerHeight};
+    --spacing: ${props => props.theme.spacing};
 
     --font-generic: ${props => props.theme.fontSize};
 
