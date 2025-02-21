@@ -32,7 +32,6 @@ const credentialIconByType = (type: MFA.CredentialsResponse['credentials'][numbe
 }
 
 export interface MfaListProps {
-    credentials: MFA.CredentialsResponse['credentials']
     /**
      * The authorization credential JSON Web Token (JWT) used to access the ReachFive API, less than five minutes old.
      */
