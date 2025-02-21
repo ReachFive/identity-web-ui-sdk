@@ -13,6 +13,8 @@ import { useI18n } from '../../contexts/i18n';
 import { useRouting } from '../../contexts/routing';
 import { useConfig } from '../../contexts/config';
 
+import type { OnError, OnSuccess } from '../../types';
+
 type PhoneNumberFormData = { phoneNumber: string }
 
 const phoneNumberInputForm = (config: Config) => createForm<PhoneNumberFormData, { phoneNumberOptions?: PhoneNumberOptions }>({
@@ -53,9 +55,13 @@ interface MainViewProps {
      * Phone number field options.
      */
     phoneNumberOptions?: PhoneNumberOptions
+    /**
+     * Callback function called when the request has failed.
+     */
+    onError?: OnError
 }
 
-const MainView = ({ accessToken, showLabels = false, phoneNumberOptions }: MainViewProps) => {
+const MainView = ({ accessToken, showLabels = false, phoneNumberOptions, onError = (() => {}) as OnError }: MainViewProps) => {
     const coreClient = useReachfive()
     const config = useConfig()
     const i18n = useI18n()
@@ -79,6 +85,7 @@ const MainView = ({ accessToken, showLabels = false, phoneNumberOptions }: MainV
                 showLabels={showLabels}
                 handler={handleSubmit}
                 onSuccess={handleSuccess}
+                onError={onError}
                 phoneNumberOptions={phoneNumberOptions}
             />
         </div>
@@ -91,14 +98,13 @@ type VerificationCodeViewProps = {
      */
     accessToken: string
     /**
+     * Callback function called when the request has succeed.
+     */
+    onSuccess?: OnSuccess
+    /**
      * Callback function called when the request has failed.
      */
-    onSuccess?: () => void
-    /**
-     * Callback function called after the widget has been successfully loaded and rendered inside the container.
-     * The callback is called with the widget instance.
-     */
-    onError?: () => void
+    onError?: OnError
 }
 
 type VerificationCodeViewState = {
@@ -110,8 +116,8 @@ type VerificationCodeViewState = {
 
 const VerificationCodeView = ({
     accessToken,
-    onSuccess = () => {},
-    onError = () => {},
+    onSuccess = (() => {}) as OnSuccess,
+    onError = (() => {}) as OnError,
 }: VerificationCodeViewProps) => {
     const coreClient = useReachfive()
     const i18n = useI18n()

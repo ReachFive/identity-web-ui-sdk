@@ -13,6 +13,8 @@ import { useReachfive } from '../../contexts/reachfive';
 import { Button, type ButtonProps } from './buttonComponent';
 import { useI18n } from '../../contexts/i18n';
 
+import type { OnError, OnSuccess } from '../../types';
+
 interface SocialButtonIconProps {
     className?: classes.Argument
     icon: string
@@ -122,22 +124,30 @@ export interface SocialButtonsProps {
      */
     auth?: AuthOptions
     /**
-     * Classname
-     */
-    className?: string
-    /**
      * Lists the available social providers. This is an array of strings.
      * 
      * Tip: If you pass an empty array, social providers will not be displayed. 
      * */
     providers: string[]
+    /**
+     * Callback function called when the request has succeed.
+     */
+    onSuccess?: OnSuccess
+    /**
+     * Callback function called when the request has failed.
+     */
+    onError?: OnError
 }
 
-export const SocialButtons = styled(({ auth, providers, className }: SocialButtonsProps) => {
+export const SocialButtons = styled(({ auth, providers, className, onError = (() => {}) as OnError, onSuccess = (() => {}) as OnSuccess }: SocialButtonsProps & { className?: string }) => {
     const coreClient = useReachfive()
 
     const clickHandler = useCallback(
-        (provider: string) => coreClient.loginWithSocialProvider(provider, auth),
+        (provider: string) => {
+            coreClient.loginWithSocialProvider(provider, auth)
+                .then(() => onSuccess())
+                .catch(onError)
+        },
         [coreClient, auth],
     )
 

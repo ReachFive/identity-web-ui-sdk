@@ -12,6 +12,8 @@ import { FieldCreator } from '../../components/form/fieldCreator';
 import { Field } from '../../components/form/formFieldFactory';
 import { PhoneNumberOptions } from '../../components/form/fields/phoneNumberField';
 
+import type { OnError, OnSuccess } from '../../types';
+
 type ProfileWithConsents = Profile & { consents?: Record<string, UserConsent> }
 
 const ProfileEditorForm = createForm<ProfileWithConsents>({
@@ -26,14 +28,13 @@ interface ProfileEditorProps {
      */
     accessToken: string
     /**
+     * Callback function called when the request has succeed.
+     */
+    onSuccess?: OnSuccess
+    /**
      * Callback function called when the request has failed.
      */
-    onSuccess?: () => void
-    /**
-     * Callback function called after the widget has been successfully loaded and rendered inside the container.
-     * The callback is called with the widget instance.
-     */
-    onError?: () => void
+    onError?: OnError
     /**
      * Phone number field options.
      */
@@ -60,8 +61,8 @@ interface ProfileEditorProps {
 
 const ProfileEditor = ({
     accessToken,
-    onSuccess = () => {},
-    onError = () => {},
+    onSuccess = (() => {}) as OnSuccess,
+    onError = (() => {}) as OnError,
     phoneNumberOptions,
     profile,
     redirectUrl,
@@ -146,6 +147,10 @@ export default createWidget<ProfileEditorWidgetProps, ProfileEditorProps>({
                             && (field.path !== 'phone_number' || !config.sms || !filteredOutConsentsProfile.phoneNumber);
                     })
                 } satisfies ProfileEditorProps)
+            })
+            .catch((error: unknown) => {
+                options.onError?.(error)
+                return Promise.reject(error)
             });
     }
 });

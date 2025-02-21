@@ -9,6 +9,8 @@ import { useReachfive } from '../../contexts/reachfive';
 import { useRouting } from '../../contexts/routing';
 import { useI18n } from '../../contexts/i18n';
 
+import type { OnError, OnSuccess } from '../../types';
+
 interface MainViewProps {
     /**
      * Whether or not to provide the display password in clear text option.
@@ -16,14 +18,13 @@ interface MainViewProps {
      */
     canShowPassword?: boolean
     /**
+     * Callback function called when the request has succeed.
+     */
+    onSuccess?: OnSuccess
+    /**
      * Callback function called when the request has failed.
      */
-    onSuccess?: () => void
-    /**
-     * Callback function called after the widget has been successfully loaded and rendered inside the container.
-     * The callback is called with the widget instance.
-     */
-    onError?: () => void
+    onError?: OnError
     /**
      * Whether the form fields' labels are displayed on the form view.
      * @default false
@@ -34,8 +35,8 @@ interface MainViewProps {
 const MainView = ({
     authentication,
     canShowPassword = false,
-    onSuccess = () => {},
-    onError = () => {},
+    onSuccess = (() => {}) as OnSuccess,
+    onError = (() => {}) as OnError,
     showLabels = false,
 }: PropsWithAuthentication<MainViewProps>) => {
     const coreClient = useReachfive()
@@ -63,7 +64,8 @@ const MainView = ({
                 canShowPassword={canShowPassword}
                 showLabels={showLabels}
                 onSuccess={handleSuccess}
-                onError={onError} />
+                onError={onError}
+            />
         </div>
     )
 }

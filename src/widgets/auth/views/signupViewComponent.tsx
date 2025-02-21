@@ -13,6 +13,8 @@ import type { SignupWithWebAuthnViewProps } from './signupWithWebAuthnViewCompon
 import { selectLogin } from '../authWidget.tsx';
 import { InitialScreen } from '../../../../constants.ts';
 
+import type { OnError, OnSuccess } from '../../../types';
+
 export interface SignupViewProps extends SignupWithPasswordViewProps, SignupWithWebAuthnViewProps {
     /**
      * Boolean that specifies whether login is enabled.
@@ -46,6 +48,14 @@ export interface SignupViewProps extends SignupWithPasswordViewProps, SignupWith
      * Phone number field options.
      */
     phoneNumberOptions?: PhoneNumberOptions
+    /**
+     * Callback function called when the request has succeed.
+     */
+    onSuccess?: OnSuccess
+    /**
+     * Callback function called when the request has failed.
+     */
+    onError?: OnError
 }
 
 export const SignupView = ({
@@ -55,6 +65,8 @@ export const SignupView = ({
     allowWebAuthnSignup = false,
     enablePasswordAuthentication=true,
     socialProviders,
+    onError = (() => {}) as OnError,
+    onSuccess = (() => {}) as OnSuccess,
     ...props
 }: SignupViewProps) => {
     const i18n = useI18n()
@@ -64,8 +76,14 @@ export const SignupView = ({
         <div>
             <Heading>{i18n('signup.title')}</Heading>
 
-            {socialProviders && socialProviders.length > 0 &&
-                <SocialButtons providers={socialProviders} auth={props.auth} />}
+            {socialProviders && socialProviders.length > 0 && (
+                <SocialButtons
+                    providers={socialProviders}
+                    auth={props.auth}
+                    onSuccess={onSuccess}
+                    onError={onError}
+                />
+            )}
             {socialProviders && socialProviders.length > 0 && <Separator text={i18n('or')} />}
 
             {allowWebAuthnSignup

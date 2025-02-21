@@ -15,6 +15,8 @@ import { useI18n } from '../../contexts/i18n';
 import { useConfig } from '../../contexts/config';
 import { dateFormat } from "../../helpers/utils.ts";
 
+import type { OnError, OnSuccess } from '../../types';
+
 const iconStyle = css`
     width: ${props => props.theme.fontSize * 2}px;
     height: ${props => props.theme.fontSize * 2}px;
@@ -60,7 +62,7 @@ export const MfaList = ({ credentials }: MfaListProps) => {
                 <Info>{i18n('mfaList.noCredentials')}</Info>
             )}
             {credentials.map((credential, index) => (
-                <Credential key={`credential-${index}`}>
+                <Credential key={`credential-${index}`} data-testid="credential">
                     {credentialIconByType(credential.type)}
                     <CardContent>
                         <div style={{fontWeight: 'bold'}}>{credential.friendlyName}</div>
@@ -81,17 +83,29 @@ export type MfaListWidgetProps = {
      * The authorization credential JSON Web Token (JWT) used to access the ReachFive API, less than five minutes old.
      */
     accessToken: string
+    /**
+     * Callback function called when the request has succeed.
+     */
+    onSuccess?: OnSuccess
+    /**
+     * Callback function called when the request has failed.
+     */
+    onError?: OnError
 }
 
 export default createWidget<MfaListWidgetProps, MfaListProps>({
     component: MfaList,
     prepare: (options, { apiClient }) =>
         apiClient.listMfaCredentials(options.accessToken)
+            .then(({ credentials }) => {
+                options.onSuccess?.()
+                return {
+                    ...options,
+                    credentials,
+                }
+            })
             .catch(error => {
+                options.onError?.(error)
                 throw UserError.fromAppError(error)
             })
-            .then(({ credentials }) => ({
-                ...options,
-                credentials,
-            }))
 });

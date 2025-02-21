@@ -11,6 +11,8 @@ import { useI18n } from '../../contexts/i18n';
 import { useReachfive } from '../../contexts/reachfive';
 import { useRouting } from '../../contexts/routing';
 
+import type { OnError, OnSuccess } from '../../types';
+
 type EmailFormData = { email: string }
 
 const EmailEditorForm = createForm<EmailFormData>({
@@ -50,6 +52,14 @@ interface MainViewProps {
      * @default false
      */
     showLabels?: boolean
+    /**
+     * Callback function called when the request has succeed.
+     */
+    onSuccess?: OnSuccess
+    /**
+     * Callback function called when the request has failed.
+     */
+    onError?: OnError
 }
 
 const MainView = ({
@@ -58,6 +68,8 @@ const MainView = ({
     recaptcha_site_key,
     redirectUrl,
     showLabels = false,
+    onError = (() => {}) as OnError,
+    onSuccess = (() => {}) as OnSuccess,
 }: MainViewProps) => {
     const coreClient = useReachfive()
     const i18n = useI18n()
@@ -71,7 +83,10 @@ const MainView = ({
         return coreClient.updateEmail({ ...data, accessToken, redirectUrl });
     }
 
-    const handleSuccess = () => goTo('success');
+    const handleSuccess = () => {
+        onSuccess()
+        goTo('success')
+    };
 
     return (
         <div>
@@ -79,7 +94,9 @@ const MainView = ({
             <EmailEditorForm
                 showLabels={showLabels}
                 handler={(data: EmailFormData) => ReCaptcha.handle(data, { recaptcha_enabled, recaptcha_site_key }, callback, "update_email")}
-                onSuccess={handleSuccess} />
+                onSuccess={handleSuccess}
+                onError={onError}
+            />
         </div>
     )
 }

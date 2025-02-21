@@ -1,7 +1,7 @@
 import React, { useLayoutEffect } from 'react';
-import { AuthOptions, SingleFactorPasswordlessParams } from '@reachfive/identity-core';
+import { AuthOptions, AuthResult, SingleFactorPasswordlessParams } from '@reachfive/identity-core';
 
-import type { Config, Prettify } from '../../types';
+import type { Config, OnError, OnSuccess, Prettify } from '../../types';
 
 import { email } from '../../core/validation';
 
@@ -97,6 +97,14 @@ interface MainViewProps {
      * Phone number field options.
      */
     phoneNumberOptions?: PhoneNumberOptions
+    /**
+     * Callback function called when the request has succeed.
+     */
+    onSuccess?: OnSuccess
+    /**
+     * Callback function called when the request has failed.
+     */
+    onError?: OnError
 }
 
 const MainView = ({
@@ -108,6 +116,8 @@ const MainView = ({
     showSocialLogins = false,
     socialProviders,
     phoneNumberOptions,
+    onError = (() => {}) as OnError,
+    onSuccess = (() => {}) as OnSuccess,
 }: MainViewProps) => {
     const coreClient = useReachfive()
     const config = useConfig()
@@ -119,17 +129,22 @@ const MainView = ({
     }, [recaptcha_site_key])
 
     const callback = (data: WithCaptchaToken<EmailFormData | PhoneNumberFormFata>) =>
-        coreClient.startPasswordless({
-            authType,
-            ...data,
-        }, auth)
-            .then(() => data);
+        coreClient
+            .startPasswordless({
+                authType,
+                ...data,
+            }, auth)
+            .then(() => data)
 
-    const handleSuccess = (data: EmailFormData | PhoneNumberFormFata) =>
-        'email' in data
-            ? goTo('emailSent')
-            : goTo<VerificationCodeViewState>('verificationCode', data)
-
+    const handleSuccess = (data: EmailFormData | PhoneNumberFormFata) => {
+        if ('email' in data) {
+            onSuccess()
+            goTo('emailSent')
+        } else {
+            goTo<VerificationCodeViewState>('verificationCode', data)
+        }
+    }
+   
     const isEmail = authType === 'magic_link';
     const PhoneNumberInputForm = phoneNumberInputForm(config);
 
@@ -145,11 +160,13 @@ const MainView = ({
             {isEmail && <EmailInputForm
                 handler={(data: EmailFormData) => ReCaptcha.handle(data, { recaptcha_enabled, recaptcha_site_key }, callback, "passwordless_email")}
                 onSuccess={handleSuccess}
+                onError={onError}
             />}
             {!isEmail && showIntro && <Intro>{i18n('passwordless.sms.intro')}</Intro>}
             {!isEmail && <PhoneNumberInputForm
                 handler={(data: PhoneNumberFormFata) => ReCaptcha.handle(data, { recaptcha_enabled, recaptcha_site_key }, callback, "passwordless_phone")}
                 onSuccess={handleSuccess}
+                onError={onError}
                 phoneNumberOptions={phoneNumberOptions}
             />}
         </div>
@@ -171,6 +188,14 @@ interface VerificationCodeViewProps {
      * This must be paired with the appropriate secret key that you received when setting up reCAPTCHA.
      */
     recaptcha_site_key?: string
+    /**
+     * Callback function called when the request has succeed.
+     */
+    onSuccess?: OnSuccess
+    /**
+     * Callback function called when the request has failed.
+     */
+    onError?: OnError
 }
 
 type VerificationCodeViewState = {
@@ -181,6 +206,8 @@ const VerificationCodeView = ({
     authType = 'magic_link',
     recaptcha_enabled = false,
     recaptcha_site_key,
+    onSuccess = (() => {}) as OnSuccess,
+    onError = (() => {}) as OnError
 }: VerificationCodeViewProps) => {
     const coreClient = useReachfive()
     const i18n = useI18n()
@@ -188,11 +215,19 @@ const VerificationCodeView = ({
     const { phoneNumber } = params as VerificationCodeViewState
 
     const handleSubmit = (data: WithCaptchaToken<VerificationCodeFormData>) => {
-        return coreClient.verifyPasswordless({
-            authType,
-            phoneNumber,
-            ...data
-        });
+        return coreClient
+            .verifyPasswordless({
+                authType,
+                phoneNumber,
+                ...data
+            })
+            .then(result => {
+                if (AuthResult.isAuthResult(result)) {
+                    onSuccess()
+                } else {
+                    onError()
+                }
+            })
     };
 
     return (
@@ -200,6 +235,7 @@ const VerificationCodeView = ({
             <Info>{i18n('passwordless.sms.verification.intro')}</Info>
             <VerificationCodeInputForm
                 handler={(data: VerificationCodeFormData) => ReCaptcha.handle(data, { recaptcha_enabled, recaptcha_site_key }, handleSubmit, "verify_passwordless_sms")}
+                onError={onError}
             />
         </div>
     )
