@@ -20,6 +20,7 @@ import {
 import { Button } from "../../components/ui/button"
 import { useReachfive } from "../../contexts/reachfive.tsx";
 import { X, MessageSquareMore, Mail } from "lucide-react";
+import { OnError, OnSuccess  } from "../../types";
 
 const credentialIconByType = (type: MFA.CredentialsResponse['credentials'][number]['type']) => {
     switch (type) {
@@ -39,11 +40,11 @@ export interface MfaListProps {
     /**
      * Callback function called when the request has succeeded.
      */
-    onSuccess?: () => void
+    onSuccess?: OnSuccess
     /**
      * Callback function called when the request has failed.
      */
-    onError?: (error?: unknown) => void
+    onError?: OnError
     /**
      * Indicates whether delete mfa credential button is displayed
      */
@@ -56,7 +57,8 @@ interface DeleteButtonProps {
 export const MfaList = ({
     accessToken,
     showRemoveMfaCredential,
-    onError = (_) => {}
+    onError = (() => {}) as OnError,
+    onSuccess = (() => {}) as OnSuccess
     }: MfaListProps) => {
     const [isOpen, setIsOpen] = React.useState(false)
     const [loading, setLoading] = React.useState(true)
@@ -71,6 +73,7 @@ export const MfaList = ({
         client.listMfaCredentials(accessToken)
             .then(mfaCredentialsResponse => {
                 setCredentials(mfaCredentialsResponse.credentials)
+                onSuccess(mfaCredentialsResponse)
             })
             .catch(onError)
             .finally(() => setLoading(false))
@@ -87,12 +90,18 @@ export const MfaList = ({
                     accessToken,
                     phoneNumber: credential.phoneNumber
                 })
-                    .then(_ => fetchMfaCredentials())
+                    .then(resp => {
+                        fetchMfaCredentials()
+                        onSuccess(resp)
+                    })
                     .catch(onError)
                 break
             case 'email':
                 client.removeMfaEmail({accessToken})
-                    .then(_ => fetchMfaCredentials())
+                    .then(resp => {
+                        fetchMfaCredentials()
+                        onSuccess(resp)
+                    })
                     .catch(onError)
                 break
         }
@@ -165,11 +174,11 @@ export type MfaListWidgetProps = {
     /**
      * Callback function called when the request has succeeded.
      */
-    onSuccess?: () => void
+    onSuccess?: OnSuccess
     /**
      * Callback function called when the request has failed.
      */
-    onError?: (error?: unknown) => void
+    onError?: OnError
     /**
      * Indicates whether delete mfa credential button is displayed
      */
