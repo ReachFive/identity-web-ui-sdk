@@ -143,8 +143,8 @@ export const MfaList = ({
             {(credentials.length === 0) && (
                 <div className="text-textColor mb-1 text-center">{i18n('mfaList.noCredentials')}</div>
             )}
-            {credentials.map((credential, index) => (
-                <div id={`credential-${index}`} data-testid="credential" key={`credential-${index}`} className={`flex flex-col ${isOpen ? 'opacity-15' : ''}`}>
+            {credentials.map((credential, _) => (
+                <div id={`credential-${credential.friendlyName}`} data-testid="credential" key={`credential-${credential.friendlyName}`} className={`flex flex-col ${isOpen ? 'opacity-15' : ''}`}>
                     <div className="flex flex-row items-center rounded">
                         <div className="flex flex-row basis-full items-center rounded align-middle whitespace-nowrap box-border p-generic border-solid border-generic border-border" >
                             {credentialIconByType(credential.type)}
