@@ -42,7 +42,7 @@ module.exports = {
                 innerBlock: "calc(var(--spacing-block-inner-height)*1px)"
             },
             borderWidth: {
-                generic: "calc(var(--border-width)*1px)"
+                DEFAULT: "calc(var(--border-width)*1px)"
             }
         },
     },
