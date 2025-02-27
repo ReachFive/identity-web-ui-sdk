@@ -29,7 +29,7 @@ exports[`Snapshot basic 1`] = `
           class="flex flex-row items-center rounded"
         >
           <div
-            class="flex flex-row basis-full items-center rounded align-middle whitespace-nowrap box-border p-generic border-solid border-generic border-border"
+            class="flex flex-row basis-full items-center rounded align-middle whitespace-nowrap box-border p-generic border-solid border"
           >
             <svg
               class="lucide lucide-message-square-more bg-background w-icon h-icon stroke-textColor"
@@ -91,7 +91,7 @@ exports[`Snapshot basic 1`] = `
           class="flex flex-row items-center rounded"
         >
           <div
-            class="flex flex-row basis-full items-center rounded align-middle whitespace-nowrap box-border p-generic border-solid border-generic border-border"
+            class="flex flex-row basis-full items-center rounded align-middle whitespace-nowrap box-border p-generic border-solid border"
           >
             <svg
               class="lucide lucide-mail bg-background w-icon h-icon stroke-textColor"
