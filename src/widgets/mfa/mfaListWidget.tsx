@@ -52,7 +52,43 @@ export interface MfaListProps {
 
 interface DeleteButtonProps {
     credential: MFA.Credential
+    isOpen: boolean
+    setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
+    onDeleteCallback: (credential: MFA.Credential) => void
+    deleteConfirmationTitle: string
+    setDeleteConfirmationTitle: React.Dispatch<React.SetStateAction<string>>
 }
+
+const DeleteButton = ({ credential, isOpen, setIsOpen, onDeleteCallback, deleteConfirmationTitle, setDeleteConfirmationTitle }: DeleteButtonProps) => {
+    const i18n = useI18n()
+
+    return (
+        <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
+            <AlertDialogTrigger asChild>
+                <Button
+                    variant="destructive"
+                    size="icon"
+                    className="ml-1"
+                    onClick={_ => setDeleteConfirmationTitle(credential.type === 'email' ? 'mfa.remove.email': 'mfa.remove.phoneNumber' )}>
+                    <X />
+                </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+                <AlertDialogHeader>
+                    <AlertDialogTitle>
+                        {i18n(deleteConfirmationTitle)}
+                    </AlertDialogTitle>
+                    <AlertDialogDescription />
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                    <AlertDialogCancel>{i18n('confirmation.cancel')}</AlertDialogCancel>
+                    <AlertDialogAction variant="destructive" onClick={_ => onDeleteCallback(credential)}>{i18n('confirmation.yes')}</AlertDialogAction>
+                </AlertDialogFooter>
+            </AlertDialogContent>
+        </AlertDialog>
+    )
+}
+
 export const MfaList = ({
     accessToken,
     showRemoveMfaCredential,
@@ -106,34 +142,6 @@ export const MfaList = ({
         }
     }
 
-        const DeleteButton = ({ credential }: DeleteButtonProps) => {
-            return (
-                <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
-                    <AlertDialogTrigger asChild>
-                        <Button
-                            variant="destructive"
-                            size="icon"
-                            className="ml-1"
-                            onClick={_ => setDeleteConfirmationTitle(credential.type === 'email' ? 'mfa.remove.email': 'mfa.remove.phoneNumber' )}>
-                            <X />
-                        </Button>
-                    </AlertDialogTrigger>
-                    <AlertDialogContent>
-                        <AlertDialogHeader>
-                            <AlertDialogTitle>
-                                {i18n(deleteConfirmationTitle)}
-                            </AlertDialogTitle>
-                            <AlertDialogDescription />
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                            <AlertDialogCancel>{i18n('confirmation.cancel')}</AlertDialogCancel>
-                            <AlertDialogAction variant="destructive" onClick={_ => onDelete(credential)}>{i18n('confirmation.yes')}</AlertDialogAction>
-                        </AlertDialogFooter>
-                    </AlertDialogContent>
-                </AlertDialog>
-            )
-        }
-
     if(loading) {
         return <LoaderCircle className="animate-spin" />
     }
@@ -157,7 +165,7 @@ export const MfaList = ({
                                 </div>
                             </div>
                         </div>
-                        {showRemoveMfaCredential && <DeleteButton credential={credential}/>}
+                        {showRemoveMfaCredential && <DeleteButton isOpen={isOpen} setIsOpen={setIsOpen} onDeleteCallback={onDelete} deleteConfirmationTitle={deleteConfirmationTitle} setDeleteConfirmationTitle={setDeleteConfirmationTitle} credential={credential}/>}
                     </div>
                 </div>
             ))}
