@@ -19,7 +19,7 @@ import {
 } from "../../components/ui/alert-dialog"
 import { Button } from "../../components/ui/button"
 import { useReachfive } from "../../contexts/reachfive.tsx";
-import { X, MessageSquareMore, Mail } from "lucide-react";
+import { X, MessageSquareMore, Mail, LoaderCircle } from "lucide-react";
 import { OnError, OnSuccess  } from "../../types";
 
 const credentialIconByType = (type: MFA.CredentialsResponse['credentials'][number]['type']) => {
@@ -135,7 +135,7 @@ export const MfaList = ({
         }
 
     if(loading) {
-        return <></>
+        return <LoaderCircle className="animate-spin" />
     }
 
     return (
@@ -146,7 +146,7 @@ export const MfaList = ({
             {credentials.map((credential, _) => (
                 <div id={`credential-${credential.friendlyName}`} data-testid="credential" key={`credential-${credential.friendlyName}`} className={`flex flex-col ${isOpen ? 'opacity-15' : ''}`}>
                     <div className="flex flex-row items-center rounded">
-                        <div className="flex flex-row basis-full items-center rounded align-middle whitespace-nowrap box-border p-generic border-solid border-generic border-border" >
+                        <div className="flex flex-row basis-full items-center rounded align-middle whitespace-nowrap box-border p-generic border-solid border" >
                             {credentialIconByType(credential.type)}
                             <div className="ml-innerBlock w-max justify-items-stretch text-textColor">
                                 <div className="font-bold">{credential.friendlyName}</div>
