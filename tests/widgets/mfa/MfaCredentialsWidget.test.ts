@@ -1,9 +1,10 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment jest-fixed-jsdom
  */
 
+import { ComponentProps } from 'react';
 import { beforeEach, describe, expect, jest, test } from '@jest/globals';
-import { render, screen, waitFor } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event'
 import '@testing-library/jest-dom/jest-globals'
 
@@ -12,64 +13,31 @@ import { Client, MFA } from '@reachfive/identity-core';
 import type { Config } from '../../../src/types';
 import { I18nMessages } from '../../../src/core/i18n';
 
-import mfaCredentialsWidget from "../../../src/widgets/mfa/MfaCredentialsWidget";
-
-const defaultConfig: Config = {
-    clientId: 'local',
-    domain: 'local.reach5.net',
-    sso: false,
-    sms: false,
-    webAuthn: false,
-    language: 'fr',
-    pkceEnforced: false,
-    isPublic: true,
-    socialProviders: ['facebook', 'google'],
-    customFields: [],
-    resourceBaseUrl: 'http://localhost',
-    mfaSmsEnabled: true,
-    mfaEmailEnabled: true,
-    rbaEnabled: false,
-    consentsVersions: {},
-    passwordPolicy: {
-        minLength: 8,
-        minStrength: 2,
-        allowUpdateWithAccessTokenOnly: true,
-    }
-};
+import MfaCredentialsWidget from "../../../src/widgets/mfa/MfaCredentialsWidget";
+import { componentGenerator, snapshotGenerator } from '../renderer';
 
 const defaultI18n: I18nMessages = {}
 
 describe('Snapshot', () => {
     const generateSnapshot = (
-        options: Partial<Parameters<typeof mfaCredentialsWidget>[0]>,
+        options: ComponentProps<typeof MfaCredentialsWidget>,
         config: Partial<Config> = {},
         credentials: (MFA.EmailCredential | MFA.PhoneCredential)[]
-    ) => async () => {
+    ) => {
         // @ts-expect-error partial Client
         const apiClient: Client = {
             listMfaCredentials: jest.fn<Client['listMfaCredentials']>().mockResolvedValue({ credentials }),
         };
-        
-        const widget = await mfaCredentialsWidget(
-            { accessToken: 'azerty', showIntro: true, ...options },
-            { apiClient,config: { ...defaultConfig, ...config }, defaultI18n }
-        )
 
-        await waitFor(async () => {
-            const { container, rerender } = await render(widget);
+        const generate = snapshotGenerator(MfaCredentialsWidget, apiClient, defaultI18n)
 
-            await waitFor(() => expect(apiClient.listMfaCredentials).toHaveBeenCalled())
-    
-            await rerender(widget)
-
-            expect(container).toMatchSnapshot();
-        })
-    };
+        return generate(options, config)
+    }
 
     describe('mfaCredentials', () => {
-        test('default', generateSnapshot({}, undefined, []));
+        test('default', generateSnapshot({ accessToken: "azerty" }, {}, []));
 
-        test('no intro', generateSnapshot({ showIntro: false }, undefined, [
+        test('no intro', generateSnapshot({ accessToken: "azerty", showIntro: false }, {}, [
             { type: 'sms', phoneNumber: '33612345678', friendlyName: 'identifier', createdAt: '2022-09-21' },
             { type: 'email', email: 'root@reach5.co', friendlyName: 'identifier', createdAt: '2022-09-21' }
         ]));
@@ -97,7 +65,7 @@ describe('DOM testing', () => {
     })
 
     const generateComponent = async (
-        options: Partial<Parameters<typeof mfaCredentialsWidget>[0]>,
+        options: ComponentProps<typeof MfaCredentialsWidget>,
         config: Partial<Config> = {},
         credentials: (MFA.EmailCredential | MFA.PhoneCredential)[]
     ) => {
@@ -109,25 +77,26 @@ describe('DOM testing', () => {
             verifyMfaEmailRegistration: verifyMfaEmailRegistration.mockResolvedValue(),
             verifyMfaPhoneNumberRegistration: verifyMfaEmailRegistration.mockResolvedValue(),
         }
-        const result = await mfaCredentialsWidget(
-            {
-                accessToken: 'azerty',
-                onError,
-                onSuccess,
-                ...options
-            },
-            {
-                apiClient,
-                config: { ...defaultConfig, ...config },
-                defaultI18n
-            }
-        );
-        return await waitFor(async () => render(result))
+
+        const generate = componentGenerator(MfaCredentialsWidget, apiClient, defaultI18n)
+        
+        return await generate(options, config)
     };
 
     describe('mfaCredentials', () => {
         test('no credentials', async () => {
-            await generateComponent({showIntro: true, showRemoveMfaCredentials: true}, defaultConfig, []);
+            await generateComponent(
+                {
+                    accessToken: "azerty",
+                    showIntro: true,
+                    showRemoveMfaCredentials: true,
+                    onError,
+                    onSuccess
+                },
+                {},
+                []
+            );
+
             // Email intro
             expect(screen.queryByText('mfa.email.explain')).toBeInTheDocument();
 
@@ -150,7 +119,7 @@ describe('DOM testing', () => {
         test('register email', async () => {
             const user = userEvent.setup()
 
-            await generateComponent({showIntro: true, showRemoveMfaCredentials: true}, defaultConfig, []);
+            await generateComponent({ accessToken: "azerty", showIntro: true, showRemoveMfaCredentials: true, onError, onSuccess }, {}, []);
 
             // Form button email
             const emailButton = screen.getByText('mfa.register.email')
@@ -190,7 +159,7 @@ describe('DOM testing', () => {
         test('register phone number', async () => {
             const user = userEvent.setup()
 
-            await generateComponent({showIntro: true, showRemoveMfaCredentials: true}, defaultConfig, []);
+            await generateComponent({ accessToken: "azerty", showIntro: true, showRemoveMfaCredentials: true, onError, onSuccess }, {}, []);
 
             // phone number input
             const phoneNumberInput = screen.getByTestId('phone_number')
@@ -220,7 +189,7 @@ describe('DOM testing', () => {
         });
 
         test('requireMfaRegistration', async () => {
-            await generateComponent({showIntro: true, showRemoveMfaCredentials: true, requireMfaRegistration: true}, defaultConfig, []);
+            await generateComponent({ accessToken: "azerty", showIntro: true, showRemoveMfaCredentials: true, requireMfaRegistration: true, onError, onSuccess }, {}, []);
             // Email intro
             expect(screen.queryByText('mfa.email.explain.required')).toBeInTheDocument();
 
@@ -241,7 +210,7 @@ describe('DOM testing', () => {
         });
 
         test('only email credential', async () => {
-            await generateComponent({showIntro: true, showRemoveMfaCredentials: true}, defaultConfig, [
+            await generateComponent({ accessToken: "azerty", showIntro: true, showRemoveMfaCredentials: true, onError, onSuccess }, {}, [
                 { type: 'email', email: 'alice@reach5.co', friendlyName: 'identifier', createdAt: '2022-09-21' },
             ]);
             // Email intro
@@ -264,7 +233,7 @@ describe('DOM testing', () => {
         });
 
         test('only sms credential', async () => {
-            await generateComponent({showIntro: true, showRemoveMfaCredentials: true}, defaultConfig, [
+            await generateComponent({ accessToken: "azerty", showIntro: true, showRemoveMfaCredentials: true, onError, onSuccess }, {}, [
                 { type: 'sms', phoneNumber: '33612345678', friendlyName: 'identifier', createdAt: '2022-09-21' },
             ]);
             // Email intro
@@ -287,7 +256,7 @@ describe('DOM testing', () => {
         });
 
         test('all credentials', async () => {
-            await generateComponent({showIntro: true, showRemoveMfaCredentials: true}, defaultConfig, [
+            await generateComponent({ accessToken: "azerty", showIntro: true, showRemoveMfaCredentials: true, onError, onSuccess }, {}, [
                 { type: 'sms', phoneNumber: '33612345678', friendlyName: 'identifier', createdAt: '2022-09-21' },
                 { type: 'email', email: 'root@reach5.co', friendlyName: 'identifier', createdAt: '2022-09-21' }
             ]);

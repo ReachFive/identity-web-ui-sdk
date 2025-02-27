@@ -1,9 +1,10 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment jest-fixed-jsdom
  */
 
+import { ComponentProps } from 'react';
 import { beforeEach, describe, expect, jest, test } from '@jest/globals';
-import { render, screen, waitFor } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event'
 import '@testing-library/jest-dom/jest-globals'
 import 'jest-styled-components';
@@ -11,66 +12,34 @@ import 'jest-styled-components';
 import { type Profile, type Client } from '@reachfive/identity-core';
 
 import { type I18nMessages } from '../../../src/core/i18n';
-import type { Config } from '../../../src/types';
 
-import profileEditorWidget from '../../../src/widgets/profileEditor/profileEditorWidget';
+import ProfileEditorWidget from '../../../src/widgets/profileEditor/profileEditorWidget';
 
-const defaultConfig: Config = {
-    clientId: 'local',
-    domain: 'local.reach5.net',
-    sso: false,
-    sms: false,
-    webAuthn: false,
-    language: 'fr',
-    pkceEnforced: false,
-    isPublic: true,
-    socialProviders: ['facebook', 'google'],
-    customFields: [],
-    resourceBaseUrl: 'http://localhost',
-    mfaSmsEnabled: false,
-    mfaEmailEnabled: false,
-    rbaEnabled: false,
-    consentsVersions: {},
-    passwordPolicy: {
-        minLength: 8,
-        minStrength: 2,
-        allowUpdateWithAccessTokenOnly: true,
-    }
-};
+import { componentGenerator, snapshotGenerator } from '../renderer'
 
 const defaultI18n: I18nMessages = {}
 
 describe('Snapshot', () => {
-    const generateSnapshot = (options: Partial<Parameters<typeof profileEditorWidget>[0]> = {}, user: Partial<Profile>, config: Partial<Config> = {}) => async () => {
+    const generateSnapshot = (options: ComponentProps<typeof ProfileEditorWidget>, user: Partial<Profile>) => {
         // @ts-expect-error partial Client
         const apiClient: Client = {
             getUser: jest.fn<Client['getUser']>().mockResolvedValue(user as Profile)
         }
 
-        const widget = await profileEditorWidget(
-            { ...options, accessToken: 'azerty' },
-            { apiClient,config: { ...defaultConfig, ...config }, defaultI18n }
-        )
-
-        await waitFor(async () => {
-            const { container, rerender } = await render(widget);
-
-            await waitFor(() => expect(apiClient.getUser).toHaveBeenCalled())
-    
-            await rerender(widget)
-
-            expect(container).toMatchSnapshot();
-        })
-    };
+        const generate = snapshotGenerator(ProfileEditorWidget, apiClient, defaultI18n)
+        
+        return generate(options)
+    }
 
     describe('profile editor', () => {
         test('basic',
             generateSnapshot(
                 {
+                    accessToken: 'azerty',
                     fields: [
                         'givenName',
                         'familyName'
-                    ]
+                    ],
                 },
                 {
                     givenName: 'John',
@@ -95,22 +64,13 @@ describe('DOM testing', () => {
         onSuccess.mockClear()
     })
 
-    const generateComponent = async (options: Partial<Parameters<typeof profileEditorWidget>[0]> = {}, config: Partial<Config> = {}) => {
-        // @ts-expect-error partial Client
-        const apiClient: Client = {
-            getUser,
-            updateProfile,
-        }
+    // @ts-expect-error partial Client
+    const apiClient: Client = {
+        getUser,
+        updateProfile,
+    }
 
-        const result = await profileEditorWidget(
-            { onError, onSuccess, ...options, accessToken: 'azerty' },
-            {config: { ...defaultConfig, ...config }, apiClient, defaultI18n }
-        );
-
-        return waitFor(async () => {
-            return render(result);
-        })
-    };
+    const generateComponent = componentGenerator(ProfileEditorWidget, apiClient, defaultI18n)
 
     describe('profileEditor', () => {
         test('default', async () => {
@@ -126,10 +86,13 @@ describe('DOM testing', () => {
             updateProfile.mockResolvedValue()
 
             await generateComponent({
+                accessToken: 'azerty',
                 fields: [
                     'given_name',
                     'family_name'
-                ]
+                ],
+                onError,
+                onSuccess,
             })
 
             expect(getUser).toBeCalledWith(
@@ -172,21 +135,25 @@ describe('DOM testing', () => {
         })
 
         test('api get user failed', async () => {
-            getUser.mockRejectedValue('Unexpected error')
+            getUser.mockRejectedValue(new Error('Unexpected error'))
 
-            await expect(
-                generateComponent({
+            await generateComponent(
+                {
+                    accessToken: 'azerty',
                     fields: [
                         'given_name',
                         'family_name'
-                    ]
-                })
-            ).rejects.toEqual('Unexpected error')
-
-            expect(getUser).toBeCalled()
+                    ],
+                    onError,
+                    onSuccess,
+                },
+                {},
+                () => expect(getUser).toBeCalled()
+            )
 
             expect(onSuccess).not.toBeCalled()
-            expect(onError).toBeCalledWith('Unexpected error')
+            expect(onError).toBeCalled()
+            expect(onError).toBeCalledWith(new Error('Unexpected error'))
         })
 
         test('api update user failed', async () => {
@@ -199,13 +166,16 @@ describe('DOM testing', () => {
 
             getUser.mockResolvedValue(profile as Profile)
 
-            updateProfile.mockRejectedValue('Unexpected error')
+            updateProfile.mockRejectedValue(new Error('Unexpected error'))
 
             await generateComponent({
+                accessToken: 'azerty',
                 fields: [
                     'given_name',
                     'family_name'
-                ]
+                ],
+                onError,
+                onSuccess,
             })
 
             expect(getUser).toBeCalled()
@@ -224,7 +194,7 @@ describe('DOM testing', () => {
             expect(updateProfile).toBeCalled()
 
             expect(onSuccess).not.toBeCalled()
-            expect(onError).toBeCalledWith('Unexpected error')
+            expect(onError).toBeCalledWith(new Error('Unexpected error'))
         })
     })
 

@@ -1,9 +1,10 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment jest-fixed-jsdom
  */
 
+import { ComponentProps } from 'react';
 import { beforeEach, describe, expect, jest, test } from '@jest/globals';
-import { render, screen, waitFor } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import '@testing-library/jest-dom/jest-globals'
 import 'jest-styled-components';
 
@@ -12,64 +13,31 @@ import type { Client, MFA } from '@reachfive/identity-core';
 import type { Config } from '../../../src/types';
 import type { I18nMessages } from '../../../src/core/i18n';
 
-import mfaListWidget from '../../../src/widgets/mfa/mfaListWidget';
+import MfaListWidget from '../../../src/widgets/mfa/mfaListWidget';
 import { AppError } from '../../../src/helpers/errors';
-
-const defaultConfig: Config = {
-    clientId: 'local',
-    domain: 'local.reach5.net',
-    sso: false,
-    sms: false,
-    webAuthn: false,
-    language: 'fr',
-    pkceEnforced: false,
-    isPublic: true,
-    socialProviders: ['facebook', 'google'],
-    customFields: [],
-    resourceBaseUrl: 'http://localhost',
-    mfaSmsEnabled: true,
-    mfaEmailEnabled: true,
-    rbaEnabled: false,
-    consentsVersions: {},
-    passwordPolicy: {
-        minLength: 8,
-        minStrength: 2,
-        allowUpdateWithAccessTokenOnly: true,
-    }
-};
+import { componentGenerator, snapshotGenerator } from '../renderer';
 
 const defaultI18n: I18nMessages = {}
 
 describe('Snapshot', () => {
     const generateSnapshot = (
-        options: Partial<Parameters<typeof mfaListWidget>[0]>,
+        options: ComponentProps<typeof MfaListWidget>,
         config: Partial<Config> = {},
         credentials: (MFA.EmailCredential | MFA.PhoneCredential)[]
-    ) => async () => {
+    ) => {
         // @ts-expect-error partial Client
         const apiClient: Client = {
             listMfaCredentials: jest.fn<Client['listMfaCredentials']>().mockResolvedValue({ credentials }),
         }
 
-        const widget = await mfaListWidget(
-            { accessToken: 'azerty', ...options },
-            { apiClient,config: { ...defaultConfig, ...config }, defaultI18n }
-        )
+        const generate = snapshotGenerator(MfaListWidget, apiClient, defaultI18n)
         
-        await waitFor(async () => {
-            const { container, rerender } = await render(widget);
-
-            await waitFor(() => expect(apiClient.listMfaCredentials).toHaveBeenCalled())
-    
-            await rerender(widget)
-
-            expect(container).toMatchSnapshot();
-        })
+        return generate(options, config)
     };
 
-    test('empty', generateSnapshot({}, undefined, []))
+    test('empty', generateSnapshot({ accessToken: 'azerty' }, undefined, []))
 
-    test('basic', generateSnapshot({}, undefined, [
+    test('basic', generateSnapshot({ accessToken: 'azerty' }, undefined, [
         { type: 'sms', phoneNumber: '33612345678', friendlyName: 'identifier', createdAt: '2022-09-21' },
         { type: 'email', email: 'root@reach5.co', friendlyName: 'identifier', createdAt: '2022-09-21' }
     ]))
@@ -87,24 +55,17 @@ describe('DOM testing', () => {
         listMfaCredentials.mockClear()
     })
 
-    const generateComponent = async (
-        options: Partial<Parameters<typeof mfaListWidget>[0]>,
-        config: Partial<Config> = {},
-    ) => {
-        // @ts-expect-error partial Client
-        const apiClient: Client = {
-            listMfaCredentials,
-        }
-        const result = await mfaListWidget({ accessToken: 'azerty', onError, onSuccess, ...options }, { apiClient,config: { ...defaultConfig, ...config }, defaultI18n });
-        return await waitFor(async () => {
-            return render(result);
-        })
-    };
+    // @ts-expect-error partial Client
+    const apiClient: Client = {
+        listMfaCredentials,
+    }
+
+    const generateComponent = componentGenerator(MfaListWidget, apiClient, defaultI18n)
 
     describe('mfaCredentials', () => {
         test('no credentials', async () => {
             listMfaCredentials.mockResolvedValue({ credentials: [] })
-            await generateComponent({}, defaultConfig);
+            await generateComponent({ accessToken: 'azerty', onError, onSuccess });
 
             const noCredentials = screen.queryByText('mfaList.noCredentials')
             expect(noCredentials).toBeInTheDocument()
@@ -121,7 +82,9 @@ describe('DOM testing', () => {
                 { type: 'sms', phoneNumber: '33612345678', friendlyName: 'identifier', createdAt: '2022-09-21' } as MFA.PhoneCredential,
                 { type: 'email', email: 'root@reach5.co', friendlyName: 'identifier', createdAt: '2022-09-21' } as MFA.EmailCredential
             ]})
-            await generateComponent({}, defaultConfig);
+            await generateComponent({ accessToken: 'azerty', onError, onSuccess });
+
+            expect(listMfaCredentials).toBeCalled()
 
             const noCredentials = screen.queryByText('mfaList.noCredentials')
             expect(noCredentials).not.toBeInTheDocument()
@@ -136,9 +99,15 @@ describe('DOM testing', () => {
         test('api error', async () => {
             const error: AppError = { errorId: '0', error: 'unexpected_error', errorDescription: "Unexpected error" }
             listMfaCredentials.mockRejectedValue(error)
-            await expect(async () => await generateComponent({}, defaultConfig)).rejects.toThrow(error.errorDescription)
+            
+            await generateComponent(
+                { accessToken: 'azerty', onError, onSuccess },
+                {},
+                () => expect(listMfaCredentials).toBeCalled()
+            )
+            
             expect(onSuccess).not.toBeCalled()
-            expect(onError).toBeCalled()
+            expect(onError).toBeCalledWith(error)
         })
     })
 

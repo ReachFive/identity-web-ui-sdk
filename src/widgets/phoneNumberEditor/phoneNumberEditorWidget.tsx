@@ -11,7 +11,6 @@ import phoneNumberField, { type PhoneNumberOptions } from '../../components/form
 import { useReachfive } from '../../contexts/reachfive';
 import { useI18n } from '../../contexts/i18n';
 import { useRouting } from '../../contexts/routing';
-import { useConfig } from '../../contexts/config';
 
 import type { OnError, OnSuccess } from '../../types';
 
@@ -62,8 +61,7 @@ interface MainViewProps {
 }
 
 const MainView = ({ accessToken, showLabels = false, phoneNumberOptions, onError = (() => {}) as OnError }: MainViewProps) => {
-    const coreClient = useReachfive()
-    const config = useConfig()
+    const { client: coreClient, config } = useReachfive()
     const i18n = useI18n()
     const { goTo } = useRouting()
     
@@ -119,7 +117,7 @@ const VerificationCodeView = ({
     onSuccess = (() => {}) as OnSuccess,
     onError = (() => {}) as OnError,
 }: VerificationCodeViewProps) => {
-    const coreClient = useReachfive()
+    const { client: coreClient } = useReachfive()
     const i18n = useI18n()
     const { params } = useRouting()
     const { phoneNumber } = params as VerificationCodeViewState

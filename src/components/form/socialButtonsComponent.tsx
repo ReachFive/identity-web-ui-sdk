@@ -140,7 +140,7 @@ export interface SocialButtonsProps {
 }
 
 export const SocialButtons = styled(({ auth, providers, className, onError = (() => {}) as OnError, onSuccess = (() => {}) as OnSuccess }: SocialButtonsProps & { className?: string }) => {
-    const coreClient = useReachfive()
+    const { client: coreClient } = useReachfive()
 
     const clickHandler = useCallback(
         (provider: string) => {

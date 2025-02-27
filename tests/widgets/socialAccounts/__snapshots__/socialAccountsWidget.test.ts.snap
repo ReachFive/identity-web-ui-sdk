@@ -1,13 +1,75 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Snapshot basic 1`] = `
-.c1 {
-  text-align: center;
-  margin-bottom: 10px;
+.c3 {
+  color: #adb5bd;
 }
 
-.c2 {
+.c4 {
+  position: absolute;
+  right: 9px;
+  top: 9px;
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.c4:hover::before,
+.c4:hover::after {
+  background: #748290;
+}
+
+.c4::before,
+.c4::after {
+  content: '';
+  position: absolute;
+  height: 3px;
+  width: 75%;
+  top: 50%;
+  left: 0;
+  margin-top: -1px;
+  background: #adb5bd;
+  background-position: center center;
+}
+
+.c4::before {
+  -webkit-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  transform: rotate(45deg);
+}
+
+.c4::after {
+  -webkit-transform: rotate(-45deg);
+  -ms-transform: rotate(-45deg);
+  transform: rotate(-45deg);
+}
+
+.c1 {
+  padding: 9px 38px;
+  border: 1px solid #ced4da;
   color: #495057;
+  box-sizing: border-box;
+  white-space: nowrap;
+  vertical-align: middle;
+  position: relative;
+}
+
+.c1:only-child {
+  border-radius: 3px;
+}
+
+.c1:not(:only-child):first-child {
+  border-radius: 3px 3px 0 0;
+}
+
+.c1:not(:only-child):last-child {
+  border-radius: 0 0 3px 3px;
+}
+
+.c1:not(:only-child):not(:last-child) {
+  border-bottom-width: 0;
 }
 
 .c0 {
@@ -24,7 +86,7 @@ exports[`Snapshot basic 1`] = `
   margin: 0 auto;
 }
 
-.c4 {
+.c6 {
   display: block;
   width: 100%;
   box-sizing: border-box;
@@ -48,23 +110,36 @@ exports[`Snapshot basic 1`] = `
   transition: all .15s ease-in-out;
 }
 
-.c4:focus {
+.c6:focus {
   outline: 0;
   box-shadow: 0 0 0 3px rgba(206,212,218,0.5);
 }
 
-.c4:hover,
-.c4:active {
+.c6:hover,
+.c6:active {
   color: #495057;
   background-color: #ebebeb;
   border-color: #b7c0c8;
 }
 
-.c4[disabled] {
+.c6[disabled] {
   opacity: .65;
 }
 
-.c3 {
+.c2 {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 38px;
+  box-sizing: border-box;
+  background-image: url(svg);
+  background-repeat: no-repeat;
+  background-size: 20px 20px;
+  background-position: center center;
+}
+
+.c5 {
   margin-top: 10px;
 }
 
@@ -74,16 +149,34 @@ exports[`Snapshot basic 1`] = `
   >
     <div>
       <div
-        class="c1 c2"
+        class="c1"
+        data-testid="identity-facebook"
       >
-        socialAccounts.noLinkedAccount
+        <span
+          class="c2"
+        />
+        <span>
+          Facebook
+        </span>
+         
+        <span
+          class="c3"
+        >
+          - 
+          John Doe
+        </span>
+        <span
+          class="c4"
+          data-testid="identity-facebook-unlink"
+          title="remove"
+        />
       </div>
     </div>
     <div
-      class="c3"
+      class="c5"
     >
       <button
-        class="c4"
+        class="c6"
       >
         socialAccounts.linkNewAccount
       </button>

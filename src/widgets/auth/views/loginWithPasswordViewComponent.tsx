@@ -132,7 +132,7 @@ export const LoginWithPasswordView = ({
     onSuccess = (() => {}) as OnSuccess,
 }: LoginWithPasswordViewProps) => {
     const i18n = useI18n()
-    const coreClient = useReachfive()
+    const { client: coreClient } = useReachfive()
     const { goTo, params } = useRouting()
     const { username } = params as LoginWithPasswordViewState
 

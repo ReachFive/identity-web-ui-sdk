@@ -1,6 +1,6 @@
 /**
  * @reachfive/identity-ui - v1.32.2
- * Compiled Fri, 21 Feb 2025 13:11:28 UTC
+ * Compiled Fri, 28 Feb 2025 20:00:11 UTC
  *
  * Copyright (c) ReachFive.
  *
@@ -8,10 +8,11 @@
  * LICENSE file in the root directory of this source tree.
  **/
 import * as React from 'react';
-import React__default, { CSSProperties, ComponentType } from 'react';
+import React__default, { CSSProperties, ReactNode, PropsWithChildren, ComponentType } from 'react';
 import * as _reachfive_identity_core from '@reachfive/identity-core';
-import { Config as Config$1, RemoteSettings, ConsentVersions, CustomField, Client as Client$1, SessionInfo, ConsentType, PasswordStrengthScore, PasswordPolicy, CustomFieldType, AuthOptions, MFA, PasswordlessResponse, SingleFactorPasswordlessParams, Profile, UserConsent, DeviceCredential } from '@reachfive/identity-core';
+import { Config as Config$1, RemoteSettings, ConsentVersions, CustomField, Client as Client$1, ConsentType, PasswordStrengthScore, PasswordPolicy, CustomFieldType, AuthOptions, MFA, PasswordlessResponse, SingleFactorPasswordlessParams, Profile, UserConsent, DeviceCredential } from '@reachfive/identity-core';
 export { Config } from '@reachfive/identity-core';
+import * as csstype from 'csstype';
 import { Country, Value as Value$2 } from 'react-phone-number-input';
 import * as libphonenumber_js from 'libphonenumber-js';
 import { PasswordlessParams } from '@reachfive/identity-core/es/main/oAuthClient';
@@ -230,17 +231,45 @@ type I18nNestedMessages = Record<string, string | I18nMessages>;
 type I18nMessageParams = Record<string, unknown>;
 type I18nResolver = (key: string, params?: I18nMessageParams, fallback?: (params?: I18nMessageParams) => string) => string;
 
+interface ReachfiveContext {
+    client: Client$1;
+    config: Config;
+    i18n: I18nMessages;
+}
+declare const ReachfiveContext: React__default.Context<ReachfiveContext | undefined>;
+declare function useReachfive(): ReachfiveContext;
+interface ReachfiveProviderProps {
+    /** ReachFive core client instance */
+    client: Client$1;
+    /** Core configuration for ReachFive */
+    config: Config$1;
+    /** An alternate UI to render in place of the actual UI if it has not finished loading */
+    fallback?: ReactNode;
+}
+/**
+ * Provider component for ReachFive authentication context
+ *
+ * @example
+ * ```tsx
+ * import { createClient, type Config } from '@reachfive/identity-core';
+ * import { ReachfiveProvider, Auth } from '@reachfive/identity-ui';
+ *
+ * const coreConfig: Config = { clientId: '####', domain: 'local.reach5.co' }
+ *
+ * const coreClient = createClient(coreConfig)
+ *
+ * <ReachfiveProvider client={coreClient} config={coreConfig} fallback={<Loading />}>
+ *   <Auth />
+ * </ReachfiveProvider>
+ * ```
+ */
+declare function ReachfiveProvider({ children, client, config: coreConfig, fallback }: PropsWithChildren<ReachfiveProviderProps>): React__default.JSX.Element;
+
 type I18nProps$1 = {
     i18n?: I18nNestedMessages;
 };
 type ThemeProps = {
     theme?: ThemeOptions;
-};
-type Context = {
-    config: Config;
-    apiClient: Client$1;
-    defaultI18n: I18nMessages;
-    session?: SessionInfo;
 };
 
 interface I18nProps {
@@ -1074,6 +1103,101 @@ type VerificationCodeViewProps$3 = Prettify<Partial<StepUpHandlerResponse> & {
 }>;
 type MfaStepUpProps = MainViewProps$6 & FaSelectionViewProps & VerificationCodeViewProps$3;
 type MfaStepUpWidgetProps = MfaStepUpProps;
+declare const _default$e: (options: {
+    accessToken?: string | undefined;
+    auth?: AuthOptions | undefined;
+    showIntro?: boolean | undefined;
+    showStepUpStart?: boolean | undefined;
+    allowTrustDevice?: boolean | undefined;
+    onSuccess?: OnSuccess | undefined;
+    onError?: OnError | undefined;
+    amr?: string[] | undefined;
+    token?: string | undefined;
+    challengeId?: string | undefined;
+    authType?: "email" | "sms" | "magic_link" | undefined;
+    i18n?: I18nNestedMessages | undefined;
+    theme?: {
+        link?: {
+            color?: string | undefined;
+            decoration?: NonNullable<csstype.Property.TextDecoration<string | number> | undefined> | undefined;
+            hoverColor?: string | undefined;
+            hoverDecoration?: NonNullable<csstype.Property.TextDecoration<string | number> | undefined> | undefined;
+        } | undefined;
+        input?: {
+            color?: string | undefined;
+            placeholderColor?: string | undefined;
+            fontSize?: number | undefined;
+            lineHeight?: number | undefined;
+            paddingX?: number | undefined;
+            paddingY?: number | undefined;
+            borderRadius?: number | undefined;
+            borderColor?: string | undefined;
+            borderWidth?: number | undefined;
+            background?: string | undefined;
+            disabledBackground?: string | undefined;
+            boxShadow?: string | undefined;
+            focusBorderColor?: string | undefined;
+            focusBoxShadow?: {} | undefined;
+            height?: number | undefined;
+        } | undefined;
+        button?: {
+            fontWeight?: NonNullable<csstype.Property.FontWeight | undefined> | undefined;
+            fontSize?: number | undefined;
+            lineHeight?: number | undefined;
+            paddingX?: number | undefined;
+            paddingY?: number | undefined;
+            borderColor?: string | undefined;
+            borderRadius?: number | undefined;
+            borderWidth?: number | undefined;
+            focusBoxShadow?: {} | undefined;
+            height?: number | undefined;
+        } | undefined;
+        socialButton?: {
+            inline?: boolean | undefined;
+            textVisible?: boolean | undefined;
+            fontWeight?: NonNullable<csstype.Property.FontWeight | undefined> | undefined;
+            fontSize?: number | undefined;
+            lineHeight?: number | undefined;
+            paddingX?: number | undefined;
+            paddingY?: number | undefined;
+            borderColor?: string | undefined;
+            borderRadius?: number | undefined;
+            borderWidth?: number | undefined;
+            focusBoxShadow?: {} | undefined;
+            height?: number | undefined;
+        } | undefined;
+        passwordStrengthValidator?: {
+            color0?: string | undefined;
+            color1?: string | undefined;
+            color2?: string | undefined;
+            color3?: string | undefined;
+            color4?: string | undefined;
+        } | undefined;
+        animateWidgetEntrance?: boolean | undefined;
+        fontSize?: number | undefined;
+        smallTextFontSize?: number | undefined;
+        lineHeight?: number | undefined;
+        headingColor?: string | undefined;
+        textColor?: string | undefined;
+        mutedTextColor?: string | undefined;
+        borderRadius?: number | undefined;
+        borderColor?: string | undefined;
+        borderWidth?: number | undefined;
+        backgroundColor?: string | undefined;
+        primaryColor?: string | undefined;
+        dangerColor?: string | undefined;
+        warningColor?: string | undefined;
+        successColor?: string | undefined;
+        lightBackgroundColor?: string | undefined;
+        paddingX?: number | undefined;
+        paddingY?: number | undefined;
+        spacing?: number | undefined;
+        maxWidth?: number | undefined;
+        _absoluteLineHeight?: number | undefined;
+        _blockInnerHeight?: number | undefined;
+        _blockHeight?: number | undefined;
+    } | undefined;
+}) => React__default.JSX.Element;
 
 interface AuthWidgetProps extends LoginViewProps, LoginWithWebAuthnViewProps, LoginWithPasswordViewProps, SignupViewProps, SignupWithPasswordViewProps, SignupWithWebAuthnViewProps, ForgotPasswordViewProps, QuickLoginViewProps, ReauthViewProps, Omit<FaSelectionViewProps, keyof FaSelectionViewState>, Omit<VerificationCodeViewProps$3, keyof VerificationCodeViewState> {
     /**
@@ -1093,6 +1217,125 @@ interface AuthWidgetProps extends LoginViewProps, LoginWithWebAuthnViewProps, Lo
      */
     initialScreen?: InitialScreen;
 }
+declare const _default$d: {
+    ({ auth, ...props }: {
+        allowQuickLogin?: boolean | undefined;
+        initialScreen?: InitialScreen | undefined;
+        acceptTos?: boolean | undefined;
+        allowCustomIdentifier?: boolean | undefined;
+        allowForgotPassword?: boolean | undefined;
+        allowAccountRecovery?: boolean | undefined;
+        allowSignup?: boolean | undefined;
+        allowWebAuthnLogin?: boolean | undefined;
+        auth?: _reachfive_identity_core.AuthOptions | undefined;
+        canShowPassword?: boolean | undefined;
+        recaptcha_enabled?: boolean | undefined;
+        recaptcha_site_key?: string | undefined;
+        showLabels?: boolean | undefined;
+        showRememberMe?: boolean | undefined;
+        socialProviders?: string[] | undefined;
+        allowAuthentMailPhone?: boolean | undefined;
+        allowTrustDevice?: boolean | undefined;
+        onSuccess?: OnSuccess | undefined;
+        onError?: OnError | undefined;
+        enablePasswordAuthentication?: boolean | undefined;
+        allowLogin?: boolean | undefined;
+        allowWebAuthnSignup?: boolean | undefined;
+        phoneNumberOptions?: PhoneNumberOptions | undefined;
+        beforeSignup?: (<T>(param: T) => T) | undefined;
+        redirectUrl?: string | undefined;
+        returnToAfterEmailConfirmation?: string | undefined;
+        signupFields?: (string | Field)[] | undefined;
+        userAgreement?: string | undefined;
+        allowPhoneNumberResetPassword?: boolean | undefined;
+        displaySafeErrorMessage?: boolean | undefined;
+        returnToAfterPasswordReset?: string | undefined;
+        showIntro?: boolean | undefined;
+        i18n?: I18nNestedMessages | undefined;
+        theme?: {
+            link?: {
+                color?: string | undefined;
+                decoration?: NonNullable<csstype.Property.TextDecoration<string | number> | undefined> | undefined;
+                hoverColor?: string | undefined;
+                hoverDecoration?: NonNullable<csstype.Property.TextDecoration<string | number> | undefined> | undefined;
+            } | undefined;
+            input?: {
+                color?: string | undefined;
+                placeholderColor?: string | undefined;
+                fontSize?: number | undefined;
+                lineHeight?: number | undefined;
+                paddingX?: number | undefined;
+                paddingY?: number | undefined;
+                borderRadius?: number | undefined;
+                borderColor?: string | undefined;
+                borderWidth?: number | undefined;
+                background?: string | undefined;
+                disabledBackground?: string | undefined;
+                boxShadow?: string | undefined;
+                focusBorderColor?: string | undefined;
+                focusBoxShadow?: {} | undefined;
+                height?: number | undefined;
+            } | undefined;
+            button?: {
+                fontWeight?: NonNullable<csstype.Property.FontWeight | undefined> | undefined;
+                fontSize?: number | undefined;
+                lineHeight?: number | undefined;
+                paddingX?: number | undefined;
+                paddingY?: number | undefined;
+                borderColor?: string | undefined;
+                borderRadius?: number | undefined;
+                borderWidth?: number | undefined;
+                focusBoxShadow?: {} | undefined;
+                height?: number | undefined;
+            } | undefined;
+            socialButton?: {
+                inline?: boolean | undefined;
+                textVisible?: boolean | undefined;
+                fontWeight?: NonNullable<csstype.Property.FontWeight | undefined> | undefined;
+                fontSize?: number | undefined;
+                lineHeight?: number | undefined;
+                paddingX?: number | undefined;
+                paddingY?: number | undefined;
+                borderColor?: string | undefined;
+                borderRadius?: number | undefined;
+                borderWidth?: number | undefined;
+                focusBoxShadow?: {} | undefined;
+                height?: number | undefined;
+            } | undefined;
+            passwordStrengthValidator?: {
+                color0?: string | undefined;
+                color1?: string | undefined;
+                color2?: string | undefined;
+                color3?: string | undefined;
+                color4?: string | undefined;
+            } | undefined;
+            animateWidgetEntrance?: boolean | undefined;
+            fontSize?: number | undefined;
+            smallTextFontSize?: number | undefined;
+            lineHeight?: number | undefined;
+            headingColor?: string | undefined;
+            textColor?: string | undefined;
+            mutedTextColor?: string | undefined;
+            borderRadius?: number | undefined;
+            borderColor?: string | undefined;
+            borderWidth?: number | undefined;
+            backgroundColor?: string | undefined;
+            primaryColor?: string | undefined;
+            dangerColor?: string | undefined;
+            warningColor?: string | undefined;
+            successColor?: string | undefined;
+            lightBackgroundColor?: string | undefined;
+            paddingX?: number | undefined;
+            paddingY?: number | undefined;
+            spacing?: number | undefined;
+            maxWidth?: number | undefined;
+            _absoluteLineHeight?: number | undefined;
+            _blockInnerHeight?: number | undefined;
+            _blockHeight?: number | undefined;
+        } | undefined;
+    }): React.JSX.Element;
+    displayName: string;
+};
 
 interface MainViewProps$5 {
     /**
@@ -1129,6 +1372,97 @@ interface MainViewProps$5 {
 }
 interface EmailEditorWidgetProps extends MainViewProps$5 {
 }
+declare const _default$c: (options: {
+    accessToken: string;
+    recaptcha_enabled?: boolean | undefined;
+    recaptcha_site_key?: string | undefined;
+    redirectUrl?: string | undefined;
+    showLabels?: boolean | undefined;
+    onSuccess?: OnSuccess | undefined;
+    onError?: OnError | undefined;
+    i18n?: I18nNestedMessages | undefined;
+    theme?: {
+        link?: {
+            color?: string | undefined;
+            decoration?: NonNullable<csstype.Property.TextDecoration<string | number> | undefined> | undefined;
+            hoverColor?: string | undefined;
+            hoverDecoration?: NonNullable<csstype.Property.TextDecoration<string | number> | undefined> | undefined;
+        } | undefined;
+        input?: {
+            color?: string | undefined;
+            placeholderColor?: string | undefined;
+            fontSize?: number | undefined;
+            lineHeight?: number | undefined;
+            paddingX?: number | undefined;
+            paddingY?: number | undefined;
+            borderRadius?: number | undefined;
+            borderColor?: string | undefined;
+            borderWidth?: number | undefined;
+            background?: string | undefined;
+            disabledBackground?: string | undefined;
+            boxShadow?: string | undefined;
+            focusBorderColor?: string | undefined;
+            focusBoxShadow?: {} | undefined;
+            height?: number | undefined;
+        } | undefined;
+        button?: {
+            fontWeight?: NonNullable<csstype.Property.FontWeight | undefined> | undefined;
+            fontSize?: number | undefined;
+            lineHeight?: number | undefined;
+            paddingX?: number | undefined;
+            paddingY?: number | undefined;
+            borderColor?: string | undefined;
+            borderRadius?: number | undefined;
+            borderWidth?: number | undefined;
+            focusBoxShadow?: {} | undefined;
+            height?: number | undefined;
+        } | undefined;
+        socialButton?: {
+            inline?: boolean | undefined;
+            textVisible?: boolean | undefined;
+            fontWeight?: NonNullable<csstype.Property.FontWeight | undefined> | undefined;
+            fontSize?: number | undefined;
+            lineHeight?: number | undefined;
+            paddingX?: number | undefined;
+            paddingY?: number | undefined;
+            borderColor?: string | undefined;
+            borderRadius?: number | undefined;
+            borderWidth?: number | undefined;
+            focusBoxShadow?: {} | undefined;
+            height?: number | undefined;
+        } | undefined;
+        passwordStrengthValidator?: {
+            color0?: string | undefined;
+            color1?: string | undefined;
+            color2?: string | undefined;
+            color3?: string | undefined;
+            color4?: string | undefined;
+        } | undefined;
+        animateWidgetEntrance?: boolean | undefined;
+        fontSize?: number | undefined;
+        smallTextFontSize?: number | undefined;
+        lineHeight?: number | undefined;
+        headingColor?: string | undefined;
+        textColor?: string | undefined;
+        mutedTextColor?: string | undefined;
+        borderRadius?: number | undefined;
+        borderColor?: string | undefined;
+        borderWidth?: number | undefined;
+        backgroundColor?: string | undefined;
+        primaryColor?: string | undefined;
+        dangerColor?: string | undefined;
+        warningColor?: string | undefined;
+        successColor?: string | undefined;
+        lightBackgroundColor?: string | undefined;
+        paddingX?: number | undefined;
+        paddingY?: number | undefined;
+        spacing?: number | undefined;
+        maxWidth?: number | undefined;
+        _absoluteLineHeight?: number | undefined;
+        _blockInnerHeight?: number | undefined;
+        _blockHeight?: number | undefined;
+    } | undefined;
+}) => React__default.JSX.Element;
 
 interface PasswordEditorFormProps {
     /**
@@ -1175,6 +1509,97 @@ type Authentication = {
     userId: string;
 };
 type PasswordEditorWidgetProps = Omit<PasswordEditorProps, 'authentication'>;
+declare const _default$b: (options: {
+    onError?: OnError | undefined;
+    onSuccess?: OnSuccess | undefined;
+    showLabels?: boolean | undefined;
+    canShowPassword?: boolean | undefined;
+    accessToken?: string | undefined;
+    userId?: string | undefined;
+    promptOldPassword?: boolean | undefined;
+    i18n?: I18nNestedMessages | undefined;
+    theme?: {
+        link?: {
+            color?: string | undefined;
+            decoration?: NonNullable<csstype.Property.TextDecoration<string | number> | undefined> | undefined;
+            hoverColor?: string | undefined;
+            hoverDecoration?: NonNullable<csstype.Property.TextDecoration<string | number> | undefined> | undefined;
+        } | undefined;
+        input?: {
+            color?: string | undefined;
+            placeholderColor?: string | undefined;
+            fontSize?: number | undefined;
+            lineHeight?: number | undefined;
+            paddingX?: number | undefined;
+            paddingY?: number | undefined;
+            borderRadius?: number | undefined;
+            borderColor?: string | undefined;
+            borderWidth?: number | undefined;
+            background?: string | undefined;
+            disabledBackground?: string | undefined;
+            boxShadow?: string | undefined;
+            focusBorderColor?: string | undefined;
+            focusBoxShadow?: {} | undefined;
+            height?: number | undefined;
+        } | undefined;
+        button?: {
+            fontWeight?: NonNullable<csstype.Property.FontWeight | undefined> | undefined;
+            fontSize?: number | undefined;
+            lineHeight?: number | undefined;
+            paddingX?: number | undefined;
+            paddingY?: number | undefined;
+            borderColor?: string | undefined;
+            borderRadius?: number | undefined;
+            borderWidth?: number | undefined;
+            focusBoxShadow?: {} | undefined;
+            height?: number | undefined;
+        } | undefined;
+        socialButton?: {
+            inline?: boolean | undefined;
+            textVisible?: boolean | undefined;
+            fontWeight?: NonNullable<csstype.Property.FontWeight | undefined> | undefined;
+            fontSize?: number | undefined;
+            lineHeight?: number | undefined;
+            paddingX?: number | undefined;
+            paddingY?: number | undefined;
+            borderColor?: string | undefined;
+            borderRadius?: number | undefined;
+            borderWidth?: number | undefined;
+            focusBoxShadow?: {} | undefined;
+            height?: number | undefined;
+        } | undefined;
+        passwordStrengthValidator?: {
+            color0?: string | undefined;
+            color1?: string | undefined;
+            color2?: string | undefined;
+            color3?: string | undefined;
+            color4?: string | undefined;
+        } | undefined;
+        animateWidgetEntrance?: boolean | undefined;
+        fontSize?: number | undefined;
+        smallTextFontSize?: number | undefined;
+        lineHeight?: number | undefined;
+        headingColor?: string | undefined;
+        textColor?: string | undefined;
+        mutedTextColor?: string | undefined;
+        borderRadius?: number | undefined;
+        borderColor?: string | undefined;
+        borderWidth?: number | undefined;
+        backgroundColor?: string | undefined;
+        primaryColor?: string | undefined;
+        dangerColor?: string | undefined;
+        warningColor?: string | undefined;
+        successColor?: string | undefined;
+        lightBackgroundColor?: string | undefined;
+        paddingX?: number | undefined;
+        paddingY?: number | undefined;
+        spacing?: number | undefined;
+        maxWidth?: number | undefined;
+        _absoluteLineHeight?: number | undefined;
+        _blockInnerHeight?: number | undefined;
+        _blockHeight?: number | undefined;
+    } | undefined;
+}) => React__default.JSX.Element;
 
 interface MainViewProps$4 {
     /**
@@ -1211,6 +1636,95 @@ type VerificationCodeViewProps$2 = {
     onError?: OnError;
 };
 type PhoneNumberEditorWidgetProps = Prettify<MainViewProps$4 & VerificationCodeViewProps$2>;
+declare const _default$a: (options: {
+    accessToken: string;
+    showLabels?: boolean | undefined;
+    phoneNumberOptions?: PhoneNumberOptions | undefined;
+    onError?: OnError | undefined;
+    onSuccess?: OnSuccess | undefined;
+    i18n?: I18nNestedMessages | undefined;
+    theme?: {
+        link?: {
+            color?: string | undefined;
+            decoration?: NonNullable<csstype.Property.TextDecoration<string | number> | undefined> | undefined;
+            hoverColor?: string | undefined;
+            hoverDecoration?: NonNullable<csstype.Property.TextDecoration<string | number> | undefined> | undefined;
+        } | undefined;
+        input?: {
+            color?: string | undefined;
+            placeholderColor?: string | undefined;
+            fontSize?: number | undefined;
+            lineHeight?: number | undefined;
+            paddingX?: number | undefined;
+            paddingY?: number | undefined;
+            borderRadius?: number | undefined;
+            borderColor?: string | undefined;
+            borderWidth?: number | undefined;
+            background?: string | undefined;
+            disabledBackground?: string | undefined;
+            boxShadow?: string | undefined;
+            focusBorderColor?: string | undefined;
+            focusBoxShadow?: {} | undefined;
+            height?: number | undefined;
+        } | undefined;
+        button?: {
+            fontWeight?: NonNullable<csstype.Property.FontWeight | undefined> | undefined;
+            fontSize?: number | undefined;
+            lineHeight?: number | undefined;
+            paddingX?: number | undefined;
+            paddingY?: number | undefined;
+            borderColor?: string | undefined;
+            borderRadius?: number | undefined;
+            borderWidth?: number | undefined;
+            focusBoxShadow?: {} | undefined;
+            height?: number | undefined;
+        } | undefined;
+        socialButton?: {
+            inline?: boolean | undefined;
+            textVisible?: boolean | undefined;
+            fontWeight?: NonNullable<csstype.Property.FontWeight | undefined> | undefined;
+            fontSize?: number | undefined;
+            lineHeight?: number | undefined;
+            paddingX?: number | undefined;
+            paddingY?: number | undefined;
+            borderColor?: string | undefined;
+            borderRadius?: number | undefined;
+            borderWidth?: number | undefined;
+            focusBoxShadow?: {} | undefined;
+            height?: number | undefined;
+        } | undefined;
+        passwordStrengthValidator?: {
+            color0?: string | undefined;
+            color1?: string | undefined;
+            color2?: string | undefined;
+            color3?: string | undefined;
+            color4?: string | undefined;
+        } | undefined;
+        animateWidgetEntrance?: boolean | undefined;
+        fontSize?: number | undefined;
+        smallTextFontSize?: number | undefined;
+        lineHeight?: number | undefined;
+        headingColor?: string | undefined;
+        textColor?: string | undefined;
+        mutedTextColor?: string | undefined;
+        borderRadius?: number | undefined;
+        borderColor?: string | undefined;
+        borderWidth?: number | undefined;
+        backgroundColor?: string | undefined;
+        primaryColor?: string | undefined;
+        dangerColor?: string | undefined;
+        warningColor?: string | undefined;
+        successColor?: string | undefined;
+        lightBackgroundColor?: string | undefined;
+        paddingX?: number | undefined;
+        paddingY?: number | undefined;
+        spacing?: number | undefined;
+        maxWidth?: number | undefined;
+        _absoluteLineHeight?: number | undefined;
+        _blockInnerHeight?: number | undefined;
+        _blockHeight?: number | undefined;
+    } | undefined;
+}) => React__default.JSX.Element;
 
 interface MainViewProps$3 {
     /**
@@ -1237,6 +1751,95 @@ interface SuccessViewProps$1 {
 }
 interface PasswordResetWidgetProps extends MainViewProps$3, SuccessViewProps$1 {
 }
+declare const _default$9: (options: {
+    canShowPassword?: boolean | undefined;
+    onSuccess?: OnSuccess | undefined;
+    onError?: OnError | undefined;
+    showLabels?: boolean | undefined;
+    loginLink?: string | undefined;
+    i18n?: I18nNestedMessages | undefined;
+    theme?: {
+        link?: {
+            color?: string | undefined;
+            decoration?: NonNullable<csstype.Property.TextDecoration<string | number> | undefined> | undefined;
+            hoverColor?: string | undefined;
+            hoverDecoration?: NonNullable<csstype.Property.TextDecoration<string | number> | undefined> | undefined;
+        } | undefined;
+        input?: {
+            color?: string | undefined;
+            placeholderColor?: string | undefined;
+            fontSize?: number | undefined;
+            lineHeight?: number | undefined;
+            paddingX?: number | undefined;
+            paddingY?: number | undefined;
+            borderRadius?: number | undefined;
+            borderColor?: string | undefined;
+            borderWidth?: number | undefined;
+            background?: string | undefined;
+            disabledBackground?: string | undefined;
+            boxShadow?: string | undefined;
+            focusBorderColor?: string | undefined;
+            focusBoxShadow?: {} | undefined;
+            height?: number | undefined;
+        } | undefined;
+        button?: {
+            fontWeight?: NonNullable<csstype.Property.FontWeight | undefined> | undefined;
+            fontSize?: number | undefined;
+            lineHeight?: number | undefined;
+            paddingX?: number | undefined;
+            paddingY?: number | undefined;
+            borderColor?: string | undefined;
+            borderRadius?: number | undefined;
+            borderWidth?: number | undefined;
+            focusBoxShadow?: {} | undefined;
+            height?: number | undefined;
+        } | undefined;
+        socialButton?: {
+            inline?: boolean | undefined;
+            textVisible?: boolean | undefined;
+            fontWeight?: NonNullable<csstype.Property.FontWeight | undefined> | undefined;
+            fontSize?: number | undefined;
+            lineHeight?: number | undefined;
+            paddingX?: number | undefined;
+            paddingY?: number | undefined;
+            borderColor?: string | undefined;
+            borderRadius?: number | undefined;
+            borderWidth?: number | undefined;
+            focusBoxShadow?: {} | undefined;
+            height?: number | undefined;
+        } | undefined;
+        passwordStrengthValidator?: {
+            color0?: string | undefined;
+            color1?: string | undefined;
+            color2?: string | undefined;
+            color3?: string | undefined;
+            color4?: string | undefined;
+        } | undefined;
+        animateWidgetEntrance?: boolean | undefined;
+        fontSize?: number | undefined;
+        smallTextFontSize?: number | undefined;
+        lineHeight?: number | undefined;
+        headingColor?: string | undefined;
+        textColor?: string | undefined;
+        mutedTextColor?: string | undefined;
+        borderRadius?: number | undefined;
+        borderColor?: string | undefined;
+        borderWidth?: number | undefined;
+        backgroundColor?: string | undefined;
+        primaryColor?: string | undefined;
+        dangerColor?: string | undefined;
+        warningColor?: string | undefined;
+        successColor?: string | undefined;
+        lightBackgroundColor?: string | undefined;
+        paddingX?: number | undefined;
+        paddingY?: number | undefined;
+        spacing?: number | undefined;
+        maxWidth?: number | undefined;
+        _absoluteLineHeight?: number | undefined;
+        _blockInnerHeight?: number | undefined;
+        _blockHeight?: number | undefined;
+    } | undefined;
+}) => React__default.JSX.Element;
 
 interface MainViewProps$2 {
     /**
@@ -1311,6 +1914,100 @@ interface VerificationCodeViewProps$1 {
     onError?: OnError;
 }
 type PasswordlessWidgetProps = Prettify<MainViewProps$2 & VerificationCodeViewProps$1>;
+declare const _default$8: (options: {
+    auth?: AuthOptions | undefined;
+    authType?: "sms" | "magic_link" | undefined;
+    recaptcha_enabled?: boolean | undefined;
+    recaptcha_site_key?: string | undefined;
+    showIntro?: boolean | undefined;
+    showSocialLogins?: boolean | undefined;
+    socialProviders?: string[] | undefined;
+    phoneNumberOptions?: PhoneNumberOptions | undefined;
+    onSuccess?: OnSuccess | undefined;
+    onError?: OnError | undefined;
+    i18n?: I18nNestedMessages | undefined;
+    theme?: {
+        link?: {
+            color?: string | undefined;
+            decoration?: NonNullable<csstype.Property.TextDecoration<string | number> | undefined> | undefined;
+            hoverColor?: string | undefined;
+            hoverDecoration?: NonNullable<csstype.Property.TextDecoration<string | number> | undefined> | undefined;
+        } | undefined;
+        input?: {
+            color?: string | undefined;
+            placeholderColor?: string | undefined;
+            fontSize?: number | undefined;
+            lineHeight?: number | undefined;
+            paddingX?: number | undefined;
+            paddingY?: number | undefined;
+            borderRadius?: number | undefined;
+            borderColor?: string | undefined;
+            borderWidth?: number | undefined;
+            background?: string | undefined;
+            disabledBackground?: string | undefined;
+            boxShadow?: string | undefined;
+            focusBorderColor?: string | undefined;
+            focusBoxShadow?: {} | undefined;
+            height?: number | undefined;
+        } | undefined;
+        button?: {
+            fontWeight?: NonNullable<csstype.Property.FontWeight | undefined> | undefined;
+            fontSize?: number | undefined;
+            lineHeight?: number | undefined;
+            paddingX?: number | undefined;
+            paddingY?: number | undefined;
+            borderColor?: string | undefined;
+            borderRadius?: number | undefined;
+            borderWidth?: number | undefined;
+            focusBoxShadow?: {} | undefined;
+            height?: number | undefined;
+        } | undefined;
+        socialButton?: {
+            inline?: boolean | undefined;
+            textVisible?: boolean | undefined;
+            fontWeight?: NonNullable<csstype.Property.FontWeight | undefined> | undefined;
+            fontSize?: number | undefined;
+            lineHeight?: number | undefined;
+            paddingX?: number | undefined;
+            paddingY?: number | undefined;
+            borderColor?: string | undefined;
+            borderRadius?: number | undefined;
+            borderWidth?: number | undefined;
+            focusBoxShadow?: {} | undefined;
+            height?: number | undefined;
+        } | undefined;
+        passwordStrengthValidator?: {
+            color0?: string | undefined;
+            color1?: string | undefined;
+            color2?: string | undefined;
+            color3?: string | undefined;
+            color4?: string | undefined;
+        } | undefined;
+        animateWidgetEntrance?: boolean | undefined;
+        fontSize?: number | undefined;
+        smallTextFontSize?: number | undefined;
+        lineHeight?: number | undefined;
+        headingColor?: string | undefined;
+        textColor?: string | undefined;
+        mutedTextColor?: string | undefined;
+        borderRadius?: number | undefined;
+        borderColor?: string | undefined;
+        borderWidth?: number | undefined;
+        backgroundColor?: string | undefined;
+        primaryColor?: string | undefined;
+        dangerColor?: string | undefined;
+        warningColor?: string | undefined;
+        successColor?: string | undefined;
+        lightBackgroundColor?: string | undefined;
+        paddingX?: number | undefined;
+        paddingY?: number | undefined;
+        spacing?: number | undefined;
+        maxWidth?: number | undefined;
+        _absoluteLineHeight?: number | undefined;
+        _blockInnerHeight?: number | undefined;
+        _blockHeight?: number | undefined;
+    } | undefined;
+}) => React__default.JSX.Element;
 
 type ProfileWithConsents = Profile & {
     consents?: Record<string, UserConsent>;
@@ -1365,6 +2062,97 @@ interface ProfileEditorWidgetProps extends Omit<ProfileEditorProps, 'profile' | 
      */
     fields?: (string | Field)[];
 }
+declare const _default$7: (options: {
+    fields?: (string | Field)[] | undefined;
+    onError?: OnError | undefined;
+    onSuccess?: OnSuccess | undefined;
+    showLabels?: boolean | undefined;
+    accessToken: string;
+    phoneNumberOptions?: PhoneNumberOptions | undefined;
+    redirectUrl?: string | undefined;
+    i18n?: I18nNestedMessages | undefined;
+    theme?: {
+        link?: {
+            color?: string | undefined;
+            decoration?: NonNullable<csstype.Property.TextDecoration<string | number> | undefined> | undefined;
+            hoverColor?: string | undefined;
+            hoverDecoration?: NonNullable<csstype.Property.TextDecoration<string | number> | undefined> | undefined;
+        } | undefined;
+        input?: {
+            color?: string | undefined;
+            placeholderColor?: string | undefined;
+            fontSize?: number | undefined;
+            lineHeight?: number | undefined;
+            paddingX?: number | undefined;
+            paddingY?: number | undefined;
+            borderRadius?: number | undefined;
+            borderColor?: string | undefined;
+            borderWidth?: number | undefined;
+            background?: string | undefined;
+            disabledBackground?: string | undefined;
+            boxShadow?: string | undefined;
+            focusBorderColor?: string | undefined;
+            focusBoxShadow?: {} | undefined;
+            height?: number | undefined;
+        } | undefined;
+        button?: {
+            fontWeight?: NonNullable<csstype.Property.FontWeight | undefined> | undefined;
+            fontSize?: number | undefined;
+            lineHeight?: number | undefined;
+            paddingX?: number | undefined;
+            paddingY?: number | undefined;
+            borderColor?: string | undefined;
+            borderRadius?: number | undefined;
+            borderWidth?: number | undefined;
+            focusBoxShadow?: {} | undefined;
+            height?: number | undefined;
+        } | undefined;
+        socialButton?: {
+            inline?: boolean | undefined;
+            textVisible?: boolean | undefined;
+            fontWeight?: NonNullable<csstype.Property.FontWeight | undefined> | undefined;
+            fontSize?: number | undefined;
+            lineHeight?: number | undefined;
+            paddingX?: number | undefined;
+            paddingY?: number | undefined;
+            borderColor?: string | undefined;
+            borderRadius?: number | undefined;
+            borderWidth?: number | undefined;
+            focusBoxShadow?: {} | undefined;
+            height?: number | undefined;
+        } | undefined;
+        passwordStrengthValidator?: {
+            color0?: string | undefined;
+            color1?: string | undefined;
+            color2?: string | undefined;
+            color3?: string | undefined;
+            color4?: string | undefined;
+        } | undefined;
+        animateWidgetEntrance?: boolean | undefined;
+        fontSize?: number | undefined;
+        smallTextFontSize?: number | undefined;
+        lineHeight?: number | undefined;
+        headingColor?: string | undefined;
+        textColor?: string | undefined;
+        mutedTextColor?: string | undefined;
+        borderRadius?: number | undefined;
+        borderColor?: string | undefined;
+        borderWidth?: number | undefined;
+        backgroundColor?: string | undefined;
+        primaryColor?: string | undefined;
+        dangerColor?: string | undefined;
+        warningColor?: string | undefined;
+        successColor?: string | undefined;
+        lightBackgroundColor?: string | undefined;
+        paddingX?: number | undefined;
+        paddingY?: number | undefined;
+        spacing?: number | undefined;
+        maxWidth?: number | undefined;
+        _absoluteLineHeight?: number | undefined;
+        _blockInnerHeight?: number | undefined;
+        _blockHeight?: number | undefined;
+    } | undefined;
+}) => React__default.JSX.Element;
 
 interface SocialAccountsWidgetProps {
     /**
@@ -1390,6 +2178,95 @@ interface SocialAccountsWidgetProps {
      */
     onError?: OnError;
 }
+declare const _default$6: (options: {
+    accessToken: string;
+    auth?: AuthOptions | undefined;
+    providers?: string[] | undefined;
+    onSuccess?: OnSuccess | undefined;
+    onError?: OnError | undefined;
+    i18n?: I18nNestedMessages | undefined;
+    theme?: {
+        link?: {
+            color?: string | undefined;
+            decoration?: NonNullable<csstype.Property.TextDecoration<string | number> | undefined> | undefined;
+            hoverColor?: string | undefined;
+            hoverDecoration?: NonNullable<csstype.Property.TextDecoration<string | number> | undefined> | undefined;
+        } | undefined;
+        input?: {
+            color?: string | undefined;
+            placeholderColor?: string | undefined;
+            fontSize?: number | undefined;
+            lineHeight?: number | undefined;
+            paddingX?: number | undefined;
+            paddingY?: number | undefined;
+            borderRadius?: number | undefined;
+            borderColor?: string | undefined;
+            borderWidth?: number | undefined;
+            background?: string | undefined;
+            disabledBackground?: string | undefined;
+            boxShadow?: string | undefined;
+            focusBorderColor?: string | undefined;
+            focusBoxShadow?: {} | undefined;
+            height?: number | undefined;
+        } | undefined;
+        button?: {
+            fontWeight?: NonNullable<csstype.Property.FontWeight | undefined> | undefined;
+            fontSize?: number | undefined;
+            lineHeight?: number | undefined;
+            paddingX?: number | undefined;
+            paddingY?: number | undefined;
+            borderColor?: string | undefined;
+            borderRadius?: number | undefined;
+            borderWidth?: number | undefined;
+            focusBoxShadow?: {} | undefined;
+            height?: number | undefined;
+        } | undefined;
+        socialButton?: {
+            inline?: boolean | undefined;
+            textVisible?: boolean | undefined;
+            fontWeight?: NonNullable<csstype.Property.FontWeight | undefined> | undefined;
+            fontSize?: number | undefined;
+            lineHeight?: number | undefined;
+            paddingX?: number | undefined;
+            paddingY?: number | undefined;
+            borderColor?: string | undefined;
+            borderRadius?: number | undefined;
+            borderWidth?: number | undefined;
+            focusBoxShadow?: {} | undefined;
+            height?: number | undefined;
+        } | undefined;
+        passwordStrengthValidator?: {
+            color0?: string | undefined;
+            color1?: string | undefined;
+            color2?: string | undefined;
+            color3?: string | undefined;
+            color4?: string | undefined;
+        } | undefined;
+        animateWidgetEntrance?: boolean | undefined;
+        fontSize?: number | undefined;
+        smallTextFontSize?: number | undefined;
+        lineHeight?: number | undefined;
+        headingColor?: string | undefined;
+        textColor?: string | undefined;
+        mutedTextColor?: string | undefined;
+        borderRadius?: number | undefined;
+        borderColor?: string | undefined;
+        borderWidth?: number | undefined;
+        backgroundColor?: string | undefined;
+        primaryColor?: string | undefined;
+        dangerColor?: string | undefined;
+        warningColor?: string | undefined;
+        successColor?: string | undefined;
+        lightBackgroundColor?: string | undefined;
+        paddingX?: number | undefined;
+        paddingY?: number | undefined;
+        spacing?: number | undefined;
+        maxWidth?: number | undefined;
+        _absoluteLineHeight?: number | undefined;
+        _blockInnerHeight?: number | undefined;
+        _blockHeight?: number | undefined;
+    } | undefined;
+}) => React__default.JSX.Element;
 
 interface SocialButtonsProps {
     /**
@@ -1424,6 +2301,95 @@ interface SocialLoginWidgetProps extends Omit<SocialButtonsProps, 'providers'> {
      * */
     socialProviders?: SocialButtonsProps['providers'];
 }
+declare const _default$5: (options: {
+    socialProviders?: string[] | undefined;
+    onError?: OnError | undefined;
+    auth?: _reachfive_identity_core.AuthOptions | undefined;
+    onSuccess?: OnSuccess | undefined;
+    acceptTos?: boolean | undefined;
+    i18n?: I18nNestedMessages | undefined;
+    theme?: {
+        link?: {
+            color?: string | undefined;
+            decoration?: NonNullable<csstype.Property.TextDecoration<string | number> | undefined> | undefined;
+            hoverColor?: string | undefined;
+            hoverDecoration?: NonNullable<csstype.Property.TextDecoration<string | number> | undefined> | undefined;
+        } | undefined;
+        input?: {
+            color?: string | undefined;
+            placeholderColor?: string | undefined;
+            fontSize?: number | undefined;
+            lineHeight?: number | undefined;
+            paddingX?: number | undefined;
+            paddingY?: number | undefined;
+            borderRadius?: number | undefined;
+            borderColor?: string | undefined;
+            borderWidth?: number | undefined;
+            background?: string | undefined;
+            disabledBackground?: string | undefined;
+            boxShadow?: string | undefined;
+            focusBorderColor?: string | undefined;
+            focusBoxShadow?: {} | undefined;
+            height?: number | undefined;
+        } | undefined;
+        button?: {
+            fontWeight?: NonNullable<csstype.Property.FontWeight | undefined> | undefined;
+            fontSize?: number | undefined;
+            lineHeight?: number | undefined;
+            paddingX?: number | undefined;
+            paddingY?: number | undefined;
+            borderColor?: string | undefined;
+            borderRadius?: number | undefined;
+            borderWidth?: number | undefined;
+            focusBoxShadow?: {} | undefined;
+            height?: number | undefined;
+        } | undefined;
+        socialButton?: {
+            inline?: boolean | undefined;
+            textVisible?: boolean | undefined;
+            fontWeight?: NonNullable<csstype.Property.FontWeight | undefined> | undefined;
+            fontSize?: number | undefined;
+            lineHeight?: number | undefined;
+            paddingX?: number | undefined;
+            paddingY?: number | undefined;
+            borderColor?: string | undefined;
+            borderRadius?: number | undefined;
+            borderWidth?: number | undefined;
+            focusBoxShadow?: {} | undefined;
+            height?: number | undefined;
+        } | undefined;
+        passwordStrengthValidator?: {
+            color0?: string | undefined;
+            color1?: string | undefined;
+            color2?: string | undefined;
+            color3?: string | undefined;
+            color4?: string | undefined;
+        } | undefined;
+        animateWidgetEntrance?: boolean | undefined;
+        fontSize?: number | undefined;
+        smallTextFontSize?: number | undefined;
+        lineHeight?: number | undefined;
+        headingColor?: string | undefined;
+        textColor?: string | undefined;
+        mutedTextColor?: string | undefined;
+        borderRadius?: number | undefined;
+        borderColor?: string | undefined;
+        borderWidth?: number | undefined;
+        backgroundColor?: string | undefined;
+        primaryColor?: string | undefined;
+        dangerColor?: string | undefined;
+        warningColor?: string | undefined;
+        successColor?: string | undefined;
+        lightBackgroundColor?: string | undefined;
+        paddingX?: number | undefined;
+        paddingY?: number | undefined;
+        spacing?: number | undefined;
+        maxWidth?: number | undefined;
+        _absoluteLineHeight?: number | undefined;
+        _blockInnerHeight?: number | undefined;
+        _blockHeight?: number | undefined;
+    } | undefined;
+}) => React.JSX.Element;
 
 interface WebAuthnDevicesProps {
     /**
@@ -1450,6 +2416,94 @@ interface WebAuthnDevicesProps {
     onError?: OnError;
 }
 type WebAuthnWidgetProps = Omit<WebAuthnDevicesProps, 'devices'>;
+declare const _default$4: (options: {
+    onError?: OnError | undefined;
+    onSuccess?: OnSuccess | undefined;
+    showLabels?: boolean | undefined;
+    accessToken: string;
+    i18n?: I18nNestedMessages | undefined;
+    theme?: {
+        link?: {
+            color?: string | undefined;
+            decoration?: NonNullable<csstype.Property.TextDecoration<string | number> | undefined> | undefined;
+            hoverColor?: string | undefined;
+            hoverDecoration?: NonNullable<csstype.Property.TextDecoration<string | number> | undefined> | undefined;
+        } | undefined;
+        input?: {
+            color?: string | undefined;
+            placeholderColor?: string | undefined;
+            fontSize?: number | undefined;
+            lineHeight?: number | undefined;
+            paddingX?: number | undefined;
+            paddingY?: number | undefined;
+            borderRadius?: number | undefined;
+            borderColor?: string | undefined;
+            borderWidth?: number | undefined;
+            background?: string | undefined;
+            disabledBackground?: string | undefined;
+            boxShadow?: string | undefined;
+            focusBorderColor?: string | undefined;
+            focusBoxShadow?: {} | undefined;
+            height?: number | undefined;
+        } | undefined;
+        button?: {
+            fontWeight?: NonNullable<csstype.Property.FontWeight | undefined> | undefined;
+            fontSize?: number | undefined;
+            lineHeight?: number | undefined;
+            paddingX?: number | undefined;
+            paddingY?: number | undefined;
+            borderColor?: string | undefined;
+            borderRadius?: number | undefined;
+            borderWidth?: number | undefined;
+            focusBoxShadow?: {} | undefined;
+            height?: number | undefined;
+        } | undefined;
+        socialButton?: {
+            inline?: boolean | undefined;
+            textVisible?: boolean | undefined;
+            fontWeight?: NonNullable<csstype.Property.FontWeight | undefined> | undefined;
+            fontSize?: number | undefined;
+            lineHeight?: number | undefined;
+            paddingX?: number | undefined;
+            paddingY?: number | undefined;
+            borderColor?: string | undefined;
+            borderRadius?: number | undefined;
+            borderWidth?: number | undefined;
+            focusBoxShadow?: {} | undefined;
+            height?: number | undefined;
+        } | undefined;
+        passwordStrengthValidator?: {
+            color0?: string | undefined;
+            color1?: string | undefined;
+            color2?: string | undefined;
+            color3?: string | undefined;
+            color4?: string | undefined;
+        } | undefined;
+        animateWidgetEntrance?: boolean | undefined;
+        fontSize?: number | undefined;
+        smallTextFontSize?: number | undefined;
+        lineHeight?: number | undefined;
+        headingColor?: string | undefined;
+        textColor?: string | undefined;
+        mutedTextColor?: string | undefined;
+        borderRadius?: number | undefined;
+        borderColor?: string | undefined;
+        borderWidth?: number | undefined;
+        backgroundColor?: string | undefined;
+        primaryColor?: string | undefined;
+        dangerColor?: string | undefined;
+        warningColor?: string | undefined;
+        successColor?: string | undefined;
+        lightBackgroundColor?: string | undefined;
+        paddingX?: number | undefined;
+        paddingY?: number | undefined;
+        spacing?: number | undefined;
+        maxWidth?: number | undefined;
+        _absoluteLineHeight?: number | undefined;
+        _blockInnerHeight?: number | undefined;
+        _blockHeight?: number | undefined;
+    } | undefined;
+}) => React__default.JSX.Element;
 
 interface MainViewProps$1 {
     /**
@@ -1510,6 +2564,97 @@ interface CredentialRegisteredViewProps {
 type CredentialRemovedViewProps = {};
 type MfaCredentialsProps = Prettify<MainViewProps$1 & CredentialRegisteredViewProps & VerificationCodeViewProps & CredentialRemovedViewProps>;
 type MfaCredentialsWidgetProps = Prettify<Omit<MfaCredentialsProps, 'credentials'>>;
+declare const _default$3: (options: {
+    onError?: OnError | undefined;
+    onSuccess?: OnSuccess | undefined;
+    accessToken: string;
+    showIntro?: boolean | undefined;
+    phoneNumberOptions?: PhoneNumberOptions | undefined;
+    requireMfaRegistration?: boolean | undefined;
+    showRemoveMfaCredentials?: boolean | undefined;
+    i18n?: I18nNestedMessages | undefined;
+    theme?: {
+        link?: {
+            color?: string | undefined;
+            decoration?: NonNullable<csstype.Property.TextDecoration<string | number> | undefined> | undefined;
+            hoverColor?: string | undefined;
+            hoverDecoration?: NonNullable<csstype.Property.TextDecoration<string | number> | undefined> | undefined;
+        } | undefined;
+        input?: {
+            color?: string | undefined;
+            placeholderColor?: string | undefined;
+            fontSize?: number | undefined;
+            lineHeight?: number | undefined;
+            paddingX?: number | undefined;
+            paddingY?: number | undefined;
+            borderRadius?: number | undefined;
+            borderColor?: string | undefined;
+            borderWidth?: number | undefined;
+            background?: string | undefined;
+            disabledBackground?: string | undefined;
+            boxShadow?: string | undefined;
+            focusBorderColor?: string | undefined;
+            focusBoxShadow?: {} | undefined;
+            height?: number | undefined;
+        } | undefined;
+        button?: {
+            fontWeight?: NonNullable<csstype.Property.FontWeight | undefined> | undefined;
+            fontSize?: number | undefined;
+            lineHeight?: number | undefined;
+            paddingX?: number | undefined;
+            paddingY?: number | undefined;
+            borderColor?: string | undefined;
+            borderRadius?: number | undefined;
+            borderWidth?: number | undefined;
+            focusBoxShadow?: {} | undefined;
+            height?: number | undefined;
+        } | undefined;
+        socialButton?: {
+            inline?: boolean | undefined;
+            textVisible?: boolean | undefined;
+            fontWeight?: NonNullable<csstype.Property.FontWeight | undefined> | undefined;
+            fontSize?: number | undefined;
+            lineHeight?: number | undefined;
+            paddingX?: number | undefined;
+            paddingY?: number | undefined;
+            borderColor?: string | undefined;
+            borderRadius?: number | undefined;
+            borderWidth?: number | undefined;
+            focusBoxShadow?: {} | undefined;
+            height?: number | undefined;
+        } | undefined;
+        passwordStrengthValidator?: {
+            color0?: string | undefined;
+            color1?: string | undefined;
+            color2?: string | undefined;
+            color3?: string | undefined;
+            color4?: string | undefined;
+        } | undefined;
+        animateWidgetEntrance?: boolean | undefined;
+        fontSize?: number | undefined;
+        smallTextFontSize?: number | undefined;
+        lineHeight?: number | undefined;
+        headingColor?: string | undefined;
+        textColor?: string | undefined;
+        mutedTextColor?: string | undefined;
+        borderRadius?: number | undefined;
+        borderColor?: string | undefined;
+        borderWidth?: number | undefined;
+        backgroundColor?: string | undefined;
+        primaryColor?: string | undefined;
+        dangerColor?: string | undefined;
+        warningColor?: string | undefined;
+        successColor?: string | undefined;
+        lightBackgroundColor?: string | undefined;
+        paddingX?: number | undefined;
+        paddingY?: number | undefined;
+        spacing?: number | undefined;
+        maxWidth?: number | undefined;
+        _absoluteLineHeight?: number | undefined;
+        _blockInnerHeight?: number | undefined;
+        _blockHeight?: number | undefined;
+    } | undefined;
+}) => React__default.JSX.Element;
 
 type MfaListWidgetProps = {
     /**
@@ -1525,6 +2670,93 @@ type MfaListWidgetProps = {
      */
     onError?: OnError;
 };
+declare const _default$2: (options: {
+    accessToken: string;
+    onSuccess?: OnSuccess | undefined;
+    onError?: OnError | undefined;
+    i18n?: I18nNestedMessages | undefined;
+    theme?: {
+        link?: {
+            color?: string | undefined;
+            decoration?: NonNullable<csstype.Property.TextDecoration<string | number> | undefined> | undefined;
+            hoverColor?: string | undefined;
+            hoverDecoration?: NonNullable<csstype.Property.TextDecoration<string | number> | undefined> | undefined;
+        } | undefined;
+        input?: {
+            color?: string | undefined;
+            placeholderColor?: string | undefined;
+            fontSize?: number | undefined;
+            lineHeight?: number | undefined;
+            paddingX?: number | undefined;
+            paddingY?: number | undefined;
+            borderRadius?: number | undefined;
+            borderColor?: string | undefined;
+            borderWidth?: number | undefined;
+            background?: string | undefined;
+            disabledBackground?: string | undefined;
+            boxShadow?: string | undefined;
+            focusBorderColor?: string | undefined;
+            focusBoxShadow?: {} | undefined;
+            height?: number | undefined;
+        } | undefined;
+        button?: {
+            fontWeight?: NonNullable<csstype.Property.FontWeight | undefined> | undefined;
+            fontSize?: number | undefined;
+            lineHeight?: number | undefined;
+            paddingX?: number | undefined;
+            paddingY?: number | undefined;
+            borderColor?: string | undefined;
+            borderRadius?: number | undefined;
+            borderWidth?: number | undefined;
+            focusBoxShadow?: {} | undefined;
+            height?: number | undefined;
+        } | undefined;
+        socialButton?: {
+            inline?: boolean | undefined;
+            textVisible?: boolean | undefined;
+            fontWeight?: NonNullable<csstype.Property.FontWeight | undefined> | undefined;
+            fontSize?: number | undefined;
+            lineHeight?: number | undefined;
+            paddingX?: number | undefined;
+            paddingY?: number | undefined;
+            borderColor?: string | undefined;
+            borderRadius?: number | undefined;
+            borderWidth?: number | undefined;
+            focusBoxShadow?: {} | undefined;
+            height?: number | undefined;
+        } | undefined;
+        passwordStrengthValidator?: {
+            color0?: string | undefined;
+            color1?: string | undefined;
+            color2?: string | undefined;
+            color3?: string | undefined;
+            color4?: string | undefined;
+        } | undefined;
+        animateWidgetEntrance?: boolean | undefined;
+        fontSize?: number | undefined;
+        smallTextFontSize?: number | undefined;
+        lineHeight?: number | undefined;
+        headingColor?: string | undefined;
+        textColor?: string | undefined;
+        mutedTextColor?: string | undefined;
+        borderRadius?: number | undefined;
+        borderColor?: string | undefined;
+        borderWidth?: number | undefined;
+        backgroundColor?: string | undefined;
+        primaryColor?: string | undefined;
+        dangerColor?: string | undefined;
+        warningColor?: string | undefined;
+        successColor?: string | undefined;
+        lightBackgroundColor?: string | undefined;
+        paddingX?: number | undefined;
+        paddingY?: number | undefined;
+        spacing?: number | undefined;
+        maxWidth?: number | undefined;
+        _absoluteLineHeight?: number | undefined;
+        _blockInnerHeight?: number | undefined;
+        _blockHeight?: number | undefined;
+    } | undefined;
+}) => React__default.JSX.Element;
 
 interface MainViewProps {
     /**
@@ -1551,6 +2783,95 @@ interface SuccessViewProps {
 }
 interface AccountRecoveryWidgetProps extends MainViewProps, SuccessViewProps {
 }
+declare const _default$1: (options: {
+    allowCreatePassword?: boolean | undefined;
+    onSuccess?: OnSuccess | undefined;
+    onError?: OnError | undefined;
+    showLabels?: boolean | undefined;
+    loginLink?: string | undefined;
+    i18n?: I18nNestedMessages | undefined;
+    theme?: {
+        link?: {
+            color?: string | undefined;
+            decoration?: NonNullable<csstype.Property.TextDecoration<string | number> | undefined> | undefined;
+            hoverColor?: string | undefined;
+            hoverDecoration?: NonNullable<csstype.Property.TextDecoration<string | number> | undefined> | undefined;
+        } | undefined;
+        input?: {
+            color?: string | undefined;
+            placeholderColor?: string | undefined;
+            fontSize?: number | undefined;
+            lineHeight?: number | undefined;
+            paddingX?: number | undefined;
+            paddingY?: number | undefined;
+            borderRadius?: number | undefined;
+            borderColor?: string | undefined;
+            borderWidth?: number | undefined;
+            background?: string | undefined;
+            disabledBackground?: string | undefined;
+            boxShadow?: string | undefined;
+            focusBorderColor?: string | undefined;
+            focusBoxShadow?: {} | undefined;
+            height?: number | undefined;
+        } | undefined;
+        button?: {
+            fontWeight?: NonNullable<csstype.Property.FontWeight | undefined> | undefined;
+            fontSize?: number | undefined;
+            lineHeight?: number | undefined;
+            paddingX?: number | undefined;
+            paddingY?: number | undefined;
+            borderColor?: string | undefined;
+            borderRadius?: number | undefined;
+            borderWidth?: number | undefined;
+            focusBoxShadow?: {} | undefined;
+            height?: number | undefined;
+        } | undefined;
+        socialButton?: {
+            inline?: boolean | undefined;
+            textVisible?: boolean | undefined;
+            fontWeight?: NonNullable<csstype.Property.FontWeight | undefined> | undefined;
+            fontSize?: number | undefined;
+            lineHeight?: number | undefined;
+            paddingX?: number | undefined;
+            paddingY?: number | undefined;
+            borderColor?: string | undefined;
+            borderRadius?: number | undefined;
+            borderWidth?: number | undefined;
+            focusBoxShadow?: {} | undefined;
+            height?: number | undefined;
+        } | undefined;
+        passwordStrengthValidator?: {
+            color0?: string | undefined;
+            color1?: string | undefined;
+            color2?: string | undefined;
+            color3?: string | undefined;
+            color4?: string | undefined;
+        } | undefined;
+        animateWidgetEntrance?: boolean | undefined;
+        fontSize?: number | undefined;
+        smallTextFontSize?: number | undefined;
+        lineHeight?: number | undefined;
+        headingColor?: string | undefined;
+        textColor?: string | undefined;
+        mutedTextColor?: string | undefined;
+        borderRadius?: number | undefined;
+        borderColor?: string | undefined;
+        borderWidth?: number | undefined;
+        backgroundColor?: string | undefined;
+        primaryColor?: string | undefined;
+        dangerColor?: string | undefined;
+        warningColor?: string | undefined;
+        successColor?: string | undefined;
+        lightBackgroundColor?: string | undefined;
+        paddingX?: number | undefined;
+        paddingY?: number | undefined;
+        spacing?: number | undefined;
+        maxWidth?: number | undefined;
+        _absoluteLineHeight?: number | undefined;
+        _blockInnerHeight?: number | undefined;
+        _blockHeight?: number | undefined;
+    } | undefined;
+}) => React__default.JSX.Element;
 
 type TrustedDeviceWidgetProps = {
     accessToken: string;
@@ -1558,6 +2879,94 @@ type TrustedDeviceWidgetProps = {
     onError?: OnError;
     onSuccess?: OnSuccess;
 };
+declare const _default: (options: {
+    accessToken: string;
+    showRemoveTrustedDevice?: boolean | undefined;
+    onError?: OnError | undefined;
+    onSuccess?: OnSuccess | undefined;
+    i18n?: I18nNestedMessages | undefined;
+    theme?: {
+        link?: {
+            color?: string | undefined;
+            decoration?: NonNullable<csstype.Property.TextDecoration<string | number> | undefined> | undefined;
+            hoverColor?: string | undefined;
+            hoverDecoration?: NonNullable<csstype.Property.TextDecoration<string | number> | undefined> | undefined;
+        } | undefined;
+        input?: {
+            color?: string | undefined;
+            placeholderColor?: string | undefined;
+            fontSize?: number | undefined;
+            lineHeight?: number | undefined;
+            paddingX?: number | undefined;
+            paddingY?: number | undefined;
+            borderRadius?: number | undefined;
+            borderColor?: string | undefined;
+            borderWidth?: number | undefined;
+            background?: string | undefined;
+            disabledBackground?: string | undefined;
+            boxShadow?: string | undefined;
+            focusBorderColor?: string | undefined;
+            focusBoxShadow?: {} | undefined;
+            height?: number | undefined;
+        } | undefined;
+        button?: {
+            fontWeight?: NonNullable<csstype.Property.FontWeight | undefined> | undefined;
+            fontSize?: number | undefined;
+            lineHeight?: number | undefined;
+            paddingX?: number | undefined;
+            paddingY?: number | undefined;
+            borderColor?: string | undefined;
+            borderRadius?: number | undefined;
+            borderWidth?: number | undefined;
+            focusBoxShadow?: {} | undefined;
+            height?: number | undefined;
+        } | undefined;
+        socialButton?: {
+            inline?: boolean | undefined;
+            textVisible?: boolean | undefined;
+            fontWeight?: NonNullable<csstype.Property.FontWeight | undefined> | undefined;
+            fontSize?: number | undefined;
+            lineHeight?: number | undefined;
+            paddingX?: number | undefined;
+            paddingY?: number | undefined;
+            borderColor?: string | undefined;
+            borderRadius?: number | undefined;
+            borderWidth?: number | undefined;
+            focusBoxShadow?: {} | undefined;
+            height?: number | undefined;
+        } | undefined;
+        passwordStrengthValidator?: {
+            color0?: string | undefined;
+            color1?: string | undefined;
+            color2?: string | undefined;
+            color3?: string | undefined;
+            color4?: string | undefined;
+        } | undefined;
+        animateWidgetEntrance?: boolean | undefined;
+        fontSize?: number | undefined;
+        smallTextFontSize?: number | undefined;
+        lineHeight?: number | undefined;
+        headingColor?: string | undefined;
+        textColor?: string | undefined;
+        mutedTextColor?: string | undefined;
+        borderRadius?: number | undefined;
+        borderColor?: string | undefined;
+        borderWidth?: number | undefined;
+        backgroundColor?: string | undefined;
+        primaryColor?: string | undefined;
+        dangerColor?: string | undefined;
+        warningColor?: string | undefined;
+        successColor?: string | undefined;
+        lightBackgroundColor?: string | undefined;
+        paddingX?: number | undefined;
+        paddingY?: number | undefined;
+        spacing?: number | undefined;
+        maxWidth?: number | undefined;
+        _absoluteLineHeight?: number | undefined;
+        _blockInnerHeight?: number | undefined;
+        _blockHeight?: number | undefined;
+    } | undefined;
+}) => React__default.JSX.Element;
 
 interface WidgetInstance {
     destroy(): void;
@@ -1570,6 +2979,8 @@ interface WidgetProps {
     * Defaults to the predefined country code in your account settings or `FR`.
     */
     countryCode?: string;
+    /** A fallback react tree to show when a Suspense child (like React.lazy) suspends */
+    fallback?: ReactNode;
     /**
      * Callback function called after the widget has been successfully loaded and rendered inside the container.
      * The callback is called with the widget instance.
@@ -1577,12 +2988,10 @@ interface WidgetProps {
     onReady?: (instance: WidgetInstance) => void;
 }
 type WidgetOptions<P> = Prettify<P & WidgetProps & I18nProps$1 & ThemeProps>;
-type Widget<P> = (props: P, ctx: Context) => Promise<React__default.JSX.Element>;
 declare class UiClient {
-    config: Config;
+    config: Config$1;
     core: Client$1;
-    defaultI18n: I18nMessages;
-    constructor(config: Config, coreClient: Client$1, defaultI18n: I18nMessages);
+    constructor(config: Config$1, coreClient: Client$1);
     showAuth(options: WidgetOptions<AuthWidgetProps>): void;
     showAccountRecovery(options: WidgetOptions<AccountRecoveryWidgetProps>): void;
     showSocialLogin(options: WidgetOptions<SocialLoginWidgetProps>): void;
@@ -1598,10 +3007,7 @@ declare class UiClient {
     showStepUp(options: WidgetOptions<MfaStepUpWidgetProps>): void;
     showMfaCredentials(options: WidgetOptions<MfaListWidgetProps>): void;
     showTrustedDevices(options: WidgetOptions<TrustedDeviceWidgetProps>): void;
-    _showWidget<P extends WidgetProps>(widget: Widget<Omit<P, keyof WidgetProps>>, options?: P, props?: {}): Promise<void>;
-    _ssoCheck<P extends WidgetProps>(widget: Widget<Omit<P, keyof WidgetProps>>, options: P & {
-        auth?: AuthOptions;
-    }): void;
+    _showWidget<P extends WidgetProps>(Widget: ComponentType<Omit<P, keyof WidgetProps>>, options?: P, props?: {}): Promise<void>;
     adaptError(error: unknown): string;
     handleError(error: unknown): void;
 }
@@ -1624,6 +3030,6 @@ type Client = {
     showStepUp: InstanceType<typeof UiClient>['showStepUp'];
     showTrustedDevices: InstanceType<typeof UiClient>['showTrustedDevices'];
 };
-declare function createClient(creationConfig: Config$1): Client;
+declare function createClient(config: Config$1): Client;
 
-export { type Client, type ThemeOptions, createClient };
+export { _default$1 as AccountRecovery, _default$d as Auth, type Client, _default$c as EmailEditor, _default$3 as MfaCredentials, _default$2 as MfaList, _default$e as MfaStepUp, _default$b as PasswordEditor, _default$9 as PasswordReset, _default$8 as Passwordless, _default$a as PhoneNumberEditor, _default$7 as ProfileEditor, ReachfiveProvider, type ReachfiveProviderProps, _default$6 as SocialAccounts, _default$5 as SocialLogin, type ThemeOptions, _default as TrustedDevices, _default$4 as WebAuthn, createClient, useReachfive };

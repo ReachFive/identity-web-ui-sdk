@@ -5,12 +5,11 @@ import { DeviceCredential } from '@reachfive/identity-core';
 import { Card, CloseIcon } from '../../components/form/cardComponent';
 import { buildFormFields } from '../../components/form/formFieldFactory';
 import { createForm } from '../../components/form/formComponent';
-import { Heading, Info, Separator } from '../../components/miscComponent';
+import { Heading, Info, MutedText, Paragraph } from '../../components/miscComponent';
 import { createWidget } from '../../components/widget/widget';
 
 import { useI18n } from '../../contexts/i18n';
 import { useReachfive } from '../../contexts/reachfive';
-import { useConfig } from '../../contexts/config';
 
 import { UserError } from '../../helpers/errors';
 
@@ -70,8 +69,8 @@ const CardText = styled.div`
 `
 
 const DevicesList = ({ devices, removeWebAuthnDevice }: DevicesListProps) => {
+    const { config } = useReachfive()
     const i18n = useI18n()
-    const config = useConfig()
 
     return (
         <DevicesListWrapper>
@@ -137,8 +136,7 @@ function WebAuthnDevices ({
     onError = (() => {}) as OnError,
     onSuccess = (() => {}) as OnSuccess,
 }: WebAuthnDevicesProps) {
-    const coreClient = useReachfive()
-    const config = useConfig()
+    const { client: coreClient, config } = useReachfive()
     const i18n = useI18n()
 
     const [devices, setDevices] = useState<DeviceCredential[]>(initDevices || []);
@@ -149,9 +147,10 @@ function WebAuthnDevices ({
         return coreClient
             .removeWebAuthnDevice(accessToken, deviceId)
             .then(() => {
-                return coreClient.
-                    listWebAuthnDevices(accessToken)
-                    .then(newDevices => setDevices(newDevices));
+                return coreClient
+                    .listWebAuthnDevices(accessToken)
+                    .then(newDevices => setDevices(newDevices))
+                    .catch(onError);
             })
             .catch(onError)
     }
@@ -163,7 +162,8 @@ function WebAuthnDevices ({
                 onSuccess()
                 return coreClient.
                     listWebAuthnDevices(accessToken)
-                    .then(newDevices => setDevices(newDevices));
+                        .then(newDevices => setDevices(newDevices))
+                        .catch(onError);
             })
     }
 
@@ -177,7 +177,7 @@ function WebAuthnDevices ({
                 removeWebAuthnDevice={removeWebAuthnDevice}
             />}
 
-        <Separator text={i18n('webauthn.registredDevices.add')} />
+        <Paragraph align="center"><MutedText>{i18n('webauthn.registredDevices.add')}</MutedText></Paragraph>
 
         <DeviceInputForm
             fields={fields}
@@ -193,7 +193,7 @@ export type WebAuthnWidgetProps = Omit<WebAuthnDevicesProps, 'devices'>
 export default createWidget<WebAuthnWidgetProps, WebAuthnDevicesProps>({
     name: 'webauthn-devices',
     component: WebAuthnDevices,
-    prepare: (options, { apiClient, config }) => {
+    prepare: (options, { client, config }) => {
         const { accessToken } = options;
 
         if (!config.webAuthn) {
@@ -208,7 +208,7 @@ export default createWidget<WebAuthnWidgetProps, WebAuthnDevicesProps>({
             throw error;
         }
 
-        return apiClient
+        return client
             .listWebAuthnDevices(accessToken)
             .then(devices => ({
                 ...options,

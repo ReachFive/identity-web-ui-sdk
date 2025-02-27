@@ -99,7 +99,7 @@ const PasswordEditor = ({
     onSuccess = () => { },
     onError = () => { }
 }: PasswordEditorProps) => {
-    const coreClient = useReachfive()
+    const { client: coreClient } = useReachfive()
 
     const handleSubmit = ({ password, oldPassword }: PasswordEditorFormData) => {
         return coreClient.updatePassword({

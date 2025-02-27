@@ -5,8 +5,8 @@ import { Heading, Intro, Link, Alternative } from '../../../components/miscCompo
 import { SocialButtons } from '../../../components/form/socialButtonsComponent';
 
 import { useI18n } from '../../../contexts/i18n';
+import { useSession  } from '../../../contexts/session'
 
-import { PropsWithSession  } from '../../../contexts/session'
 import { selectLogin } from '../authWidget.tsx';
 import { InitialScreen } from '../../../../constants.ts';
 
@@ -38,10 +38,10 @@ export const  QuickLoginView = ({
     initialScreen,
     allowWebAuthnLogin = false,
     auth,
-    session,
     onError = (() => {}) as OnError,
     onSuccess = (() => {}) as OnSuccess,
-}: PropsWithSession<QuickLoginViewProps>) => {
+}: QuickLoginViewProps) => {
+    const session = useSession()
     const i18n = useI18n()
 
     // this component should never be display without session infos defined

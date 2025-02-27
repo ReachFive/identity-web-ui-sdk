@@ -1,18 +1,16 @@
-import React, { ComponentType } from 'react';
-import {createGlobalStyle, StyleSheetManager, ThemeProvider} from 'styled-components'
-import type { SessionInfo, Client as CoreClient } from '@reachfive/identity-core'
+import React, { type ComponentType } from 'react';
+import { createGlobalStyle, StyleSheetManager, ThemeProvider } from 'styled-components'
+import { useSuspenseQuery } from '@tanstack/react-query'
 
-import type { Config, Prettify } from '../../types'
-import type { I18nMessages, I18nNestedMessages } from '../../core/i18n';
-
-import { ConfigProvider } from '../../contexts/config';
-import { I18nProvider } from '../../contexts/i18n'
-import { ReachfiveProvider } from '../../contexts/reachfive'
-import { RoutingProvider } from '../../contexts/routing'
-import { SessionProvider } from '../../contexts/session'
-
+import type { Prettify } from '../../types'
 import { Theme, ThemeOptions } from '../../types/styled'
+import type { I18nNestedMessages } from '../../core/i18n';
 import { buildTheme } from '../../core/theme'
+
+import { I18nProvider } from '../../contexts/i18n'
+import { useReachfive, type ReachfiveContext } from '../../contexts/reachfive'
+import { RoutingProvider } from '../../contexts/routing'
+import { PropsWithSession, useSession } from '../../contexts/session';
 
 import WidgetContainer, { WidgetContainerProps } from './widgetContainerComponent';
 
@@ -23,7 +21,6 @@ export type PropsWithI18n<P> = Prettify<P & I18nProps>
 export type PropsWithTheme<P> = Prettify<P & ThemeProps>
 
 const GlobalStyle = createGlobalStyle`
-
 :root {
     --color-primary: ${props => props.theme.primaryColor};
     --color-destructive: ${props => props.theme.dangerColor};
@@ -43,57 +40,73 @@ const GlobalStyle = createGlobalStyle`
 }
 `
 
-export type Context = {
-    config: Config
-    apiClient: CoreClient
-    defaultI18n: I18nMessages
-    session?: SessionInfo
-}
-
-type PrepareFn<P, U> = (options: PropsWithI18n<PropsWithTheme<P>>, context: Context) => PropsWithI18n<PropsWithTheme<U>> | PromiseLike<PropsWithI18n<PropsWithTheme<U>>>
+type PrepareFn<P, U> = (
+    options: PropsWithI18n<PropsWithTheme<P>>,
+    context: PropsWithSession<ReachfiveContext>
+) => PropsWithI18n<PropsWithTheme<U>> | Promise<PropsWithI18n<PropsWithTheme<U>>>
 
 type CreateWidget<P, U> = {
-    component: ComponentType<Omit<U, 'theme'>>
+    component: ComponentType<U>
     prepare?: PrepareFn<P, U>
 } & WidgetContainerProps
 
-
-export function createWidget<P, U = P>({
+/**
+ * Create Widget component.
+ * @param {object} widget - Widget configuration
+ * @example
+ * type WidgetProps = { username: string }
+ * type ComponentProps = { greeting: string }
+ * const Greeting = createWidget<WidgetProps, ComponentProps>({
+ *     component: ({ greeting }: ComponentProps) => <p>{greeting}</p>,
+ *     prepare: ({ username }: WidgetProps) => Promise.resolve({ greeting: `Hello ${username}!` })
+ * })
+ * const root = createRoot(document.getElementById("root")!)
+ * root.render(<Greeting username="Alice" />);
+ */
+export function createWidget<P extends {}, U extends {} = P>({
     component,
-    prepare = (options: PropsWithI18n<PropsWithTheme<P>>) => options as unknown as PropsWithI18n<PropsWithTheme<U>>,
+    prepare,
     ...widgetAttrs
 }: CreateWidget<P, U>) {
-    return (options: PropsWithTheme<PropsWithI18n<P>>, context: Context) => {
-        return Promise.resolve(prepare(options, context)).then(({ theme: customTheme, ...preparedOptions }) => {
-            const Component = component
+    return function Widget(options: PropsWithTheme<PropsWithI18n<P>>) {
+        const context = useReachfive()
+        const session = useSession()
 
-            const theme: Theme = buildTheme(customTheme)
+        const resolve = async () => {
+            if (prepare) {
+                return await Promise.resolve(prepare(options, { ...context, session }))
+            } else {
+                return options as unknown as PropsWithTheme<PropsWithI18n<U>>
+            }
+        }
 
-            return (
-                <ConfigProvider config={context.config}>
-                    <ReachfiveProvider client={context.apiClient}>
-                        <SessionProvider session={context.session}>
-                            <StyleSheetManager>
-                                <ThemeProvider theme={theme}>
-                                    <GlobalStyle />
-                                    <I18nProvider defaultMessages={context.defaultI18n} messages={preparedOptions.i18n}>
-                                        <WidgetContainer {...widgetAttrs}>
-                                            <Component {...preparedOptions} />
-                                        </WidgetContainer>
-                                    </I18nProvider>
-                                </ThemeProvider>
-                            </StyleSheetManager>
-                        </SessionProvider>
-                    </ReachfiveProvider>
-                </ConfigProvider>
-            );
-        });
+        const { data: resolved } = useSuspenseQuery({
+            queryFn: resolve,
+            queryKey: ['prepare'],
+        })
+
+        const { theme: customTheme, i18n, ...props } = resolved
+        
+        const Component = component
+        const theme: Theme = buildTheme(customTheme)
+        return (
+            <StyleSheetManager>
+                <ThemeProvider theme={theme}>
+                    <GlobalStyle />
+                    <I18nProvider defaultMessages={context.i18n} messages={i18n}>
+                        <WidgetContainer {...widgetAttrs}>
+                            <Component {...props as U} />
+                        </WidgetContainer>
+                    </I18nProvider>
+                </ThemeProvider>
+            </StyleSheetManager>
+        );
     }
 }
 
 export interface CreateMultiViewWidgetProps<P, U> extends MultiViewWidgetProps<P, U> {}
 
-export function createMultiViewWidget<P, U = P>({ prepare, ...params }: MultiViewWidgetProps<P, U>) {
+export function createMultiViewWidget<P extends {}, U extends {} = P>({ prepare, ...params }: MultiViewWidgetProps<P, U>) {
     return createWidget<P, U>({
         component: multiViewWidget<P, U>(params),
         prepare,
@@ -102,8 +115,8 @@ export function createMultiViewWidget<P, U = P>({ prepare, ...params }: MultiVie
 }
 
 export interface MultiViewWidgetProps<P, U> {
-    initialView: ((props: Omit<U, 'theme'>) => string) | string
-    views: Record<string, ComponentType<Omit<U, 'theme'>>>
+    initialView: ((props: U) => string) | string
+    views: Record<string, ComponentType<U>>
     initialState?: MultiWidgetState
     prepare?: PrepareFn<P, U>
 }
@@ -113,7 +126,7 @@ export type MultiWidgetState = Record<string, unknown> & {
 }
 
 function multiViewWidget<P, U>({ initialView, views, initialState = {} as MultiWidgetState }: MultiViewWidgetProps<P, U>) {
-    return class MultiViewWidget extends React.Component<Omit<U, 'theme'>, MultiWidgetState> {
+    return class MultiViewWidget extends React.Component<U, MultiWidgetState> {
 
         state = {
             ...initialState,

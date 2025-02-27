@@ -13,7 +13,6 @@ import { isRichFormValue, isValued } from '../../helpers/utils';
 import ReCaptcha, { extractCaptchaTokenFromData, importGoogleRecaptchaScript, type WithCaptchaToken } from '../reCaptcha';
 
 import { useReachfive } from '../../contexts/reachfive';
-import { useConfig } from '../../contexts/config';
 
 import { isEqual } from '../../helpers/utils';
 
@@ -67,8 +66,7 @@ export const PasswordSignupForm = ({
     onError = (() => {}) as OnError,
     onSuccess = (() => {}) as OnSuccess,
 }: PasswordSignupFormProps) => {
-    const coreClient = useReachfive()
-    const config = useConfig()
+    const { client: coreClient, config } = useReachfive()
     const [blacklist, setBlacklist] = useState<string[]>([])
 
     useLayoutEffect(() => {

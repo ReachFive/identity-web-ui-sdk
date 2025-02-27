@@ -1,31 +1,23 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment jest-fixed-jsdom
  */
 
 import React from 'react'
 import { beforeEach, describe, expect, jest, test } from '@jest/globals';
-import { render, screen, waitFor } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import '@testing-library/jest-dom/jest-globals'
 import 'jest-styled-components';
+import { Client, PasswordStrengthScore } from '@reachfive/identity-core';
 
 import type { Config } from '../../../src/types';
 
 import { createForm } from '../../../src/components/form/formComponent'
 import { buildFormFields } from '../../../src/components/form/formFieldFactory'
 import { I18nMessages } from '../../../src/core/i18n';
-import { WidgetContext } from './WidgetContext';
-import { Client, PasswordStrengthScore } from '@reachfive/identity-core';
+import { defaultConfig, renderWithContext } from '../../widgets/renderer';
 
-const defaultConfig: Config = {
-    clientId: 'local',
-    domain: 'local.reach5.net',
-    sso: false,
-    sms: false,
-    webAuthn: false,
-    language: 'fr',
-    pkceEnforced: false,
-    isPublic: true,
-    socialProviders: ['facebook', 'google'],
+const customConfig: Config = {
+    ...defaultConfig,
     customFields: [
         {
             name: 'number',
@@ -104,10 +96,6 @@ const defaultConfig: Config = {
             dataType: 'email',
         },
     ],
-    resourceBaseUrl: 'http://localhost',
-    mfaSmsEnabled: false,
-    mfaEmailEnabled: false,
-    rbaEnabled: false,
     consentsVersions: {
         myconsent: {
             key: 'myconsent',
@@ -132,15 +120,10 @@ const defaultConfig: Config = {
             }]
         }
     },
-    passwordPolicy: {
-        minLength: 8,
-        minStrength: 2,
-        allowUpdateWithAccessTokenOnly: true,
-    }
 };
 
 // function customFieldLabel(path: string, langCode: string) {
-//     return defaultConfig.customFields
+//     return customConfig.customFields
 //         .find(customFields => customFields.path === path)
 //         ?.nameTranslations
 //         ?.find(translation => translation.langCode == langCode)
@@ -207,7 +190,7 @@ describe('DOM testing', () => {
             'address.region',
             'address.postalCode',
             'address.country',
-        ], defaultConfig)
+        ], customConfig)
 
         const onSubmit = jest.fn<(data: Model) => Promise<Model>>(data => Promise.resolve(data))
 
@@ -215,17 +198,12 @@ describe('DOM testing', () => {
             fields,
         })
 
-        await waitFor(async () => {   
-            return render(
-                <WidgetContext
-                    client={apiClient}
-                    config={defaultConfig}
-                    defaultMessages={defaultI18n}
-                >
-                    <Form handler={onSubmit} />
-                </WidgetContext>
-            )
-        })
+        await renderWithContext(
+            <Form handler={onSubmit} />,
+            apiClient,
+            customConfig,
+            defaultI18n
+        )
 
         expect(screen.queryByTestId('customIdentifier')).toBeInTheDocument()
         expect(screen.queryByTestId('givenName')).toBeInTheDocument()
@@ -256,7 +234,7 @@ describe('DOM testing', () => {
             { key: "customFields.select" },
             { key: "customFields.phone" },
             { key: "customFields.email" },
-        ], defaultConfig)
+        ], customConfig)
 
         const onSubmit = jest.fn<(data: Model) => Promise<Model>>(data => Promise.resolve(data))
 
@@ -264,16 +242,12 @@ describe('DOM testing', () => {
             fields,
         })
 
-        await waitFor(async () => {   
-            return render(
-                <WidgetContext
-                    config={defaultConfig}
-                    defaultMessages={defaultI18n}
-                >
-                    <Form handler={onSubmit} />
-                </WidgetContext>
-            )
-        })
+        await renderWithContext(
+            <Form handler={onSubmit} />,
+            apiClient,
+            customConfig,
+            defaultI18n
+        )
 
         // const label = customFieldLabel('custom_fields.username', 'fr')
         // const input = screen.queryByLabelText(label!)
@@ -299,7 +273,7 @@ describe('DOM testing', () => {
 
         const select = screen.queryByTestId('custom_fields.select')
         expect(select).toBeInTheDocument()
-        defaultConfig.customFields.find(({ path }) => path === 'select')?.selectableValues?.forEach(value => {
+        customConfig.customFields.find(({ path }) => path === 'select')?.selectableValues?.forEach(value => {
             expect(screen.getByRole('option', { name: value.label })).toBeInTheDocument()
         });
 
@@ -317,7 +291,7 @@ describe('DOM testing', () => {
         const fields = buildFormFields([
             { key: "consents.myconsent" },
             { key: "consents.oldconsent" },
-        ], { ...defaultConfig })
+        ], { ...customConfig })
 
         const onSubmit = jest.fn<(data: Model) => Promise<Model>>(data => Promise.resolve(data))
 
@@ -325,16 +299,12 @@ describe('DOM testing', () => {
             fields,
         })
 
-        await waitFor(async () => {   
-            return render(
-                <WidgetContext
-                    config={defaultConfig}
-                    defaultMessages={defaultI18n}
-                >
-                    <Form handler={onSubmit} />
-                </WidgetContext>
-            )
-        })
+        await renderWithContext(
+            <Form handler={onSubmit} />,
+            apiClient,
+            customConfig,
+            defaultI18n
+        )
 
         const myconsent = screen.getByLabelText('My Consent')
         expect(myconsent).toBeInTheDocument()
@@ -356,7 +326,7 @@ describe('DOM testing', () => {
                     { key: "consents.oldconsent" },
                 ],
                 {
-                    ...defaultConfig,
+                    ...customConfig,
                     errorArchivedConsents: true
                 }
             )

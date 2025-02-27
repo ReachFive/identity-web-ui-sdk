@@ -6,13 +6,13 @@ import { Info } from '../../components/miscComponent';
 import { Card } from '../../components/form/cardComponent';
 import { createWidget } from '../../components/widget/widget';
 
-import { UserError } from '../../helpers/errors';
+import { isAppError, UserError } from '../../helpers/errors';
 
 import { ReactComponent as Envelope } from '../../icons/envelope.svg'
 import { ReactComponent as CommentAltDots } from '../../icons/comment-alt-dots.svg'
 
 import { useI18n } from '../../contexts/i18n';
-import { useConfig } from '../../contexts/config';
+import { useReachfive } from '../../contexts/reachfive';
 import { dateFormat } from "../../helpers/utils.ts";
 
 import type { OnError, OnSuccess } from '../../types';
@@ -55,7 +55,7 @@ export interface MfaListProps {
 
 export const MfaList = ({ credentials }: MfaListProps) => {
     const i18n = useI18n()
-    const config = useConfig()
+    const { config } = useReachfive()
     return (
         <div>
             {(credentials.length === 0) && (
@@ -95,17 +95,17 @@ export type MfaListWidgetProps = {
 
 export default createWidget<MfaListWidgetProps, MfaListProps>({
     component: MfaList,
-    prepare: (options, { apiClient }) =>
-        apiClient.listMfaCredentials(options.accessToken)
-            .then(({ credentials }) => {
-                options.onSuccess?.()
-                return {
-                    ...options,
-                    credentials,
-                }
-            })
-            .catch(error => {
-                options.onError?.(error)
-                throw UserError.fromAppError(error)
-            })
+    prepare: async (options, { client }) => {
+        try {
+            const { credentials } = await client.listMfaCredentials(options.accessToken)
+            options.onSuccess?.()
+            return {
+                ...options,
+                credentials,
+            }
+        } catch (error) {
+            options.onError?.(error)
+            throw (isAppError(error) ? UserError.fromAppError(error) : new UserError('Unxpected error'))
+        }
+    }
 });

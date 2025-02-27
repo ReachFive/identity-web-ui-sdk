@@ -69,7 +69,7 @@ const ProfileEditor = ({
     resolvedFields,
     showLabels = false,
 }: ProfileEditorProps) => {
-    const coreClient = useReachfive()
+    const { client: coreClient } = useReachfive()
 
     const handleSubmit = (data: ProfileWithConsents) =>
         coreClient.updateProfile({
@@ -110,7 +110,7 @@ export interface ProfileEditorWidgetProps extends Omit<ProfileEditorProps, 'prof
 
 export default createWidget<ProfileEditorWidgetProps, ProfileEditorProps>({
     component: ProfileEditor,
-    prepare: (options, { apiClient, config }) => {
+    prepare: (options, { client, config }) => {
         const opts = {
             showLabels: true,
             fields: [],
@@ -130,7 +130,7 @@ export default createWidget<ProfileEditorWidgetProps, ProfileEditorProps>({
         // This step removes the version from the consents
         const resolvedFields = buildFormFields(fields, { ...config, errorArchivedConsents: false });
 
-        return apiClient
+        return client
             .getUser({
                 accessToken,
                 fields: resolvedFields.map(({ path }) => path).join(',')
