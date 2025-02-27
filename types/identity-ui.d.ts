@@ -1517,13 +1517,17 @@ type MfaListWidgetProps = {
     */
     accessToken: string;
     /**
-     * Callback function called when the request has succeed.
+     * Callback function called when the request has succeeded.
      */
     onSuccess?: OnSuccess;
     /**
      * Callback function called when the request has failed.
      */
     onError?: OnError;
+    /**
+     * Indicates whether delete mfa credential button is displayed
+     */
+    showRemoveMfaCredential?: boolean;
 };
 
 interface MainViewProps {
