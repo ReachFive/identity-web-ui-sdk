@@ -125,7 +125,6 @@ export const TrustedDeviceList = ({
             })
             .catch(onError)
     }
-    console.log("INSIDE trusted devices widget")
 
     if(loading) {
         return <LoaderCircle className="animate-spin" />
