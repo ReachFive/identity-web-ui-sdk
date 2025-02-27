@@ -17,7 +17,11 @@ module.exports = {
                     foreground: "var(--color-destructive)",
                 },
                 background: "var(--color-background)",
-                border: "var(--color-border)"
+                border: "var(--color-border)",
+                theme: "var(--color-text)"
+            },
+            spacing: {
+              DEFAULT: "calc(var(--spacing)*1px)",
             },
             borderRadius: {
                     DEFAULT: "calc(var(--radius)*1px)"
@@ -38,7 +42,7 @@ module.exports = {
                 innerBlock: "calc(var(--spacing-block-inner-height)*1px)"
             },
             borderWidth: {
-                generic: "calc(var(--border-width)*1px)"
+                DEFAULT: "calc(var(--border-width)*1px)"
             }
         },
     },

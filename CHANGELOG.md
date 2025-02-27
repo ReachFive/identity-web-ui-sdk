@@ -7,10 +7,16 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+- Allow to list and remove trusted devices
+
 ### Fixed
 
 - Fix phoneNumberField so phone number is not in the payload instead of always valuating it to null
 
+### Added
+
+- Allow to list and remove trusted devices
+-
 ## [1.32.2] - 2025-02-10
 
 ### Fixed

@@ -1,6 +1,6 @@
 /**
  * @reachfive/identity-ui - v1.32.2
- * Compiled Tue, 18 Feb 2025 15:01:57 UTC
+ * Compiled Fri, 21 Feb 2025 13:11:28 UTC
  *
  * Copyright (c) ReachFive.
  *
@@ -39,6 +39,10 @@ type ConsentsVersions = { consentsVersions: Record<string, ConsentVersions> }
 type CustomFields = { customFields?: CustomField[] }
 
 type Config = Config$1 & RemoteSettings & ConsentsVersions & CustomFields
+
+type OnSuccess = (...args: any[]) => void
+
+type OnError = (error?: unknown) => void
 
 declare module 'styled-components' {
     export interface DefaultTheme extends Theme {}
@@ -1548,6 +1552,13 @@ interface SuccessViewProps {
 interface AccountRecoveryWidgetProps extends MainViewProps, SuccessViewProps {
 }
 
+type TrustedDeviceWidgetProps = {
+    accessToken: string;
+    showRemoveTrustedDevice?: boolean;
+    onError?: OnError;
+    onSuccess?: OnSuccess;
+};
+
 interface WidgetInstance {
     destroy(): void;
 }
@@ -1586,6 +1597,7 @@ declare class UiClient {
     showMfa(options: WidgetOptions<MfaCredentialsWidgetProps>): void;
     showStepUp(options: WidgetOptions<MfaStepUpWidgetProps>): void;
     showMfaCredentials(options: WidgetOptions<MfaListWidgetProps>): void;
+    showTrustedDevices(options: WidgetOptions<TrustedDeviceWidgetProps>): void;
     _showWidget<P extends WidgetProps>(widget: Widget<Omit<P, keyof WidgetProps>>, options?: P, props?: {}): Promise<void>;
     _ssoCheck<P extends WidgetProps>(widget: Widget<Omit<P, keyof WidgetProps>>, options: P & {
         auth?: AuthOptions;
@@ -1610,6 +1622,7 @@ type Client = {
     showMfa: InstanceType<typeof UiClient>['showMfa'];
     showMfaCredentials: InstanceType<typeof UiClient>['showMfaCredentials'];
     showStepUp: InstanceType<typeof UiClient>['showStepUp'];
+    showTrustedDevices: InstanceType<typeof UiClient>['showTrustedDevices'];
 };
 declare function createClient(creationConfig: Config$1): Client;
 

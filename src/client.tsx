@@ -25,6 +25,7 @@ import mfaCredentialsWidget, { type MfaCredentialsWidgetProps } from './widgets/
 import mfaListWidget, { type MfaListWidgetProps } from './widgets/mfa/mfaListWidget'
 import mfaStepUpWidget, { type MfaStepUpWidgetProps } from './widgets/stepUp/mfaStepUpWidget';
 import accountRecoveryWidget, { type AccountRecoveryWidgetProps } from './widgets/accountRecovery/accountRecoveryWidget.tsx'
+import trustedDevicesWidget, { type TrustedDeviceWidgetProps } from "./widgets/mfa/trustedDevicesWidget.tsx";
 
 export interface WidgetInstance {
     destroy(): void
@@ -117,6 +118,10 @@ export class UiClient {
 
     showMfaCredentials(options: WidgetOptions<MfaListWidgetProps>) {
         this._showWidget(mfaListWidget, options);
+    }
+
+    showTrustedDevices(options: WidgetOptions<TrustedDeviceWidgetProps>) {
+        this._showWidget(trustedDevicesWidget, options);
     }
 
     async _showWidget<P extends WidgetProps>(widget: Widget<Omit<P, keyof WidgetProps>>, options: P = {} as P, props = {}) {
