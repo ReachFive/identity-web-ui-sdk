@@ -23,7 +23,7 @@ exports[`Snapshot basic 1`] = `
       <div
         class="flex flex-col "
         data-testid="credential"
-        id="credential-0"
+        id="credential-33612345678"
       >
         <div
           class="flex flex-row items-center rounded"
@@ -62,7 +62,7 @@ exports[`Snapshot basic 1`] = `
               <div
                 class="font-bold"
               >
-                identifier
+                33612345678
               </div>
               <div>
                 33612345678
@@ -85,7 +85,7 @@ exports[`Snapshot basic 1`] = `
       <div
         class="flex flex-col "
         data-testid="credential"
-        id="credential-1"
+        id="credential-identifier"
       >
         <div
           class="flex flex-row items-center rounded"
