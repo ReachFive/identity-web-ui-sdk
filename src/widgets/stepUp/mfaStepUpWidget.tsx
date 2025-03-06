@@ -16,7 +16,6 @@ import { useReachfive } from '../../contexts/reachfive';
 import { useRouting } from '../../contexts/routing';
 import { useI18n } from '../../contexts/i18n';
 import checkboxField from "../../components/form/fields/checkboxField";
-import { useConfig } from "../../contexts/config.tsx";
 
 const StartStepUpMfaButton = createForm({
     prefix: 'r5-mfa-start-step-up-',
@@ -121,7 +120,7 @@ export const MainView = ({
     showStepUpStart = true,
     allowTrustDevice = false
 }: MainViewProps) => {
-    const coreClient = useReachfive()
+    const { client: coreClient } = useReachfive()
     const { goTo } = useRouting()
 
     const [response, setResponse] = useState<MFA.StepUpResponse | undefined>()
@@ -195,7 +194,7 @@ type StepUpResponse = RequiredProperty<PasswordlessResponse, 'challengeId'>
 type StepUpHandlerResponse = StepUpResponse & StartPasswordlessFormData
 
 export const FaSelectionView = (props: FaSelectionViewProps) => {
-    const coreClient = useReachfive()
+    const { client: coreClient } = useReachfive()
     const i18n = useI18n()
     const { params } = useRouting()
     const state = params as FaSelectionViewState
@@ -277,10 +276,9 @@ export type VerificationCodeViewProps = Prettify<Partial<StepUpHandlerResponse> 
 }>
 
 export const VerificationCodeView = (props: VerificationCodeViewProps) => {
-    const coreClient = useReachfive()
+    const { client: coreClient, config: { rbaEnabled } } = useReachfive()
     const i18n = useI18n()
     const { params } = useRouting()
-    const { rbaEnabled } = useConfig()
     const state = params as VerificationCodeViewState
 
     const {

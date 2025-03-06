@@ -2,7 +2,7 @@ import type { JestConfigWithTsJest } from 'ts-jest'
 
 const config: JestConfigWithTsJest = {
     preset: 'ts-jest',
-    testEnvironment: 'jsdom',
+    testEnvironment: 'jest-fixed-jsdom',
     maxWorkers: 2,
     transform: {
         "^.+\\.jsx?$": "babel-jest"
@@ -13,6 +13,7 @@ const config: JestConfigWithTsJest = {
         '@reachfive/i18n': '<rootDir>/src/i18n/en.js',
         'react-phone-number-input/locale/([a-z_-]+)\\.json.js$': '<rootDir>/node_modules/react-phone-number-input/locale/$1.json'
     },
+    setupFilesAfterEnv: ['<rootDir>/setup-jest.ts'],
 };
 
 export default config

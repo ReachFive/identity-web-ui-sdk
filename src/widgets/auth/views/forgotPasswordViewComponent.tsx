@@ -19,7 +19,6 @@ import passwordField from '../../../components/form/fields/passwordField.tsx';
 import simplePasswordField from '../../../components/form/fields/simplePasswordField';
 import { DefaultButton } from '../../../components/form/buttonComponent.tsx';
 import { Validator } from '../../../core/validation.ts';
-import { useConfig } from '../../../contexts/config.tsx';
 
 import type { OnError, OnSuccess } from '../../../types';
 
@@ -185,8 +184,7 @@ export const ForgotPasswordView = ({
     onError = (() => {}) as OnError,
     onSuccess = (() => {}) as OnSuccess,
 }: ForgotPasswordViewProps) => {
-    const coreClient = useReachfive()
-    const config = useConfig()
+    const { client: coreClient, config } = useReachfive()
     const { goTo } = useRouting()
     const i18n = useI18n()
 
@@ -247,7 +245,7 @@ export const ForgotPasswordPhoneNumberView = ({
     returnToAfterPasswordReset,
     onError = (() => {}) as OnError,
 }: ForgotPasswordViewProps) => {
-    const coreClient = useReachfive()
+    const { client: coreClient } = useReachfive()
     const { goTo } = useRouting()
     const i18n = useI18n()
 
@@ -305,7 +303,7 @@ export const ForgotPasswordCodeView = ({
     onError = (() => {}) as OnError,
     onSuccess = (() => {}) as OnSuccess,
 }: ForgotPasswordViewProps) => {
-    const coreClient = useReachfive()
+    const { client: coreClient } = useReachfive()
     const { goTo, params } = useRouting()
     const i18n = useI18n()
 

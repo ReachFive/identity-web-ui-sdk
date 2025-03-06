@@ -1,10 +1,25 @@
 import { createClient as createCoreClient } from '@reachfive/identity-core';
-import type { Client as CoreClient, Config, ConsentVersions, RemoteSettings } from '@reachfive/identity-core';
+import type { Client as CoreClient, Config } from '@reachfive/identity-core';
 import { UiClient } from './client';
-import { camelCaseProperties } from './helpers/transformObjectProperties';
-import { toQueryString } from './helpers/queryString';
 
 export type { Config } from '@reachfive/identity-core';
+
+export { ReachfiveProvider, type ReachfiveProviderProps, useReachfive } from './contexts/reachfive';
+export { default as Auth } from './widgets/auth/authWidget';
+export { default as EmailEditor } from './widgets/emailEditor/emailEditorWidget';
+export { default as PasswordEditor } from './widgets/passwordEditor/passwordEditorWidget';
+export { default as PhoneNumberEditor } from './widgets/phoneNumberEditor/phoneNumberEditorWidget';
+export { default as PasswordReset } from './widgets/passwordReset/passwordResetWidget';
+export { default as Passwordless } from './widgets/passwordless/passwordlessWidget';
+export { default as ProfileEditor } from './widgets/profileEditor/profileEditorWidget';
+export { default as SocialAccounts } from './widgets/socialAccounts/socialAccountsWidget';
+export { default as SocialLogin } from './widgets/socialLogin/socialLoginWidget';
+export { default as WebAuthn } from './widgets/webAuthn/webAuthnDevicesWidget';
+export { default as MfaCredentials } from './widgets/mfa/MfaCredentialsWidget';
+export { default as MfaList } from './widgets/mfa/mfaListWidget'
+export { default as MfaStepUp } from './widgets/stepUp/mfaStepUpWidget';
+export { default as AccountRecovery } from './widgets/accountRecovery/accountRecoveryWidget.tsx'
+export { default as TrustedDevices } from "./widgets/mfa/trustedDevicesWidget.tsx";
 
 export type Client = {
     core: CoreClient,
@@ -25,45 +40,27 @@ export type Client = {
     showTrustedDevices: InstanceType<typeof UiClient>['showTrustedDevices']
 }
 
-export function createClient(creationConfig: Config): Client {
-    const coreClient = createCoreClient(creationConfig);
+export function createClient(config: Config): Client {
+    const coreClient = createCoreClient(config);
 
-    const client = coreClient.remoteSettings.then(remoteSettings => {
-        const remoteConfig = camelCaseProperties(remoteSettings) as RemoteSettings;
-        const language = creationConfig.language ?? remoteSettings.language;
-
-        return fetch(`https://${creationConfig.domain}/identity/v1/config/consents?${toQueryString({ lang: language })}`)
-            .then(response => response.json())
-            .then(consentsVersions => {
-                return fetch(`${remoteConfig.resourceBaseUrl}/${language}.json`)
-                    .then(response => response.json())
-                    .then(defaultI18n => {
-                        const config = {
-                            ...creationConfig,
-                            ...remoteConfig,
-                            consentsVersions: camelCaseProperties(consentsVersions) as Record<string, ConsentVersions>
-                        }
-                        return new UiClient(config, coreClient, defaultI18n)
-                    })
-            })
-    })
+    const client = new UiClient(config, coreClient)
 
     return {
         core: coreClient,
-        showAuth: (options: Parameters<Awaited<typeof client>['showAuth']>[0]) => client.then(client => client.showAuth(options)),
-        showAccountRecovery: (options: Parameters<Awaited<typeof client>['showAccountRecovery']>[0]) => client.then(client => client.showAccountRecovery(options)),
-        showEmailEditor: (options: Parameters<Awaited<typeof client>['showEmailEditor']>[0]) => client.then(client => client.showEmailEditor(options)),
-        showPasswordEditor: (options: Parameters<Awaited<typeof client>['showPasswordEditor']>[0]) => client.then(client => client.showPasswordEditor(options)),
-        showPhoneNumberEditor: (options: Parameters<Awaited<typeof client>['showPhoneNumberEditor']>[0]) => client.then(client => client.showPhoneNumberEditor(options)),
-        showPasswordReset: (options: Parameters<Awaited<typeof client>['showPasswordReset']>[0]) => client.then(client => client.showPasswordReset(options)),
-        showPasswordless: (options: Parameters<Awaited<typeof client>['showPasswordless']>[0]) => client.then(client => client.showPasswordless(options)),
-        showProfileEditor: (options: Parameters<Awaited<typeof client>['showProfileEditor']>[0]) => client.then(client => client.showProfileEditor(options)),
-        showSocialAccounts: (options: Parameters<Awaited<typeof client>['showSocialAccounts']>[0]) => client.then(client => client.showSocialAccounts(options)),
-        showSocialLogin: (options: Parameters<Awaited<typeof client>['showSocialLogin']>[0]) => client.then(client => client.showSocialLogin(options)),
-        showWebAuthnDevices: (options: Parameters<Awaited<typeof client>['showWebAuthnDevices']>[0]) => client.then(client => client.showWebAuthnDevices(options)),
-        showMfa: (options: Parameters<Awaited<typeof client>['showMfa']>[0]) => client.then(client => client.showMfa(options)),
-        showMfaCredentials: (options: Parameters<Awaited<typeof client>['showMfaCredentials']>[0]) => client.then(client => client.showMfaCredentials(options)),
-        showStepUp: (options: Parameters<Awaited<typeof client>['showStepUp']>[0]) => client.then(client => client.showStepUp(options)),
-        showTrustedDevices: (options: Parameters<Awaited<typeof client>['showTrustedDevices']>[0]) => client.then(client => client.showTrustedDevices(options))
+        showAuth: (options: Parameters<Awaited<typeof client>['showAuth']>[0]) => client.showAuth(options),
+        showAccountRecovery: (options: Parameters<Awaited<typeof client>['showAccountRecovery']>[0]) => client.showAccountRecovery(options),
+        showEmailEditor: (options: Parameters<Awaited<typeof client>['showEmailEditor']>[0]) => client.showEmailEditor(options),
+        showPasswordEditor: (options: Parameters<Awaited<typeof client>['showPasswordEditor']>[0]) => client.showPasswordEditor(options),
+        showPhoneNumberEditor: (options: Parameters<Awaited<typeof client>['showPhoneNumberEditor']>[0]) => client.showPhoneNumberEditor(options),
+        showPasswordReset: (options: Parameters<Awaited<typeof client>['showPasswordReset']>[0]) => client.showPasswordReset(options),
+        showPasswordless: (options: Parameters<Awaited<typeof client>['showPasswordless']>[0]) => client.showPasswordless(options),
+        showProfileEditor: (options: Parameters<Awaited<typeof client>['showProfileEditor']>[0]) => client.showProfileEditor(options),
+        showSocialAccounts: (options: Parameters<Awaited<typeof client>['showSocialAccounts']>[0]) => client.showSocialAccounts(options),
+        showSocialLogin: (options: Parameters<Awaited<typeof client>['showSocialLogin']>[0]) => client.showSocialLogin(options),
+        showWebAuthnDevices: (options: Parameters<Awaited<typeof client>['showWebAuthnDevices']>[0]) => client.showWebAuthnDevices(options),
+        showMfa: (options: Parameters<Awaited<typeof client>['showMfa']>[0]) => client.showMfa(options),
+        showMfaCredentials: (options: Parameters<Awaited<typeof client>['showMfaCredentials']>[0]) => client.showMfaCredentials(options),
+        showStepUp: (options: Parameters<Awaited<typeof client>['showStepUp']>[0]) => client.showStepUp(options),
+        showTrustedDevices: (options: Parameters<Awaited<typeof client>['showTrustedDevices']>[0]) => client.showTrustedDevices(options)
     };
 }

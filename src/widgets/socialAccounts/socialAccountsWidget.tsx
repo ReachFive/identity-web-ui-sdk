@@ -48,7 +48,7 @@ const withIdentities = <T extends WithIdentitiesProps = WithIdentitiesProps>(
     const displayName = WrappedComponent.displayName ?? WrappedComponent.name ?? "Component";
 
     const ComponentWithIdentities = (props: Omit<T, 'identities' | 'unlink'>) => {
-        const coreClient = useReachfive()
+        const { client: coreClient } = useReachfive()
         const { goTo } = useRouting()
         const [identities, setIdentities] = useState<Identity[]>([])
 
