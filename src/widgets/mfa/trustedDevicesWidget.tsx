@@ -1,5 +1,7 @@
 import React, { useEffect } from 'react';
 import { TrustedDevice } from "@reachfive/identity-core";
+import { X, LoaderCircle } from "lucide-react";
+
 import { createWidget } from "../../components/widget/widget.tsx";
 import { useI18n } from "../../contexts/i18n.tsx";
 import { dateFormat } from "../../helpers/utils.ts";
@@ -17,7 +19,6 @@ import {
     AlertDialogTrigger,
 } from "../../components/ui/alert-dialog"
 import { Button } from "../../components/ui/button"
-import { X, LoaderCircle } from "lucide-react";
 import { OnError, OnSuccess} from "../../types";
 
 export type TrustedDeviceWidgetProps = {
@@ -114,8 +115,7 @@ export const TrustedDeviceList = ({
 
     const onDelete = (device: TrustedDevice) => {
         client
-            .removeTrustedDevice
-            ({
+            .removeTrustedDevice({
                 accessToken: accessToken,
                 trustedDeviceId: device.id
             })
