@@ -1,9 +1,9 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment jest-fixed-jsdom
  */
 
 import { beforeEach, describe, expect, jest, test } from '@jest/globals';
-import { render, screen, waitFor } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event'
 import '@testing-library/jest-dom/jest-globals'
 import 'jest-styled-components';
@@ -13,35 +13,18 @@ import { type Profile, type Client } from '@reachfive/identity-core';
 import { type I18nMessages } from '../../../src/core/i18n';
 import type { Config } from '../../../src/types';
 
-import socialAccountsWidget from '../../../src/widgets/socialAccounts/socialAccountsWidget';
-
-const defaultConfig: Config = {
-    clientId: 'local',
-    domain: 'local.reach5.net',
-    sso: false,
-    sms: false,
-    webAuthn: false,
-    language: 'fr',
-    pkceEnforced: false,
-    isPublic: true,
-    socialProviders: ['facebook', 'google', 'line:custom'],
-    customFields: [],
-    resourceBaseUrl: 'http://localhost',
-    mfaSmsEnabled: false,
-    mfaEmailEnabled: false,
-    rbaEnabled: false,
-    consentsVersions: {},
-    passwordPolicy: {
-        minLength: 8,
-        minStrength: 2,
-        allowUpdateWithAccessTokenOnly: true,
-    }
-};
+import SocialAccountsWidget from '../../../src/widgets/socialAccounts/socialAccountsWidget';
+import { componentGenerator, snapshotGenerator } from '../renderer';
+import { ComponentProps } from 'react';
 
 const defaultI18n: I18nMessages = {}
 
 describe('Snapshot', () => {
-    const generateSnapshot = (options = {}, config = defaultConfig, socialIdentities: Profile['socialIdentities'] = []) => async () => {
+    const generateSnapshot = (
+        options: ComponentProps<typeof SocialAccountsWidget>,
+        config: Partial<Config> = {},
+        socialIdentities: Profile['socialIdentities'] = []
+    ) => {
         // @ts-expect-error partial Client
         const apiClient: Client = {
             // @ts-expect-error partial Profile
@@ -51,27 +34,18 @@ describe('Snapshot', () => {
             off: jest.fn(),
         };
 
-        const widget = await socialAccountsWidget(
-            { ...options, accessToken: 'azerty' },
-            { apiClient,config: { ...defaultConfig, ...config }, defaultI18n }
-        )
+        const generate = snapshotGenerator(SocialAccountsWidget, apiClient, defaultI18n)
 
-        await waitFor(async () => {
-            const { container, rerender } = await render(widget);
-
-            await waitFor(() => expect(apiClient.getUser).toHaveBeenCalled())
-    
-            await rerender(widget)
-            
-            expect(container).toMatchSnapshot();
-        })
+        return generate(options, config)
     };
 
-    test('basic', generateSnapshot({
-        socialIdentities: [
-            { id: '123456778', provider: 'facebook', name: 'John Doe' }
+    test('basic', generateSnapshot(
+        { accessToken: 'azerty' },
+        {},
+        [
+            { id: '123456778', provider: 'facebook', username: 'John Doe' }
         ]
-    }))
+    ))
 })
 
 describe('DOM testing', () => {
@@ -93,8 +67,8 @@ describe('DOM testing', () => {
     })
 
     const generateComponent = async (
-        options: Partial<Parameters<typeof socialAccountsWidget>[0]> = {},
-        config = defaultConfig,
+        options: ComponentProps<typeof SocialAccountsWidget>,
+        config: Partial<Config> = {},
         socialIdentities: Profile['socialIdentities'] = []
     ) => {
         // @ts-expect-error partial Client
@@ -106,36 +80,27 @@ describe('DOM testing', () => {
             off,
         };
 
-        const widget = await socialAccountsWidget(
-            { onError, onSuccess, ...options, accessToken: 'azerty' },
-            { apiClient,config: { ...defaultConfig, ...config }, defaultI18n }
-        )
-
-        await waitFor(async () => {
-            const { rerender } = await render(widget);
-
-            await waitFor(() => expect(apiClient.getUser).toHaveBeenCalled())
-
-            await rerender(widget)
-        })
-    };
+        const generate = componentGenerator(SocialAccountsWidget, apiClient, defaultI18n)
+        
+        return await generate(options, config)
+    }
 
     describe('with default config', () => {
         test('no identity', async () => {
-            expect.assertions(3);
+            expect.assertions(6);
 
-            await generateComponent({});
+            await generateComponent({ accessToken: 'azerty', onError, onSuccess });
 
             expect(screen.queryByText('socialAccounts.noLinkedAccount')).toBeInTheDocument();
             expect(screen.queryByText('socialAccounts.linkNewAccount')).toBeInTheDocument();
         })
 
         test('with existing identity', async () => {
-            expect.assertions(4);
+            expect.assertions(7);
 
             await generateComponent(
+                { accessToken: 'azerty', onError, onSuccess },
                 {},
-                defaultConfig,
                 [
                     { id: '123456789', provider: 'facebook', username: 'John Doe' },
                 ]
@@ -147,11 +112,11 @@ describe('DOM testing', () => {
         })
 
         test('with all identities configured', async () => {
-            expect.assertions(6);
+            expect.assertions(9);
 
             await generateComponent(
+                { accessToken: 'azerty', onError, onSuccess },
                 {},
-                defaultConfig,
                 [
                     { id: '123456789', provider: 'facebook', username: 'John Doe' },
                     { id: '987654321', provider: 'google', username: 'John Doe' },
@@ -172,8 +137,8 @@ describe('DOM testing', () => {
             unlink.mockResolvedValue()
 
             await generateComponent(
+                { accessToken: 'azerty', onError, onSuccess },
                 {},
-                defaultConfig,
                 [
                     { id: '123456789', provider: 'facebook', username: 'John Doe' },
                     { id: '987654321', provider: 'google', username: 'John Doe' },
@@ -204,11 +169,11 @@ describe('DOM testing', () => {
         test('unlink api failure', async () => {
             const user = userEvent.setup()
 
-            unlink.mockRejectedValue('Unexpected error')
+            unlink.mockRejectedValue(new Error('Unexpected error'))
 
             await generateComponent(
+                { accessToken: 'azerty', onError, onSuccess },
                 {},
-                defaultConfig,
                 [
                     { id: '123456789', provider: 'facebook', username: 'John Doe' },
                     { id: '987654321', provider: 'google', username: 'John Doe' },

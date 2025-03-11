@@ -3,7 +3,6 @@ import { TrustedDevice } from "@reachfive/identity-core";
 import { createWidget } from "../../components/widget/widget.tsx";
 import { useI18n } from "../../contexts/i18n.tsx";
 import { dateFormat } from "../../helpers/utils.ts";
-import { useConfig } from "../../contexts/config.tsx";
 import { useReachfive } from "../../contexts/reachfive.tsx";
 import {
     AlertDialog,
@@ -94,8 +93,7 @@ export const TrustedDeviceList = ({
     const [loading, setLoading] = React.useState(true)
 
     const i18n = useI18n()
-    const config = useConfig()
-    const client = useReachfive()
+    const { client, config } = useReachfive()
 
     const fetchTrustedDevices = () => {
         setLoading(true)
@@ -114,8 +112,7 @@ export const TrustedDeviceList = ({
 
     const onDelete = (device: TrustedDevice) => {
         client
-            .removeTrustedDevice
-            ({
+            .removeTrustedDevice({
                 accessToken: accessToken,
                 trustedDeviceId: device.id
             })

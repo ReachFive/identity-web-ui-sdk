@@ -1,44 +1,19 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment jest-fixed-jsdom
  */
 
 import React from 'react'
 import { describe, expect, jest, test } from '@jest/globals';
-import { render, screen, waitFor } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event'
 import '@testing-library/jest-dom/jest-globals'
 import 'jest-styled-components';
-
-import type { Config } from '../../../../src/types';
 
 import { createForm } from '../../../../src/components/form/formComponent'
 import { simpleField } from '../../../../src/components/form/fields/simpleField'
 import resolveI18n, { I18nMessages } from '../../../../src/core/i18n';
 import { Validator } from '../../../../src/core/validation';
-import { WidgetContext } from '../WidgetContext';
-
-const defaultConfig: Config = {
-    clientId: 'local',
-    domain: 'local.reach5.net',
-    sso: false,
-    sms: false,
-    webAuthn: false,
-    language: 'fr',
-    pkceEnforced: false,
-    isPublic: true,
-    socialProviders: ['facebook', 'google'],
-    customFields: [],
-    resourceBaseUrl: 'http://localhost',
-    mfaSmsEnabled: false,
-    mfaEmailEnabled: false,
-    rbaEnabled: false,
-    consentsVersions: {},
-    passwordPolicy: {
-        minLength: 8,
-        minStrength: 2,
-        allowUpdateWithAccessTokenOnly: true,
-    }
-};
+import { defaultConfig, renderWithContext } from '../../../widgets/renderer';
 
 const defaultI18n: I18nMessages = {
     simple: 'simple'
@@ -64,20 +39,17 @@ describe('DOM testing', () => {
             ],
         })
 
-        await waitFor(async () => {   
-            return render(
-                <WidgetContext
-                    config={defaultConfig}
-                    defaultMessages={defaultI18n}
-                >
-                    <Form
-                        fieldValidationDebounce={0} // trigger validation instantly
-                        onFieldChange={onFieldChange}
-                        handler={onSubmit}
-                    />
-                </WidgetContext>
-            )
-        })
+        await renderWithContext(
+            <Form
+                fieldValidationDebounce={0} // trigger validation instantly
+                onFieldChange={onFieldChange}
+                handler={onSubmit}
+            />,
+            // @ts-expect-error partial Client
+            {},
+            defaultConfig,
+            defaultI18n
+        )
 
         const input = screen.getByLabelText(i18nResolver(label))
         expect(input).toBeInTheDocument()
@@ -125,20 +97,17 @@ describe('DOM testing', () => {
             ],
         })
 
-        await waitFor(async () => {   
-            return render(
-                <WidgetContext
-                    config={defaultConfig}
-                    defaultMessages={defaultI18n}
-                >
-                    <Form
-                        fieldValidationDebounce={0} // trigger validation instantly
-                        onFieldChange={onFieldChange}
-                        handler={onSubmit}
-                    />
-                </WidgetContext>
-            )
-        })
+        await renderWithContext(
+            <Form
+                fieldValidationDebounce={0} // trigger validation instantly
+                onFieldChange={onFieldChange}
+                handler={onSubmit}
+            />,
+            // @ts-expect-error partial Client
+            {},
+            defaultConfig,
+            defaultI18n
+        )
 
         const input = screen.queryByLabelText(i18nResolver(label))
         expect(input).toBeInTheDocument()
@@ -175,20 +144,17 @@ describe('DOM testing', () => {
             ],
         })
 
-        await waitFor(async () => {   
-            return render(
-                <WidgetContext
-                    config={defaultConfig}
-                    defaultMessages={defaultI18n}
-                >
-                    <Form
-                        fieldValidationDebounce={0} // trigger validation instantly
-                        handler={onSubmit}
-                        onFieldChange={onFieldChange}
-                    />
-                </WidgetContext>
-            )
-        })
+        await renderWithContext(
+            <Form
+                fieldValidationDebounce={0} // trigger validation instantly
+                onFieldChange={onFieldChange}
+                handler={onSubmit}
+            />,
+            // @ts-expect-error partial Client
+            {},
+            defaultConfig,
+            defaultI18n
+        )
 
         const input = screen.getByLabelText(i18nResolver(label))
         expect(input).toHaveAttribute('placeholder', i18nResolver(label))

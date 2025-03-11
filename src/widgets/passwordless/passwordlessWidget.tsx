@@ -17,7 +17,6 @@ import ReCaptcha, { importGoogleRecaptchaScript, type WithCaptchaToken } from '.
 import { useReachfive } from '../../contexts/reachfive';
 import { useRouting } from '../../contexts/routing';
 import { useI18n } from '../../contexts/i18n';
-import { useConfig } from '../../contexts/config';
 
 type EmailFormData = { email: string, captchaToken?: string }
 
@@ -119,8 +118,7 @@ const MainView = ({
     onError = (() => {}) as OnError,
     onSuccess = (() => {}) as OnSuccess,
 }: MainViewProps) => {
-    const coreClient = useReachfive()
-    const config = useConfig()
+    const { client: coreClient, config } = useReachfive()
     const i18n = useI18n()
     const { goTo } = useRouting()
 
@@ -209,7 +207,7 @@ const VerificationCodeView = ({
     onSuccess = (() => {}) as OnSuccess,
     onError = (() => {}) as OnError
 }: VerificationCodeViewProps) => {
-    const coreClient = useReachfive()
+    const { client: coreClient } = useReachfive()
     const i18n = useI18n()
     const { params } = useRouting()
     const { phoneNumber } = params as VerificationCodeViewState

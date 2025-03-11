@@ -1,62 +1,31 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment jest-fixed-jsdom
  */
 
 import { beforeEach, describe, expect, jest, test } from '@jest/globals';
-import { render, screen, waitFor } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event'
 import '@testing-library/jest-dom/jest-globals'
 import 'jest-styled-components';
 
 import { type Client } from '@reachfive/identity-core';
 
-import { I18nMessages } from '../../../src/core/i18n';
+import { type I18nMessages } from '../../../src/core/i18n';
 import { providers, type ProviderId } from '../../../src/providers/providers';
-import { type Config } from '../../../src/types';
 
-import socialLoginWidget from '../../../src/widgets/socialLogin/socialLoginWidget';
-
-const defaultConfig: Config = {
-    clientId: 'local',
-    domain: 'local.reach5.net',
-    sso: false,
-    sms: false,
-    webAuthn: false,
-    language: 'fr',
-    pkceEnforced: false,
-    isPublic: true,
-    socialProviders: ['facebook', 'google'],
-    customFields: [],
-    resourceBaseUrl: 'http://localhost',
-    mfaSmsEnabled: false,
-    mfaEmailEnabled: false,
-    rbaEnabled: false,
-    consentsVersions: {},
-    passwordPolicy: {
-        minLength: 8,
-        minStrength: 2,
-        allowUpdateWithAccessTokenOnly: true,
-    }
-};
+import SocialLoginWidget from '../../../src/widgets/socialLogin/socialLoginWidget';
+import { defaultConfig, componentGenerator, snapshotGenerator } from '../renderer';
 
 const defaultI18n: I18nMessages = {}
 
 describe('Snapshot', () => {
+    // @ts-expect-error partial Client
+    const apiClient: Client = {};
 
-    const generateSnapshot = (options: Parameters<typeof socialLoginWidget>[0] = {}, config: Partial<Config> = {}) => async () => {
-        // @ts-expect-error partial Client
-        const apiClient: Client = {}
-
-        const widget = await socialLoginWidget(options, {config: { ...defaultConfig, ...config }, apiClient, defaultI18n })
-        
-        await waitFor(async () => {
-            const { container } = await render(widget);
-            expect(container).toMatchSnapshot();
-        })
-    };
+    const generateSnapshot = snapshotGenerator(SocialLoginWidget, apiClient, defaultI18n)
 
     describe('social login', () => {
-        test('basic', generateSnapshot());
+        test('basic', generateSnapshot({}));
     });
 })
 
@@ -72,23 +41,19 @@ describe('DOM testing', () => {
         onSuccess.mockClear()
     })
 
-    const generateComponent = async (options: Parameters<typeof socialLoginWidget>[0] = {}, config: Partial<Config> = {}) => {
-        // @ts-expect-error partial Client
-        const apiClient: Client = {
-            loginWithSocialProvider
-        }
+    // @ts-expect-error partial Client
+    const apiClient: Client = {
+        loginWithSocialProvider,
+    }
 
-        const result = await socialLoginWidget({ onError, onSuccess, ...options }, {config: { ...defaultConfig, ...config }, apiClient, defaultI18n });
-
-        return render(result);
-    };
+    const generateComponent = componentGenerator(SocialLoginWidget, apiClient, defaultI18n)
 
     test('basic', async () => {
         const user = userEvent.setup()
 
-        loginWithSocialProvider.mockResolvedValue({})
+        loginWithSocialProvider.mockResolvedValue(undefined)
 
-        await generateComponent({});
+        await generateComponent({ onError, onSuccess });
 
         defaultConfig.socialProviders.forEach((provider) => {
             expect(screen.queryByTitle(providers[provider as ProviderId].name)).toBeInTheDocument()
@@ -108,7 +73,9 @@ describe('DOM testing', () => {
         await generateComponent({
             theme: {
                 primaryColor: '#ff0000',
-            }
+            },
+            onError,
+            onSuccess,
         });
 
         defaultConfig.socialProviders.forEach((provider) => {
@@ -122,7 +89,7 @@ describe('DOM testing', () => {
         const error = { error: 'Unexpected error' }
         loginWithSocialProvider.mockRejectedValue(error)
 
-        await generateComponent({});
+        await generateComponent({ onError, onSuccess });
 
         defaultConfig.socialProviders.forEach((provider) => {
             expect(screen.queryByTitle(providers[provider as ProviderId].name)).toBeInTheDocument()
@@ -132,8 +99,8 @@ describe('DOM testing', () => {
         const button = screen.getByTitle(providers[provider].name)
         await user.click(button)
 
-        expect(loginWithSocialProvider).toBeCalledWith(provider, undefined)
-
+        await waitFor(() => expect(loginWithSocialProvider).toBeCalledWith(provider, undefined))
+            
         expect(onSuccess).not.toBeCalled()
         expect(onError).toBeCalledWith(error)
     })

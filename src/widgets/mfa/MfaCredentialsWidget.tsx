@@ -17,8 +17,6 @@ import { UserError } from '../../helpers/errors';
 import { useI18n } from '../../contexts/i18n';
 import { useReachfive } from '../../contexts/reachfive';
 import { useRouting } from '../../contexts/routing';
-import { useConfig } from '../../contexts/config';
-
 
 const EmailRegisteringCredentialForm = createForm({
     prefix: 'r5-mfa-credentials-email-',
@@ -112,8 +110,7 @@ const MainView = ({
     showIntro = true,
     showRemoveMfaCredentials = true,
 }: MainViewProps) => {
-    const coreClient = useReachfive()
-    const config = useConfig()
+    const { client: coreClient, config } = useReachfive()
     const i18n = useI18n()
     const { goTo } = useRouting()
 
@@ -159,7 +156,7 @@ const MainView = ({
             <DivCredentialBlock>
                 {config.mfaEmailEnabled && !isEmailCredentialRegistered &&
                     <div>
-                        {showIntro && <Intro>{requireMfaRegistration ? i18n('mfa.email.explain.required') :i18n('mfa.email.explain')}</Intro>}
+                        {showIntro && <Intro>{requireMfaRegistration ? i18n('mfa.email.explain.required') : i18n('mfa.email.explain')}</Intro>}
                         <EmailRegisteringCredentialForm
                             handler={onEmailRegistering}
                             onSuccess={(data: StartMfaEmailRegistrationResponse) => goTo<VerificationCodeViewState>('verification-code', {...data, registrationType: 'email'})}
@@ -248,7 +245,7 @@ const VerificationCodeView = ({
     onSuccess = (() => {}) as OnSuccess,
     showIntro = true
 }: VerificationCodeViewProps) => {
-    const coreClient = useReachfive()
+    const { client: coreClient } = useReachfive()
     const i18n = useI18n()
     const { goTo, params } = useRouting()
     const { registrationType, status } = params as VerificationCodeViewState
@@ -350,8 +347,8 @@ export default createMultiViewWidget<MfaCredentialsWidgetProps, MfaCredentialsPr
         'verification-code': VerificationCodeView,
         'credential-removed': CredentialRemovedView
     },
-    prepare: (options, { apiClient }) => {
-        return apiClient.listMfaCredentials(options.accessToken)
+    prepare: (options, { client }) => {
+        return client.listMfaCredentials(options.accessToken)
             .then(({ credentials }) => ({
                 ...options,
                 credentials,
