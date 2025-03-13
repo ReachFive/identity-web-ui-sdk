@@ -1,7 +1,7 @@
 import type {Config} from "../../../src/types";
 import {I18nMessages} from "../../../src/core/i18n";
 import {beforeEach, describe, expect, jest, test} from "@jest/globals";
-import { Client } from "../../../../../identity-web-core-sdk";
+import { Client } from '@reachfive/identity-core';
 import {render, screen, waitFor} from "@testing-library/react";
 import trustedDevicesWidget from "../../../src/widgets/mfa/trustedDevicesWidget";
 import '@testing-library/jest-dom/jest-globals'
