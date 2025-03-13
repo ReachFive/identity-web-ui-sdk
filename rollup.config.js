@@ -1,3 +1,4 @@
+import alias from '@rollup/plugin-alias';
 import commonjs from '@rollup/plugin-commonjs';
 import dynamicImportVars from '@rollup/plugin-dynamic-import-vars';
 import replace from '@rollup/plugin-replace';
@@ -8,6 +9,9 @@ import svg from '@svgr/rollup'
 import dts from 'rollup-plugin-dts'
 import esbuild from 'rollup-plugin-esbuild'
 import postcss from "rollup-plugin-postcss";
+import { addDirective } from 'rollup-plugin-add-directive';
+
+import path from 'path';
 
 import pkg from './package.json' with { type: 'json' }
 const dependencies = Object.keys(pkg.dependencies)
@@ -36,6 +40,12 @@ const bundle = config => ({
 })
 
 const plugins = [
+    alias({
+        entries: [
+            { find: '@/lib/utils', replacement: path.resolve('src/lib/utils.ts') },
+            { find: '@', replacement: path.resolve('src') },
+        ]
+    }),
     replace({
         preventAssignment: true,
         values: {
@@ -55,6 +65,9 @@ const plugins = [
     }),
     // Add an inlined version of SVG files: https://www.smooth-code.com/open-source/svgr/docs/rollup/#using-with-url-plugin
     url({ limit: Infinity, include: ['**/*.svg'] }),
+    addDirective({ pattern: '**/components/*', directive: "'use client';" }),
+    addDirective({ pattern: '**/contexts/*', directive: "'use client';" }),
+    addDirective({ pattern: '**/widgets/*', directive: "'use client';" }),
     esbuild(),
     dynamicImportVars({
         errorWhenNoFilesFound: true
@@ -64,7 +77,7 @@ const plugins = [
 export default [
     bundle({
         plugins,
-        external: dependencies.concat(['@/lib/utils']),
+        // external: dependencies.concat(['@/lib/utils']),
         output: [
             {
                 banner,
@@ -88,11 +101,17 @@ export default [
                 inlineDynamicImports: true,
             },
         ],
-        onwarn: onWarn
+        onwarn: onWarn,
+        onLog(level, log, handler) {
+            if (log.cause && log.cause.message === `Can't resolve original location of error.`) {
+              return
+            }
+            handler(level, log)
+        },
     }),
     bundle({
         plugins,
-        external: ['@/lib/utils'],
+        // external: ['@/lib/utils'],
         output: [
             {
                 banner,
@@ -101,7 +120,7 @@ export default [
                 name: 'reach5Widgets',
                 sourcemap: true,
                 inlineDynamicImports: true,
-                globals: { '@reachfive/identity-core': 'reach5', "@/lib/utils": "tw-cl-merge" },
+                globals: { '@reachfive/identity-core': 'reach5' },
             },
             {
                 file: 'umd/identity-ui.min.js',
@@ -110,10 +129,16 @@ export default [
                 plugins: [terser({ output: { preamble: banner } })],
                 sourcemap: true,
                 inlineDynamicImports: true,
-                globals: { '@reachfive/identity-core': 'reach5', "@/lib/utils": "tw-cl-merge" },
+                globals: { '@reachfive/identity-core': 'reach5' },
             },
         ],
-        onwarn: onWarn
+        onwarn: onWarn,
+        onLog(level, log, handler) {
+            if (log.cause && log.cause.message === `Can't resolve original location of error.`) {
+              return
+            }
+            handler(level, log)
+        },
     }),
     bundle({
         plugins: [
