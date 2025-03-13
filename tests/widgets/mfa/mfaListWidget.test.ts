@@ -55,12 +55,12 @@ describe('Snapshot', () => {
             { accessToken: 'azerty', ...options },
             { apiClient,config: { ...defaultConfig, ...config }, defaultI18n }
         )
-        
+
         await waitFor(async () => {
             const { container, rerender } = await render(widget);
 
             await waitFor(() => expect(apiClient.listMfaCredentials).toHaveBeenCalled())
-    
+
             await rerender(widget)
 
             expect(container).toMatchSnapshot();
@@ -70,7 +70,7 @@ describe('Snapshot', () => {
     test('empty', generateSnapshot({}, undefined, []))
 
     test('basic', generateSnapshot({}, undefined, [
-        { type: 'sms', phoneNumber: '33612345678', friendlyName: 'identifier', createdAt: '2022-09-21' },
+        { type: 'sms', phoneNumber: '33612345678', friendlyName: '33612345678', createdAt: '2022-09-21' },
         { type: 'email', email: 'root@reach5.co', friendlyName: 'identifier', createdAt: '2022-09-21' }
     ]))
 })
@@ -118,7 +118,7 @@ describe('DOM testing', () => {
 
         test('with credentials', async () => {
             listMfaCredentials.mockResolvedValue({ credentials: [
-                { type: 'sms', phoneNumber: '33612345678', friendlyName: 'identifier', createdAt: '2022-09-21' } as MFA.PhoneCredential,
+                { type: 'sms', phoneNumber: '33612345678', friendlyName: '33612345678', createdAt: '2022-09-21' } as MFA.PhoneCredential,
                 { type: 'email', email: 'root@reach5.co', friendlyName: 'identifier', createdAt: '2022-09-21' } as MFA.EmailCredential
             ]})
             await generateComponent({}, defaultConfig);
@@ -136,9 +136,9 @@ describe('DOM testing', () => {
         test('api error', async () => {
             const error: AppError = { errorId: '0', error: 'unexpected_error', errorDescription: "Unexpected error" }
             listMfaCredentials.mockRejectedValue(error)
-            await expect(async () => await generateComponent({}, defaultConfig)).rejects.toThrow(error.errorDescription)
+            await generateComponent({}, defaultConfig)
             expect(onSuccess).not.toBeCalled()
-            expect(onError).toBeCalled()
+            expect(onError).toBeCalledWith(error)
         })
     })
 
