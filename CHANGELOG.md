@@ -7,16 +7,19 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
-- Allow to list and remove trusted devices
-
-### Fixed
-
-- Fix phoneNumberField so phone number is not in the payload instead of always valuating it to null
+## [1.33.0] - 2025-03-13
 
 ### Added
 
-- Allow to list and remove trusted devices
--
+- Allow to define onSuccess and onError callback on all widgets.
+- Allow to list and remove trusted devices.
+- Add a button in MfaList widget to delete credential.
+
+### Fixed
+
+- Fix phoneNumberField so phone number is not in the payload instead of always valuating it to null.
+- Use the right color for Kakao provider as defined in the design guidelines.
+
 ## [1.32.2] - 2025-02-10
 
 ### Fixed
@@ -582,7 +585,9 @@ The eye icon is now correctly displayed in the Auth widget.
 
 First version of the SDK Web UI.
 
-[Unreleased]: https://github.com/ReachFive/identity-web-ui-sdk/compare/1.32.2...HEAD
+[Unreleased]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.33.0...HEAD
+
+[1.33.0]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.32.2...v1.33.0
 
 [1.32.2]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.32.1...v1.32.2
 
