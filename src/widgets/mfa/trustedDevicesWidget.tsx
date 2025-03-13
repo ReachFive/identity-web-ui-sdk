@@ -137,7 +137,7 @@ export const TrustedDeviceList = ({
             )}
             {trustedDevices.map((trustedDevice, _) => (
                 <div id={`trusted-device-${trustedDevice.id}`} key={`trusted-device-${trustedDevice.id}`}
-                     className={`flex items-center ${isOpen ? 'opacity-15' : ''}`}>
+                     className={`flex items-center ${isOpen ? 'opacity-15' : ''}`} data-testid="trustedDevice">
                     <div
                         className="flex text-theme flex-col items-center basis-full line-height-1 align-middle whitespace-nowrap box-border p-[calc(var(--padding-y)*1px)] border-solid border-[calc(var(--border-width)*1px)] rounded-[calc(var(--border-radius)*1px)]">
                         <div className="font-bold ">{trustedDevice.metadata.deviceName}</div>
