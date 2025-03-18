@@ -1,12 +1,12 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Snapshot basic 1`] = `
-.c1 {
+.c2 {
   text-align: center;
   margin-bottom: 10px;
 }
 
-.c2 {
+.c3 {
   color: #495057;
 }
 
@@ -24,7 +24,22 @@ exports[`Snapshot basic 1`] = `
   margin: 0 auto;
 }
 
-.c4 {
+.c1 {
+  --color-primary: #229955;
+  --color-destructive: #dc4e41;
+  --color-background: #ffffff;
+  --color-text: #495057;
+  --color-border: #ced4da;
+  --spacing-padding-y: 9;
+  --spacing-padding-x: 12;
+  --spacing-block-inner-height: 38;
+  --spacing: 10;
+  --font-generic: 14;
+  --border-width: 1;
+  --radius: 3;
+}
+
+.c5 {
   display: block;
   width: 100%;
   box-sizing: border-box;
@@ -48,42 +63,43 @@ exports[`Snapshot basic 1`] = `
   transition: all .15s ease-in-out;
 }
 
-.c4:focus {
+.c5:focus {
   outline: 0;
   box-shadow: 0 0 0 3px rgba(206,212,218,0.5);
 }
 
-.c4:hover,
-.c4:active {
+.c5:hover,
+.c5:active {
   color: #495057;
   background-color: #ebebeb;
   border-color: #b7c0c8;
 }
 
-.c4[disabled] {
+.c5[disabled] {
   opacity: .65;
 }
 
-.c3 {
+.c4 {
   margin-top: 10px;
 }
 
 <div>
   <div
-    class="c0"
+    class="c0 c1 r5-widget"
+    transition="entering"
   >
     <div>
       <div
-        class="c1 c2"
+        class="c2 c3"
       >
         socialAccounts.noLinkedAccount
       </div>
     </div>
     <div
-      class="c3"
+      class="c4"
     >
       <button
-        class="c4"
+        class="c5"
       >
         socialAccounts.linkNewAccount
       </button>

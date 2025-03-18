@@ -1,12 +1,12 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Snapshot email editor basic 1`] = `
-.c1 {
+.c2 {
   text-align: center;
   margin-bottom: 10px;
 }
 
-.c2 {
+.c3 {
   color: #495057;
 }
 
@@ -24,7 +24,22 @@ exports[`Snapshot email editor basic 1`] = `
   margin: 0 auto;
 }
 
-.c7 {
+.c1 {
+  --color-primary: #229955;
+  --color-destructive: #dc4e41;
+  --color-background: #ffffff;
+  --color-text: #495057;
+  --color-border: #ced4da;
+  --spacing-padding-y: 9;
+  --spacing-padding-x: 12;
+  --spacing-block-inner-height: 38;
+  --spacing: 10;
+  --font-generic: 14;
+  --border-width: 1;
+  --radius: 3;
+}
+
+.c8 {
   display: block;
   width: 100%;
   box-sizing: border-box;
@@ -48,41 +63,41 @@ exports[`Snapshot email editor basic 1`] = `
   transition: all .15s ease-in-out;
 }
 
-.c7:focus {
+.c8:focus {
   outline: 0;
   box-shadow: 0 0 0 3px rgba(34,153,85,0.5);
 }
 
-.c7:hover,
-.c7:active {
+.c8:hover,
+.c8:active {
   background-color: #1b7842;
   border-color: #1b7842;
 }
 
-.c7[disabled] {
+.c8[disabled] {
   opacity: .65;
 }
 
-.c3 {
+.c4 {
   position: relative;
 }
 
-.c5 {
+.c6 {
   color: #495057;
   margin-bottom: 5px;
   display: none;
 }
 
-.c4 {
+.c5 {
   margin-bottom: 10px;
 }
 
-.c4 > label::after {
+.c5 > label::after {
   content: "\\A0*";
   color: #dc4e41;
 }
 
-.c6 {
+.c7 {
   display: block;
   width: 100%;
   box-sizing: border-box;
@@ -104,59 +119,60 @@ exports[`Snapshot email editor basic 1`] = `
   appearance: none;
 }
 
-.c6:focus {
+.c7:focus {
   border-color: #5fdb94;
   box-shadow: 0 0 0 3px rgba(95,219,148,0.5);
   outline: 0;
 }
 
-.c6:disabled,
-.c6[readonly] {
+.c7:disabled,
+.c7[readonly] {
   background-color: #e9ecef;
 }
 
-.c6::-webkit-input-placeholder {
+.c7::-webkit-input-placeholder {
   color: #868e96;
 }
 
-.c6::-moz-placeholder {
+.c7::-moz-placeholder {
   color: #868e96;
 }
 
-.c6:-ms-input-placeholder {
+.c7:-ms-input-placeholder {
   color: #868e96;
 }
 
-.c6::placeholder {
+.c7::placeholder {
   color: #868e96;
 }
 
 <div>
   <div
-    class="c0"
+    class="c0 c1 r5-widget"
+    transition="entering"
   >
     <div>
       <div
-        class="c1 c2"
+        class="c2 c3"
       >
         emailEditor.intro
       </div>
       <form
-        class="c3"
+        class="c4"
         novalidate=""
       >
         <div
-          class="c4"
+          class="c5"
           required=""
         >
           <label
-            class="c5"
+            class="c6"
             for="email"
           >
             email
           </label>
           <input
-            class="c6"
+            class="c7"
             data-testid="email"
             id="email"
             name="email"
@@ -168,7 +184,7 @@ exports[`Snapshot email editor basic 1`] = `
           />
         </div>
         <button
-          class="c7"
+          class="c8"
           data-testid="submit"
           type="submit"
         >

@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Snapshot profile editor basic 1`] = `
-.c6 {
+.c7 {
   color: #adb5bd;
 }
 
@@ -19,7 +19,22 @@ exports[`Snapshot profile editor basic 1`] = `
   margin: 0 auto;
 }
 
-.c5 {
+.c1 {
+  --color-primary: #229955;
+  --color-destructive: #dc4e41;
+  --color-background: #ffffff;
+  --color-text: #495057;
+  --color-border: #ced4da;
+  --spacing-padding-y: 9;
+  --spacing-padding-x: 12;
+  --spacing-block-inner-height: 38;
+  --spacing: 10;
+  --font-generic: 14;
+  --border-width: 1;
+  --radius: 3;
+}
+
+.c6 {
   display: block;
   width: 100%;
   box-sizing: border-box;
@@ -43,47 +58,47 @@ exports[`Snapshot profile editor basic 1`] = `
   transition: all .15s ease-in-out;
 }
 
-.c5:focus {
+.c6:focus {
   outline: 0;
   box-shadow: 0 0 0 3px rgba(34,153,85,0.5);
 }
 
-.c5:hover,
-.c5:active {
+.c6:hover,
+.c6:active {
   background-color: #1b7842;
   border-color: #1b7842;
 }
 
-.c5[disabled] {
+.c6[disabled] {
   opacity: .65;
 }
 
-.c1 {
+.c2 {
   position: relative;
 }
 
-.c7 {
+.c8 {
   display: block;
   padding: 9px 12px;
   text-align: center;
 }
 
-.c3 {
+.c4 {
   color: #495057;
   margin-bottom: 5px;
   display: inline-block;
 }
 
-.c2 {
+.c3 {
   margin-bottom: 10px;
 }
 
-.c2 > label::after {
+.c3 > label::after {
   content: "\\A0*";
   color: #dc4e41;
 }
 
-.c4 {
+.c5 {
   display: block;
   width: 100%;
   box-sizing: border-box;
@@ -105,53 +120,54 @@ exports[`Snapshot profile editor basic 1`] = `
   appearance: none;
 }
 
-.c4:focus {
+.c5:focus {
   border-color: #5fdb94;
   box-shadow: 0 0 0 3px rgba(95,219,148,0.5);
   outline: 0;
 }
 
-.c4:disabled,
-.c4[readonly] {
+.c5:disabled,
+.c5[readonly] {
   background-color: #e9ecef;
 }
 
-.c4::-webkit-input-placeholder {
+.c5::-webkit-input-placeholder {
   color: #868e96;
 }
 
-.c4::-moz-placeholder {
+.c5::-moz-placeholder {
   color: #868e96;
 }
 
-.c4:-ms-input-placeholder {
+.c5:-ms-input-placeholder {
   color: #868e96;
 }
 
-.c4::placeholder {
+.c5::placeholder {
   color: #868e96;
 }
 
 <div>
   <div
-    class="c0"
+    class="c0 c1 r5-widget"
+    transition="entering"
   >
     <form
-      class="c1"
+      class="c2"
       novalidate=""
     >
       <div
-        class="c2"
+        class="c3"
         required=""
       >
         <label
-          class="c3"
+          class="c4"
           for="givenName"
         >
           givenName
         </label>
         <input
-          class="c4"
+          class="c5"
           data-testid="givenName"
           id="givenName"
           name="givenName"
@@ -162,17 +178,17 @@ exports[`Snapshot profile editor basic 1`] = `
         />
       </div>
       <div
-        class="c2"
+        class="c3"
         required=""
       >
         <label
-          class="c3"
+          class="c4"
           for="familyName"
         >
           familyName
         </label>
         <input
-          class="c4"
+          class="c5"
           data-testid="familyName"
           id="familyName"
           name="familyName"
@@ -183,14 +199,14 @@ exports[`Snapshot profile editor basic 1`] = `
         />
       </div>
       <button
-        class="c5"
+        class="c6"
         data-testid="submit"
         type="submit"
       >
         save
       </button>
       <span
-        class="c6 c7"
+        class="c7 c8"
       >
         *
         form.required.fields
