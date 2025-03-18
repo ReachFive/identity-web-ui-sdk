@@ -1,6 +1,6 @@
 /**
- * @reachfive/identity-ui - v1.32.2
- * Compiled Tue, 11 Mar 2025 19:37:56 UTC
+ * @reachfive/identity-ui - v1.33.0
+ * Compiled Tue, 18 Mar 2025 17:48:48 UTC
  *
  * Copyright (c) ReachFive.
  *
@@ -2662,18 +2662,23 @@ type MfaListWidgetProps = {
     */
     accessToken: string;
     /**
-     * Callback function called when the request has succeed.
+     * Callback function called when the request has succeeded.
      */
     onSuccess?: OnSuccess;
     /**
      * Callback function called when the request has failed.
      */
     onError?: OnError;
+    /**
+     * Indicates whether delete mfa credential button is displayed
+     */
+    showRemoveMfaCredential?: boolean;
 };
 declare const _default$2: (options: {
     accessToken: string;
     onSuccess?: OnSuccess | undefined;
     onError?: OnError | undefined;
+    showRemoveMfaCredential?: boolean | undefined;
     i18n?: I18nNestedMessages | undefined;
     theme?: {
         link?: {

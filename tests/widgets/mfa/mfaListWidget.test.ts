@@ -38,7 +38,7 @@ describe('Snapshot', () => {
     test('empty', generateSnapshot({ accessToken: 'azerty' }, undefined, []))
 
     test('basic', generateSnapshot({ accessToken: 'azerty' }, undefined, [
-        { type: 'sms', phoneNumber: '33612345678', friendlyName: 'identifier', createdAt: '2022-09-21' },
+        { type: 'sms', phoneNumber: '33612345678', friendlyName: '33612345678', createdAt: '2022-09-21' },
         { type: 'email', email: 'root@reach5.co', friendlyName: 'identifier', createdAt: '2022-09-21' }
     ]))
 })
@@ -79,7 +79,7 @@ describe('DOM testing', () => {
 
         test('with credentials', async () => {
             listMfaCredentials.mockResolvedValue({ credentials: [
-                { type: 'sms', phoneNumber: '33612345678', friendlyName: 'identifier', createdAt: '2022-09-21' } as MFA.PhoneCredential,
+                { type: 'sms', phoneNumber: '33612345678', friendlyName: '33612345678', createdAt: '2022-09-21' } as MFA.PhoneCredential,
                 { type: 'email', email: 'root@reach5.co', friendlyName: 'identifier', createdAt: '2022-09-21' } as MFA.EmailCredential
             ]})
             await generateComponent({ accessToken: 'azerty', onError, onSuccess });

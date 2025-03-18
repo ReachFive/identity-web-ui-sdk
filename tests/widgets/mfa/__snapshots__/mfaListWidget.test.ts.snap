@@ -1,32 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Snapshot basic 1`] = `
-.c1 {
-  padding: 9px 38px;
-  border: 1px solid #ced4da;
-  color: #495057;
-  box-sizing: border-box;
-  white-space: nowrap;
-  vertical-align: middle;
-  position: relative;
-}
-
-.c1:only-child {
-  border-radius: 3px;
-}
-
-.c1:not(:only-child):first-child {
-  border-radius: 3px 3px 0 0;
-}
-
-.c1:not(:only-child):last-child {
-  border-radius: 0 0 3px 3px;
-}
-
-.c1:not(:only-child):not(:last-child) {
-  border-bottom-width: 0;
-}
-
 .c0 {
   font-size: 14px;
   -webkit-transition: -webkit-transform 400ms ease, opacity 400ms ease;
@@ -41,109 +15,130 @@ exports[`Snapshot basic 1`] = `
   margin: 0 auto;
 }
 
-.c5 {
-  width: 28px;
-  height: 28px;
-  fill: #495057;
-  -webkit-flex-shrink: 0;
-  -ms-flex-negative: 0;
-  flex-shrink: 0;
-}
-
-.c3 {
-  width: 28px;
-  height: 28px;
-  fill: #495057;
-  -webkit-flex-shrink: 0;
-  -ms-flex-negative: 0;
-  flex-shrink: 0;
-}
-
-.c2 {
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-flex-direction: row;
-  -ms-flex-direction: row;
-  flex-direction: row;
-  -webkit-align-items: center;
-  -webkit-box-align: center;
-  -ms-flex-align: center;
-  align-items: center;
-  color: #495057;
-  line-height: 1.5;
-}
-
-.c4 {
-  margin-left: 38px;
-  white-space: initial;
-}
-
 <div>
   <div
     class="c0"
   >
     <div>
       <div
-        class="c1 c2"
+        class="flex flex-col "
         data-testid="credential"
+        id="credential-33612345678"
       >
-        <svg
-          class="c3"
-        />
         <div
-          class="c4"
+          class="flex flex-row items-center rounded"
         >
           <div
-            style="font-weight: bold;"
+            class="flex flex-row basis-full items-center rounded align-middle whitespace-nowrap box-border p-generic border-solid border"
           >
-            identifier
-          </div>
-          <div>
-            33612345678
-          </div>
-          <div>
-            <span>
-              mfaList.createdAt
-               : 
-            </span>
-            <time
-              datetime="2022-09-21"
+            <svg
+              class="lucide lucide-message-square-more bg-background w-icon h-icon stroke-textColor"
+              fill="none"
+              height="24"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="24"
+              xmlns="http://www.w3.org/2000/svg"
             >
-              21/09/2022
-            </time>
+              <path
+                d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"
+              />
+              <path
+                d="M8 10h.01"
+              />
+              <path
+                d="M12 10h.01"
+              />
+              <path
+                d="M16 10h.01"
+              />
+            </svg>
+            <div
+              class="ml-innerBlock w-max justify-items-stretch text-textColor"
+            >
+              <div
+                class="font-bold"
+              >
+                33612345678
+              </div>
+              <div>
+                33612345678
+              </div>
+              <div>
+                <span>
+                  mfaList.createdAt
+                   : 
+                </span>
+                <time
+                  datetime="2022-09-21"
+                >
+                  21/09/2022
+                </time>
+              </div>
+            </div>
           </div>
         </div>
       </div>
       <div
-        class="c1 c2"
+        class="flex flex-col "
         data-testid="credential"
+        id="credential-identifier"
       >
-        <svg
-          class="c5"
-        />
         <div
-          class="c4"
+          class="flex flex-row items-center rounded"
         >
           <div
-            style="font-weight: bold;"
+            class="flex flex-row basis-full items-center rounded align-middle whitespace-nowrap box-border p-generic border-solid border"
           >
-            identifier
-          </div>
-          <div>
-            root@reach5.co
-          </div>
-          <div>
-            <span>
-              mfaList.createdAt
-               : 
-            </span>
-            <time
-              datetime="2022-09-21"
+            <svg
+              class="lucide lucide-mail bg-background w-icon h-icon stroke-textColor"
+              fill="none"
+              height="24"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="24"
+              xmlns="http://www.w3.org/2000/svg"
             >
-              21/09/2022
-            </time>
+              <rect
+                height="16"
+                rx="2"
+                width="20"
+                x="2"
+                y="4"
+              />
+              <path
+                d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"
+              />
+            </svg>
+            <div
+              class="ml-innerBlock w-max justify-items-stretch text-textColor"
+            >
+              <div
+                class="font-bold"
+              >
+                identifier
+              </div>
+              <div>
+                root@reach5.co
+              </div>
+              <div>
+                <span>
+                  mfaList.createdAt
+                   : 
+                </span>
+                <time
+                  datetime="2022-09-21"
+                >
+                  21/09/2022
+                </time>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -153,15 +148,6 @@ exports[`Snapshot basic 1`] = `
 `;
 
 exports[`Snapshot empty 1`] = `
-.c1 {
-  text-align: center;
-  margin-bottom: 10px;
-}
-
-.c2 {
-  color: #495057;
-}
-
 .c0 {
   font-size: 14px;
   -webkit-transition: -webkit-transform 400ms ease, opacity 400ms ease;
@@ -182,7 +168,7 @@ exports[`Snapshot empty 1`] = `
   >
     <div>
       <div
-        class="c1 c2"
+        class="text-textColor mb-1 text-center"
       >
         mfaList.noCredentials
       </div>

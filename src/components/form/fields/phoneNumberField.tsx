@@ -98,14 +98,11 @@ const PhoneNumberField = (props: PhoneNumberFieldProps) => {
             }
         }
         /**
-         * @node the ignore variable which is initialized to false, and is set to true during cleanup.
+         * @note the ignore variable which is initialized to false, and is set to true during cleanup.
          * This ensures your code doesn’t suffer from “race conditions”: network responses may arrive in a different order than you sent them.
          */
         let ignore = false;
         fetchLabels();
-        onChange({
-            value: currentValue == "" ? undefined: currentValue
-        })
         return () => {
             ignore = true;
         }
@@ -182,7 +179,8 @@ const phoneNumberField = (
                 }
             },
             unbind: formValue => {
-                return (typeof formValue === 'object' && 'raw' in formValue ? formValue.raw : formValue)
+                const value = (typeof formValue === 'object' && 'raw' in formValue ? formValue.raw : formValue)
+                return value == "" ? undefined : value
             }
         },
         validator: new Validator<Value>({

@@ -1,5 +1,7 @@
 import React, { useEffect } from 'react';
 import { TrustedDevice } from "@reachfive/identity-core";
+import { X, LoaderCircle } from "lucide-react";
+
 import { createWidget } from "../../components/widget/widget.tsx";
 import { useI18n } from "../../contexts/i18n.tsx";
 import { dateFormat } from "../../helpers/utils.ts";
@@ -16,7 +18,6 @@ import {
     AlertDialogTrigger,
 } from "../../components/ui/alert-dialog"
 import { Button } from "../../components/ui/button"
-import { X, LoaderCircle } from "lucide-react";
 import { OnError, OnSuccess} from "../../types";
 
 export type TrustedDeviceWidgetProps = {
@@ -134,7 +135,7 @@ export const TrustedDeviceList = ({
             )}
             {trustedDevices.map((trustedDevice, _) => (
                 <div id={`trusted-device-${trustedDevice.id}`} key={`trusted-device-${trustedDevice.id}`}
-                     className={`flex items-center ${isOpen ? 'opacity-15' : ''}`}>
+                     className={`flex items-center ${isOpen ? 'opacity-15' : ''}`} data-testid="trustedDevice">
                     <div
                         className="flex text-theme flex-col items-center basis-full line-height-1 align-middle whitespace-nowrap box-border p-[calc(var(--padding-y)*1px)] border-solid border-[calc(var(--border-width)*1px)] rounded-[calc(var(--border-radius)*1px)]">
                         <div className="font-bold ">{trustedDevice.metadata.deviceName}</div>
