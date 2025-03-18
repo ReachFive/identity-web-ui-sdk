@@ -2,6 +2,7 @@
 module.exports = {
     important: '.r5-widget',
     corePlugins: {
+        container: false,
         preflight: false,
     },
     content: {
