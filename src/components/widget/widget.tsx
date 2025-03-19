@@ -1,5 +1,5 @@
 import React, { ComponentType } from 'react';
-import {createGlobalStyle, StyleSheetManager, ThemeProvider} from 'styled-components'
+import styled, {StyleSheetManager, ThemeProvider} from 'styled-components'
 import type { SessionInfo, Client as CoreClient } from '@reachfive/identity-core'
 
 import type { Config, Prettify } from '../../types'
@@ -22,9 +22,7 @@ export type ThemeProps = { theme?: ThemeOptions }
 export type PropsWithI18n<P> = Prettify<P & I18nProps>
 export type PropsWithTheme<P> = Prettify<P & ThemeProps>
 
-const GlobalStyle = createGlobalStyle`
-
-:root {
+const WidgetContainerThemeVariables = styled(WidgetContainer)`
     --color-primary: ${props => props.theme.primaryColor};
     --color-destructive: ${props => props.theme.dangerColor};
     --color-background: ${props => props.theme.backgroundColor};
@@ -40,7 +38,6 @@ const GlobalStyle = createGlobalStyle`
 
     --border-width: ${props => props.theme.borderWidth};
     --radius: ${props => props.theme.borderRadius};
-}
 `
 
 export type Context = {
@@ -75,11 +72,10 @@ export function createWidget<P, U = P>({
                         <SessionProvider session={context.session}>
                             <StyleSheetManager>
                                 <ThemeProvider theme={theme}>
-                                    <GlobalStyle />
                                     <I18nProvider defaultMessages={context.defaultI18n} messages={preparedOptions.i18n}>
-                                        <WidgetContainer {...widgetAttrs}>
+                                        <WidgetContainerThemeVariables {...widgetAttrs} className="r5-widget">
                                             <Component {...preparedOptions} />
-                                        </WidgetContainer>
+                                        </WidgetContainerThemeVariables>
                                     </I18nProvider>
                                 </ThemeProvider>
                             </StyleSheetManager>
