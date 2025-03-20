@@ -71,7 +71,7 @@ const MainView = ({
     onError = (() => {}) as OnError,
     onSuccess = (() => {}) as OnSuccess,
 }: MainViewProps) => {
-    const coreClient = useReachfive()
+    const { client: coreClient } = useReachfive()
     const i18n = useI18n()
     const { goTo } = useRouting()
 

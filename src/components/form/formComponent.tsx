@@ -5,9 +5,8 @@ import { Client } from '@reachfive/identity-core';
 import { PrimaryButton } from './buttonComponent';
 import type { Field, FieldCreator, FieldValue } from './fieldCreator';
 import { ErrorText, MutedText } from '../miscComponent';
-import { type WithConfig, useConfig } from '../../contexts/config';
 import { type WithI18n, useI18n } from '../../contexts/i18n';
-import { useReachfive } from '../../contexts/reachfive';
+import { useReachfive, type WithConfig } from '../../contexts/reachfive';
 import { isAppError } from '../../helpers/errors';
 import { logError } from '../../helpers/logger';
 import { useDebounceCallback } from '../../helpers/useDebounceCallback';
@@ -74,9 +73,8 @@ type FormProps<Model extends Record<PropertyKey, unknown> = {}, P = {}, R = void
 
 export function createForm<Model extends Record<PropertyKey, unknown> = {}, P = {}>(formOptions: FormOptions<P>) {
     function FormComponent<R = void>(props: FormProps<Model, P, R>) {
-        const config = useConfig();
         const i18n = useI18n();
-        const client = useReachfive()
+        const { client, config } = useReachfive()
 
         const {
             beforeSubmit,
@@ -238,6 +236,7 @@ export function createForm<Model extends Record<PropertyKey, unknown> = {}, P = 
         };
 
         const handleError = (err: unknown) => {
+            console.error(err)
             onError?.(err);
 
             if (isAppError(err) && !err.errorUserMsg) {

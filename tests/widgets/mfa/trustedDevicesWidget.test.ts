@@ -1,34 +1,15 @@
-import type {Config} from "../../../src/types";
-import {I18nMessages} from "../../../src/core/i18n";
-import {beforeEach, describe, expect, jest, test} from "@jest/globals";
-import { Client } from '@reachfive/identity-core';
-import {render, screen, waitFor} from "@testing-library/react";
-import trustedDevicesWidget from "../../../src/widgets/mfa/trustedDevicesWidget";
+import { beforeEach, describe, expect, jest, test } from '@jest/globals';
+import { screen } from '@testing-library/react';
 import '@testing-library/jest-dom/jest-globals'
-import {AppError} from "../../../src/helpers/errors";
+import 'jest-styled-components';
 
-const defaultConfig: Config = {
-    clientId: 'local',
-    domain: 'local.reach5.net',
-    sso: false,
-    sms: false,
-    webAuthn: false,
-    language: 'fr',
-    pkceEnforced: false,
-    isPublic: true,
-    socialProviders: ['facebook', 'google'],
-    customFields: [],
-    resourceBaseUrl: 'http://localhost',
-    mfaSmsEnabled: true,
-    mfaEmailEnabled: true,
-    rbaEnabled: false,
-    consentsVersions: {},
-    passwordPolicy: {
-        minLength: 8,
-        minStrength: 2,
-        allowUpdateWithAccessTokenOnly: true,
-    }
-};
+import { Client } from '@reachfive/identity-core';
+
+import {I18nMessages} from "../../../src/core/i18n";
+import TrustedDevicesWidget from "../../../src/widgets/mfa/trustedDevicesWidget";
+import {AppError} from "../../../src/helpers/errors";
+import { componentGenerator } from "../renderer";
+
 const defaultI18n: I18nMessages = {}
 
 describe('DOM testing', () => {
@@ -43,34 +24,17 @@ describe('DOM testing', () => {
         listTrustedDevices.mockClear()
     })
 
-    const generateComponent = async (
-        options: Partial<Parameters<typeof trustedDevicesWidget>[0]>,
-        config: Partial<Config> = {}
-    ) => {
-        // @ts-expect-error partial Client
-        const apiClient: Client = {
-            listTrustedDevices,
-        }
-        const result = await trustedDevicesWidget(
-            {
-                accessToken: 'azerty',
-                onError,
-                onSuccess,
-                ...options
-            },
-            {
-                apiClient,
-                config: { ...defaultConfig, ...config },
-                defaultI18n
-            }
-        );
-        return await waitFor(async () => render(result))
-    };
+    // @ts-expect-error partial Client
+    const apiClient: Client = {
+        listTrustedDevices,
+    }
+
+    const generateComponent = componentGenerator(TrustedDevicesWidget, apiClient, defaultI18n)
 
     describe('trustedDevices', () => {
             test('no trusted device', async () => {
                 listTrustedDevices.mockResolvedValue({ trustedDevices: []})
-                await generateComponent({ showRemoveTrustedDevice: true }, defaultConfig);
+                await generateComponent({ accessToken: 'azerty', onError, onSuccess, showRemoveTrustedDevice: true });
 
                 expect(screen.queryByText('trustedDevices.empty')).toBeInTheDocument();
             });
@@ -81,7 +45,7 @@ describe('DOM testing', () => {
                         {id: 'id2', userId: 'userid2', createdAt: '2022-09-21', metadata: {}},
                         {id: 'id3', userId: 'userid3', createdAt: '2022-09-21', metadata: {}}
                     ]})
-                await generateComponent({ showRemoveTrustedDevice: true }, defaultConfig);
+                await generateComponent({ accessToken: 'azerty', onError, onSuccess, showRemoveTrustedDevice: true });
 
                 const trustedDevices = screen.queryAllByTestId('trustedDevice')
                 expect(trustedDevices).toHaveLength(3)
@@ -94,7 +58,7 @@ describe('DOM testing', () => {
                 const error: AppError = { errorId: '0', error: 'unexpected_error', errorDescription: "Unexpected error"}
                 listTrustedDevices.mockRejectedValue(error)
 
-                await generateComponent({}, defaultConfig)
+                await generateComponent({ accessToken: 'azerty', onError, onSuccess })
                 expect(onSuccess).not.toBeCalled()
                 expect(onError).toBeCalledWith(error)
             })

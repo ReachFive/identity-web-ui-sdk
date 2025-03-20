@@ -1,31 +1,33 @@
-import React from 'react';
+import React, { ComponentType, ReactNode } from 'react';
 import { createRoot } from 'react-dom/client';
-import type { AuthOptions, Client as CoreClient, SessionInfo } from '@reachfive/identity-core'
+import type { Client as CoreClient, Config } from '@reachfive/identity-core'
 
-import { Config, Prettify } from './types'
+import type { Prettify } from './types'
 
-import { I18nMessages } from './core/i18n';
 import { UserError } from './helpers/errors';
 import { logError } from './helpers/logger';
 
 import { ErrorText } from './components/miscComponent'
-import type { Context, I18nProps, ThemeProps } from './components/widget/widget'
+import type { I18nProps, ThemeProps } from './components/widget/widget'
 
-import authWidget, { type AuthWidgetProps } from './widgets/auth/authWidget';
-import emailEditorWidget, { type EmailEditorWidgetProps } from './widgets/emailEditor/emailEditorWidget';
-import passwordEditorWidget, { type PasswordEditorWidgetProps } from './widgets/passwordEditor/passwordEditorWidget';
-import phoneNumberEditorWidget, { type PhoneNumberEditorWidgetProps } from './widgets/phoneNumberEditor/phoneNumberEditorWidget';
-import passwordResetWidget, { type PasswordResetWidgetProps } from './widgets/passwordReset/passwordResetWidget';
-import passwordlessWidget, { type PasswordlessWidgetProps } from './widgets/passwordless/passwordlessWidget';
-import profileEditorWidget, { type ProfileEditorWidgetProps } from './widgets/profileEditor/profileEditorWidget';
-import socialAccountsWidget, { type SocialAccountsWidgetProps } from './widgets/socialAccounts/socialAccountsWidget';
-import socialLoginWidget, { type SocialLoginWidgetProps } from './widgets/socialLogin/socialLoginWidget';
-import webAuthnWidget, { type WebAuthnWidgetProps } from './widgets/webAuthn/webAuthnDevicesWidget';
-import mfaCredentialsWidget, { type MfaCredentialsWidgetProps } from './widgets/mfa/MfaCredentialsWidget';
-import mfaListWidget, { type MfaListWidgetProps } from './widgets/mfa/mfaListWidget'
-import mfaStepUpWidget, { type MfaStepUpWidgetProps } from './widgets/stepUp/mfaStepUpWidget';
-import accountRecoveryWidget, { type AccountRecoveryWidgetProps } from './widgets/accountRecovery/accountRecoveryWidget.tsx'
-import trustedDevicesWidget, { type TrustedDeviceWidgetProps } from "./widgets/mfa/trustedDevicesWidget.tsx";
+import { ReachfiveProvider } from './contexts/reachfive.tsx';
+import { withSsoCheck } from './contexts/session.tsx';
+
+import AuthWidget, { type AuthWidgetProps } from './widgets/auth/authWidget';
+import EmailEditorWidget, { type EmailEditorWidgetProps } from './widgets/emailEditor/emailEditorWidget';
+import PasswordEditorWidget, { type PasswordEditorWidgetProps } from './widgets/passwordEditor/passwordEditorWidget';
+import PhoneNumberEditorWidget, { type PhoneNumberEditorWidgetProps } from './widgets/phoneNumberEditor/phoneNumberEditorWidget';
+import PasswordResetWidget, { type PasswordResetWidgetProps } from './widgets/passwordReset/passwordResetWidget';
+import PasswordlessWidget, { type PasswordlessWidgetProps } from './widgets/passwordless/passwordlessWidget';
+import ProfileEditorWidget, { type ProfileEditorWidgetProps } from './widgets/profileEditor/profileEditorWidget';
+import SocialAccountsWidget, { type SocialAccountsWidgetProps } from './widgets/socialAccounts/socialAccountsWidget';
+import SocialLoginWidget, { type SocialLoginWidgetProps } from './widgets/socialLogin/socialLoginWidget';
+import WebAuthnWidget, { type WebAuthnWidgetProps } from './widgets/webAuthn/webAuthnDevicesWidget';
+import MfaCredentialsWidget, { type MfaCredentialsWidgetProps } from './widgets/mfa/MfaCredentialsWidget';
+import MfaListWidget, { type MfaListWidgetProps } from './widgets/mfa/mfaListWidget'
+import MfaStepUpWidget, { type MfaStepUpWidgetProps } from './widgets/stepUp/mfaStepUpWidget';
+import AccountRecoveryWidget, { type AccountRecoveryWidgetProps } from './widgets/accountRecovery/accountRecoveryWidget.tsx'
+import TrustedDevicesWidget, { type TrustedDeviceWidgetProps } from "./widgets/mfa/trustedDevicesWidget.tsx";
 
 export interface WidgetInstance {
     destroy(): void
@@ -39,6 +41,8 @@ export interface WidgetProps {
      * Defaults to the predefined country code in your account settings or `FR`.
      */
     countryCode?: string
+    /** A fallback react tree to show when a Suspense child (like React.lazy) suspends */
+    fallback?: ReactNode;
     /**
      * Callback function called after the widget has been successfully loaded and rendered inside the container.
      * The callback is called with the widget instance.
@@ -49,83 +53,81 @@ export interface WidgetProps {
 // type PropsWithWidgetProps<P> = P & WidgetProps
 type WidgetOptions<P> = Prettify<P & WidgetProps & I18nProps & ThemeProps>
 
-type Widget<P> = (props: P, ctx: Context) => Promise<React.JSX.Element>
+// type Widget<P> = (props: P, ctx: Context) => Promise<React.JSX.Element>
 
 // type WidgetOptions<W> = PropsWithWidgetProps<W extends Widget<infer P> ? P : never[0]>
 
 export class UiClient {
     config: Config
     core: CoreClient
-    defaultI18n: I18nMessages
 
-    constructor(config: Config, coreClient: CoreClient, defaultI18n: I18nMessages) {
+    constructor(config: Config, coreClient: CoreClient) {
         this.config = config;
         this.core = coreClient;
-        this.defaultI18n = defaultI18n;
     }
 
     showAuth(options: WidgetOptions<AuthWidgetProps>) {
-        this._ssoCheck(authWidget, options);
+        this._showWidget(withSsoCheck(AuthWidget), options);
     }
 
     showAccountRecovery(options: WidgetOptions<AccountRecoveryWidgetProps>) {
-        this._showWidget(accountRecoveryWidget, options);
+        this._showWidget(AccountRecoveryWidget, options);
     }
 
     showSocialLogin(options: WidgetOptions<SocialLoginWidgetProps>) {
-        this._ssoCheck(socialLoginWidget, options);
+        this._showWidget(withSsoCheck(SocialLoginWidget), options);
     }
 
     showPasswordless(options: WidgetOptions<PasswordlessWidgetProps>) {
-        this._ssoCheck(passwordlessWidget, options);
+        this._showWidget(withSsoCheck(PasswordlessWidget), options);
     }
 
     showEmailEditor(options: WidgetOptions<EmailEditorWidgetProps>) {
-        this._showWidget(emailEditorWidget, options);
+        this._showWidget(EmailEditorWidget, options);
     }
 
     showPasswordEditor(options: WidgetOptions<PasswordEditorWidgetProps>) {
-        this._showWidget(passwordEditorWidget, options);
+        this._showWidget(PasswordEditorWidget, options);
     }
 
     showPhoneNumberEditor(options: WidgetOptions<PhoneNumberEditorWidgetProps>) {
-        this._showWidget(phoneNumberEditorWidget, options);
+        this._showWidget(PhoneNumberEditorWidget, options);
     }
 
     showProfileEditor(options: WidgetOptions<ProfileEditorWidgetProps>) {
-        this._showWidget(profileEditorWidget, options);
+        this._showWidget(ProfileEditorWidget, options);
     }
 
     showPasswordReset(options: WidgetOptions<PasswordResetWidgetProps>) {
-        this._showWidget(passwordResetWidget, options);
+        this._showWidget(PasswordResetWidget, options);
     }
 
     showSocialAccounts(options: WidgetOptions<SocialAccountsWidgetProps>) {
-        this._showWidget(socialAccountsWidget, options);
+        this._showWidget(SocialAccountsWidget, options);
     }
 
     showWebAuthnDevices(options: WidgetOptions<WebAuthnWidgetProps>) {
-        this._showWidget(webAuthnWidget, options);
+        this._showWidget(WebAuthnWidget, options);
     }
 
     showMfa(options: WidgetOptions<MfaCredentialsWidgetProps>) {
-        this._showWidget(mfaCredentialsWidget, options);
+        this._showWidget(MfaCredentialsWidget, options);
     }
 
     showStepUp(options: WidgetOptions<MfaStepUpWidgetProps>) {
-        this._showWidget(mfaStepUpWidget, options)
+        this._showWidget(MfaStepUpWidget, options)
     }
 
     showMfaCredentials(options: WidgetOptions<MfaListWidgetProps>) {
-        this._showWidget(mfaListWidget, options);
+        this._showWidget(MfaListWidget, options);
     }
 
     showTrustedDevices(options: WidgetOptions<TrustedDeviceWidgetProps>) {
-        this._showWidget(trustedDevicesWidget, options);
+        this._showWidget(TrustedDevicesWidget, options);
     }
 
-    async _showWidget<P extends WidgetProps>(widget: Widget<Omit<P, keyof WidgetProps>>, options: P = {} as P, props = {}) {
-        const { container: _c1, countryCode: _c2, onReady: _c3, ...widgetProps } = options
+    async _showWidget<P extends WidgetProps>(Widget: ComponentType<Omit<P, keyof WidgetProps>>, options: P = {} as P, props = {}) {
+        const { container: _c1, fallback, countryCode: _c2, onReady: _c3, ...widgetProps } = options
 
         const container = typeof options.container === 'string'
             ? document.getElementById(options.container)
@@ -138,19 +140,11 @@ export class UiClient {
         const root = createRoot(container)
 
         try {
-            const config = {
-                ...this.config,
-                countryCode: options.countryCode ?? this.config.countryCode ?? 'FR'
-            };
-
-            const WidgetComponent = await widget(widgetProps, {
-                ...props,
-                config,
-                apiClient: this.core,
-                defaultI18n: this.defaultI18n
-            });
-
-            root.render(WidgetComponent);
+            root.render(
+                <ReachfiveProvider client={this.core} config={this.config} fallback={fallback}>
+                    <Widget {...widgetProps} {...props} />
+                </ReachfiveProvider>
+            )
 
             if (options.onReady && typeof options.onReady === 'function') {
                 options.onReady({
@@ -161,39 +155,6 @@ export class UiClient {
             const message = this.adaptError(error);
             root.render(<ErrorText>{message}</ErrorText>)
             this.handleError(error)
-        }
-    }
-
-    _ssoCheck<P extends WidgetProps>(widget: Widget<Omit<P, keyof WidgetProps>>, options: P & { auth?: AuthOptions }) {
-        const { auth = {} } = options;
-        const showAuthWidget = (session?: SessionInfo) => this._showWidget(widget, options, { session });
-
-        if (this.config.sso || auth.idTokenHint || auth.loginHint) {
-            setTimeout(() =>
-                Promise.resolve(this.core.checkUrlFragment(window.location.href)).then(authResult => {
-                    // Avoid authentication triggering when an authentication response is present
-                    if (authResult) return;
-
-                    this.core
-                        .getSessionInfo()
-                        .then(session => {
-                            const reAuthenticate = auth?.prompt === 'login'
-
-                            if (session.isAuthenticated && !reAuthenticate) {
-                                this.core.loginFromSession(auth);
-                            } else {
-                                showAuthWidget(session);
-                            }
-                        })
-                        .catch(err => {
-                            logError(err);
-                            showAuthWidget();
-                        });
-                }),
-                0
-            );
-        } else {
-            showAuthWidget();
         }
     }
 

@@ -1,9 +1,9 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment jest-fixed-jsdom
  */
 
-import { describe, expect, jest, test } from '@jest/globals';
-import { render, screen, waitFor } from '@testing-library/react';
+import { beforeEach, describe, expect, jest, test } from '@jest/globals';
+import { screen } from '@testing-library/react';
 import '@testing-library/jest-dom/jest-globals'
 import 'jest-styled-components';
 
@@ -11,50 +11,14 @@ import type { PasswordStrengthScore, Client } from '@reachfive/identity-core';
 
 import { type I18nMessages } from '../../../src/core/i18n';
 import { type ProviderId, providers } from '../../../src/providers/providers';
-import type { Config } from '../../../src/types';
 import { randomString } from '../../../src/helpers/random';
 
-import authWidget from '../../../src/widgets/auth/authWidget';
-import { beforeEach } from 'node:test';
+import AuthWidget from '../../../src/widgets/auth/authWidget';
 
-const defaultConfig: Config = {
-    clientId: 'local',
-    domain: 'local.reach5.net',
-    sso: false,
-    sms: false,
-    webAuthn: false,
-    language: 'fr',
-    pkceEnforced: false,
-    isPublic: true,
-    socialProviders: ['facebook', 'google'],
-    customFields: [],
-    resourceBaseUrl: 'http://localhost',
-    mfaSmsEnabled: false,
-    mfaEmailEnabled: false,
-    rbaEnabled: false,
-    consentsVersions: {
-        aConsent: {
-            key: 'aConsent',
-            versions: [{
-                versionId: 1,
-                title: 'consent title',
-                description: 'consent description',
-                language: 'fr',
-            }],
-            consentType: 'opt-in',
-            status: 'active'
-        }
-    },
-    passwordPolicy: {
-        minLength: 8,
-        minStrength: 2,
-        allowUpdateWithAccessTokenOnly: true,
-    }
-};
+import { defaultConfig, snapshotGenerator, componentGenerator } from '../renderer'
+import { AppError } from '../../../src/helpers/errors';
 
 const defaultI18n: I18nMessages = {}
-
-const webauthnConfig = { ...defaultConfig, webAuthn: true };
 
 function expectSocialButtons(toBeInTheDocument = true) {
     return defaultConfig.socialProviders.forEach((provider) => {
@@ -67,6 +31,14 @@ function expectSocialButtons(toBeInTheDocument = true) {
 }
 
 describe('Snapshot', () => {
+    const checkUrlFragment = jest.fn<Client['checkUrlFragment']>().mockImplementation((_url?: string) => false)
+    
+    const getSessionInfo = jest.fn<Client['getSessionInfo']>().mockRejectedValue({
+        errorId: 'azerty',
+        errorDescription: 'The user is not logged in',
+        error: 'login_required'
+    } satisfies AppError)
+ 
     const getPasswordStrength = jest.fn<Client['getPasswordStrength']>().mockImplementation((password) => {
         let score = 0
         if (password.match(/[a-z]+/)) score++
@@ -78,25 +50,22 @@ describe('Snapshot', () => {
     
     const loginWithWebAuthn = jest.fn<Client['loginWithWebAuthn']>().mockRejectedValue(new Error('This is a mock.'))
 
-    // @ts-expect-error partial Client
-    const apiClient: Client = {
-        getPasswordStrength,
-        loginWithWebAuthn,
-    }
-
     beforeEach(() => {
+        checkUrlFragment.mockClear()
+        getSessionInfo.mockClear()
         getPasswordStrength.mockClear()
         loginWithWebAuthn.mockClear()
     })
 
-    const generateSnapshot = (options: Parameters<typeof authWidget>[0] = {}, config: Partial<Config> = {}) => async () => {
-        const widget = await authWidget(options, {config: { ...defaultConfig, ...config }, apiClient, defaultI18n })
-                
-        await waitFor(async () => {
-            const { container } = await render(widget);
-            expect(container).toMatchSnapshot();
-        })
-    };
+    // @ts-expect-error partial Client
+    const apiClient: Client = {
+        checkUrlFragment,
+        getSessionInfo,
+        getPasswordStrength,
+        loginWithWebAuthn,
+    }
+
+    const generateSnapshot = snapshotGenerator(AuthWidget, apiClient, defaultI18n)
 
     describe('login view', () => {
         test('default', generateSnapshot({
@@ -189,64 +158,64 @@ describe('Snapshot', () => {
     describe('with webauthn feature', () => {
         test('login old view with webauthn or password', generateSnapshot({
             allowWebAuthnLogin: true
-        }, webauthnConfig))
+        }, { webAuthn: true }))
 
         test('login new view with integradted webauthn and password', generateSnapshot({
             allowWebAuthnLogin: true,
             initialScreen: 'login'
-        }, webauthnConfig))
+        }, { webAuthn: true }))
 
         test('signup view with webauthn or password', generateSnapshot({
             allowWebAuthnSignup: true,
             initialScreen: 'signup'
-        }, webauthnConfig))
+        }, { webAuthn: true }))
 
         test('signup form view with password', generateSnapshot({
             allowWebAuthnSignup: true,
             initialScreen: 'signup-with-password'
-        }, webauthnConfig))
+        }, { webAuthn: true }))
 
         test('signup form view with webauthn', generateSnapshot({
             allowWebAuthnSignup: true,
             initialScreen: 'signup-with-web-authn'
-        }, webauthnConfig))
+        }, { webAuthn: true }))
     })
 
     describe('with webauthn feature and without password', () => {
         test('login old view with webauthn or password', generateSnapshot({
             allowWebAuthnLogin: true,
             enablePasswordAuthentication:false
-        }, webauthnConfig))
+        }, { webAuthn: true }))
 
         test('login new view with integrated webauthn and password', generateSnapshot({
             allowWebAuthnLogin: true,
             enablePasswordAuthentication:false,
             initialScreen: 'login'
-        }, webauthnConfig))
+        }, { webAuthn: true }))
 
         test('signup view with webauthn or password', generateSnapshot({
             allowWebAuthnSignup: true,
             enablePasswordAuthentication:false,
             initialScreen: 'signup'
-        }, webauthnConfig))
+        }, { webAuthn: true }))
 
         test('signup form view with password', generateSnapshot({
             allowWebAuthnSignup: true,
             enablePasswordAuthentication:false,
             initialScreen: 'signup-with-password'
-        }, webauthnConfig))
+        }, { webAuthn: true }))
 
         test('signup form view with webauthn', generateSnapshot({
             allowWebAuthnSignup: true,
             enablePasswordAuthentication:false,
             initialScreen: 'signup-with-web-authn'
-        }, webauthnConfig))
+        }, { webAuthn: true }))
 
         test('signup form view with webauthn and without password', generateSnapshot({
             allowWebAuthnSignup: true,
             enablePasswordAuthentication: false,
             initialScreen: 'signup-with-web-authn'
-        }, webauthnConfig))
+        }, { webAuthn: true }))
     })
 
     describe('forgot password view', () => {
@@ -257,6 +226,14 @@ describe('Snapshot', () => {
 });
 
 describe('DOM testing', () => {
+    const checkUrlFragment = jest.fn<Client['checkUrlFragment']>().mockImplementation((_url?: string) => false)
+    
+    const getSessionInfo = jest.fn<Client['getSessionInfo']>().mockRejectedValue({
+        errorId: 'azerty',
+        errorDescription: 'The user is not logged in',
+        error: 'login_required'
+    } satisfies AppError)
+
     const getPasswordStrength = jest.fn<Client['getPasswordStrength']>().mockImplementation((password) => {
         let score = 0
         if (password.match(/[a-z]+/)) score++
@@ -269,23 +246,24 @@ describe('DOM testing', () => {
     const loginWithWebAuthn = jest.fn<Client['loginWithWebAuthn']>().mockRejectedValue(new Error('This is a mock.'))
 
     beforeEach(() => {
+        checkUrlFragment.mockClear()
+        getSessionInfo.mockClear()
         getPasswordStrength.mockClear()
         loginWithWebAuthn.mockClear()
     })
+
+    // @ts-expect-error partial Client
+    const apiClient: Client = {
+        checkUrlFragment,
+        getSessionInfo,
+        getPasswordStrength,
+        loginWithWebAuthn
+    }
     
-    const generateComponent = async (options: Parameters<typeof authWidget>[0] = {}, config: Partial<Config> = {}) => {
-        // @ts-expect-error partial Client
-        const apiClient: Client = {
-            getPasswordStrength,
-            loginWithWebAuthn
-        }
-        const result = await authWidget(options, {config: { ...defaultConfig, ...config }, apiClient, defaultI18n });
-        return render(result);
-    };
+    const generateComponent = componentGenerator(AuthWidget, apiClient, defaultI18n)
 
     describe('login view', () => {
         test('default config', async () => {
-            expect.assertions(6);
             await generateComponent({});
 
             // Form button
@@ -303,7 +281,6 @@ describe('DOM testing', () => {
         });
 
         test('login only', async () => {
-            expect.assertions(2);
             await generateComponent({
                 allowSignup: false
             });
@@ -313,7 +290,6 @@ describe('DOM testing', () => {
         });
 
         test('without forgot password', async () => {
-            expect.assertions(3);
             await generateComponent({
                 allowSignup: false,
                 allowForgotPassword: false
@@ -325,7 +301,6 @@ describe('DOM testing', () => {
         });
 
         test('with remember me', async () => {
-            expect.assertions(1);
             await generateComponent({
                 showRememberMe: true
             });
@@ -334,7 +309,6 @@ describe('DOM testing', () => {
         });
 
         test('with canShowPassword', async () => {
-            expect.assertions(1);
             await generateComponent({
                 canShowPassword: true
             });
@@ -344,7 +318,6 @@ describe('DOM testing', () => {
         });
 
         test('inline social buttons', async () => {
-            expect.assertions(2);
             await generateComponent({
                 theme: {
                     socialButton: {
@@ -359,7 +332,6 @@ describe('DOM testing', () => {
 
         describe('i18n', () => {
             test('overwrite title', async () => {
-                expect.assertions(1);
                 const title = randomString();
                 await generateComponent({
                     i18n: {
@@ -371,7 +343,6 @@ describe('DOM testing', () => {
             });
 
             test('overwrite title - expanded', async () => {
-                expect.assertions(1);
                 const title = randomString();
                 await generateComponent({
                     i18n: {
@@ -388,7 +359,6 @@ describe('DOM testing', () => {
 
     describe('signup view', () => {
         test('default config', async () => {
-            expect.assertions(4);
             await generateComponent({
                 initialScreen: 'signup'
             });
@@ -404,7 +374,6 @@ describe('DOM testing', () => {
         });
 
         test('inline social buttons', async () => {
-            expect.assertions(2);
             await generateComponent({
                 initialScreen: 'signup',
                 theme: {
@@ -419,7 +388,6 @@ describe('DOM testing', () => {
         });
 
         test('with user agreement', async () => {
-            expect.assertions(1);
             await generateComponent({
                 initialScreen: 'signup',
                 userAgreement: 'I agreed [terms of use](https://example.com/termsofuse).'
@@ -429,7 +397,6 @@ describe('DOM testing', () => {
         });
 
         test('default signup fields', async () => {
-            expect.assertions(5);
             await generateComponent({
                 initialScreen: 'signup'
             });
@@ -443,7 +410,6 @@ describe('DOM testing', () => {
         });
 
         test('signup fields selection', async () => {
-            expect.assertions(3);
             const signupFields = ['email', 'password', 'passwordConfirmation'];
             await generateComponent({
                 initialScreen: 'signup',
@@ -456,7 +422,6 @@ describe('DOM testing', () => {
         });
 
         test('signup fields selection with custom field', async () => {
-            expect.assertions(3);
             const signupFields = ['email', 'password', 'custom_fields.newsletter_optin'];
             await generateComponent({
                 initialScreen: 'signup',
@@ -481,11 +446,9 @@ describe('DOM testing', () => {
 
     describe('with webauthn feature', () => {
         test('new login view', async () => {
-            expect.assertions(6);
-
             loginWithWebAuthn.mockRejectedValue(new Error('This is a mock.'))
 
-            await generateComponent({ allowWebAuthnLogin: true, initialScreen: 'login' }, webauthnConfig);
+            await generateComponent({ allowWebAuthnLogin: true, initialScreen: 'login' }, { webAuthn: true });
 
             // Social buttons
             expectSocialButtons(true)
@@ -504,11 +467,9 @@ describe('DOM testing', () => {
         });
 
         test('old login view', async () => {
-            expect.assertions(6);
-
             loginWithWebAuthn.mockRejectedValue(new Error('This is a mock.'))
 
-            await generateComponent({ allowWebAuthnLogin: true, initialScreen: 'login-with-web-authn' }, webauthnConfig);
+            await generateComponent({ allowWebAuthnLogin: true, initialScreen: 'login-with-web-authn' }, { webAuthn: true });
 
             // Social buttons
             expectSocialButtons(true)
@@ -525,10 +486,9 @@ describe('DOM testing', () => {
         });
 
         test('signup view with password or webauthn', async () => {
-            expect.assertions(5);
             await generateComponent(
                 { allowWebAuthnSignup: true,  initialScreen: 'signup' },
-                webauthnConfig
+                { webAuthn: true }
             );
 
             // Social buttons
@@ -543,10 +503,9 @@ describe('DOM testing', () => {
         });
 
         test('signup form view with password', async () => {
-            expect.assertions(7);
             await generateComponent(
                 { allowWebAuthnSignup: true,  initialScreen: 'signup-with-password' },
-                webauthnConfig
+                { webAuthn: true }
             );
 
             // Form fields
@@ -564,10 +523,9 @@ describe('DOM testing', () => {
         });
 
         test('signup form view with webauthn', async () => {
-            expect.assertions(5);
             await generateComponent(
                 { allowWebAuthnSignup: true,  initialScreen: 'signup-with-web-authn' },
-                webauthnConfig
+                { webAuthn: true }
             );
 
             // Form fields
@@ -585,15 +543,13 @@ describe('DOM testing', () => {
 
     describe('with webauthn feature and without password', () => {
         test('old login view', async () => {
-            expect.assertions(6);
-
             loginWithWebAuthn.mockRejectedValue(new Error('This is a mock.'))
 
             await generateComponent({
                 allowWebAuthnLogin: true,
                 enablePasswordAuthentication:false,
                 initialScreen: 'login-with-web-authn'
-            }, webauthnConfig);
+            }, { webAuthn: true });
 
             // Social buttons
             expectSocialButtons(true)
@@ -610,10 +566,9 @@ describe('DOM testing', () => {
         });
 
         test('signup view without password and with webauthn', async () => {
-            expect.assertions(5);
             await generateComponent(
                 { allowWebAuthnSignup: true,  enablePasswordAuthentication:false, initialScreen: 'signup' },
-                webauthnConfig
+                { webAuthn: true }
             );
 
             // Social buttons
@@ -628,10 +583,9 @@ describe('DOM testing', () => {
         });
 
         test('signup form view with webauthn and without password', async () => {
-            expect.assertions(5);
             await generateComponent(
                 { allowWebAuthnSignup: true, enablePasswordAuthentication:false, initialScreen: 'signup-with-web-authn' },
-                webauthnConfig
+                { webAuthn: true }
             );
 
             // Form fields

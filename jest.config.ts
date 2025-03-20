@@ -2,7 +2,7 @@ import type { JestConfigWithTsJest } from 'ts-jest'
 
 const config: JestConfigWithTsJest = {
     preset: 'ts-jest',
-    testEnvironment: 'jsdom',
+    testEnvironment: 'jest-fixed-jsdom',
     maxWorkers: 2,
     transform: {
         "^.+\\.jsx?$": "babel-jest"
@@ -15,6 +15,7 @@ const config: JestConfigWithTsJest = {
         '@/lib/utils': '<rootDir>/src/lib/utils.ts',
         'lucide-react': '<rootDir>/node_modules/lucide-react/dist/cjs/lucide-react.js'
     },
+    setupFilesAfterEnv: ['<rootDir>/setup-jest.ts'],
 };
 
 export default config

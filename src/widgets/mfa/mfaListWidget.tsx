@@ -1,10 +1,11 @@
 import React, {useEffect} from 'react';
 import { MFA } from '@reachfive/identity-core'
+import { X, MessageSquareMore, Mail, LoaderCircle } from "lucide-react";
 
 import { createWidget } from '../../components/widget/widget';
 
 import { useI18n } from '../../contexts/i18n';
-import { useConfig } from '../../contexts/config';
+import { useReachfive } from '../../contexts/reachfive';
 import { dateFormat } from "../../helpers/utils.ts";
 import {
     AlertDialog,
@@ -18,8 +19,6 @@ import {
     AlertDialogDescription
 } from "../../components/ui/alert-dialog"
 import { Button } from "../../components/ui/button"
-import { useReachfive } from "../../contexts/reachfive.tsx";
-import { X, MessageSquareMore, Mail, LoaderCircle } from "lucide-react";
 import { OnError, OnSuccess  } from "../../types";
 
 const credentialIconByType = (type: MFA.CredentialsResponse['credentials'][number]['type']) => {
@@ -100,8 +99,7 @@ export const MfaList = ({
     const [deleteConfirmationTitle, setDeleteConfirmationTitle] = React.useState('')
     const [credentials, setCredentials] = React.useState<MFA.Credential[]>([])
     const i18n = useI18n()
-    const config = useConfig()
-    const client = useReachfive()
+    const { client, config } = useReachfive()
 
     const fetchMfaCredentials = () => {
         setLoading(true)

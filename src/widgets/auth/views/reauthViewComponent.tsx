@@ -9,8 +9,7 @@ import { LoginForm, type LoginFormData } from './loginViewComponent';
 
 import { useI18n } from '../../../contexts/i18n';
 import { useReachfive } from '../../../contexts/reachfive';
-
-import { PropsWithSession } from '../../../contexts/session'
+import { useSession } from '../../../contexts/session'
 
 import type { OnError, OnSuccess } from '../../../types';
 
@@ -51,13 +50,13 @@ export interface ReauthViewProps {
 export const ReauthView = ({
     allowForgotPassword = true,
     auth,
-    session,
     showLabels = false,
     socialProviders,
     onError = (() => {}) as OnError,
     onSuccess = (() => {}) as OnSuccess,
-}: PropsWithSession<ReauthViewProps>) => {
-    const coreClient = useReachfive()
+}: ReauthViewProps) => {
+    const { client: coreClient } = useReachfive()
+    const session = useSession()
     const i18n = useI18n()
 
     // this component should never be display without session infos defined
