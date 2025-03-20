@@ -11,14 +11,16 @@ import esbuild from 'rollup-plugin-esbuild'
 import postcss from "rollup-plugin-postcss";
 import { addDirective } from 'rollup-plugin-add-directive';
 
-import path from 'path';
+import path, { dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
+    
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
-import pkg from './package.json' with { type: 'json' }
-const dependencies = Object.keys(pkg.dependencies)
+import packageJson from './package.json' with { type: 'json' }
 
 const banner = [
     `/**`,
-    ` * ${pkg.name} - v${pkg.version}`,
+    ` * ${packageJson.name} - v${packageJson.version}`,
     ` * Compiled ${(new Date()).toUTCString().replace(/GMT/g, 'UTC')}`,
     ` *`,
     ` * Copyright (c) ReachFive.`,
@@ -34,6 +36,10 @@ function onWarn(message) {
     console.warn( message);
 }
 
+/** 
+ * @param {Partial<import('rollup').RollupOptions>} config
+ * @returns {import('rollup').RollupOptions}
+ */
 const bundle = config => ({
     ...config,
     input: 'src/index.ts',
@@ -42,8 +48,7 @@ const bundle = config => ({
 const plugins = [
     alias({
         entries: [
-            { find: '@/lib/utils', replacement: path.resolve('src/lib/utils.ts') },
-            { find: '@', replacement: path.resolve('src') },
+            { find: /^@\/(.*)/, replacement: path.resolve(__dirname, './src/$1') }
         ]
     }),
     replace({
@@ -54,7 +59,7 @@ const plugins = [
     }),
     nodeResolve({
         browser: true,
-        extensions: ['.jsx', '.js', '.json'],
+        extensions: ['.tsx', '.ts', '.jsx', '.js', '.json'],
         preferBuiltins: true
     }),
     commonjs({ include: /node_modules/ }),
@@ -74,27 +79,28 @@ const plugins = [
     }),
 ]
 
+/** @type {import('rollup').RollupOptions[]} */
 export default [
     bundle({
         plugins,
-        // external: dependencies.concat(['@/lib/utils']),
+        external: [...Object.keys(packageJson.devDependencies)],
         output: [
             {
                 banner,
-                file: 'cjs/identity-ui.js',
+                file: packageJson.main,
                 format: 'cjs',
                 sourcemap: true,
                 inlineDynamicImports: true,
             },
             {
                 banner,
-                file: 'es/identity-ui.js',
+                file: packageJson.module,
                 format: 'es',
                 sourcemap: true,
                 inlineDynamicImports: true,
             },
             {
-                file: 'es/identity-ui.min.js',
+                file: packageJson.module.replace('.js', '.min.js'),
                 format: 'es',
                 plugins: [terser({ output: { preamble: banner } })],
                 sourcemap: true,
@@ -111,25 +117,29 @@ export default [
     }),
     bundle({
         plugins,
-        // external: ['@/lib/utils'],
+        external: [...Object.keys(packageJson.devDependencies)],
         output: [
             {
                 banner,
-                file: 'umd/identity-ui.js',
+                file: packageJson.main.replace('cjs/', 'umd/'),
                 format: 'umd',
                 name: 'reach5Widgets',
                 sourcemap: true,
                 inlineDynamicImports: true,
-                globals: { '@reachfive/identity-core': 'reach5' },
+                globals: {
+                    '@reachfive/identity-core': 'reach5',
+                },
             },
             {
-                file: 'umd/identity-ui.min.js',
+                file: packageJson.main.replace('cjs/', 'umd/').replace('.js', '.min.js'),
                 format: 'umd',
                 name: 'reach5Widgets',
                 plugins: [terser({ output: { preamble: banner } })],
                 sourcemap: true,
                 inlineDynamicImports: true,
-                globals: { '@reachfive/identity-core': 'reach5' },
+                globals: {
+                    '@reachfive/identity-core': 'reach5',
+                },
             },
         ],
         onwarn: onWarn,
@@ -146,7 +156,7 @@ export default [
         ],
         output: {
             banner,
-            file: 'types/identity-ui.d.ts',
+            file: packageJson.types,
             format: 'es',
         },
         onwarn: onWarn
