@@ -1,4 +1,10 @@
+/** @type {import('tailwindcss').Config} */
 module.exports = {
+    important: '.r5-widget',
+    corePlugins: {
+        container: false,
+        preflight: false,
+    },
     content: {
         relative: true,
         files: [

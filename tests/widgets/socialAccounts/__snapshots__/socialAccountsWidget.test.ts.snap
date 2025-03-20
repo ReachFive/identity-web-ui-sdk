@@ -1,11 +1,11 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Snapshot basic 1`] = `
-.c3 {
+.c4 {
   color: #adb5bd;
 }
 
-.c4 {
+.c5 {
   position: absolute;
   right: 9px;
   top: 9px;
@@ -16,13 +16,13 @@ exports[`Snapshot basic 1`] = `
   overflow: hidden;
 }
 
-.c4:hover::before,
-.c4:hover::after {
+.c5:hover::before,
+.c5:hover::after {
   background: #748290;
 }
 
-.c4::before,
-.c4::after {
+.c5::before,
+.c5::after {
   content: '';
   position: absolute;
   height: 3px;
@@ -34,19 +34,19 @@ exports[`Snapshot basic 1`] = `
   background-position: center center;
 }
 
-.c4::before {
+.c5::before {
   -webkit-transform: rotate(45deg);
   -ms-transform: rotate(45deg);
   transform: rotate(45deg);
 }
 
-.c4::after {
+.c5::after {
   -webkit-transform: rotate(-45deg);
   -ms-transform: rotate(-45deg);
   transform: rotate(-45deg);
 }
 
-.c1 {
+.c2 {
   padding: 9px 38px;
   border: 1px solid #ced4da;
   color: #495057;
@@ -56,19 +56,19 @@ exports[`Snapshot basic 1`] = `
   position: relative;
 }
 
-.c1:only-child {
+.c2:only-child {
   border-radius: 3px;
 }
 
-.c1:not(:only-child):first-child {
+.c2:not(:only-child):first-child {
   border-radius: 3px 3px 0 0;
 }
 
-.c1:not(:only-child):last-child {
+.c2:not(:only-child):last-child {
   border-radius: 0 0 3px 3px;
 }
 
-.c1:not(:only-child):not(:last-child) {
+.c2:not(:only-child):not(:last-child) {
   border-bottom-width: 0;
 }
 
@@ -86,7 +86,22 @@ exports[`Snapshot basic 1`] = `
   margin: 0 auto;
 }
 
-.c6 {
+.c1 {
+  --color-primary: #229955;
+  --color-destructive: #dc4e41;
+  --color-background: #ffffff;
+  --color-text: #495057;
+  --color-border: #ced4da;
+  --spacing-padding-y: 9;
+  --spacing-padding-x: 12;
+  --spacing-block-inner-height: 38;
+  --spacing: 10;
+  --font-generic: 14;
+  --border-width: 1;
+  --radius: 3;
+}
+
+.c7 {
   display: block;
   width: 100%;
   box-sizing: border-box;
@@ -110,23 +125,23 @@ exports[`Snapshot basic 1`] = `
   transition: all .15s ease-in-out;
 }
 
-.c6:focus {
+.c7:focus {
   outline: 0;
   box-shadow: 0 0 0 3px rgba(206,212,218,0.5);
 }
 
-.c6:hover,
-.c6:active {
+.c7:hover,
+.c7:active {
   color: #495057;
   background-color: #ebebeb;
   border-color: #b7c0c8;
 }
 
-.c6[disabled] {
+.c7[disabled] {
   opacity: .65;
 }
 
-.c2 {
+.c3 {
   position: absolute;
   left: 0;
   top: 0;
@@ -139,44 +154,45 @@ exports[`Snapshot basic 1`] = `
   background-position: center center;
 }
 
-.c5 {
+.c6 {
   margin-top: 10px;
 }
 
 <div>
   <div
-    class="c0"
+    class="c0 c1 r5-widget"
+    transition="entering"
   >
     <div>
       <div
-        class="c1"
+        class="c2"
         data-testid="identity-facebook"
       >
         <span
-          class="c2"
+          class="c3"
         />
         <span>
           Facebook
         </span>
          
         <span
-          class="c3"
+          class="c4"
         >
           - 
           John Doe
         </span>
         <span
-          class="c4"
+          class="c5"
           data-testid="identity-facebook-unlink"
           title="remove"
         />
       </div>
     </div>
     <div
-      class="c5"
+      class="c6"
     >
       <button
-        class="c6"
+        class="c7"
       >
         socialAccounts.linkNewAccount
       </button>

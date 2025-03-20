@@ -6,9 +6,8 @@ import classes from 'classnames';
 
 import { Heading, Intro } from '../miscComponent';
 
-interface WidgetContentProps {
+interface WidgetContentProps extends React.HTMLAttributes<HTMLDivElement> {
     name?: string
-    className?: classes.Argument
     standalone?: boolean
     transition?: TransitionStatus
 }
@@ -16,7 +15,7 @@ interface WidgetContentProps {
 const WidgetContent = styled(
     React.forwardRef(
         function WidgetContent(
-            { name, className, children }: PropsWithChildren<WidgetContentProps>,
+            { name, className, children, ...props }: PropsWithChildren<WidgetContentProps>,
             ref: ForwardedRef<HTMLDivElement>
         ) {
             return (
@@ -31,6 +30,7 @@ const WidgetContent = styled(
                             }
                         )
                     }
+                    {...props}
                 >{children}</div>
             )
         }
@@ -53,7 +53,7 @@ const WidgetContent = styled(
     `}
 `;
 
-export interface WidgetContainerProps {
+export interface WidgetContainerProps extends React.HTMLAttributes<HTMLDivElement> {
     name?: string
     standalone?: boolean
     noIntro?: boolean
@@ -67,7 +67,8 @@ export default function WidgetContainer({
     noIntro = false,
     title,
     intro,
-    children
+    children,
+    ...props
 }: PropsWithChildren<WidgetContainerProps>) {
     const theme = useTheme()
     const nodeRef = React.useRef<HTMLDivElement>(null)
@@ -79,6 +80,7 @@ export default function WidgetContainer({
                     standalone={standalone}
                     name={name}
                     transition={state}
+                    {...props}
                 >
                     {title && <Heading>{title}</Heading>}
                     {!noIntro && intro && <Intro>{intro}</Intro>}

@@ -7,6 +7,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.33.1] - 2025-03-19
+
+### Fixed
+
+- Limits Tailwind styles to widgets scope.
+
 ## [1.33.0] - 2025-03-13
 
 ### Added
@@ -585,7 +591,9 @@ The eye icon is now correctly displayed in the Auth widget.
 
 First version of the SDK Web UI.
 
-[Unreleased]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.33.0...HEAD
+[Unreleased]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.33.1...HEAD
+
+[1.33.1]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.33.0...v1.33.1
 
 [1.33.0]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.32.2...v1.33.0
 
