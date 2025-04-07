@@ -30,7 +30,19 @@ const defaultConfig: Config = {
     mfaSmsEnabled: false,
     mfaEmailEnabled: false,
     rbaEnabled: false,
-    consentsVersions: {},
+    consentsVersions: {
+        'optinTesting': {
+            key: 'optinTesting',
+            consentType: 'opt-in',
+            status: 'active',
+            versions: [{
+                versionId: 1,
+                title: 'Opt-in Testing v1',
+                language: 'fr',
+                description: 'This is just a test'
+            }]
+        }
+    },
     passwordPolicy: {
         minLength: 8,
         minStrength: 2,
@@ -116,9 +128,21 @@ describe('DOM testing', () => {
         test('default', async () => {
             const user = userEvent.setup()
 
-            const profile = {
+            // @ts-expect-error partial Profile
+            const profile: Profile = {
                 givenName: 'John',
                 familyName: 'Do',
+                consents: {
+                    optinTesting: {
+                        granted: false,
+                        consentType: 'opt-in',
+                        consentVersion: {
+                            versionId: 1,
+                            language: 'fr'
+                        },
+                        date: '2021-01-01T00:00:00.000Z',
+                    }
+                }
             }
 
             getUser.mockResolvedValue(profile as Profile)
@@ -128,14 +152,15 @@ describe('DOM testing', () => {
             await generateComponent({
                 fields: [
                     'given_name',
-                    'family_name'
+                    'family_name',
+                    'optinTesting'
                 ]
             })
 
             expect(getUser).toBeCalledWith(
                 expect.objectContaining({
                     accessToken: 'azerty',
-                    fields: 'givenName,familyName',
+                    fields: 'givenName,familyName,consents.optinTesting',
                 })
             )
 
@@ -152,6 +177,10 @@ describe('DOM testing', () => {
             await userEvent.clear(familyNameInput)
             await userEvent.type(familyNameInput, 'reachfive')
             
+            // const consentCheckbox = screen.getByTestId('consents.optinTesting.1')
+            const consentCheckbox = screen.getByLabelText(defaultConfig.consentsVersions['optinTesting'].versions[0].title)
+            await user.click(consentCheckbox)
+
             const submitBtn = screen.getByRole('button', { name: 'save'})
             expect(submitBtn).toBeInTheDocument()
 
@@ -163,6 +192,16 @@ describe('DOM testing', () => {
                     data: {
                         givenName: 'alice',
                         familyName: 'reachfive',
+                        consents: {
+                            optin_testing: { // consent key should be snakecase
+                                granted: true,
+                                consentType: 'opt-in',
+                                consentVersion: {
+                                    versionId: 1,
+                                    language: 'fr'
+                                }
+                            }
+                        }
                     }
                 })
             )

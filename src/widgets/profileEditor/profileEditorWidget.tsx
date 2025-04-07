@@ -77,7 +77,7 @@ const ProfileEditor = ({
             accessToken: accessToken,
             redirectUrl: redirectUrl
         });
-
+    console.log('ProfileEditor', profile)
     return (
         <ProfileEditorForm
             handler={handleSubmit}
@@ -135,7 +135,23 @@ export default createWidget<ProfileEditorWidgetProps, ProfileEditorProps>({
                 accessToken,
                 fields: resolvedFields.map(({ path }) => path).join(',')
             })
-            .then(profile => camelCaseProperties(profile) as Profile) /** @todo check api response key format in sdk core */
+            /** 
+             * @todo this can be removed when https://github.com/ReachFive/identity-web-core-sdk/pull/260 will be merged 
+             * L'idéal serait que la clé d'un consentement soit en valeur d'une propriété "key" et non une clé de la structure Map utilisée.
+             * le mieux serait même que `consents` soit un array et non un map.
+             * Mais bon, difficile de changer ça maintenant sans créer un breaking change pour les utilisateurs de l'api ou du sdk core...
+             */
+            .then(({ consents, ...profile }) => ({
+                ...profile,
+                consents: consents 
+                    ? Object.fromEntries(
+                        Object.entries(consents).map(([key, value]) => [
+                            key,
+                            camelCaseProperties(value) as UserConsent
+                        ])
+                    )
+                    : undefined
+            }) as Profile) /** @todo check api response key format in sdk core */
             .then((profile: Profile) => {
                 const filteredProfileConsents = (profile.consents && Object.keys(profile.consents).length > 0) ? filterProfileConsents(fields, config.consentsVersions, profile.consents) : undefined;
                 const filteredOutConsentsProfile = { ...profile, consents: filteredProfileConsents };
@@ -156,7 +172,11 @@ export default createWidget<ProfileEditorWidgetProps, ProfileEditorProps>({
 });
 
 // Filter out the profile consents with different version than the one the given consent field own
-const filterProfileConsents = (fields: (string | Field)[], consentsVersions: Record<string, ConsentVersions>, profileConsents: Record<string, UserConsent>) => {
+const filterProfileConsents = (
+    fields: (string | Field)[],
+    consentsVersions: Record<string, ConsentVersions>,
+    profileConsents: Record<string, UserConsent>
+) => {
     return Object.keys(profileConsents)
         .filter(profileConsentKey => {
             const consentField = fields.map(f => typeof f === 'string' ? f : f.key).find(field => field.startsWith(`consents.${profileConsentKey}`));

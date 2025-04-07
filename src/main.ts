@@ -34,14 +34,19 @@ export function createClient(creationConfig: Config): Client {
 
         return fetch(`https://${creationConfig.domain}/identity/v1/config/consents?${toQueryString({ lang: language })}`)
             .then(response => response.json())
-            .then(consentsVersions => {
+            .then((consentsVersions: Record<string, ConsentVersions>) => {
                 return fetch(`${remoteConfig.resourceBaseUrl}/${language}.json`)
                     .then(response => response.json())
                     .then(defaultI18n => {
                         const config = {
                             ...creationConfig,
                             ...remoteConfig,
-                            consentsVersions: camelCaseProperties(consentsVersions) as Record<string, ConsentVersions>
+                            consentsVersions: Object.fromEntries(
+                                Object.entries(consentsVersions).map(([key, value]) => [
+                                    key, // consents keys should be snake_case
+                                    camelCaseProperties(value) as ConsentVersions
+                                ])
+                            )
                         }
                         return new UiClient(config, coreClient, defaultI18n)
                     })
