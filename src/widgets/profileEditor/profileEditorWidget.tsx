@@ -77,7 +77,7 @@ const ProfileEditor = ({
             accessToken: accessToken,
             redirectUrl: redirectUrl
         });
-    console.log('ProfileEditor', profile)
+
     return (
         <ProfileEditorForm
             handler={handleSubmit}
