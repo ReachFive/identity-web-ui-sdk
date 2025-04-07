@@ -83,7 +83,11 @@ const plugins = [
 export default [
     bundle({
         plugins,
-        external: [...Object.keys(packageJson.devDependencies)],
+        external: [
+            ...Object.keys(packageJson.devDependencies),
+            'react',
+            'react-dom',
+        ],
         output: [
             {
                 banner,
@@ -117,7 +121,11 @@ export default [
     }),
     bundle({
         plugins,
-        external: [...Object.keys(packageJson.devDependencies)],
+        external: [
+            ...Object.keys(packageJson.devDependencies),
+            'react',
+            'react-dom',
+        ],
         output: [
             {
                 banner,
@@ -128,6 +136,8 @@ export default [
                 inlineDynamicImports: true,
                 globals: {
                     '@reachfive/identity-core': 'reach5',
+                    'react': 'React',
+                    'react-dom': 'ReactDOM',
                 },
             },
             {
@@ -139,6 +149,8 @@ export default [
                 inlineDynamicImports: true,
                 globals: {
                     '@reachfive/identity-core': 'reach5',
+                    'react': 'React',
+                    'react-dom': 'ReactDOM',
                 },
             },
         ],
