@@ -7,6 +7,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.33.2] - 2025-04-10
+
+### Fixed
+
+- ProfileEditor should update consents with key in snake_case
+
 ## [1.33.1] - 2025-03-19
 
 ### Fixed
@@ -591,7 +597,9 @@ The eye icon is now correctly displayed in the Auth widget.
 
 First version of the SDK Web UI.
 
-[Unreleased]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.33.1...HEAD
+[Unreleased]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.33.2...HEAD
+
+[1.33.2]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.33.1...v1.33.2
 
 [1.33.1]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.33.0...v1.33.1
 
