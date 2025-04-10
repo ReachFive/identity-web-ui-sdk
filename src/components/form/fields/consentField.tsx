@@ -2,13 +2,16 @@ import React from 'react';
 
 import styled from 'styled-components';
 
+import { ConsentType } from '@reachfive/identity-core';
+
 import { Checkbox } from '../formControlsComponent';
 import { createField, type FieldComponentProps, type FieldDefinition } from '../fieldCreator';
 import { MarkdownContent } from '../../miscComponent';
 
+import { PathMapping } from '../../../core/mapping';
 import { checked, empty, isValidatorError } from '../../../core/validation';
 import { isRichFormValue } from '../../../helpers/utils';
-import { ConsentType } from '@reachfive/identity-core';
+import { snakeCasePath } from '../../../helpers/transformObjectProperties';
 
 const Description = styled.div`
     font-size: ${props => props.theme.smallTextFontSize}px;
@@ -80,6 +83,7 @@ export default function consentField({
         ...props,
         required,
         defaultValue: { granted: props.defaultValue ?? false },
+        mapping: new PathMapping(snakeCasePath(props.path ?? props.key)), // Consent key should be snake_case
         format: {
             bind: value => value,
             unbind: value => value !== undefined
