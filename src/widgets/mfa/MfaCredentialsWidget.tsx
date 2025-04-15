@@ -1,7 +1,10 @@
-import React from 'react';
+import React, {useCallback, useState} from 'react';
 import styled from 'styled-components';
-import { MFA } from '@reachfive/identity-core';
-import type { StartMfaEmailRegistrationResponse, StartMfaPhoneNumberRegistrationResponse } from '@reachfive/identity-core/es/main/mfaClient';
+import {MFA, Profile} from '@reachfive/identity-core';
+import type {
+    StartMfaEmailRegistrationResponse,
+    StartMfaPhoneNumberRegistrationResponse
+} from '@reachfive/identity-core/es/main/mfaClient';
 
 import type { OnError, OnSuccess, Prettify } from '../../types';
 
@@ -9,7 +12,7 @@ import { createMultiViewWidget } from '../../components/widget/widget';
 
 import { simpleField } from '../../components/form/fields/simpleField';
 import { Info, Intro, Separator } from '../../components/miscComponent';
-import { createForm } from '../../components/form/formComponent';
+import {createForm, FieldValues} from '../../components/form/formComponent';
 import phoneNumberField, { type PhoneNumberOptions } from '../../components/form/fields/phoneNumberField';
 
 import { UserError } from '../../helpers/errors';
@@ -18,10 +21,19 @@ import { useI18n } from '../../contexts/i18n';
 import { useReachfive } from '../../contexts/reachfive';
 import { useRouting } from '../../contexts/routing';
 import { useConfig } from '../../contexts/config';
+import checkboxField from '../../components/form/fields/checkboxField.tsx'
 
+type EmailRegisteringCredentialFormData = { trustDevice: boolean }
 
-const EmailRegisteringCredentialForm = createForm({
+const EmailRegisteringCredentialForm = createForm<EmailRegisteringCredentialFormData, DisplayTrustDeviceFormOptions>({
     prefix: 'r5-mfa-credentials-email-',
+    fields({ displayTrustDevice } ) {
+      return (displayTrustDevice ? [ checkboxField({
+            key: 'trust_device',
+            label: 'mfa.stepUp.trustDevice',
+            defaultValue: false
+        })] : [])
+    },
     submitLabel: 'mfa.register.email'
 });
 
@@ -35,29 +47,54 @@ const PhoneNumberCredentialRemovalForm = createForm({
     submitLabel: 'mfa.remove.phoneNumber'
 })
 
-type VerificationCodeFormData = { verificationCode: string }
+type VerificationCodeFormData = { verificationCode: string, trustDevice: boolean }
 
-const VerificationCodeForm = createForm<VerificationCodeFormData>({
+type DisplayTrustDeviceFormOptions = {
+    displayTrustDevice: boolean
+}
+
+const VerificationCodeForm = createForm<VerificationCodeFormData, DisplayTrustDeviceFormOptions>({
     prefix: 'r5-mfa-credentials-verification-code-',
-    fields: [
-        simpleField({
-            key: 'verification_code',
-            label: 'verificationCode',
-            type: 'text'
-        })
-    ],
+    fields({ displayTrustDevice }) {
+        return [
+            simpleField({
+                key: 'verification_code',
+                label: 'verificationCode',
+                type: 'text'
+            }),
+            ...(displayTrustDevice ? [ checkboxField({
+                key: 'trust_device',
+                label: 'mfa.stepUp.trustDevice',
+                defaultValue: false
+            })] : [])
+        ]
+    }
 })
 
-type PhoneNumberRegisteringCredentialFormData = { phoneNumber: string }
+type PhoneNumberRegisteringCredentialFormData = { phoneNumber: string, trustDevice: boolean }
 
-const PhoneNumberRegisteringCredentialForm = createForm<PhoneNumberRegisteringCredentialFormData, { phoneNumberOptions?: PhoneNumberOptions }>({
+const PhoneNumberRegisteringCredentialForm = createForm<PhoneNumberRegisteringCredentialFormData, { phoneNumberOptions?: PhoneNumberOptions } & DisplayTrustDeviceFormOptions>({
     prefix: 'r5-mfa-credentials-phone-number-',
-    fields: ({ config, phoneNumberOptions }) => ([
-        phoneNumberField({
-            required: true,
-            ...phoneNumberOptions,
-        }, config)
-    ]),
+    fields: ({ config, phoneNumberOptions, displayTrustDevice }) => {
+        console.log("config")
+        console.log(config)
+        console.log("phoneNumberOptions")
+        console.log(phoneNumberOptions)
+        console.log("displayTrustDevice")
+        console.log(displayTrustDevice)
+        return ([
+            phoneNumberField({
+                required: true,
+                ...phoneNumberOptions,
+            }, config),
+            ...(displayTrustDevice ? [checkboxField({
+                key: 'trust_device',
+                label: 'mfa.stepUp.trustDevice',
+                required: true,
+                defaultValue: false
+            })] : [])
+        ])
+    },
     submitLabel: 'mfa.register.phoneNumber'
 })
 
@@ -77,19 +114,19 @@ interface MainViewProps {
     credentials: MFA.CredentialsResponse['credentials']
     /**
      * Boolean to enable (`true`) or disable (`false`) whether the option to remove MFA credentials are displayed.
-     * 
+     *
      * @default false
      */
     requireMfaRegistration?: boolean
     /**
      * Show the introduction text.
-     * 
+     *
      * @default true
      */
     showIntro?: boolean
     /**
      * Boolean to enable (true) or disable (false) whether the option to remove MFA credentials are displayed.
-     * 
+     *
      * @default true
      */
     showRemoveMfaCredentials?: boolean
@@ -101,6 +138,12 @@ interface MainViewProps {
      * Callback function called when the request has failed.
      */
     onError?: OnError
+
+    profileIdentifiers: Pick<Profile, 'emailVerified' | 'phoneNumber' | 'phoneNumberVerified'>
+    /**
+     * Allow to trust device during enrollment
+     */
+    allowTrustDevice: boolean
 }
 
 const MainView = ({
@@ -111,16 +154,21 @@ const MainView = ({
     requireMfaRegistration = false,
     showIntro = true,
     showRemoveMfaCredentials = true,
+    allowTrustDevice = false,
+    profileIdentifiers
 }: MainViewProps) => {
     const coreClient = useReachfive()
     const config = useConfig()
     const i18n = useI18n()
     const { goTo } = useRouting()
+    const [displayTrustDevicePhoneNumber, setDisplayTrustDevicePhoneNumber] = useState<boolean>(false)
 
-    const onEmailRegistering = () => {
+
+    const onEmailRegistering = (data: EmailRegisteringCredentialFormData) => {
         return coreClient
             .startMfaEmailRegistration({
-                    accessToken
+                    accessToken,
+                    ...data
                 }
             )
     }
@@ -148,6 +196,14 @@ const MainView = ({
             })
     }
 
+    const onPhoneNumberChange = useCallback(({ phone_number }: FieldValues<any>) => {
+        // console.log("phone number")
+        // console.log(phone_number)
+        // console.log(profileIdentifiers.phoneNumber)
+        // console.log(profileIdentifiers.phoneNumber != undefined && profileIdentifiers.phoneNumber === phone_number.value && config.rbaEnabled)
+        setDisplayTrustDevicePhoneNumber(profileIdentifiers.phoneNumber != undefined && profileIdentifiers.phoneNumber === phone_number.value && config.rbaEnabled)
+    }, [displayTrustDevicePhoneNumber])
+
     const phoneNumberCredentialRegistered = credentials.find<MFA.PhoneCredential>(
         (credential): credential is MFA.PhoneCredential => MFA.isPhoneCredential(credential)
     )
@@ -161,8 +217,9 @@ const MainView = ({
                     <div>
                         {showIntro && <Intro>{requireMfaRegistration ? i18n('mfa.email.explain.required') :i18n('mfa.email.explain')}</Intro>}
                         <EmailRegisteringCredentialForm
+                            displayTrustDevice={profileIdentifiers.emailVerified != undefined && profileIdentifiers.emailVerified && allowTrustDevice && config.rbaEnabled}
                             handler={onEmailRegistering}
-                            onSuccess={(data: StartMfaEmailRegistrationResponse) => goTo<VerificationCodeViewState>('verification-code', {...data, registrationType: 'email'})}
+                            onSuccess={(data: StartMfaEmailRegistrationResponse) => goTo<VerificationCodeViewState>('verification-code', {...data, registrationType: 'email', allowTrustDevice})}
                             onError={onError}
                         />
                     </div>
@@ -175,7 +232,9 @@ const MainView = ({
                         {showIntro && <Intro>{i18n('mfa.phoneNumber.explain')}</Intro>}
                         <PhoneNumberRegisteringCredentialForm
                             handler={onPhoneNumberRegistering}
-                            onSuccess={(data: StartMfaPhoneNumberRegistrationResponse) => goTo<VerificationCodeViewState>('verification-code', {...data, registrationType: 'sms'})}
+                            displayTrustDevice={displayTrustDevicePhoneNumber}
+                            onFieldChange={onPhoneNumberChange}
+                            onSuccess={(data: StartMfaPhoneNumberRegistrationResponse) => goTo<VerificationCodeViewState>('verification-code', {...data, registrationType: 'sms', allowTrustDevice})}
                             onError={onError}
                             phoneNumberOptions={phoneNumberOptions}
                         />
@@ -195,11 +254,11 @@ const MainView = ({
                         />
                     </div>
                 }
-                {showRemoveMfaCredentials 
-                    && config.mfaEmailEnabled 
-                    && config.mfaSmsEnabled 
-                    && phoneNumberCredentialRegistered 
-                    && isEmailCredentialRegistered 
+                {showRemoveMfaCredentials
+                    && config.mfaEmailEnabled
+                    && config.mfaSmsEnabled
+                    && phoneNumberCredentialRegistered
+                    && isEmailCredentialRegistered
                     && <Separator text={i18n('or')} />
                 }
                 {showRemoveMfaCredentials &&
@@ -236,20 +295,26 @@ interface VerificationCodeViewProps {
      * Callback function called when the request has failed.
      */
     onError?: OnError
+    /**
+     * Display the checkbox to trust device
+     */
+    allowTrustDevice: boolean
 }
 
-type VerificationCodeViewState = 
-    ({ registrationType: 'email' } & StartMfaEmailRegistrationResponse) | 
-    ({ registrationType: 'sms' } & StartMfaPhoneNumberRegistrationResponse)
+type VerificationCodeViewState =
+    (({ registrationType: 'email' } & StartMfaEmailRegistrationResponse) |
+    ({ registrationType: 'sms' } & StartMfaPhoneNumberRegistrationResponse)) & { allowTrustDevice: boolean }
 
 const VerificationCodeView = ({
     accessToken,
     onError = (() => {}) as OnError,
     onSuccess = (() => {}) as OnSuccess,
-    showIntro = true
+    showIntro = true,
+    allowTrustDevice
 }: VerificationCodeViewProps) => {
     const coreClient = useReachfive()
     const i18n = useI18n()
+    const config = useConfig()
     const { goTo, params } = useRouting()
     const { registrationType, status } = params as VerificationCodeViewState
 
@@ -284,6 +349,7 @@ const VerificationCodeView = ({
             {showIntro && status === 'email_sent' && <Intro>{i18n('mfa.verify.email')}</Intro>}
             {status === 'email_sent' &&
                 <VerificationCodeForm
+                    displayTrustDevice={allowTrustDevice && config.rbaEnabled}
                     handler={onEmailCodeVerification}
                     onSuccess={onCredentialRegistered}
                     onError={onError}
@@ -293,6 +359,7 @@ const VerificationCodeView = ({
             {showIntro && status === 'sms_sent' && <Intro>{i18n('mfa.verify.sms')}</Intro>}
             {status === 'sms_sent' &&
                 <VerificationCodeForm
+                    displayTrustDevice={allowTrustDevice && config.rbaEnabled}
                     handler={onSmsCodeVerification}
                     onSuccess={onCredentialRegistered}
                     onError={onError}
@@ -338,7 +405,7 @@ const CredentialRemovedView = () => {
     )
 }
 
-type MfaCredentialsProps = Prettify<MainViewProps & CredentialRegisteredViewProps & VerificationCodeViewProps & CredentialRemovedViewProps>
+type MfaCredentialsProps = Prettify<MainViewProps & CredentialRegisteredViewProps & VerificationCodeViewProps & CredentialRemovedViewProps & Pick<Profile, 'emailVerified' | 'phoneNumber' | 'phoneNumberVerified'>>
 
 export type MfaCredentialsWidgetProps = Prettify<Omit<MfaCredentialsProps, 'credentials'>>
 
@@ -352,10 +419,21 @@ export default createMultiViewWidget<MfaCredentialsWidgetProps, MfaCredentialsPr
     },
     prepare: (options, { apiClient }) => {
         return apiClient.listMfaCredentials(options.accessToken)
-            .then(({ credentials }) => ({
-                ...options,
-                credentials,
-            }))
+            .then(({ credentials }) => {
+                return apiClient.getUser({accessToken: options.accessToken, fields: "email_verified,phone_number,phone_number_verified"})
+                    .then( profile => {
+                        const profileIdentifiers = profile as Pick<Profile, 'emailVerified' | 'phoneNumber' | 'phoneNumberVerified'>
+                        return {
+                            ...options,
+                            credentials,
+                            profileIdentifiers
+                        }
+                    }
+                    ).catch(error => {
+                        options.onError?.(error)
+                        throw UserError.fromAppError(error)
+                    })
+            })
             .catch(error => {
                 options.onError?.(error)
                 throw UserError.fromAppError(error)
