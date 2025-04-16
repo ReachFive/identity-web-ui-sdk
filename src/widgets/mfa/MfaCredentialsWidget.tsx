@@ -12,7 +12,7 @@ import { createMultiViewWidget } from '../../components/widget/widget';
 
 import { simpleField } from '../../components/form/fields/simpleField';
 import { Info, Intro, Separator } from '../../components/miscComponent';
-import {createForm, FieldValues} from '../../components/form/formComponent';
+import { createForm } from '../../components/form/formComponent';
 import phoneNumberField, { type PhoneNumberOptions } from '../../components/form/fields/phoneNumberField';
 
 import { UserError } from '../../helpers/errors';
@@ -76,12 +76,6 @@ type PhoneNumberRegisteringCredentialFormData = { phoneNumber: string, trustDevi
 const PhoneNumberRegisteringCredentialForm = createForm<PhoneNumberRegisteringCredentialFormData, { phoneNumberOptions?: PhoneNumberOptions } & DisplayTrustDeviceFormOptions>({
     prefix: 'r5-mfa-credentials-phone-number-',
     fields: ({ config, phoneNumberOptions, displayTrustDevice }) => {
-        console.log("config")
-        console.log(config)
-        console.log("phoneNumberOptions")
-        console.log(phoneNumberOptions)
-        console.log("displayTrustDevice")
-        console.log(displayTrustDevice)
         return ([
             phoneNumberField({
                 required: true,
@@ -196,12 +190,14 @@ const MainView = ({
             })
     }
 
-    const onPhoneNumberChange = useCallback(({ phone_number }: FieldValues<any>) => {
-        // console.log("phone number")
-        // console.log(phone_number)
-        // console.log(profileIdentifiers.phoneNumber)
-        // console.log(profileIdentifiers.phoneNumber != undefined && profileIdentifiers.phoneNumber === phone_number.value && config.rbaEnabled)
-        setDisplayTrustDevicePhoneNumber(profileIdentifiers.phoneNumber != undefined && profileIdentifiers.phoneNumber === phone_number.value && config.rbaEnabled)
+    const onPhoneNumberChange = useCallback((data: PhoneNumberRegisteringCredentialFormData) => {
+        console.log('onPhoneNumberChange', data)
+        const { phoneNumber } = data
+        setDisplayTrustDevicePhoneNumber(
+            profileIdentifiers.phoneNumber != undefined
+            && profileIdentifiers.phoneNumber === phoneNumber
+            && config.rbaEnabled
+        )
     }, [displayTrustDevicePhoneNumber])
 
     const phoneNumberCredentialRegistered = credentials.find<MFA.PhoneCredential>(

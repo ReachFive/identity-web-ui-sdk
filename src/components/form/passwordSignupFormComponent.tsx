@@ -2,14 +2,14 @@ import React, { useCallback, useLayoutEffect, useState } from 'react';
 import { AuthOptions } from '@reachfive/identity-core';
 import { SignupParams } from '@reachfive/identity-core/es/main/oAuthClient';
 
-import { createForm, FieldValues } from './formComponent';
+import { createForm } from './formComponent';
 import { buildFormFields, type Field } from './formFieldFactory';
 import { UserAggreementStyle } from './formControlsComponent'
 import { type PhoneNumberOptions } from './fields/phoneNumberField';
 
 import { MarkdownContent } from '../miscComponent';
 import { snakeCaseProperties } from '../../helpers/transformObjectProperties';
-import { isRichFormValue, isValued } from '../../helpers/utils';
+import { isValued } from '../../helpers/utils';
 import ReCaptcha, { extractCaptchaTokenFromData, importGoogleRecaptchaScript, type WithCaptchaToken } from '../reCaptcha';
 
 import { useReachfive } from '../../contexts/reachfive';
@@ -90,16 +90,12 @@ export const PasswordSignupForm = ({
     )
 
     const refreshBlacklist = useCallback(
-        (data: FieldValues<SignupParams['data']>) => {
-            const email = (isRichFormValue(data.email?.value) ? data.email?.value.raw : data.email?.value) ?? '';
-            const givenName = (isRichFormValue(data.givenName?.value) ? data.givenName?.value.raw : data.givenName?.value) ?? '';
-            const lastName = (isRichFormValue(data.familyName?.value) ? data.familyName?.value.raw : data.familyName?.value) ?? '';
-
+        ({ email = '', givenName = '', familyName = '' }: SignupParams['data']) => {
             const list = [
                 email.split('@'),
                 email,
                 givenName.split(' '),
-                lastName.split(' ')
+                familyName.split(' ')
             ]
                 .flat(1)
                 .map(str => str.trim().toLowerCase())

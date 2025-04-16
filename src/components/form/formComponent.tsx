@@ -29,11 +29,11 @@ export type StaticContent = {
 }
 
 /** @todo to refine */
-export type FormContext<T> = {
+export type FormContext<Model> = {
     client: Client
     config: Config
     errorMessage?: string
-    fields: FieldValues<T>
+    fields: Model
     hasErrors?: boolean
     isLoading?: boolean
     isSubmitted: boolean,
@@ -45,12 +45,44 @@ export type FieldValues<T> = {
 
 export type FieldOptions<P> = WithConfig<WithI18n<P>>
 
-export type FormFields<P = {}> = 
-    | (FieldCreator<any, any, any, any> | StaticContent)[]
-    | ((options: FieldOptions<P>) => (FieldCreator<any, P, any, any> | StaticContent)[])
+type FormField = FieldCreator<any, any, any, any> | StaticContent
+
+export type FormFieldsBuilder<P = {}> = FormField[] | ((options: FieldOptions<P>) => FormField[])
+
+export type FieldCreators<FF extends FormFieldsBuilder<P>, P = {}> =
+    FF extends ((...args: any) => any)
+        ? ReturnType<FF>
+        : FF
+
+
+/**
+ * tranform fields builder into a record of field values
+ * @example
+ * const builder: FormFieldsBuilder = [
+ *   {
+ *     key: 'test',
+ *     path: 'test',
+ *     create: () => ({
+ *       key: 'test',
+ *       render: () => null,
+ *       initialize: () => ({ value: '' }),
+ *       unbind: () => ({ test: '' }),
+ *       validate: () => Promise.resolve({ valid: true })
+ *     })
+ *   }
+ * ]
+ * type Test = FormFields<typeof builder>
+ * // { test: { value: '', isDirty: false, validation: { valid: true } } }
+ */
+export type FormFields<Fields extends FormFieldsBuilder<P>, P = {}> ={
+    [F in FieldCreators<Fields, P>[number] as F extends FieldCreator<any, any, any, any> ? F['key'] : never]:
+        F extends FieldCreator<infer T, P, any, infer K>
+            ? FieldValue<T, K>
+            : never
+}
 
 type FormOptions<P = {}, Model extends Record<PropertyKey, unknown> = {}> = {
-    fields?: FormFields<P>
+    fields?: FormFieldsBuilder<P>
     fieldValidationDebounce?: number
     prefix?: string
     resetAfterError?: boolean
@@ -67,7 +99,7 @@ type FormProps<Model extends Record<PropertyKey, unknown> = {}, P = {}, R = void
     handler: (data: Model) => Promise<R>
     initialModel?: Partial<Model>
     onError?: ((error: unknown) => void)
-    onFieldChange?: (fields: FieldValues<Model>) => void
+    onFieldChange?: (fields: Model) => void
     onSuccess?: (result: R) => void
     sharedProps?: Record<string, unknown>
 }
@@ -103,7 +135,7 @@ export function createForm<Model extends Record<PropertyKey, unknown> = {}, P = 
 
         const allFields = 
             (typeof fields === 'function' ? fields({ config, i18n, ...props as P }) : fields)
-                .filter((field): field is FieldCreator<unknown, P> | StaticContent => !!field) /** @todo: is this useless ? */
+                .filter((field): field is FieldCreator<Model, P> | StaticContent => !!field) /** @todo: is this useless ? */
                 .map(field => (
                     'staticContent' in field
                         ? field
@@ -117,52 +149,63 @@ export function createForm<Model extends Record<PropertyKey, unknown> = {}, P = 
                 !('staticContent' in field)
         );
 
-        const fieldByKey = inputFields.reduce(
-            (acc: Record<keyof Model, FieldType>, field: FieldType) => ({ ...acc, [field.key]: field }),
-            {} as Record<keyof Model, FieldType>
-        );
+        const fieldByKey = Object.fromEntries(
+            inputFields.map(field => [field.key, field])
+        )
 
-        const filledWithModel = (): FieldValues<Model> =>
-            inputFields.reduce(
-                (acc, field) => ({
-                    ...acc,
-                    [field.key]: field.initialize(initialModel),
-                }),
-                {} as FieldValues<Model>
-            )
+        const filledWithModel = () => Object.fromEntries(
+            Object.entries(inputFields).map(([key, field]) => (
+                [key, field.initialize<Model>(initialModel)]
+            ))
+        )
 
-        const [fieldValues, setFieldValues] = useState<FieldValues<Model>>(filledWithModel())
+        const [fieldValues, setFieldValues] = useState(filledWithModel())
+
+        type FieldKey = keyof typeof fieldValues
+        type FieldValue<K extends FieldKey> = (typeof fieldValues)[K]
+
+        const valuesToModel = () => {
+            return inputFields.reduce((acc, field) => {
+                return field.unbind<Model>(acc, getFieldValue(field.key));
+            }, {} as Model);
+        }
+
+        const getFieldValue = <K extends FieldKey>(fieldName: K): FieldValue<K> => {
+            return fieldValues[fieldName] ?? {} as never;
+        }
 
         useEffect(() => {
-            onFieldChange && onFieldChange(fieldValues);
+            onFieldChange && onFieldChange(valuesToModel());
         }, [fieldValues])
 
-        const handleFieldChange = <T,>(fieldName: keyof typeof fieldValues, stateUpdate: FieldValue<T>) => {
-            const { validation: _, ...currentState } = fieldValues[fieldName];
+        const handleFieldChange = <K extends FieldKey>(fieldName: K, stateUpdate: FieldValue<K>) => {
+            const { validation: _, ...currentState } = getFieldValue(fieldName);
+            
             const newState = {
                 ...currentState,
                 // ...(typeof stateUpdate === 'function' ? stateUpdate(currentState) : stateUpdate)
                 ...stateUpdate
-            } satisfies FieldValue<T>;
+            };
 
             const newFieldValues = {
                 ...fieldValues,
                 [fieldName]: {
                     ...newState,
                 }
-            } satisfies Record<string, FieldValue<unknown>>;
+            };
 
             setFieldValues(newFieldValues);
         }
 
-        const validateField = async <T, P>(field: Field<T, P>, fieldState: FieldValue<T>, ctx: FormContext<Model>) =>
+        const validateField = async <K extends string>(field: Field<Model, P, any, K>, fieldState: FieldValue<K>, ctx: FormContext<Model>) =>
             await field.validate(fieldState, ctx) || {} as ValidatorResult;
 
         const validateAllFields = async (callback: (isValid: boolean) => void) => {
+            const data = valuesToModel()
             const { hasErrors, values: newFieldValues } = await inputFields.reduce(
                 async (acc, field) => {
-                    const fieldState = fieldValues[field.key as keyof Model];
-                    const validation = await validateField(field, fieldState, { client, config, isSubmitted: true, fields: fieldValues });
+                    const fieldState = getFieldValue(field.key);
+                    const validation = await validateField(field, fieldState, { client, config, isSubmitted: true, fields: data });
                     return {
                         hasErrors: (await acc).hasErrors || (typeof validation === 'object' && 'error' in validation),
                         values: {
@@ -171,10 +214,10 @@ export function createForm<Model extends Record<PropertyKey, unknown> = {}, P = 
                                 ...fieldState,
                                 validation
                             }
-                        }
+                        } satisfies FormFields<typeof fields, P>
                     }
                 },
-                Promise.resolve({ hasErrors: false, values: {} as FieldValues<Model> })
+                Promise.resolve({ hasErrors: false, values: {} as FormFields<typeof fields, P> })
             )
 
             setHasErrors(hasErrors);
@@ -184,18 +227,20 @@ export function createForm<Model extends Record<PropertyKey, unknown> = {}, P = 
         }
 
         const handleFieldValidation = useCallback(
-            async <T,>(fieldName: keyof typeof fieldValues, stateUpdate: FieldValue<T>) => {
-                const { validation: _, ...currentState } = fieldValues[fieldName];
+            async <K extends FieldKey>(fieldName: K, stateUpdate: FieldValue<K>) => {
+                const { validation: _, ...currentState } = getFieldValue(fieldName);
                 
                 const newState = {
                     ...currentState,
                     ...stateUpdate
-                } satisfies FieldValue<T>
+                } satisfies FieldValue<K>
+
+                const data = valuesToModel()
                 
                 const validation = await validateField(
                     fieldByKey[fieldName],
                     newState,
-                    { client, config, isSubmitted: false, fields: fieldValues }
+                    { client, config, isSubmitted: false, fields: data }
                 );
                 
                 const newFieldValues = {
@@ -262,9 +307,7 @@ export function createForm<Model extends Record<PropertyKey, unknown> = {}, P = 
                 if (isValid) {
                     setIsLoading(true)
 
-                    const fieldData = inputFields.reduce((acc, field) => {
-                        return field.unbind<Model>(acc, fieldValues[field.key as keyof Model]);
-                    }, {} as Model);
+                    const fieldData = valuesToModel();
 
                     const processedData = beforeSubmit ? beforeSubmit(fieldData) : fieldData;
 
@@ -292,10 +335,10 @@ export function createForm<Model extends Record<PropertyKey, unknown> = {}, P = 
                 {errorMessage && <ErrorText>{errorMessage}</ErrorText>}
                 {
                     allFields.map(field => !('staticContent' in field) ? field.render({
-                        state: fieldValues[field.key as keyof Model],
+                        state: getFieldValue(field.key),
                         onChange: newState => {
-                            handleFieldChange(field.key as keyof Model, newState);
-                            handleFieldValidationDebounced(field.key as keyof Model, newState);
+                            handleFieldChange(field.key, newState);
+                            handleFieldValidationDebounced(field.key, newState);
                         },
                         ...sharedProps as P
                     }) : field.staticContent)

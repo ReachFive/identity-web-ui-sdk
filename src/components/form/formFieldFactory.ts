@@ -16,7 +16,6 @@ import passwordField from './fields/passwordField';
 import simplePasswordField from './fields/simplePasswordField';
 import consentField from './fields/consentField';
 import { FormContext } from './formComponent';
-import { FieldValue } from './fieldCreator';
 
 type FieldBuilder = 
     | typeof simpleField
@@ -95,8 +94,8 @@ const predefinedFields = {
         label: 'passwordConfirmation',
         ...props,
         canShowPassword: false,
-        validator: new Validator<string, FormContext<{ password: FieldValue<string> }>>({
-            rule: (value, ctx) => value === ctx.fields.password.value,
+        validator: new Validator<string, FormContext<{ password: string }>>({
+            rule: (value, ctx) => value === ctx.fields.password,
             hint: 'passwordMatch'
         }),
         // mapping: {
