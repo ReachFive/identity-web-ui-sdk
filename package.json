@@ -1,6 +1,6 @@
 {
     "name": "@reachfive/identity-ui",
-    "version": "1.33.4-develop",
+    "version": "1.33.2",
     "description": "ReachFive Identity Web UI SDK",
     "author": "ReachFive",
     "repository": {
@@ -31,7 +31,7 @@
         "lint": "eslint -c eslint.config.mjs src/"
     },
     "dependencies": {
-        "@reachfive/identity-core": "^1.35.11-develop",
+        "@reachfive/identity-core": "^1.35.1",
         "buffer": "^6.0.3",
         "char-info": "0.3.2",
         "class-variance-authority": "^0.7.1",
