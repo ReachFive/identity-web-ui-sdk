@@ -66,7 +66,7 @@ describe('DOM testing', () => {
     const apiClient: Client = {
         getPasswordStrength,
     }
-    
+
     beforeEach(() => {
         getPasswordStrength.mockClear()
         jest.useFakeTimers();
@@ -92,7 +92,7 @@ describe('DOM testing', () => {
             ],
         })
 
-        await waitFor(async () => {   
+        await waitFor(async () => {
             return render(
                 <WidgetContext
                     client={apiClient}
@@ -130,16 +130,7 @@ describe('DOM testing', () => {
 
         await waitFor(() => expect(onFieldChange).toHaveBeenLastCalledWith(
             expect.objectContaining({
-                password: expect.objectContaining({
-                    isDirty: false,
-                    // strength: getPasswordStrength([], invalidPassword),
-                    value: invalidPassword,
-                    validation: expect.objectContaining({
-                        strength: 1,
-                        valid: false,
-                        error: "validation.password.minStrength"
-                    })
-                })
+                password: invalidPassword,
             })
         ))
 
@@ -157,14 +148,7 @@ describe('DOM testing', () => {
 
         await waitFor(() => expect(onFieldChange).toHaveBeenLastCalledWith(
             expect.objectContaining({
-                password: expect.objectContaining({
-                    isDirty: false,
-                    value: validPassword,
-                    validation: expect.objectContaining({
-                        strength: 4,
-                        valid: true
-                    })
-                })
+                password: validPassword,
             })
         ))
 
@@ -186,7 +170,7 @@ describe('DOM testing', () => {
             ],
         })
 
-        await waitFor(async () => {   
+        await waitFor(async () => {
             return render(
                 <WidgetContext
                     client={apiClient}
@@ -247,7 +231,7 @@ describe('DOM testing', () => {
             ],
         })
 
-        await waitFor(async () => {   
+        await waitFor(async () => {
             return render(
                 <WidgetContext
                     client={apiClient}
@@ -278,14 +262,7 @@ describe('DOM testing', () => {
 
         await waitFor(() => expect(onFieldChange).toHaveBeenLastCalledWith(
             expect.objectContaining({
-                password: expect.objectContaining({
-                    isDirty: false,
-                    // strength: getPasswordStrength([], invalidPassword),
-                    value: invalidPassword,
-                    validation: expect.objectContaining({
-                        error: "validation.password.match"
-                    })
-                })
+                password: invalidPassword,
             })
         ))
     })

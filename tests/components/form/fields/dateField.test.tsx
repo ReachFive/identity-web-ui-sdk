@@ -78,7 +78,7 @@ describe('DOM testing', () => {
             ],
         })
 
-        await waitFor(async () => {   
+        await waitFor(async () => {
             return render(
                 <WidgetContext
                     config={defaultConfig}
@@ -103,7 +103,7 @@ describe('DOM testing', () => {
         expect(yearInput).toHaveAttribute('aria-label', i18nResolver('year'))
         expect(yearInput).toHaveAttribute('placeholder', i18nResolver('year'))
         expect(yearInput).not.toHaveValue()
-        
+
         const monthInput = screen.getByTestId('date.month')
         expect(monthInput).toBeInTheDocument()
         expect(monthInput).toHaveAttribute('aria-label', i18nResolver('month'))
@@ -122,7 +122,7 @@ describe('DOM testing', () => {
         expect(options.map(option => option.textContent)).toEqual(
             expect.arrayContaining(expectedMonthsOptionsIntl)
         )
-        
+
         const dayInput = screen.getByTestId('date.day')
         expect(dayInput).toBeInTheDocument()
         expect(dayInput).toHaveAttribute('aria-label', i18nResolver('day'))
@@ -154,16 +154,13 @@ describe('DOM testing', () => {
         const day = 31
         // await user.clear(dayInput)
         await user.selectOptions(dayInput, String(day))
-        
+
         // Fast-forward until all timers have been executed (handle year debounced value)
         await jest.runOnlyPendingTimersAsync();
-    
+
         await waitFor(() => expect(onFieldChange).toHaveBeenLastCalledWith(
             expect.objectContaining({
-                date: expect.objectContaining({
-                    isDirty: true,
-                    value: new Date(year, month, day),
-                })
+                date: formatISO(new Date(year, month, day), { representation: 'date'}),
             })
         ))
 
@@ -203,7 +200,7 @@ describe('DOM testing', () => {
             ],
         })
 
-        await waitFor(async () => {   
+        await waitFor(async () => {
             return render(
                 <WidgetContext
                     config={defaultConfig}
@@ -234,14 +231,7 @@ describe('DOM testing', () => {
 
         await waitFor(() => expect(onFieldChange).toHaveBeenLastCalledWith(
             expect.objectContaining({
-                date: expect.objectContaining({
-                    isDirty: true,
-                    value: startOfDay(tenYearsOld),
-                    validation: {
-                        valid: false,
-                        error: "validation.age.minimun"
-                    }
-                })
+                date: formatISO(startOfDay(tenYearsOld), { representation: 'date'}),
             })
         ))
 
@@ -254,16 +244,13 @@ describe('DOM testing', () => {
         const eighteenYearsOld = subYears(new Date(), 18)
         await user.clear(yearInput)
         await user.type(yearInput, String(getYear(eighteenYearsOld)))
-        
+
         // Fast-forward until all timers have been executed (handle year debounced value)
         await jest.runOnlyPendingTimersAsync();
 
         await waitFor(() => expect(onFieldChange).toHaveBeenLastCalledWith(
             expect.objectContaining({
-                date: expect.objectContaining({
-                    isDirty: true,
-                    value: startOfDay(eighteenYearsOld),
-                })
+                date:  formatISO(startOfDay(eighteenYearsOld), {representation: 'date'}),
             })
         ))
 

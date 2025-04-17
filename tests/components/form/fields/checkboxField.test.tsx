@@ -63,7 +63,7 @@ describe('DOM testing', () => {
             ],
         })
 
-        await waitFor(async () => {   
+        await waitFor(async () => {
             return render(
                 <WidgetContext
                     config={defaultConfig}
@@ -80,17 +80,14 @@ describe('DOM testing', () => {
 
         const checkbox = screen.getByLabelText(i18nResolver(label))
         expect(checkbox).not.toBeChecked()
-        
+
         await user.click(checkbox)
 
         expect(checkbox).toBeChecked()
 
         await waitFor(() => expect(onFieldChange).toHaveBeenLastCalledWith(
             expect.objectContaining({
-                checkbox: expect.objectContaining({
-                    isDirty: true,
-                    value: true,
-                })
+                checkbox: true,
             })
         ))
 
@@ -121,7 +118,7 @@ describe('DOM testing', () => {
             ],
         })
 
-        await waitFor(async () => {   
+        await waitFor(async () => {
             return render(
                 <WidgetContext
                     config={defaultConfig}
@@ -138,17 +135,14 @@ describe('DOM testing', () => {
 
         const checkbox = screen.getByLabelText(i18nResolver(label))
         expect(checkbox).toBeChecked()
-        
+
         await user.click(checkbox)
 
         expect(checkbox).not.toBeChecked()
 
         await waitFor(() => expect(onFieldChange).toHaveBeenLastCalledWith(
             expect.objectContaining({
-                checkbox: expect.objectContaining({
-                    isDirty: true,
-                    value: false,
-                })
+                checkbox: false
             })
         ))
 

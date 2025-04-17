@@ -133,11 +133,11 @@ interface MainViewProps {
      */
     onError?: OnError
 
-    profileIdentifiers: Pick<Profile, 'emailVerified' | 'phoneNumber' | 'phoneNumberVerified'>
+    profileIdentifiers?: Pick<Profile, 'emailVerified' | 'phoneNumber' | 'phoneNumberVerified'>
     /**
      * Allow to trust device during enrollment
      */
-    allowTrustDevice: boolean
+    allowTrustDevice?: boolean
 }
 
 const MainView = ({
@@ -149,7 +149,7 @@ const MainView = ({
     showIntro = true,
     showRemoveMfaCredentials = true,
     allowTrustDevice = false,
-    profileIdentifiers
+    profileIdentifiers = {}
 }: MainViewProps) => {
     const coreClient = useReachfive()
     const config = useConfig()
@@ -294,7 +294,7 @@ interface VerificationCodeViewProps {
     /**
      * Display the checkbox to trust device
      */
-    allowTrustDevice: boolean
+    allowTrustDevice?: boolean
 }
 
 type VerificationCodeViewState =
@@ -306,7 +306,7 @@ const VerificationCodeView = ({
     onError = (() => {}) as OnError,
     onSuccess = (() => {}) as OnSuccess,
     showIntro = true,
-    allowTrustDevice
+    allowTrustDevice = false
 }: VerificationCodeViewProps) => {
     const coreClient = useReachfive()
     const i18n = useI18n()
@@ -401,9 +401,9 @@ const CredentialRemovedView = () => {
     )
 }
 
-type MfaCredentialsProps = Prettify<MainViewProps & CredentialRegisteredViewProps & VerificationCodeViewProps & CredentialRemovedViewProps & Pick<Profile, 'emailVerified' | 'phoneNumber' | 'phoneNumberVerified'>>
+type MfaCredentialsProps = Prettify<MainViewProps & CredentialRegisteredViewProps & VerificationCodeViewProps & CredentialRemovedViewProps>
 
-export type MfaCredentialsWidgetProps = Prettify<Omit<MfaCredentialsProps, 'credentials'>>
+export type MfaCredentialsWidgetProps = Prettify<Omit<MfaCredentialsProps, 'credentials' | 'profileIdentifiers'>>
 
 export default createMultiViewWidget<MfaCredentialsWidgetProps, MfaCredentialsProps>({
     initialView: 'main',

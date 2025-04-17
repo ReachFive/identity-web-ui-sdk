@@ -38,6 +38,29 @@ const defaultConfig: Config = {
 };
 
 const defaultI18n: I18nMessages = {}
+const profile = {
+    emailVerified: true,
+    authTypes: [],
+    emails: {
+        verified: [],
+        unverified: []
+    },
+    thirdPartyGrants: [],
+    tokenRevocationRecord: {
+        allLongLived: undefined,
+        longLivedByClient: {}
+    },
+    providers: [],
+    likesFriendsRatio: 0,
+    localFriendsCount: 0,
+    loginsCount: 0,
+    origins: [],
+    devices: [],
+    hasPassword: false,
+    socialIdentities: [],
+    hasManagedProfile: false,
+    providerDetails: []
+}
 
 describe('Snapshot', () => {
     const generateSnapshot = (
@@ -48,8 +71,9 @@ describe('Snapshot', () => {
         // @ts-expect-error partial Client
         const apiClient: Client = {
             listMfaCredentials: jest.fn<Client['listMfaCredentials']>().mockResolvedValue({ credentials }),
+            getUser: jest.fn<Client['getUser']>().mockResolvedValue(profile)
         };
-        
+
         const widget = await mfaCredentialsWidget(
             { accessToken: 'azerty', showIntro: true, ...options },
             { apiClient,config: { ...defaultConfig, ...config }, defaultI18n }
@@ -59,7 +83,7 @@ describe('Snapshot', () => {
             const { container, rerender } = await render(widget);
 
             await waitFor(() => expect(apiClient.listMfaCredentials).toHaveBeenCalled())
-    
+
             await rerender(widget)
 
             expect(container).toMatchSnapshot();
@@ -82,7 +106,8 @@ describe('DOM testing', () => {
     const startMfaPhoneNumberRegistration = jest.fn<Client['startMfaPhoneNumberRegistration']>()
     const verifyMfaEmailRegistration = jest.fn<Client['verifyMfaEmailRegistration']>()
     const verifyMfaPhoneNumberRegistration = jest.fn<Client['verifyMfaPhoneNumberRegistration']>()
-    
+    const getUser = jest.fn<Client['getUser']>()
+
     const onError = jest.fn()
     const onSuccess = jest.fn()
 
@@ -94,6 +119,7 @@ describe('DOM testing', () => {
         startMfaPhoneNumberRegistration.mockClear()
         verifyMfaEmailRegistration.mockClear()
         verifyMfaPhoneNumberRegistration.mockClear()
+        getUser.mockClear()
     })
 
     const generateComponent = async (
@@ -108,6 +134,7 @@ describe('DOM testing', () => {
             startMfaPhoneNumberRegistration: startMfaPhoneNumberRegistration.mockResolvedValue({ status: 'sms_sent' }),
             verifyMfaEmailRegistration: verifyMfaEmailRegistration.mockResolvedValue(),
             verifyMfaPhoneNumberRegistration: verifyMfaEmailRegistration.mockResolvedValue(),
+            getUser: getUser.mockResolvedValue(profile)
         }
         const result = await mfaCredentialsWidget(
             {
@@ -133,7 +160,7 @@ describe('DOM testing', () => {
 
             // Form button email
             expect(screen.queryByText('mfa.register.email')).toBeInTheDocument();
-            
+
             // Sms intro
             expect(screen.queryByText('mfa.phoneNumber.explain')).toBeInTheDocument();
 
@@ -155,7 +182,7 @@ describe('DOM testing', () => {
             // Form button email
             const emailButton = screen.getByText('mfa.register.email')
             expect(emailButton).toBeInTheDocument();
-            
+
             await user.click(emailButton)
             expect(startMfaEmailRegistration).toBeCalled()
 
@@ -168,7 +195,7 @@ describe('DOM testing', () => {
             await user.type(verificationCodeInput, '123456')
 
             verifyMfaEmailRegistration.mockReset().mockRejectedValue(new Error("Invalid code"))
-            
+
             await user.click(screen.getByTestId('submit'))
 
             expect(onSuccess).not.toBeCalled()
@@ -177,7 +204,7 @@ describe('DOM testing', () => {
             verifyMfaEmailRegistration.mockReset().mockResolvedValue()
             onSuccess.mockReset()
             onError.mockReset()
-            
+
             await user.click(screen.getByTestId('submit'))
 
             await waitFor(async () => {
@@ -199,7 +226,7 @@ describe('DOM testing', () => {
             // Form button phone number
             const phoneNumberButton = screen.getByText('mfa.register.phoneNumber')
             expect(phoneNumberButton).toBeInTheDocument();
-            
+
             await user.click(phoneNumberButton)
             expect(startMfaPhoneNumberRegistration).toBeCalled()
 
@@ -272,7 +299,7 @@ describe('DOM testing', () => {
 
             // Form button email
             expect(screen.queryByText('mfa.register.email')).toBeInTheDocument();
-            
+
             // Sms intro
             expect(screen.queryByText('mfa.phoneNumber.explain')).not.toBeInTheDocument();
 
@@ -299,7 +326,7 @@ describe('DOM testing', () => {
 
             // Sms intro
             expect(screen.queryByText('mfa.phoneNumber.explain')).not.toBeInTheDocument();
-            
+
             // Form button sms
             expect(screen.queryByText('mfa.register.phoneNumber')).not.toBeInTheDocument();
 
