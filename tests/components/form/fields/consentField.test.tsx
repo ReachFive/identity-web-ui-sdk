@@ -180,9 +180,10 @@ describe('DOM testing', () => {
 
         await waitFor(() => expect(onFieldChange).toHaveBeenLastCalledWith(
             expect.objectContaining({
-                'consents.myconsent.1': expect.objectContaining({
-                    isDirty: true,
-                    value: false,
+                consents: expect.objectContaining({
+                    'myconsent': expect.objectContaining({
+                        "consentType": "opt-in", "consentVersion": {"language": "fr", "versionId": 1}, "granted": false
+                    })
                 })
             })
         ))
@@ -196,12 +197,7 @@ describe('DOM testing', () => {
             expect.objectContaining({
                 consents: expect.objectContaining({
                     'myconsent': expect.objectContaining({
-                        consentType: 'opt-in',
-                        consentVersion: expect.objectContaining({
-                            language: defaultConfig.language,
-                            versionId: 1
-                        }),
-                        granted: false
+                        "consentType": "opt-in", "consentVersion": {"language": "fr", "versionId": 1}, "granted": false
                     })
                 })
             })
