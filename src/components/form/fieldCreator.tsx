@@ -22,6 +22,7 @@ interface FieldCreateProps {
 }
 
 export interface FieldCreator<T, P = {}, E extends Record<string, unknown> = {}, K extends string = 'raw'> {
+    key: string
     path: string,
     create: (options: WithI18n<FieldCreateProps>) => Field<T, P, E, K>
 }
@@ -29,7 +30,7 @@ export interface FieldCreator<T, P = {}, E extends Record<string, unknown> = {},
 export interface Field<T, P = {}, E extends Record<string, unknown> = {}, K extends string = 'raw'> {
     key: string
     render: (props: Partial<P> & Partial<FieldComponentProps<T, {}, E, K>> & { state: FieldValue<T, K, E> }) => React.ReactNode
-    initialize: <M extends Record<PropertyKey, unknown>>(model: M) => FieldValue<T, K>
+    initialize: <M extends Record<PropertyKey, unknown>>(model: Partial<M>) => FieldValue<T, K>
     unbind: <M extends Record<PropertyKey, unknown>>(model: M, state: FieldValue<T, K, E>) => M
     validate: (data: FieldValue<T, K, E>, ctx: FormContext<any>) => Promise<ValidatorResult>
 }
@@ -95,7 +96,7 @@ export function createField<
     P extends FieldComponentProps<F, ExtraParams, E, K>,
     ExtraParams extends Record<string, unknown> = {},
     K extends string = 'raw',
-    E extends Record<string, unknown> = {}
+    E extends Record<string, unknown> = {},
 >({
     key,
     path = key,
@@ -115,6 +116,7 @@ export function createField<
     extendedParams = {} as ExtraParams
 }: FieldProps<T, F, P, ExtraParams, K, E>): FieldCreator<F, P, E, K> {
     return ({
+        key,
         path: path,
         create: ({ i18n, showLabel }: WithI18n<FieldCreateProps>): Field<F, P, E, K> => {
             const extParams = typeof extendedParams === 'function' ? extendedParams(i18n) : extendedParams;

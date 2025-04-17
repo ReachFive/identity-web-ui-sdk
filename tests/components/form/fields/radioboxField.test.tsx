@@ -67,7 +67,7 @@ describe('DOM testing', () => {
             ],
         })
 
-        await waitFor(async () => {   
+        await waitFor(async () => {
             return render(
                 <WidgetContext
                     config={defaultConfig}
@@ -96,10 +96,7 @@ describe('DOM testing', () => {
 
         await waitFor(() => expect(onFieldChange).toHaveBeenLastCalledWith(
             expect.objectContaining({
-                radiobox: expect.objectContaining({
-                    isDirty: false,
-                    value: choice.value,
-                })
+                radiobox: choice.value
             })
         ))
 
@@ -135,7 +132,7 @@ describe('DOM testing', () => {
             ],
         })
 
-        await waitFor(async () => {   
+        await waitFor(async () => {
             return render(
                 <WidgetContext
                     config={defaultConfig}
@@ -169,10 +166,7 @@ describe('DOM testing', () => {
 
         await waitFor(() => expect(onFieldChange).toHaveBeenLastCalledWith(
             expect.objectContaining({
-                radiobox: expect.objectContaining({
-                    isDirty: false,
-                    value: choice.value,
-                })
+                radiobox:  choice.value
             })
         ))
 
@@ -207,7 +201,7 @@ describe('DOM testing', () => {
             ],
         })
 
-        await waitFor(async () => {   
+        await waitFor(async () => {
             return render(
                 <WidgetContext
                     config={defaultConfig}
@@ -236,10 +230,7 @@ describe('DOM testing', () => {
 
         await waitFor(() => expect(onFieldChange).toHaveBeenLastCalledWith(
             expect.objectContaining({
-                radiobox: expect.objectContaining({
-                    isDirty: false,
-                    value: choice.value,
-                })
+                radiobox: choice.value,
             })
         ))
 

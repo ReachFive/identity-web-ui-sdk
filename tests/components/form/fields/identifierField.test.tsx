@@ -63,7 +63,7 @@ describe('DOM testing', () => {
             ],
         })
 
-        await waitFor(async () => {   
+        await waitFor(async () => {
             return render(
                 <WidgetContext
                     config={defaultConfig}
@@ -92,12 +92,7 @@ describe('DOM testing', () => {
 
         expect(onFieldChange).toHaveBeenLastCalledWith(
             expect.objectContaining({
-                identifier: expect.objectContaining({
-                    value: expect.objectContaining({
-                        type: 'email',
-                        value: emailValue,
-                    })
-                })
+                identifier: emailValue,
             })
         );
 
@@ -108,15 +103,7 @@ describe('DOM testing', () => {
 
         expect(onFieldChange).toHaveBeenLastCalledWith(
             expect.objectContaining({
-                identifier: expect.objectContaining({
-                    value: expect.objectContaining({
-                        type: 'tel',
-                        country: 'FR',
-                        formatted: format(phoneValue, 'FR', 'INTERNATIONAL'),
-                        value: phoneValue,
-                        isValid: true,
-                    })
-                })
+                identifier: format(phoneValue, 'FR', 'INTERNATIONAL'),
             })
         );
 
@@ -127,12 +114,7 @@ describe('DOM testing', () => {
 
         expect(onFieldChange).toHaveBeenLastCalledWith(
             expect.objectContaining({
-                identifier: expect.objectContaining({
-                    value: expect.objectContaining({
-                        type: 'text',
-                        value: otherValue,
-                    })
-                }) 
+                identifier: otherValue,
             })
         );
     })
@@ -151,7 +133,7 @@ describe('DOM testing', () => {
             ],
         })
 
-        await waitFor(async () => {   
+        await waitFor(async () => {
             return render(
                 <WidgetContext
                     config={defaultConfig}
@@ -180,12 +162,7 @@ describe('DOM testing', () => {
 
         expect(onFieldChange).toHaveBeenLastCalledWith(
             expect.objectContaining({
-                identifier: expect.objectContaining({
-                    value: expect.objectContaining({
-                        type: 'email',
-                        value: emailValue,
-                    })
-                })
+                identifier: emailValue,
             })
         );
 
@@ -197,12 +174,7 @@ describe('DOM testing', () => {
         // phone value is handled as "other" value type
         expect(onFieldChange).toHaveBeenLastCalledWith(
             expect.objectContaining({
-                identifier: expect.objectContaining({
-                    value: expect.objectContaining({
-                        type: 'text',
-                        value: phoneValue,
-                    })
-                })
+                identifier: phoneValue,
             })
         );
 
@@ -213,12 +185,7 @@ describe('DOM testing', () => {
 
         expect(onFieldChange).toHaveBeenLastCalledWith(
             expect.objectContaining({
-                identifier: expect.objectContaining({
-                    value: expect.objectContaining({
-                        type: 'text',
-                        value: otherValue,
-                    })
-                })
+                identifier: otherValue,
             })
         );
     })
@@ -239,7 +206,7 @@ describe('DOM testing', () => {
             ],
         })
 
-        await waitFor(async () => {   
+        await waitFor(async () => {
             return render(
                 <WidgetContext
                     config={defaultConfig}
@@ -268,15 +235,7 @@ describe('DOM testing', () => {
 
         expect(onFieldChange).toHaveBeenLastCalledWith(
             expect.objectContaining({
-                identifier: expect.objectContaining({
-                    value: expect.objectContaining({
-                        type: 'tel',
-                        country: 'FR',
-                        formatted: format(phoneValue, 'FR', 'INTERNATIONAL'),
-                        value: phoneValue,
-                        isValid: true,
-                    })
-                })
+                identifier: format(phoneValue, 'FR', 'INTERNATIONAL')
             })
         );
 
@@ -287,12 +246,7 @@ describe('DOM testing', () => {
 
         expect(onFieldChange).toHaveBeenLastCalledWith(
             expect.objectContaining({
-                identifier: expect.objectContaining({
-                    value: expect.objectContaining({
-                        type: 'email',
-                        value: emailValue,
-                    })
-                })
+                identifier: emailValue,
             })
         );
 
@@ -303,12 +257,7 @@ describe('DOM testing', () => {
 
         expect(onFieldChange).toHaveBeenLastCalledWith(
             expect.objectContaining({
-                identifier: expect.objectContaining({
-                    value: expect.objectContaining({
-                        type: 'text',
-                        value: otherValue,
-                    })
-                })
+                identifier: otherValue,
             })
         );
     })

@@ -1,6 +1,6 @@
 /**
- * @reachfive/identity-ui - v1.33.2
- * Compiled Thu, 10 Apr 2025 13:25:05 UTC
+ * @reachfive/identity-ui - v1.33.4-develop
+ * Compiled Thu, 17 Apr 2025 11:59:25 UTC
  *
  * Copyright (c) ReachFive.
  *
@@ -292,23 +292,21 @@ type FormValue<T, K extends string = 'raw'> = T | RichFormValue<T, K>;
 type RichFormValue<T, K extends string = 'raw'> = Record<K, T>;
 
 /** @todo to refine */
-type FormContext<T> = {
+type FormContext<Model> = {
     client: Client$1;
     config: Config;
     errorMessage?: string;
-    fields: FieldValues<T>;
+    fields: Model;
     hasErrors?: boolean;
     isLoading?: boolean;
     isSubmitted: boolean;
-};
-type FieldValues<T> = {
-    [K in keyof T]: FieldValue<T[K]>;
 };
 
 interface FieldCreateProps {
     showLabel: boolean;
 }
 interface FieldCreator<T, P = {}, E extends Record<string, unknown> = {}, K extends string = 'raw'> {
+    key: string;
     path: string;
     create: (options: WithI18n<FieldCreateProps>) => Field$1<T, P, E, K>;
 }
@@ -317,7 +315,7 @@ interface Field$1<T, P = {}, E extends Record<string, unknown> = {}, K extends s
     render: (props: Partial<P> & Partial<FieldComponentProps<T, {}, E, K>> & {
         state: FieldValue<T, K, E>;
     }) => React__default.ReactNode;
-    initialize: <M extends Record<PropertyKey, unknown>>(model: M) => FieldValue<T, K>;
+    initialize: <M extends Record<PropertyKey, unknown>>(model: Partial<M>) => FieldValue<T, K>;
     unbind: <M extends Record<PropertyKey, unknown>>(model: M, state: FieldValue<T, K, E>) => M;
     validate: (data: FieldValue<T, K, E>, ctx: FormContext<any>) => Promise<ValidatorResult>;
 }
@@ -1486,6 +1484,11 @@ interface MainViewProps$1 {
      * Callback function called when the request has failed.
      */
     onError?: OnError;
+    profileIdentifiers?: Pick<Profile, 'emailVerified' | 'phoneNumber' | 'phoneNumberVerified'>;
+    /**
+     * Allow to trust device during enrollment
+     */
+    allowTrustDevice?: boolean;
 }
 interface VerificationCodeViewProps {
     /**
@@ -1504,12 +1507,16 @@ interface VerificationCodeViewProps {
      * Callback function called when the request has failed.
      */
     onError?: OnError;
+    /**
+     * Display the checkbox to trust device
+     */
+    allowTrustDevice?: boolean;
 }
 interface CredentialRegisteredViewProps {
 }
 type CredentialRemovedViewProps = {};
 type MfaCredentialsProps = Prettify<MainViewProps$1 & CredentialRegisteredViewProps & VerificationCodeViewProps & CredentialRemovedViewProps>;
-type MfaCredentialsWidgetProps = Prettify<Omit<MfaCredentialsProps, 'credentials'>>;
+type MfaCredentialsWidgetProps = Prettify<Omit<MfaCredentialsProps, 'credentials' | 'profileIdentifiers'>>;
 
 type MfaListWidgetProps = {
     /**

@@ -75,7 +75,7 @@ describe('DOM testing', () => {
             ],
         })
 
-        await waitFor(async () => {   
+        await waitFor(async () => {
             return render(
                 <WidgetContext
                     config={defaultConfig}
@@ -106,14 +106,7 @@ describe('DOM testing', () => {
 
         await waitFor(() => expect(onFieldChange).toHaveBeenLastCalledWith(
             expect.objectContaining({
-                birthday: expect.objectContaining({
-                    isDirty: true,
-                    value: startOfDay(fiveYearsOld),
-                    validation: {
-                        valid: false,
-                        error: "validation.birthdate.yearLimit"
-                    }
-                })
+                birthday: formatISO(startOfDay(fiveYearsOld), {representation: 'date'}),
             })
         ))
 
@@ -129,13 +122,10 @@ describe('DOM testing', () => {
 
         await waitFor(() => expect(onFieldChange).toHaveBeenLastCalledWith(
             expect.objectContaining({
-                birthday: expect.objectContaining({
-                    isDirty: true,
-                    value: startOfDay(eighteenYearsOld),
-                })
+                birthday: formatISO(startOfDay(eighteenYearsOld), {representation: 'date'}),
             })
         ))
-        
+
         const submitBtn = screen.getByRole('button')
         await user.click(submitBtn)
 

@@ -94,7 +94,7 @@ const VerificationCodeForm = createForm<VerificationCodeFormData, VerificationCo
                 label: 'passwordConfirmation',
                 autoComplete: 'new-password',
                 validator: new Validator<string, FormContext<VerificationCodeFormData>>({
-                    rule: (value, ctx) => value === ctx.fields.password.value,
+                    rule: (value, ctx) => value === ctx.fields.password,
                     hint: 'passwordMatch'
                 })
             })

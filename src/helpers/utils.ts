@@ -88,23 +88,28 @@ export function isValidEmail(email: string) {
     return /\S+@\S+\.\S+/.test(email);
 }
 
-export function camelCase(string: string) {
+export type CamelCase<T extends string> = T extends `${infer U}_${infer V}` ? `${U}${CamelCase<Capitalize<V>>}` : T
+
+export function camelCase<T extends string>(string: T) {
     return string
-    .replace(/([^A-Z])([A-Z])/g, '$1 $2') // "aB" become "a B"
-    .toLowerCase()
-    .replace(/[^a-z0-9]/ig, ' ')
-    .trim()
-    .replace(/(?:^\w|[A-Z]|\b\w)/g, function(word, index) {
-        return index === 0 ? word.toLowerCase() : word.toUpperCase();
-    })
-    .replace(/\s+/g, '');
+        .replace(/([^A-Z])([A-Z])/g, '$1 $2') // "aB" become "a B"
+        .toLowerCase()
+        .replace(/[^a-z0-9]/ig, ' ')
+        .trim()
+        .replace(/(?:^\w|[A-Z]|\b\w)/g, function(word, index) {
+            return index === 0 ? word.toLowerCase() : word.toUpperCase();
+        })
+        .replace(/\s+/g, '');
 }
 
-export function snakeCase(string: string) {
+export type SnakeCase<S extends string> = S extends `${infer T}${infer U}`
+    ? `${T extends Capitalize<T> ? "_" : ""}${Lowercase<T>}${SnakeCase<U>}`
+    : S
+
+export function snakeCase<T extends string>(string: T) {
     const matches = string.match(/[A-Z]{2,}(?=[A-Z][a-z]+[0-9]*|\b)|[A-Z]?[a-z]+|[A-Z]|[0-9]+/g)
     return matches ? matches.map(s => s.toLowerCase()).join('_') : '';
 }
-
 
 export function isEmpty(value: unknown) {
     if (value == null) {

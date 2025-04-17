@@ -63,7 +63,7 @@ describe('DOM testing', () => {
             ],
         })
 
-        await waitFor(async () => {   
+        await waitFor(async () => {
             return render(
                 <WidgetContext
                     config={defaultConfig}
@@ -94,10 +94,7 @@ describe('DOM testing', () => {
 
         expect(onFieldChange).toHaveBeenLastCalledWith(
             expect.objectContaining({
-                password: expect.objectContaining({
-                    isDirty: false,
-                    value: newValue,
-                })
+                password: newValue,
             })
         )
 
@@ -131,7 +128,7 @@ describe('DOM testing', () => {
             ],
         })
 
-        await waitFor(async () => {   
+        await waitFor(async () => {
             return render(
                 <WidgetContext
                     config={defaultConfig}
@@ -169,7 +166,7 @@ describe('DOM testing', () => {
             ],
         })
 
-        await waitFor(async () => {   
+        await waitFor(async () => {
             return render(
                 <WidgetContext
                     config={defaultConfig}
@@ -197,10 +194,7 @@ describe('DOM testing', () => {
 
         expect(onFieldChange).toHaveBeenLastCalledWith(
             expect.objectContaining({
-                password: expect.objectContaining({
-                    isDirty: false,
-                    value: newValue,
-                })
+                password: newValue,
             })
         )
 
