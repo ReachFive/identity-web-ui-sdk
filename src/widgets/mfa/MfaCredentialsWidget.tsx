@@ -191,12 +191,12 @@ const MainView = ({
     }
 
     const onPhoneNumberChange = useCallback((data: PhoneNumberRegisteringCredentialFormData) => {
-        console.log('onPhoneNumberChange', data)
         const { phoneNumber } = data
         setDisplayTrustDevicePhoneNumber(
             profileIdentifiers.phoneNumber != undefined
             && profileIdentifiers.phoneNumber === phoneNumber
             && config.rbaEnabled
+            && allowTrustDevice
         )
     }, [displayTrustDevicePhoneNumber])
 
