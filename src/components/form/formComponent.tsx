@@ -154,7 +154,7 @@ export function createForm<Model extends Record<PropertyKey, unknown> = {}, P = 
         )
 
         const filledWithModel = () => Object.fromEntries(
-            Object.entries(inputFields).map(([key, field]) => (
+            Object.entries(fieldByKey).map(([key, field]) => (
                 [key, field.initialize<Model>(initialModel)]
             ))
         )
