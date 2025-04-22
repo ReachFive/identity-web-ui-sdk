@@ -197,6 +197,8 @@ const MainView = ({
             && profileIdentifiers.phoneNumber === phoneNumber
             && config.rbaEnabled
             && allowTrustDevice
+            && profileIdentifiers.phoneNumberVerified != undefined
+            && profileIdentifiers.phoneNumberVerified
         )
     }, [displayTrustDevicePhoneNumber])
 
@@ -414,25 +416,22 @@ export default createMultiViewWidget<MfaCredentialsWidgetProps, MfaCredentialsPr
         'credential-removed': CredentialRemovedView
     },
     prepare: (options, { apiClient }) => {
-        return apiClient.listMfaCredentials(options.accessToken)
-            .then(({ credentials }) => {
-                return apiClient.getUser({accessToken: options.accessToken, fields: "email_verified,phone_number,phone_number_verified"})
-                    .then( profile => {
-                        const profileIdentifiers = profile as Pick<Profile, 'emailVerified' | 'phoneNumber' | 'phoneNumberVerified'>
-                        return {
-                            ...options,
-                            credentials,
-                            profileIdentifiers
-                        }
-                    }
-                    ).catch(error => {
-                        options.onError?.(error)
-                        throw UserError.fromAppError(error)
-                    })
+        return Promise.all([
+            apiClient.listMfaCredentials(options.accessToken),
+            apiClient.getUser({
+                accessToken: options.accessToken,
+                fields: "email_verified,phone_number,phone_number_verified"
             })
-            .catch(error => {
-                options.onError?.(error)
-                throw UserError.fromAppError(error)
-            })
+        ]).then(([{ credentials }, profile]) => {
+            const profileIdentifiers = profile as Pick<Profile, 'emailVerified' | 'phoneNumber' | 'phoneNumberVerified'>
+            return {
+                ...options,
+                credentials,
+                profileIdentifiers
+            }
+        }).catch(error => {
+            options.onError?.(error)
+            throw UserError.fromAppError(error)
+        })
     }
 })
