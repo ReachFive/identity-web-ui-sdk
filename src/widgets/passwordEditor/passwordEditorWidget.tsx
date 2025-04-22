@@ -54,7 +54,6 @@ export const PasswordEditorForm = createForm<PasswordEditorFormData, PasswordEdi
                 autoComplete: 'new-password',
                 validator: new Validator<string, FormContext<PasswordEditorFormData>>({
                     rule: (value, ctx) => {
-                        console.log('ctx', ctx)
                         return value === ctx.fields.password
                     },
                     hint: 'passwordMatch'
