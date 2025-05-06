@@ -123,9 +123,7 @@ describe('DOM testing', () => {
 
         expect(onFieldChange).toHaveBeenLastCalledWith(
             expect.objectContaining({
-                phone_number: expect.objectContaining({
-                    value: newValue,
-                })
+                phoneNumber: newValue,
             })
         );
 

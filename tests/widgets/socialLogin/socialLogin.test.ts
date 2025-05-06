@@ -48,7 +48,7 @@ describe('Snapshot', () => {
         const apiClient: Client = {}
 
         const widget = await socialLoginWidget(options, {config: { ...defaultConfig, ...config }, apiClient, defaultI18n })
-        
+
         await waitFor(async () => {
             const { container } = await render(widget);
             expect(container).toMatchSnapshot();
@@ -65,7 +65,7 @@ describe('DOM testing', () => {
 
     const onError = jest.fn()
     const onSuccess = jest.fn()
-    
+
     beforeEach(() => {
         loginWithSocialProvider.mockClear()
         onError.mockClear()

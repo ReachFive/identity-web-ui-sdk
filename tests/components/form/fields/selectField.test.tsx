@@ -67,7 +67,7 @@ describe('DOM testing', () => {
             ],
         })
 
-        await waitFor(async () => {   
+        await waitFor(async () => {
             return render(
                 <WidgetContext
                     config={defaultConfig}
@@ -83,7 +83,7 @@ describe('DOM testing', () => {
         })
 
         const selectbox = screen.getByLabelText(i18nResolver(label))
-        
+
         expect(selectbox).toHaveValue('')
         options.forEach((option) => {
             expect(screen.getByRole<HTMLOptionElement>("option", { name: option.value }).selected).toBe(false)
@@ -94,10 +94,7 @@ describe('DOM testing', () => {
 
         expect(onFieldChange).toHaveBeenLastCalledWith(
             expect.objectContaining({
-                selectbox: expect.objectContaining({
-                    isDirty: false,
-                    value: choice.value,
-                })
+                selectbox:  choice.value,
             })
         )
 
@@ -136,7 +133,7 @@ describe('DOM testing', () => {
             ],
         })
 
-        await waitFor(async () => {   
+        await waitFor(async () => {
             return render(
                 <WidgetContext
                     config={defaultConfig}
@@ -152,7 +149,7 @@ describe('DOM testing', () => {
         })
 
         const selectbox = screen.getByLabelText(i18nResolver(label))
-        
+
         expect(selectbox).toHaveValue(defaultOption.value)
         expect(screen.getByRole<HTMLOptionElement>('option', { name: defaultOption.value }).selected).toBe(true)
 
@@ -161,10 +158,7 @@ describe('DOM testing', () => {
 
         expect(onFieldChange).toHaveBeenLastCalledWith(
             expect.objectContaining({
-                selectbox: expect.objectContaining({
-                    isDirty: false,
-                    value: choice.value,
-                })
+                selectbox: choice.value,
             })
         )
 

@@ -73,7 +73,7 @@ describe('DOM testing', () => {
             ],
         })
 
-        await waitFor(async () => {   
+        await waitFor(async () => {
             return render(
                 <WidgetContext
                     config={defaultConfig}
@@ -94,16 +94,17 @@ describe('DOM testing', () => {
         const description = screen.queryByTestId('consents.myconsent.1.description')
         expect(description).toBeInTheDocument()
         expect(description).toHaveTextContent('Lorem ipsum sit amet')
-        
+
         await user.click(checkbox)
 
         expect(checkbox).toBeChecked()
 
         await waitFor(() => expect(onFieldChange).toHaveBeenLastCalledWith(
             expect.objectContaining({
-                'consents.myconsent.1': expect.objectContaining({
-                    isDirty: true,
-                    value: true,
+                'consents': expect.objectContaining({
+                    'myconsent': expect.objectContaining({
+                        "consentType": "opt-in", "consentVersion": {"language": "fr", "versionId": 1}, "granted": true
+                    })
                 })
             })
         ))
@@ -155,7 +156,7 @@ describe('DOM testing', () => {
             ],
         })
 
-        await waitFor(async () => {   
+        await waitFor(async () => {
             return render(
                 <WidgetContext
                     config={defaultConfig}
@@ -172,16 +173,17 @@ describe('DOM testing', () => {
 
         const checkbox = screen.getByLabelText(i18nResolver(label))
         expect(checkbox).toBeChecked()
-        
+
         await user.click(checkbox)
 
         expect(checkbox).not.toBeChecked()
 
         await waitFor(() => expect(onFieldChange).toHaveBeenLastCalledWith(
             expect.objectContaining({
-                'consents.myconsent.1': expect.objectContaining({
-                    isDirty: true,
-                    value: false,
+                consents: expect.objectContaining({
+                    'myconsent': expect.objectContaining({
+                        "consentType": "opt-in", "consentVersion": {"language": "fr", "versionId": 1}, "granted": false
+                    })
                 })
             })
         ))
@@ -195,12 +197,7 @@ describe('DOM testing', () => {
             expect.objectContaining({
                 consents: expect.objectContaining({
                     'myconsent': expect.objectContaining({
-                        consentType: 'opt-in',
-                        consentVersion: expect.objectContaining({
-                            language: defaultConfig.language,
-                            versionId: 1
-                        }),
-                        granted: false
+                        "consentType": "opt-in", "consentVersion": {"language": "fr", "versionId": 1}, "granted": false
                     })
                 })
             })
