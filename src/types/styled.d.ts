@@ -14,16 +14,34 @@ export interface BaseTheme {
      * @default true
      */
     animateWidgetEntrance: boolean
-    /** Specifies the font-size.
-     * @default 14
+    /** tag::animateWidgetEntrance[]
+        |animateWidgetEntrance
+        |boolean
+        |Indicates whether the widget should be animated or not.
+
+        @default true
+
+    end::animateWidgetEntrance[]
      */
     fontSize: number
-    /** Specifies the font-size for small texts.
-     * @default 12
+    /** tag::fontSize[]
+        |fontSize
+        |number
+        |Specifies the text font size.
+
+        @default 12
+
+     end::fontSize[]
      */
     smallTextFontSize: number
-    /** Specifies the line-height.
-     * @default 1.428571429
+    /** tag::smallTextFontSize[]
+        |smallTextFontSize
+        |number
+        |Specifies font size for small text (in rem).
+
+        @default 1.428571429
+
+     end::smallTextFontSize[]
      */
     lineHeight: number
     /**

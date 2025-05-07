@@ -1,0 +1,15 @@
+= {company} UI SDK
+
+placeholder
+
+{localdatetime}
+
+== Test fetch
+
+[cols="28%m,16%s,56%a"]
+|===
+|Attribute |Type |Description
+
+include::sdk-ui-attributes:ROOT:example$types/styled.d.ts[tags="animateWidgetEntrance,fontSize,smallTextFontSize"]
+
+|===
