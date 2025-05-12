@@ -1,6 +1,6 @@
 /**
- * @reachfive/identity-ui - v1.33.4-develop
- * Compiled Thu, 17 Apr 2025 11:59:25 UTC
+ * @reachfive/identity-ui - v1.33.3
+ * Compiled Mon, 12 May 2025 16:28:07 UTC
  *
  * Copyright (c) ReachFive.
  *
@@ -1520,8 +1520,8 @@ type MfaCredentialsWidgetProps = Prettify<Omit<MfaCredentialsProps, 'credentials
 
 type MfaListWidgetProps = {
     /**
-    * The authorization credential JSON Web Token (JWT) used to access the ReachFive API, less than five minutes old.
-    */
+     * The authorization credential JSON Web Token (JWT) used to access the ReachFive API, less than five minutes old.
+     */
     accessToken: string;
     /**
      * Callback function called when the request has succeeded.
