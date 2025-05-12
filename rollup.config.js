@@ -1,20 +1,26 @@
+import alias from '@rollup/plugin-alias';
 import commonjs from '@rollup/plugin-commonjs';
 import dynamicImportVars from '@rollup/plugin-dynamic-import-vars';
-import replace from '@rollup/plugin-replace';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
+import replace from '@rollup/plugin-replace';
 import terser from '@rollup/plugin-terser';
-import url from '@rollup/plugin-url'
-import svg from '@svgr/rollup'
-import dts from 'rollup-plugin-dts'
-import esbuild from 'rollup-plugin-esbuild'
+import url from '@rollup/plugin-url';
+import svg from '@svgr/rollup';
+import dts from 'rollup-plugin-dts';
+import esbuild from 'rollup-plugin-esbuild';
 import postcss from "rollup-plugin-postcss";
 
-import pkg from './package.json' with { type: 'json' }
-const dependencies = Object.keys(pkg.dependencies)
+import path, { dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+
+import packageJson from './package.json' with { type: 'json' };
+const dependencies = Object.keys(packageJson.dependencies)
 
 const banner = [
     `/**`,
-    ` * ${pkg.name} - v${pkg.version}`,
+    ` * ${packageJson.name} - v${packageJson.version}`,
     ` * Compiled ${(new Date()).toUTCString().replace(/GMT/g, 'UTC')}`,
     ` *`,
     ` * Copyright (c) ReachFive.`,
@@ -24,18 +30,35 @@ const banner = [
     ` **/`,
 ].join('\n');
 
-// Ignore Luxon library's circular dependencies
-function onWarn(message) {
-    if ( message.code === 'CIRCULAR_DEPENDENCY' || message.code === 'MODULE_LEVEL_DIRECTIVE') return;
-    console.warn( message);
+/**
+ * Ignore Luxon library's circular dependencies 
+ * @param {Partial<import('rollup').RollupLog>} warning
+ * @returns {void}
+ */
+const onWarn = (warning) => {
+    if ( warning.code === 'CIRCULAR_DEPENDENCY' || warning.code === 'MODULE_LEVEL_DIRECTIVE') return;
+    console.warn(warning);
 }
 
+/** 
+ * @param {Partial<import('rollup').RollupOptions>} config
+ * @returns {import('rollup').RollupOptions}
+ */
 const bundle = config => ({
     ...config,
     input: 'src/index.ts',
 })
 
+/** @type {import('rollup').InputPluginOption} */
 const plugins = [
+    alias({
+        entries: [
+            {
+                find: /^@\/(.*)/,
+                replacement: path.resolve(__dirname, './src/$1')
+            }
+        ]
+    }),
     replace({
         preventAssignment: true,
         values: {
@@ -44,7 +67,7 @@ const plugins = [
     }),
     nodeResolve({
         browser: true,
-        extensions: ['.jsx', '.js', '.json'],
+        extensions: ['.tsx', '.ts', '.jsx', '.js', '.json'],
         preferBuiltins: true
     }),
     commonjs({ include: /node_modules/ }),
@@ -61,29 +84,32 @@ const plugins = [
     }),
 ]
 
+/** @type {import('rollup').RollupOptions[]} */
 export default [
     bundle({
         plugins,
-        external: dependencies.concat(['@/lib/utils']),
+        external: dependencies,
         output: [
             {
                 banner,
-                file: 'cjs/identity-ui.js',
+                file: packageJson.main,
                 format: 'cjs',
                 sourcemap: true,
                 inlineDynamicImports: true,
             },
             {
                 banner,
-                file: 'es/identity-ui.js',
+                file: packageJson.module,
                 format: 'es',
                 sourcemap: true,
                 inlineDynamicImports: true,
             },
             {
-                file: 'es/identity-ui.min.js',
+                file: packageJson.module.replace('.js', '.min.js'),
                 format: 'es',
-                plugins: [terser({ output: { preamble: banner } })],
+                plugins: [
+                    terser({ output: { preamble: banner } })
+                ],
                 sourcemap: true,
                 inlineDynamicImports: true,
             },
@@ -92,25 +118,31 @@ export default [
     }),
     bundle({
         plugins,
-        external: ['@/lib/utils'],
+        external: [],
         output: [
             {
                 banner,
-                file: 'umd/identity-ui.js',
+                file: packageJson.main.replace('cjs/', 'umd/'),
                 format: 'umd',
                 name: 'reach5Widgets',
                 sourcemap: true,
                 inlineDynamicImports: true,
-                globals: { '@reachfive/identity-core': 'reach5', "@/lib/utils": "tw-cl-merge" },
+                globals: {
+                    '@reachfive/identity-core': 'reach5'
+                },
             },
             {
-                file: 'umd/identity-ui.min.js',
+                file: packageJson.main.replace('cjs/', 'umd/').replace('.js', '.min.js'),
                 format: 'umd',
                 name: 'reach5Widgets',
-                plugins: [terser({ output: { preamble: banner } })],
+                plugins: [
+                    terser({ output: { preamble: banner } })
+                ],
                 sourcemap: true,
                 inlineDynamicImports: true,
-                globals: { '@reachfive/identity-core': 'reach5', "@/lib/utils": "tw-cl-merge" },
+                globals: {
+                    '@reachfive/identity-core': 'reach5'
+                },
             },
         ],
         onwarn: onWarn
@@ -121,7 +153,7 @@ export default [
         ],
         output: {
             banner,
-            file: 'types/identity-ui.d.ts',
+            file: packageJson.types,
             format: 'es',
         },
         onwarn: onWarn

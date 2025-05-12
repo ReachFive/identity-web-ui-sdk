@@ -10,3 +10,9 @@ insert_final_newline = true
 
 [*.yml]
 indent_size = 2
+
+[tailwind.config.cjs]
+indent_size = 2
+
+[src/components/ui/*]
+indent_size = 2
