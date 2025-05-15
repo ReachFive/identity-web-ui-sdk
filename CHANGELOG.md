@@ -7,9 +7,14 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
-## [1.34.0] - 2025-05-13
+## [1.34.1] - 2025-05-15
+
+### Fixed
+
+- Reset password with phone number should send phone number value in payload
 
 ### Added
+
 - Allow to trust device during mfa credential registration
 
 ### Fixed
@@ -608,6 +613,8 @@ The eye icon is now correctly displayed in the Auth widget.
 First version of the SDK Web UI.
 
 [Unreleased]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.34.0...HEAD
+
+[1.34.1]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.34.0...v1.34.1
 
 [1.34.0]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.33.2...v1.34.0
 
