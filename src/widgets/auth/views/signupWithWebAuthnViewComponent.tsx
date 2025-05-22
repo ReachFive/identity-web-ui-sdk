@@ -1,30 +1,43 @@
-import React from 'react';
-import type { AuthOptions, Client as CoreClient } from '@reachfive/identity-core';
+import type {
+    AuthOptions,
+    Client as CoreClient,
+} from '@reachfive/identity-core'
+import React from 'react'
 
-import { useReachfive } from '../../../contexts/reachfive';
+import { useReachfive } from '../../../contexts/reachfive'
 
+import { createForm } from '../../../components/form/formComponent'
 import { UserAggreementStyle } from '../../../components/form/formControlsComponent'
-import { createForm } from '../../../components/form/formComponent';
-import { buildFormFields, type Field } from '../../../components/form/formFieldFactory';
-import { Alternative, Heading, Link, MarkdownContent } from '../../../components/miscComponent';
-import { snakeCaseProperties } from '../../../helpers/transformObjectProperties';
-import { useI18n } from '../../../contexts/i18n';
-import { useConfig } from '../../../contexts/config';
+import {
+    buildFormFields,
+    type Field,
+} from '../../../components/form/formFieldFactory'
+import {
+    Alternative,
+    Heading,
+    Link,
+    MarkdownContent,
+} from '../../../components/miscComponent'
+import { useConfig } from '../../../contexts/config'
+import { useI18n } from '../../../contexts/i18n'
+import { snakeCaseProperties } from '../../../helpers/transformObjectProperties'
 
-import type { OnError, OnSuccess } from '../../../types';
+import type { OnError, OnSuccess } from '../../../types'
 
-type SignupFormData = Parameters<CoreClient['signupWithWebAuthn']>[0]['profile'] & { friendlyName?: string }
+type SignupFormData = Parameters<
+    CoreClient['signupWithWebAuthn']
+>[0]['profile'] & { friendlyName?: string }
 
 const SignupForm = createForm({
     prefix: 'r5-webauthn-signup-',
-    submitLabel: 'signup.submitLabel'
-});
+    submitLabel: 'signup.submitLabel',
+})
 
 export interface SignupWithWebAuthnViewProps {
     /**
      * List of authentication options
      */
-    auth?: AuthOptions,
+    auth?: AuthOptions
     /**  */
     beforeSignup?: <T>(param: T) => T
     /**
@@ -70,14 +83,10 @@ export interface SignupWithWebAuthnViewProps {
 
 export const SignupWithWebAuthnView = ({
     auth,
-    beforeSignup = x => x,
+    beforeSignup = (x) => x,
     redirectUrl,
     returnToAfterEmailConfirmation,
-    signupFields = [
-        'given_name',
-        'family_name',
-        'email'
-    ],
+    signupFields = ['given_name', 'family_name', 'email'],
     showLabels = false,
     userAgreement,
     onError = (() => {}) as OnError,
@@ -96,22 +105,28 @@ export const SignupWithWebAuthnView = ({
                 returnToAfterEmailConfirmation,
             },
             auth
-        );
+        )
 
-        const webAuthnSignupFields = signupFields
-            .filter(field => field !== 'password' && field !== 'password_confirmation')
+    const webAuthnSignupFields = signupFields.filter(
+        (field) => field !== 'password' && field !== 'password_confirmation'
+    )
 
-        const fields = buildFormFields(webAuthnSignupFields, config);
+    const fields = buildFormFields(webAuthnSignupFields, config)
 
-        const allFields = userAgreement
+    const allFields = userAgreement
         ? [
-            ...fields,
-            {
-                staticContent: <MarkdownContent key="user-aggreement" root={UserAggreementStyle} source={userAgreement} />
-            }
-        ]
-        : fields;
-
+              ...fields,
+              {
+                  staticContent: (
+                      <MarkdownContent
+                          key="user-aggreement"
+                          root={UserAggreementStyle}
+                          source={userAgreement}
+                      />
+                  ),
+              },
+          ]
+        : fields
 
     return (
         <div>
@@ -121,7 +136,9 @@ export const SignupWithWebAuthnView = ({
                 showLabels={showLabels}
                 beforeSubmit={beforeSignup}
                 handler={handleSignup}
-                onSuccess={onSuccess}
+                onSuccess={(authResult) =>
+                    onSuccess({ name: 'sign_up', authResult })
+                }
                 onError={onError}
             />
             <Alternative>

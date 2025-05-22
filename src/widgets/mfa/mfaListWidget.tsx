@@ -1,9 +1,9 @@
-import { MFA } from "@reachfive/identity-core";
-import React, { useEffect } from "react";
+import { MFA } from '@reachfive/identity-core'
+import React, { useEffect } from 'react'
 
-import { createWidget } from "../../components/widget/widget";
+import { createWidget } from '../../components/widget/widget'
 
-import { LoaderCircle, Mail, MessageSquareMore, X } from "lucide-react";
+import { LoaderCircle, Mail, MessageSquareMore, X } from 'lucide-react'
 import {
     AlertDialog,
     AlertDialogAction,
@@ -14,55 +14,55 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
     AlertDialogTrigger,
-} from "../../components/ui/alert-dialog";
-import { Button } from "../../components/ui/button";
-import { useConfig } from "../../contexts/config";
-import { useI18n } from "../../contexts/i18n";
-import { useReachfive } from "../../contexts/reachfive.tsx";
-import { dateFormat } from "../../helpers/utils.ts";
-import { OnError, OnSuccess } from "../../types";
+} from '../../components/ui/alert-dialog'
+import { Button } from '../../components/ui/button'
+import { useConfig } from '../../contexts/config'
+import { useI18n } from '../../contexts/i18n'
+import { useReachfive } from '../../contexts/reachfive.tsx'
+import { dateFormat } from '../../helpers/utils.ts'
+import { OnError, OnSuccess } from '../../types'
 
 const credentialIconByType = (
-    type: MFA.CredentialsResponse["credentials"][number]["type"]
+    type: MFA.CredentialsResponse['credentials'][number]['type']
 ) => {
     switch (type) {
-        case "email":
+        case 'email':
             return (
                 <Mail className="bg-background w-icon h-icon stroke-textColor" />
-            );
-        case "sms":
+            )
+        case 'sms':
             return (
                 <MessageSquareMore className="bg-background w-icon h-icon stroke-textColor" />
-            );
+            )
     }
-};
+}
 
 export interface MfaListProps {
     /**
      * The authorization credential JSON Web Token (JWT) used to access the ReachFive API, less than five minutes old.
      */
-    accessToken: string;
+    accessToken: string
     /**
      * Callback function called when the request has succeeded.
      */
-    onSuccess?: OnSuccess;
+    onSuccess?: OnSuccess
     /**
      * Callback function called when the request has failed.
      */
-    onError?: OnError;
+    onError?: OnError
     /**
      * Indicates whether delete mfa credential button is displayed
      */
-    showRemoveMfaCredential?: boolean;
+    showRemoveMfaCredential?: boolean
 }
 
 interface DeleteButtonProps {
-    credential: MFA.Credential;
-    isOpen: boolean;
-    setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
-    onDeleteCallback: (credential: MFA.Credential) => void;
-    deleteConfirmationTitle: string;
-    setDeleteConfirmationTitle: React.Dispatch<React.SetStateAction<string>>;
+    credential: MFA.Credential
+    isOpen: boolean
+    setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
+    onDeleteCallback: (credential: MFA.Credential) => void
+    deleteConfirmationTitle: string
+    setDeleteConfirmationTitle: React.Dispatch<React.SetStateAction<string>>
 }
 
 const DeleteButton = ({
@@ -73,7 +73,7 @@ const DeleteButton = ({
     deleteConfirmationTitle,
     setDeleteConfirmationTitle,
 }: DeleteButtonProps) => {
-    const i18n = useI18n();
+    const i18n = useI18n()
 
     return (
         <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
@@ -84,9 +84,9 @@ const DeleteButton = ({
                     className="ml-1"
                     onClick={(_) =>
                         setDeleteConfirmationTitle(
-                            credential.type === "email"
-                                ? "mfa.remove.email"
-                                : "mfa.remove.phoneNumber"
+                            credential.type === 'email'
+                                ? 'mfa.remove.email'
+                                : 'mfa.remove.phoneNumber'
                         )
                     }
                 >
@@ -102,19 +102,19 @@ const DeleteButton = ({
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                     <AlertDialogCancel>
-                        {i18n("confirmation.cancel")}
+                        {i18n('confirmation.cancel')}
                     </AlertDialogCancel>
                     <AlertDialogAction
                         variant="destructive"
                         onClick={(_) => onDeleteCallback(credential)}
                     >
-                        {i18n("confirmation.yes")}
+                        {i18n('confirmation.yes')}
                     </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>
         </AlertDialog>
-    );
-};
+    )
+}
 
 export const MfaList = ({
     accessToken,
@@ -122,66 +122,74 @@ export const MfaList = ({
     onError = (() => {}) as OnError,
     onSuccess = (() => {}) as OnSuccess,
 }: MfaListProps) => {
-    const [isOpen, setIsOpen] = React.useState(false);
-    const [loading, setLoading] = React.useState(true);
+    const [isOpen, setIsOpen] = React.useState(false)
+    const [loading, setLoading] = React.useState(true)
     const [deleteConfirmationTitle, setDeleteConfirmationTitle] =
-        React.useState("");
-    const [credentials, setCredentials] = React.useState<MFA.Credential[]>([]);
-    const i18n = useI18n();
-    const config = useConfig();
-    const client = useReachfive();
+        React.useState('')
+    const [credentials, setCredentials] = React.useState<MFA.Credential[]>([])
+    const i18n = useI18n()
+    const config = useConfig()
+    const client = useReachfive()
 
     const fetchMfaCredentials = () => {
-        setLoading(true);
+        setLoading(true)
         client
             .listMfaCredentials(accessToken)
             .then((mfaCredentialsResponse) => {
-                setCredentials(mfaCredentialsResponse.credentials);
-                onSuccess(mfaCredentialsResponse);
+                setCredentials(mfaCredentialsResponse.credentials)
+                onSuccess({
+                    name: 'mfa_credentials_listed',
+                    credentials: mfaCredentialsResponse.credentials,
+                })
             })
             .catch(onError)
-            .finally(() => setLoading(false));
-    };
+            .finally(() => setLoading(false))
+    }
 
     useEffect(() => {
-        fetchMfaCredentials();
-    }, [accessToken]);
+        fetchMfaCredentials()
+    }, [accessToken])
 
     const onDelete = (credential: MFA.Credential) => {
         switch (credential.type) {
-            case "sms":
+            case 'sms':
                 client
                     .removeMfaPhoneNumber({
                         accessToken,
                         phoneNumber: credential.phoneNumber,
                     })
-                    .then((resp) => {
-                        fetchMfaCredentials();
-                        onSuccess(resp);
+                    .then(() => {
+                        fetchMfaCredentials()
+                        onSuccess({
+                            name: 'mfa_phone_number_removed',
+                            phoneNumber: credential.phoneNumber,
+                        })
                     })
-                    .catch(onError);
-                break;
-            case "email":
+                    .catch(onError)
+                break
+            case 'email':
                 client
                     .removeMfaEmail({ accessToken })
-                    .then((resp) => {
-                        fetchMfaCredentials();
-                        onSuccess(resp);
+                    .then(() => {
+                        fetchMfaCredentials()
+                        onSuccess({
+                            name: 'mfa_email_removed',
+                        })
                     })
-                    .catch(onError);
-                break;
+                    .catch(onError)
+                break
         }
-    };
+    }
 
     if (loading) {
-        return <LoaderCircle className="animate-spin" />;
+        return <LoaderCircle className="animate-spin" />
     }
 
     return (
         <div>
             {credentials.length === 0 && (
                 <div className="mb-1 text-center text-textColor">
-                    {i18n("mfaList.noCredentials")}
+                    {i18n('mfaList.noCredentials')}
                 </div>
             )}
             {credentials.map((credential, _) => (
@@ -189,7 +197,7 @@ export const MfaList = ({
                     id={`credential-${credential.friendlyName}`}
                     data-testid="credential"
                     key={`credential-${credential.friendlyName}`}
-                    className={`flex flex-col ${isOpen ? "opacity-15" : ""}`}
+                    className={`flex flex-col ${isOpen ? 'opacity-15' : ''}`}
                 >
                     <div className="flex flex-row items-center rounded">
                         <div className="box-border flex flex-row items-center align-middle border border-solid rounded basis-full whitespace-nowrap p-generic">
@@ -203,11 +211,11 @@ export const MfaList = ({
                                         ? credential.email
                                         : MFA.isPhoneCredential(credential)
                                         ? credential.phoneNumber
-                                        : "N/A"}
+                                        : 'N/A'}
                                 </div>
                                 <div>
                                     <span>
-                                        {i18n("mfaList.createdAt")}&nbsp;:{" "}
+                                        {i18n('mfaList.createdAt')}&nbsp;:{' '}
                                     </span>
                                     <time dateTime={credential.createdAt}>
                                         {dateFormat(
@@ -236,28 +244,28 @@ export const MfaList = ({
                 </div>
             ))}
         </div>
-    );
-};
+    )
+}
 
 export type MfaListWidgetProps = {
     /**
      * The authorization credential JSON Web Token (JWT) used to access the ReachFive API, less than five minutes old.
      */
-    accessToken: string;
+    accessToken: string
     /**
      * Callback function called when the request has succeeded.
      */
-    onSuccess?: OnSuccess;
+    onSuccess?: OnSuccess
     /**
      * Callback function called when the request has failed.
      */
-    onError?: OnError;
+    onError?: OnError
     /**
      * Indicates whether delete mfa credential button is displayed
      */
-    showRemoveMfaCredential?: boolean;
-};
+    showRemoveMfaCredential?: boolean
+}
 
 export default createWidget<MfaListWidgetProps, MfaListProps>({
     component: MfaList,
-});
+})

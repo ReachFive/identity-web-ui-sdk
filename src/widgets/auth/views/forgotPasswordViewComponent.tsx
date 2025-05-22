@@ -246,7 +246,7 @@ export const ForgotPasswordView = ({
                 showLabels={showLabels}
                 handler={callback}
                 onSuccess={() => {
-                    onSuccess()
+                    onSuccess({ name: 'forgot_password' })
                     goTo('forgot-password-success')
                 }}
                 onError={onError}
@@ -379,7 +379,7 @@ export const ForgotPasswordCodeView = ({
                 showLabels={showLabels}
                 handler={callback}
                 onSuccess={() => {
-                    onSuccess()
+                    onSuccess({ name: 'forgot_password' })
                     goTo('login')
                 }}
                 onError={onError}

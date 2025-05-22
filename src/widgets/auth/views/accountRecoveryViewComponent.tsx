@@ -1,20 +1,28 @@
-import React, { useCallback, useLayoutEffect } from 'react';
-import { RequestAccountRecoveryParams } from '@reachfive/identity-core/es/main/profileClient';
+import { RequestAccountRecoveryParams } from '@reachfive/identity-core/es/main/profileClient'
+import React, { useCallback, useLayoutEffect } from 'react'
 
 import { isAppError } from '../../../helpers/errors'
 
-import { email } from '../../../core/validation';
-import { Heading, Intro, Info, Link, Alternative } from '../../../components/miscComponent';
+import {
+    Alternative,
+    Heading,
+    Info,
+    Intro,
+    Link,
+} from '../../../components/miscComponent'
+import { email } from '../../../core/validation'
 
-import { createForm } from '../../../components/form/formComponent';
-import { simpleField } from '../../../components/form/fields/simpleField';
-import ReCaptcha, {importGoogleRecaptchaScript} from '../../../components/reCaptcha';
+import { simpleField } from '../../../components/form/fields/simpleField'
+import { createForm } from '../../../components/form/formComponent'
+import ReCaptcha, {
+    importGoogleRecaptchaScript,
+} from '../../../components/reCaptcha'
 
 import { useI18n } from '../../../contexts/i18n'
-import { useRouting } from '../../../contexts/routing';
-import { useReachfive } from '../../../contexts/reachfive';
+import { useReachfive } from '../../../contexts/reachfive'
+import { useRouting } from '../../../contexts/routing'
 
-import type { OnError, OnSuccess } from '../../../types';
+import type { OnError, OnSuccess } from '../../../types'
 
 const AccountRecoveryForm = createForm<RequestAccountRecoveryParams>({
     prefix: 'r5-account-recovery-',
@@ -23,13 +31,14 @@ const AccountRecoveryForm = createForm<RequestAccountRecoveryParams>({
             key: 'email',
             label: 'email',
             type: 'email',
-            validator: email
-        })
+            validator: email,
+        }),
     ],
-    submitLabel: 'accountRecovery.submitLabel'
-});
+    submitLabel: 'accountRecovery.submitLabel',
+})
 
-const skipError = (error: unknown) => isAppError(error) ? error.error === 'resource_not_found' : false;
+const skipError = (error: unknown) =>
+    isAppError(error) ? error.error === 'resource_not_found' : false
 
 export interface AccountRecoveryViewProps {
     /**
@@ -64,12 +73,12 @@ export interface AccountRecoveryViewProps {
      * The URL sent in the email to which the user is redirected.
      * This URL must be whitelisted in the `Allowed Callback URLs` field of your ReachFive client settings.
      */
-    redirectUrl?: string,
+    redirectUrl?: string
     /**
      * Returned in the `redirectUrl` as a query parameter, this parameter is used to redirect users to a specific URL after a credentials reset.
      * Important: This parameter should only be used with Hosted Pages.
      */
-    returnToAfterAccountRecovery?: string,
+    returnToAfterAccountRecovery?: string
     /**
      * Callback function called when the request has succeed.
      */
@@ -95,14 +104,21 @@ export const AccountRecoveryView = ({
     const { goTo } = useRouting()
     const i18n = useI18n()
 
-    const callback = useCallback((data: RequestAccountRecoveryParams) =>
-        ReCaptcha.handle(
-            {...data, redirectUrl, returnToAfterAccountRecovery},
-            { recaptcha_enabled, recaptcha_site_key },
-            coreClient.requestAccountRecovery,
-            "account_recovery"
-        ),
-        [coreClient, recaptcha_enabled, recaptcha_site_key, redirectUrl, returnToAfterAccountRecovery]
+    const callback = useCallback(
+        (data: RequestAccountRecoveryParams) =>
+            ReCaptcha.handle(
+                { ...data, redirectUrl, returnToAfterAccountRecovery },
+                { recaptcha_enabled, recaptcha_site_key },
+                coreClient.requestAccountRecovery,
+                'account_recovery'
+            ),
+        [
+            coreClient,
+            recaptcha_enabled,
+            recaptcha_site_key,
+            redirectUrl,
+            returnToAfterAccountRecovery,
+        ]
     )
 
     useLayoutEffect(() => {
@@ -117,15 +133,19 @@ export const AccountRecoveryView = ({
                 showLabels={showLabels}
                 handler={callback}
                 onSuccess={() => {
-                    onSuccess()
+                    onSuccess({ name: 'account_recovery' })
                     goTo('account-recovery-success')
                 }}
                 onError={onError}
                 skipError={displaySafeErrorMessage && skipError}
             />
-            {allowLogin && <Alternative>
-                <Link target={'login'}>{i18n('accountRecovery.backToLoginLink')}</Link>
-            </Alternative>}
+            {allowLogin && (
+                <Alternative>
+                    <Link target={'login'}>
+                        {i18n('accountRecovery.backToLoginLink')}
+                    </Link>
+                </Alternative>
+            )}
         </div>
     )
 }
@@ -134,15 +154,19 @@ export interface AccountRecoverySuccessViewProps {
     allowLogin?: boolean
 }
 
-export const AccountRecoverySuccessView = ({ allowLogin }: AccountRecoverySuccessViewProps) => {
+export const AccountRecoverySuccessView = ({
+    allowLogin,
+}: AccountRecoverySuccessViewProps) => {
     const i18n = useI18n()
     return (
         <div>
             <Heading>{i18n('accountRecovery.title')}</Heading>
             <Info>{i18n('accountRecovery.successMessage')}</Info>
-            {allowLogin && <Alternative>
-                <Link target={'login'}>{i18n('back')}</Link>
-            </Alternative>}
+            {allowLogin && (
+                <Alternative>
+                    <Link target={'login'}>{i18n('back')}</Link>
+                </Alternative>
+            )}
         </div>
     )
 }

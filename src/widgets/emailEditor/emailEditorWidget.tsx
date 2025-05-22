@@ -1,17 +1,20 @@
-import React, { useLayoutEffect } from 'react';
+import React, { useLayoutEffect } from 'react'
 
-import { email } from '../../core/validation';
+import { email } from '../../core/validation'
 
-import { createMultiViewWidget } from '../../components/widget/widget';
-import { Info, Intro } from '../../components/miscComponent';
-import { createForm } from '../../components/form/formComponent';
-import { simpleField } from '../../components/form/fields/simpleField';
-import ReCaptcha, { importGoogleRecaptchaScript, type WithCaptchaToken } from '../../components/reCaptcha'
-import { useI18n } from '../../contexts/i18n';
-import { useReachfive } from '../../contexts/reachfive';
-import { useRouting } from '../../contexts/routing';
+import { simpleField } from '../../components/form/fields/simpleField'
+import { createForm } from '../../components/form/formComponent'
+import { Info, Intro } from '../../components/miscComponent'
+import ReCaptcha, {
+    importGoogleRecaptchaScript,
+    type WithCaptchaToken,
+} from '../../components/reCaptcha'
+import { createMultiViewWidget } from '../../components/widget/widget'
+import { useI18n } from '../../contexts/i18n'
+import { useReachfive } from '../../contexts/reachfive'
+import { useRouting } from '../../contexts/routing'
 
-import type { OnError, OnSuccess } from '../../types';
+import type { OnError, OnSuccess } from '../../types'
 
 type EmailFormData = { email: string }
 
@@ -23,10 +26,10 @@ const EmailEditorForm = createForm<EmailFormData>({
             key: 'email',
             label: 'email',
             type: 'email',
-            validator: email
-        })
-    ]
-});
+            validator: email,
+        }),
+    ],
+})
 
 interface MainViewProps {
     /**
@@ -80,20 +83,27 @@ const MainView = ({
     }, [recaptcha_site_key])
 
     const callback = (data: WithCaptchaToken<EmailFormData>) => {
-        return coreClient.updateEmail({ ...data, accessToken, redirectUrl });
+        return coreClient.updateEmail({ ...data, accessToken, redirectUrl })
     }
 
     const handleSuccess = () => {
-        onSuccess()
+        onSuccess({ name: 'email_updated' })
         goTo('success')
-    };
+    }
 
     return (
         <div>
             <Intro>{i18n('emailEditor.intro')}</Intro>
             <EmailEditorForm
                 showLabels={showLabels}
-                handler={(data: EmailFormData) => ReCaptcha.handle(data, { recaptcha_enabled, recaptcha_site_key }, callback, "update_email")}
+                handler={(data: EmailFormData) =>
+                    ReCaptcha.handle(
+                        data,
+                        { recaptcha_enabled, recaptcha_site_key },
+                        callback,
+                        'update_email'
+                    )
+                }
                 onSuccess={handleSuccess}
                 onError={onError}
             />
@@ -112,6 +122,6 @@ export default createMultiViewWidget<EmailEditorWidgetProps>({
     initialView: 'main',
     views: {
         main: MainView,
-        success: SuccessView
-    }
-});
+        success: SuccessView,
+    },
+})

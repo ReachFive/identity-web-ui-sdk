@@ -1,39 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Snapshot profile editor basic 1`] = `
-.c7 {
-  color: #adb5bd;
-}
-
-.c0 {
-  font-size: 14px;
-  -webkit-transition: -webkit-transform 400ms ease, opacity 400ms ease;
-  -webkit-transition: transform 400ms ease, opacity 400ms ease;
-  transition: transform 400ms ease, opacity 400ms ease;
-  opacity: 0;
-  padding: 20px;
-  border-radius: 3px;
-  background-color: #ffffff;
-  max-width: 400px;
-  box-sizing: border-box;
-  margin: 0 auto;
-}
-
-.c1 {
-  --color-primary: #229955;
-  --color-destructive: #dc4e41;
-  --color-background: #ffffff;
-  --color-text: #495057;
-  --color-border: #ced4da;
-  --spacing-padding-y: 9;
-  --spacing-padding-x: 12;
-  --spacing-block-inner-height: 38;
-  --spacing: 10;
-  --font-generic: 14;
-  --border-width: 1;
-  --radius: 3;
-}
-
 .c6 {
   display: block;
   width: 100%;
@@ -71,6 +38,10 @@ exports[`Snapshot profile editor basic 1`] = `
 
 .c6[disabled] {
   opacity: .65;
+}
+
+.c7 {
+  color: #adb5bd;
 }
 
 .c2 {
@@ -145,6 +116,35 @@ exports[`Snapshot profile editor basic 1`] = `
 
 .c5::placeholder {
   color: #868e96;
+}
+
+.c0 {
+  font-size: 14px;
+  -webkit-transition: -webkit-transform 400ms ease, opacity 400ms ease;
+  -webkit-transition: transform 400ms ease, opacity 400ms ease;
+  transition: transform 400ms ease, opacity 400ms ease;
+  opacity: 0;
+  padding: 20px;
+  border-radius: 3px;
+  background-color: #ffffff;
+  max-width: 400px;
+  box-sizing: border-box;
+  margin: 0 auto;
+}
+
+.c1 {
+  --color-primary: #229955;
+  --color-destructive: #dc4e41;
+  --color-background: #ffffff;
+  --color-text: #495057;
+  --color-border: #ced4da;
+  --spacing-padding-y: 9;
+  --spacing-padding-x: 12;
+  --spacing-block-inner-height: 38;
+  --spacing: 10;
+  --font-generic: 14;
+  --border-width: 1;
+  --radius: 3;
 }
 
 <div>

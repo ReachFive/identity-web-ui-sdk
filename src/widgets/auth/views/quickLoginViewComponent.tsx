@@ -1,16 +1,21 @@
-import React from 'react';
 import type { AuthOptions } from '@reachfive/identity-core'
+import React from 'react'
 
-import { Heading, Intro, Link, Alternative } from '../../../components/miscComponent';
-import { SocialButtons } from '../../../components/form/socialButtonsComponent';
+import { SocialButtons } from '../../../components/form/socialButtonsComponent'
+import {
+    Alternative,
+    Heading,
+    Intro,
+    Link,
+} from '../../../components/miscComponent'
 
-import { useI18n } from '../../../contexts/i18n';
+import { useI18n } from '../../../contexts/i18n'
 
-import { PropsWithSession  } from '../../../contexts/session'
-import { selectLogin } from '../authWidget.tsx';
-import { InitialScreen } from '../../../../constants.ts';
+import { InitialScreen } from '../../../../constants.ts'
+import { PropsWithSession } from '../../../contexts/session'
+import { selectLogin } from '../authWidget.tsx'
 
-import type { OnError, OnSuccess } from '../../../types';
+import type { OnError, OnSuccess } from '../../../types'
 
 export interface QuickLoginViewProps {
     initialScreen?: InitialScreen
@@ -34,7 +39,7 @@ export interface QuickLoginViewProps {
     onError?: OnError
 }
 
-export const  QuickLoginView = ({
+export const QuickLoginView = ({
     initialScreen,
     allowWebAuthnLogin = false,
     auth,
@@ -45,22 +50,24 @@ export const  QuickLoginView = ({
     const i18n = useI18n()
 
     // this component should never be display without session infos defined
-    if (!session) return null;
+    if (!session) return null
 
     return (
         <div>
-        <Heading>{session.name ?? session.email}</Heading>
-        <Intro>{i18n('lastTimeYouLoggedInWith')}</Intro>
-        <SocialButtons
-            providers={session.lastLoginType ? [session.lastLoginType] : []}
-            auth={auth}
-            onSuccess={onSuccess}
-            onError={onError}
-        />
-        <Alternative>
-            <Link target={selectLogin(initialScreen, allowWebAuthnLogin)}>{i18n('notYourAccount')}</Link>
-        </Alternative>
-    </div>
+            <Heading>{session.name ?? session.email}</Heading>
+            <Intro>{i18n('lastTimeYouLoggedInWith')}</Intro>
+            <SocialButtons
+                providers={session.lastLoginType ? [session.lastLoginType] : []}
+                auth={auth}
+                onSuccess={onSuccess}
+                onError={onError}
+            />
+            <Alternative>
+                <Link target={selectLogin(initialScreen, allowWebAuthnLogin)}>
+                    {i18n('notYourAccount')}
+                </Link>
+            </Alternative>
+        </div>
     )
 }
 

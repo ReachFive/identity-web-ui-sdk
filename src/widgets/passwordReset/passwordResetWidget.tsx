@@ -1,15 +1,18 @@
-import React from 'react';
+import React from 'react'
 
 import { parseQueryString } from '../../helpers/queryString'
 
-import { Heading, Info, Link } from '../../components/miscComponent';
-import { createMultiViewWidget } from '../../components/widget/widget';
-import { PasswordEditorForm, PasswordEditorFormData } from '../passwordEditor/passwordEditorWidget'
-import { useReachfive } from '../../contexts/reachfive';
-import { useRouting } from '../../contexts/routing';
-import { useI18n } from '../../contexts/i18n';
+import { Heading, Info, Link } from '../../components/miscComponent'
+import { createMultiViewWidget } from '../../components/widget/widget'
+import { useI18n } from '../../contexts/i18n'
+import { useReachfive } from '../../contexts/reachfive'
+import { useRouting } from '../../contexts/routing'
+import {
+    PasswordEditorForm,
+    PasswordEditorFormData,
+} from '../passwordEditor/passwordEditorWidget'
 
-import type { OnError, OnSuccess } from '../../types';
+import type { OnError, OnSuccess } from '../../types'
 
 interface MainViewProps {
     /**
@@ -46,14 +49,14 @@ const MainView = ({
     const handleSubmit = ({ password }: PasswordEditorFormData) => {
         return coreClient.updatePassword({
             password,
-            ...authentication
-        });
-    };
+            ...authentication,
+        })
+    }
 
     const handleSuccess = () => {
-        onSuccess();
-        goTo('success');
-    };
+        onSuccess({ name: 'password_reset' })
+        goTo('success')
+    }
 
     return (
         <div>
@@ -76,13 +79,15 @@ interface SuccessViewProps {
 
 const SuccessView = ({ loginLink }: SuccessViewProps) => {
     const i18n = useI18n()
-    return  (
+    return (
         <div>
             <Heading>{i18n('passwordReset.successTitle')}</Heading>
             <Info>{i18n('passwordReset.successMessage')}</Info>
             {loginLink && (
                 <Info>
-                    <Link href={loginLink}>{i18n('passwordReset.loginLink')}</Link>
+                    <Link href={loginLink}>
+                        {i18n('passwordReset.loginLink')}
+                    </Link>
                 </Info>
             )}
         </div>
@@ -92,22 +97,27 @@ const SuccessView = ({ loginLink }: SuccessViewProps) => {
 const resolveCode = () => {
     const qs = window.location.search.substring(1)
     const { verificationCode, email } = parseQueryString(qs)
-    return { authentication: { verificationCode, email } as Authentication };
-};
+    return { authentication: { verificationCode, email } as Authentication }
+}
 
-type Authentication = { verificationCode: string,  email: string }
+type Authentication = { verificationCode: string; email: string }
 type PropsWithAuthentication<P> = P & { authentication?: Authentication }
 
-export interface PasswordResetWidgetProps extends MainViewProps, SuccessViewProps {}
+export interface PasswordResetWidgetProps
+    extends MainViewProps,
+        SuccessViewProps {}
 
-export default createMultiViewWidget<PasswordResetWidgetProps, PropsWithAuthentication<PasswordResetWidgetProps>>({
+export default createMultiViewWidget<
+    PasswordResetWidgetProps,
+    PropsWithAuthentication<PasswordResetWidgetProps>
+>({
     initialView: 'main',
     views: {
         main: MainView,
-        success: SuccessView
+        success: SuccessView,
     },
-    prepare: options => ({
+    prepare: (options) => ({
         ...options,
-        ...resolveCode()
-    })
-});
+        ...resolveCode(),
+    }),
+})

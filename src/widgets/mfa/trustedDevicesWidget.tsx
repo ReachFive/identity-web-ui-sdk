@@ -1,12 +1,7 @@
-import React, { useEffect } from 'react';
-import { TrustedDevice } from "@reachfive/identity-core";
-import { X, LoaderCircle } from "lucide-react";
+import { TrustedDevice } from '@reachfive/identity-core'
+import { LoaderCircle, X } from 'lucide-react'
+import React, { useEffect } from 'react'
 
-import { createWidget } from "../../components/widget/widget.tsx";
-import { useI18n } from "../../contexts/i18n.tsx";
-import { dateFormat } from "../../helpers/utils.ts";
-import { useConfig } from "../../contexts/config.tsx";
-import { useReachfive } from "../../contexts/reachfive.tsx";
 import {
     AlertDialog,
     AlertDialogAction,
@@ -17,9 +12,14 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
     AlertDialogTrigger,
-} from "../../components/ui/alert-dialog"
-import { Button } from "../../components/ui/button"
-import { OnError, OnSuccess} from "../../types";
+} from '../../components/ui/alert-dialog'
+import { Button } from '../../components/ui/button'
+import { createWidget } from '../../components/widget/widget.tsx'
+import { useConfig } from '../../contexts/config.tsx'
+import { useI18n } from '../../contexts/i18n.tsx'
+import { useReachfive } from '../../contexts/reachfive.tsx'
+import { dateFormat } from '../../helpers/utils.ts'
+import { OnError, OnSuccess } from '../../types'
 
 export type TrustedDeviceWidgetProps = {
     accessToken: string
@@ -60,13 +60,20 @@ interface DeleteButtonProps {
     onDeleteCallback: (device: TrustedDevice) => void
 }
 
-const DeleteButton = ({ device, isOpen, setIsOpen, onDeleteCallback }: DeleteButtonProps)  => {
+const DeleteButton = ({
+    device,
+    isOpen,
+    setIsOpen,
+    onDeleteCallback,
+}: DeleteButtonProps) => {
     const i18n = useI18n()
 
     return (
         <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
             <AlertDialogTrigger asChild>
-                <Button variant="destructive" size="icon" className="ml-1"><X/></Button>
+                <Button variant="destructive" size="icon" className="ml-1">
+                    <X />
+                </Button>
             </AlertDialogTrigger>
             <AlertDialogContent>
                 <AlertDialogHeader>
@@ -76,8 +83,15 @@ const DeleteButton = ({ device, isOpen, setIsOpen, onDeleteCallback }: DeleteBut
                     <AlertDialogDescription />
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                    <AlertDialogCancel>{i18n('confirmation.cancel')}</AlertDialogCancel>
-                    <AlertDialogAction variant="destructive" onClick={_ => onDeleteCallback(device)}>{i18n('confirmation.yes')}</AlertDialogAction>
+                    <AlertDialogCancel>
+                        {i18n('confirmation.cancel')}
+                    </AlertDialogCancel>
+                    <AlertDialogAction
+                        variant="destructive"
+                        onClick={(_) => onDeleteCallback(device)}
+                    >
+                        {i18n('confirmation.yes')}
+                    </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>
         </AlertDialog>
@@ -88,10 +102,12 @@ export const TrustedDeviceList = ({
     accessToken,
     showRemoveTrustedDevice,
     onError = (() => {}) as OnError,
-    onSuccess = (() => {}) as OnSuccess
+    onSuccess = (() => {}) as OnSuccess,
 }: TrustedDeviceProps) => {
     const [isOpen, setIsOpen] = React.useState(false)
-    const [trustedDevices, setTrustedDevices] = React.useState<TrustedDevice[]>([])
+    const [trustedDevices, setTrustedDevices] = React.useState<TrustedDevice[]>(
+        []
+    )
     const [loading, setLoading] = React.useState(true)
 
     const i18n = useI18n()
@@ -100,10 +116,14 @@ export const TrustedDeviceList = ({
 
     const fetchTrustedDevices = () => {
         setLoading(true)
-        client.listTrustedDevices(accessToken)
-            .then(trustedDevicesResponse => {
+        client
+            .listTrustedDevices(accessToken)
+            .then((trustedDevicesResponse) => {
                 setTrustedDevices(trustedDevicesResponse.trustedDevices)
-                onSuccess(trustedDevicesResponse)
+                onSuccess({
+                    name: 'trusted_devices_listed',
+                    devices: trustedDevicesResponse.trustedDevices,
+                })
             })
             .catch(onError)
             .finally(() => setLoading(false))
@@ -111,51 +131,82 @@ export const TrustedDeviceList = ({
 
     useEffect(() => {
         fetchTrustedDevices()
-    }, [accessToken]);
+    }, [accessToken])
 
     const onDelete = (device: TrustedDevice) => {
         client
             .removeTrustedDevice({
                 accessToken: accessToken,
-                trustedDeviceId: device.id
+                trustedDeviceId: device.id,
             })
-            .then(res => {
+            .then(() => {
                 fetchTrustedDevices()
-                onSuccess(res)
+                onSuccess({
+                    name: 'trusted_device_deleted',
+                    device,
+                })
             })
             .catch(onError)
     }
 
-    if(loading) {
+    if (loading) {
         return <LoaderCircle className="animate-spin" />
     }
 
     return (
         <div>
-            {(trustedDevices.length === 0) && (
-                <div className="text-theme mb-1 text-center">{i18n('trustedDevices.empty')}</div>
+            {trustedDevices.length === 0 && (
+                <div className="mb-1 text-center text-theme">
+                    {i18n('trustedDevices.empty')}
+                </div>
             )}
             {trustedDevices.map((trustedDevice, _) => (
-                <div id={`trusted-device-${trustedDevice.id}`} key={`trusted-device-${trustedDevice.id}`}
-                     className={`flex items-center ${isOpen ? 'opacity-15' : ''}`} data-testid="trustedDevice">
-                    <div
-                        className="flex text-theme flex-col items-center basis-full line-height-1 align-middle whitespace-nowrap box-border p-[calc(var(--padding-y)*1px)] border-solid border-[calc(var(--border-width)*1px)] rounded-[calc(var(--border-radius)*1px)]">
-                        <div className="font-bold ">{trustedDevice.metadata.deviceName}</div>
-                        <div className="font-bold">{trustedDevice.metadata.ip}</div>
-                        <div className="font-bold">{trustedDevice.metadata.deviceClass}</div>
-                        <div className="font-bold">{trustedDevice.metadata.operatingSystem}</div>
-                        <div className="font-bold">{trustedDevice.metadata.userAgent}</div>
+                <div
+                    id={`trusted-device-${trustedDevice.id}`}
+                    key={`trusted-device-${trustedDevice.id}`}
+                    className={`flex items-center ${
+                        isOpen ? 'opacity-15' : ''
+                    }`}
+                    data-testid="trustedDevice"
+                >
+                    <div className="flex text-theme flex-col items-center basis-full line-height-1 align-middle whitespace-nowrap box-border p-[calc(var(--padding-y)*1px)] border-solid border-[calc(var(--border-width)*1px)] rounded-[calc(var(--border-radius)*1px)]">
+                        <div className="font-bold ">
+                            {trustedDevice.metadata.deviceName}
+                        </div>
+                        <div className="font-bold">
+                            {trustedDevice.metadata.ip}
+                        </div>
+                        <div className="font-bold">
+                            {trustedDevice.metadata.deviceClass}
+                        </div>
+                        <div className="font-bold">
+                            {trustedDevice.metadata.operatingSystem}
+                        </div>
+                        <div className="font-bold">
+                            {trustedDevice.metadata.userAgent}
+                        </div>
                         <div>
                             <span>{i18n('mfaList.createdAt')}&nbsp;: </span>
-                            <time
-                                dateTime={trustedDevice.createdAt}>{dateFormat(trustedDevice.createdAt, config.language)}</time>
+                            <time dateTime={trustedDevice.createdAt}>
+                                {dateFormat(
+                                    trustedDevice.createdAt,
+                                    config.language
+                                )}
+                            </time>
                         </div>
                     </div>
-                    {showRemoveTrustedDevice && <DeleteButton device={trustedDevice} isOpen={isOpen} setIsOpen={setIsOpen} onDeleteCallback={onDelete}/>}
+                    {showRemoveTrustedDevice && (
+                        <DeleteButton
+                            device={trustedDevice}
+                            isOpen={isOpen}
+                            setIsOpen={setIsOpen}
+                            onDeleteCallback={onDelete}
+                        />
+                    )}
                 </div>
             ))}
         </div>
-    );
+    )
 }
 
 export default createWidget<TrustedDeviceWidgetProps, TrustedDeviceProps>({
