@@ -1,6 +1,6 @@
 import icon from './yandex.svg';
 
-import type { Provider } from '../providers'
+import type { Provider } from '../providers';
 
 export default {
     key: 'yandex',
@@ -9,6 +9,6 @@ export default {
     icon,
     windowSize: {
         width: 655,
-        height: 700
-    }
+        height: 700,
+    },
 } satisfies Provider;

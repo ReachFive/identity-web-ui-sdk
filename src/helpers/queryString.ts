@@ -6,9 +6,9 @@ export function parseQueryString(value: string) {
 
         return key.length
             ? {
-                ...acc,
-                [key]: decodeURIComponent(value.replace(/\+/g, ' '))
-            }
+                  ...acc,
+                  [key]: decodeURIComponent(value.replace(/\+/g, ' ')),
+              }
             : acc;
     }, {});
 
@@ -17,9 +17,10 @@ export function parseQueryString(value: string) {
 
 export function toQueryString(obj: Record<string, string | number | boolean>, snakeCase = true) {
     const params = snakeCase ? snakeCaseProperties(obj) : obj;
-    return Object
-        .entries(params)
+    return Object.entries(params)
         .filter(([, value]) => value !== null && value !== undefined)
-        .map(([key, value]) => value !== '' ? `${key}=${encodeURIComponent(value as string)}` : key)
+        .map(([key, value]) =>
+            value !== '' ? `${key}=${encodeURIComponent(value as string)}` : key
+        )
         .join('&');
 }

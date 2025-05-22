@@ -1,7 +1,15 @@
-import { lighten, transparentize, darken } from 'polished';
+import { darken, lighten, transparentize } from 'polished';
 import { CSSProperties } from 'styled-components';
-    
-import { Theme, ThemeOptions, BaseTheme, LinkTheme, InputTheme, ButtonTheme, SocialButtonTheme } from '../types/styled'
+
+import {
+    BaseTheme,
+    ButtonTheme,
+    InputTheme,
+    LinkTheme,
+    SocialButtonTheme,
+    Theme,
+    ThemeOptions,
+} from '../types/styled';
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
 const white = '#fff';
@@ -17,7 +25,15 @@ const gray900 = '#212529';
 // const black = '#000';
 /* eslint-enable @typescript-eslint/no-unused-vars */
 
-type PrimitiveTheme = Omit<BaseTheme, 'paddingX' | 'paddingY' | 'spacing' | '_absoluteLineHeight' | '_blockInnerHeight' | '_blockHeight'>
+type PrimitiveTheme = Omit<
+    BaseTheme,
+    | 'paddingX'
+    | 'paddingY'
+    | 'spacing'
+    | '_absoluteLineHeight'
+    | '_blockInnerHeight'
+    | '_blockHeight'
+>;
 
 export const primitiveTheme: PrimitiveTheme = {
     animateWidgetEntrance: true,
@@ -37,28 +53,36 @@ export const primitiveTheme: PrimitiveTheme = {
     successColor: '#229955',
     lightBackgroundColor: gray200,
     maxWidth: 400,
-}
+};
 
-export const paddingY = (theme: Pick<PrimitiveTheme, 'fontSize' | 'lineHeight' | 'borderWidth'>) => 
-    Math.round(theme.fontSize * theme.lineHeight) / 2 - theme.borderWidth
+export const paddingY = (theme: Pick<PrimitiveTheme, 'fontSize' | 'lineHeight' | 'borderWidth'>) =>
+    Math.round(theme.fontSize * theme.lineHeight) / 2 - theme.borderWidth;
 
-    export const paddingX = (theme: Parameters<typeof paddingY>[0]) => 
-    Math.round(paddingY(theme) * 4 / 3)
+export const paddingX = (theme: Parameters<typeof paddingY>[0]) =>
+    Math.round((paddingY(theme) * 4) / 3);
 
 export const _absoluteLineHeight = (theme: Pick<PrimitiveTheme, 'fontSize' | 'lineHeight'>) =>
-    Math.round(theme.fontSize * theme.lineHeight)
+    Math.round(theme.fontSize * theme.lineHeight);
 
-export const _blockInnerHeight = (theme: Parameters<typeof _absoluteLineHeight>[0] & Parameters<typeof paddingY>[0]) =>
-    _absoluteLineHeight(theme) + 2 * paddingY(theme)
+export const _blockInnerHeight = (
+    theme: Parameters<typeof _absoluteLineHeight>[0] & Parameters<typeof paddingY>[0]
+) => _absoluteLineHeight(theme) + 2 * paddingY(theme);
 
-export const _blockHeight = (theme: Parameters<typeof _blockInnerHeight>[0] & Pick<PrimitiveTheme, 'borderWidth'>) =>
-    _blockInnerHeight(theme) + 2 * theme.borderWidth
+export const _blockHeight = (
+    theme: Parameters<typeof _blockInnerHeight>[0] & Pick<PrimitiveTheme, 'borderWidth'>
+) => _blockInnerHeight(theme) + 2 * theme.borderWidth;
 
-export const inputBtnFocusBoxShadow = (color?: CSSProperties['color']): NonNullable<CSSProperties['boxShadow']> =>
+export const inputBtnFocusBoxShadow = (
+    color?: CSSProperties['color']
+): NonNullable<CSSProperties['boxShadow']> =>
     color ? `0 0 0 3px ${transparentize(0.5, color)}` : 'none';
 
-export const height = (fontSize: number, lineHeight: number, paddingY: number, borderWidth: number) =>
-    Math.round(fontSize * lineHeight) + 2 * paddingY + 2 * borderWidth
+export const height = (
+    fontSize: number,
+    lineHeight: number,
+    paddingY: number,
+    borderWidth: number
+) => Math.round(fontSize * lineHeight) + 2 * paddingY + 2 * borderWidth;
 
 export const baseInputTheme = {
     color: gray700,
@@ -67,7 +91,7 @@ export const baseInputTheme = {
     disabledBackground: gray200,
     boxShadow: 'none',
     focusBoxShadow: inputBtnFocusBoxShadow,
-}
+};
 
 export const buildTheme = (themeOptions: ThemeOptions = {} as Partial<ThemeOptions>): Theme => {
     const {
@@ -76,8 +100,8 @@ export const buildTheme = (themeOptions: ThemeOptions = {} as Partial<ThemeOptio
         button: customButton,
         socialButton: customSocialButton,
         ...customBase
-    } = themeOptions
-    const primitive = { ...primitiveTheme, ...customBase }
+    } = themeOptions;
+    const primitive = { ...primitiveTheme, ...customBase };
     const base: BaseTheme = {
         paddingY: paddingY(primitive),
         paddingX: paddingX(primitive),
@@ -86,13 +110,13 @@ export const buildTheme = (themeOptions: ThemeOptions = {} as Partial<ThemeOptio
         _blockInnerHeight: _blockInnerHeight(primitive),
         _blockHeight: _blockHeight(primitive),
         ...primitive,
-    }
+    };
     const link: Omit<LinkTheme, 'hoverColor'> = {
         color: base.primaryColor,
         decoration: 'none',
         hoverDecoration: 'none',
-        ...customLink
-    }
+        ...customLink,
+    };
     const input: Omit<InputTheme, 'focusBoxShadow' | 'height'> = {
         ...baseInputTheme,
         fontSize: base.fontSize,
@@ -103,8 +127,8 @@ export const buildTheme = (themeOptions: ThemeOptions = {} as Partial<ThemeOptio
         borderRadius: base.borderRadius,
         borderWidth: base.borderWidth,
         focusBorderColor: lighten(0.25, base.primaryColor),
-        ...customInput
-    }
+        ...customInput,
+    };
     const button: Omit<ButtonTheme, 'focusBoxShadow' | 'height'> = {
         fontWeight: 'bold',
         fontSize: base.fontSize,
@@ -114,8 +138,8 @@ export const buildTheme = (themeOptions: ThemeOptions = {} as Partial<ThemeOptio
         borderColor: base.borderColor,
         borderRadius: base.borderRadius,
         borderWidth: base.borderWidth,
-        ...customButton
-    }
+        ...customButton,
+    };
     const socialButton: Omit<SocialButtonTheme, 'focusBoxShadow' | 'height' | 'textVisible'> = {
         inline: false,
         fontWeight: button.fontWeight,
@@ -126,8 +150,8 @@ export const buildTheme = (themeOptions: ThemeOptions = {} as Partial<ThemeOptio
         borderColor: button.borderColor,
         borderRadius: button.borderRadius,
         borderWidth: button.borderWidth,
-        ...customSocialButton
-    }
+        ...customSocialButton,
+    };
     return {
         ...base,
         link: {
@@ -137,18 +161,23 @@ export const buildTheme = (themeOptions: ThemeOptions = {} as Partial<ThemeOptio
         input: {
             ...input,
             focusBoxShadow: inputBtnFocusBoxShadow,
-            height: height(input.fontSize, input.lineHeight, input.paddingY, input.borderWidth)
+            height: height(input.fontSize, input.lineHeight, input.paddingY, input.borderWidth),
         },
         button: {
             ...button,
             focusBoxShadow: inputBtnFocusBoxShadow,
-            height: height(button.fontSize, button.lineHeight, button.paddingY, button.borderWidth)
+            height: height(button.fontSize, button.lineHeight, button.paddingY, button.borderWidth),
         },
         socialButton: {
             ...socialButton,
-            textVisible: !(socialButton.inline),
+            textVisible: !socialButton.inline,
             focusBoxShadow: inputBtnFocusBoxShadow,
-            height: height(socialButton.fontSize, socialButton.lineHeight, socialButton.paddingY, socialButton.borderWidth)
+            height: height(
+                socialButton.fontSize,
+                socialButton.lineHeight,
+                socialButton.paddingY,
+                socialButton.borderWidth
+            ),
         },
         passwordStrengthValidator: {
             color0: base.dangerColor,
@@ -156,6 +185,6 @@ export const buildTheme = (themeOptions: ThemeOptions = {} as Partial<ThemeOptio
             color2: base.warningColor,
             color3: lighten(0.2, base.successColor),
             color4: base.successColor,
-        }
-    }
-}
+        },
+    };
+};

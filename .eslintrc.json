@@ -35,12 +35,9 @@
         ]
     },
     "settings": {
-        "polyfills": [
-            "Promise",
-            "fetch"
-        ],
+        "polyfills": ["Promise", "fetch"],
         "react": {
             "version": "detect"
         }
     }
-  }
+}

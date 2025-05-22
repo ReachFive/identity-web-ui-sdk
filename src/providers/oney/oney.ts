@@ -1,6 +1,6 @@
 import icon from './oney.svg';
 
-import type { Provider } from '../providers'
+import type { Provider } from '../providers';
 
 export default {
     key: 'oney',

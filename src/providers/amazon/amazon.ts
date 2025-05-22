@@ -1,6 +1,6 @@
 import icon from './amazon.svg';
 
-import type { Provider } from '../providers'
+import type { Provider } from '../providers';
 
 export default {
     key: 'amazon',
@@ -9,6 +9,6 @@ export default {
     icon,
     windowSize: {
         width: 715,
-        height: 525
-    }
+        height: 525,
+    },
 } satisfies Provider;

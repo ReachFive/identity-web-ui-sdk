@@ -1,6 +1,6 @@
 import icon from './twitter.svg';
 
-import type { Provider } from '../providers'
+import type { Provider } from '../providers';
 
 export default {
     key: 'twitter',
@@ -9,6 +9,6 @@ export default {
     icon,
     windowSize: {
         width: 800,
-        height: 440
-    }
+        height: 440,
+    },
 } satisfies Provider;
