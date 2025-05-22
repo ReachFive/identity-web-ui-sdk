@@ -2,18 +2,18 @@
  * @jest-environment jsdom
  */
 
-import { beforeEach, describe, expect, jest, test } from '@jest/globals';
-import { render, screen, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event'
+import { beforeEach, describe, expect, jest, test } from '@jest/globals'
 import '@testing-library/jest-dom/jest-globals'
-import 'jest-styled-components';
+import { render, screen, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import 'jest-styled-components'
 
-import { type Client } from '@reachfive/identity-core';
+import { type Client } from '@reachfive/identity-core'
 
-import { type I18nMessages } from '../../../src/core/i18n';
-import type { Config } from '../../../src/types';
+import { type I18nMessages } from '../../../src/core/i18n'
+import type { Config, OnError, OnSuccess } from '../../../src/types'
 
-import emailEditorWidget from '../../../src/widgets/emailEditor/emailEditorWidget';
+import emailEditorWidget from '../../../src/widgets/emailEditor/emailEditorWidget'
 
 const defaultConfig: Config = {
     clientId: 'local',
@@ -35,49 +35,61 @@ const defaultConfig: Config = {
         minLength: 8,
         minStrength: 2,
         allowUpdateWithAccessTokenOnly: true,
-    }
-};
+    },
+}
 
 const defaultI18n: I18nMessages = {}
 
 describe('Snapshot', () => {
-    const generateSnapshot = (options: Partial<Parameters<typeof emailEditorWidget>[0]> = {}, config: Partial<Config> = {}) => async () => {
-        // @ts-expect-error partial Client
-        const apiClient: Client = {
-            updateEmail: jest.fn<Client['updateEmail']>().mockResolvedValue()
+    const generateSnapshot =
+        (
+            options: Partial<Parameters<typeof emailEditorWidget>[0]> = {},
+            config: Partial<Config> = {}
+        ) =>
+        async () => {
+            // @ts-expect-error partial Client
+            const apiClient: Client = {
+                updateEmail: jest
+                    .fn<Client['updateEmail']>()
+                    .mockResolvedValue(),
+            }
+
+            const widget = await emailEditorWidget(
+                { ...options, accessToken: 'azerty' },
+                {
+                    apiClient,
+                    config: { ...defaultConfig, ...config },
+                    defaultI18n,
+                }
+            )
+
+            await waitFor(async () => {
+                const { container } = await render(widget)
+                expect(container).toMatchSnapshot()
+            })
         }
 
-        const widget = await emailEditorWidget(
-            { ...options, accessToken: 'azerty' },
-            { apiClient,config: { ...defaultConfig, ...config }, defaultI18n }
-        )
-
-        await waitFor(async () => {
-            const { container } = await render(widget);
-            expect(container).toMatchSnapshot();
-        })
-    };
-
     describe('email editor', () => {
-        test('basic',
-            generateSnapshot({})
-        );
-    });
+        test('basic', generateSnapshot({}))
+    })
 })
 
 describe('DOM testing', () => {
     const updateEmail = jest.fn<Client['updateEmail']>()
 
-    const onError = jest.fn()
-    const onSuccess = jest.fn()
-    
+    const onError = jest.fn<OnError>()
+    const onSuccess = jest.fn<OnSuccess>()
+
     beforeEach(() => {
         updateEmail.mockClear()
         onError.mockClear()
         onSuccess.mockClear()
     })
 
-    const generateComponent = async (options: Partial<Parameters<typeof emailEditorWidget>[0]> = {}, config: Partial<Config> = {}) => {
+    const generateComponent = async (
+        options: Partial<Parameters<typeof emailEditorWidget>[0]> = {},
+        config: Partial<Config> = {}
+    ) => {
         // @ts-expect-error partial Client
         const apiClient: Client = {
             updateEmail,
@@ -85,13 +97,13 @@ describe('DOM testing', () => {
 
         const result = await emailEditorWidget(
             { onError, onSuccess, ...options, accessToken: 'azerty' },
-            {config: { ...defaultConfig, ...config }, apiClient, defaultI18n }
-        );
+            { config: { ...defaultConfig, ...config }, apiClient, defaultI18n }
+        )
 
         return waitFor(async () => {
-            return render(result);
+            return render(result)
         })
-    };
+    }
 
     describe('emailEditor', () => {
         test('default', async () => {
@@ -103,11 +115,11 @@ describe('DOM testing', () => {
 
             const emailInput = screen.getByLabelText('email')
             expect(emailInput).toBeInTheDocument()
-            
+
             await userEvent.clear(emailInput)
             await userEvent.type(emailInput, 'alice@reach5.co')
-            
-            const submitBtn = screen.getByRole('button', { name: 'send'})
+
+            const submitBtn = screen.getByRole('button', { name: 'send' })
             expect(submitBtn).toBeInTheDocument()
 
             await user.click(submitBtn)
@@ -119,7 +131,11 @@ describe('DOM testing', () => {
                 })
             )
 
-            expect(onSuccess).toBeCalled()
+            expect(onSuccess).toBeCalledWith(
+                expect.objectContaining({
+                    name: 'email_updated',
+                })
+            )
             expect(onError).not.toBeCalled()
         })
 
@@ -132,11 +148,11 @@ describe('DOM testing', () => {
 
             const emailInput = screen.getByLabelText('email')
             expect(emailInput).toBeInTheDocument()
-            
+
             await userEvent.clear(emailInput)
             await userEvent.type(emailInput, 'alice@reach5.co')
-            
-            const submitBtn = screen.getByRole('button', { name: 'send'})
+
+            const submitBtn = screen.getByRole('button', { name: 'send' })
             expect(submitBtn).toBeInTheDocument()
 
             await user.click(submitBtn)
@@ -145,5 +161,4 @@ describe('DOM testing', () => {
             expect(onError).toBeCalledWith('Unexpected error')
         })
     })
-
 })

@@ -1,28 +1,32 @@
-import React, { useCallback, useLayoutEffect, useState } from 'react';
-import { AuthOptions } from '@reachfive/identity-core';
-import { SignupParams } from '@reachfive/identity-core/es/main/oAuthClient';
+import { AuthOptions } from '@reachfive/identity-core'
+import { SignupParams } from '@reachfive/identity-core/es/main/oAuthClient'
+import React, { useCallback, useLayoutEffect, useState } from 'react'
 
-import { createForm } from './formComponent';
-import { buildFormFields, type Field } from './formFieldFactory';
+import { type PhoneNumberOptions } from './fields/phoneNumberField'
+import { createForm } from './formComponent'
 import { UserAggreementStyle } from './formControlsComponent'
-import { type PhoneNumberOptions } from './fields/phoneNumberField';
+import { buildFormFields, type Field } from './formFieldFactory'
 
-import { MarkdownContent } from '../miscComponent';
-import { snakeCaseProperties } from '../../helpers/transformObjectProperties';
-import { isValued } from '../../helpers/utils';
-import ReCaptcha, { extractCaptchaTokenFromData, importGoogleRecaptchaScript, type WithCaptchaToken } from '../reCaptcha';
+import { snakeCaseProperties } from '../../helpers/transformObjectProperties'
+import { isValued } from '../../helpers/utils'
+import { MarkdownContent } from '../miscComponent'
+import ReCaptcha, {
+    extractCaptchaTokenFromData,
+    importGoogleRecaptchaScript,
+    type WithCaptchaToken,
+} from '../reCaptcha'
 
-import { useReachfive } from '../../contexts/reachfive';
-import { useConfig } from '../../contexts/config';
+import { useConfig } from '../../contexts/config'
+import { useReachfive } from '../../contexts/reachfive'
 
-import { isEqual } from '../../helpers/utils';
+import { isEqual } from '../../helpers/utils'
 
-import type { OnError, OnSuccess } from '../../types';
+import type { OnError, OnSuccess } from '../../types'
 
 const SignupForm = createForm<SignupParams['data']>({
     prefix: 'r5-signup-',
-    submitLabel: 'signup.submitLabel'
-});
+    submitLabel: 'signup.submitLabel',
+})
 
 export interface PasswordSignupFormProps {
     auth?: AuthOptions
@@ -48,7 +52,7 @@ export interface PasswordSignupFormProps {
 
 export const PasswordSignupForm = ({
     auth,
-    beforeSignup = x => x,
+    beforeSignup = (x) => x,
     canShowPassword,
     phoneNumberOptions,
     recaptcha_enabled = false,
@@ -61,11 +65,11 @@ export const PasswordSignupForm = ({
         'family_name',
         'email',
         'password',
-        'password_confirmation'
+        'password_confirmation',
     ],
     userAgreement,
     onError = (() => {}) as OnError,
-    onSuccess = (() => {}) as OnSuccess,
+    onSuccess = (() => {}) satisfies OnSuccess,
 }: PasswordSignupFormProps) => {
     const coreClient = useReachfive()
     const config = useConfig()
@@ -90,48 +94,78 @@ export const PasswordSignupForm = ({
     )
 
     const refreshBlacklist = useCallback(
-        ({ email = '', givenName = '', familyName = '' }: SignupParams['data']) => {
+        ({
+            email = '',
+            givenName = '',
+            familyName = '',
+        }: SignupParams['data']) => {
             const list = [
                 email.split('@'),
                 email,
                 givenName.split(' '),
-                familyName.split(' ')
+                familyName.split(' '),
             ]
                 .flat(1)
-                .map(str => str.trim().toLowerCase())
-                .filter(function (word) { return isValued(word) });
+                .map((str) => str.trim().toLowerCase())
+                .filter(function (word) {
+                    return isValued(word)
+                })
 
             const distinct = Array.from(new Set(list))
 
             if (!isEqual(distinct, blacklist)) {
-                setBlacklist(distinct);
+                setBlacklist(distinct)
             }
         },
         [blacklist]
     )
 
-    const fields = buildFormFields(signupFields, { ...config, canShowPassword, errorArchivedConsents: true });
+    const fields = buildFormFields(signupFields, {
+        ...config,
+        canShowPassword,
+        errorArchivedConsents: true,
+    })
 
     const allFields = userAgreement
         ? [
-            ...fields,
-            { staticContent: <MarkdownContent key="user-aggreement" data-testid="user-aggreement" root={UserAggreementStyle} source={userAgreement} /> }
-        ]
-        : fields;
+              ...fields,
+              {
+                  staticContent: (
+                      <MarkdownContent
+                          key="user-aggreement"
+                          data-testid="user-aggreement"
+                          root={UserAggreementStyle}
+                          source={userAgreement}
+                      />
+                  ),
+              },
+          ]
+        : fields
 
-    return <SignupForm
-        fields={allFields}
-        showLabels={showLabels}
-        beforeSubmit={beforeSignup}
-        onFieldChange={refreshBlacklist}
-        sharedProps={{
-            blacklist,
-            ...phoneNumberOptions,
-        }}
-        handler={(data: SignupParams['data']) => ReCaptcha.handle(data, { recaptcha_enabled, recaptcha_site_key }, callback, "signup")}
-        onSuccess={onSuccess}
-        onError={onError}
-    />
+    return (
+        <SignupForm
+            fields={allFields}
+            showLabels={showLabels}
+            beforeSubmit={beforeSignup}
+            onFieldChange={refreshBlacklist}
+            sharedProps={{
+                blacklist,
+                ...phoneNumberOptions,
+            }}
+            handler={(data: SignupParams['data']) =>
+                ReCaptcha.handle(
+                    data,
+                    { recaptcha_enabled, recaptcha_site_key },
+                    callback,
+                    'signup'
+                )
+            }
+            onSuccess={(authResult) =>
+                onSuccess({ name: 'sign_up', authResult })
+            }
+            onError={onError}
+        />
+    )
 }
 
 export default PasswordSignupForm

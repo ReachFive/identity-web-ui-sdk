@@ -2,18 +2,18 @@
  * @jest-environment jsdom
  */
 
-import { beforeEach, describe, expect, jest, test } from '@jest/globals';
-import { render, screen, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event'
+import { beforeEach, describe, expect, jest, test } from '@jest/globals'
 import '@testing-library/jest-dom/jest-globals'
-import 'jest-styled-components';
+import { render, screen, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import 'jest-styled-components'
 
-import { type Profile, type Client } from '@reachfive/identity-core';
+import { type Client, type Profile } from '@reachfive/identity-core'
 
-import { type I18nMessages } from '../../../src/core/i18n';
-import type { Config } from '../../../src/types';
+import { type I18nMessages } from '../../../src/core/i18n'
+import type { Config, OnError, OnSuccess } from '../../../src/types'
 
-import profileEditorWidget from '../../../src/widgets/profileEditor/profileEditorWidget';
+import profileEditorWidget from '../../../src/widgets/profileEditor/profileEditorWidget'
 
 const defaultConfig: Config = {
     clientId: 'local',
@@ -31,75 +31,89 @@ const defaultConfig: Config = {
     mfaEmailEnabled: false,
     rbaEnabled: false,
     consentsVersions: {
-        'optinTesting': {
+        optinTesting: {
             key: 'optinTesting',
             consentType: 'opt-in',
             status: 'active',
-            versions: [{
-                versionId: 1,
-                title: 'Opt-in Testing v1',
-                language: 'fr',
-                description: 'This is just a test'
-            }]
-        }
+            versions: [
+                {
+                    versionId: 1,
+                    title: 'Opt-in Testing v1',
+                    language: 'fr',
+                    description: 'This is just a test',
+                },
+            ],
+        },
     },
     passwordPolicy: {
         minLength: 8,
         minStrength: 2,
         allowUpdateWithAccessTokenOnly: true,
-    }
-};
+    },
+}
 
 const defaultI18n: I18nMessages = {}
 
 describe('Snapshot', () => {
-    const generateSnapshot = (options: Partial<Parameters<typeof profileEditorWidget>[0]> = {}, user: Partial<Profile>, config: Partial<Config> = {}) => async () => {
-        // @ts-expect-error partial Client
-        const apiClient: Client = {
-            getUser: jest.fn<Client['getUser']>().mockResolvedValue(user as Profile)
+    const generateSnapshot =
+        (
+            options: Partial<Parameters<typeof profileEditorWidget>[0]> = {},
+            user: Partial<Profile>,
+            config: Partial<Config> = {}
+        ) =>
+        async () => {
+            // @ts-expect-error partial Client
+            const apiClient: Client = {
+                getUser: jest
+                    .fn<Client['getUser']>()
+                    .mockResolvedValue(user as Profile),
+            }
+
+            const widget = await profileEditorWidget(
+                { ...options, accessToken: 'azerty' },
+                {
+                    apiClient,
+                    config: { ...defaultConfig, ...config },
+                    defaultI18n,
+                }
+            )
+
+            await waitFor(async () => {
+                const { container, rerender } = await render(widget)
+
+                await waitFor(() =>
+                    expect(apiClient.getUser).toHaveBeenCalled()
+                )
+
+                rerender(widget)
+
+                expect(container).toMatchSnapshot()
+            })
         }
 
-        const widget = await profileEditorWidget(
-            { ...options, accessToken: 'azerty' },
-            { apiClient,config: { ...defaultConfig, ...config }, defaultI18n }
-        )
-
-        await waitFor(async () => {
-            const { container, rerender } = await render(widget);
-
-            await waitFor(() => expect(apiClient.getUser).toHaveBeenCalled())
-    
-            await rerender(widget)
-
-            expect(container).toMatchSnapshot();
-        })
-    };
-
     describe('profile editor', () => {
-        test('basic',
+        test(
+            'basic',
             generateSnapshot(
                 {
-                    fields: [
-                        'givenName',
-                        'familyName'
-                    ]
+                    fields: ['givenName', 'familyName'],
                 },
                 {
                     givenName: 'John',
                     familyName: 'Do',
                 }
             )
-        );
-    });
+        )
+    })
 })
 
 describe('DOM testing', () => {
     const getUser = jest.fn<Client['getUser']>()
     const updateProfile = jest.fn<Client['updateProfile']>()
 
-    const onError = jest.fn()
-    const onSuccess = jest.fn()
-    
+    const onError = jest.fn<OnError>()
+    const onSuccess = jest.fn<OnSuccess>()
+
     beforeEach(() => {
         getUser.mockClear()
         updateProfile.mockClear()
@@ -107,7 +121,10 @@ describe('DOM testing', () => {
         onSuccess.mockClear()
     })
 
-    const generateComponent = async (options: Partial<Parameters<typeof profileEditorWidget>[0]> = {}, config: Partial<Config> = {}) => {
+    const generateComponent = async (
+        options: Partial<Parameters<typeof profileEditorWidget>[0]> = {},
+        config: Partial<Config> = {}
+    ) => {
         // @ts-expect-error partial Client
         const apiClient: Client = {
             getUser,
@@ -116,13 +133,13 @@ describe('DOM testing', () => {
 
         const result = await profileEditorWidget(
             { onError, onSuccess, ...options, accessToken: 'azerty' },
-            {config: { ...defaultConfig, ...config }, apiClient, defaultI18n }
-        );
+            { config: { ...defaultConfig, ...config }, apiClient, defaultI18n }
+        )
 
         return waitFor(async () => {
-            return render(result);
+            return render(result)
         })
-    };
+    }
 
     describe('profileEditor', () => {
         test('default', async () => {
@@ -138,11 +155,11 @@ describe('DOM testing', () => {
                         consentType: 'opt-in',
                         consentVersion: {
                             versionId: 1,
-                            language: 'fr'
+                            language: 'fr',
                         },
                         date: '2021-01-01T00:00:00.000Z',
-                    }
-                }
+                    },
+                },
             }
 
             getUser.mockResolvedValue(profile as Profile)
@@ -150,11 +167,7 @@ describe('DOM testing', () => {
             updateProfile.mockResolvedValue()
 
             await generateComponent({
-                fields: [
-                    'given_name',
-                    'family_name',
-                    'optinTesting'
-                ]
+                fields: ['given_name', 'family_name', 'optinTesting'],
             })
 
             expect(getUser).toBeCalledWith(
@@ -167,21 +180,23 @@ describe('DOM testing', () => {
             const givenNameInput = screen.getByLabelText('givenName')
             expect(givenNameInput).toBeInTheDocument()
             expect(givenNameInput).toHaveValue(profile.givenName)
-            
+
             const familyNameInput = screen.getByLabelText('familyName')
             expect(familyNameInput).toBeInTheDocument()
             expect(familyNameInput).toHaveValue(profile.familyName)
-            
+
             await userEvent.clear(givenNameInput)
             await userEvent.type(givenNameInput, 'alice')
             await userEvent.clear(familyNameInput)
             await userEvent.type(familyNameInput, 'reachfive')
-            
+
             // const consentCheckbox = screen.getByTestId('consents.optinTesting.1')
-            const consentCheckbox = screen.getByLabelText(defaultConfig.consentsVersions['optinTesting'].versions[0].title)
+            const consentCheckbox = screen.getByLabelText(
+                defaultConfig.consentsVersions.optinTesting.versions[0].title
+            )
             await user.click(consentCheckbox)
 
-            const submitBtn = screen.getByRole('button', { name: 'save'})
+            const submitBtn = screen.getByRole('button', { name: 'save' })
             expect(submitBtn).toBeInTheDocument()
 
             await user.click(submitBtn)
@@ -193,20 +208,25 @@ describe('DOM testing', () => {
                         givenName: 'alice',
                         familyName: 'reachfive',
                         consents: {
-                            optin_testing: { // consent key should be snakecase
+                            optin_testing: {
+                                // consent key should be snakecase
                                 granted: true,
                                 consentType: 'opt-in',
                                 consentVersion: {
                                     versionId: 1,
-                                    language: 'fr'
-                                }
-                            }
-                        }
-                    }
+                                    language: 'fr',
+                                },
+                            },
+                        },
+                    },
                 })
             )
 
-            expect(onSuccess).toBeCalled()
+            expect(onSuccess).toBeCalledWith(
+                expect.objectContaining({
+                    name: 'profile_updated',
+                })
+            )
             expect(onError).not.toBeCalled()
         })
 
@@ -215,10 +235,7 @@ describe('DOM testing', () => {
 
             await expect(
                 generateComponent({
-                    fields: [
-                        'given_name',
-                        'family_name'
-                    ]
+                    fields: ['given_name', 'family_name'],
                 })
             ).rejects.toEqual('Unexpected error')
 
@@ -241,10 +258,7 @@ describe('DOM testing', () => {
             updateProfile.mockRejectedValue('Unexpected error')
 
             await generateComponent({
-                fields: [
-                    'given_name',
-                    'family_name'
-                ]
+                fields: ['given_name', 'family_name'],
             })
 
             expect(getUser).toBeCalled()
@@ -256,8 +270,8 @@ describe('DOM testing', () => {
             const familyNameInput = screen.getByLabelText('familyName')
             await userEvent.clear(familyNameInput)
             await userEvent.type(familyNameInput, 'reachfive')
-            
-            const submitBtn = screen.getByRole('button', { name: 'save'})
+
+            const submitBtn = screen.getByRole('button', { name: 'save' })
             await user.click(submitBtn)
 
             expect(updateProfile).toBeCalled()
@@ -266,5 +280,4 @@ describe('DOM testing', () => {
             expect(onError).toBeCalledWith('Unexpected error')
         })
     })
-
 })

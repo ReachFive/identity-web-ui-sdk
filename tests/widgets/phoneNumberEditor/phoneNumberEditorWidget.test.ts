@@ -2,18 +2,18 @@
  * @jest-environment jsdom
  */
 
-import { beforeEach, describe, expect, jest, test } from '@jest/globals';
-import { render, screen, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event'
+import { beforeEach, describe, expect, jest, test } from '@jest/globals'
 import '@testing-library/jest-dom/jest-globals'
-import 'jest-styled-components';
+import { render, screen, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import 'jest-styled-components'
 
-import { type Client } from '@reachfive/identity-core';
+import { type Client } from '@reachfive/identity-core'
 
-import { type I18nMessages } from '../../../src/core/i18n';
-import type { Config } from '../../../src/types';
+import { type I18nMessages } from '../../../src/core/i18n'
+import type { Config, OnError, OnSuccess } from '../../../src/types'
 
-import phoneNumberEditorWidget from '../../../src/widgets/phoneNumberEditor/phoneNumberEditorWidget';
+import phoneNumberEditorWidget from '../../../src/widgets/phoneNumberEditor/phoneNumberEditorWidget'
 
 const defaultConfig: Config = {
     clientId: 'local',
@@ -35,50 +35,64 @@ const defaultConfig: Config = {
         minLength: 8,
         minStrength: 2,
         allowUpdateWithAccessTokenOnly: true,
-    }
-};
+    },
+}
 
 const defaultI18n: I18nMessages = {}
 
 describe('Snapshot', () => {
-    const generateSnapshot = (options: Partial<Parameters<typeof phoneNumberEditorWidget>[0]> = {}, config: Partial<Config> = {}) => async () => {
-        // @ts-expect-error partial Client
-        const apiClient: Client = {
-            updatePhoneNumber: jest.fn<Client['updatePhoneNumber']>().mockResolvedValue()
+    const generateSnapshot =
+        (
+            options: Partial<
+                Parameters<typeof phoneNumberEditorWidget>[0]
+            > = {},
+            config: Partial<Config> = {}
+        ) =>
+        async () => {
+            // @ts-expect-error partial Client
+            const apiClient: Client = {
+                updatePhoneNumber: jest
+                    .fn<Client['updatePhoneNumber']>()
+                    .mockResolvedValue(),
+            }
+
+            const widget = await phoneNumberEditorWidget(
+                { ...options, accessToken: 'azerty' },
+                {
+                    apiClient,
+                    config: { ...defaultConfig, ...config },
+                    defaultI18n,
+                }
+            )
+
+            await waitFor(async () => {
+                const { container } = await render(widget)
+                expect(container).toMatchSnapshot()
+            })
         }
 
-        const widget = await phoneNumberEditorWidget(
-            { ...options, accessToken: 'azerty' },
-            { apiClient,config: { ...defaultConfig, ...config }, defaultI18n }
-        )
-
-        await waitFor(async () => {
-            const { container } = await render(widget);
-            expect(container).toMatchSnapshot();
-        })
-    };
-
     describe('phone number editor', () => {
-        test('basic',
-            generateSnapshot({})
-        );
-    });
+        test('basic', generateSnapshot({}))
+    })
 })
 
 describe('DOM testing', () => {
     const updatePhoneNumber = jest.fn<Client['updatePhoneNumber']>()
     const verifyPhoneNumber = jest.fn<Client['verifyPhoneNumber']>()
 
-    const onError = jest.fn()
-    const onSuccess = jest.fn()
-    
+    const onError = jest.fn<OnError>()
+    const onSuccess = jest.fn<OnSuccess>()
+
     beforeEach(() => {
         updatePhoneNumber.mockClear()
         onError.mockClear()
         onSuccess.mockClear()
     })
 
-    const generateComponent = async (options: Partial<Parameters<typeof phoneNumberEditorWidget>[0]> = {}, config: Partial<Config> = {}) => {
+    const generateComponent = async (
+        options: Partial<Parameters<typeof phoneNumberEditorWidget>[0]> = {},
+        config: Partial<Config> = {}
+    ) => {
         // @ts-expect-error partial Client
         const apiClient: Client = {
             updatePhoneNumber,
@@ -87,13 +101,13 @@ describe('DOM testing', () => {
 
         const result = await phoneNumberEditorWidget(
             { onError, onSuccess, ...options, accessToken: 'azerty' },
-            {config: { ...defaultConfig, ...config }, apiClient, defaultI18n }
-        );
+            { config: { ...defaultConfig, ...config }, apiClient, defaultI18n }
+        )
 
         return waitFor(async () => {
-            return render(result);
+            return render(result)
         })
-    };
+    }
 
     describe('phoneNumberEditor', () => {
         test('default', async () => {
@@ -106,11 +120,11 @@ describe('DOM testing', () => {
 
             const phoneNumberInput = screen.getByLabelText('phoneNumber')
             expect(phoneNumberInput).toBeInTheDocument()
-            
+
             await userEvent.clear(phoneNumberInput)
             await userEvent.type(phoneNumberInput, '+33123456789')
-            
-            const submitBtn = screen.getByRole('button', { name: 'send'})
+
+            const submitBtn = screen.getByRole('button', { name: 'send' })
             expect(submitBtn).toBeInTheDocument()
 
             await user.click(submitBtn)
@@ -122,13 +136,14 @@ describe('DOM testing', () => {
                 })
             )
 
-            const verificationCodeInput = screen.getByLabelText('verificationCode')
+            const verificationCodeInput =
+                screen.getByLabelText('verificationCode')
             expect(verificationCodeInput).toBeInTheDocument()
-            
+
             await userEvent.clear(verificationCodeInput)
             await userEvent.type(verificationCodeInput, '123456')
-            
-            const submitCodeBtn = screen.getByRole('button', { name: 'send'})
+
+            const submitCodeBtn = screen.getByRole('button', { name: 'send' })
             expect(submitCodeBtn).toBeInTheDocument()
 
             await user.click(submitCodeBtn)
@@ -141,7 +156,12 @@ describe('DOM testing', () => {
                 })
             )
 
-            expect(onSuccess).toBeCalled()
+            expect(onSuccess).toBeCalledWith(
+                expect.objectContaining({
+                    name: 'phone_number_verified',
+                    phoneNumber: '+33123456789',
+                })
+            )
             expect(onError).not.toBeCalled()
         })
 
@@ -154,11 +174,11 @@ describe('DOM testing', () => {
 
             const phoneNumberInput = screen.getByLabelText('phoneNumber')
             expect(phoneNumberInput).toBeInTheDocument()
-            
+
             await userEvent.clear(phoneNumberInput)
             await userEvent.type(phoneNumberInput, '+33123456789')
-            
-            const submitBtn = screen.getByRole('button', { name: 'send'})
+
+            const submitBtn = screen.getByRole('button', { name: 'send' })
 
             await user.click(submitBtn)
 
@@ -176,24 +196,25 @@ describe('DOM testing', () => {
 
             const phoneNumberInput = screen.getByLabelText('phoneNumber')
             expect(phoneNumberInput).toBeInTheDocument()
-            
+
             await userEvent.clear(phoneNumberInput)
             await userEvent.type(phoneNumberInput, '+33123456789')
-            
-            const submitBtn = screen.getByRole('button', { name: 'send'})
+
+            const submitBtn = screen.getByRole('button', { name: 'send' })
             expect(submitBtn).toBeInTheDocument()
 
             await user.click(submitBtn)
 
             expect(updatePhoneNumber).toBeCalled()
 
-            const verificationCodeInput = screen.getByLabelText('verificationCode')
+            const verificationCodeInput =
+                screen.getByLabelText('verificationCode')
             expect(verificationCodeInput).toBeInTheDocument()
-            
+
             await userEvent.clear(verificationCodeInput)
             await userEvent.type(verificationCodeInput, '123456')
-            
-            const submitCodeBtn = screen.getByRole('button', { name: 'send'})
+
+            const submitCodeBtn = screen.getByRole('button', { name: 'send' })
 
             await user.click(submitCodeBtn)
 
@@ -203,5 +224,4 @@ describe('DOM testing', () => {
             expect(onError).toBeCalledWith('Unexpected error')
         })
     })
-
 })

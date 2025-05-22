@@ -1,20 +1,20 @@
-import React from 'react';
+import React from 'react'
 
-import { Validator } from '../../core/validation';
+import { Validator } from '../../core/validation'
 
-import { createWidget } from '../../components/widget/widget';
-import { createForm, FormContext } from '../../components/form/formComponent';
 import passwordField from '../../components/form/fields/passwordField'
-import simplePasswordField from '../../components/form/fields/simplePasswordField';
+import simplePasswordField from '../../components/form/fields/simplePasswordField'
+import { createForm, FormContext } from '../../components/form/formComponent'
+import { createWidget } from '../../components/widget/widget'
 
-import { useReachfive } from '../../contexts/reachfive';
+import { useReachfive } from '../../contexts/reachfive'
 
-import type { OnError, OnSuccess } from '../../types';
+import type { OnError, OnSuccess } from '../../types'
 
 export type PasswordEditorFormData = {
-    password: string,
+    password: string
     passwordConfirmation: string
-    oldPassword: string,
+    oldPassword: string
 }
 
 interface PasswordEditorFormProps {
@@ -30,40 +30,48 @@ interface PasswordEditorFormProps {
     canShowPassword?: boolean
 }
 
-export const PasswordEditorForm = createForm<PasswordEditorFormData, PasswordEditorFormProps>({
+export const PasswordEditorForm = createForm<
+    PasswordEditorFormData,
+    PasswordEditorFormProps
+>({
     prefix: 'r5-password-editor-',
     fields({ promptOldPassword = false, canShowPassword = false, config }) {
         return [
             ...(promptOldPassword
                 ? [
-                    simplePasswordField({
-                        key: 'old_password',
-                        label: 'oldPassword'
-                    })
-                ]
-                : []
+                      simplePasswordField({
+                          key: 'old_password',
+                          label: 'oldPassword',
+                      }),
+                  ]
+                : []),
+            passwordField(
+                {
+                    label: 'newPassword',
+                    autoComplete: 'new-password',
+                    canShowPassword,
+                },
+                config
             ),
-            passwordField({
-                label: 'newPassword',
-                autoComplete: 'new-password',
-                canShowPassword
-            }, config),
             simplePasswordField({
                 key: 'password_confirmation',
                 label: 'passwordConfirmation',
                 autoComplete: 'new-password',
-                validator: new Validator<string, FormContext<PasswordEditorFormData>>({
+                validator: new Validator<
+                    string,
+                    FormContext<PasswordEditorFormData>
+                >({
                     rule: (value, ctx) => {
                         return value === ctx.fields.password
                     },
-                    hint: 'passwordMatch'
-                })
-            })
-        ];
+                    hint: 'passwordMatch',
+                }),
+            }),
+        ]
     },
     resetAfterSuccess: true,
-    resetAfterError: true
-});
+    resetAfterError: true,
+})
 
 export interface PasswordEditorProps extends PasswordEditorFormProps {
     /**
@@ -98,18 +106,21 @@ const PasswordEditor = ({
     canShowPassword = false,
     promptOldPassword = false,
     showLabels = false,
-    onSuccess = () => { },
-    onError = () => { }
+    onSuccess = () => {},
+    onError = () => {},
 }: PasswordEditorProps) => {
     const coreClient = useReachfive()
 
-    const handleSubmit = ({ password, oldPassword }: PasswordEditorFormData) => {
+    const handleSubmit = ({
+        password,
+        oldPassword,
+    }: PasswordEditorFormData) => {
         return coreClient.updatePassword({
             password,
             ...(promptOldPassword ? { oldPassword } : {}),
             ...authentication,
-        });
-    };
+        })
+    }
 
     return (
         <PasswordEditorForm
@@ -118,7 +129,7 @@ const PasswordEditor = ({
             promptOldPassword={promptOldPassword}
             canShowPassword={canShowPassword}
             showLabels={showLabels}
-            onSuccess={onSuccess}
+            onSuccess={() => onSuccess({ name: 'password_updated' })}
             onError={onError}
         />
     )
@@ -126,22 +137,28 @@ const PasswordEditor = ({
 
 type Authentication = { accessToken: string } | { userId: string }
 
-const resolveAuthentication = (accessToken?: string, userId?: string): { authentication?: Authentication } => {
+const resolveAuthentication = (
+    accessToken?: string,
+    userId?: string
+): { authentication?: Authentication } => {
     if (accessToken) {
-        return { authentication: { accessToken } };
+        return { authentication: { accessToken } }
     } else if (userId) {
-        return { authentication: { userId } };
+        return { authentication: { userId } }
     } else {
-        return {};
+        return {}
     }
-};
+}
 
-export type PasswordEditorWidgetProps = Omit<PasswordEditorProps, 'authentication'>
+export type PasswordEditorWidgetProps = Omit<
+    PasswordEditorProps,
+    'authentication'
+>
 
 export default createWidget<PasswordEditorWidgetProps, PasswordEditorProps>({
     component: PasswordEditor,
     prepare: (options) => ({
         ...options,
-        ...resolveAuthentication(options.accessToken, options.userId)
-    })
-});
+        ...resolveAuthentication(options.accessToken, options.userId),
+    }),
+})

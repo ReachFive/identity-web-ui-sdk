@@ -1,48 +1,60 @@
-import React, { useLayoutEffect } from 'react';
 import { AuthOptions, LoginWithPasswordParams } from '@reachfive/identity-core'
-import styled from 'styled-components';
+import React, { useLayoutEffect } from 'react'
+import styled from 'styled-components'
 
-import { Heading, Link, Alternative, Separator } from '../../../components/miscComponent';
+import {
+    Alternative,
+    Heading,
+    Link,
+    Separator,
+} from '../../../components/miscComponent'
 
-import { SocialButtons } from '../../../components/form/socialButtonsComponent';
-import { createForm } from '../../../components/form/formComponent';
-import simplePasswordField from '../../../components/form/fields/simplePasswordField';
-import checkboxField from '../../../components/form/fields/checkboxField';
-import identifierField from '../../../components/form/fields/identifierField';
-import ReCaptcha, { importGoogleRecaptchaScript, type WithCaptchaToken } from '../../../components/reCaptcha'
-import { simpleField } from '../../../components/form/fields/simpleField';
+import checkboxField from '../../../components/form/fields/checkboxField'
+import identifierField from '../../../components/form/fields/identifierField'
+import { simpleField } from '../../../components/form/fields/simpleField'
+import simplePasswordField from '../../../components/form/fields/simplePasswordField'
+import { createForm } from '../../../components/form/formComponent'
+import { SocialButtons } from '../../../components/form/socialButtonsComponent'
+import ReCaptcha, {
+    importGoogleRecaptchaScript,
+    type WithCaptchaToken,
+} from '../../../components/reCaptcha'
 
 import { FaSelectionViewState } from '../../stepUp/mfaStepUpWidget'
 
-import { useI18n } from '../../../contexts/i18n';
-import { useReachfive } from '../../../contexts/reachfive';
-import { useRouting } from '../../../contexts/routing';
-import { useSession } from '../../../contexts/session';
+import { useI18n } from '../../../contexts/i18n'
+import { useReachfive } from '../../../contexts/reachfive'
+import { useRouting } from '../../../contexts/routing'
+import { useSession } from '../../../contexts/session'
 
-import { specializeIdentifierData } from '../../../helpers/utils';
+import { specializeIdentifierData } from '../../../helpers/utils'
 
-import type { OnError, OnSuccess } from '../../../types';
+import type { OnError, OnSuccess } from '../../../types'
 
 type Floating = { floating?: boolean }
 
 const ResetCredentialWrapper = styled.div.withConfig({
-    shouldForwardProp: (prop) => !['floating'].includes(prop)
+    shouldForwardProp: (prop) => !['floating'].includes(prop),
 })<Floating>`
-    margin-bottom: ${props => props.theme.spacing}px;
+    margin-bottom: ${(props) => props.theme.spacing}px;
     text-align: right;
-    ${props => props.floating && `
+    ${(props) =>
+        props.floating &&
+        `
         position: absolute;
         right: 0;
     `};
-`;
+`
 
-export type LoginFormData = {
-    identifier: string
-    password: string
-} | {
-    customIdentifier: string
-    password: string
-}
+export type LoginFormData =
+    | {
+          identifier: string
+          password: string
+      }
+    | {
+          customIdentifier: string
+          password: string
+      }
 
 export interface LoginFormOptions {
     allowCustomIdentifier?: boolean
@@ -68,82 +80,95 @@ export const LoginForm = createForm<LoginFormData, LoginFormOptions>({
         showIdentifier = true,
         showRememberMe,
         showForgotPassword,
-        showAccountRecovery = false ,
+        showAccountRecovery = false,
         i18n,
         config,
     }) {
         return [
             ...(allowAuthentMailPhone
                 ? [
-                    identifierField({
-                        defaultValue: defaultIdentifier,
-                        withPhoneNumber: showIdentifier && config.sms,
-                        required: !allowCustomIdentifier,
-                        autoComplete: 'username webauthn'
-                    }, config)
-                ]
-                : []
-            ),
+                      identifierField(
+                          {
+                              defaultValue: defaultIdentifier,
+                              withPhoneNumber: showIdentifier && config.sms,
+                              required: !allowCustomIdentifier,
+                              autoComplete: 'username webauthn',
+                          },
+                          config
+                      ),
+                  ]
+                : []),
             ...(allowCustomIdentifier && allowAuthentMailPhone
-                ? [{
-                    staticContent: (
-                        <Separator text={i18n('or')} />
-                    )
-                }]
-                : []
-            ),
+                ? [
+                      {
+                          staticContent: <Separator text={i18n('or')} />,
+                      },
+                  ]
+                : []),
             ...(allowCustomIdentifier
                 ? [
-                    simpleField({
-                        key: 'customIdentifier',
-                        type: 'text',
-                        label: 'customIdentifier',
-                        placeholder: i18n('customIdentifier'),
-                        required: false
-                    })
-                ]
-                : []
-            ),
+                      simpleField({
+                          key: 'customIdentifier',
+                          type: 'text',
+                          label: 'customIdentifier',
+                          placeholder: i18n('customIdentifier'),
+                          required: false,
+                      }),
+                  ]
+                : []),
             simplePasswordField({
                 key: 'password',
                 label: 'password',
                 autoComplete: 'current-password',
-                canShowPassword
+                canShowPassword,
             }),
-            ...(enablePasswordAuthentication && showForgotPassword && !showAccountRecovery
-                ? [{
-                    staticContent: (
-                        <ResetCredentialWrapper key="forgot-password" floating={showRememberMe}>
-                            <Link target="forgot-password">{i18n('login.forgotPasswordLink')}</Link>
-                        </ResetCredentialWrapper>
-                    )
-                }]
-                : []
-            ),
+            ...(enablePasswordAuthentication &&
+            showForgotPassword &&
+            !showAccountRecovery
+                ? [
+                      {
+                          staticContent: (
+                              <ResetCredentialWrapper
+                                  key="forgot-password"
+                                  floating={showRememberMe}
+                              >
+                                  <Link target="forgot-password">
+                                      {i18n('login.forgotPasswordLink')}
+                                  </Link>
+                              </ResetCredentialWrapper>
+                          ),
+                      },
+                  ]
+                : []),
             ...(showAccountRecovery
-                ? [{
-                    staticContent: (
-                        <ResetCredentialWrapper key="account-recovery" floating={showRememberMe}>
-                            <Link target="account-recovery">{i18n('accountRecovery.title')}</Link>
-                        </ResetCredentialWrapper>
-                    )
-                }]
-                : []
-            ),
+                ? [
+                      {
+                          staticContent: (
+                              <ResetCredentialWrapper
+                                  key="account-recovery"
+                                  floating={showRememberMe}
+                              >
+                                  <Link target="account-recovery">
+                                      {i18n('accountRecovery.title')}
+                                  </Link>
+                              </ResetCredentialWrapper>
+                          ),
+                      },
+                  ]
+                : []),
             ...(showRememberMe
                 ? [
-                    checkboxField({
-                        key: 'auth.persistent',
-                        label: 'rememberMe',
-                        defaultValue: false
-                    })
-                ]
-                : []
-            )
-        ];
+                      checkboxField({
+                          key: 'auth.persistent',
+                          label: 'rememberMe',
+                          defaultValue: false,
+                      }),
+                  ]
+                : []),
+        ]
     },
-    submitLabel: 'login.submitLabel'
-});
+    submitLabel: 'login.submitLabel',
+})
 
 export type LoginViewProps = {
     /**
@@ -273,46 +298,62 @@ export const LoginView = ({
         importGoogleRecaptchaScript(recaptcha_site_key)
     }, [recaptcha_site_key])
 
-    const controller = new AbortController();
-    const signal = controller.signal;
-    
+    const controller = new AbortController()
+    const signal = controller.signal
+
     React.useEffect(() => {
         if (allowWebAuthnLogin) {
             coreClient
                 .loginWithWebAuthn({
                     conditionalMediation: 'preferred',
                     auth: {
-                        ...auth
+                        ...auth,
                     },
-                    signal: signal
+                    signal: signal,
                 })
                 .catch(onError)
         }
     }, [coreClient, auth, allowWebAuthnLogin, signal])
 
     const callback = (data: WithCaptchaToken<LoginFormData>) => {
-        const { auth: dataAuth, ...specializedData} = specializeIdentifierData<LoginWithPasswordParams>(data);
-        return coreClient.loginWithPassword({
-            ...specializedData,
-            auth: {
-                ...dataAuth,
-                ...auth,
-            },
-        })
-            .then(res => res?.stepUpToken ? goTo<FaSelectionViewState>('fa-selection', {token: res.stepUpToken, amr: res.amr ?? [], allowTrustDevice}) : res)
+        const { auth: dataAuth, ...specializedData } =
+            specializeIdentifierData<LoginWithPasswordParams>(data)
+        return coreClient
+            .loginWithPassword({
+                ...specializedData,
+                auth: {
+                    ...dataAuth,
+                    ...auth,
+                },
+            })
+            .then((res) => {
+                if (res?.stepUpToken) {
+                    goTo<FaSelectionViewState>('fa-selection', {
+                        token: res.stepUpToken,
+                        amr: res.amr ?? [],
+                        allowTrustDevice,
+                    })
+                }
+                return res
+            })
     }
 
-    const defaultIdentifier = session?.lastLoginType === 'password' ? session.email : undefined;
+    const defaultIdentifier =
+        session?.lastLoginType === 'password' ? session.email : undefined
 
     return (
         <div>
             <Heading>{i18n('login.title')}</Heading>
-            {socialProviders && socialProviders.length > 0 &&
-                <SocialButtons providers={socialProviders} auth={auth} acceptTos={acceptTos} />
-            }
-            {socialProviders && socialProviders.length > 0 &&
+            {socialProviders && socialProviders.length > 0 && (
+                <SocialButtons
+                    providers={socialProviders}
+                    auth={auth}
+                    acceptTos={acceptTos}
+                />
+            )}
+            {socialProviders && socialProviders.length > 0 && (
                 <Separator text={i18n('or')} />
-            }
+            )}
             <LoginForm
                 showLabels={showLabels}
                 showRememberMe={showRememberMe}
@@ -322,19 +363,30 @@ export const LoginView = ({
                 defaultIdentifier={defaultIdentifier}
                 allowCustomIdentifier={allowCustomIdentifier}
                 allowAuthentMailPhone={allowAuthentMailPhone}
-                handler={(data: LoginFormData) => ReCaptcha.handle(data, { recaptcha_enabled, recaptcha_site_key }, callback, "login")}
-                onSuccess={onSuccess}
+                handler={(data: LoginFormData) =>
+                    ReCaptcha.handle(
+                        data,
+                        { recaptcha_enabled, recaptcha_site_key },
+                        callback,
+                        'login'
+                    )
+                }
+                onSuccess={(authResult) =>
+                    onSuccess({ name: 'login', authResult })
+                }
                 onError={onError}
             />
-            {allowSignup &&
+            {allowSignup && (
                 <Alternative>
                     <span>{i18n('login.signupLinkPrefix')}</span>
                     &nbsp;
-                    <Link target="signup" controller={controller}>{i18n('login.signupLink')}</Link>
+                    <Link target="signup" controller={controller}>
+                        {i18n('login.signupLink')}
+                    </Link>
                 </Alternative>
-            }
+            )}
         </div>
-    );
+    )
 }
 
 export default LoginView

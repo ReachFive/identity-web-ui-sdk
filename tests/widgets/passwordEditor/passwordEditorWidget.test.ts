@@ -2,18 +2,18 @@
  * @jest-environment jsdom
  */
 
-import { beforeEach, describe, expect, jest, test } from '@jest/globals';
-import { render, screen, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event'
+import { beforeEach, describe, expect, jest, test } from '@jest/globals'
 import '@testing-library/jest-dom/jest-globals'
-import 'jest-styled-components';
+import { render, screen, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import 'jest-styled-components'
 
-import type { PasswordStrengthScore, Client } from '@reachfive/identity-core';
+import type { Client, PasswordStrengthScore } from '@reachfive/identity-core'
 
-import { type I18nMessages } from '../../../src/core/i18n';
-import type { Config } from '../../../src/types';
+import { type I18nMessages } from '../../../src/core/i18n'
+import type { Config, OnError, OnSuccess } from '../../../src/types'
 
-import passwordEditorWidget from '../../../src/widgets/passwordEditor/passwordEditorWidget';
+import passwordEditorWidget from '../../../src/widgets/passwordEditor/passwordEditorWidget'
 
 const defaultConfig: Config = {
     clientId: 'local',
@@ -35,53 +35,66 @@ const defaultConfig: Config = {
         minLength: 8,
         minStrength: 2,
         allowUpdateWithAccessTokenOnly: true,
-    }
-};
+    },
+}
 
 const defaultI18n: I18nMessages = {}
 
 const getPasswordStrengthImplementation = (password: string) => {
     let score = 0
-    if (password.match(/[a-z]+/)) score++
-    if (password.match(/[0-9]+/)) score++
-    if (password.match(/[^a-z0-9]+/)) score++
+    if (/[a-z]+/.exec(password)) score++
+    if (/[0-9]+/.exec(password)) score++
+    if (/[^a-z0-9]+/.exec(password)) score++
     if (password.length > 8) score++
     return Promise.resolve({ score: score as PasswordStrengthScore })
 }
 
 describe('Snapshot', () => {
-    const generateSnapshot = (options: Partial<Parameters<typeof passwordEditorWidget>[0]> = {}, config: Partial<Config> = {}) => async () => {
-        // @ts-expect-error partial Client
-        const apiClient: Client = {
-            getPasswordStrength: jest.fn<Client['getPasswordStrength']>().mockImplementation(getPasswordStrengthImplementation),
-            updatePassword: jest.fn<Client['updatePassword']>().mockResolvedValue()
+    const generateSnapshot =
+        (
+            options: Partial<Parameters<typeof passwordEditorWidget>[0]> = {},
+            config: Partial<Config> = {}
+        ) =>
+        async () => {
+            // @ts-expect-error partial Client
+            const apiClient: Client = {
+                getPasswordStrength: jest
+                    .fn<Client['getPasswordStrength']>()
+                    .mockImplementation(getPasswordStrengthImplementation),
+                updatePassword: jest
+                    .fn<Client['updatePassword']>()
+                    .mockResolvedValue(),
+            }
+
+            const widget = await passwordEditorWidget(
+                { ...options, accessToken: 'azerty' },
+                {
+                    apiClient,
+                    config: { ...defaultConfig, ...config },
+                    defaultI18n,
+                }
+            )
+
+            await waitFor(async () => {
+                const { container } = await render(widget)
+                expect(container).toMatchSnapshot()
+            })
         }
 
-        const widget = await passwordEditorWidget(
-            { ...options, accessToken: 'azerty' },
-            { apiClient,config: { ...defaultConfig, ...config }, defaultI18n }
-        )
-
-        await waitFor(async () => {
-            const { container } = await render(widget);
-            expect(container).toMatchSnapshot();
-        })
-    };
-
     describe('password editor', () => {
-        test('basic',
-            generateSnapshot({})
-        );
-    });
+        test('basic', generateSnapshot({}))
+    })
 })
 
 describe('DOM testing', () => {
-    const getPasswordStrength = jest.fn<Client["getPasswordStrength"]>().mockImplementation(getPasswordStrengthImplementation)
+    const getPasswordStrength = jest
+        .fn<Client['getPasswordStrength']>()
+        .mockImplementation(getPasswordStrengthImplementation)
     const updatePassword = jest.fn<Client['updatePassword']>()
 
-    const onError = jest.fn()
-    const onSuccess = jest.fn()
-    
+    const onError = jest.fn<OnError>()
+    const onSuccess = jest.fn<OnSuccess>()
+
     beforeEach(() => {
         getPasswordStrength.mockClear()
         updatePassword.mockClear()
@@ -89,7 +102,10 @@ describe('DOM testing', () => {
         onSuccess.mockClear()
     })
 
-    const generateComponent = async (options: Partial<Parameters<typeof passwordEditorWidget>[0]> = {}, config: Partial<Config> = {}) => {
+    const generateComponent = async (
+        options: Partial<Parameters<typeof passwordEditorWidget>[0]> = {},
+        config: Partial<Config> = {}
+    ) => {
         // @ts-expect-error partial Client
         const apiClient: Client = {
             getPasswordStrength,
@@ -98,13 +114,13 @@ describe('DOM testing', () => {
 
         const result = await passwordEditorWidget(
             { onError, onSuccess, ...options, accessToken: 'azerty' },
-            {config: { ...defaultConfig, ...config }, apiClient, defaultI18n }
-        );
+            { config: { ...defaultConfig, ...config }, apiClient, defaultI18n }
+        )
 
         return waitFor(async () => {
-            return render(result);
+            return render(result)
         })
-    };
+    }
 
     describe('passwordEditor', () => {
         test('default', async () => {
@@ -114,21 +130,25 @@ describe('DOM testing', () => {
 
             await generateComponent({})
 
-            expect(screen.queryByLabelText('oldPassword')).not.toBeInTheDocument()
+            expect(
+                screen.queryByLabelText('oldPassword')
+            ).not.toBeInTheDocument()
 
             const newPasswordInput = screen.getByLabelText('newPassword')
             expect(newPasswordInput).toBeInTheDocument()
 
-            const passwordConfirmationInput = screen.getByLabelText('passwordConfirmation')
+            const passwordConfirmationInput = screen.getByLabelText(
+                'passwordConfirmation'
+            )
             expect(passwordConfirmationInput).toBeInTheDocument()
-            
+
             await userEvent.clear(newPasswordInput)
             await userEvent.type(newPasswordInput, 'bob@reach5.co')
-            
+
             await userEvent.clear(passwordConfirmationInput)
             await userEvent.type(passwordConfirmationInput, 'bob@reach5.co')
-            
-            const submitBtn = screen.getByRole('button', { name: 'send'})
+
+            const submitBtn = screen.getByRole('button', { name: 'send' })
             expect(submitBtn).toBeInTheDocument()
 
             await user.click(submitBtn)
@@ -140,7 +160,11 @@ describe('DOM testing', () => {
                 })
             )
 
-            expect(onSuccess).toBeCalled()
+            expect(onSuccess).toBeCalledWith(
+                expect.objectContaining({
+                    name: 'password_updated',
+                })
+            )
             expect(onError).not.toBeCalled()
         })
 
@@ -157,19 +181,21 @@ describe('DOM testing', () => {
             const newPasswordInput = screen.getByLabelText('newPassword')
             expect(newPasswordInput).toBeInTheDocument()
 
-            const passwordConfirmationInput = screen.getByLabelText('passwordConfirmation')
+            const passwordConfirmationInput = screen.getByLabelText(
+                'passwordConfirmation'
+            )
             expect(passwordConfirmationInput).toBeInTheDocument()
-            
+
             await userEvent.clear(oldPasswordInput)
             await userEvent.type(oldPasswordInput, 'My0ld_Pa55w0rD')
-            
+
             await userEvent.clear(newPasswordInput)
             await userEvent.type(newPasswordInput, 'Wond3rFu11_Pa55w0rD*$')
-            
+
             await userEvent.clear(passwordConfirmationInput)
             await userEvent.type(passwordConfirmationInput, 'Wr0ng_Pa55w0rD*$') // don't match newPasswordInput
-            
-            const submitBtn = screen.getByRole('button', { name: 'send'})
+
+            const submitBtn = screen.getByRole('button', { name: 'send' })
             expect(submitBtn).toBeInTheDocument()
 
             await user.click(submitBtn)
@@ -178,9 +204,12 @@ describe('DOM testing', () => {
             const formError = screen.queryByTestId('form-error')
             expect(formError).toBeInTheDocument()
             expect(formError).toHaveTextContent('validation.passwordMatch')
-            
+
             await userEvent.clear(passwordConfirmationInput)
-            await userEvent.type(passwordConfirmationInput, 'Wond3rFu11_Pa55w0rD*$') // match newPasswordInput
+            await userEvent.type(
+                passwordConfirmationInput,
+                'Wond3rFu11_Pa55w0rD*$'
+            ) // match newPasswordInput
 
             await user.click(submitBtn)
 
@@ -192,7 +221,11 @@ describe('DOM testing', () => {
                 })
             )
 
-            expect(onSuccess).toBeCalled()
+            expect(onSuccess).toBeCalledWith(
+                expect.objectContaining({
+                    name: 'password_updated',
+                })
+            )
             expect(onError).not.toBeCalled()
         })
 
@@ -206,16 +239,21 @@ describe('DOM testing', () => {
             const newPasswordInput = screen.getByLabelText('newPassword')
             expect(newPasswordInput).toBeInTheDocument()
 
-            const passwordConfirmationInput = screen.getByLabelText('passwordConfirmation')
+            const passwordConfirmationInput = screen.getByLabelText(
+                'passwordConfirmation'
+            )
             expect(passwordConfirmationInput).toBeInTheDocument()
-            
+
             await userEvent.clear(newPasswordInput)
             await userEvent.type(newPasswordInput, 'Wond3rFu11_Pa55w0rD*$')
-            
+
             await userEvent.clear(passwordConfirmationInput)
-            await userEvent.type(passwordConfirmationInput, 'Wond3rFu11_Pa55w0rD*$')
-            
-            const submitBtn = screen.getByRole('button', { name: 'send'})
+            await userEvent.type(
+                passwordConfirmationInput,
+                'Wond3rFu11_Pa55w0rD*$'
+            )
+
+            const submitBtn = screen.getByRole('button', { name: 'send' })
             expect(submitBtn).toBeInTheDocument()
 
             await user.click(submitBtn)
@@ -224,5 +262,4 @@ describe('DOM testing', () => {
             expect(onError).toBeCalledWith('Unexpected error')
         })
     })
-
 })

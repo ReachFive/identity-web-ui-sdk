@@ -1,11 +1,11 @@
-import type {Config} from "../../../src/types";
-import {I18nMessages} from "../../../src/core/i18n";
-import {beforeEach, describe, expect, jest, test} from "@jest/globals";
-import { Client } from '@reachfive/identity-core';
-import {render, screen, waitFor} from "@testing-library/react";
-import trustedDevicesWidget from "../../../src/widgets/mfa/trustedDevicesWidget";
+import { beforeEach, describe, expect, jest, test } from '@jest/globals'
+import { Client } from '@reachfive/identity-core'
 import '@testing-library/jest-dom/jest-globals'
-import {AppError} from "../../../src/helpers/errors";
+import { render, screen, waitFor } from '@testing-library/react'
+import { I18nMessages } from '../../../src/core/i18n'
+import { AppError } from '../../../src/helpers/errors'
+import type { Config, OnError, OnSuccess } from '../../../src/types'
+import trustedDevicesWidget from '../../../src/widgets/mfa/trustedDevicesWidget'
 
 const defaultConfig: Config = {
     clientId: 'local',
@@ -27,15 +27,15 @@ const defaultConfig: Config = {
         minLength: 8,
         minStrength: 2,
         allowUpdateWithAccessTokenOnly: true,
-    }
-};
+    },
+}
 const defaultI18n: I18nMessages = {}
 
 describe('DOM testing', () => {
     const listTrustedDevices = jest.fn<Client['listTrustedDevices']>()
 
-    const onError = jest.fn()
-    const onSuccess = jest.fn()
+    const onError = jest.fn<OnError>()
+    const onSuccess = jest.fn<OnSuccess>()
 
     beforeEach(() => {
         onError.mockClear()
@@ -56,47 +56,80 @@ describe('DOM testing', () => {
                 accessToken: 'azerty',
                 onError,
                 onSuccess,
-                ...options
+                ...options,
             },
             {
                 apiClient,
                 config: { ...defaultConfig, ...config },
-                defaultI18n
+                defaultI18n,
             }
-        );
+        )
         return await waitFor(async () => render(result))
-    };
+    }
 
     describe('trustedDevices', () => {
-            test('no trusted device', async () => {
-                listTrustedDevices.mockResolvedValue({ trustedDevices: []})
-                await generateComponent({ showRemoveTrustedDevice: true }, defaultConfig);
+        test('no trusted device', async () => {
+            listTrustedDevices.mockResolvedValue({ trustedDevices: [] })
+            await generateComponent(
+                { showRemoveTrustedDevice: true },
+                defaultConfig
+            )
 
-                expect(screen.queryByText('trustedDevices.empty')).toBeInTheDocument();
-            });
+            expect(
+                screen.queryByText('trustedDevices.empty')
+            ).toBeInTheDocument()
+        })
 
-            test('has trusted devices',  async () => {
-                listTrustedDevices.mockResolvedValue({ trustedDevices: [
-                        {id: 'id1', userId: 'userid1', createdAt: '2022-09-21', metadata: {}},
-                        {id: 'id2', userId: 'userid2', createdAt: '2022-09-21', metadata: {}},
-                        {id: 'id3', userId: 'userid3', createdAt: '2022-09-21', metadata: {}}
-                    ]})
-                await generateComponent({ showRemoveTrustedDevice: true }, defaultConfig);
-
-                const trustedDevices = screen.queryAllByTestId('trustedDevice')
-                expect(trustedDevices).toHaveLength(3)
-
-                expect(onSuccess).toBeCalled()
-                expect(onError).not.toBeCalled()
-            });
-
-            test('api error', async () => {
-                const error: AppError = { errorId: '0', error: 'unexpected_error', errorDescription: "Unexpected error"}
-                listTrustedDevices.mockRejectedValue(error)
-
-                await generateComponent({}, defaultConfig)
-                expect(onSuccess).not.toBeCalled()
-                expect(onError).toBeCalledWith(error)
+        test('has trusted devices', async () => {
+            listTrustedDevices.mockResolvedValue({
+                trustedDevices: [
+                    {
+                        id: 'id1',
+                        userId: 'userid1',
+                        createdAt: '2022-09-21',
+                        metadata: {},
+                    },
+                    {
+                        id: 'id2',
+                        userId: 'userid2',
+                        createdAt: '2022-09-21',
+                        metadata: {},
+                    },
+                    {
+                        id: 'id3',
+                        userId: 'userid3',
+                        createdAt: '2022-09-21',
+                        metadata: {},
+                    },
+                ],
             })
-    });
-});
+            await generateComponent(
+                { showRemoveTrustedDevice: true },
+                defaultConfig
+            )
+
+            const trustedDevices = screen.queryAllByTestId('trustedDevice')
+            expect(trustedDevices).toHaveLength(3)
+
+            expect(onSuccess).toBeCalledWith(
+                expect.objectContaining({
+                    name: 'trusted_devices_listed',
+                })
+            )
+            expect(onError).not.toBeCalled()
+        })
+
+        test('api error', async () => {
+            const error: AppError = {
+                errorId: '0',
+                error: 'unexpected_error',
+                errorDescription: 'Unexpected error',
+            }
+            listTrustedDevices.mockRejectedValue(error)
+
+            await generateComponent({}, defaultConfig)
+            expect(onSuccess).not.toBeCalled()
+            expect(onError).toBeCalledWith(error)
+        })
+    })
+})
