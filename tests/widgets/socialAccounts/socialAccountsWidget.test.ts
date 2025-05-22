@@ -10,10 +10,10 @@ import 'jest-styled-components';
 
 import { type Client, type Profile } from '@reachfive/identity-core';
 
-import { type I18nMessages } from '../../../src/core/i18n';
-import type { Config } from '../../../src/types';
+import { type I18nMessages } from '../../../src/core/i18n'
+import type { Config, OnError, OnSuccess } from '../../../src/types'
 
-import socialAccountsWidget from '../../../src/widgets/socialAccounts/socialAccountsWidget';
+import socialAccountsWidget from '../../../src/widgets/socialAccounts/socialAccountsWidget'
 
 const defaultConfig: Config = {
     clientId: 'local',
@@ -111,7 +111,7 @@ describe('DOM testing', () => {
             unlink,
             on,
             off,
-        };
+        }
 
         const widget = await socialAccountsWidget(
             { onError, onSuccess, ...options, accessToken: 'azerty' },
@@ -119,7 +119,7 @@ describe('DOM testing', () => {
         );
 
         await waitFor(async () => {
-            const { rerender } = await render(widget);
+            const { rerender } = await render(widget)
 
             await waitFor(() => expect(apiClient.getUser).toHaveBeenCalled());
 
@@ -129,16 +129,16 @@ describe('DOM testing', () => {
 
     describe('with default config', () => {
         test('no identity', async () => {
-            expect.assertions(3);
+            expect.assertions(3)
 
-            await generateComponent({});
+            await generateComponent({})
 
             expect(screen.queryByText('socialAccounts.noLinkedAccount')).toBeInTheDocument();
             expect(screen.queryByText('socialAccounts.linkNewAccount')).toBeInTheDocument();
         });
 
         test('with existing identity', async () => {
-            expect.assertions(4);
+            expect.assertions(4)
 
             await generateComponent({}, defaultConfig, [
                 { id: '123456789', provider: 'facebook', username: 'John Doe' },
@@ -150,7 +150,7 @@ describe('DOM testing', () => {
         });
 
         test('with all identities configured', async () => {
-            expect.assertions(6);
+            expect.assertions(6)
 
             await generateComponent({}, defaultConfig, [
                 { id: '123456789', provider: 'facebook', username: 'John Doe' },
@@ -190,7 +190,9 @@ describe('DOM testing', () => {
                 })
             );
 
-            expect(screen.queryByTestId('identity-google')).not.toBeInTheDocument();
+            expect(
+                screen.queryByTestId('identity-google')
+            ).not.toBeInTheDocument()
 
             expect(onSuccess).toBeCalled();
             expect(onError).not.toBeCalled();

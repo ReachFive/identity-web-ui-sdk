@@ -7,12 +7,12 @@ import { SocialButtons } from '../../../components/form/socialButtonsComponent';
 import { Heading, Intro, Separator } from '../../../components/miscComponent';
 import { LoginForm, type LoginFormData } from './loginViewComponent';
 
-import { useI18n } from '../../../contexts/i18n';
-import { useReachfive } from '../../../contexts/reachfive';
+import { useI18n } from '../../../contexts/i18n'
+import { useReachfive } from '../../../contexts/reachfive'
 
 import { PropsWithSession } from '../../../contexts/session';
 
-import type { OnError, OnSuccess } from '../../../types';
+import type { OnError, OnSuccess } from '../../../types'
 
 export interface ReauthViewProps {
     /**
@@ -61,7 +61,7 @@ export const ReauthView = ({
     const i18n = useI18n();
 
     // this component should never be display without session infos defined
-    if (!session) return null;
+    if (!session) return null
 
     const handlePasswordLogin = ({ password }: LoginFormData) =>
         coreClient.loginWithPassword({
@@ -70,7 +70,10 @@ export const ReauthView = ({
             auth: auth,
         });
 
-    const userSocialProviders = intersection(socialProviders ?? [], session.socialProviders ?? []);
+    const userSocialProviders = intersection(
+        socialProviders ?? [],
+        session.socialProviders ?? []
+    )
 
     return (
         <div>
@@ -89,7 +92,9 @@ export const ReauthView = ({
                     showForgotPassword={allowForgotPassword}
                     showEmail={false}
                     handler={handlePasswordLogin}
-                    onSuccess={onSuccess}
+                    onSuccess={(authResult) =>
+                        onSuccess({ name: 'login', authResult })
+                    }
                     onError={onError}
                 />
             )}

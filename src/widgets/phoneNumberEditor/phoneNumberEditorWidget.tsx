@@ -1,6 +1,6 @@
-import React, { useMemo } from 'react';
+import React, { useMemo } from 'react'
 
-import type { Config, Prettify } from '../../types';
+import type { Config, Prettify } from '../../types'
 
 import phoneNumberField, {
     type PhoneNumberOptions,
@@ -15,7 +15,7 @@ import { useI18n } from '../../contexts/i18n';
 import { useReachfive } from '../../contexts/reachfive';
 import { useRouting } from '../../contexts/routing';
 
-import type { OnError, OnSuccess } from '../../types';
+import type { OnError, OnSuccess } from '../../types'
 
 type PhoneNumberFormData = { phoneNumber: string };
 
@@ -90,7 +90,10 @@ const MainView = ({
     const handleSuccess = (data: PhoneNumberFormData) =>
         goTo<VerificationCodeViewState>('verificationCode', data);
 
-    const PhoneNumberInputForm = useMemo(() => phoneNumberInputForm(config), [config]);
+    const PhoneNumberInputForm = useMemo(
+        () => phoneNumberInputForm(config),
+        [config]
+    )
 
     return (
         <div>
@@ -139,15 +142,21 @@ const VerificationCodeView = ({
     const { phoneNumber } = params as VerificationCodeViewState;
 
     const handleSubmit = (data: VerificationCodeFormData) => {
-        return coreClient.verifyPhoneNumber({ ...data, phoneNumber, accessToken });
-    };
+        return coreClient.verifyPhoneNumber({
+            ...data,
+            phoneNumber,
+            accessToken,
+        })
+    }
 
     return (
         <div>
             <Info>{i18n('phoneNumberEditor.verification.intro')}</Info>
             <VerificationCodeInputForm
                 handler={handleSubmit}
-                onSuccess={onSuccess}
+                onSuccess={() =>
+                    onSuccess({ name: 'phone_number_verified', phoneNumber })
+                }
                 onError={onError}
             />
         </div>

@@ -44,6 +44,10 @@ exports[`Snapshot profile editor basic 1`] = `
   opacity: 0.65;
 }
 
+.c7 {
+  color: #adb5bd;
+}
+
 .c2 {
   position: relative;
 }

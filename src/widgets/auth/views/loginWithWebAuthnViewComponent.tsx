@@ -9,14 +9,17 @@ import { WebAuthnLoginViewButtons } from '../../../components/form/webAuthAndPas
 import { Alternative, Heading, Link, Separator } from '../../../components/miscComponent';
 import { LoginWithPasswordViewState } from './loginWithPasswordViewComponent';
 
-import { useI18n } from '../../../contexts/i18n';
-import { useReachfive } from '../../../contexts/reachfive';
-import { useRouting } from '../../../contexts/routing';
-import { useSession } from '../../../contexts/session';
+import { useI18n } from '../../../contexts/i18n'
+import { useReachfive } from '../../../contexts/reachfive'
+import { useRouting } from '../../../contexts/routing'
+import { useSession } from '../../../contexts/session'
 
-import { isCustomIdentifier, specializeIdentifierData } from '../../../helpers/utils';
+import {
+    isCustomIdentifier,
+    specializeIdentifierData,
+} from '../../../helpers/utils'
 
-import type { OnError, OnSuccess } from '../../../types';
+import type { OnError, OnSuccess } from '../../../types'
 
 type LoginWithWebAuthnFormData = { identifier: string } | { email: string };
 
@@ -27,14 +30,14 @@ type LoginWithWebAuthnFormProps = {
 };
 
 const ResetCredentialWrapper = styled.div<{ floating?: boolean }>`
-    margin-bottom: ${props => props.theme.spacing}px;
+    margin-bottom: ${(props) => props.theme.spacing}px;
     text-align: right;
     ${props =>
         props.floating &&
         `
         right: 0;
     `};
-`;
+`
 
 export const LoginWithWebAuthnForm = createForm<
     LoginWithWebAuthnFormData,
@@ -180,7 +183,8 @@ export const LoginWithWebAuthnView = ({
         [goTo]
     );
 
-    const defaultIdentifier = session?.lastLoginType === 'password' ? session.email : undefined;
+    const defaultIdentifier =
+        session?.lastLoginType === 'password' ? session.email : undefined
 
     return (
         <div>
@@ -193,14 +197,20 @@ export const LoginWithWebAuthnView = ({
                 showLabels={showLabels}
                 defaultIdentifier={defaultIdentifier}
                 handler={handleWebAuthnLogin}
-                onSuccess={onSuccess}
+                onSuccess={(authResult) =>
+                    onSuccess({ name: 'login', authResult })
+                }
                 onError={onError}
                 showAccountRecovery={allowAccountRecovery}
                 SubmitComponent={({ disabled, onClick }) => (
                     <WebAuthnLoginViewButtons
                         disabled={disabled}
-                        enablePasswordAuthentication={enablePasswordAuthentication}
-                        onPasswordClick={() => onClick(redirectToPasswordLoginView)}
+                        enablePasswordAuthentication={
+                            enablePasswordAuthentication
+                        }
+                        onPasswordClick={() =>
+                            onClick(redirectToPasswordLoginView)
+                        }
                     />
                 )}
             />

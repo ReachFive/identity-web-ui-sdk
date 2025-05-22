@@ -12,14 +12,14 @@ import { useConfig } from '../../contexts/config';
 import { useI18n } from '../../contexts/i18n';
 import { useReachfive } from '../../contexts/reachfive';
 
-import { UserError } from '../../helpers/errors';
+import { UserError } from '../../helpers/errors'
 
-import type { OnError, OnSuccess } from '../../types';
+import type { OnError, OnSuccess } from '../../types'
 
 const DeviceName = styled.div`
     font-weight: bold;
     line-height: 2;
-`;
+`
 
 type DeviceInputFormData = {
     friendlyName: string;
@@ -166,10 +166,12 @@ function WebAuthnDevices({
     const config = useConfig();
     const i18n = useI18n();
 
-    const [devices, setDevices] = useState<DeviceCredential[]>(initDevices || []);
+    const [devices, setDevices] = useState<DeviceCredential[]>(
+        initDevices || []
+    )
 
     const removeWebAuthnDevice = (deviceId: string) => {
-        if (!confirm(i18n('webauthn.registredDevices.confirm.removal'))) return;
+        if (!confirm(i18n('webauthn.registredDevices.confirm.removal'))) return
 
         return coreClient
             .removeWebAuthnDevice(accessToken, deviceId)
@@ -218,7 +220,7 @@ export default createWidget<WebAuthnWidgetProps, WebAuthnDevicesProps>({
     name: 'webauthn-devices',
     component: WebAuthnDevices,
     prepare: (options, { apiClient, config }) => {
-        const { accessToken } = options;
+        const { accessToken } = options
 
         if (!config.webAuthn) {
             const error = new UserError('The WebAuthn feature is not available on your account.');
@@ -234,7 +236,7 @@ export default createWidget<WebAuthnWidgetProps, WebAuthnDevicesProps>({
 
         return apiClient
             .listWebAuthnDevices(accessToken)
-            .then(devices => ({
+            .then((devices) => ({
                 ...options,
                 devices,
             }))

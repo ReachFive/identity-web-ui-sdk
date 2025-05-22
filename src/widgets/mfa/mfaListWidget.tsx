@@ -29,34 +29,34 @@ const credentialIconByType = (type: MFA.CredentialsResponse['credentials'][numbe
         case 'sms':
             return <MessageSquareMore className="bg-background w-icon h-icon stroke-textColor" />;
     }
-};
+}
 
 export interface MfaListProps {
     /**
      * The authorization credential JSON Web Token (JWT) used to access the ReachFive API, less than five minutes old.
      */
-    accessToken: string;
+    accessToken: string
     /**
      * Callback function called when the request has succeeded.
      */
-    onSuccess?: OnSuccess;
+    onSuccess?: OnSuccess
     /**
      * Callback function called when the request has failed.
      */
-    onError?: OnError;
+    onError?: OnError
     /**
      * Indicates whether delete mfa credential button is displayed
      */
-    showRemoveMfaCredential?: boolean;
+    showRemoveMfaCredential?: boolean
 }
 
 interface DeleteButtonProps {
-    credential: MFA.Credential;
-    isOpen: boolean;
-    setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
-    onDeleteCallback: (credential: MFA.Credential) => void;
-    deleteConfirmationTitle: string;
-    setDeleteConfirmationTitle: React.Dispatch<React.SetStateAction<string>>;
+    credential: MFA.Credential
+    isOpen: boolean
+    setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
+    onDeleteCallback: (credential: MFA.Credential) => void
+    deleteConfirmationTitle: string
+    setDeleteConfirmationTitle: React.Dispatch<React.SetStateAction<string>>
 }
 
 const DeleteButton = ({
@@ -67,7 +67,7 @@ const DeleteButton = ({
     deleteConfirmationTitle,
     setDeleteConfirmationTitle,
 }: DeleteButtonProps) => {
-    const i18n = useI18n();
+    const i18n = useI18n()
 
     return (
         <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
@@ -103,8 +103,8 @@ const DeleteButton = ({
                 </AlertDialogFooter>
             </AlertDialogContent>
         </AlertDialog>
-    );
-};
+    )
+}
 
 export const MfaList = ({
     accessToken,
@@ -121,7 +121,7 @@ export const MfaList = ({
     const client = useReachfive();
 
     const fetchMfaCredentials = () => {
-        setLoading(true);
+        setLoading(true)
         client
             .listMfaCredentials(accessToken)
             .then(mfaCredentialsResponse => {
@@ -129,12 +129,12 @@ export const MfaList = ({
                 onSuccess(mfaCredentialsResponse);
             })
             .catch(onError)
-            .finally(() => setLoading(false));
-    };
+            .finally(() => setLoading(false))
+    }
 
     useEffect(() => {
-        fetchMfaCredentials();
-    }, [accessToken]);
+        fetchMfaCredentials()
+    }, [accessToken])
 
     const onDelete = (credential: MFA.Credential) => {
         switch (credential.type) {
@@ -157,13 +157,13 @@ export const MfaList = ({
                         fetchMfaCredentials();
                         onSuccess(resp);
                     })
-                    .catch(onError);
-                break;
+                    .catch(onError)
+                break
         }
-    };
+    }
 
     if (loading) {
-        return <LoaderCircle className="animate-spin" />;
+        return <LoaderCircle className="animate-spin" />
     }
 
     return (
@@ -214,28 +214,28 @@ export const MfaList = ({
                 </div>
             ))}
         </div>
-    );
-};
+    )
+}
 
 export type MfaListWidgetProps = {
     /**
      * The authorization credential JSON Web Token (JWT) used to access the ReachFive API, less than five minutes old.
      */
-    accessToken: string;
+    accessToken: string
     /**
      * Callback function called when the request has succeeded.
      */
-    onSuccess?: OnSuccess;
+    onSuccess?: OnSuccess
     /**
      * Callback function called when the request has failed.
      */
-    onError?: OnError;
+    onError?: OnError
     /**
      * Indicates whether delete mfa credential button is displayed
      */
-    showRemoveMfaCredential?: boolean;
-};
+    showRemoveMfaCredential?: boolean
+}
 
 export default createWidget<MfaListWidgetProps, MfaListProps>({
     component: MfaList,
-});
+})

@@ -9,12 +9,12 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import 'jest-styled-components';
 
-import { PasswordStrengthScore, type Client } from '@reachfive/identity-core';
+import { PasswordStrengthScore, type Client } from '@reachfive/identity-core'
 
-import { type I18nMessages } from '../../../src/core/i18n';
-import type { Config } from '../../../src/types';
+import { type I18nMessages } from '../../../src/core/i18n'
+import type { Config, OnError, OnSuccess } from '../../../src/types'
 
-import passwordResetWidget from '../../../src/widgets/passwordReset/passwordResetWidget';
+import passwordResetWidget from '../../../src/widgets/passwordReset/passwordResetWidget'
 
 const defaultConfig: Config = {
     clientId: 'local',
@@ -78,9 +78,9 @@ describe('Snapshot', () => {
         };
 
     describe('password-reset', () => {
-        test('default', generateSnapshot());
-    });
-});
+        test('default', generateSnapshot())
+    })
+})
 
 describe('DOM testing', () => {
     const getPasswordStrength = jest
@@ -120,8 +120,8 @@ describe('DOM testing', () => {
             { config: { ...defaultConfig, ...config }, apiClient, defaultI18n }
         );
 
-        return render(result);
-    };
+        return render(result)
+    }
 
     describe('password-reset', () => {
         test('basic', async () => {
@@ -130,7 +130,7 @@ describe('DOM testing', () => {
 
             updatePassword.mockResolvedValue();
 
-            await generateComponent();
+            await generateComponent()
 
             const password = screen.getByTestId('password');
             expect(password).toBeInTheDocument();
@@ -160,7 +160,7 @@ describe('DOM testing', () => {
 
             updatePassword.mockRejectedValue('Unexpected error');
 
-            await generateComponent();
+            await generateComponent()
 
             const password = screen.getByTestId('password');
             const passwordConfirmation = screen.getByTestId('password_confirmation');

@@ -8,10 +8,10 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import 'jest-styled-components';
 
-import { type Client } from '@reachfive/identity-core';
+import { type Client } from '@reachfive/identity-core'
 
-import { type I18nMessages } from '../../../src/core/i18n';
-import type { Config } from '../../../src/types';
+import { type I18nMessages } from '../../../src/core/i18n'
+import type { Config, OnError, OnSuccess } from '../../../src/types'
 
 import passwordlessWidget from '../../../src/widgets/passwordless/passwordlessWidget';
 
@@ -60,9 +60,9 @@ describe('Snapshot', () => {
         };
 
     describe('passwordless', () => {
-        test('default', generateSnapshot());
+        test('default', generateSnapshot())
 
-        test('no intro', generateSnapshot({ showIntro: false }));
+        test('no intro', generateSnapshot({ showIntro: false }))
 
         test('sms', generateSnapshot({ authType: 'sms' }));
     });
@@ -111,10 +111,10 @@ describe('DOM testing', () => {
             await generateComponent();
 
             // Intro
-            expect(screen.queryByText('passwordless.intro')).toBeInTheDocument();
+            expect(screen.queryByText('passwordless.intro')).toBeInTheDocument()
 
             // Label
-            expect(screen.queryByLabelText('email')).toBeInTheDocument();
+            expect(screen.queryByLabelText('email')).toBeInTheDocument()
 
             // Input email
             const emailInput = screen.getByTestId('email');
@@ -135,20 +135,26 @@ describe('DOM testing', () => {
                 undefined // auth
             );
 
-            expect(screen.queryByText('passwordless.emailSent')).toBeInTheDocument();
+            expect(
+                screen.queryByText('passwordless.emailSent')
+            ).toBeInTheDocument()
 
             expect(onSuccess).toBeCalled();
             expect(onError).not.toBeCalled();
         });
 
         test('no intro', async () => {
-            expect.assertions(2);
-            await generateComponent({ showIntro: false });
+            expect.assertions(2)
+            await generateComponent({ showIntro: false })
 
             // Intro
-            expect(screen.queryByText('passwordless.intro')).not.toBeInTheDocument();
-            expect(screen.queryByText('passwordless.sms.intro')).not.toBeInTheDocument();
-        });
+            expect(
+                screen.queryByText('passwordless.intro')
+            ).not.toBeInTheDocument()
+            expect(
+                screen.queryByText('passwordless.sms.intro')
+            ).not.toBeInTheDocument()
+        })
 
         test('by phone number', async () => {
             expect.assertions(10);
@@ -166,10 +172,12 @@ describe('DOM testing', () => {
             await generateComponent({ authType: 'sms' });
 
             // Intro
-            expect(screen.queryByText('passwordless.sms.intro')).toBeInTheDocument();
+            expect(
+                screen.queryByText('passwordless.sms.intro')
+            ).toBeInTheDocument()
 
             // Label
-            expect(screen.queryByLabelText('phoneNumber')).toBeInTheDocument();
+            expect(screen.queryByLabelText('phoneNumber')).toBeInTheDocument()
 
             // Input phone number
             const phoneNumberInput = screen.getByTestId('phone_number');

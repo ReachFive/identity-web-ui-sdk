@@ -8,13 +8,13 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import 'jest-styled-components';
 
-import { type Client } from '@reachfive/identity-core';
+import { type Client } from '@reachfive/identity-core'
 
-import { type I18nMessages } from '../../../src/core/i18n';
-import { UserError } from '../../../src/helpers/errors';
-import type { Config } from '../../../src/types';
+import { type I18nMessages } from '../../../src/core/i18n'
+import { UserError } from '../../../src/helpers/errors'
+import type { Config, OnError, OnSuccess } from '../../../src/types'
 
-import webAuthnDevicesWidget from '../../../src/widgets/webAuthn/webAuthnDevicesWidget';
+import webAuthnDevicesWidget from '../../../src/widgets/webAuthn/webAuthnDevicesWidget'
 
 const defaultConfig: Config = {
     clientId: 'local',
@@ -44,7 +44,9 @@ const defaultI18n: I18nMessages = {};
 const accessToken = 'azerty';
 
 describe('DOM testing', () => {
-    const confirmMock = jest.spyOn(window, 'confirm').mockImplementation(() => true);
+    const confirmMock = jest
+        .spyOn(window, 'confirm')
+        .mockImplementation(() => true)
 
     const listWebAuthnDevices = jest.fn<Client['listWebAuthnDevices']>();
     const addNewWebAuthnDevice = jest.fn<Client['addNewWebAuthnDevice']>();
@@ -80,7 +82,7 @@ describe('DOM testing', () => {
         const result = await webAuthnDevicesWidget(
             { onError, onSuccess, ...options, accessToken },
             { config: { ...defaultConfig, ...config }, apiClient, defaultI18n }
-        );
+        )
 
         return waitFor(async () => {
             return render(result);

@@ -1,6 +1,6 @@
-import React, { useLayoutEffect } from 'react';
+import React, { useLayoutEffect } from 'react'
 
-import { email } from '../../core/validation';
+import { email } from '../../core/validation'
 
 import { simpleField } from '../../components/form/fields/simpleField';
 import { createForm } from '../../components/form/formComponent';
@@ -14,7 +14,7 @@ import { useI18n } from '../../contexts/i18n';
 import { useReachfive } from '../../contexts/reachfive';
 import { useRouting } from '../../contexts/routing';
 
-import type { OnError, OnSuccess } from '../../types';
+import type { OnError, OnSuccess } from '../../types'
 
 type EmailFormData = { email: string };
 

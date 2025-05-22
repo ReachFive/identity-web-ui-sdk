@@ -1,4 +1,4 @@
-import React from 'react';
+import React from 'react'
 
 import { parseQueryString } from '../../helpers/queryString';
 
@@ -9,7 +9,7 @@ import { useReachfive } from '../../contexts/reachfive';
 import { useRouting } from '../../contexts/routing';
 import { PasswordEditorForm, PasswordEditorFormData } from '../passwordEditor/passwordEditorWidget';
 
-import type { OnError, OnSuccess } from '../../types';
+import type { OnError, OnSuccess } from '../../types'
 
 interface MainViewProps {
     /**
@@ -51,9 +51,9 @@ const MainView = ({
     };
 
     const handleSuccess = () => {
-        onSuccess();
-        goTo('success');
-    };
+        onSuccess({ name: 'password_reset' })
+        goTo('success')
+    }
 
     return (
         <div>
@@ -82,7 +82,9 @@ const SuccessView = ({ loginLink }: SuccessViewProps) => {
             <Info>{i18n('passwordReset.successMessage')}</Info>
             {loginLink && (
                 <Info>
-                    <Link href={loginLink}>{i18n('passwordReset.loginLink')}</Link>
+                    <Link href={loginLink}>
+                        {i18n('passwordReset.loginLink')}
+                    </Link>
                 </Info>
             )}
         </div>
@@ -98,7 +100,9 @@ const resolveCode = () => {
 type Authentication = { verificationCode: string; email: string };
 type PropsWithAuthentication<P> = P & { authentication?: Authentication };
 
-export interface PasswordResetWidgetProps extends MainViewProps, SuccessViewProps {}
+export interface PasswordResetWidgetProps
+    extends MainViewProps,
+        SuccessViewProps {}
 
 export default createMultiViewWidget<
     PasswordResetWidgetProps,
@@ -109,7 +113,7 @@ export default createMultiViewWidget<
         main: MainView,
         success: SuccessView,
     },
-    prepare: options => ({
+    prepare: (options) => ({
         ...options,
         ...resolveCode(),
     }),

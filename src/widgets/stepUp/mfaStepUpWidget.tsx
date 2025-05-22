@@ -10,7 +10,7 @@ import { createForm } from '../../components/form/formComponent';
 import { Info, Intro } from '../../components/miscComponent';
 import { createMultiViewWidget } from '../../components/widget/widget';
 
-import { toQueryString } from '../../helpers/queryString';
+import { toQueryString } from '../../helpers/queryString'
 
 import checkboxField from '../../components/form/fields/checkboxField';
 import { useConfig } from '../../contexts/config.tsx';
@@ -21,7 +21,7 @@ import { useRouting } from '../../contexts/routing';
 const StartStepUpMfaButton = createForm({
     prefix: 'r5-mfa-start-step-up-',
     submitLabel: 'mfa.stepUp.start',
-});
+})
 
 export type VerificationCodeInputFormData = {
     verificationCode: string;
@@ -65,7 +65,10 @@ type StartPasswordlessFormProps = {
     options: Parameters<typeof radioboxField>[0]['options'];
 };
 
-const StartPasswordlessForm = createForm<StartPasswordlessFormData, StartPasswordlessFormProps>({
+const StartPasswordlessForm = createForm<
+    StartPasswordlessFormData,
+    StartPasswordlessFormProps
+>({
     prefix: 'r5-mfa-start-passwordless',
     fields({ options }) {
         return [
@@ -122,8 +125,8 @@ export interface MainViewProps {
 export const MainView = ({
     accessToken,
     auth,
-    onError = (() => {}) as OnSuccess,
-    onSuccess = (() => {}) as OnError,
+    onError = (() => {}) as OnError,
+    onSuccess = (() => {}) as OnSuccess,
     showIntro = true,
     showStepUpStart = true,
     allowTrustDevice = false,
@@ -322,8 +325,12 @@ export const VerificationCodeView = (props: VerificationCodeViewProps) => {
 
     return (
         <div>
-            {authType === 'sms' && <Info>{i18n('passwordless.sms.verification.intro')}</Info>}
-            {authType === 'email' && <Info>{i18n('passwordless.email.verification.intro')}</Info>}
+            {authType === 'sms' && (
+                <Info>{i18n('passwordless.sms.verification.intro')}</Info>
+            )}
+            {authType === 'email' && (
+                <Info>{i18n('passwordless.email.verification.intro')}</Info>
+            )}
             <VerificationCodeInputForm
                 allowTrustDevice={rbaEnabled && allowTrustDevice}
                 handler={handleSubmit}

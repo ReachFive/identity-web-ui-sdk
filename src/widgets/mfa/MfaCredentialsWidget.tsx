@@ -6,9 +6,9 @@ import type {
 import React, { useCallback, useState } from 'react';
 import styled from 'styled-components';
 
-import type { OnError, OnSuccess, Prettify } from '../../types';
+import type { OnError, OnSuccess, Prettify } from '../../types'
 
-import { createMultiViewWidget } from '../../components/widget/widget';
+import { createMultiViewWidget } from '../../components/widget/widget'
 
 import phoneNumberField, {
     type PhoneNumberOptions,
@@ -17,7 +17,7 @@ import { simpleField } from '../../components/form/fields/simpleField';
 import { createForm } from '../../components/form/formComponent';
 import { Info, Intro, Separator } from '../../components/miscComponent';
 
-import { UserError } from '../../helpers/errors';
+import { UserError } from '../../helpers/errors'
 
 import checkboxField from '../../components/form/fields/checkboxField.tsx';
 import { useConfig } from '../../contexts/config';
@@ -62,7 +62,10 @@ type DisplayTrustDeviceFormOptions = {
     displayTrustDevice: boolean;
 };
 
-const VerificationCodeForm = createForm<VerificationCodeFormData, DisplayTrustDeviceFormOptions>({
+const VerificationCodeForm = createForm<
+    VerificationCodeFormData,
+    DisplayTrustDeviceFormOptions
+>({
     prefix: 'r5-mfa-credentials-verification-code-',
     fields({ displayTrustDevice }) {
         return [
@@ -116,9 +119,9 @@ const PhoneNumberRegisteringCredentialForm = createForm<
 });
 
 const DivCredentialBlock = styled.div`
-    margin-left: ${props => props.theme._blockInnerHeight}px;
+    margin-left: ${(props) => props.theme._blockInnerHeight}px;
     margin-bottom: 5em;
-`;
+`
 
 interface MainViewProps {
     /**
@@ -126,7 +129,7 @@ interface MainViewProps {
      */
     accessToken: string;
     /**
-     * The user’s MFA credentials
+     * The user's MFA credentials
      */
     credentials: MFA.CredentialsResponse['credentials'];
     /**
@@ -272,7 +275,9 @@ const MainView = ({
 
                 {config.mfaSmsEnabled && !isPhoneCredentialRegistered && (
                     <div>
-                        {showIntro && <Intro>{i18n('mfa.phoneNumber.explain')}</Intro>}
+                        {showIntro && (
+                            <Intro>{i18n('mfa.phoneNumber.explain')}</Intro>
+                        )}
                         <PhoneNumberRegisteringCredentialForm
                             handler={onPhoneNumberRegistering}
                             displayTrustDevice={displayTrustDevicePhoneNumber}
@@ -437,8 +442,12 @@ const CredentialRegisteredView = () => {
     const { registrationType } = params as CredentialRegisteredViewState;
     return (
         <div>
-            {registrationType === 'email' && <Info>{i18n('mfa.email.registered')}</Info>}
-            {registrationType === 'sms' && <Info>{i18n('mfa.phoneNumber.registered')}</Info>}
+            {registrationType === 'email' && (
+                <Info>{i18n('mfa.email.registered')}</Info>
+            )}
+            {registrationType === 'sms' && (
+                <Info>{i18n('mfa.phoneNumber.registered')}</Info>
+            )}
         </div>
     );
 };
@@ -455,8 +464,12 @@ const CredentialRemovedView = () => {
     const { credentialType } = params as CredentialRemovedViewState;
     return (
         <div>
-            {credentialType === 'email' && <Info>{i18n('mfa.email.removed')}</Info>}
-            {credentialType === 'sms' && <Info>{i18n('mfa.phoneNumber.removed')}</Info>}
+            {credentialType === 'email' && (
+                <Info>{i18n('mfa.email.removed')}</Info>
+            )}
+            {credentialType === 'sms' && (
+                <Info>{i18n('mfa.phoneNumber.removed')}</Info>
+            )}
         </div>
     );
 };
@@ -472,7 +485,10 @@ export type MfaCredentialsWidgetProps = Prettify<
     Omit<MfaCredentialsProps, 'credentials' | 'profileIdentifiers'>
 >;
 
-export default createMultiViewWidget<MfaCredentialsWidgetProps, MfaCredentialsProps>({
+export default createMultiViewWidget<
+    MfaCredentialsWidgetProps,
+    MfaCredentialsProps
+>({
     initialView: 'main',
     views: {
         main: MainView,

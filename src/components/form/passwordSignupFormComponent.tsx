@@ -19,9 +19,9 @@ import ReCaptcha, {
 import { useConfig } from '../../contexts/config';
 import { useReachfive } from '../../contexts/reachfive';
 
-import { isEqual } from '../../helpers/utils';
+import { isEqual } from '../../helpers/utils'
 
-import type { OnError, OnSuccess } from '../../types';
+import type { OnError, OnSuccess } from '../../types'
 
 const SignupForm = createForm<SignupParams['data']>({
     prefix: 'r5-signup-',
@@ -52,7 +52,7 @@ export interface PasswordSignupFormProps {
 
 export const PasswordSignupForm = ({
     auth,
-    beforeSignup = x => x,
+    beforeSignup = (x) => x,
     canShowPassword,
     phoneNumberOptions,
     recaptcha_enabled = false,
@@ -63,7 +63,7 @@ export const PasswordSignupForm = ({
     signupFields = ['given_name', 'family_name', 'email', 'password', 'password_confirmation'],
     userAgreement,
     onError = (() => {}) as OnError,
-    onSuccess = (() => {}) as OnSuccess,
+    onSuccess = (() => {}) satisfies OnSuccess,
 }: PasswordSignupFormProps) => {
     const coreClient = useReachfive();
     const config = useConfig();
@@ -99,7 +99,7 @@ export const PasswordSignupForm = ({
             const distinct = Array.from(new Set(list));
 
             if (!isEqual(distinct, blacklist)) {
-                setBlacklist(distinct);
+                setBlacklist(distinct)
             }
         },
         [blacklist]
