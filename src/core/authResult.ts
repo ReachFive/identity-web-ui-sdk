@@ -1,7 +1,7 @@
 import { AuthResult, ErrorResponse } from '@reachfive/identity-core';
 
-import { parseJwtTokenPayload } from '../helpers/jwt'
-import { logError } from '../helpers/logger'
+import { parseJwtTokenPayload } from '../helpers/jwt';
+import { logError } from '../helpers/logger';
 
 export function enrichAuthResult(response: AuthResult) {
     if (response.idToken) {
@@ -10,7 +10,7 @@ export function enrichAuthResult(response: AuthResult) {
 
             return {
                 ...response,
-                idTokenPayload
+                idTokenPayload,
             };
         } catch (e) {
             logError('id token parsing error: ' + e);
@@ -21,7 +21,11 @@ export function enrichAuthResult(response: AuthResult) {
 }
 
 export function isAuthResult(value: unknown): value is AuthResult {
-    return value !== null && typeof value === 'object' && ('accessToken' in value || 'idToken' in value);
+    return (
+        value !== null &&
+        typeof value === 'object' &&
+        ('accessToken' in value || 'idToken' in value)
+    );
 }
 
 export function isErrorResponse(value: unknown): value is ErrorResponse {

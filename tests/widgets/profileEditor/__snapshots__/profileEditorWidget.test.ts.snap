@@ -5,35 +5,6 @@ exports[`Snapshot profile editor basic 1`] = `
   color: #adb5bd;
 }
 
-.c0 {
-  font-size: 14px;
-  -webkit-transition: -webkit-transform 400ms ease, opacity 400ms ease;
-  -webkit-transition: transform 400ms ease, opacity 400ms ease;
-  transition: transform 400ms ease, opacity 400ms ease;
-  opacity: 0;
-  padding: 20px;
-  border-radius: 3px;
-  background-color: #ffffff;
-  max-width: 400px;
-  box-sizing: border-box;
-  margin: 0 auto;
-}
-
-.c1 {
-  --color-primary: #229955;
-  --color-destructive: #dc4e41;
-  --color-background: #ffffff;
-  --color-text: #495057;
-  --color-border: #ced4da;
-  --spacing-padding-y: 9;
-  --spacing-padding-x: 12;
-  --spacing-block-inner-height: 38;
-  --spacing: 10;
-  --font-generic: 14;
-  --border-width: 1;
-  --radius: 3;
-}
-
 .c6 {
   display: block;
   width: 100%;
@@ -54,8 +25,8 @@ exports[`Snapshot profile editor basic 1`] = `
   font-size: 14px;
   line-height: 1.428571429;
   border-radius: 3px;
-  -webkit-transition: all .15s ease-in-out;
-  transition: all .15s ease-in-out;
+  -webkit-transition: all 0.15s ease-in-out;
+  transition: all 0.15s ease-in-out;
 }
 
 .c6:focus {
@@ -70,7 +41,7 @@ exports[`Snapshot profile editor basic 1`] = `
 }
 
 .c6[disabled] {
-  opacity: .65;
+  opacity: 0.65;
 }
 
 .c2 {
@@ -112,8 +83,8 @@ exports[`Snapshot profile editor basic 1`] = `
   background-color: #fff;
   background-image: none;
   padding: 9px 12px;
-  -webkit-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
-  transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+  -webkit-transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
+  transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
   box-shadow: none;
   -webkit-appearance: none;
   -moz-appearance: none;
@@ -145,6 +116,35 @@ exports[`Snapshot profile editor basic 1`] = `
 
 .c5::placeholder {
   color: #868e96;
+}
+
+.c0 {
+  font-size: 14px;
+  -webkit-transition: -webkit-transform 400ms ease, opacity 400ms ease;
+  -webkit-transition: transform 400ms ease, opacity 400ms ease;
+  transition: transform 400ms ease, opacity 400ms ease;
+  opacity: 0;
+  padding: 20px;
+  border-radius: 3px;
+  background-color: #ffffff;
+  max-width: 400px;
+  box-sizing: border-box;
+  margin: 0 auto;
+}
+
+.c1 {
+  --color-primary: #229955;
+  --color-destructive: #dc4e41;
+  --color-background: #ffffff;
+  --color-text: #495057;
+  --color-border: #ced4da;
+  --spacing-padding-y: 9;
+  --spacing-padding-x: 12;
+  --spacing-block-inner-height: 38;
+  --spacing: 10;
+  --font-generic: 14;
+  --border-width: 1;
+  --radius: 3;
 }
 
 <div>

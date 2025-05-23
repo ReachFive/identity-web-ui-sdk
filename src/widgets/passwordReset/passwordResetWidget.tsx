@@ -1,13 +1,13 @@
 import React from 'react';
 
-import { parseQueryString } from '../../helpers/queryString'
+import { parseQueryString } from '../../helpers/queryString';
 
 import { Heading, Info, Link } from '../../components/miscComponent';
 import { createMultiViewWidget } from '../../components/widget/widget';
-import { PasswordEditorForm, PasswordEditorFormData } from '../passwordEditor/passwordEditorWidget'
+import { useI18n } from '../../contexts/i18n';
 import { useReachfive } from '../../contexts/reachfive';
 import { useRouting } from '../../contexts/routing';
-import { useI18n } from '../../contexts/i18n';
+import { PasswordEditorForm, PasswordEditorFormData } from '../passwordEditor/passwordEditorWidget';
 
 import type { OnError, OnSuccess } from '../../types';
 
@@ -16,20 +16,20 @@ interface MainViewProps {
      * Whether or not to provide the display password in clear text option.
      * @default false
      */
-    canShowPassword?: boolean
+    canShowPassword?: boolean;
     /**
      * Callback function called when the request has succeed.
      */
-    onSuccess?: OnSuccess
+    onSuccess?: OnSuccess;
     /**
      * Callback function called when the request has failed.
      */
-    onError?: OnError
+    onError?: OnError;
     /**
      * Whether the form fields' labels are displayed on the form view.
      * @default false
      */
-    showLabels?: boolean
+    showLabels?: boolean;
 }
 
 const MainView = ({
@@ -39,14 +39,14 @@ const MainView = ({
     onError = (() => {}) as OnError,
     showLabels = false,
 }: PropsWithAuthentication<MainViewProps>) => {
-    const coreClient = useReachfive()
-    const i18n = useI18n()
-    const { goTo } = useRouting()
+    const coreClient = useReachfive();
+    const i18n = useI18n();
+    const { goTo } = useRouting();
 
     const handleSubmit = ({ password }: PasswordEditorFormData) => {
         return coreClient.updatePassword({
             password,
-            ...authentication
+            ...authentication,
         });
     };
 
@@ -67,16 +67,16 @@ const MainView = ({
                 onError={onError}
             />
         </div>
-    )
-}
+    );
+};
 
 interface SuccessViewProps {
-    loginLink?: string
+    loginLink?: string;
 }
 
 const SuccessView = ({ loginLink }: SuccessViewProps) => {
-    const i18n = useI18n()
-    return  (
+    const i18n = useI18n();
+    return (
         <div>
             <Heading>{i18n('passwordReset.successTitle')}</Heading>
             <Info>{i18n('passwordReset.successMessage')}</Info>
@@ -86,28 +86,31 @@ const SuccessView = ({ loginLink }: SuccessViewProps) => {
                 </Info>
             )}
         </div>
-    )
-}
+    );
+};
 
 const resolveCode = () => {
-    const qs = window.location.search.substring(1)
-    const { verificationCode, email } = parseQueryString(qs)
+    const qs = window.location.search.substring(1);
+    const { verificationCode, email } = parseQueryString(qs);
     return { authentication: { verificationCode, email } as Authentication };
 };
 
-type Authentication = { verificationCode: string,  email: string }
-type PropsWithAuthentication<P> = P & { authentication?: Authentication }
+type Authentication = { verificationCode: string; email: string };
+type PropsWithAuthentication<P> = P & { authentication?: Authentication };
 
 export interface PasswordResetWidgetProps extends MainViewProps, SuccessViewProps {}
 
-export default createMultiViewWidget<PasswordResetWidgetProps, PropsWithAuthentication<PasswordResetWidgetProps>>({
+export default createMultiViewWidget<
+    PasswordResetWidgetProps,
+    PropsWithAuthentication<PasswordResetWidgetProps>
+>({
     initialView: 'main',
     views: {
         main: MainView,
-        success: SuccessView
+        success: SuccessView,
     },
     prepare: options => ({
         ...options,
-        ...resolveCode()
-    })
+        ...resolveCode(),
+    }),
 });

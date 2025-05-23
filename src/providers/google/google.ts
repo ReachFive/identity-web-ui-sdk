@@ -1,6 +1,6 @@
 import icon from './google.svg';
 
-import type { Provider } from '../providers'
+import type { Provider } from '../providers';
 
 export default {
     key: 'google',
@@ -12,6 +12,6 @@ export default {
     icon,
     windowSize: {
         width: 560,
-        height: 630
-    }
+        height: 630,
+    },
 } satisfies Provider;

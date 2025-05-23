@@ -1,49 +1,46 @@
 import React, { ForwardedRef, PropsWithChildren } from 'react';
 
-import styled, { useTheme } from 'styled-components';
-import { Transition, TransitionStatus } from 'react-transition-group';
 import classes from 'classnames';
+import { Transition, TransitionStatus } from 'react-transition-group';
+import styled, { useTheme } from 'styled-components';
 
 import { Heading, Intro } from '../miscComponent';
 
 interface WidgetContentProps extends React.HTMLAttributes<HTMLDivElement> {
-    name?: string
-    standalone?: boolean
-    transition?: TransitionStatus
+    name?: string;
+    standalone?: boolean;
+    transition?: TransitionStatus;
 }
 
 const WidgetContent = styled(
-    React.forwardRef(
-        function WidgetContent(
-            { name, className, children, ...props }: PropsWithChildren<WidgetContentProps>,
-            ref: ForwardedRef<HTMLDivElement>
-        ) {
-            return (
-                <div
-                    ref={ref}
-                    className={
-                        classes(
-                            className,
-                            {
-                                [`r5-${name}`]: !!name,
-                                'r5-widget-active': !!name
-                            }
-                        )
-                    }
-                    {...props}
-                >{children}</div>
-            )
-        }
-    )
+    React.forwardRef(function WidgetContent(
+        { name, className, children, ...props }: PropsWithChildren<WidgetContentProps>,
+        ref: ForwardedRef<HTMLDivElement>
+    ) {
+        return (
+            <div
+                ref={ref}
+                className={classes(className, {
+                    [`r5-${name}`]: !!name,
+                    'r5-widget-active': !!name,
+                })}
+                {...props}
+            >
+                {children}
+            </div>
+        );
+    })
 )`
     font-size: ${props => props.theme.fontSize}px;
     transition:
         transform 400ms ease,
         opacity 400ms ease;
 
-    opacity: ${props => props.transition === 'entered' ? '1' : '0'};
+    opacity: ${props => (props.transition === 'entered' ? '1' : '0')};
 
-    ${props => props.standalone && `
+    ${props =>
+        props.standalone &&
+        `
         padding: ${props.theme.spacing * 2}px;
         border-radius: ${props.theme.borderRadius}px;
         background-color: ${props.theme.backgroundColor};
@@ -54,11 +51,11 @@ const WidgetContent = styled(
 `;
 
 export interface WidgetContainerProps extends React.HTMLAttributes<HTMLDivElement> {
-    name?: string
-    standalone?: boolean
-    noIntro?: boolean
-    title?: string
-    intro?: string
+    name?: string;
+    standalone?: boolean;
+    noIntro?: boolean;
+    title?: string;
+    intro?: string;
 }
 
 export default function WidgetContainer({
@@ -70,8 +67,8 @@ export default function WidgetContainer({
     children,
     ...props
 }: PropsWithChildren<WidgetContainerProps>) {
-    const theme = useTheme()
-    const nodeRef = React.useRef<HTMLDivElement>(null)
+    const theme = useTheme();
+    const nodeRef = React.useRef<HTMLDivElement>(null);
     return (
         <Transition nodeRef={nodeRef} in={true} appear={theme.animateWidgetEntrance} timeout={400}>
             {state => (
@@ -88,5 +85,5 @@ export default function WidgetContainer({
                 </WidgetContent>
             )}
         </Transition>
-    )
+    );
 }

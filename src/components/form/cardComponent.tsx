@@ -1,5 +1,5 @@
-import styled from 'styled-components';
 import { darken } from 'polished';
+import styled from 'styled-components';
 
 export const CloseIcon = styled.span`
     position: absolute;
@@ -11,12 +11,14 @@ export const CloseIcon = styled.span`
     box-sizing: border-box;
     overflow: hidden;
     &:hover {
-        &::before, &::after {
+        &::before,
+        &::after {
             background: ${props => darken(0.2, props.theme.mutedTextColor)};
         }
     }
 
-    &::before, &::after {
+    &::before,
+    &::after {
         content: '';
         position: absolute;
         height: 3px;
@@ -50,16 +52,17 @@ export const Card = styled.div`
 
     &:not(:only-child) {
         &:first-child {
-            border-radius: ${({ theme }) => theme.borderRadius}px ${({ theme }) => theme.borderRadius}px 0 0;
+            border-radius: ${({ theme }) => theme.borderRadius}px
+                ${({ theme }) => theme.borderRadius}px 0 0;
         }
 
         &:last-child {
-            border-radius: 0 0 ${({ theme }) => theme.borderRadius}px ${({ theme }) => theme.borderRadius}px;
+            border-radius: 0 0 ${({ theme }) => theme.borderRadius}px
+                ${({ theme }) => theme.borderRadius}px;
         }
 
         &:not(:last-child) {
             border-bottom-width: 0;
         }
-
     }
 `;

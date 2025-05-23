@@ -28,5 +28,5 @@
       "@/lib": ["./src/lib/*"]
     }
   },
-  "include": ["src", "rollup.config.js", "tailwind.config.cjs"]
+  "include": ["src", "tests", "rollup.config.js", "tailwind.config.cjs", "eslint.config.mjs"]
 }

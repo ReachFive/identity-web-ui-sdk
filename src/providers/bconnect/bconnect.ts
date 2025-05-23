@@ -1,6 +1,6 @@
 import icon from './bconnect.svg';
 
-import type { Provider } from '../providers'
+import type { Provider } from '../providers';
 
 export default {
     key: 'bconnect',

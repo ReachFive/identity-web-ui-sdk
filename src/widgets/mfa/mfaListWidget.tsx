@@ -1,9 +1,9 @@
-import { MFA } from "@reachfive/identity-core";
-import React, { useEffect } from "react";
+import { MFA } from '@reachfive/identity-core';
+import React, { useEffect } from 'react';
 
-import { createWidget } from "../../components/widget/widget";
+import { createWidget } from '../../components/widget/widget';
 
-import { LoaderCircle, Mail, MessageSquareMore, X } from "lucide-react";
+import { LoaderCircle, Mail, MessageSquareMore, X } from 'lucide-react';
 import {
     AlertDialog,
     AlertDialogAction,
@@ -14,26 +14,20 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
     AlertDialogTrigger,
-} from "../../components/ui/alert-dialog";
-import { Button } from "../../components/ui/button";
-import { useConfig } from "../../contexts/config";
-import { useI18n } from "../../contexts/i18n";
-import { useReachfive } from "../../contexts/reachfive.tsx";
-import { dateFormat } from "../../helpers/utils.ts";
-import { OnError, OnSuccess } from "../../types";
+} from '../../components/ui/alert-dialog';
+import { Button } from '../../components/ui/button';
+import { useConfig } from '../../contexts/config';
+import { useI18n } from '../../contexts/i18n';
+import { useReachfive } from '../../contexts/reachfive.tsx';
+import { dateFormat } from '../../helpers/utils.ts';
+import { OnError, OnSuccess } from '../../types';
 
-const credentialIconByType = (
-    type: MFA.CredentialsResponse["credentials"][number]["type"]
-) => {
+const credentialIconByType = (type: MFA.CredentialsResponse['credentials'][number]['type']) => {
     switch (type) {
-        case "email":
-            return (
-                <Mail className="bg-background w-icon h-icon stroke-textColor" />
-            );
-        case "sms":
-            return (
-                <MessageSquareMore className="bg-background w-icon h-icon stroke-textColor" />
-            );
+        case 'email':
+            return <Mail className="bg-background w-icon h-icon stroke-textColor" />;
+        case 'sms':
+            return <MessageSquareMore className="bg-background w-icon h-icon stroke-textColor" />;
     }
 };
 
@@ -82,11 +76,11 @@ const DeleteButton = ({
                     variant="destructive"
                     size="icon"
                     className="ml-1"
-                    onClick={(_) =>
+                    onClick={_ =>
                         setDeleteConfirmationTitle(
-                            credential.type === "email"
-                                ? "mfa.remove.email"
-                                : "mfa.remove.phoneNumber"
+                            credential.type === 'email'
+                                ? 'mfa.remove.email'
+                                : 'mfa.remove.phoneNumber'
                         )
                     }
                 >
@@ -95,20 +89,16 @@ const DeleteButton = ({
             </AlertDialogTrigger>
             <AlertDialogContent>
                 <AlertDialogHeader>
-                    <AlertDialogTitle>
-                        {i18n(deleteConfirmationTitle)}
-                    </AlertDialogTitle>
+                    <AlertDialogTitle>{i18n(deleteConfirmationTitle)}</AlertDialogTitle>
                     <AlertDialogDescription />
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                    <AlertDialogCancel>
-                        {i18n("confirmation.cancel")}
-                    </AlertDialogCancel>
+                    <AlertDialogCancel>{i18n('confirmation.cancel')}</AlertDialogCancel>
                     <AlertDialogAction
                         variant="destructive"
-                        onClick={(_) => onDeleteCallback(credential)}
+                        onClick={_ => onDeleteCallback(credential)}
                     >
-                        {i18n("confirmation.yes")}
+                        {i18n('confirmation.yes')}
                     </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>
@@ -124,8 +114,7 @@ export const MfaList = ({
 }: MfaListProps) => {
     const [isOpen, setIsOpen] = React.useState(false);
     const [loading, setLoading] = React.useState(true);
-    const [deleteConfirmationTitle, setDeleteConfirmationTitle] =
-        React.useState("");
+    const [deleteConfirmationTitle, setDeleteConfirmationTitle] = React.useState('');
     const [credentials, setCredentials] = React.useState<MFA.Credential[]>([]);
     const i18n = useI18n();
     const config = useConfig();
@@ -135,7 +124,7 @@ export const MfaList = ({
         setLoading(true);
         client
             .listMfaCredentials(accessToken)
-            .then((mfaCredentialsResponse) => {
+            .then(mfaCredentialsResponse => {
                 setCredentials(mfaCredentialsResponse.credentials);
                 onSuccess(mfaCredentialsResponse);
             })
@@ -149,22 +138,22 @@ export const MfaList = ({
 
     const onDelete = (credential: MFA.Credential) => {
         switch (credential.type) {
-            case "sms":
+            case 'sms':
                 client
                     .removeMfaPhoneNumber({
                         accessToken,
                         phoneNumber: credential.phoneNumber,
                     })
-                    .then((resp) => {
+                    .then(resp => {
                         fetchMfaCredentials();
                         onSuccess(resp);
                     })
                     .catch(onError);
                 break;
-            case "email":
+            case 'email':
                 client
                     .removeMfaEmail({ accessToken })
-                    .then((resp) => {
+                    .then(resp => {
                         fetchMfaCredentials();
                         onSuccess(resp);
                     })
@@ -181,7 +170,7 @@ export const MfaList = ({
         <div>
             {credentials.length === 0 && (
                 <div className="mb-1 text-center text-textColor">
-                    {i18n("mfaList.noCredentials")}
+                    {i18n('mfaList.noCredentials')}
                 </div>
             )}
             {credentials.map((credential, _) => (
@@ -189,31 +178,24 @@ export const MfaList = ({
                     id={`credential-${credential.friendlyName}`}
                     data-testid="credential"
                     key={`credential-${credential.friendlyName}`}
-                    className={`flex flex-col ${isOpen ? "opacity-15" : ""}`}
+                    className={`flex flex-col ${isOpen ? 'opacity-15' : ''}`}
                 >
                     <div className="flex flex-row items-center rounded">
                         <div className="box-border flex flex-row items-center align-middle border border-solid rounded basis-full whitespace-nowrap p-generic">
                             {credentialIconByType(credential.type)}
                             <div className="ml-innerBlock w-max justify-items-stretch text-textColor">
-                                <div className="font-bold">
-                                    {credential.friendlyName}
-                                </div>
+                                <div className="font-bold">{credential.friendlyName}</div>
                                 <div>
                                     {MFA.isEmailCredential(credential)
                                         ? credential.email
                                         : MFA.isPhoneCredential(credential)
-                                        ? credential.phoneNumber
-                                        : "N/A"}
+                                          ? credential.phoneNumber
+                                          : 'N/A'}
                                 </div>
                                 <div>
-                                    <span>
-                                        {i18n("mfaList.createdAt")}&nbsp;:{" "}
-                                    </span>
+                                    <span>{i18n('mfaList.createdAt')}&nbsp;: </span>
                                     <time dateTime={credential.createdAt}>
-                                        {dateFormat(
-                                            credential.createdAt,
-                                            config.language
-                                        )}
+                                        {dateFormat(credential.createdAt, config.language)}
                                     </time>
                                 </div>
                             </div>
@@ -223,12 +205,8 @@ export const MfaList = ({
                                 isOpen={isOpen}
                                 setIsOpen={setIsOpen}
                                 onDeleteCallback={onDelete}
-                                deleteConfirmationTitle={
-                                    deleteConfirmationTitle
-                                }
-                                setDeleteConfirmationTitle={
-                                    setDeleteConfirmationTitle
-                                }
+                                deleteConfirmationTitle={deleteConfirmationTitle}
+                                setDeleteConfirmationTitle={setDeleteConfirmationTitle}
                                 credential={credential}
                             />
                         )}

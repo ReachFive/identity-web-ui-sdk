@@ -1,41 +1,43 @@
 import React from 'react';
-import styled from 'styled-components'
+import styled from 'styled-components';
 
-import { parseQueryString } from '../../helpers/queryString'
+import { parseQueryString } from '../../helpers/queryString';
 
-import { Alternative, Heading, Info, Link, Intro, Separator } from '../../components/miscComponent';
+import { createForm } from '../../components/form/formComponent';
+import { Alternative, Heading, Info, Intro, Link, Separator } from '../../components/miscComponent';
 import { createMultiViewWidget } from '../../components/widget/widget';
-import { createForm } from '../../components/form/formComponent'
+import { useI18n } from '../../contexts/i18n';
 import { useReachfive } from '../../contexts/reachfive';
 import { useRouting } from '../../contexts/routing';
-import { useI18n } from '../../contexts/i18n';
 
-import { PasswordEditorForm, PasswordEditorFormData } from '../passwordEditor/passwordEditorWidget.tsx'
+import {
+    PasswordEditorForm,
+    PasswordEditorFormData,
+} from '../passwordEditor/passwordEditorWidget.tsx';
 
-import { ReactComponent as Passkeys } from '../../icons/passkeys.svg'
+import { ReactComponent as Passkeys } from '../../icons/passkeys.svg';
 
 import type { OnError, OnSuccess } from '../../types';
 
 interface MainViewProps {
-
     /**
      * Allow an end-user to create a password instead of a Passkey
      * @default true
      */
-    allowCreatePassword?: boolean
+    allowCreatePassword?: boolean;
     /**
      * Callback function called when the request has succeed.
      */
-    onSuccess?: OnSuccess
+    onSuccess?: OnSuccess;
     /**
      * Callback function called when the request has failed.
      */
-    onError?: OnError
+    onError?: OnError;
     /**
      * Whether the form fields' labels are displayed on the form view.
      * @default false
      */
-    showLabels?: boolean
+    showLabels?: boolean;
 }
 
 const DeviceInputForm = createForm<{}, MainViewProps>({
@@ -43,8 +45,8 @@ const DeviceInputForm = createForm<{}, MainViewProps>({
     fields: [],
     submitLabel: 'accountRecovery.passkeyReset.button',
     supportMultipleSubmits: true,
-    resetAfterSuccess: true
-})
+    resetAfterSuccess: true,
+});
 
 const iconStyle = `
         width: 60px;
@@ -53,25 +55,30 @@ const iconStyle = `
         margin-right: auto;
         margin-bottom: 1em;
         display: block;
-`
-const PasskeysIcon = styled(Passkeys)`${iconStyle}`;
+`;
+const PasskeysIcon = styled(Passkeys)`
+    ${iconStyle}
+`;
 
 const PasskeysExplanation = styled(() => {
-    const i18n = useI18n()
+    const i18n = useI18n();
     return (
         <ul>
-            <li><b>{i18n('accountRecovery.passkeyReset.subtitle1')}</b></li>
+            <li>
+                <b>{i18n('accountRecovery.passkeyReset.subtitle1')}</b>
+            </li>
             <ul>
                 <li>{i18n('accountRecovery.passkeyReset.legend1')}</li>
             </ul>
-            <li><b>{i18n('accountRecovery.passkeyReset.subtitle2')}</b></li>
+            <li>
+                <b>{i18n('accountRecovery.passkeyReset.subtitle2')}</b>
+            </li>
             <ul>
                 <li>{i18n('accountRecovery.passkeyReset.legend2')}</li>
             </ul>
         </ul>
-    )
-})`
-`;
+    );
+})``;
 
 const NewPasskey = ({
     authentication,
@@ -79,15 +86,15 @@ const NewPasskey = ({
     onSuccess = (() => {}) as OnSuccess,
     onError = (() => {}) as OnError,
 }: PropsWithAuthentication<MainViewProps>) => {
-    const coreClient = useReachfive()
-    const i18n = useI18n()
-    const {goTo} = useRouting()
+    const coreClient = useReachfive();
+    const i18n = useI18n();
+    const { goTo } = useRouting();
 
     const handleSubmit = () => {
         return coreClient.resetPasskeys({
             email: authentication?.email,
             verificationCode: authentication?.verificationCode,
-            clientId: authentication?.clientId
+            clientId: authentication?.clientId,
         });
     };
 
@@ -99,30 +106,30 @@ const NewPasskey = ({
     return (
         <div>
             <Heading>{i18n('accountRecovery.passkeyReset.title')}</Heading>
-            <PasskeysIcon/>
-            <Intro><b>{i18n('accountRecovery.passkeyReset.intro')}</b></Intro>
-            <PasskeysExplanation/>
-            <DeviceInputForm
-                handler={handleSubmit}
-                onSuccess={handleSuccess}
-                onError={onError}
-            />
-            {allowCreatePassword &&
+            <PasskeysIcon />
+            <Intro>
+                <b>{i18n('accountRecovery.passkeyReset.intro')}</b>
+            </Intro>
+            <PasskeysExplanation />
+            <DeviceInputForm handler={handleSubmit} onSuccess={handleSuccess} onError={onError} />
+            {allowCreatePassword && (
                 <Alternative>
                     <Separator text={i18n('or')} />
-                    <Intro><Link target="new-password">{i18n('accountRecovery.password.title')}</Link></Intro>
+                    <Intro>
+                        <Link target="new-password">{i18n('accountRecovery.password.title')}</Link>
+                    </Intro>
                 </Alternative>
-            }
+            )}
         </div>
-    )
-}
+    );
+};
 
 interface SuccessViewProps {
-    loginLink?: string
+    loginLink?: string;
 }
 
-const PasskeySuccessView = ({loginLink}: SuccessViewProps) => {
-    const i18n = useI18n()
+const PasskeySuccessView = ({ loginLink }: SuccessViewProps) => {
+    const i18n = useI18n();
     return (
         <div>
             <Heading>{i18n('accountRecovery.passkeyReset.successTitle')}</Heading>
@@ -133,11 +140,11 @@ const PasskeySuccessView = ({loginLink}: SuccessViewProps) => {
                 </Info>
             )}
         </div>
-    )
-}
+    );
+};
 
-const PasswordSuccessView = ({loginLink}: SuccessViewProps) => {
-    const i18n = useI18n()
+const PasswordSuccessView = ({ loginLink }: SuccessViewProps) => {
+    const i18n = useI18n();
     return (
         <div>
             <Heading>{i18n('passwordReset.successTitle')}</Heading>
@@ -148,8 +155,8 @@ const PasswordSuccessView = ({loginLink}: SuccessViewProps) => {
                 </Info>
             )}
         </div>
-    )
-}
+    );
+};
 
 export const NewPasswordView = ({
     authentication,
@@ -157,14 +164,14 @@ export const NewPasswordView = ({
     onError = (() => {}) as OnError,
     showLabels = false,
 }: PropsWithAuthentication<MainViewProps>) => {
-    const coreClient = useReachfive()
-    const i18n = useI18n()
-    const { goTo } = useRouting()
+    const coreClient = useReachfive();
+    const i18n = useI18n();
+    const { goTo } = useRouting();
 
     const handleSubmit = ({ password }: PasswordEditorFormData) => {
         return coreClient.updatePassword({
             password,
-            ...authentication
+            ...authentication,
         });
     };
 
@@ -187,31 +194,33 @@ export const NewPasswordView = ({
                 <Link target="new-passkey">{i18n('back')}</Link>
             </Alternative>
         </div>
-    )
-}
-
-const resolveCode = () => {
-    const qs = window.location.search.substring(1)
-    const {verificationCode, email, clientId} = parseQueryString(qs)
-    return {authentication: { verificationCode, email, clientId } as Authentication};
+    );
 };
 
-type Authentication = { verificationCode: string, email: string, clientId: string }
-type PropsWithAuthentication<P> = P & { authentication: Authentication }
+const resolveCode = () => {
+    const qs = window.location.search.substring(1);
+    const { verificationCode, email, clientId } = parseQueryString(qs);
+    return { authentication: { verificationCode, email, clientId } as Authentication };
+};
 
-export interface AccountRecoveryWidgetProps extends MainViewProps, SuccessViewProps {
-}
+type Authentication = { verificationCode: string; email: string; clientId: string };
+type PropsWithAuthentication<P> = P & { authentication: Authentication };
 
-export default createMultiViewWidget<AccountRecoveryWidgetProps, PropsWithAuthentication<AccountRecoveryWidgetProps>>({
+export interface AccountRecoveryWidgetProps extends MainViewProps, SuccessViewProps {}
+
+export default createMultiViewWidget<
+    AccountRecoveryWidgetProps,
+    PropsWithAuthentication<AccountRecoveryWidgetProps>
+>({
     initialView: 'new-passkey',
     views: {
         'new-passkey': NewPasskey,
         'new-password': NewPasswordView,
         'passkey-success': PasskeySuccessView,
-        'password-success': PasswordSuccessView
+        'password-success': PasswordSuccessView,
     },
     prepare: options => ({
         ...options,
-        ...resolveCode()
-    })
+        ...resolveCode(),
+    }),
 });

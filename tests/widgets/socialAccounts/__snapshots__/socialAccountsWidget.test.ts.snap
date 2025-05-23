@@ -1,6 +1,46 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Snapshot basic 1`] = `
+.c5 {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: center;
+  font-weight: bold;
+  vertical-align: middle;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  touch-action: manipulation;
+  cursor: pointer;
+  color: #495057;
+  background-color: #ffffff;
+  border: 1px solid #ced4da;
+  padding: 9px 12px;
+  font-size: 14px;
+  line-height: 1.428571429;
+  border-radius: 3px;
+  -webkit-transition: all 0.15s ease-in-out;
+  transition: all 0.15s ease-in-out;
+}
+
+.c5:focus {
+  outline: 0;
+  box-shadow: 0 0 0 3px rgba(206,212,218,0.5);
+}
+
+.c5:hover,
+.c5:active {
+  color: #495057;
+  background-color: #ebebeb;
+  border-color: #b7c0c8;
+}
+
+.c5[disabled] {
+  opacity: 0.65;
+}
+
 .c2 {
   text-align: center;
   margin-bottom: 10px;
@@ -37,46 +77,6 @@ exports[`Snapshot basic 1`] = `
   --font-generic: 14;
   --border-width: 1;
   --radius: 3;
-}
-
-.c5 {
-  display: block;
-  width: 100%;
-  box-sizing: border-box;
-  text-align: center;
-  font-weight: bold;
-  vertical-align: middle;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-  touch-action: manipulation;
-  cursor: pointer;
-  color: #495057;
-  background-color: #ffffff;
-  border: 1px solid #ced4da;
-  padding: 9px 12px;
-  font-size: 14px;
-  line-height: 1.428571429;
-  border-radius: 3px;
-  -webkit-transition: all .15s ease-in-out;
-  transition: all .15s ease-in-out;
-}
-
-.c5:focus {
-  outline: 0;
-  box-shadow: 0 0 0 3px rgba(206,212,218,0.5);
-}
-
-.c5:hover,
-.c5:active {
-  color: #495057;
-  background-color: #ebebeb;
-  border-color: #b7c0c8;
-}
-
-.c5[disabled] {
-  opacity: .65;
 }
 
 .c4 {

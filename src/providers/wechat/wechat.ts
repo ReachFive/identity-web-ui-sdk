@@ -1,6 +1,6 @@
 import icon from './wechat.svg';
 
-import type { Provider } from '../providers'
+import type { Provider } from '../providers';
 
 export default {
     key: 'wechat',
@@ -9,6 +9,6 @@ export default {
     icon,
     windowSize: {
         width: 450,
-        height: 400
-    }
+        height: 400,
+    },
 } satisfies Provider;

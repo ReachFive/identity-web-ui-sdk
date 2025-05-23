@@ -11,6 +11,9 @@ insert_final_newline = true
 [*.yml]
 indent_size = 2
 
+[tsconfig.json]
+indent_size = 2
+
 [tailwind.config.cjs]
 indent_size = 2
 

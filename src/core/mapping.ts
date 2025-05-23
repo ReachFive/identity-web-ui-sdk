@@ -1,7 +1,7 @@
 import { getValue, setValue } from '../helpers/propertyHelpers';
 
 export class PathMapping {
-    protected readonly modelPath: string
+    protected readonly modelPath: string;
 
     constructor(modelPath: string) {
         this.modelPath = modelPath;

@@ -21,6 +21,9 @@ jobs:
           name: Build package
           command: npm run build
       - run:
+          name: Check format
+          command: npm run format:check
+      - run:
           name: Install JUnit coverage reporter
           command: npm i -D jest-junit
       - run:
@@ -29,7 +32,7 @@ jobs:
             npx jest --listTests | circleci tests run --command="JEST_JUNIT_ADD_FILE_ATTRIBUTE=true xargs npx jest --config jest.config.ts --runInBand --reporters=default --reporters=jest-junit --" --verbose --split-by=timings
           environment:
             JEST_JUNIT_OUTPUT_DIR: ./reports/
-            JEST_JUNIT_ADD_FILE_ATTRIBUTE: "true"
+            JEST_JUNIT_ADD_FILE_ATTRIBUTE: 'true'
       - store_test_results:
           path: ./reports/
       - persist_to_workspace:
