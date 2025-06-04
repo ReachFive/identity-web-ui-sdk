@@ -42,12 +42,12 @@ const auth = {
     redirectUri: 'http://localhost/',
 };
 
-const myStepUpToken = 'myStepUpToken'
-const myChallengeId = 'myChallengeId'
-const myVerificationCode = '1234'
+const myStepUpToken = 'myStepUpToken';
+const myChallengeId = 'myChallengeId';
+const myVerificationCode = '1234';
 
 describe('DOM testing', () => {
-    const { location } = window
+    const { location } = window;
 
     const replaceMock = jest.fn();
 
@@ -98,7 +98,7 @@ describe('DOM testing', () => {
     };
 
     const assertStepUpWorkflow = async (user: UserEvent, amr: string[]) => {
-        expect(getMfaStepUpToken).toHaveBeenCalledTimes(1)
+        expect(getMfaStepUpToken).toHaveBeenCalledTimes(1);
 
         // When more than one amr options, display radio input selector
         if (amr.length > 1) {
@@ -121,9 +121,7 @@ describe('DOM testing', () => {
         });
 
         // wait for view redirect to code verification view
-        expect(
-            await screen.findByText('passwordless.sms.verification.intro')
-        ).toBeInTheDocument()
+        expect(await screen.findByText('passwordless.sms.verification.intro')).toBeInTheDocument();
 
         expect(screen.queryByLabelText('verificationCode')).toBeInTheDocument();
         const input = screen.getByPlaceholderText('verificationCode');
@@ -131,8 +129,8 @@ describe('DOM testing', () => {
         const submitBtn = screen.getByTestId('submit');
         expect(submitBtn).toBeInTheDocument();
 
-        await user.type(input, myVerificationCode)
-        await user.click(submitBtn)
+        await user.type(input, myVerificationCode);
+        await user.click(submitBtn);
 
         await waitFor(() =>
             expect(verifyMfaPasswordless).toHaveBeenNthCalledWith(
@@ -167,7 +165,7 @@ describe('DOM testing', () => {
         });
 
         test('showStepUpStart: true', async () => {
-            expect.assertions(11)
+            expect.assertions(11);
 
             const user = userEvent.setup();
 
@@ -180,13 +178,13 @@ describe('DOM testing', () => {
             const stepUpStartBtn = screen.getByText('mfa.stepUp.start');
             expect(stepUpStartBtn).toBeInTheDocument();
 
-            await user.click(stepUpStartBtn)
+            await user.click(stepUpStartBtn);
 
             await assertStepUpWorkflow(user, ['sms']);
         });
 
         test('showStepUpStart: false', async () => {
-            expect.assertions(12)
+            expect.assertions(12);
 
             const user = userEvent.setup();
 
@@ -216,7 +214,7 @@ describe('DOM testing', () => {
         });
 
         test('showStepUpStart: false', async () => {
-            expect.assertions(14)
+            expect.assertions(14);
 
             const user = userEvent.setup();
 

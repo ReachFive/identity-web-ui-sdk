@@ -2,9 +2,9 @@ import { type AuthOptions } from '@reachfive/identity-core';
 import { LoginWithPasswordParams } from '@reachfive/identity-core/es/main/oAuthClient';
 import React, { useLayoutEffect } from 'react';
 
-import styled from 'styled-components'
+import styled from 'styled-components';
 
-import { Alternative, Heading, Link } from '../../../components/miscComponent'
+import { Alternative, Heading, Link } from '../../../components/miscComponent';
 
 import checkboxField from '../../../components/form/fields/checkboxField';
 import identifierField from '../../../components/form/fields/identifierField';
@@ -12,17 +12,17 @@ import simplePasswordField from '../../../components/form/fields/simplePasswordF
 import { createForm } from '../../../components/form/formComponent';
 import ReCaptcha, { importGoogleRecaptchaScript } from '../../../components/reCaptcha';
 
-import { useI18n } from '../../../contexts/i18n'
-import { useReachfive } from '../../../contexts/reachfive'
-import { useRouting } from '../../../contexts/routing'
+import { useI18n } from '../../../contexts/i18n';
+import { useReachfive } from '../../../contexts/reachfive';
+import { useRouting } from '../../../contexts/routing';
 
-import { specializeIdentifierData } from '../../../helpers/utils'
-import { FaSelectionViewState } from '../../stepUp/mfaStepUpWidget'
+import { specializeIdentifierData } from '../../../helpers/utils';
+import { FaSelectionViewState } from '../../stepUp/mfaStepUpWidget';
 
-import type { OnError, OnSuccess } from '../../../types'
+import type { OnError, OnSuccess } from '../../../types';
 
 const ResetCredentialWrapper = styled.div<{ floating?: boolean }>`
-    margin-bottom: ${(props) => props.theme.spacing}px;
+    margin-bottom: ${props => props.theme.spacing}px;
     text-align: right;
     ${props =>
         props.floating &&
@@ -30,7 +30,7 @@ const ResetCredentialWrapper = styled.div<{ floating?: boolean }>`
         position: absolute;
         right: 0;
     `};
-`
+`;
 
 type LoginWithPasswordFormData = {
     identifier: string;
@@ -179,15 +179,16 @@ export const LoginWithPasswordView = ({
                     ...auth,
                 },
             })
-            .then(res =>
-                res?.stepUpToken
-                    ? goTo<FaSelectionViewState>('fa-selection', {
-                          token: res.stepUpToken,
-                          amr: res.amr ?? [],
-                          allowTrustDevice,
-                      })
-                    : res
-            );
+            .then(res => {
+                if (res?.stepUpToken) {
+                    goTo<FaSelectionViewState>('fa-selection', {
+                        token: res.stepUpToken,
+                        amr: res.amr ?? [],
+                        allowTrustDevice,
+                    });
+                }
+                return res;
+            });
     };
 
     return (
@@ -208,7 +209,7 @@ export const LoginWithPasswordView = ({
                         'login'
                     )
                 }
-                onSuccess={onSuccess}
+                onSuccess={authResult => onSuccess({ name: 'login', authResult })}
                 onError={onError}
             />
             <Alternative>

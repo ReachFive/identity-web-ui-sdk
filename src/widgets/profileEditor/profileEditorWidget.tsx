@@ -1,8 +1,8 @@
 import { ConsentVersions, Profile, UserConsent } from '@reachfive/identity-core';
 import React from 'react';
 
-import { UserError } from '../../helpers/errors'
-import { camelCaseProperties } from '../../helpers/transformObjectProperties'
+import { UserError } from '../../helpers/errors';
+import { camelCaseProperties } from '../../helpers/transformObjectProperties';
 
 import { FieldCreator } from '../../components/form/fieldCreator';
 import { PhoneNumberOptions } from '../../components/form/fields/phoneNumberField';
@@ -11,7 +11,7 @@ import { Field, buildFormFields } from '../../components/form/formFieldFactory';
 import { createWidget } from '../../components/widget/widget';
 import { useReachfive } from '../../contexts/reachfive';
 
-import type { OnError, OnSuccess } from '../../types'
+import type { OnError, OnSuccess } from '../../types';
 
 type ProfileWithConsents = Profile & { consents?: Record<string, UserConsent> };
 
@@ -124,16 +124,14 @@ export default createWidget<ProfileEditorWidgetProps, ProfileEditorProps>({
         });
 
         if (haveNotAllowedFields) {
-            throw new UserError(
-                'These fields are not allowed: password, password_confirmation.'
-            )
+            throw new UserError('These fields are not allowed: password, password_confirmation.');
         }
 
         // This step removes the version from the consents
         const resolvedFields = buildFormFields(fields, {
             ...config,
             errorArchivedConsents: false,
-        })
+        });
 
         return (
             apiClient

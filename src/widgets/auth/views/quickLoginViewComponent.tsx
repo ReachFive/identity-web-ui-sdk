@@ -4,13 +4,13 @@ import React from 'react';
 import { SocialButtons } from '../../../components/form/socialButtonsComponent';
 import { Alternative, Heading, Intro, Link } from '../../../components/miscComponent';
 
-import { useI18n } from '../../../contexts/i18n'
+import { useI18n } from '../../../contexts/i18n';
 
 import { InitialScreen } from '../../../../constants.ts';
 import { PropsWithSession } from '../../../contexts/session';
 import { selectLogin } from '../authWidget.tsx';
 
-import type { OnError, OnSuccess } from '../../../types'
+import type { OnError, OnSuccess } from '../../../types';
 
 export interface QuickLoginViewProps {
     initialScreen?: InitialScreen;
@@ -45,7 +45,7 @@ export const QuickLoginView = ({
     const i18n = useI18n();
 
     // this component should never be display without session infos defined
-    if (!session) return null
+    if (!session) return null;
 
     return (
         <div>

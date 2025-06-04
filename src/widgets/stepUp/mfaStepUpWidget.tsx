@@ -1,5 +1,5 @@
 import { AuthOptions, MFA, PasswordlessResponse } from '@reachfive/identity-core';
-import { PasswordlessParams } from '@reachfive/identity-core/es/main/oAuthClient';
+import { StepUpPasswordlessParams } from '@reachfive/identity-core/es/main/oAuthClient';
 import React, { useCallback, useEffect, useState } from 'react';
 
 import type { OnError, OnSuccess, Prettify, RequiredProperty } from '../../types';
@@ -10,7 +10,7 @@ import { createForm } from '../../components/form/formComponent';
 import { Info, Intro } from '../../components/miscComponent';
 import { createMultiViewWidget } from '../../components/widget/widget';
 
-import { toQueryString } from '../../helpers/queryString'
+import { toQueryString } from '../../helpers/queryString';
 
 import checkboxField from '../../components/form/fields/checkboxField';
 import { useConfig } from '../../contexts/config.tsx';
@@ -21,7 +21,7 @@ import { useRouting } from '../../contexts/routing';
 const StartStepUpMfaButton = createForm({
     prefix: 'r5-mfa-start-step-up-',
     submitLabel: 'mfa.stepUp.start',
-})
+});
 
 export type VerificationCodeInputFormData = {
     verificationCode: string;
@@ -57,18 +57,15 @@ const VerificationCodeInputForm = createForm<
     },
 });
 
-type StartPasswordlessFormData = {
-    authType: PasswordlessParams['authType'];
+type StepUpFormData = {
+    authType: StepUpPasswordlessParams['authType'];
 };
 
-type StartPasswordlessFormProps = {
+type StepUpFormProps = {
     options: Parameters<typeof radioboxField>[0]['options'];
 };
 
-const StartPasswordlessForm = createForm<
-    StartPasswordlessFormData,
-    StartPasswordlessFormProps
->({
+const StepUpForm = createForm<StepUpFormData, StepUpFormProps>({
     prefix: 'r5-mfa-start-passwordless',
     fields({ options }) {
         return [
@@ -207,7 +204,7 @@ export type FaSelectionViewProps = Prettify<
 // Unlike single factor authentication, StepUp request always returns a challengeId
 type StepUpResponse = RequiredProperty<PasswordlessResponse, 'challengeId'>;
 
-type StepUpHandlerResponse = StepUpResponse & StartPasswordlessFormData;
+type StepUpHandlerResponse = StepUpResponse & StepUpFormData;
 
 export const FaSelectionView = (props: FaSelectionViewProps) => {
     const coreClient = useReachfive();
@@ -225,7 +222,7 @@ export const FaSelectionView = (props: FaSelectionViewProps) => {
     const [response, setResponse] = useState<StepUpHandlerResponse | undefined>();
 
     const onChooseFa = useCallback(
-        (factor: StartPasswordlessFormData): Promise<void> =>
+        (factor: StepUpFormData): Promise<void> =>
             coreClient.startPasswordless({ ...factor, stepUp: token }).then(resp =>
                 setResponse({
                     ...(resp as StepUpResponse),
@@ -237,7 +234,7 @@ export const FaSelectionView = (props: FaSelectionViewProps) => {
 
     useEffect(() => {
         if (amr.length === 1) {
-            onChooseFa({ authType: amr[0] as PasswordlessParams['authType'] });
+            onChooseFa({ authType: amr[0] as StepUpPasswordlessParams['authType'] });
         }
     }, [amr, onChooseFa]);
 
@@ -257,7 +254,7 @@ export const FaSelectionView = (props: FaSelectionViewProps) => {
         return (
             <div>
                 {showIntro && <Intro>{i18n('mfa.select.factor')}</Intro>}
-                <StartPasswordlessForm
+                <StepUpForm
                     options={amr.map(factor => ({ key: factor, value: factor, label: factor }))}
                     handler={onChooseFa}
                     onError={onError}
@@ -318,19 +315,15 @@ export const VerificationCodeView = (props: VerificationCodeViewProps) => {
                 trustDevice: data.trustDevice,
             })
             .then(resp => {
-                onSuccess();
+                onSuccess({ name: 'mfa_step_up_verified', authType, authResult: resp });
                 // @ts-expect-error AuthResult is too complex and is not representative of the real response of this request
                 window.location.replace((auth?.redirectUri ?? '') + '?' + toQueryString(resp));
             });
 
     return (
         <div>
-            {authType === 'sms' && (
-                <Info>{i18n('passwordless.sms.verification.intro')}</Info>
-            )}
-            {authType === 'email' && (
-                <Info>{i18n('passwordless.email.verification.intro')}</Info>
-            )}
+            {authType === 'sms' && <Info>{i18n('passwordless.sms.verification.intro')}</Info>}
+            {authType === 'email' && <Info>{i18n('passwordless.email.verification.intro')}</Info>}
             <VerificationCodeInputForm
                 allowTrustDevice={rbaEnabled && allowTrustDevice}
                 handler={handleSubmit}

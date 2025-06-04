@@ -11,10 +11,10 @@ import 'jest-styled-components';
 
 import type { Client, PasswordStrengthScore } from '@reachfive/identity-core';
 
-import { type I18nMessages } from '../../../src/core/i18n'
-import type { Config, OnError, OnSuccess } from '../../../src/types'
+import { type I18nMessages } from '../../../src/core/i18n';
+import type { Config } from '../../../src/types';
 
-import accountRecoveryWidget from '../../../src/widgets/accountRecovery/accountRecoveryWidget'
+import accountRecoveryWidget from '../../../src/widgets/accountRecovery/accountRecoveryWidget';
 
 const defaultConfig: Config = {
     clientId: 'local',

@@ -1,15 +1,15 @@
-import React from 'react'
+import React from 'react';
 
-import { Validator } from '../../core/validation'
+import { Validator } from '../../core/validation';
 
 import passwordField from '../../components/form/fields/passwordField';
 import simplePasswordField from '../../components/form/fields/simplePasswordField';
 import { createForm, FormContext } from '../../components/form/formComponent';
 import { createWidget } from '../../components/widget/widget';
 
-import { useReachfive } from '../../contexts/reachfive'
+import { useReachfive } from '../../contexts/reachfive';
 
-import type { OnError, OnSuccess } from '../../types'
+import type { OnError, OnSuccess } from '../../types';
 
 export type PasswordEditorFormData = {
     password: string;
@@ -30,10 +30,7 @@ interface PasswordEditorFormProps {
     canShowPassword?: boolean;
 }
 
-export const PasswordEditorForm = createForm<
-    PasswordEditorFormData,
-    PasswordEditorFormProps
->({
+export const PasswordEditorForm = createForm<PasswordEditorFormData, PasswordEditorFormProps>({
     prefix: 'r5-password-editor-',
     fields({ promptOldPassword = false, canShowPassword = false, config }) {
         return [
@@ -57,10 +54,7 @@ export const PasswordEditorForm = createForm<
                 key: 'password_confirmation',
                 label: 'passwordConfirmation',
                 autoComplete: 'new-password',
-                validator: new Validator<
-                    string,
-                    FormContext<PasswordEditorFormData>
-                >({
+                validator: new Validator<string, FormContext<PasswordEditorFormData>>({
                     rule: (value, ctx) => {
                         return value === ctx.fields.password;
                     },
@@ -111,16 +105,13 @@ const PasswordEditor = ({
 }: PasswordEditorProps) => {
     const coreClient = useReachfive();
 
-    const handleSubmit = ({
-        password,
-        oldPassword,
-    }: PasswordEditorFormData) => {
+    const handleSubmit = ({ password, oldPassword }: PasswordEditorFormData) => {
         return coreClient.updatePassword({
             password,
             ...(promptOldPassword ? { oldPassword } : {}),
             ...authentication,
-        })
-    }
+        });
+    };
 
     return (
         <PasswordEditorForm
@@ -142,13 +133,13 @@ const resolveAuthentication = (
     userId?: string
 ): { authentication?: Authentication } => {
     if (accessToken) {
-        return { authentication: { accessToken } }
+        return { authentication: { accessToken } };
     } else if (userId) {
-        return { authentication: { userId } }
+        return { authentication: { userId } };
     } else {
-        return {}
+        return {};
     }
-}
+};
 
 export type PasswordEditorWidgetProps = Omit<PasswordEditorProps, 'authentication'>;
 

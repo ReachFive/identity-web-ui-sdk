@@ -17,7 +17,7 @@ import {
 
 import { ReactComponent as Passkeys } from '../../icons/passkeys.svg';
 
-import type { OnError, OnSuccess } from '../../types'
+import type { OnError, OnSuccess } from '../../types';
 
 interface MainViewProps {
     /**
@@ -99,9 +99,9 @@ const NewPasskey = ({
     };
 
     const handleSuccess = () => {
-        onSuccess({ name: 'passkey_reset' })
-        goTo('passkey-success')
-    }
+        onSuccess({ name: 'passkey_reset' });
+        goTo('passkey-success');
+    };
 
     return (
         <div>
@@ -132,15 +132,11 @@ const PasskeySuccessView = ({ loginLink }: SuccessViewProps) => {
     const i18n = useI18n();
     return (
         <div>
-            <Heading>
-                {i18n('accountRecovery.passkeyReset.successTitle')}
-            </Heading>
+            <Heading>{i18n('accountRecovery.passkeyReset.successTitle')}</Heading>
             <Info>{i18n('accountRecovery.passkeyReset.successMessage')}</Info>
             {loginLink && (
                 <Info>
-                    <Link href={loginLink}>
-                        {i18n('accountRecovery.passkeyReset.loginLink')}
-                    </Link>
+                    <Link href={loginLink}>{i18n('accountRecovery.passkeyReset.loginLink')}</Link>
                 </Info>
             )}
         </div>
@@ -155,9 +151,7 @@ const PasswordSuccessView = ({ loginLink }: SuccessViewProps) => {
             <Info>{i18n('passwordReset.successMessage')}</Info>
             {loginLink && (
                 <Info>
-                    <Link href={loginLink}>
-                        {i18n('passwordReset.loginLink')}
-                    </Link>
+                    <Link href={loginLink}>{i18n('passwordReset.loginLink')}</Link>
                 </Info>
             )}
         </div>
@@ -182,9 +176,9 @@ export const NewPasswordView = ({
     };
 
     const handleSuccess = () => {
-        onSuccess({ name: 'password_reset' })
-        goTo('password-success')
-    }
+        onSuccess({ name: 'password_reset' });
+        goTo('password-success');
+    };
 
     return (
         <div>
@@ -225,7 +219,7 @@ export default createMultiViewWidget<
         'passkey-success': PasskeySuccessView,
         'password-success': PasswordSuccessView,
     },
-    prepare: (options) => ({
+    prepare: options => ({
         ...options,
         ...resolveCode(),
     }),

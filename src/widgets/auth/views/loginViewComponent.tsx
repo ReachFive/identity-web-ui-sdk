@@ -17,21 +17,21 @@ import ReCaptcha, {
 
 import { FaSelectionViewState } from '../../stepUp/mfaStepUpWidget';
 
-import { useI18n } from '../../../contexts/i18n'
-import { useReachfive } from '../../../contexts/reachfive'
-import { useRouting } from '../../../contexts/routing'
-import { useSession } from '../../../contexts/session'
+import { useI18n } from '../../../contexts/i18n';
+import { useReachfive } from '../../../contexts/reachfive';
+import { useRouting } from '../../../contexts/routing';
+import { useSession } from '../../../contexts/session';
 
-import { specializeIdentifierData } from '../../../helpers/utils'
+import { specializeIdentifierData } from '../../../helpers/utils';
 
-import type { OnError, OnSuccess } from '../../../types'
+import type { OnError, OnSuccess } from '../../../types';
 
 type Floating = { floating?: boolean };
 
 const ResetCredentialWrapper = styled.div.withConfig({
     shouldForwardProp: prop => !['floating'].includes(prop),
 })<Floating>`
-    margin-bottom: ${(props) => props.theme.spacing}px;
+    margin-bottom: ${props => props.theme.spacing}px;
     text-align: right;
     ${props =>
         props.floating &&
@@ -39,7 +39,7 @@ const ResetCredentialWrapper = styled.div.withConfig({
         position: absolute;
         right: 0;
     `};
-`
+`;
 
 export type LoginFormData =
     | {
@@ -319,19 +319,19 @@ export const LoginView = ({
                     ...auth,
                 },
             })
-            .then(res =>
-                res?.stepUpToken
-                    ? goTo<FaSelectionViewState>('fa-selection', {
-                          token: res.stepUpToken,
-                          amr: res.amr ?? [],
-                          allowTrustDevice,
-                      })
-                    : res
-            );
+            .then(res => {
+                if (res?.stepUpToken) {
+                    goTo<FaSelectionViewState>('fa-selection', {
+                        token: res.stepUpToken,
+                        amr: res.amr ?? [],
+                        allowTrustDevice,
+                    });
+                }
+                return res;
+            });
     };
 
-    const defaultIdentifier =
-        session?.lastLoginType === 'password' ? session.email : undefined
+    const defaultIdentifier = session?.lastLoginType === 'password' ? session.email : undefined;
 
     return (
         <div>
@@ -357,7 +357,9 @@ export const LoginView = ({
                         'login'
                     )
                 }
-                onSuccess={onSuccess}
+                onSuccess={authResult => {
+                    onSuccess({ name: 'login', authResult });
+                }}
                 onError={onError}
             />
             {allowSignup && (

@@ -1,9 +1,9 @@
 import { AuthOptions, AuthResult, SingleFactorPasswordlessParams } from '@reachfive/identity-core';
 import React, { useLayoutEffect } from 'react';
 
-import type { Config, OnError, OnSuccess, Prettify } from '../../types'
+import type { Config, OnError, OnSuccess, Prettify } from '../../types';
 
-import { email } from '../../core/validation'
+import { email } from '../../core/validation';
 
 import { Info, Intro, Separator } from '../../components/miscComponent';
 import { createMultiViewWidget } from '../../components/widget/widget';
@@ -137,9 +137,7 @@ const MainView = ({
         importGoogleRecaptchaScript(recaptcha_site_key);
     }, [recaptcha_site_key]);
 
-    const callback = (
-        data: WithCaptchaToken<EmailFormData | PhoneNumberFormFata>
-    ) =>
+    const callback = (data: WithCaptchaToken<EmailFormData | PhoneNumberFormFata>) =>
         coreClient
             .startPasswordless(
                 {
@@ -152,7 +150,7 @@ const MainView = ({
 
     const handleSuccess = (data: EmailFormData | PhoneNumberFormFata) => {
         if ('email' in data) {
-            onSuccess();
+            onSuccess({ name: 'passwordless_start', authType });
             goTo('emailSent');
         } else {
             goTo<VerificationCodeViewState>('verificationCode', data);
@@ -164,48 +162,11 @@ const MainView = ({
 
     return (
         <div>
-            {showSocialLogins &&
-                socialProviders &&
-                socialProviders.length > 0 && (
-                    <SocialButtons providers={socialProviders} auth={auth} />
-                )}
-            {showSocialLogins &&
-                socialProviders &&
-                socialProviders.length > 0 && <Separator text={i18n('or')} />}
-            {isEmail && showIntro && (
-                <Intro>{i18n('passwordless.intro')}</Intro>
+            {showSocialLogins && socialProviders && socialProviders.length > 0 && (
+                <SocialButtons providers={socialProviders} auth={auth} />
             )}
-            {isEmail && (
-                <EmailInputForm
-                    handler={(data: EmailFormData) =>
-                        ReCaptcha.handle(
-                            data,
-                            { recaptcha_enabled, recaptcha_site_key },
-                            callback,
-                            'passwordless_email'
-                        )
-                    }
-                    onSuccess={handleSuccess}
-                    onError={onError}
-                />
-            )}
-            {!isEmail && showIntro && (
-                <Intro>{i18n('passwordless.sms.intro')}</Intro>
-            )}
-            {!isEmail && (
-                <PhoneNumberInputForm
-                    handler={(data: PhoneNumberFormFata) =>
-                        ReCaptcha.handle(
-                            data,
-                            { recaptcha_enabled, recaptcha_site_key },
-                            callback,
-                            'passwordless_phone'
-                        )
-                    }
-                    onSuccess={handleSuccess}
-                    onError={onError}
-                    phoneNumberOptions={phoneNumberOptions}
-                />
+            {showSocialLogins && socialProviders && socialProviders.length > 0 && (
+                <Separator text={i18n('or')} />
             )}
             {isEmail && showIntro && <Intro>{i18n('passwordless.intro')}</Intro>}
             {isEmail && (
@@ -292,7 +253,7 @@ const VerificationCodeView = ({
             })
             .then(result => {
                 if (AuthResult.isAuthResult(result)) {
-                    onSuccess();
+                    onSuccess({ name: 'passwordless_verified', authType, authResult: result });
                 } else {
                     onError();
                 }

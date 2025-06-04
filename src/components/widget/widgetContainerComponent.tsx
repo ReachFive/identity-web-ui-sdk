@@ -14,7 +14,7 @@ interface WidgetContentProps extends React.HTMLAttributes<HTMLDivElement> {
 
 const WidgetContent = styled(
     React.forwardRef(function WidgetContent(
-        { name, className, children, ...props }: PropsWithChildren<WidgetContentProps>,
+        { name, className, children, standalone, ...props }: PropsWithChildren<WidgetContentProps>,
         ref: ForwardedRef<HTMLDivElement>
     ) {
         return (

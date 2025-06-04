@@ -1,7 +1,7 @@
 import type { AuthOptions, Client as CoreClient } from '@reachfive/identity-core';
 import React from 'react';
 
-import { useReachfive } from '../../../contexts/reachfive'
+import { useReachfive } from '../../../contexts/reachfive';
 
 import { createForm } from '../../../components/form/formComponent';
 import { UserAggreementStyle } from '../../../components/form/formControlsComponent';
@@ -11,7 +11,7 @@ import { useConfig } from '../../../contexts/config';
 import { useI18n } from '../../../contexts/i18n';
 import { snakeCaseProperties } from '../../../helpers/transformObjectProperties';
 
-import type { OnError, OnSuccess } from '../../../types'
+import type { OnError, OnSuccess } from '../../../types';
 
 type SignupFormData = Parameters<CoreClient['signupWithWebAuthn']>[0]['profile'] & {
     friendlyName?: string;
@@ -72,7 +72,7 @@ export interface SignupWithWebAuthnViewProps {
 
 export const SignupWithWebAuthnView = ({
     auth,
-    beforeSignup = (x) => x,
+    beforeSignup = x => x,
     redirectUrl,
     returnToAfterEmailConfirmation,
     signupFields = ['given_name', 'family_name', 'email'],
@@ -94,7 +94,7 @@ export const SignupWithWebAuthnView = ({
                 returnToAfterEmailConfirmation,
             },
             auth
-        )
+        );
 
     const webAuthnSignupFields = signupFields.filter(
         field => field !== 'password' && field !== 'password_confirmation'
@@ -125,9 +125,7 @@ export const SignupWithWebAuthnView = ({
                 showLabels={showLabels}
                 beforeSubmit={beforeSignup}
                 handler={handleSignup}
-                onSuccess={(authResult) =>
-                    onSuccess({ name: 'sign_up', authResult })
-                }
+                onSuccess={authResult => onSuccess({ name: 'sign_up', authResult })}
                 onError={onError}
             />
             <Alternative>

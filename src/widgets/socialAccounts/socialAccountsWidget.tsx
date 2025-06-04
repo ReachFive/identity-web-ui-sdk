@@ -2,16 +2,13 @@ import { AuthOptions, Identity, Profile } from '@reachfive/identity-core';
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { UserError } from '../../helpers/errors'
+import { UserError } from '../../helpers/errors';
 
-import {
-    ProviderId,
-    providers as socialProviders,
-} from '../../providers/providers'
+import { ProviderId, providers as socialProviders } from '../../providers/providers';
 
-import { useI18n } from '../../contexts/i18n'
-import { useReachfive } from '../../contexts/reachfive'
-import { useRouting } from '../../contexts/routing'
+import { useI18n } from '../../contexts/i18n';
+import { useReachfive } from '../../contexts/reachfive';
+import { useRouting } from '../../contexts/routing';
 
 import { DefaultButton } from '../../components/form/buttonComponent';
 import { Card, CloseIcon } from '../../components/form/cardComponent';
@@ -19,7 +16,7 @@ import { SocialButtons } from '../../components/form/socialButtonsComponent';
 import { Alternative, ErrorText, Info, Link, MutedText } from '../../components/miscComponent';
 import { createMultiViewWidget } from '../../components/widget/widget';
 
-import type { OnError, OnSuccess } from '../../types'
+import type { OnError, OnSuccess } from '../../types';
 
 type Unlink = (id: string) => Promise<void>;
 
@@ -38,14 +35,11 @@ interface WithIdentitiesProps {
     onError?: OnError;
 }
 
-function findAvailableProviders(
-    providers: string[],
-    identities: Identity[]
-): string[] {
-    return providers.filter((provider) => {
-        const providerName = provider.split(':').shift()
-        return identities.findIndex((i) => i.provider == providerName) == -1
-    })
+function findAvailableProviders(providers: string[], identities: Identity[]): string[] {
+    return providers.filter(provider => {
+        const providerName = provider.split(':').shift();
+        return identities.findIndex(i => i.provider == providerName) == -1;
+    });
 }
 
 const withIdentities = <T extends WithIdentitiesProps = WithIdentitiesProps>(
@@ -76,7 +70,7 @@ const withIdentities = <T extends WithIdentitiesProps = WithIdentitiesProps>(
                 // api call + catch failure
                 return coreClient
                     .unlink({ accessToken: props.accessToken, identityId })
-                    .then(() => props.onSuccess?.())
+                    .then(() => props.onSuccess?.({ name: 'social_identity_unlinked', identityId }))
                     .catch(error => {
                         props.onError?.(error);
                         // restore previous identities
@@ -94,7 +88,7 @@ const withIdentities = <T extends WithIdentitiesProps = WithIdentitiesProps>(
 
         useEffect(() => {
             if (props.auth?.popupMode) {
-                coreClient.on('authenticated', handleAuthenticated)
+                coreClient.on('authenticated', handleAuthenticated);
             }
             refresh();
             return () => coreClient.off('authenticated', handleAuthenticated);
@@ -103,7 +97,7 @@ const withIdentities = <T extends WithIdentitiesProps = WithIdentitiesProps>(
         return <WrappedComponent {...(props as T)} identities={identities} unlink={unlink} />;
     };
 
-    ComponentWithIdentities.displayName = `withIdentities(${displayName})`
+    ComponentWithIdentities.displayName = `withIdentities(${displayName})`;
 
     return ComponentWithIdentities;
 };
@@ -113,14 +107,14 @@ const SocialIcon = styled.span<{ icon: string }>`
     left: 0;
     top: 0;
     bottom: 0;
-    width: ${(props) => props.theme._blockInnerHeight}px;
+    width: ${props => props.theme._blockInnerHeight}px;
     box-sizing: border-box;
-    background-image: url(${(props) => props.icon});
+    background-image: url(${props => props.icon});
     background-repeat: no-repeat;
     background-size: ${props => props.theme._absoluteLineHeight}px
         ${props => props.theme._absoluteLineHeight}px;
     background-position: center center;
-`
+`;
 
 interface IdentityListProps {
     identities?: Identity[];
@@ -157,7 +151,7 @@ const IdentityList = ({
                 </ErrorText>
             )}
             {identities.map(({ provider, id, username }) => {
-                const providerInfos = socialProviders[provider as ProviderId]
+                const providerInfos = socialProviders[provider as ProviderId];
                 return (
                     <Card key={id} data-testid={`identity-${provider}`}>
                         <SocialIcon icon={providerInfos.icon} />
@@ -170,7 +164,7 @@ const IdentityList = ({
                             data-testid={`identity-${provider}-unlink`}
                         />
                     </Card>
-                )
+                );
             })}
         </div>
     );
@@ -260,10 +254,7 @@ interface SocialAccountsWidgetPropsPrepared
     extends Omit<SocialAccountsProps, 'identities' | 'unlink'>, // indentities and unlink are injected by HoC `withIdentity`
         Omit<LinkAccountProps, 'identities' | 'unlink'> {}
 
-export default createMultiViewWidget<
-    SocialAccountsWidgetProps,
-    SocialAccountsWidgetPropsPrepared
->({
+export default createMultiViewWidget<SocialAccountsWidgetProps, SocialAccountsWidgetPropsPrepared>({
     initialView: 'links',
     views: {
         links: SocialAccounts,
@@ -273,4 +264,4 @@ export default createMultiViewWidget<
         providers: options.providers ?? config.socialProviders,
         ...options,
     }),
-})
+});

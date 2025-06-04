@@ -1,3 +1,5 @@
+import type { AuthResult, MFA, SingleFactorPasswordlessParams, StepUpPasswordlessParams, TrustedDevice } from "@reachfive/identity-core"
+
 export interface AbstractEvent {
     readonly name: string
 }
@@ -60,9 +62,10 @@ interface MfaStepUpVerifiedEvent extends AbstractEvent {
 
 interface MfaCredentialsListedEvent extends AbstractEvent {
     readonly name: 'mfa_credentials_listed'
+    readonly credentials: MFA.Credential[]
 }
 
-interface MfaPhoneNumberRemovedEvent extends AbstractEvent {
+interface MfaPhoneNumberRemovedEvent extends AbstractEvent { 
     readonly name: 'mfa_phone_number_removed'
 }
 
@@ -81,6 +84,7 @@ interface PasskeyResetEvent extends AbstractEvent {
 
 interface CredentialRegisteredEvent extends AbstractEvent {
     readonly name: 'credential_registered'
+    readonly type: MFA.Credential['type']
 }
 
 interface WebAuthnDeviceAddedEvent extends AbstractEvent {

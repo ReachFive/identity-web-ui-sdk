@@ -8,13 +8,13 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import 'jest-styled-components';
 
-import { type Client } from '@reachfive/identity-core'
+import { type Client } from '@reachfive/identity-core';
 
-import { I18nMessages } from '../../../src/core/i18n'
-import { providers, type ProviderId } from '../../../src/providers/providers'
-import { type Config, type OnError, type OnSuccess } from '../../../src/types'
+import { I18nMessages } from '../../../src/core/i18n';
+import { providers, type ProviderId } from '../../../src/providers/providers';
+import { type Config } from '../../../src/types';
 
-import socialLoginWidget from '../../../src/widgets/socialLogin/socialLoginWidget'
+import socialLoginWidget from '../../../src/widgets/socialLogin/socialLoginWidget';
 
 const defaultConfig: Config = {
     clientId: 'local',
@@ -91,15 +91,15 @@ describe('DOM testing', () => {
             { config: { ...defaultConfig, ...config }, apiClient, defaultI18n }
         );
 
-        return render(result)
-    }
+        return render(result);
+    };
 
     test('basic', async () => {
         const user = userEvent.setup();
 
         loginWithSocialProvider.mockResolvedValue({});
 
-        await generateComponent({})
+        await generateComponent({});
 
         defaultConfig.socialProviders.forEach(provider => {
             expect(screen.queryByTitle(providers[provider as ProviderId].name)).toBeInTheDocument();
@@ -133,7 +133,7 @@ describe('DOM testing', () => {
         const error = { error: 'Unexpected error' };
         loginWithSocialProvider.mockRejectedValue(error);
 
-        await generateComponent({})
+        await generateComponent({});
 
         defaultConfig.socialProviders.forEach(provider => {
             expect(screen.queryByTitle(providers[provider as ProviderId].name)).toBeInTheDocument();

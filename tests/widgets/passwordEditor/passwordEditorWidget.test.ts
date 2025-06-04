@@ -10,10 +10,10 @@ import 'jest-styled-components';
 
 import type { Client, PasswordStrengthScore } from '@reachfive/identity-core';
 
-import { type I18nMessages } from '../../../src/core/i18n'
-import type { Config, OnError, OnSuccess } from '../../../src/types'
+import { type I18nMessages } from '../../../src/core/i18n';
+import type { Config } from '../../../src/types';
 
-import passwordEditorWidget from '../../../src/widgets/passwordEditor/passwordEditorWidget'
+import passwordEditorWidget from '../../../src/widgets/passwordEditor/passwordEditorWidget';
 
 const defaultConfig: Config = {
     clientId: 'local',

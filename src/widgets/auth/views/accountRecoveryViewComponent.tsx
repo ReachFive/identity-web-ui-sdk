@@ -14,7 +14,7 @@ import { useI18n } from '../../../contexts/i18n';
 import { useReachfive } from '../../../contexts/reachfive';
 import { useRouting } from '../../../contexts/routing';
 
-import type { OnError, OnSuccess } from '../../../types'
+import type { OnError, OnSuccess } from '../../../types';
 
 const AccountRecoveryForm = createForm<RequestAccountRecoveryParams>({
     prefix: 'r5-account-recovery-',
@@ -125,7 +125,7 @@ export const AccountRecoveryView = ({
                 showLabels={showLabels}
                 handler={callback}
                 onSuccess={() => {
-                    onSuccess();
+                    onSuccess({ name: 'account_recovery' });
                     goTo('account-recovery-success');
                 }}
                 onError={onError}

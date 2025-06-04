@@ -7,7 +7,7 @@ import '@testing-library/jest-dom/jest-globals';
 import { render, screen, waitFor } from '@testing-library/react';
 import 'jest-styled-components';
 
-import type { Client, MFA } from '@reachfive/identity-core'
+import type { Client, MFA } from '@reachfive/identity-core';
 
 import type { I18nMessages } from '../../../src/core/i18n';
 import type { Config } from '../../../src/types';

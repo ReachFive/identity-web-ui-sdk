@@ -8,12 +8,12 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import 'jest-styled-components';
 
-import { type Client } from '@reachfive/identity-core'
+import { type Client } from '@reachfive/identity-core';
 
-import { type I18nMessages } from '../../../src/core/i18n'
-import type { Config, OnError, OnSuccess } from '../../../src/types'
+import { type I18nMessages } from '../../../src/core/i18n';
+import type { Config } from '../../../src/types';
 
-import phoneNumberEditorWidget from '../../../src/widgets/phoneNumberEditor/phoneNumberEditorWidget'
+import phoneNumberEditorWidget from '../../../src/widgets/phoneNumberEditor/phoneNumberEditorWidget';
 
 const defaultConfig: Config = {
     clientId: 'local',

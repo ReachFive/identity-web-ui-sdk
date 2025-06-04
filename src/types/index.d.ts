@@ -4,6 +4,7 @@ import type {
     CustomField,
     RemoteSettings,
 } from '@reachfive/identity-core';
+import type { SuccessEvent } from './events';
 
 export type Prettify<T> = {
     [K in keyof T]: T[K];
@@ -29,6 +30,6 @@ type CustomFields = { customFields?: CustomField[] };
 
 export type Config = CoreConfig & RemoteSettings & ConsentsVersions & CustomFields;
 
-export type OnSuccess = (...args: any[]) => void;
+export type OnSuccess = (event: SuccessEvent) => void;
 
 export type OnError = (error?: unknown) => void;
