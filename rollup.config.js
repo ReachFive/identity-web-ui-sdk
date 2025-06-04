@@ -8,7 +8,7 @@ import url from '@rollup/plugin-url';
 import svg from '@svgr/rollup';
 import dts from 'rollup-plugin-dts';
 import esbuild from 'rollup-plugin-esbuild';
-import postcss from "rollup-plugin-postcss";
+import postcss from 'rollup-plugin-postcss';
 
 import path, { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -16,12 +16,12 @@ import { fileURLToPath } from 'node:url';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 import packageJson from './package.json' with { type: 'json' };
-const dependencies = Object.keys(packageJson.dependencies)
+const dependencies = Object.keys(packageJson.dependencies);
 
 const banner = [
     `/**`,
     ` * ${packageJson.name} - v${packageJson.version}`,
-    ` * Compiled ${(new Date()).toUTCString().replace(/GMT/g, 'UTC')}`,
+    ` * Compiled ${new Date().toUTCString().replace(/GMT/g, 'UTC')}`,
     ` *`,
     ` * Copyright (c) ReachFive.`,
     ` *`,
@@ -31,23 +31,23 @@ const banner = [
 ].join('\n');
 
 /**
- * Ignore Luxon library's circular dependencies 
+ * Ignore Luxon library's circular dependencies
  * @param {Partial<import('rollup').RollupLog>} warning
  * @returns {void}
  */
-const onWarn = (warning) => {
-    if ( warning.code === 'CIRCULAR_DEPENDENCY' || warning.code === 'MODULE_LEVEL_DIRECTIVE') return;
+const onWarn = warning => {
+    if (warning.code === 'CIRCULAR_DEPENDENCY' || warning.code === 'MODULE_LEVEL_DIRECTIVE') return;
     console.warn(warning);
-}
+};
 
-/** 
+/**
  * @param {Partial<import('rollup').RollupOptions>} config
  * @returns {import('rollup').RollupOptions}
  */
 const bundle = config => ({
     ...config,
     input: 'src/index.ts',
-})
+});
 
 /** @type {import('rollup').InputPluginOption} */
 const plugins = [
@@ -55,34 +55,34 @@ const plugins = [
         entries: [
             {
                 find: /^@\/(.*)/,
-                replacement: path.resolve(__dirname, './src/$1')
-            }
-        ]
+                replacement: path.resolve(__dirname, './src/$1'),
+            },
+        ],
     }),
     replace({
         preventAssignment: true,
         values: {
             'process.env.NODE_ENV': JSON.stringify('production'),
-        }
+        },
     }),
     nodeResolve({
         browser: true,
         extensions: ['.tsx', '.ts', '.jsx', '.js', '.json'],
-        preferBuiltins: true
+        preferBuiltins: true,
     }),
     commonjs({ include: /node_modules/ }),
     svg(),
     postcss({
         extract: false,
-        minimize: true
+        minimize: true,
     }),
     // Add an inlined version of SVG files: https://www.smooth-code.com/open-source/svgr/docs/rollup/#using-with-url-plugin
     url({ limit: Infinity, include: ['**/*.svg'] }),
     esbuild(),
     dynamicImportVars({
-        errorWhenNoFilesFound: true
+        errorWhenNoFilesFound: true,
     }),
-]
+];
 
 /** @type {import('rollup').RollupOptions[]} */
 export default [
@@ -107,14 +107,12 @@ export default [
             {
                 file: packageJson.module.replace('.js', '.min.js'),
                 format: 'es',
-                plugins: [
-                    terser({ output: { preamble: banner } })
-                ],
+                plugins: [terser({ output: { preamble: banner } })],
                 sourcemap: true,
                 inlineDynamicImports: true,
             },
         ],
-        onwarn: onWarn
+        onwarn: onWarn,
     }),
     bundle({
         plugins,
@@ -128,34 +126,30 @@ export default [
                 sourcemap: true,
                 inlineDynamicImports: true,
                 globals: {
-                    '@reachfive/identity-core': 'reach5'
+                    '@reachfive/identity-core': 'reach5',
                 },
             },
             {
                 file: packageJson.main.replace('cjs/', 'umd/').replace('.js', '.min.js'),
                 format: 'umd',
                 name: 'reach5Widgets',
-                plugins: [
-                    terser({ output: { preamble: banner } })
-                ],
+                plugins: [terser({ output: { preamble: banner } })],
                 sourcemap: true,
                 inlineDynamicImports: true,
                 globals: {
-                    '@reachfive/identity-core': 'reach5'
+                    '@reachfive/identity-core': 'reach5',
                 },
             },
         ],
-        onwarn: onWarn
+        onwarn: onWarn,
     }),
     bundle({
-        plugins: [
-            dts()
-        ],
+        plugins: [dts()],
         output: {
             banner,
             file: packageJson.types,
             format: 'es',
         },
-        onwarn: onWarn
+        onwarn: onWarn,
     }),
-]
+];

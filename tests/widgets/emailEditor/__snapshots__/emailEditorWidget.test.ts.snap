@@ -1,87 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Snapshot email editor basic 1`] = `
-.c2 {
-  text-align: center;
-  margin-bottom: 10px;
-}
-
-.c3 {
-  color: #495057;
-}
-
-.c0 {
-  font-size: 14px;
-  -webkit-transition: -webkit-transform 400ms ease, opacity 400ms ease;
-  -webkit-transition: transform 400ms ease, opacity 400ms ease;
-  transition: transform 400ms ease, opacity 400ms ease;
-  opacity: 0;
-  padding: 20px;
-  border-radius: 3px;
-  background-color: #ffffff;
-  max-width: 400px;
-  box-sizing: border-box;
-  margin: 0 auto;
-}
-
-.c1 {
-  --color-primary: #229955;
-  --color-destructive: #dc4e41;
-  --color-background: #ffffff;
-  --color-text: #495057;
-  --color-border: #ced4da;
-  --spacing-padding-y: 9;
-  --spacing-padding-x: 12;
-  --spacing-block-inner-height: 38;
-  --spacing: 10;
-  --font-generic: 14;
-  --border-width: 1;
-  --radius: 3;
-}
-
-.c8 {
-  display: block;
-  width: 100%;
-  box-sizing: border-box;
-  text-align: center;
-  font-weight: bold;
-  vertical-align: middle;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-  touch-action: manipulation;
-  cursor: pointer;
-  color: #ffffff;
-  background-color: #229955;
-  border: 1px solid #229955;
-  padding: 9px 12px;
-  font-size: 14px;
-  line-height: 1.428571429;
-  border-radius: 3px;
-  -webkit-transition: all .15s ease-in-out;
-  transition: all .15s ease-in-out;
-}
-
-.c8:focus {
-  outline: 0;
-  box-shadow: 0 0 0 3px rgba(34,153,85,0.5);
-}
-
-.c8:hover,
-.c8:active {
-  background-color: #1b7842;
-  border-color: #1b7842;
-}
-
-.c8[disabled] {
-  opacity: .65;
-}
-
-.c4 {
-  position: relative;
-}
-
 .c6 {
   color: #495057;
   margin-bottom: 5px;
@@ -111,8 +30,8 @@ exports[`Snapshot email editor basic 1`] = `
   background-color: #fff;
   background-image: none;
   padding: 9px 12px;
-  -webkit-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
-  transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+  -webkit-transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
+  transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
   box-shadow: none;
   -webkit-appearance: none;
   -moz-appearance: none;
@@ -144,6 +63,87 @@ exports[`Snapshot email editor basic 1`] = `
 
 .c7::placeholder {
   color: #868e96;
+}
+
+.c2 {
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.c3 {
+  color: #495057;
+}
+
+.c8 {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: center;
+  font-weight: bold;
+  vertical-align: middle;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  touch-action: manipulation;
+  cursor: pointer;
+  color: #ffffff;
+  background-color: #229955;
+  border: 1px solid #229955;
+  padding: 9px 12px;
+  font-size: 14px;
+  line-height: 1.428571429;
+  border-radius: 3px;
+  -webkit-transition: all 0.15s ease-in-out;
+  transition: all 0.15s ease-in-out;
+}
+
+.c8:focus {
+  outline: 0;
+  box-shadow: 0 0 0 3px rgba(34,153,85,0.5);
+}
+
+.c8:hover,
+.c8:active {
+  background-color: #1b7842;
+  border-color: #1b7842;
+}
+
+.c8[disabled] {
+  opacity: 0.65;
+}
+
+.c4 {
+  position: relative;
+}
+
+.c0 {
+  font-size: 14px;
+  -webkit-transition: -webkit-transform 400ms ease, opacity 400ms ease;
+  -webkit-transition: transform 400ms ease, opacity 400ms ease;
+  transition: transform 400ms ease, opacity 400ms ease;
+  opacity: 0;
+  padding: 20px;
+  border-radius: 3px;
+  background-color: #ffffff;
+  max-width: 400px;
+  box-sizing: border-box;
+  margin: 0 auto;
+}
+
+.c1 {
+  --color-primary: #229955;
+  --color-destructive: #dc4e41;
+  --color-background: #ffffff;
+  --color-text: #495057;
+  --color-border: #ced4da;
+  --spacing-padding-y: 9;
+  --spacing-padding-x: 12;
+  --spacing-block-inner-height: 38;
+  --spacing: 10;
+  --font-generic: 14;
+  --border-width: 1;
+  --radius: 3;
 }
 
 <div>

@@ -86,8 +86,7 @@ exports[`Snapshot basic 1`] = `
               <div>
                 <span>
                   mfaList.createdAt
-                   :
-                   
+                   : 
                 </span>
                 <time
                   datetime="2022-09-21"
@@ -147,8 +146,7 @@ exports[`Snapshot basic 1`] = `
               <div>
                 <span>
                   mfaList.createdAt
-                   :
-                   
+                   : 
                 </span>
                 <time
                   datetime="2022-09-21"

@@ -1,14 +1,14 @@
-import { createWidget } from '../../components/widget/widget';
-import { SocialButtons } from '../../components/form/socialButtonsComponent';
 import type { SocialButtonsProps } from '../../components/form/socialButtonsComponent';
+import { SocialButtons } from '../../components/form/socialButtonsComponent';
+import { createWidget } from '../../components/widget/widget';
 
 export interface SocialLoginWidgetProps extends Omit<SocialButtonsProps, 'providers'> {
     /**
      * Lists the available social providers. This is an array of strings.
-     * 
-     * Tip: If you pass an empty array, social providers will not be displayed. 
+     *
+     * Tip: If you pass an empty array, social providers will not be displayed.
      * */
-    socialProviders?: SocialButtonsProps['providers']
+    socialProviders?: SocialButtonsProps['providers'];
 }
 
 export default createWidget<SocialLoginWidgetProps, SocialButtonsProps>({
@@ -18,5 +18,5 @@ export default createWidget<SocialLoginWidgetProps, SocialButtonsProps>({
     prepare: ({ socialProviders, ...options }, { config }) => ({
         providers: (Array.isArray(socialProviders) && socialProviders) || config.socialProviders,
         ...options,
-    })
+    }),
 });

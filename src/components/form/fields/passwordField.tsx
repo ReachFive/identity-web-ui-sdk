@@ -1,25 +1,25 @@
 import React, { useEffect, useState } from 'react';
 
-import { isLower, isUpper, isDigit } from 'char-info';
-import type { PasswordPolicy, PasswordStrengthScore } from '@reachfive/identity-core'
+import type { PasswordPolicy, PasswordStrengthScore } from '@reachfive/identity-core';
+import { isDigit, isLower, isUpper } from 'char-info';
 import styled, { DefaultTheme } from 'styled-components';
 
-import type { Config, Optional } from '../../../types'
+import type { Config, Optional } from '../../../types';
 
-import { Input, Label, FormGroupContainer, FormError } from '../formControlsComponent';
-import type { FieldCreator, FieldComponentProps, FieldDefinition } from '../fieldCreator'
+import type { FieldComponentProps, FieldCreator, FieldDefinition } from '../fieldCreator';
+import { FormError, FormGroupContainer, Input, Label } from '../formControlsComponent';
 import { PasswordPolicyRules, type PasswordRule } from './passwordPolicyRules';
 
-import { ShowPasswordIcon, HidePasswordIcon } from './simplePasswordField';
 import { useI18n } from '../../../contexts/i18n';
-import { isValidatorError, Validator } from '../../../core/validation';
 import { I18nResolver } from '../../../core/i18n';
+import { Validator, isValidatorError } from '../../../core/validation';
+import { HidePasswordIcon, ShowPasswordIcon } from './simplePasswordField';
 
-import { createField } from '../fieldCreator';
 import { isRichFormValue } from '../../../helpers/utils';
+import { createField } from '../fieldCreator';
 import { FormContext } from '../formComponent';
 
-const SPECIAL_CHARACTERS = " !\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~";
+const SPECIAL_CHARACTERS = ' !"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~';
 const MAX_PASSWORD_LENGTH = 255;
 
 const PasswordStrengthContainer = styled.div`
@@ -34,11 +34,12 @@ const PasswordStrengthGaugeContainer = styled.div`
 `;
 
 interface PasswordStrengthColorProps {
-    theme: DefaultTheme
-    score: PasswordStrengthScore
+    theme: DefaultTheme;
+    score: PasswordStrengthScore;
 }
 
-const getPasswordStrengthColor = ({ theme, score }: PasswordStrengthColorProps) => theme.passwordStrengthValidator[`color${score}`];
+const getPasswordStrengthColor = ({ theme, score }: PasswordStrengthColorProps) =>
+    theme.passwordStrengthValidator[`color${score}`];
 
 const PasswordStrengthLabel = styled.div<{ score: PasswordStrengthScore }>`
     text-align: right;
@@ -54,15 +55,17 @@ const PasswordStrengthGauge = styled.div<{ score: PasswordStrengthScore }>`
     background-color: ${getPasswordStrengthColor};
     width: ${props => props.score * 25}%;
     border-radius: ${props => props.theme.borderRadius}px;
-    transition: width 300ms ease-out, background-color 300ms linear;
+    transition:
+        width 300ms ease-out,
+        background-color 300ms linear;
 `;
 
 interface PasswordStrength {
-    score: PasswordStrengthScore
+    score: PasswordStrengthScore;
 }
 
 const PasswordStrength = ({ score }: PasswordStrength) => {
-    const i18n = useI18n()
+    const i18n = useI18n();
     return (
         <PasswordStrengthContainer data-testid="password-strength">
             <PasswordStrengthGaugeContainer>
@@ -72,19 +75,19 @@ const PasswordStrength = ({ score }: PasswordStrength) => {
                 {i18n('passwordStrength.score' + score)}
             </PasswordStrengthLabel>
         </PasswordStrengthContainer>
-    )
-}
+    );
+};
 
 type ExtraValues = {
-    strength?: PasswordStrengthScore,
-}
+    strength?: PasswordStrengthScore;
+};
 
 type ExtraParams = {
-    blacklist?: string[]
-    canShowPassword?: boolean
-    enabledRules: Record<RuleKeys, PasswordRule>
-    minStrength: PasswordStrengthScore
-}
+    blacklist?: string[];
+    canShowPassword?: boolean;
+    enabledRules: Record<RuleKeys, PasswordRule>;
+    minStrength: PasswordStrengthScore;
+};
 
 export interface PasswordFieldProps extends FieldComponentProps<string, ExtraParams, ExtraValues> {}
 
@@ -103,22 +106,22 @@ function PasswordField({
     validation,
     value = '',
 }: PasswordFieldProps) {
-    const [showPassword, setShowPassword] = useState(false)
-    const [isTouched, setIsTouched] = useState(false)
-    const [strength, setStrength] = useState<PasswordStrengthScore>(validation?.strength ?? 0)
+    const [showPassword, setShowPassword] = useState(false);
+    const [isTouched, setIsTouched] = useState(false);
+    const [strength, setStrength] = useState<PasswordStrengthScore>(validation?.strength ?? 0);
 
-    const currentValue = isRichFormValue(value, 'raw') ? value.raw : value
-    
+    const currentValue = isRichFormValue(value, 'raw') ? value.raw : value;
+
     useEffect(() => {
         // only update strength if defined in validation to avoid strength to be reset on field change event
         if (validation?.strength) {
-            setStrength(validation.strength)
+            setStrength(validation.strength);
         }
-    }, [validation])
+    }, [validation]);
 
     const toggleShowPassword = () => {
-        setShowPassword(showPassword => !showPassword)
-    }
+        setShowPassword(showPassword => !showPassword);
+    };
 
     return (
         <FormGroupContainer required={required}>
@@ -139,26 +142,36 @@ function PasswordField({
                     onChange={event => {
                         onChange({
                             value: event.target.value,
-                        })
+                        });
                     }}
                     onFocus={() => setIsTouched(true)}
                     onBlur={event => {
-                        event?.target.value !== currentValue && onChange({
-                            value: event?.target.value,
-                            validation,
-                            isDirty: true
-                        })
+                        event?.target.value !== currentValue &&
+                            onChange({
+                                value: event?.target.value,
+                                validation,
+                                isDirty: true,
+                            });
                     }}
                     data-testid="password"
                 />
-                {canShowPassword && (
-                    showPassword
-                        ? <HidePasswordIcon data-testid="hide-password-btn" onClick={toggleShowPassword} />
-                        : <ShowPasswordIcon data-testid="show-password-btn" onClick={toggleShowPassword} />
-                )}
+                {canShowPassword &&
+                    (showPassword ? (
+                        <HidePasswordIcon
+                            data-testid="hide-password-btn"
+                            onClick={toggleShowPassword}
+                        />
+                    ) : (
+                        <ShowPasswordIcon
+                            data-testid="show-password-btn"
+                            onClick={toggleShowPassword}
+                        />
+                    ))}
             </div>
             {isTouched && <PasswordStrength score={strength} />}
-            {validation && isValidatorError(validation) && <FormError data-testid="error">{validation.error}</FormError>}
+            {validation && isValidatorError(validation) && (
+                <FormError data-testid="error">{validation.error}</FormError>
+            )}
             {isTouched && (
                 <PasswordPolicyRules
                     value={currentValue}
@@ -168,68 +181,76 @@ function PasswordField({
                 />
             )}
         </FormGroupContainer>
-    )
+    );
 }
 
-type RuleKeys = Exclude<keyof PasswordPolicy, 'minStrength' | 'allowUpdateWithAccessTokenOnly'>
+type RuleKeys = Exclude<keyof PasswordPolicy, 'minStrength' | 'allowUpdateWithAccessTokenOnly'>;
 
-export function listEnabledRules(i18n: I18nResolver, passwordPolicy: Config['passwordPolicy']): Record<RuleKeys, PasswordRule> {
+export function listEnabledRules(
+    i18n: I18nResolver,
+    passwordPolicy: Config['passwordPolicy']
+): Record<RuleKeys, PasswordRule> {
     if (!passwordPolicy) return {} as Record<RuleKeys, PasswordRule>;
 
     const rules: Record<RuleKeys, PasswordRule> = {
         minLength: {
             label: i18n('validation.password.minLength', { min: passwordPolicy.minLength }),
-            verify: (password: string) => password.length >= passwordPolicy.minLength
+            verify: (password: string) => password.length >= passwordPolicy.minLength,
         },
         specialCharacters: {
             label: i18n('validation.password.specials.characters'),
-            verify: (password: string) => Array.from(password).some(c => SPECIAL_CHARACTERS.includes(c))
+            verify: (password: string) =>
+                Array.from(password).some(c => SPECIAL_CHARACTERS.includes(c)),
         },
         lowercaseCharacters: {
             label: i18n('validation.password.specials.lowercase'),
-            verify: (password: string) => Array.from(password).some(c => isLower(c))
+            verify: (password: string) => Array.from(password).some(c => isLower(c)),
         },
         uppercaseCharacters: {
             label: i18n('validation.password.specials.uppercase'),
-            verify: (password: string) => Array.from(password).some(c => isUpper(c))
+            verify: (password: string) => Array.from(password).some(c => isUpper(c)),
         },
         digitCharacters: {
             label: i18n('validation.password.specials.digit'),
-            verify: (password: string) => Array.from(password).some(c => isDigit(c))
-        }
+            verify: (password: string) => Array.from(password).some(c => isDigit(c)),
+        },
     };
 
-    return Object.keys(rules).reduce<Record<RuleKeys, PasswordRule>>((enabledRules, key) => {
-        if (key in passwordPolicy && passwordPolicy[key as RuleKeys]) enabledRules[key as RuleKeys] = rules[key as RuleKeys];
-        return enabledRules;
-    }, {} as Record<RuleKeys, PasswordRule>);
+    return Object.keys(rules).reduce<Record<RuleKeys, PasswordRule>>(
+        (enabledRules, key) => {
+            if (key in passwordPolicy && passwordPolicy[key as RuleKeys])
+                enabledRules[key as RuleKeys] = rules[key as RuleKeys];
+            return enabledRules;
+        },
+        {} as Record<RuleKeys, PasswordRule>
+    );
 }
 
 export function passwordStrengthValidator(passwordPolicy?: PasswordPolicy) {
     return new Validator<string, FormContext<any>>({
         rule: async (value, ctx) => {
-            if (value.length === 0) return false
-            const strength = await ctx.client.getPasswordStrength(value)
+            if (value.length === 0) return false;
+            const strength = await ctx.client.getPasswordStrength(value);
             if (passwordPolicy && strength.score < passwordPolicy.minStrength) {
-                return { valid: false, strength: strength.score }
+                return { valid: false, strength: strength.score };
             }
-            return { valid: true, strength: strength.score }
+            return { valid: true, strength: strength.score };
         },
-        hint: 'password.minStrength'
-    })
+        hint: 'password.minStrength',
+    });
 }
 
 export const passwordLengthValidator = new Validator<string, FormContext<any>>({
-    rule: (value) => {
-        if (value.length > MAX_PASSWORD_LENGTH) return false
-        return true
+    rule: value => {
+        if (value.length > MAX_PASSWORD_LENGTH) return false;
+        return true;
     },
     hint: 'password.maxLength',
-    parameters: { max: MAX_PASSWORD_LENGTH }
-})
+    parameters: { max: MAX_PASSWORD_LENGTH },
+});
 
 function passwordValidatorChain(passwordPolicy?: PasswordPolicy) {
-    return passwordLengthValidator.and(passwordStrengthValidator(passwordPolicy))
+    return passwordLengthValidator.and(passwordStrengthValidator(passwordPolicy));
 }
 
 export const passwordField = (
@@ -252,13 +273,15 @@ export const passwordField = (
         required,
         ...props,
         component: PasswordField,
-        extendedParams: (i18n) => ({
+        extendedParams: i18n => ({
             blacklist,
             canShowPassword,
             enabledRules: enabledRules ?? listEnabledRules(i18n, passwordPolicy),
             minStrength: minStrength ?? passwordPolicy.minStrength,
         }),
-        validator: validator ? validator.and(passwordValidatorChain(passwordPolicy)) : passwordValidatorChain(passwordPolicy)
-    })
+        validator: validator
+            ? validator.and(passwordValidatorChain(passwordPolicy))
+            : passwordValidatorChain(passwordPolicy),
+    });
 
 export default passwordField;
