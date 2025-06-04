@@ -67,7 +67,7 @@ describe('Snapshot', () => {
 
                 await waitFor(() => expect(apiClient.getUser).toHaveBeenCalled());
 
-                await rerender(widget);
+                rerender(widget);
 
                 expect(container).toMatchSnapshot();
             });
@@ -123,7 +123,7 @@ describe('DOM testing', () => {
 
             await waitFor(() => expect(apiClient.getUser).toHaveBeenCalled());
 
-            await rerender(widget);
+            rerender(widget);
         });
     };
 
@@ -192,7 +192,12 @@ describe('DOM testing', () => {
 
             expect(screen.queryByTestId('identity-google')).not.toBeInTheDocument();
 
-            expect(onSuccess).toBeCalled();
+            expect(onSuccess).toBeCalledWith(
+                expect.objectContaining({
+                    identityId: '987654321',
+                    name: 'social_identity_unlinked',
+                })
+            );
             expect(onError).not.toBeCalled();
         });
 

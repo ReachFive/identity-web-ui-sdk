@@ -65,7 +65,7 @@ describe('Snapshot', () => {
 
                 await waitFor(() => expect(apiClient.listMfaCredentials).toHaveBeenCalled());
 
-                await rerender(widget);
+                rerender(widget);
 
                 expect(container).toMatchSnapshot();
             });
@@ -132,7 +132,12 @@ describe('DOM testing', () => {
             const credential = screen.queryAllByTestId('credential');
             expect(credential).toHaveLength(0);
 
-            expect(onSuccess).toBeCalled();
+            expect(onSuccess).toBeCalledWith(
+                expect.objectContaining({
+                    credentials: expect.arrayContaining([]),
+                    name: 'mfa_credentials_listed',
+                })
+            );
             expect(onError).not.toBeCalled();
         });
 
@@ -161,7 +166,25 @@ describe('DOM testing', () => {
             const credential = screen.queryAllByTestId('credential');
             expect(credential).toHaveLength(2);
 
-            expect(onSuccess).toBeCalled();
+            expect(onSuccess).toBeCalledWith(
+                expect.objectContaining({
+                    credentials: expect.arrayContaining([
+                        {
+                            type: 'sms',
+                            phoneNumber: '33612345678',
+                            friendlyName: '33612345678',
+                            createdAt: '2022-09-21',
+                        },
+                        {
+                            type: 'email',
+                            email: 'root@reach5.co',
+                            friendlyName: 'identifier',
+                            createdAt: '2022-09-21',
+                        },
+                    ]),
+                    name: 'mfa_credentials_listed',
+                })
+            );
             expect(onError).not.toBeCalled();
         });
 

@@ -142,7 +142,13 @@ describe('DOM testing', () => {
             )
         );
 
-        expect(onSuccess).toBeCalled();
+        expect(onSuccess).toBeCalledWith(
+            expect.objectContaining({
+                name: 'mfa_step_up_verified',
+                authResult: expect.objectContaining({}),
+                authType: 'sms',
+            })
+        );
         expect(onError).not.toBeCalled();
 
         await waitFor(() =>

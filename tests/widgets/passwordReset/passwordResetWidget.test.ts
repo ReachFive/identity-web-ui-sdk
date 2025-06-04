@@ -151,7 +151,7 @@ describe('DOM testing', () => {
                 verificationCode: '123456' /** @see @jest-environment-options on top of file */,
             });
 
-            expect(onSuccess).toBeCalled();
+            expect(onSuccess).toBeCalledWith(expect.objectContaining({ name: 'password_reset' }));
             expect(onError).not.toBeCalled();
         });
 

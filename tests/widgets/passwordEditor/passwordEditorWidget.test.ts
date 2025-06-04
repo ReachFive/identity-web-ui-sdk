@@ -42,9 +42,9 @@ const defaultI18n: I18nMessages = {};
 
 const getPasswordStrengthImplementation = (password: string) => {
     let score = 0;
-    if (password.match(/[a-z]+/)) score++;
-    if (password.match(/[0-9]+/)) score++;
-    if (password.match(/[^a-z0-9]+/)) score++;
+    if (/[a-z]+/.exec(password)) score++;
+    if (/[0-9]+/.exec(password)) score++;
+    if (/[^a-z0-9]+/.exec(password)) score++;
     if (password.length > 8) score++;
     return Promise.resolve({ score: score as PasswordStrengthScore });
 };
@@ -150,7 +150,7 @@ describe('DOM testing', () => {
                 })
             );
 
-            expect(onSuccess).toBeCalled();
+            expect(onSuccess).toBeCalledWith(expect.objectContaining({ name: 'password_updated' }));
             expect(onError).not.toBeCalled();
         });
 
@@ -202,7 +202,7 @@ describe('DOM testing', () => {
                 })
             );
 
-            expect(onSuccess).toBeCalled();
+            expect(onSuccess).toBeCalledWith(expect.objectContaining({ name: 'password_updated' }));
             expect(onError).not.toBeCalled();
         });
 

@@ -111,7 +111,12 @@ describe('DOM testing', () => {
 
         expect(loginWithSocialProvider).toBeCalledWith(provider, undefined);
 
-        expect(onSuccess).toBeCalled();
+        expect(onSuccess).toBeCalledWith(
+            expect.objectContaining({
+                name: 'social_login',
+                provider: 'facebook',
+            })
+        );
         expect(onError).not.toBeCalled();
     });
 
