@@ -1,14 +1,14 @@
 import React from 'react';
 
-import { FormGroup, Input } from '../formControlsComponent';
-import { createField, type FieldComponentProps, type FieldDefinition } from '../fieldCreator';
-import { isRichFormValue } from '../../../helpers/utils';
 import { isValidatorError } from '../../../core/validation';
+import { isRichFormValue } from '../../../helpers/utils';
+import { createField, type FieldComponentProps, type FieldDefinition } from '../fieldCreator';
+import { FormGroup, Input } from '../formControlsComponent';
 
 type SimpleFieldOptions = {
-    placeholder?: React.InputHTMLAttributes<HTMLInputElement>['placeholder']
-    type?: React.HTMLInputTypeAttribute
-}
+    placeholder?: React.InputHTMLAttributes<HTMLInputElement>['placeholder'];
+    type?: React.HTMLInputTypeAttribute;
+};
 
 export interface SimpleFieldProps extends FieldComponentProps<string, SimpleFieldOptions> {}
 
@@ -25,12 +25,12 @@ const SimpleField = (props: SimpleFieldProps) => {
         placeholder = label,
         readOnly,
         required,
-        type
+        type,
     } = props;
 
-    const currentValue = isRichFormValue(value, 'raw') ? value.raw : value
+    const currentValue = isRichFormValue(value, 'raw') ? value.raw : value;
 
-    const error = validation && isValidatorError(validation) ? validation.error : undefined
+    const error = validation && isValidatorError(validation) ? validation.error : undefined;
 
     return (
         <FormGroup
@@ -59,15 +59,19 @@ const SimpleField = (props: SimpleFieldProps) => {
     );
 };
 
-export const simpleField = ({ placeholder, type, ...props }: FieldDefinition<string | number, string> & SimpleFieldOptions) => {
+export const simpleField = ({
+    placeholder,
+    type,
+    ...props
+}: FieldDefinition<string | number, string> & SimpleFieldOptions) => {
     return createField<string | number, string, SimpleFieldProps>({
         ...props,
         component: SimpleField,
         extendedParams: {
             placeholder,
             type,
-        }
-    })
+        },
+    });
 };
 
 export default simpleField;

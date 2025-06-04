@@ -1,22 +1,24 @@
 // @ts-check
 
-import globals from 'globals';
-import eslint from '@eslint/js';
-import tseslint from 'typescript-eslint';
-import compat from 'eslint-plugin-compat';
-import react from 'eslint-plugin-react';
-import reactHooks from 'eslint-plugin-react-hooks';
+import eslint from "@eslint/js";
+import compat from "eslint-plugin-compat";
+import prettier from "eslint-plugin-prettier/recommended";
+import react from "eslint-plugin-react";
+import reactHooks from "eslint-plugin-react-hooks";
+import globals from "globals";
+import tseslint from "typescript-eslint";
 
 export default tseslint.config(
     eslint.configs.recommended,
     tseslint.configs.eslintRecommended,
     ...tseslint.configs.stylisticTypeChecked,
     react.configs.flat.recommended,
-    react.configs.flat['jsx-runtime'],
+    react.configs.flat["jsx-runtime"],
+    prettier,
     // reactHooks.configs.recommended,
-    compat.configs['flat/recommended'],
+    compat.configs["flat/recommended"],
     {
-        files: ['**/*.{js,jsx,mjs,cjs,ts,tsx}'],
+        files: ["**/*.{js,jsx,mjs,cjs,ts,tsx}"],
         languageOptions: {
             ...react.configs.flat?.recommended.languageOptions,
             parserOptions: {
@@ -24,8 +26,8 @@ export default tseslint.config(
                 tsconfigRootDir: import.meta.dirname
             },
             globals: {
-                ...globals.browser,
-            },
+                ...globals.browser
+            }
         },
         plugins: {
             "react-hooks": reactHooks.configs.recommended
@@ -46,7 +48,7 @@ export default tseslint.config(
             "@typescript-eslint/no-empty-function": [
                 "error",
                 {
-                    "allow": ["arrowFunctions"]
+                    allow: ["arrowFunctions"]
                 }
             ],
             "@typescript-eslint/no-unused-vars": [
@@ -56,19 +58,15 @@ export default tseslint.config(
                     caughtErrorsIgnorePattern: "^_",
                     destructuredArrayIgnorePattern: "^_",
                     ignoreRestSiblings: true,
-                    varsIgnorePattern: "^_",
-
+                    varsIgnorePattern: "^_"
                 }
             ]
         },
         settings: {
-            polyfills: [
-                "Promise",
-                "fetch"
-            ],
+            polyfills: ["Promise", "fetch"],
             react: {
-                "version": "detect"
+                version: "detect"
             }
         }
-    },
-)
+    }
+);

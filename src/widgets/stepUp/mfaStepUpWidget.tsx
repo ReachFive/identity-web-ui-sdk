@@ -1,22 +1,22 @@
-import React, { useCallback, useEffect, useState } from 'react';
 import { AuthOptions, MFA, PasswordlessResponse } from '@reachfive/identity-core';
 import { PasswordlessParams } from '@reachfive/identity-core/es/main/oAuthClient';
+import React, { useCallback, useEffect, useState } from 'react';
 
-import type { OnError, OnSuccess, Prettify, RequiredProperty } from '../../types'
+import type { OnError, OnSuccess, Prettify, RequiredProperty } from '../../types';
 
-import {createMultiViewWidget} from '../../components/widget/widget';
-import {createForm} from '../../components/form/formComponent';
 import radioboxField from '../../components/form/fields/radioboxField';
-import {Info, Intro} from '../../components/miscComponent';
-import {simpleField} from '../../components/form/fields/simpleField';
+import { simpleField } from '../../components/form/fields/simpleField';
+import { createForm } from '../../components/form/formComponent';
+import { Info, Intro } from '../../components/miscComponent';
+import { createMultiViewWidget } from '../../components/widget/widget';
 
 import { toQueryString } from '../../helpers/queryString';
 
+import checkboxField from '../../components/form/fields/checkboxField';
+import { useConfig } from '../../contexts/config.tsx';
+import { useI18n } from '../../contexts/i18n';
 import { useReachfive } from '../../contexts/reachfive';
 import { useRouting } from '../../contexts/routing';
-import { useI18n } from '../../contexts/i18n';
-import checkboxField from "../../components/form/fields/checkboxField";
-import { useConfig } from "../../contexts/config.tsx";
 
 const StartStepUpMfaButton = createForm({
     prefix: 'r5-mfa-start-step-up-',
@@ -24,39 +24,46 @@ const StartStepUpMfaButton = createForm({
 });
 
 export type VerificationCodeInputFormData = {
-    verificationCode: string
-    trustDevice?: boolean
-}
+    verificationCode: string;
+    trustDevice?: boolean;
+};
 
 interface VerificationCodeFormOptions {
-    allowTrustDevice?: boolean
+    allowTrustDevice?: boolean;
 }
 
-const VerificationCodeInputForm = createForm<VerificationCodeInputFormData, VerificationCodeFormOptions>({
+const VerificationCodeInputForm = createForm<
+    VerificationCodeInputFormData,
+    VerificationCodeFormOptions
+>({
     prefix: 'r5-passwordless-sms-',
     fields({ allowTrustDevice }) {
         return [
             simpleField({
                 key: 'verification_code',
                 label: 'verificationCode',
-                type: 'text'
+                type: 'text',
             }),
-        ...(allowTrustDevice ? [ checkboxField({
-                key: 'trust_device',
-                label: 'mfa.stepUp.trustDevice',
-                defaultValue: false
-            })] : [])
-        ]
-    }
+            ...(allowTrustDevice
+                ? [
+                      checkboxField({
+                          key: 'trust_device',
+                          label: 'mfa.stepUp.trustDevice',
+                          defaultValue: false,
+                      }),
+                  ]
+                : []),
+        ];
+    },
 });
 
 type StartPasswordlessFormData = {
-    authType: PasswordlessParams['authType']
-}
+    authType: PasswordlessParams['authType'];
+};
 
 type StartPasswordlessFormProps = {
-    options: Parameters<typeof radioboxField>[0]['options']
-}
+    options: Parameters<typeof radioboxField>[0]['options'];
+};
 
 const StartPasswordlessForm = createForm<StartPasswordlessFormData, StartPasswordlessFormProps>({
     prefix: 'r5-mfa-start-passwordless',
@@ -65,11 +72,11 @@ const StartPasswordlessForm = createForm<StartPasswordlessFormData, StartPasswor
             radioboxField({
                 key: 'authType',
                 label: 'authType',
-                options
+                options,
             }),
-        ]
-    }
-})
+        ];
+    },
+});
 
 export interface MainViewProps {
     /**
@@ -79,37 +86,37 @@ export interface MainViewProps {
      *
      * If empty, using an existing SSO session cookie.
      */
-    accessToken?: string
+    accessToken?: string;
     /**
      * List of authentication options
      */
-    auth?: AuthOptions
+    auth?: AuthOptions;
     /**
      * Show the introduction text.
      *
      * @default true
      */
-    showIntro?: boolean
+    showIntro?: boolean;
     /**
      * Show the stepup button. Unnecessary for console use
      *
      * @default true
      */
-    showStepUpStart?: boolean
+    showStepUpStart?: boolean;
     /**
      * Boolean that specifies whether a device can be trusted during step up.
      *
      * @default false
      */
-    allowTrustDevice?: boolean
+    allowTrustDevice?: boolean;
     /**
      * Callback function called when the request has succeed.
      */
-    onSuccess?: OnSuccess
+    onSuccess?: OnSuccess;
     /**
      * Callback function called when the request has failed.
      */
-    onError?: OnError
+    onError?: OnError;
 }
 
 export const MainView = ({
@@ -119,40 +126,43 @@ export const MainView = ({
     onSuccess = (() => {}) as OnError,
     showIntro = true,
     showStepUpStart = true,
-    allowTrustDevice = false
+    allowTrustDevice = false,
 }: MainViewProps) => {
-    const coreClient = useReachfive()
-    const { goTo } = useRouting()
+    const coreClient = useReachfive();
+    const { goTo } = useRouting();
 
-    const [response, setResponse] = useState<MFA.StepUpResponse | undefined>()
+    const [response, setResponse] = useState<MFA.StepUpResponse | undefined>();
 
     const onGetStepUpToken = useCallback(
-        () => coreClient
-            .getMfaStepUpToken({
-                options: auth,
-                accessToken: accessToken
-            })
-            .then(res => {
-                setResponse(res)
-                return res
-            }),
+        () =>
+            coreClient
+                .getMfaStepUpToken({
+                    options: auth,
+                    accessToken: accessToken,
+                })
+                .then(res => {
+                    setResponse(res);
+                    return res;
+                }),
         [accessToken, auth, coreClient]
-    )
+    );
 
     useEffect(() => {
         if (!showStepUpStart) {
-            onGetStepUpToken()
+            onGetStepUpToken();
         }
-    }, [showStepUpStart, onGetStepUpToken])
+    }, [showStepUpStart, onGetStepUpToken]);
 
     if (showStepUpStart) {
         return (
             <StartStepUpMfaButton
                 handler={onGetStepUpToken}
-                onSuccess={(data: MFA.StepUpResponse) => goTo<FaSelectionViewState>('fa-selection', { ...data, allowTrustDevice })}
+                onSuccess={(data: MFA.StepUpResponse) =>
+                    goTo<FaSelectionViewState>('fa-selection', { ...data, allowTrustDevice })
+                }
                 onError={onError}
             />
-        )
+        );
     }
 
     if (response) {
@@ -165,65 +175,68 @@ export const MainView = ({
                 onError={onError}
                 onSuccess={onSuccess}
             />
-        )
+        );
     }
 
-    return null
-}
+    return null;
+};
 
 export type FaSelectionViewState = MFA.StepUpResponse & {
-    allowTrustDevice?: boolean
-}
+    allowTrustDevice?: boolean;
+};
 
-export type FaSelectionViewProps = Prettify<Partial<MFA.StepUpResponse> & {
-    showIntro?: boolean
-    auth?: AuthOptions
-    allowTrustDevice?: boolean
-    /**
-     * Callback function called when the request has succeed.
-     */
-    onSuccess?: OnSuccess
-    /**
-     * Callback function called when the request has failed.
-     */
-    onError?: OnError
-}>
+export type FaSelectionViewProps = Prettify<
+    Partial<MFA.StepUpResponse> & {
+        showIntro?: boolean;
+        auth?: AuthOptions;
+        allowTrustDevice?: boolean;
+        /**
+         * Callback function called when the request has succeed.
+         */
+        onSuccess?: OnSuccess;
+        /**
+         * Callback function called when the request has failed.
+         */
+        onError?: OnError;
+    }
+>;
 
- // Unlike single factor authentication, StepUp request always returns a challengeId
-type StepUpResponse = RequiredProperty<PasswordlessResponse, 'challengeId'>
+// Unlike single factor authentication, StepUp request always returns a challengeId
+type StepUpResponse = RequiredProperty<PasswordlessResponse, 'challengeId'>;
 
-type StepUpHandlerResponse = StepUpResponse & StartPasswordlessFormData
+type StepUpHandlerResponse = StepUpResponse & StartPasswordlessFormData;
 
 export const FaSelectionView = (props: FaSelectionViewProps) => {
-    const coreClient = useReachfive()
-    const i18n = useI18n()
-    const { params } = useRouting()
-    const state = params as FaSelectionViewState
+    const coreClient = useReachfive();
+    const i18n = useI18n();
+    const { params } = useRouting();
+    const state = params as FaSelectionViewState;
 
     const {
-        amr, onError = (() => {}) as OnError,
+        amr,
+        onError = (() => {}) as OnError,
         showIntro = true,
-        token
-    } = { ...props, ...state }
+        token,
+    } = { ...props, ...state };
 
-    const [response, setResponse] = useState<StepUpHandlerResponse | undefined>()
+    const [response, setResponse] = useState<StepUpHandlerResponse | undefined>();
 
     const onChooseFa = useCallback(
         (factor: StartPasswordlessFormData): Promise<void> =>
-            coreClient
-                .startPasswordless({ ...factor, stepUp: token, })
-                .then(resp => setResponse({
+            coreClient.startPasswordless({ ...factor, stepUp: token }).then(resp =>
+                setResponse({
                     ...(resp as StepUpResponse),
                     ...factor,
-                })),
+                })
+            ),
         [coreClient, token]
-    )
+    );
 
     useEffect(() => {
         if (amr.length === 1) {
-            onChooseFa({ authType: amr[0] as PasswordlessParams['authType'] })
+            onChooseFa({ authType: amr[0] as PasswordlessParams['authType'] });
         }
-    }, [amr, onChooseFa])
+    }, [amr, onChooseFa]);
 
     if (response) {
         return (
@@ -234,7 +247,7 @@ export const FaSelectionView = (props: FaSelectionViewProps) => {
                 onError={props.onError}
                 onSuccess={props.onSuccess}
             />
-        )
+        );
     }
 
     if (amr.length > 1) {
@@ -242,46 +255,48 @@ export const FaSelectionView = (props: FaSelectionViewProps) => {
             <div>
                 {showIntro && <Intro>{i18n('mfa.select.factor')}</Intro>}
                 <StartPasswordlessForm
-                    options={amr.map(factor => ({key: factor, value: factor, label: factor}))}
+                    options={amr.map(factor => ({ key: factor, value: factor, label: factor }))}
                     handler={onChooseFa}
                     onError={onError}
                 />
             </div>
-        )
+        );
     }
 
     return null;
-}
+};
 
-export type VerificationCodeViewState = Prettify<StepUpHandlerResponse>
+export type VerificationCodeViewState = Prettify<StepUpHandlerResponse>;
 
-export type VerificationCodeViewProps = Prettify<Partial<StepUpHandlerResponse> & {
-    /**
-     * List of authentication options
-     */
-    auth?: AuthOptions
-    /**
-     * Boolean that specifies whether a device can be trusted during step up.
-     *
-     * @default false
-     */
-    allowTrustDevice?: boolean
-    /**
-     * Callback function called when the request has succeed.
-     */
-    onSuccess?: OnSuccess
-    /**
-     * Callback function called when the request has failed.
-     */
-    onError?: OnError
-}>
+export type VerificationCodeViewProps = Prettify<
+    Partial<StepUpHandlerResponse> & {
+        /**
+         * List of authentication options
+         */
+        auth?: AuthOptions;
+        /**
+         * Boolean that specifies whether a device can be trusted during step up.
+         *
+         * @default false
+         */
+        allowTrustDevice?: boolean;
+        /**
+         * Callback function called when the request has succeed.
+         */
+        onSuccess?: OnSuccess;
+        /**
+         * Callback function called when the request has failed.
+         */
+        onError?: OnError;
+    }
+>;
 
 export const VerificationCodeView = (props: VerificationCodeViewProps) => {
-    const coreClient = useReachfive()
-    const i18n = useI18n()
-    const { params } = useRouting()
-    const { rbaEnabled } = useConfig()
-    const state = params as VerificationCodeViewState
+    const coreClient = useReachfive();
+    const i18n = useI18n();
+    const { params } = useRouting();
+    const { rbaEnabled } = useConfig();
+    const state = params as VerificationCodeViewState;
 
     const {
         auth,
@@ -289,21 +304,21 @@ export const VerificationCodeView = (props: VerificationCodeViewProps) => {
         challengeId,
         allowTrustDevice,
         onError = (() => {}) as OnError,
-        onSuccess = (() => {}) as OnSuccess
-    } = { ...props, ...state }
+        onSuccess = (() => {}) as OnSuccess,
+    } = { ...props, ...state };
 
     const handleSubmit = (data: VerificationCodeInputFormData) =>
         coreClient
             .verifyMfaPasswordless({
                 challengeId,
                 verificationCode: data.verificationCode,
-                trustDevice: data.trustDevice
+                trustDevice: data.trustDevice,
             })
             .then(resp => {
-                onSuccess()
+                onSuccess();
                 // @ts-expect-error AuthResult is too complex and is not representative of the real response of this request
-                window.location.replace( (auth?.redirectUri ?? '') + "?" + toQueryString(resp))
-            })
+                window.location.replace((auth?.redirectUri ?? '') + '?' + toQueryString(resp));
+            });
 
     return (
         <div>
@@ -315,18 +330,18 @@ export const VerificationCodeView = (props: VerificationCodeViewProps) => {
                 onError={onError}
             />
         </div>
-    )
-}
+    );
+};
 
-export type MfaStepUpProps = MainViewProps & FaSelectionViewProps & VerificationCodeViewProps
+export type MfaStepUpProps = MainViewProps & FaSelectionViewProps & VerificationCodeViewProps;
 
-export type MfaStepUpWidgetProps = MfaStepUpProps
+export type MfaStepUpWidgetProps = MfaStepUpProps;
 
 export default createMultiViewWidget<MfaStepUpWidgetProps, MfaStepUpProps>({
     initialView: 'main',
     views: {
-        'main': MainView,
+        main: MainView,
         'fa-selection': FaSelectionView,
-        'verification-code': VerificationCodeView
+        'verification-code': VerificationCodeView,
     },
-})
+});

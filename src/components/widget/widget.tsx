@@ -1,29 +1,20 @@
-import type {
-    Client as CoreClient,
-    SessionInfo,
-} from "@reachfive/identity-core";
-import React, { ComponentType } from "react";
-import styled, {
-    css,
-    StyleSheetManager,
-    ThemeProvider,
-} from "styled-components";
+import type { Client as CoreClient, SessionInfo } from '@reachfive/identity-core';
+import React, { ComponentType } from 'react';
+import styled, { StyleSheetManager, ThemeProvider, css } from 'styled-components';
 
-import type { I18nMessages, I18nNestedMessages } from "../../core/i18n";
-import type { Config, Prettify } from "../../types";
+import type { I18nMessages, I18nNestedMessages } from '../../core/i18n';
+import type { Config, Prettify } from '../../types';
 
-import { ConfigProvider } from "../../contexts/config";
-import { I18nProvider } from "../../contexts/i18n";
-import { ReachfiveProvider } from "../../contexts/reachfive";
-import { RoutingProvider } from "../../contexts/routing";
-import { SessionProvider } from "../../contexts/session";
+import { ConfigProvider } from '../../contexts/config';
+import { I18nProvider } from '../../contexts/i18n';
+import { ReachfiveProvider } from '../../contexts/reachfive';
+import { RoutingProvider } from '../../contexts/routing';
+import { SessionProvider } from '../../contexts/session';
 
-import { buildTheme } from "../../core/theme";
-import { Theme, ThemeOptions } from "../../types/styled";
+import { buildTheme } from '../../core/theme';
+import { Theme, ThemeOptions } from '../../types/styled';
 
-import WidgetContainer, {
-    WidgetContainerProps,
-} from "./widgetContainerComponent";
+import WidgetContainer, { WidgetContainerProps } from './widgetContainerComponent';
 
 export type I18nProps = { i18n?: I18nNestedMessages };
 export type ThemeProps = { theme?: ThemeOptions };
@@ -32,21 +23,21 @@ export type PropsWithI18n<P> = Prettify<P & I18nProps>;
 export type PropsWithTheme<P> = Prettify<P & ThemeProps>;
 
 export const themeVariables = css`
-    --color-primary: ${(props) => props.theme.primaryColor};
-    --color-destructive: ${(props) => props.theme.dangerColor};
-    --color-background: ${(props) => props.theme.backgroundColor};
-    --color-text: ${(props) => props.theme.textColor};
-    --color-border: ${(props) => props.theme.borderColor};
+    --color-primary: ${props => props.theme.primaryColor};
+    --color-destructive: ${props => props.theme.dangerColor};
+    --color-background: ${props => props.theme.backgroundColor};
+    --color-text: ${props => props.theme.textColor};
+    --color-border: ${props => props.theme.borderColor};
 
-    --spacing-padding-y: ${(props) => props.theme.paddingY};
-    --spacing-padding-x: ${(props) => props.theme.paddingX};
-    --spacing-block-inner-height: ${(props) => props.theme._blockInnerHeight};
-    --spacing: ${(props) => props.theme.spacing};
+    --spacing-padding-y: ${props => props.theme.paddingY};
+    --spacing-padding-x: ${props => props.theme.paddingX};
+    --spacing-block-inner-height: ${props => props.theme._blockInnerHeight};
+    --spacing: ${props => props.theme.spacing};
 
-    --font-generic: ${(props) => props.theme.fontSize};
+    --font-generic: ${props => props.theme.fontSize};
 
-    --border-width: ${(props) => props.theme.borderWidth};
-    --radius: ${(props) => props.theme.borderRadius};
+    --border-width: ${props => props.theme.borderWidth};
+    --radius: ${props => props.theme.borderRadius};
 `;
 
 export const ThemeVariablesContainer = styled.div`
@@ -67,12 +58,10 @@ export type Context = {
 type PrepareFn<P, U> = (
     options: PropsWithI18n<PropsWithTheme<P>>,
     context: Context
-) =>
-    | PropsWithI18n<PropsWithTheme<U>>
-    | PromiseLike<PropsWithI18n<PropsWithTheme<U>>>;
+) => PropsWithI18n<PropsWithTheme<U>> | PromiseLike<PropsWithI18n<PropsWithTheme<U>>>;
 
 type CreateWidget<P, U> = {
-    component: ComponentType<Omit<U, "theme">>;
+    component: ComponentType<Omit<U, 'theme'>>;
     prepare?: PrepareFn<P, U>;
 } & WidgetContainerProps;
 
@@ -96,18 +85,14 @@ export function createWidget<P, U = P>({
                                 <StyleSheetManager>
                                     <ThemeProvider theme={theme}>
                                         <I18nProvider
-                                            defaultMessages={
-                                                context.defaultI18n
-                                            }
+                                            defaultMessages={context.defaultI18n}
                                             messages={preparedOptions.i18n}
                                         >
                                             <WidgetContainerThemeVariables
                                                 {...widgetAttrs}
                                                 className="r5-widget"
                                             >
-                                                <Component
-                                                    {...preparedOptions}
-                                                />
+                                                <Component {...preparedOptions} />
                                             </WidgetContainerThemeVariables>
                                         </I18nProvider>
                                     </ThemeProvider>
@@ -121,8 +106,7 @@ export function createWidget<P, U = P>({
     };
 }
 
-export interface CreateMultiViewWidgetProps<P, U>
-    extends MultiViewWidgetProps<P, U> {}
+export interface CreateMultiViewWidgetProps<P, U> extends MultiViewWidgetProps<P, U> {}
 
 export function createMultiViewWidget<P, U = P>({
     prepare,
@@ -136,8 +120,8 @@ export function createMultiViewWidget<P, U = P>({
 }
 
 export interface MultiViewWidgetProps<P, U> {
-    initialView: ((props: Omit<U, "theme">) => string) | string;
-    views: Record<string, ComponentType<Omit<U, "theme">>>;
+    initialView: ((props: Omit<U, 'theme'>) => string) | string;
+    views: Record<string, ComponentType<Omit<U, 'theme'>>>;
     initialState?: MultiWidgetState;
     prepare?: PrepareFn<P, U>;
 }
@@ -151,25 +135,16 @@ function multiViewWidget<P, U>({
     views,
     initialState = {} as MultiWidgetState,
 }: MultiViewWidgetProps<P, U>) {
-    return class MultiViewWidget extends React.Component<
-        Omit<U, "theme">,
-        MultiWidgetState
-    > {
+    return class MultiViewWidget extends React.Component<Omit<U, 'theme'>, MultiWidgetState> {
         state = {
             ...initialState,
-            activeView:
-                typeof initialView === "function"
-                    ? initialView(this.props)
-                    : initialView,
+            activeView: typeof initialView === 'function' ? initialView(this.props) : initialView,
         };
 
         // _goTo = <View extends keyof typeof views, S extends ComponentProps<(typeof views)[View]>>(view: View, props?: S) => this.setState({
-        _goTo = <S extends Record<string, unknown>>(
-            view: keyof typeof views,
-            params?: S
-        ) =>
+        _goTo = <S extends Record<string, unknown>>(view: keyof typeof views, params?: S) =>
             this.setState({
-                activeView: view as MultiWidgetState["activeView"],
+                activeView: view as MultiWidgetState['activeView'],
                 ...params,
             });
 

@@ -1,6 +1,6 @@
 import icon from './apple.svg';
 
-import type { Provider } from '../providers'
+import type { Provider } from '../providers';
 
 export default {
     key: 'apple',
@@ -8,5 +8,5 @@ export default {
     color: '#000',
     fontWeight: 400,
     fontFamily: 'SF Pro Text,SF Pro Icons,Helvetica Neue,Helvetica,Arial,sans-serif',
-    icon
+    icon,
 } satisfies Provider;

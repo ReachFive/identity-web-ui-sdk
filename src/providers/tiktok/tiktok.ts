@@ -1,6 +1,6 @@
-import icon from './tiktok.svg'
+import icon from './tiktok.svg';
 
-import type { Provider } from '../providers'
+import type { Provider } from '../providers';
 
 export default {
     key: 'tiktok',
@@ -9,6 +9,6 @@ export default {
     icon,
     windowSize: {
         width: 440,
-        height: 550
-    }
+        height: 550,
+    },
 } satisfies Provider;
