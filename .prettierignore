@@ -1,0 +1,5 @@
+# Ignore generated types
+types
+
+# Ignore markdown files
+*.md
