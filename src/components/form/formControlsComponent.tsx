@@ -252,7 +252,7 @@ export const RadioGroup = ({ options, onChange, value, inputId, ...props }: Radi
         </FormGroup>
     );
 };
-export const UserAggreementStyle = styled.div`
+export const UserAgreementStyle = styled.div`
     font-size: ${props => props.theme.fontSize * 0.8}px;
     color: ${props => props.theme.mutedTextColor};
     text-align: center;

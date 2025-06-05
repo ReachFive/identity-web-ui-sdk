@@ -4,7 +4,7 @@ import React, { useCallback, useLayoutEffect, useState } from 'react';
 
 import { type PhoneNumberOptions } from './fields/phoneNumberField';
 import { createForm } from './formComponent';
-import { UserAggreementStyle } from './formControlsComponent';
+import { UserAgreementStyle } from './formControlsComponent';
 import { buildFormFields, type Field } from './formFieldFactory';
 
 import { snakeCaseProperties } from '../../helpers/transformObjectProperties';
@@ -117,9 +117,9 @@ export const PasswordSignupForm = ({
               {
                   staticContent: (
                       <MarkdownContent
-                          key="user-aggreement"
-                          data-testid="user-aggreement"
-                          root={UserAggreementStyle}
+                          key="user-agreement"
+                          data-testid="user-agreement"
+                          root={UserAgreementStyle}
                           source={userAgreement}
                       />
                   ),
