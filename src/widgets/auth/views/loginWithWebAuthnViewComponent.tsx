@@ -193,7 +193,7 @@ export const LoginWithWebAuthnView = ({
                 showLabels={showLabels}
                 defaultIdentifier={defaultIdentifier}
                 handler={handleWebAuthnLogin}
-                onSuccess={onSuccess}
+                onSuccess={authResult => onSuccess({ name: 'login', authResult })}
                 onError={onError}
                 showAccountRecovery={allowAccountRecovery}
                 SubmitComponent={({ disabled, onClick }) => (

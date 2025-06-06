@@ -137,7 +137,12 @@ describe('DOM testing', () => {
 
             expect(screen.queryByText('passwordless.emailSent')).toBeInTheDocument();
 
-            expect(onSuccess).toBeCalled();
+            expect(onSuccess).toBeCalledWith(
+                expect.objectContaining({
+                    authType: 'magic_link',
+                    name: 'passwordless_start',
+                })
+            );
             expect(onError).not.toBeCalled();
         });
 
@@ -207,7 +212,13 @@ describe('DOM testing', () => {
                 })
             );
 
-            expect(onSuccess).toBeCalled();
+            expect(onSuccess).toBeCalledWith(
+                expect.objectContaining({
+                    authResult: expect.objectContaining({ accessToken: 'abcd1234' }),
+                    authType: 'sms',
+                    name: 'passwordless_verified',
+                })
+            );
             expect(onError).not.toBeCalled();
         });
 

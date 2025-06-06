@@ -99,7 +99,7 @@ const NewPasskey = ({
     };
 
     const handleSuccess = () => {
-        onSuccess();
+        onSuccess({ name: 'passkey_reset' });
         goTo('passkey-success');
     };
 
@@ -176,7 +176,7 @@ export const NewPasswordView = ({
     };
 
     const handleSuccess = () => {
-        onSuccess();
+        onSuccess({ name: 'password_reset' });
         goTo('password-success');
     };
 

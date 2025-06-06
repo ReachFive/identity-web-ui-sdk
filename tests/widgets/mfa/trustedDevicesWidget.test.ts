@@ -88,7 +88,19 @@ describe('DOM testing', () => {
             const trustedDevices = screen.queryAllByTestId('trustedDevice');
             expect(trustedDevices).toHaveLength(3);
 
-            expect(onSuccess).toBeCalled();
+            expect(onSuccess).toBeCalledWith(
+                expect.objectContaining({
+                    devices: expect.arrayContaining([
+                        {
+                            id: 'id1',
+                            userId: 'userid1',
+                            createdAt: '2022-09-21',
+                            metadata: {},
+                        },
+                    ]),
+                    name: 'trusted_devices_listed',
+                })
+            );
             expect(onError).not.toBeCalled();
         });
 

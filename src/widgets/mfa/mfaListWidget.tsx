@@ -126,7 +126,10 @@ export const MfaList = ({
             .listMfaCredentials(accessToken)
             .then(mfaCredentialsResponse => {
                 setCredentials(mfaCredentialsResponse.credentials);
-                onSuccess(mfaCredentialsResponse);
+                onSuccess({
+                    name: 'mfa_credentials_listed',
+                    credentials: mfaCredentialsResponse.credentials,
+                });
             })
             .catch(onError)
             .finally(() => setLoading(false));
@@ -144,18 +147,18 @@ export const MfaList = ({
                         accessToken,
                         phoneNumber: credential.phoneNumber,
                     })
-                    .then(resp => {
+                    .then(() => {
                         fetchMfaCredentials();
-                        onSuccess(resp);
+                        onSuccess({ name: 'mfa_email_removed' });
                     })
                     .catch(onError);
                 break;
             case 'email':
                 client
                     .removeMfaEmail({ accessToken })
-                    .then(resp => {
+                    .then(() => {
                         fetchMfaCredentials();
-                        onSuccess(resp);
+                        onSuccess({ name: 'mfa_email_removed' });
                     })
                     .catch(onError);
                 break;

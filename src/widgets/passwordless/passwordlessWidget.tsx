@@ -38,10 +38,10 @@ const EmailInputForm = createForm<EmailFormData>({
     ],
 });
 
-type PhoneNumberFormFata = { phoneNumber: string; captchaToken?: string };
+type PhoneNumberFormData = { phoneNumber: string; captchaToken?: string };
 
 const phoneNumberInputForm = (config: Config) =>
-    createForm<PhoneNumberFormFata, { phoneNumberOptions?: PhoneNumberOptions }>({
+    createForm<PhoneNumberFormData, { phoneNumberOptions?: PhoneNumberOptions }>({
         prefix: 'r5-passwordless-sms-',
         fields: ({ phoneNumberOptions }) => [
             phoneNumberField(
@@ -137,7 +137,7 @@ const MainView = ({
         importGoogleRecaptchaScript(recaptcha_site_key);
     }, [recaptcha_site_key]);
 
-    const callback = (data: WithCaptchaToken<EmailFormData | PhoneNumberFormFata>) =>
+    const callback = (data: WithCaptchaToken<EmailFormData | PhoneNumberFormData>) =>
         coreClient
             .startPasswordless(
                 {
@@ -148,9 +148,9 @@ const MainView = ({
             )
             .then(() => data);
 
-    const handleSuccess = (data: EmailFormData | PhoneNumberFormFata) => {
+    const handleSuccess = (data: EmailFormData | PhoneNumberFormData) => {
         if ('email' in data) {
-            onSuccess();
+            onSuccess({ name: 'passwordless_start', authType });
             goTo('emailSent');
         } else {
             goTo<VerificationCodeViewState>('verificationCode', data);
@@ -186,7 +186,7 @@ const MainView = ({
             {!isEmail && showIntro && <Intro>{i18n('passwordless.sms.intro')}</Intro>}
             {!isEmail && (
                 <PhoneNumberInputForm
-                    handler={(data: PhoneNumberFormFata) =>
+                    handler={(data: PhoneNumberFormData) =>
                         ReCaptcha.handle(
                             data,
                             { recaptcha_enabled, recaptcha_site_key },
@@ -253,7 +253,7 @@ const VerificationCodeView = ({
             })
             .then(result => {
                 if (AuthResult.isAuthResult(result)) {
-                    onSuccess();
+                    onSuccess({ name: 'passwordless_verified', authType, authResult: result });
                 } else {
                     onError();
                 }

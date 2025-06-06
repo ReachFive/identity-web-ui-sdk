@@ -179,15 +179,16 @@ export const LoginWithPasswordView = ({
                     ...auth,
                 },
             })
-            .then(res =>
-                res?.stepUpToken
-                    ? goTo<FaSelectionViewState>('fa-selection', {
-                          token: res.stepUpToken,
-                          amr: res.amr ?? [],
-                          allowTrustDevice,
-                      })
-                    : res
-            );
+            .then(res => {
+                if (res?.stepUpToken) {
+                    goTo<FaSelectionViewState>('fa-selection', {
+                        token: res.stepUpToken,
+                        amr: res.amr ?? [],
+                        allowTrustDevice,
+                    });
+                }
+                return res;
+            });
     };
 
     return (
@@ -208,7 +209,7 @@ export const LoginWithPasswordView = ({
                         'login'
                     )
                 }
-                onSuccess={onSuccess}
+                onSuccess={authResult => onSuccess({ name: 'login', authResult })}
                 onError={onError}
             />
             <Alternative>

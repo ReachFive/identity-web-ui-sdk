@@ -177,7 +177,12 @@ describe('DOM testing', () => {
             const devicesAfterRemove = screen.queryAllByTestId('device');
             expect(devicesAfterRemove).toHaveLength(1);
 
-            expect(onSuccess).toBeCalled();
+            expect(onSuccess).toBeCalledWith(
+                expect.objectContaining({
+                    friendlyName: 'myNewDevice',
+                    name: 'web_authn_device_added',
+                })
+            );
             expect(onError).not.toBeCalled();
         });
 
