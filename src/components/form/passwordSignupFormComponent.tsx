@@ -146,7 +146,7 @@ export const PasswordSignupForm = ({
                 )
             }
             onSuccess={authResult => {
-                onSuccess({ name: 'sign_up', authResult });
+                onSuccess({ name: 'signup', authResult });
             }}
             onError={onError}
         />

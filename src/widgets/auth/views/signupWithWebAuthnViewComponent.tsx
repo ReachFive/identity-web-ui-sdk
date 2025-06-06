@@ -125,7 +125,7 @@ export const SignupWithWebAuthnView = ({
                 showLabels={showLabels}
                 beforeSubmit={beforeSignup}
                 handler={handleSignup}
-                onSuccess={authResult => onSuccess({ name: 'sign_up', authResult })}
+                onSuccess={authResult => onSuccess({ name: 'signup', authResult })}
                 onError={onError}
             />
             <Alternative>

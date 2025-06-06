@@ -1,11 +1,11 @@
 import type { AuthResult, MFA, SingleFactorPasswordlessParams, StepUpPasswordlessParams, TrustedDevice } from "@reachfive/identity-core"
 
-export interface AbstractEvent {
+interface AbstractEvent {
     readonly name: string
 }
 
 interface SignupEvent extends AbstractEvent {
-    readonly name: 'sign_up'
+    readonly name: 'signup'
     readonly authResult: AuthResult
 }
 
