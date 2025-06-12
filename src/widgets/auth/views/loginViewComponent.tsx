@@ -319,15 +319,16 @@ export const LoginView = ({
                     ...auth,
                 },
             })
-            .then(res =>
-                res?.stepUpToken
-                    ? goTo<FaSelectionViewState>('fa-selection', {
-                          token: res.stepUpToken,
-                          amr: res.amr ?? [],
-                          allowTrustDevice,
-                      })
-                    : res
-            );
+            .then(res => {
+                if (res?.stepUpToken) {
+                    goTo<FaSelectionViewState>('fa-selection', {
+                        token: res.stepUpToken,
+                        amr: res.amr ?? [],
+                        allowTrustDevice,
+                    });
+                }
+                return res;
+            });
     };
 
     const defaultIdentifier = session?.lastLoginType === 'password' ? session.email : undefined;
@@ -356,7 +357,9 @@ export const LoginView = ({
                         'login'
                     )
                 }
-                onSuccess={onSuccess}
+                onSuccess={authResult => {
+                    onSuccess({ name: 'login', authResult });
+                }}
                 onError={onError}
             />
             {allowSignup && (

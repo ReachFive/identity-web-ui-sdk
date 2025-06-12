@@ -56,7 +56,7 @@ export type FieldCreators<FF extends FormFieldsBuilder<P>, P = {}> = FF extends 
     : FF;
 
 /**
- * tranform fields builder into a record of field values
+ * transform fields builder into a record of field values
  * @example
  * const builder: FormFieldsBuilder = [
  *   {

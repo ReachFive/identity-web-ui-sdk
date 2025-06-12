@@ -34,23 +34,23 @@ export class CompoundValidator<T, C = {}> {
     }
 }
 
-export type VaildatorError<Extra = {}> = { valid: false; error?: string } & Extra;
+export type ValidatorError<Extra = {}> = { valid: false; error?: string } & Extra;
 export type ValidatorSuccess<Extra = {}> = { valid: true } & Extra;
 
-export type ValidatorResult<Extra = {}> = VaildatorError<Extra> | ValidatorSuccess<Extra>;
+export type ValidatorResult<Extra = {}> = ValidatorError<Extra> | ValidatorSuccess<Extra>;
 
 export type ValidatorInstance<T, C, Extra = {}> = (
     value: T,
     ctx: C
 ) => Promise<ValidatorResult<Extra>>;
 
-type RuleResult<E = {}> = boolean | ValidatorSuccess<E> | VaildatorError<E>;
+type RuleResult<E = {}> = boolean | ValidatorSuccess<E> | ValidatorError<E>;
 
 export type Rule<T, C, E = {}> = (value: T, ctx: C) => RuleResult<E> | Promise<RuleResult<E>>;
 
 export type Hint<T> = (value: T) => string | undefined;
 
-export function isValidatorError<E = {}>(result: ValidatorResult<E>): result is VaildatorError<E> {
+export function isValidatorError<E = {}>(result: ValidatorResult<E>): result is ValidatorError<E> {
     return result.valid === false;
 }
 

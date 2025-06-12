@@ -183,7 +183,7 @@ function WebAuthnDevices({
 
     const addNewWebAuthnDevice = ({ friendlyName }: DeviceInputFormData) => {
         return coreClient.addNewWebAuthnDevice(accessToken, friendlyName).then(() => {
-            onSuccess();
+            onSuccess({ name: 'web_authn_device_added', friendlyName });
             return coreClient
                 .listWebAuthnDevices(accessToken)
                 .then(newDevices => setDevices(newDevices));

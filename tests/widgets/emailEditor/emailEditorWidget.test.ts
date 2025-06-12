@@ -125,7 +125,7 @@ describe('DOM testing', () => {
                 })
             );
 
-            expect(onSuccess).toBeCalled();
+            expect(onSuccess).toBeCalledWith(expect.objectContaining({ name: 'email_updated' }));
             expect(onError).not.toBeCalled();
         });
 

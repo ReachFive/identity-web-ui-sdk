@@ -89,7 +89,7 @@ export const ReauthView = ({
                     showForgotPassword={allowForgotPassword}
                     showEmail={false}
                     handler={handlePasswordLogin}
-                    onSuccess={onSuccess}
+                    onSuccess={authResult => onSuccess({ name: 'login', authResult })}
                     onError={onError}
                 />
             )}

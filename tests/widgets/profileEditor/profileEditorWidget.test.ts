@@ -77,7 +77,7 @@ describe('Snapshot', () => {
 
                 await waitFor(() => expect(apiClient.getUser).toHaveBeenCalled());
 
-                await rerender(widget);
+                rerender(widget);
 
                 expect(container).toMatchSnapshot();
             });
@@ -184,7 +184,7 @@ describe('DOM testing', () => {
 
             // const consentCheckbox = screen.getByTestId('consents.optinTesting.1')
             const consentCheckbox = screen.getByLabelText(
-                defaultConfig.consentsVersions['optinTesting'].versions[0].title
+                defaultConfig.consentsVersions.optinTesting.versions[0].title
             );
             await user.click(consentCheckbox);
 
@@ -214,7 +214,7 @@ describe('DOM testing', () => {
                 })
             );
 
-            expect(onSuccess).toBeCalled();
+            expect(onSuccess).toBeCalledWith(expect.objectContaining({ name: 'profile_updated' }));
             expect(onError).not.toBeCalled();
         });
 

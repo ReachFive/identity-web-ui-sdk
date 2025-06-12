@@ -126,7 +126,7 @@ interface MainViewProps {
      */
     accessToken: string;
     /**
-     * The user’s MFA credentials
+     * The user's MFA credentials
      */
     credentials: MFA.CredentialsResponse['credentials'];
     /**
@@ -391,7 +391,7 @@ const VerificationCodeView = ({
     };
 
     const onCredentialRegistered = () => {
-        onSuccess();
+        onSuccess({ name: 'credential_registered', type: registrationType });
         goTo<CredentialRegisteredViewState>('credential-registered', { registrationType });
     };
 
@@ -446,7 +446,7 @@ const CredentialRegisteredView = () => {
 type CredentialRemovedViewProps = {};
 
 type CredentialRemovedViewState = {
-    credentialType: MFA.CredentialsResponse['credentials'][number]['type'];
+    credentialType: MFA.Credential['type'];
 };
 
 const CredentialRemovedView = () => {

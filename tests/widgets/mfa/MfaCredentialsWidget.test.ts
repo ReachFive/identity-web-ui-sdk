@@ -88,7 +88,7 @@ describe('Snapshot', () => {
 
                 await waitFor(() => expect(apiClient.listMfaCredentials).toHaveBeenCalled());
 
-                await rerender(widget);
+                rerender(widget);
 
                 expect(container).toMatchSnapshot();
             });
@@ -238,7 +238,9 @@ describe('DOM testing', () => {
 
             await waitFor(async () => {
                 expect(screen.queryByText('mfa.email.registered')).toBeInTheDocument();
-                expect(onSuccess).toBeCalled();
+                expect(onSuccess).toBeCalledWith(
+                    expect.objectContaining({ name: 'credential_registered', type: 'email' })
+                );
                 expect(onError).not.toBeCalled();
             });
         });
@@ -274,7 +276,9 @@ describe('DOM testing', () => {
 
             await waitFor(async () => {
                 expect(screen.queryByText('mfa.phoneNumber.registered')).toBeInTheDocument();
-                expect(onSuccess).toBeCalled();
+                expect(onSuccess).toBeCalledWith(
+                    expect.objectContaining({ name: 'credential_registered', type: 'sms' })
+                );
                 expect(onError).not.toBeCalled();
             });
         });

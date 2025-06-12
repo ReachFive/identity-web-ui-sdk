@@ -147,7 +147,12 @@ describe('DOM testing', () => {
                 })
             );
 
-            expect(onSuccess).toBeCalled();
+            expect(onSuccess).toBeCalledWith(
+                expect.objectContaining({
+                    name: 'phone_number_verified',
+                    phoneNumber: '+33123456789',
+                })
+            );
             expect(onError).not.toBeCalled();
         });
 
