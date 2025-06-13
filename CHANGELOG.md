@@ -7,6 +7,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.35.0] - 2025-05-13
+
+### Changed
+
+- BConnect social provider button no longer requires a dedicated query parameter to be displayed.
+
 ## [1.34.1] - 2025-05-15
 
 ### Fixed
@@ -615,7 +621,8 @@ The eye icon is now correctly displayed in the Auth widget.
 
 First version of the SDK Web UI.
 
-[Unreleased]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.34.0...HEAD
+[Unreleased]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.35.0...HEAD
+[1.35.0]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.34.1...v1.35.0
 [1.34.1]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.34.0...v1.34.1
 [1.34.0]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.33.2...v1.34.0
 [1.33.2]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.33.1...v1.33.2
