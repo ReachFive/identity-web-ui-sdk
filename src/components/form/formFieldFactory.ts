@@ -1,11 +1,11 @@
 import { ConsentVersions, CustomField, CustomFieldType } from '@reachfive/identity-core';
 
+import { AddressPathMapping } from '../../core/mapping';
 import { Validator, checked, email, float, integer } from '../../core/validation';
 import { UserError } from '../../helpers/errors';
 import { camelCasePath } from '../../helpers/transformObjectProperties';
 import { FormValue, camelCase, isRichFormValue } from '../../helpers/utils';
 import { Config, Prettify } from '../../types';
-
 import birthdateField from './fields/birthdayField';
 import checkboxField from './fields/checkboxField';
 import consentField from './fields/consentField';
@@ -150,33 +150,72 @@ const predefinedFields = {
     birthdate: createPredefinedFieldBuilder<typeof birthdateField>((props, config) =>
         birthdateField(props, config)
     ),
+    'address.title': createPredefinedFieldBuilder<typeof simpleField>((props, _config) =>
+        simpleField({
+            label: 'address.title',
+            path: 'addresses.title',
+            mapping: new AddressPathMapping('title'),
+            ...props,
+        })
+    ),
+    'address.addressType': createPredefinedFieldBuilder<typeof selectField>((props, _config) =>
+        selectField({
+            label: 'address.addressType',
+            path: 'addresses.addressType',
+            mapping: new AddressPathMapping('addressType'),
+            ...props,
+            values: [
+                { value: 'billing', label: 'address.addressType.billing' },
+                { value: 'delivery', label: 'address.addressType.delivery' },
+            ],
+        })
+    ),
     'address.streetAddress': createPredefinedFieldBuilder<typeof simpleField>((props, _config) =>
         simpleField({
             label: 'address.streetAddress',
+            path: 'addresses.streetAddress',
+            mapping: new AddressPathMapping('streetAddress'),
             ...props,
         })
+    ),
+    'address.addressComplement': createPredefinedFieldBuilder<typeof simpleField>(
+        (props, _config) =>
+            simpleField({
+                label: 'address.addressComplement',
+                path: 'addresses.addressComplement',
+                mapping: new AddressPathMapping('addressComplement'),
+                ...props,
+            })
     ),
     'address.locality': createPredefinedFieldBuilder<typeof simpleField>((props, _config) =>
         simpleField({
             label: 'address.locality',
+            path: 'addresses.locality',
+            mapping: new AddressPathMapping('locality'),
             ...props,
         })
     ),
     'address.region': createPredefinedFieldBuilder<typeof simpleField>((props, _config) =>
         simpleField({
             label: 'address.region',
+            path: 'addresses.region',
+            mapping: new AddressPathMapping('region'),
             ...props,
         })
     ),
     'address.postalCode': createPredefinedFieldBuilder<typeof simpleField>((props, _config) =>
         simpleField({
             label: 'address.postalCode',
+            path: 'addresses.postalCode',
+            mapping: new AddressPathMapping('postalCode'),
             ...props,
         })
     ),
     'address.country': createPredefinedFieldBuilder<typeof simpleField>((props, _config) =>
         simpleField({
             label: 'address.country',
+            path: 'addresses.country',
+            mapping: new AddressPathMapping('country'),
             ...props,
         })
     ),
@@ -357,23 +396,26 @@ function isPredefinedField(key: string): key is PredefinedFieldKey {
     return key in predefinedFields;
 }
 
-function isCustomField(
-    config: Config,
+function findCustomField(
+    customFields: CustomField[],
     camelPath: string,
-    _options: object
-): _options is CustomFieldOptions {
-    return config.customFields.some(customFields => {
-        const fieldCamelPath = camelCase(customFields.path);
-        return camelPath === fieldCamelPath || camelPath === `customFields.${fieldCamelPath}`;
+    prefix = 'customFields'
+): CustomField | undefined {
+    return customFields?.find(customField => {
+        const fieldCamelPath = camelCase(customField.path);
+        return camelPath === fieldCamelPath || camelPath === `${prefix}.${fieldCamelPath}`;
     });
 }
 
-const findCustomField = (config: Config, camelPath: string): CustomField | undefined => {
-    return config.customFields.find(customFields => {
-        const fieldCamelPath = camelCase(customFields.path);
-        return camelPath === fieldCamelPath || camelPath === `customFields.${fieldCamelPath}`;
-    });
-};
+function buildCustomField<FieldConfig extends FieldConf<string>>(
+    customField: CustomField,
+    fieldConfig: FieldConfig,
+    config: Config
+) {
+    const builder = customFields[customField.dataType];
+    type Field = typeof builder extends CustomFieldBuilder<infer T> ? T : never;
+    return customFieldComponent<Field>(customField, builder, fieldConfig, config);
+}
 
 function isConsentField(
     config: Config,
@@ -405,6 +447,7 @@ const resolveField = <K extends string>(
     fieldConfig: FieldConf<K> & ExtraOptions,
     config: Config
 ) => {
+    // Predefined fields
     if (isPredefinedField(fieldConfig.key)) {
         const builder = predefinedFields[fieldConfig.key];
         type Field = typeof builder extends PredefinedFieldBuilder<infer T> ? T : never;
@@ -415,15 +458,31 @@ const resolveField = <K extends string>(
         );
     }
 
-    if (isCustomField(config, fieldConfig.key, fieldConfig)) {
-        const customField = findCustomField(config, fieldConfig.key);
-        if (customField) {
-            const builder = customFields[customField.dataType];
-            type Field = typeof builder extends CustomFieldBuilder<infer T> ? T : never;
-            return customFieldComponent<Field>(customField, builder, fieldConfig, config);
-        }
+    // Custom fields
+    const customField = findCustomField(config.customFields ?? [], fieldConfig.key);
+    if (customField) {
+        return buildCustomField(customField, fieldConfig, config);
     }
 
+    // Custom address fields
+    const addressField = findCustomField(
+        config.addressFields ?? [],
+        fieldConfig.key,
+        'address.customFields'
+    );
+    // custom address field property should be `customField.{string}`
+    if (addressField) {
+        const addressProperty =
+            new RegExp('^address(?:es)?\\.(.+)').exec(fieldConfig.key)?.at(1) ?? fieldConfig.key;
+        const addressFieldConfig = {
+            ...fieldConfig,
+            path: `addresses.${addressProperty}`,
+            mapping: new AddressPathMapping(addressProperty),
+        };
+        return buildCustomField(addressField, addressFieldConfig, config);
+    }
+
+    // Consent fields
     const camelPathSplit =
         fieldConfig.key.split('.v'); /** @todo What if consent start with a `v`? */
     if (isConsentField(config, camelPathSplit[0], fieldConfig)) {

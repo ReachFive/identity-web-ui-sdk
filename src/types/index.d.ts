@@ -25,7 +25,10 @@ export type RequiredProperty<T, K extends keyof T> = T & {
 
 type ConsentsVersions = { consentsVersions: Record<string, ConsentVersions> };
 
-type CustomFields = { customFields?: CustomField[] };
+type CustomFields = {
+    addressFields?: CustomField[];
+    customFields?: CustomField[];
+};
 
 export type Config = CoreConfig & RemoteSettings & ConsentsVersions & CustomFields;
 
