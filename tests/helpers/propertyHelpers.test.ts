@@ -47,5 +47,47 @@ describe('propertyHelpers', () => {
             const result = setValue(object, 'a.b.c', 'e');
             expect(result).toEqual({ a: { b: { c: 'e' } } });
         });
+
+        test('should set new value by path (empty object)', () => {
+            expect(setValue({}, 'a', 2)).toEqual({ a: 2 });
+        });
+        test('should override an existing value by path', () => {
+            expect(setValue({ a: 1 }, 'a', 2)).toEqual({ a: 2 });
+        });
+        test('should set a new value by path', () => {
+            expect(setValue({ a: 1 }, 'b', 2)).toEqual({ a: 1, b: 2 });
+        });
+        test('should set nested new value by path', () => {
+            expect(setValue({ a: 1 }, 'b.c', 2)).toEqual({ a: 1, b: { c: 2 } });
+        });
+        test('should override nested value by path', () => {
+            expect(setValue({ a: { b: { c: 1 } } }, 'a.b.c', 2)).toEqual({ a: { b: { c: 2 } } });
+        });
+        test('should add nested value by path', () => {
+            expect(setValue({ a: { b: { c: 1 } } }, 'a.b.d', 2)).toEqual({
+                a: { b: { c: 1, d: 2 } },
+            });
+        });
+        test('should set new array value by path', () => {
+            expect(setValue({ a: 1 }, 'b.0.c', 2)).toEqual({ a: 1, b: [{ c: 2 }] });
+        });
+        test('should override array value by path', () => {
+            expect(setValue({ a: 1, b: [{ c: 1 }] }, 'b.0.c', 2)).toEqual({
+                a: 1,
+                b: [{ c: 2 }],
+            });
+        });
+        test('should update array value by path', () => {
+            expect(setValue({ a: 1, b: [{ c: 1 }] }, 'b.0.d', 2)).toEqual({
+                a: 1,
+                b: [{ c: 1, d: 2 }],
+            });
+        });
+        test('should add vaule to array by path', () => {
+            expect(setValue({ a: 1, b: [{ c: 1 }] }, 'b.1.d', 2)).toEqual({
+                a: 1,
+                b: [{ c: 1 }, { d: 2 }],
+            });
+        });
     });
 });

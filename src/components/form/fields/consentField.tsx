@@ -8,7 +8,7 @@ import { MarkdownContent } from '../../miscComponent';
 import { createField, type FieldComponentProps, type FieldDefinition } from '../fieldCreator';
 import { Checkbox } from '../formControlsComponent';
 
-import { PathMapping } from '../../../core/mapping';
+import { DefaultPathMapping } from '../../../core/mapping';
 import { checked, empty, isValidatorError } from '../../../core/validation';
 import { snakeCasePath } from '../../../helpers/transformObjectProperties';
 import { isRichFormValue } from '../../../helpers/utils';
@@ -102,7 +102,7 @@ export default function consentField({
         ...props,
         required,
         defaultValue: { granted: props.defaultValue ?? false },
-        mapping: new PathMapping(snakeCasePath(props.path ?? props.key)), // Consent key should be snake_case
+        mapping: new DefaultPathMapping(snakeCasePath(props.path ?? props.key)), // Consent key should be snake_case
         format: {
             bind: value => value,
             unbind: value =>
