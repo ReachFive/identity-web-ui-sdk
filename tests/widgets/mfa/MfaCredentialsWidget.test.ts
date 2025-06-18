@@ -10,7 +10,7 @@ import userEvent from '@testing-library/user-event';
 import { Client, MFA } from '@reachfive/identity-core';
 
 import { I18nMessages } from '../../../src/core/i18n';
-import type { Config } from '../../../src/types';
+import type { Config, OnError, OnSuccess } from '../../../src/types';
 
 import mfaCredentialsWidget from '../../../src/widgets/mfa/MfaCredentialsWidget';
 
@@ -125,8 +125,8 @@ describe('DOM testing', () => {
     const verifyMfaPhoneNumberRegistration = jest.fn<Client['verifyMfaPhoneNumberRegistration']>();
     const getUser = jest.fn<Client['getUser']>();
 
-    const onError = jest.fn();
-    const onSuccess = jest.fn();
+    const onError = jest.fn<OnError>();
+    const onSuccess = jest.fn<OnSuccess>();
 
     beforeEach(() => {
         onError.mockClear();

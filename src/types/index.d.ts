@@ -30,6 +30,6 @@ type CustomFields = { customFields?: CustomField[] };
 
 export type Config = CoreConfig & RemoteSettings & ConsentsVersions & CustomFields;
 
-export type OnSuccess = (event: SuccessEvent) => void;
+export type OnSuccess = (event: SuccessEvent) => void | PromiseLike<void>;
 
-export type OnError = (error?: unknown) => void;
+export type OnError = (error?: unknown) => void | PromiseLike<void>;

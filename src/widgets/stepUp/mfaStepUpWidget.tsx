@@ -133,19 +133,19 @@ export const MainView = ({
 
     const [response, setResponse] = useState<MFA.StepUpResponse | undefined>();
 
-    const onGetStepUpToken = useCallback(
-        () =>
-            coreClient
-                .getMfaStepUpToken({
-                    options: auth,
-                    accessToken: accessToken,
-                })
-                .then(res => {
-                    setResponse(res);
-                    return res;
-                }),
-        [accessToken, auth, coreClient]
-    );
+    const onGetStepUpToken = useCallback(async () => {
+        try {
+            const res = await coreClient.getMfaStepUpToken({
+                options: auth,
+                accessToken: accessToken,
+            });
+            setResponse(res);
+            return res;
+        } catch (error) {
+            onError(error);
+            throw error;
+        }
+    }, [accessToken, auth, coreClient]);
 
     useEffect(() => {
         if (!showStepUpStart) {
@@ -234,7 +234,7 @@ export const FaSelectionView = (props: FaSelectionViewProps) => {
 
     useEffect(() => {
         if (amr.length === 1) {
-            onChooseFa({ authType: amr[0] as StepUpPasswordlessParams['authType'] });
+            onChooseFa({ authType: amr[0] as StepUpPasswordlessParams['authType'] }).catch(onError);
         }
     }, [amr, onChooseFa]);
 

@@ -105,9 +105,9 @@ type FormProps<Model extends Record<PropertyKey, unknown> = {}, P = {}, R = void
         beforeSubmit?: (data: Model) => Model;
         handler: (data: Model) => Promise<R>;
         initialModel?: Partial<Model>;
-        onError?: (error: unknown) => void;
+        onError?: (error: unknown) => void | PromiseLike<void>;
         onFieldChange?: (fields: Model) => void;
-        onSuccess?: (result: R) => void;
+        onSuccess?: (result: R) => void | PromiseLike<void>;
         sharedProps?: Record<string, unknown>;
     };
 
@@ -297,8 +297,8 @@ export function createForm<Model extends Record<PropertyKey, unknown> = {}, P = 
             }
         };
 
-        const handleSuccess = (result: R) => {
-            onSuccess?.(result);
+        const handleSuccess = async (result: R) => {
+            await onSuccess?.(result);
 
             setIsLoading(!supportMultipleSubmits);
             setErrorMessage(undefined);
@@ -308,8 +308,8 @@ export function createForm<Model extends Record<PropertyKey, unknown> = {}, P = 
             }
         };
 
-        const handleError = (err: unknown) => {
-            onError?.(err);
+        const handleError = async (err: unknown) => {
+            await onError?.(err);
 
             if (isAppError(err) && !err.errorUserMsg) {
                 if (err.errorDescription) {

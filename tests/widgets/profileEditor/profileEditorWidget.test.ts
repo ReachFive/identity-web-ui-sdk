@@ -11,7 +11,7 @@ import 'jest-styled-components';
 import { type Client, type Profile } from '@reachfive/identity-core';
 
 import { type I18nMessages } from '../../../src/core/i18n';
-import type { Config } from '../../../src/types';
+import type { Config, OnError, OnSuccess } from '../../../src/types';
 
 import profileEditorWidget from '../../../src/widgets/profileEditor/profileEditorWidget';
 
@@ -103,8 +103,8 @@ describe('DOM testing', () => {
     const getUser = jest.fn<Client['getUser']>();
     const updateProfile = jest.fn<Client['updateProfile']>();
 
-    const onError = jest.fn();
-    const onSuccess = jest.fn();
+    const onError = jest.fn<OnError>();
+    const onSuccess = jest.fn<OnSuccess>();
 
     beforeEach(() => {
         getUser.mockClear();

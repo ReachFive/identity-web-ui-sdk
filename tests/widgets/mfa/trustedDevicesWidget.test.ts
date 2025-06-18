@@ -4,7 +4,7 @@ import '@testing-library/jest-dom/jest-globals';
 import { render, screen, waitFor } from '@testing-library/react';
 import { I18nMessages } from '../../../src/core/i18n';
 import { AppError } from '../../../src/helpers/errors';
-import type { Config } from '../../../src/types';
+import type { Config, OnError, OnSuccess } from '../../../src/types';
 import trustedDevicesWidget from '../../../src/widgets/mfa/trustedDevicesWidget';
 
 const defaultConfig: Config = {
@@ -34,8 +34,8 @@ const defaultI18n: I18nMessages = {};
 describe('DOM testing', () => {
     const listTrustedDevices = jest.fn<Client['listTrustedDevices']>();
 
-    const onError = jest.fn();
-    const onSuccess = jest.fn();
+    const onError = jest.fn<OnError>();
+    const onSuccess = jest.fn<OnSuccess>();
 
     beforeEach(() => {
         onError.mockClear();

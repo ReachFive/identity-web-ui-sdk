@@ -87,6 +87,11 @@ interface CredentialRegisteredEvent extends AbstractEvent {
     readonly type: MFA.Credential['type']
 }
 
+interface CredentialRemovedEvent extends AbstractEvent {
+    readonly name: 'credential_removed'
+    readonly type: MFA.Credential['type']
+}
+
 interface WebAuthnDeviceAddedEvent extends AbstractEvent {
     readonly name: 'web_authn_device_added'
     readonly friendlyName: string
@@ -131,6 +136,7 @@ export type SuccessEvent =
     | MfaPhoneNumberRemovedEvent
     | PhoneNumberVerifiedEvent
     | CredentialRegisteredEvent
+    | CredentialRemovedEvent
     | WebAuthnDeviceAddedEvent
     | WebAuthnDeviceRemovedEvent
     | SocialIdentityUnlinkedEvent

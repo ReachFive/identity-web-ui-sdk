@@ -10,7 +10,7 @@ import 'jest-styled-components';
 import type { Client, MFA } from '@reachfive/identity-core';
 
 import type { I18nMessages } from '../../../src/core/i18n';
-import type { Config } from '../../../src/types';
+import type { Config, OnError, OnSuccess } from '../../../src/types';
 
 import { AppError } from '../../../src/helpers/errors';
 import mfaListWidget from '../../../src/widgets/mfa/mfaListWidget';
@@ -95,8 +95,8 @@ describe('Snapshot', () => {
 describe('DOM testing', () => {
     const listMfaCredentials = jest.fn<Client['listMfaCredentials']>();
 
-    const onError = jest.fn();
-    const onSuccess = jest.fn();
+    const onError = jest.fn<OnError>();
+    const onSuccess = jest.fn<OnSuccess>();
 
     beforeEach(() => {
         onError.mockClear();

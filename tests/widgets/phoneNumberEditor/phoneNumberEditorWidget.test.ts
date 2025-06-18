@@ -11,7 +11,7 @@ import 'jest-styled-components';
 import { type Client } from '@reachfive/identity-core';
 
 import { type I18nMessages } from '../../../src/core/i18n';
-import type { Config } from '../../../src/types';
+import type { Config, OnError, OnSuccess } from '../../../src/types';
 
 import phoneNumberEditorWidget from '../../../src/widgets/phoneNumberEditor/phoneNumberEditorWidget';
 
@@ -72,8 +72,8 @@ describe('DOM testing', () => {
     const updatePhoneNumber = jest.fn<Client['updatePhoneNumber']>();
     const verifyPhoneNumber = jest.fn<Client['verifyPhoneNumber']>();
 
-    const onError = jest.fn();
-    const onSuccess = jest.fn();
+    const onError = jest.fn<OnError>();
+    const onSuccess = jest.fn<OnSuccess>();
 
     beforeEach(() => {
         updatePhoneNumber.mockClear();

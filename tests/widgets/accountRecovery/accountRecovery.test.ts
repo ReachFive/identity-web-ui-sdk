@@ -12,7 +12,7 @@ import 'jest-styled-components';
 import type { Client, PasswordStrengthScore } from '@reachfive/identity-core';
 
 import { type I18nMessages } from '../../../src/core/i18n';
-import type { Config } from '../../../src/types';
+import type { Config, OnError, OnSuccess } from '../../../src/types';
 
 import accountRecoveryWidget from '../../../src/widgets/accountRecovery/accountRecoveryWidget';
 
@@ -57,8 +57,8 @@ describe('DOM testing', () => {
     const resetPasskeys = jest.fn<Client['resetPasskeys']>();
     const updatePassword = jest.fn<Client['updatePassword']>();
 
-    const onError = jest.fn();
-    const onSuccess = jest.fn();
+    const onError = jest.fn<OnError>();
+    const onSuccess = jest.fn<OnSuccess>();
 
     beforeEach(() => {
         getPasswordStrength.mockClear();
