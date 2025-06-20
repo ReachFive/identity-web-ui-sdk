@@ -113,8 +113,8 @@ describe('DOM testing', () => {
 
         expect(onSuccess).toBeCalledWith(
             expect.objectContaining({
-                name: 'social_login',
-                provider: 'facebook',
+                name: 'login',
+                authResult: expect.objectContaining({ providerName: 'facebook' }),
             })
         );
         expect(onError).not.toBeCalled();

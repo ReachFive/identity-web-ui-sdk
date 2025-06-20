@@ -195,7 +195,7 @@ describe('DOM testing', () => {
                 errorDescription: 'Unexpected error',
             };
             listMfaCredentials.mockRejectedValue(error);
-            await generateComponent({}, defaultConfig);
+            await expect(generateComponent({}, defaultConfig)).rejects.toEqual(error);
             expect(onSuccess).not.toBeCalled();
             expect(onError).toBeCalledWith(error);
         });

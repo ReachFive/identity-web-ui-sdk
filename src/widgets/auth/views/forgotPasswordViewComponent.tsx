@@ -208,7 +208,7 @@ export const ForgotPasswordView = ({
                 { ...data, redirectUrl, returnToAfterPasswordReset },
                 { recaptcha_enabled, recaptcha_site_key },
                 coreClient.requestPasswordReset,
-                'forgot_password'
+                'password_reset_requested'
             );
         },
         [coreClient, recaptcha_enabled, recaptcha_site_key, redirectUrl, returnToAfterPasswordReset]
@@ -226,7 +226,7 @@ export const ForgotPasswordView = ({
                 showLabels={showLabels}
                 handler={callback}
                 onSuccess={() => {
-                    onSuccess({ name: 'forgot_password' });
+                    onSuccess({ name: 'password_reset_requested' });
                     goTo('forgot-password-success');
                 }}
                 onError={onError}
@@ -273,7 +273,7 @@ export const ForgotPasswordPhoneNumberView = ({
                 { ...data, redirectUrl, returnToAfterPasswordReset },
                 { recaptcha_enabled, recaptcha_site_key },
                 coreClient.requestPasswordReset,
-                'forgot_password'
+                'password_reset_requested'
             ).then(() => data);
         },
         [coreClient, recaptcha_enabled, recaptcha_site_key, redirectUrl, returnToAfterPasswordReset]
@@ -347,7 +347,7 @@ export const ForgotPasswordCodeView = ({
                 showLabels={showLabels}
                 handler={callback}
                 onSuccess={() => {
-                    onSuccess({ name: 'forgot_password' });
+                    onSuccess({ name: 'password_changed' });
                     goTo('login');
                 }}
                 onError={onError}

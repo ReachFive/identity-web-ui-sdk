@@ -150,7 +150,7 @@ describe('DOM testing', () => {
                 })
             );
 
-            expect(onSuccess).toBeCalledWith(expect.objectContaining({ name: 'password_updated' }));
+            expect(onSuccess).toBeCalledWith(expect.objectContaining({ name: 'password_changed' }));
             expect(onError).not.toBeCalled();
         });
 
@@ -202,7 +202,7 @@ describe('DOM testing', () => {
                 })
             );
 
-            expect(onSuccess).toBeCalledWith(expect.objectContaining({ name: 'password_updated' }));
+            expect(onSuccess).toBeCalledWith(expect.objectContaining({ name: 'password_changed' }));
             expect(onError).not.toBeCalled();
         });
 

@@ -91,14 +91,26 @@ describe('DOM testing', () => {
             expect(onSuccess).toBeCalledWith(
                 expect.objectContaining({
                     devices: expect.arrayContaining([
-                        {
+                        expect.objectContaining({
                             id: 'id1',
                             userId: 'userid1',
                             createdAt: '2022-09-21',
                             metadata: {},
-                        },
+                        }),
+                        expect.objectContaining({
+                            id: 'id2',
+                            userId: 'userid2',
+                            createdAt: '2022-09-21',
+                            metadata: {},
+                        }),
+                        expect.objectContaining({
+                            id: 'id3',
+                            userId: 'userid3',
+                            createdAt: '2022-09-21',
+                            metadata: {},
+                        }),
                     ]),
-                    name: 'trusted_devices_listed',
+                    name: 'mfa_trusted_device_listed',
                 })
             );
             expect(onError).not.toBeCalled();

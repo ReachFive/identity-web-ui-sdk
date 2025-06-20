@@ -195,7 +195,7 @@ describe('DOM testing', () => {
             expect(onSuccess).toBeCalledWith(
                 expect.objectContaining({
                     identityId: '987654321',
-                    name: 'social_identity_unlinked',
+                    name: 'unlink',
                 })
             );
             expect(onError).not.toBeCalled();

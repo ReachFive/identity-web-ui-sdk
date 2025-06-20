@@ -118,7 +118,7 @@ describe('DOM testing', () => {
 
             expect(onSuccess).toBeCalledWith(
                 expect.objectContaining({
-                    name: 'passkey_reset',
+                    name: 'webauthn_reset',
                 })
             );
             expect(onError).not.toBeCalled();
@@ -176,7 +176,7 @@ describe('DOM testing', () => {
 
             expect(onSuccess).toBeCalledWith(
                 expect.objectContaining({
-                    name: 'password_reset',
+                    name: 'password_changed',
                 })
             );
             expect(onError).not.toBeCalled();

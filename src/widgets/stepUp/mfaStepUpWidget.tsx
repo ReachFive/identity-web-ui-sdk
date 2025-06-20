@@ -315,7 +315,7 @@ export const VerificationCodeView = (props: VerificationCodeViewProps) => {
                 trustDevice: data.trustDevice,
             })
             .then(resp => {
-                onSuccess({ name: 'mfa_step_up_verified', authType, authResult: resp });
+                onSuccess({ name: 'login_2nd_step', authType, authResult: resp });
                 // @ts-expect-error AuthResult is too complex and is not representative of the real response of this request
                 window.location.replace((auth?.redirectUri ?? '') + '?' + toQueryString(resp));
             });

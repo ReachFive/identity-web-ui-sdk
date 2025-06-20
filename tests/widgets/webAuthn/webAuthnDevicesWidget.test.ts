@@ -180,7 +180,7 @@ describe('DOM testing', () => {
             expect(onSuccess).toBeCalledWith(
                 expect.objectContaining({
                     friendlyName: 'myNewDevice',
-                    name: 'web_authn_device_added',
+                    name: 'webauthn_credential_created',
                 })
             );
             expect(onError).not.toBeCalled();

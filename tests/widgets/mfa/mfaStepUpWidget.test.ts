@@ -144,7 +144,7 @@ describe('DOM testing', () => {
 
         expect(onSuccess).toBeCalledWith(
             expect.objectContaining({
-                name: 'mfa_step_up_verified',
+                name: 'login_2nd_step',
                 authResult: expect.objectContaining({}),
                 authType: 'sms',
             })

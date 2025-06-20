@@ -140,7 +140,7 @@ describe('DOM testing', () => {
             expect(onSuccess).toBeCalledWith(
                 expect.objectContaining({
                     authType: 'magic_link',
-                    name: 'passwordless_start',
+                    name: 'otp_sent',
                 })
             );
             expect(onError).not.toBeCalled();
@@ -215,8 +215,7 @@ describe('DOM testing', () => {
             expect(onSuccess).toBeCalledWith(
                 expect.objectContaining({
                     authResult: expect.objectContaining({ accessToken: 'abcd1234' }),
-                    authType: 'sms',
-                    name: 'passwordless_verified',
+                    name: 'login',
                 })
             );
             expect(onError).not.toBeCalled();

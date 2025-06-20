@@ -150,7 +150,7 @@ const MainView = ({
 
     const handleSuccess = (data: EmailFormData | PhoneNumberFormData) => {
         if ('email' in data) {
-            onSuccess({ name: 'passwordless_start', authType });
+            onSuccess({ name: 'otp_sent', authType });
             goTo('emailSent');
         } else {
             goTo<VerificationCodeViewState>('verificationCode', data);
@@ -253,7 +253,7 @@ const VerificationCodeView = ({
             })
             .then(result => {
                 if (AuthResult.isAuthResult(result)) {
-                    onSuccess({ name: 'passwordless_verified', authType, authResult: result });
+                    onSuccess({ name: 'login', authResult: result });
                 } else {
                     onError();
                 }

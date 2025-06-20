@@ -109,7 +109,7 @@ export const TrustedDeviceList = ({
             .listTrustedDevices(accessToken)
             .then(response => {
                 setTrustedDevices(response.trustedDevices);
-                onSuccess({ name: 'trusted_devices_listed', devices: response.trustedDevices });
+                onSuccess({ name: 'mfa_trusted_device_listed', devices: response.trustedDevices });
             })
             .catch(onError)
             .finally(() => setLoading(false));
@@ -127,7 +127,7 @@ export const TrustedDeviceList = ({
             })
             .then(() => {
                 fetchTrustedDevices();
-                onSuccess({ name: 'trusted_device_deleted', device });
+                onSuccess({ name: 'mfa_trusted_device_deleted', device });
             })
             .catch(onError);
     };

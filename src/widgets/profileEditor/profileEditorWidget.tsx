@@ -86,7 +86,7 @@ const ProfileEditor = ({
                 ...phoneNumberOptions,
             }}
             showLabels={showLabels}
-            onSuccess={() => onSuccess({ name: 'profile_updated' })}
+            onSuccess={() => onSuccess({ name: 'user_updated' })}
             onError={onError}
         />
     );

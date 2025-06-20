@@ -4,11 +4,13 @@ interface AbstractEvent {
     readonly name: string
 }
 
+/** Emitted after a successful signup. */
 interface SignupEvent extends AbstractEvent {
     readonly name: 'signup'
     readonly authResult: AuthResult
 }
 
+/** Emitted after a successful authentication. */
 interface LoginEvent extends AbstractEvent {
     readonly name: 'login'
     readonly authResult: AuthResult
@@ -19,22 +21,32 @@ interface SocialLoginEvent extends AbstractEvent {
     readonly provider: string
 }
 
+/** Emitted after a successful email update. */
 interface EmailUpdatedEvent extends AbstractEvent {
     readonly name: 'email_updated'
 }
 
-interface ProfileUpdatedEvent extends AbstractEvent {
-    readonly name: 'profile_updated'
+/** Emitted after a successful phone number update. */
+interface PhoneNumberUpdatedEvent extends AbstractEvent {
+    readonly name: 'phone_number_updated'
 }
 
-interface PasswordUpdatedEvent extends AbstractEvent {
-    readonly name: 'password_updated'
+/** Emitted after a successful user update. */
+interface UserUpdatedEvent extends AbstractEvent {
+    readonly name: 'user_updated'
 }
 
-interface ForgotPasswordEvent extends AbstractEvent {
-    readonly name: 'forgot_password'
+/** Emitted after a successful password change. */
+interface PasswordChangedEvent extends AbstractEvent {
+    readonly name: 'password_changed'
 }
 
+/** Emitted after a successful password reset request. */
+interface PasswordResetRequestedEvent extends AbstractEvent {
+    readonly name: 'password_reset_requested'
+}
+
+/** Emitted after a successful password reset process. */
 interface PasswordResetEvent extends AbstractEvent {
     readonly name: 'password_reset'
 }
@@ -43,77 +55,99 @@ interface AccountRecoveryEvent extends AbstractEvent {
     readonly name: 'account_recovery'
 }
 
-interface PasswordlessStartEvent extends AbstractEvent {
-    readonly name: 'passwordless_start'
+/** Emitted after a one-time password (otp) is successfully sent (via sms or email) for verification. */
+interface OtpSentEvent extends AbstractEvent {
+    readonly name: 'otp_sent'
     readonly authType: SingleFactorPasswordlessParams['authType']
 }
 
-interface PasswordlessVerifiedEvent extends AbstractEvent {
-    readonly name: 'passwordless_verified'
-    readonly authType: SingleFactorPasswordlessParams['authType']
-    readonly authResult: AuthResult
-}
-
-interface MfaStepUpVerifiedEvent extends AbstractEvent {
-    readonly name: 'mfa_step_up_verified'
+/** Emitted after the user has successfully logged in using the Two-factor authentication (2FA) flow. */
+interface Login2ndStepEvent extends AbstractEvent {
+    readonly name: 'login_2nd_step'
     readonly authType: StepUpPasswordlessParams['authType']
     readonly authResult: AuthResult
 }
 
+/** Emitted after an email is used to start the MFA registration process. */
+interface MfaEmailStartRegistration extends AbstractEvent {
+    readonly name: 'mfa_email_start_registration'
+}
+
+/** Emitted after an email has been verified as an MFA credential. */
+interface MfaEmailVerifyRegistration extends AbstractEvent {
+    readonly name: 'mfa_email_verify_registration'
+}
+
+/** Emitted after a phone number is used to start the MFA registration process. */
+interface MfaPhoneNumberStartRegistration extends AbstractEvent {
+    readonly name: 'mfa_phone_number_start_registration'
+}
+
+/** Emitted after a phone number has been verified as an MFA credential. */
+interface MfaPhoneNumberVerifyRegistration extends AbstractEvent {
+    readonly name: 'mfa_phone_number_verify_registration'
+}
+
+/** Emitted after a list of MFA credentials was successfully listed. */
 interface MfaCredentialsListedEvent extends AbstractEvent {
     readonly name: 'mfa_credentials_listed'
     readonly credentials: MFA.Credential[]
 }
 
-interface MfaPhoneNumberRemovedEvent extends AbstractEvent { 
-    readonly name: 'mfa_phone_number_removed'
+/** Emitted after an MFA credential (phone number) is deleted. */
+interface MfaPhoneNumberDeletedEvent extends AbstractEvent { 
+    readonly name: 'mfa_phone_number_deleted'
 }
 
-interface MfaEmailRemovedEvent extends AbstractEvent {
-    readonly name: 'mfa_email_removed'
+/** Emitted after an MFA credential (email) is deleted. */
+interface MfaEmailDeletedEvent extends AbstractEvent {
+    readonly name: 'mfa_email_deleted'
 }
 
+/** Emitted after a successful mobile number verification. */
 interface PhoneNumberVerifiedEvent extends AbstractEvent {
     readonly name: 'phone_number_verified'
     readonly phoneNumber: string
 }
 
-interface PasskeyResetEvent extends AbstractEvent {
-    readonly name: 'passkey_reset'
+/** Emitted after a passkey was successfully reset. */
+interface WebauthnResetEvent extends AbstractEvent {
+    readonly name: 'webauthn_reset'
 }
 
-interface CredentialRegisteredEvent extends AbstractEvent {
-    readonly name: 'credential_registered'
-    readonly type: MFA.Credential['type']
-}
-
-interface CredentialRemovedEvent extends AbstractEvent {
-    readonly name: 'credential_removed'
-    readonly type: MFA.Credential['type']
-}
-
-interface WebAuthnDeviceAddedEvent extends AbstractEvent {
-    readonly name: 'web_authn_device_added'
+/** Emitted after a passkey was successfully created. */
+interface WebauthnCredentialCreatedEvent extends AbstractEvent {
+    readonly name: 'webauthn_credential_created'
     readonly friendlyName: string
 }
 
-interface WebAuthnDeviceRemovedEvent extends AbstractEvent {
-    readonly name: 'web_authn_device_removed'
+/** Emitted after a passkey was successfully deleted */
+interface WebauthnCredentialDeletedEvent extends AbstractEvent {
+    readonly name: 'webauthn_credential_deleted'
     readonly deviceId: string
 }
 
+/** Emitted after a successful unlink identity. */
 interface SocialIdentityUnlinkedEvent extends AbstractEvent {
-    readonly name: 'social_identity_unlinked'
+    readonly name: 'unlink'
     readonly identityId: string
 }
 
-interface TrustedDevicesListedEvent extends AbstractEvent {
-    readonly name: 'trusted_devices_listed'
+/** Emitted after trusted devices has been listed. */
+interface WebAuthnDevicesListedEvent extends AbstractEvent {
+    readonly name: 'mfa_trusted_device_listed'
     readonly devices: TrustedDevice[]
 }
 
-interface TrustedDeviceDeletedEvent extends AbstractEvent {
-    readonly name: 'trusted_device_deleted'
+/** Emitted after a device has been added as a trusted device. */
+interface MfaTrustedDeviceAddedEvent extends AbstractEvent {
+    readonly name: 'mfa_trusted_device_added'
+    readonly device: TrustedDevice
+}
+
+/** Emitted after a device has been removed as a trusted device. */
+interface MfaTrustedDeviceDeletedEvent extends AbstractEvent {
+    readonly name: 'mfa_trusted_device_deleted'
     readonly device: TrustedDevice
 }
 
@@ -122,23 +156,26 @@ export type SuccessEvent =
     | LoginEvent
     | SocialLoginEvent
     | EmailUpdatedEvent
-    | ProfileUpdatedEvent
-    | PasswordUpdatedEvent
-    | ForgotPasswordEvent
+    | PhoneNumberUpdatedEvent
+    | UserUpdatedEvent
     | AccountRecoveryEvent
-    | PasskeyResetEvent
+    | OtpSentEvent
+    | Login2ndStepEvent
+    | PasswordChangedEvent
+    | PasswordResetRequestedEvent
     | PasswordResetEvent
-    | PasswordlessStartEvent
-    | PasswordlessVerifiedEvent
-    | MfaStepUpVerifiedEvent
     | MfaCredentialsListedEvent
-    | MfaEmailRemovedEvent
-    | MfaPhoneNumberRemovedEvent
+    | MfaEmailStartRegistration
+    | MfaEmailVerifyRegistration
+    | MfaPhoneNumberStartRegistration
+    | MfaPhoneNumberVerifyRegistration
+    | MfaPhoneNumberDeletedEvent
+    | MfaEmailDeletedEvent
     | PhoneNumberVerifiedEvent
-    | CredentialRegisteredEvent
-    | CredentialRemovedEvent
-    | WebAuthnDeviceAddedEvent
-    | WebAuthnDeviceRemovedEvent
+    | WebauthnResetEvent
+    | WebauthnCredentialCreatedEvent
+    | WebauthnCredentialDeletedEvent
     | SocialIdentityUnlinkedEvent
-    | TrustedDevicesListedEvent
-    | TrustedDeviceDeletedEvent
+    | WebAuthnDevicesListedEvent
+    | MfaTrustedDeviceAddedEvent
+    | MfaTrustedDeviceDeletedEvent

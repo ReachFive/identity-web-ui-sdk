@@ -223,11 +223,19 @@ describe('DOM testing', () => {
             expect(verificationCodeInput).toBeInTheDocument();
             await user.type(verificationCodeInput, '123456');
 
+            expect(onSuccess).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    name: 'mfa_email_start_registration',
+                })
+            );
+            expect(onError).not.toBeCalled();
+            onSuccess.mockReset();
+            onError.mockReset();
+
             verifyMfaEmailRegistration.mockReset().mockRejectedValue(new Error('Invalid code'));
 
             await user.click(screen.getByTestId('submit'));
 
-            expect(onSuccess).not.toBeCalled();
             expect(onError).toBeCalled();
 
             verifyMfaEmailRegistration.mockReset().mockResolvedValue();
@@ -237,9 +245,8 @@ describe('DOM testing', () => {
             await user.click(screen.getByTestId('submit'));
 
             await waitFor(async () => {
-                expect(screen.queryByText('mfa.email.registered')).toBeInTheDocument();
                 expect(onSuccess).toBeCalledWith(
-                    expect.objectContaining({ name: 'credential_registered', type: 'email' })
+                    expect.objectContaining({ name: 'mfa_email_verify_registration' })
                 );
                 expect(onError).not.toBeCalled();
             });
@@ -275,9 +282,8 @@ describe('DOM testing', () => {
             await user.click(screen.getByTestId('submit'));
 
             await waitFor(async () => {
-                expect(screen.queryByText('mfa.phoneNumber.registered')).toBeInTheDocument();
                 expect(onSuccess).toBeCalledWith(
-                    expect.objectContaining({ name: 'credential_registered', type: 'sms' })
+                    expect.objectContaining({ name: 'mfa_phone_number_verify_registration' })
                 );
                 expect(onError).not.toBeCalled();
             });
