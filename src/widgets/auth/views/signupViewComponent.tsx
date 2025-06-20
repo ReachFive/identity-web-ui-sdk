@@ -65,8 +65,6 @@ export const SignupView = ({
     allowWebAuthnSignup = false,
     enablePasswordAuthentication = true,
     socialProviders,
-    onError = (() => {}) as OnError,
-    onSuccess = (() => {}) as OnSuccess,
     ...props
 }: SignupViewProps) => {
     const i18n = useI18n();
@@ -80,8 +78,8 @@ export const SignupView = ({
                 <SocialButtons
                     providers={socialProviders}
                     auth={props.auth}
-                    onSuccess={onSuccess}
-                    onError={onError}
+                    onSuccess={props.onSuccess}
+                    onError={props.onError}
                 />
             )}
             {socialProviders && socialProviders.length > 0 && <Separator text={i18n('or')} />}

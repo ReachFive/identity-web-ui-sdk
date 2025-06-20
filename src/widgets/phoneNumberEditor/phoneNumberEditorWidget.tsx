@@ -139,7 +139,11 @@ const VerificationCodeView = ({
     const { phoneNumber } = params as VerificationCodeViewState;
 
     const handleSubmit = (data: VerificationCodeFormData) => {
-        return coreClient.verifyPhoneNumber({ ...data, phoneNumber, accessToken });
+        return coreClient.verifyPhoneNumber({
+            ...data,
+            phoneNumber,
+            accessToken,
+        });
     };
 
     return (
@@ -147,7 +151,7 @@ const VerificationCodeView = ({
             <Info>{i18n('phoneNumberEditor.verification.intro')}</Info>
             <VerificationCodeInputForm
                 handler={handleSubmit}
-                onSuccess={onSuccess}
+                onSuccess={() => onSuccess({ name: 'phone_number_verified', phoneNumber })}
                 onError={onError}
             />
         </div>

@@ -11,7 +11,7 @@ import 'jest-styled-components';
 import { type Client } from '@reachfive/identity-core';
 
 import { type I18nMessages } from '../../../src/core/i18n';
-import type { Config } from '../../../src/types';
+import type { Config, OnError, OnSuccess } from '../../../src/types';
 
 import emailEditorWidget from '../../../src/widgets/emailEditor/emailEditorWidget';
 
@@ -71,8 +71,8 @@ describe('Snapshot', () => {
 describe('DOM testing', () => {
     const updateEmail = jest.fn<Client['updateEmail']>();
 
-    const onError = jest.fn();
-    const onSuccess = jest.fn();
+    const onError = jest.fn<OnError>();
+    const onSuccess = jest.fn<OnSuccess>();
 
     beforeEach(() => {
         updateEmail.mockClear();
@@ -125,7 +125,7 @@ describe('DOM testing', () => {
                 })
             );
 
-            expect(onSuccess).toBeCalled();
+            expect(onSuccess).toBeCalledWith(expect.objectContaining({ name: 'email_updated' }));
             expect(onError).not.toBeCalled();
         });
 

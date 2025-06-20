@@ -12,7 +12,7 @@ import 'jest-styled-components';
 import { PasswordStrengthScore, type Client } from '@reachfive/identity-core';
 
 import { type I18nMessages } from '../../../src/core/i18n';
-import type { Config } from '../../../src/types';
+import type { Config, OnError, OnSuccess } from '../../../src/types';
 
 import passwordResetWidget from '../../../src/widgets/passwordReset/passwordResetWidget';
 
@@ -95,8 +95,8 @@ describe('DOM testing', () => {
         });
     const updatePassword = jest.fn<Client['updatePassword']>();
 
-    const onError = jest.fn();
-    const onSuccess = jest.fn();
+    const onError = jest.fn<OnError>();
+    const onSuccess = jest.fn<OnSuccess>();
 
     beforeEach(() => {
         getPasswordStrength.mockClear();
@@ -151,7 +151,7 @@ describe('DOM testing', () => {
                 verificationCode: '123456' /** @see @jest-environment-options on top of file */,
             });
 
-            expect(onSuccess).toBeCalled();
+            expect(onSuccess).toBeCalledWith(expect.objectContaining({ name: 'password_changed' }));
             expect(onError).not.toBeCalled();
         });
 

@@ -70,7 +70,7 @@ const withIdentities = <T extends WithIdentitiesProps = WithIdentitiesProps>(
                 // api call + catch failure
                 return coreClient
                     .unlink({ accessToken: props.accessToken, identityId })
-                    .then(() => props.onSuccess?.())
+                    .then(() => props.onSuccess?.({ name: 'unlink', identityId }))
                     .catch(error => {
                         props.onError?.(error);
                         // restore previous identities

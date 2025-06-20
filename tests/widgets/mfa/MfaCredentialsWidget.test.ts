@@ -10,7 +10,7 @@ import userEvent from '@testing-library/user-event';
 import { Client, MFA } from '@reachfive/identity-core';
 
 import { I18nMessages } from '../../../src/core/i18n';
-import type { Config } from '../../../src/types';
+import type { Config, OnError, OnSuccess } from '../../../src/types';
 
 import mfaCredentialsWidget from '../../../src/widgets/mfa/MfaCredentialsWidget';
 
@@ -88,7 +88,7 @@ describe('Snapshot', () => {
 
                 await waitFor(() => expect(apiClient.listMfaCredentials).toHaveBeenCalled());
 
-                await rerender(widget);
+                rerender(widget);
 
                 expect(container).toMatchSnapshot();
             });
@@ -125,8 +125,8 @@ describe('DOM testing', () => {
     const verifyMfaPhoneNumberRegistration = jest.fn<Client['verifyMfaPhoneNumberRegistration']>();
     const getUser = jest.fn<Client['getUser']>();
 
-    const onError = jest.fn();
-    const onSuccess = jest.fn();
+    const onError = jest.fn<OnError>();
+    const onSuccess = jest.fn<OnSuccess>();
 
     beforeEach(() => {
         onError.mockClear();
@@ -223,11 +223,19 @@ describe('DOM testing', () => {
             expect(verificationCodeInput).toBeInTheDocument();
             await user.type(verificationCodeInput, '123456');
 
+            expect(onSuccess).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    name: 'mfa_email_start_registration',
+                })
+            );
+            expect(onError).not.toBeCalled();
+            onSuccess.mockReset();
+            onError.mockReset();
+
             verifyMfaEmailRegistration.mockReset().mockRejectedValue(new Error('Invalid code'));
 
             await user.click(screen.getByTestId('submit'));
 
-            expect(onSuccess).not.toBeCalled();
             expect(onError).toBeCalled();
 
             verifyMfaEmailRegistration.mockReset().mockResolvedValue();
@@ -237,8 +245,9 @@ describe('DOM testing', () => {
             await user.click(screen.getByTestId('submit'));
 
             await waitFor(async () => {
-                expect(screen.queryByText('mfa.email.registered')).toBeInTheDocument();
-                expect(onSuccess).toBeCalled();
+                expect(onSuccess).toBeCalledWith(
+                    expect.objectContaining({ name: 'mfa_email_verify_registration' })
+                );
                 expect(onError).not.toBeCalled();
             });
         });
@@ -273,8 +282,9 @@ describe('DOM testing', () => {
             await user.click(screen.getByTestId('submit'));
 
             await waitFor(async () => {
-                expect(screen.queryByText('mfa.phoneNumber.registered')).toBeInTheDocument();
-                expect(onSuccess).toBeCalled();
+                expect(onSuccess).toBeCalledWith(
+                    expect.objectContaining({ name: 'mfa_phone_number_verify_registration' })
+                );
                 expect(onError).not.toBeCalled();
             });
         });

@@ -60,7 +60,7 @@ const defaultI18n: I18nMessages = {};
 const webauthnConfig = { ...defaultConfig, webAuthn: true };
 
 function expectSocialButtons(toBeInTheDocument = true) {
-    return defaultConfig.socialProviders.forEach(provider => {
+    defaultConfig.socialProviders.forEach(provider => {
         if (toBeInTheDocument) {
             expect(screen.queryByTitle(providers[provider as ProviderId].name)).toBeInTheDocument();
         } else {
@@ -76,9 +76,9 @@ describe('Snapshot', () => {
         .fn<Client['getPasswordStrength']>()
         .mockImplementation(password => {
             let score = 0;
-            if (password.match(/[a-z]+/)) score++;
-            if (password.match(/[0-9]+/)) score++;
-            if (password.match(/[^a-z0-9]+/)) score++;
+            if (/[a-z]+/.exec(password)) score++;
+            if (/[0-9]+/.exec(password)) score++;
+            if (/[^a-z0-9]+/.exec(password)) score++;
             if (password.length > 8) score++;
             return Promise.resolve({ score: score as PasswordStrengthScore });
         });
@@ -388,9 +388,9 @@ describe('DOM testing', () => {
         .fn<Client['getPasswordStrength']>()
         .mockImplementation(password => {
             let score = 0;
-            if (password.match(/[a-z]+/)) score++;
-            if (password.match(/[0-9]+/)) score++;
-            if (password.match(/[^a-z0-9]+/)) score++;
+            if (/[a-z]+/.exec(password)) score++;
+            if (/[0-9]+/.exec(password)) score++;
+            if (/[^a-z0-9]+/.exec(password)) score++;
             if (password.length > 8) score++;
             return Promise.resolve({ score: score as PasswordStrengthScore });
         });
