@@ -14,15 +14,17 @@ import phoneNumberField, {
 import { simpleField } from '../../components/form/fields/simpleField';
 import { createForm } from '../../components/form/formComponent';
 import { SocialButtons } from '../../components/form/socialButtonsComponent';
-import ReCaptcha, {
+import {
     importGoogleRecaptchaScript,
-    type WithCaptchaToken,
 } from '../../components/reCaptcha';
+
+import { getCaptchaHandler, type WithCaptchaToken } from '../../components/captcha';
 
 import { useConfig } from '../../contexts/config';
 import { useI18n } from '../../contexts/i18n';
 import { useReachfive } from '../../contexts/reachfive';
 import { useRouting } from '../../contexts/routing';
+import R5CaptchaFox from "@/components/captchaFox.tsx";
 
 type EmailFormData = { email: string; captchaToken?: string };
 
@@ -87,6 +89,15 @@ interface MainViewProps {
      */
     recaptcha_site_key?: string;
     /**
+     * Boolean that specifies whether CaptchaFox is enabled or not.
+     */
+    captchaFoxEnabled?: boolean;
+    /**
+     * The SITE key that comes from your [CaptchaFox](https://docs.captchafox.com/getting-started#get-your-captchafox-keys) setup.
+     * This must be paired with the appropriate secret key that you received when setting up CaptchaFox.
+     */
+    captchaFoxSiteKey?: string;
+    /**
      * Show the introduction text.
      * @default true
      */
@@ -121,6 +132,8 @@ const MainView = ({
     authType = 'magic_link',
     recaptcha_enabled = false,
     recaptcha_site_key,
+    captchaFoxEnabled = false,
+    captchaFoxSiteKey,
     showIntro = true,
     showSocialLogins = false,
     socialProviders,
@@ -160,6 +173,18 @@ const MainView = ({
     const isEmail = authType === 'magic_link';
     const PhoneNumberInputForm = phoneNumberInputForm(config);
 
+    const captchaFox = new R5CaptchaFox(captchaFoxEnabled, captchaFoxSiteKey)
+    const handleCaptcha = getCaptchaHandler(
+        {
+            recaptchaEnabled: recaptcha_enabled,
+            recaptchaSiteKey: recaptcha_site_key,
+            captchaFoxEnabled: captchaFoxEnabled,
+            captchaFoxInstance: captchaFox,
+        },
+        callback
+    );
+
+
     return (
         <div>
             {showSocialLogins && socialProviders && socialProviders.length > 0 && (
@@ -171,13 +196,7 @@ const MainView = ({
             {isEmail && showIntro && <Intro>{i18n('passwordless.intro')}</Intro>}
             {isEmail && (
                 <EmailInputForm
-                    handler={(data: EmailFormData) =>
-                        ReCaptcha.handle(
-                            data,
-                            { recaptcha_enabled, recaptcha_site_key },
-                            callback,
-                            'passwordless_email'
-                        )
+                    handler={data => handleCaptcha(data, 'passwordless_email')
                     }
                     onSuccess={handleSuccess}
                     onError={onError}
@@ -186,19 +205,13 @@ const MainView = ({
             {!isEmail && showIntro && <Intro>{i18n('passwordless.sms.intro')}</Intro>}
             {!isEmail && (
                 <PhoneNumberInputForm
-                    handler={(data: PhoneNumberFormFata) =>
-                        ReCaptcha.handle(
-                            data,
-                            { recaptcha_enabled, recaptcha_site_key },
-                            callback,
-                            'passwordless_phone'
-                        )
-                    }
+                    handler={data => handleCaptcha(data, 'passwordless_phone')}
                     onSuccess={handleSuccess}
                     onError={onError}
                     phoneNumberOptions={phoneNumberOptions}
                 />
             )}
+            {captchaFox.render()}
         </div>
     );
 };
@@ -219,6 +232,15 @@ interface VerificationCodeViewProps {
      */
     recaptcha_site_key?: string;
     /**
+     * Boolean that specifies whether CaptchaFox is enabled or not.
+     */
+    captchaFoxEnabled?: boolean;
+    /**
+     * The SITE key that comes from your [CaptchaFox](https://docs.captchafox.com/getting-started#get-your-captchafox-keys) setup.
+     * This must be paired with the appropriate secret key that you received when setting up CaptchaFox.
+     */
+    captchaFoxSiteKey?: string;
+    /**
      * Callback function called when the request has succeed.
      */
     onSuccess?: OnSuccess;
@@ -236,6 +258,8 @@ const VerificationCodeView = ({
     authType = 'magic_link',
     recaptcha_enabled = false,
     recaptcha_site_key,
+    captchaFoxEnabled = false,
+    captchaFoxSiteKey,
     onSuccess = (() => {}) as OnSuccess,
     onError = (() => {}) as OnError,
 }: VerificationCodeViewProps) => {
@@ -260,18 +284,22 @@ const VerificationCodeView = ({
             });
     };
 
+    const captchaFox = new R5CaptchaFox(captchaFoxEnabled, captchaFoxSiteKey)
+    const handleCaptcha = getCaptchaHandler(
+        {
+            recaptchaEnabled: recaptcha_enabled,
+            recaptchaSiteKey: recaptcha_site_key,
+            captchaFoxEnabled: captchaFoxEnabled,
+            captchaFoxInstance: captchaFox,
+        },
+        handleSubmit
+    );
+
     return (
         <div>
             <Info>{i18n('passwordless.sms.verification.intro')}</Info>
             <VerificationCodeInputForm
-                handler={(data: VerificationCodeFormData) =>
-                    ReCaptcha.handle(
-                        data,
-                        { recaptcha_enabled, recaptcha_site_key },
-                        handleSubmit,
-                        'verify_passwordless_sms'
-                    )
-                }
+                handler={data => handleCaptcha(data, 'verify_passwordless_sms' )}
                 onError={onError}
             />
         </div>

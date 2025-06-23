@@ -6,6 +6,9 @@ declare global {
     }
 }
 
+export type RecaptchaAction = 'signup' | 'login' | 'update_email' | 'passwordless_email'
+    | 'passwordless_phone' | 'verify_passwordless_sms'
+
 export interface ReCaptchaConf {
     recaptcha_enabled: boolean;
     recaptcha_site_key?: string;
@@ -28,7 +31,7 @@ export default class ReCaptcha {
                     conf.recaptcha_site_key ?? '',
                     action
                 );
-                return callback({ ...data, captchaToken });
+                return callback({ ...data, captchaToken, captchaProvider: 'recaptcha' });
             } catch (_error) {
                 return Promise.reject({
                     errorUserMsg: 'Error recaptcha',
@@ -52,5 +55,3 @@ export function extractCaptchaTokenFromData<T extends { captchaToken?: string }>
     delete data.captchaToken;
     return token;
 }
-
-export type WithCaptchaToken<T> = T & { captchaToken?: string };

@@ -10,11 +10,11 @@ import { buildFormFields, type Field } from './formFieldFactory';
 import { snakeCaseProperties } from '../../helpers/transformObjectProperties';
 import { isValued } from '../../helpers/utils';
 import { MarkdownContent } from '../miscComponent';
-import ReCaptcha, {
+import {
     extractCaptchaTokenFromData,
     importGoogleRecaptchaScript,
-    type WithCaptchaToken,
 } from '../reCaptcha';
+import { getCaptchaHandler, type WithCaptchaToken } from '../../components/captcha';
 
 import { useConfig } from '../../contexts/config';
 import { useReachfive } from '../../contexts/reachfive';
@@ -22,6 +22,7 @@ import { useReachfive } from '../../contexts/reachfive';
 import { isEqual } from '../../helpers/utils';
 
 import type { OnError, OnSuccess } from '../../types';
+import R5CaptchaFox from "@/components/captchaFox.tsx";
 
 const SignupForm = createForm<SignupParams['data']>({
     prefix: 'r5-signup-',
@@ -35,6 +36,8 @@ export interface PasswordSignupFormProps {
     phoneNumberOptions?: PhoneNumberOptions;
     recaptcha_enabled?: boolean;
     recaptcha_site_key?: string;
+    captchaFoxEnabled?: boolean,
+    captchaFoxSiteKey?: string,
     redirectUrl?: string;
     returnToAfterEmailConfirmation?: string;
     showLabels?: boolean;
@@ -57,6 +60,8 @@ export const PasswordSignupForm = ({
     phoneNumberOptions,
     recaptcha_enabled = false,
     recaptcha_site_key,
+    captchaFoxEnabled = false,
+    captchaFoxSiteKey,
     redirectUrl,
     returnToAfterEmailConfirmation,
     showLabels,
@@ -127,27 +132,35 @@ export const PasswordSignupForm = ({
           ]
         : fields;
 
+    const captchaFox = new R5CaptchaFox(captchaFoxEnabled, captchaFoxSiteKey)
+    const handleCaptcha = getCaptchaHandler(
+        {
+            recaptchaEnabled: recaptcha_enabled,
+            recaptchaSiteKey: recaptcha_site_key,
+            captchaFoxEnabled: captchaFoxEnabled,
+            captchaFoxInstance: captchaFox,
+        },
+        callback
+    );
+
     return (
-        <SignupForm
-            fields={allFields}
-            showLabels={showLabels}
-            beforeSubmit={beforeSignup}
-            onFieldChange={refreshBlacklist}
-            sharedProps={{
-                blacklist,
-                ...phoneNumberOptions,
-            }}
-            handler={(data: SignupParams['data']) =>
-                ReCaptcha.handle(
-                    data,
-                    { recaptcha_enabled, recaptcha_site_key },
-                    callback,
-                    'signup'
-                )
-            }
-            onSuccess={onSuccess}
-            onError={onError}
-        />
+        <>
+            <SignupForm
+                fields={allFields}
+                showLabels={showLabels}
+                beforeSubmit={beforeSignup}
+                onFieldChange={refreshBlacklist}
+                sharedProps={{
+                    blacklist,
+                    ...phoneNumberOptions,
+                }}
+                handler={data => handleCaptcha(data, 'signup')
+                }
+                onSuccess={onSuccess}
+                onError={onError}
+            />
+            {captchaFox.render()}
+            </>
     );
 };
 

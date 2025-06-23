@@ -5,16 +5,18 @@ import { email } from '../../core/validation';
 import { simpleField } from '../../components/form/fields/simpleField';
 import { createForm } from '../../components/form/formComponent';
 import { Info, Intro } from '../../components/miscComponent';
-import ReCaptcha, {
+import {
     importGoogleRecaptchaScript,
-    type WithCaptchaToken,
 } from '../../components/reCaptcha';
+import { getCaptchaHandler, type WithCaptchaToken } from '../../components/captcha';
+
 import { createMultiViewWidget } from '../../components/widget/widget';
 import { useI18n } from '../../contexts/i18n';
 import { useReachfive } from '../../contexts/reachfive';
 import { useRouting } from '../../contexts/routing';
 
 import type { OnError, OnSuccess } from '../../types';
+import R5CaptchaFox from "@/components/captchaFox.tsx";
 
 type EmailFormData = { email: string };
 
@@ -46,6 +48,15 @@ interface MainViewProps {
      */
     recaptcha_site_key?: string;
     /**
+     * Boolean that specifies whether CaptchaFox is enabled or not.
+     */
+    captchaFoxEnabled?: boolean;
+    /**
+     * The SITE key that comes from your [CaptchaFox](https://docs.captchafox.com/getting-started#get-your-captchafox-keys) setup.
+     * This must be paired with the appropriate secret key that you received when setting up CaptchaFox.
+     */
+    captchaFoxSiteKey?: string;
+    /**
      * The URL sent in the email to which the user is redirected.
      * This URL must be whitelisted in the `Allowed Callback URLs` field of your ReachFive client settings.
      */
@@ -69,6 +80,8 @@ const MainView = ({
     accessToken,
     recaptcha_enabled = false,
     recaptcha_site_key,
+    captchaFoxEnabled = false,
+    captchaFoxSiteKey,
     redirectUrl,
     showLabels = false,
     onError = (() => {}) as OnError,
@@ -91,22 +104,27 @@ const MainView = ({
         goTo('success');
     };
 
+    const captchaFox = new R5CaptchaFox(captchaFoxEnabled, captchaFoxSiteKey)
+    const handleCaptcha = getCaptchaHandler(
+        {
+            recaptchaEnabled: recaptcha_enabled,
+            recaptchaSiteKey: recaptcha_site_key,
+            captchaFoxEnabled: captchaFoxEnabled,
+            captchaFoxInstance: captchaFox,
+        },
+        callback
+    );
+
     return (
         <div>
             <Intro>{i18n('emailEditor.intro')}</Intro>
             <EmailEditorForm
                 showLabels={showLabels}
-                handler={(data: EmailFormData) =>
-                    ReCaptcha.handle(
-                        data,
-                        { recaptcha_enabled, recaptcha_site_key },
-                        callback,
-                        'update_email'
-                    )
-                }
+                handler={data => handleCaptcha(data, 'update_email')}
                 onSuccess={handleSuccess}
                 onError={onError}
             />
+            {captchaFox.render()}
         </div>
     );
 };

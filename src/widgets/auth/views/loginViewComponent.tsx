@@ -10,10 +10,11 @@ import { simpleField } from '../../../components/form/fields/simpleField';
 import simplePasswordField from '../../../components/form/fields/simplePasswordField';
 import { createForm } from '../../../components/form/formComponent';
 import { SocialButtons } from '../../../components/form/socialButtonsComponent';
-import ReCaptcha, {
-    importGoogleRecaptchaScript,
-    type WithCaptchaToken,
+import {
+    importGoogleRecaptchaScript
 } from '../../../components/reCaptcha';
+
+import { getCaptchaHandler, type WithCaptchaToken } from '../../../components/captcha'
 
 import { FaSelectionViewState } from '../../stepUp/mfaStepUpWidget';
 
@@ -25,6 +26,7 @@ import { useSession } from '../../../contexts/session';
 import { specializeIdentifierData } from '../../../helpers/utils';
 
 import type { OnError, OnSuccess } from '../../../types';
+import R5CaptchaFox from "@/components/captchaFox.tsx";
 
 type Floating = { floating?: boolean };
 
@@ -220,6 +222,15 @@ export type LoginViewProps = {
      */
     recaptcha_site_key?: string;
     /**
+     * Boolean that specifies whether CaptchaFox is enabled or not.
+     */
+    captchaFoxEnabled?: boolean;
+    /**
+     * The SITE key that comes from your [CaptchaFox](https://docs.captchafox.com/getting-started#get-your-captchafox-keys) setup.
+     * This must be paired with the appropriate secret key that you received when setting up CaptchaFox.
+     */
+    captchaFoxSiteKey?: string;
+    /**
      * Whether the signup form fields' labels are displayed on the login view.
      *
      * @default false
@@ -277,6 +288,8 @@ export const LoginView = ({
     showRememberMe = false,
     recaptcha_enabled = false,
     recaptcha_site_key,
+    captchaFoxEnabled = false,
+    captchaFoxSiteKey,
     allowAuthentMailPhone = true,
     allowTrustDevice,
     onError = (() => {}) as OnError,
@@ -332,6 +345,18 @@ export const LoginView = ({
 
     const defaultIdentifier = session?.lastLoginType === 'password' ? session.email : undefined;
 
+    const captchaFox = new R5CaptchaFox(captchaFoxEnabled, captchaFoxSiteKey)
+    const handleLogin = getCaptchaHandler(
+        {
+            recaptchaEnabled: recaptcha_enabled,
+            recaptchaSiteKey: recaptcha_site_key,
+            captchaFoxEnabled: captchaFoxEnabled,
+            captchaFoxInstance: captchaFox,
+        },
+        callback
+    );
+
+
     return (
         <div>
             <Heading>{i18n('login.title')}</Heading>
@@ -348,17 +373,11 @@ export const LoginView = ({
                 defaultIdentifier={defaultIdentifier}
                 allowCustomIdentifier={allowCustomIdentifier}
                 allowAuthentMailPhone={allowAuthentMailPhone}
-                handler={(data: LoginFormData) =>
-                    ReCaptcha.handle(
-                        data,
-                        { recaptcha_enabled, recaptcha_site_key },
-                        callback,
-                        'login'
-                    )
-                }
+                handler={data => handleLogin(data, 'login')}
                 onSuccess={onSuccess}
                 onError={onError}
             />
+            {captchaFox.render()}
             {allowSignup && (
                 <Alternative>
                     <span>{i18n('login.signupLinkPrefix')}</span>
