@@ -7,22 +7,19 @@ import { createForm } from './formComponent';
 import { UserAggreementStyle } from './formControlsComponent';
 import { buildFormFields, type Field } from './formFieldFactory';
 
+import { getCaptchaHandler, type WithCaptchaToken } from '../../components/captcha';
 import { snakeCaseProperties } from '../../helpers/transformObjectProperties';
 import { isValued } from '../../helpers/utils';
 import { MarkdownContent } from '../miscComponent';
-import {
-    extractCaptchaTokenFromData,
-    importGoogleRecaptchaScript,
-} from '../reCaptcha';
-import { getCaptchaHandler, type WithCaptchaToken } from '../../components/captcha';
+import { extractCaptchaTokenFromData, importGoogleRecaptchaScript } from '../reCaptcha';
 
 import { useConfig } from '../../contexts/config';
 import { useReachfive } from '../../contexts/reachfive';
 
 import { isEqual } from '../../helpers/utils';
 
+import R5CaptchaFox from '@/components/captchaFox.tsx';
 import type { OnError, OnSuccess } from '../../types';
-import R5CaptchaFox from "@/components/captchaFox.tsx";
 
 const SignupForm = createForm<SignupParams['data']>({
     prefix: 'r5-signup-',
@@ -36,8 +33,8 @@ export interface PasswordSignupFormProps {
     phoneNumberOptions?: PhoneNumberOptions;
     recaptcha_enabled?: boolean;
     recaptcha_site_key?: string;
-    captchaFoxEnabled?: boolean,
-    captchaFoxSiteKey?: string,
+    captchaFoxEnabled?: boolean;
+    captchaFoxSiteKey?: string;
     redirectUrl?: string;
     returnToAfterEmailConfirmation?: string;
     showLabels?: boolean;
@@ -132,7 +129,7 @@ export const PasswordSignupForm = ({
           ]
         : fields;
 
-    const captchaFox = new R5CaptchaFox(captchaFoxEnabled, captchaFoxSiteKey)
+    const captchaFox = new R5CaptchaFox(captchaFoxEnabled, captchaFoxSiteKey);
     const handleCaptcha = getCaptchaHandler(
         {
             recaptchaEnabled: recaptcha_enabled,
@@ -154,13 +151,12 @@ export const PasswordSignupForm = ({
                     blacklist,
                     ...phoneNumberOptions,
                 }}
-                handler={data => handleCaptcha(data, 'signup')
-                }
+                handler={data => handleCaptcha(data, 'signup')}
                 onSuccess={onSuccess}
                 onError={onError}
             />
             {captchaFox.render()}
-            </>
+        </>
     );
 };
 

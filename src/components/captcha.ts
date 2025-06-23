@@ -1,11 +1,9 @@
-import ReCaptcha, {RecaptchaAction} from './reCaptcha'
-import R5CaptchaFox from './captchaFox'
+import R5CaptchaFox from './captchaFox';
+import ReCaptcha, { RecaptchaAction } from './reCaptcha';
 
-
-export type CaptchaType = "recaptcha" | "captchafox";
+export type CaptchaType = 'recaptcha' | 'captchafox';
 
 export type WithCaptchaToken<T> = T & { captchaToken?: string };
-
 
 interface CaptchaOptions {
     recaptchaEnabled: boolean;
@@ -14,19 +12,15 @@ interface CaptchaOptions {
     captchaFoxInstance?: R5CaptchaFox;
 }
 
-export function getCaptchaHandler<T extends { captchaToken?: string}, R = any>(
+export function getCaptchaHandler<T extends { captchaToken?: string }, R = any>(
     options: CaptchaOptions,
-    callback: (data: T) => Promise<R>,
+    callback: (data: T) => Promise<R>
 ): (data: T, action: RecaptchaAction) => Promise<R> {
     return (data: T, action: RecaptchaAction) => {
-        const {
-            recaptchaEnabled,
-            recaptchaSiteKey,
-            captchaFoxEnabled,
-            captchaFoxInstance,
-        } = options;
+        const { recaptchaEnabled, recaptchaSiteKey, captchaFoxEnabled, captchaFoxInstance } =
+            options;
 
-        const sanitizedCaptchaFoxActivation = recaptchaEnabled ? false : captchaFoxEnabled
+        const sanitizedCaptchaFoxActivation = recaptchaEnabled ? false : captchaFoxEnabled;
 
         if (recaptchaEnabled) {
             return ReCaptcha.handle(

@@ -14,17 +14,15 @@ import phoneNumberField, {
 import { simpleField } from '../../components/form/fields/simpleField';
 import { createForm } from '../../components/form/formComponent';
 import { SocialButtons } from '../../components/form/socialButtonsComponent';
-import {
-    importGoogleRecaptchaScript,
-} from '../../components/reCaptcha';
+import { importGoogleRecaptchaScript } from '../../components/reCaptcha';
 
 import { getCaptchaHandler, type WithCaptchaToken } from '../../components/captcha';
 
+import R5CaptchaFox from '@/components/captchaFox.tsx';
 import { useConfig } from '../../contexts/config';
 import { useI18n } from '../../contexts/i18n';
 import { useReachfive } from '../../contexts/reachfive';
 import { useRouting } from '../../contexts/routing';
-import R5CaptchaFox from "@/components/captchaFox.tsx";
 
 type EmailFormData = { email: string; captchaToken?: string };
 
@@ -173,7 +171,7 @@ const MainView = ({
     const isEmail = authType === 'magic_link';
     const PhoneNumberInputForm = phoneNumberInputForm(config);
 
-    const captchaFox = new R5CaptchaFox(captchaFoxEnabled, captchaFoxSiteKey)
+    const captchaFox = new R5CaptchaFox(captchaFoxEnabled, captchaFoxSiteKey);
     const handleCaptcha = getCaptchaHandler(
         {
             recaptchaEnabled: recaptcha_enabled,
@@ -183,7 +181,6 @@ const MainView = ({
         },
         callback
     );
-
 
     return (
         <div>
@@ -196,8 +193,7 @@ const MainView = ({
             {isEmail && showIntro && <Intro>{i18n('passwordless.intro')}</Intro>}
             {isEmail && (
                 <EmailInputForm
-                    handler={data => handleCaptcha(data, 'passwordless_email')
-                    }
+                    handler={data => handleCaptcha(data, 'passwordless_email')}
                     onSuccess={handleSuccess}
                     onError={onError}
                 />
@@ -284,7 +280,7 @@ const VerificationCodeView = ({
             });
     };
 
-    const captchaFox = new R5CaptchaFox(captchaFoxEnabled, captchaFoxSiteKey)
+    const captchaFox = new R5CaptchaFox(captchaFoxEnabled, captchaFoxSiteKey);
     const handleCaptcha = getCaptchaHandler(
         {
             recaptchaEnabled: recaptcha_enabled,
@@ -299,7 +295,7 @@ const VerificationCodeView = ({
         <div>
             <Info>{i18n('passwordless.sms.verification.intro')}</Info>
             <VerificationCodeInputForm
-                handler={data => handleCaptcha(data, 'verify_passwordless_sms' )}
+                handler={data => handleCaptcha(data, 'verify_passwordless_sms')}
                 onError={onError}
             />
         </div>

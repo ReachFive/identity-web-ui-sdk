@@ -10,11 +10,9 @@ import { simpleField } from '../../../components/form/fields/simpleField';
 import simplePasswordField from '../../../components/form/fields/simplePasswordField';
 import { createForm } from '../../../components/form/formComponent';
 import { SocialButtons } from '../../../components/form/socialButtonsComponent';
-import {
-    importGoogleRecaptchaScript
-} from '../../../components/reCaptcha';
+import { importGoogleRecaptchaScript } from '../../../components/reCaptcha';
 
-import { getCaptchaHandler, type WithCaptchaToken } from '../../../components/captcha'
+import { getCaptchaHandler, type WithCaptchaToken } from '../../../components/captcha';
 
 import { FaSelectionViewState } from '../../stepUp/mfaStepUpWidget';
 
@@ -25,8 +23,8 @@ import { useSession } from '../../../contexts/session';
 
 import { specializeIdentifierData } from '../../../helpers/utils';
 
+import R5CaptchaFox from '@/components/captchaFox.tsx';
 import type { OnError, OnSuccess } from '../../../types';
-import R5CaptchaFox from "@/components/captchaFox.tsx";
 
 type Floating = { floating?: boolean };
 
@@ -345,7 +343,7 @@ export const LoginView = ({
 
     const defaultIdentifier = session?.lastLoginType === 'password' ? session.email : undefined;
 
-    const captchaFox = new R5CaptchaFox(captchaFoxEnabled, captchaFoxSiteKey)
+    const captchaFox = new R5CaptchaFox(captchaFoxEnabled, captchaFoxSiteKey);
     const handleLogin = getCaptchaHandler(
         {
             recaptchaEnabled: recaptcha_enabled,
@@ -355,7 +353,6 @@ export const LoginView = ({
         },
         callback
     );
-
 
     return (
         <div>

@@ -2,21 +2,19 @@ import React, { useLayoutEffect } from 'react';
 
 import { email } from '../../core/validation';
 
+import { getCaptchaHandler, type WithCaptchaToken } from '../../components/captcha';
 import { simpleField } from '../../components/form/fields/simpleField';
 import { createForm } from '../../components/form/formComponent';
 import { Info, Intro } from '../../components/miscComponent';
-import {
-    importGoogleRecaptchaScript,
-} from '../../components/reCaptcha';
-import { getCaptchaHandler, type WithCaptchaToken } from '../../components/captcha';
+import { importGoogleRecaptchaScript } from '../../components/reCaptcha';
 
 import { createMultiViewWidget } from '../../components/widget/widget';
 import { useI18n } from '../../contexts/i18n';
 import { useReachfive } from '../../contexts/reachfive';
 import { useRouting } from '../../contexts/routing';
 
+import R5CaptchaFox from '@/components/captchaFox.tsx';
 import type { OnError, OnSuccess } from '../../types';
-import R5CaptchaFox from "@/components/captchaFox.tsx";
 
 type EmailFormData = { email: string };
 
@@ -104,7 +102,7 @@ const MainView = ({
         goTo('success');
     };
 
-    const captchaFox = new R5CaptchaFox(captchaFoxEnabled, captchaFoxSiteKey)
+    const captchaFox = new R5CaptchaFox(captchaFoxEnabled, captchaFoxSiteKey);
     const handleCaptcha = getCaptchaHandler(
         {
             recaptchaEnabled: recaptcha_enabled,

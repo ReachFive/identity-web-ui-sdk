@@ -6,8 +6,13 @@ declare global {
     }
 }
 
-export type RecaptchaAction = 'signup' | 'login' | 'update_email' | 'passwordless_email'
-    | 'passwordless_phone' | 'verify_passwordless_sms'
+export type RecaptchaAction =
+    | 'signup'
+    | 'login'
+    | 'update_email'
+    | 'passwordless_email'
+    | 'passwordless_phone'
+    | 'verify_passwordless_sms';
 
 export interface ReCaptchaConf {
     recaptcha_enabled: boolean;
