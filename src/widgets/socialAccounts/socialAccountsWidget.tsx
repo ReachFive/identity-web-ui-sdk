@@ -218,7 +218,12 @@ const LinkAccount = withIdentities(
         const availableProviders = findAvailableProviders(providers, identities);
         return (
             <Fragment>
-                <SocialButtons providers={availableProviders} auth={{ ...auth, accessToken }} onSuccess={onSuccess} onError={onError}/>
+                <SocialButtons
+                    providers={availableProviders}
+                    auth={{ ...auth, accessToken }}
+                    onSuccess={onSuccess}
+                    onError={onError}
+                />
                 <Alternative>
                     <Link target="links">{i18n('back')}</Link>
                 </Alternative>

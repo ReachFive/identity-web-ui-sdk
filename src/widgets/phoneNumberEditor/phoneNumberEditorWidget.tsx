@@ -90,8 +90,8 @@ const MainView = ({
                 accessToken,
             })
             .then(() => {
-                onSuccess({ name: 'phone_number_updated'})
-                return data
+                onSuccess({ name: 'phone_number_updated' });
+                return data;
             });
     };
 
