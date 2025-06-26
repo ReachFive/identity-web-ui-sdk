@@ -337,7 +337,7 @@ export const LoginView = ({
         <div>
             <Heading>{i18n('login.title')}</Heading>
             {socialProviders && socialProviders.length > 0 && (
-                <SocialButtons providers={socialProviders} auth={auth} acceptTos={acceptTos} />
+                <SocialButtons providers={socialProviders} auth={auth} acceptTos={acceptTos} onSuccess={onSuccess} onError={onError} />
             )}
             {socialProviders && socialProviders.length > 0 && <Separator text={i18n('or')} />}
             <LoginForm

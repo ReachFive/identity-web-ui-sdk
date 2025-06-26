@@ -163,7 +163,7 @@ const MainView = ({
     return (
         <div>
             {showSocialLogins && socialProviders && socialProviders.length > 0 && (
-                <SocialButtons providers={socialProviders} auth={auth} />
+                <SocialButtons providers={socialProviders} auth={auth} onSuccess={onSuccess} onError={onError}/>
             )}
             {showSocialLogins && socialProviders && socialProviders.length > 0 && (
                 <Separator text={i18n('or')} />

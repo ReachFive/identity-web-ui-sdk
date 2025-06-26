@@ -65,6 +65,10 @@ interface MainViewProps {
      * Callback function called when the request has failed.
      */
     onError?: OnError;
+    /**
+     * Callback function called when the request has succeeded
+     */
+    onSuccess?: OnSuccess;
 }
 
 const MainView = ({
@@ -72,6 +76,7 @@ const MainView = ({
     showLabels = false,
     phoneNumberOptions,
     onError = (() => {}) as OnError,
+    onSuccess = (() => {}) as OnSuccess,
 }: MainViewProps) => {
     const coreClient = useReachfive();
     const config = useConfig();
@@ -84,7 +89,10 @@ const MainView = ({
                 ...data,
                 accessToken,
             })
-            .then(() => data);
+            .then(() => {
+                onSuccess({ name: 'phone_number_updated'})
+                return data
+            });
     };
 
     const handleSuccess = (data: PhoneNumberFormData) =>

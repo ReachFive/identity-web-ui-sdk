@@ -77,7 +77,7 @@ export const ReauthView = ({
             <Heading>{session.name}</Heading>
             <Intro>{i18n('confirmYourIdentity')}</Intro>
             {userSocialProviders && userSocialProviders.length > 0 && (
-                <SocialButtons providers={userSocialProviders} auth={auth} />
+                <SocialButtons providers={userSocialProviders} auth={auth} onSuccess={onSuccess} onError={onError}/>
             )}
             {userSocialProviders && userSocialProviders.length > 0 && session.hasPassword && (
                 <Separator text={i18n('or')} />

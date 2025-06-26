@@ -1,234 +1,414 @@
 /**
- * @reachfive/identity-ui - v1.34.1
- * Compiled Thu, 15 May 2025 15:22:32 UTC
+ * @reachfive/identity-ui - v1.36.0-develop
+ * Compiled Thu, 26 Jun 2025 14:51:35 UTC
  *
  * Copyright (c) ReachFive.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  **/
+import * as _reachfive_identity_core from '@reachfive/identity-core';
+import { AuthResult, SingleFactorPasswordlessParams, StepUpPasswordlessParams, MFA, TrustedDevice, Config as Config$1, RemoteSettings, ConsentVersions, CustomField, Client as Client$1, SessionInfo, ConsentType, PasswordStrengthScore, PasswordPolicy, CustomFieldType, AuthOptions, PasswordlessResponse, Profile, UserConsent, DeviceCredential } from '@reachfive/identity-core';
+export { Config } from '@reachfive/identity-core';
 import * as React from 'react';
 import React__default, { CSSProperties, ComponentType } from 'react';
-import * as _reachfive_identity_core from '@reachfive/identity-core';
-import { Config as Config$1, RemoteSettings, ConsentVersions, CustomField, Client as Client$1, SessionInfo, ConsentType, PasswordStrengthScore, PasswordPolicy, CustomFieldType, AuthOptions, MFA, PasswordlessResponse, SingleFactorPasswordlessParams, Profile, UserConsent, DeviceCredential } from '@reachfive/identity-core';
-export { Config } from '@reachfive/identity-core';
+import { StepUpPasswordlessParams as StepUpPasswordlessParams$1 } from '@reachfive/identity-core/es/main/oAuthClient';
 import { Country, Value as Value$2 } from 'react-phone-number-input';
 import * as libphonenumber_js from 'libphonenumber-js';
-import { PasswordlessParams } from '@reachfive/identity-core/es/main/oAuthClient';
+
+interface AbstractEvent {
+    readonly name: string
+}
+
+/** Emitted after a successful signup. */
+interface SignupEvent extends AbstractEvent {
+    readonly name: 'signup'
+    readonly authResult: AuthResult
+}
+
+/** Emitted after a successful authentication. */
+interface LoginEvent extends AbstractEvent {
+    readonly name: 'login'
+    readonly authResult: AuthResult
+}
+
+interface SocialLoginEvent extends AbstractEvent {
+    readonly name: 'social_login'
+    readonly provider: string
+}
+
+/** Emitted after a successful email update. */
+interface EmailUpdatedEvent extends AbstractEvent {
+    readonly name: 'email_updated'
+}
+
+/** Emitted after a successful phone number update. */
+interface PhoneNumberUpdatedEvent extends AbstractEvent {
+    readonly name: 'phone_number_updated'
+}
+
+/** Emitted after a successful user update. */
+interface UserUpdatedEvent extends AbstractEvent {
+    readonly name: 'user_updated'
+}
+
+/** Emitted after a successful password change. */
+interface PasswordChangedEvent extends AbstractEvent {
+    readonly name: 'password_changed'
+}
+
+/** Emitted after a successful password reset request. */
+interface PasswordResetRequestedEvent extends AbstractEvent {
+    readonly name: 'password_reset_requested'
+}
+
+/** Emitted after a successful password reset process. */
+interface PasswordResetEvent extends AbstractEvent {
+    readonly name: 'password_reset'
+}
+
+interface AccountRecoveryEvent extends AbstractEvent {
+    readonly name: 'account_recovery'
+}
+
+/** Emitted after a one-time password (otp) is successfully sent (via sms or email) for verification. */
+interface OtpSentEvent extends AbstractEvent {
+    readonly name: 'otp_sent'
+    readonly authType: SingleFactorPasswordlessParams['authType']
+}
+
+/** Emitted after the user has successfully logged in using the Two-factor authentication (2FA) flow. */
+interface Login2ndStepEvent extends AbstractEvent {
+    readonly name: 'login_2nd_step'
+    readonly authType: StepUpPasswordlessParams['authType']
+    readonly authResult: AuthResult
+}
+
+/** Emitted after an email is used to start the MFA registration process. */
+interface MfaEmailStartRegistration extends AbstractEvent {
+    readonly name: 'mfa_email_start_registration'
+}
+
+/** Emitted after an email has been verified as an MFA credential. */
+interface MfaEmailVerifyRegistration extends AbstractEvent {
+    readonly name: 'mfa_email_verify_registration'
+}
+
+/** Emitted after a phone number is used to start the MFA registration process. */
+interface MfaPhoneNumberStartRegistration extends AbstractEvent {
+    readonly name: 'mfa_phone_number_start_registration'
+}
+
+/** Emitted after a phone number has been verified as an MFA credential. */
+interface MfaPhoneNumberVerifyRegistration extends AbstractEvent {
+    readonly name: 'mfa_phone_number_verify_registration'
+}
+
+/** Emitted after a list of MFA credentials was successfully listed. */
+interface MfaCredentialsListedEvent extends AbstractEvent {
+    readonly name: 'mfa_credentials_listed'
+    readonly credentials: MFA.Credential[]
+}
+
+/** Emitted after an MFA credential (phone number) is deleted. */
+interface MfaPhoneNumberDeletedEvent extends AbstractEvent { 
+    readonly name: 'mfa_phone_number_deleted'
+}
+
+/** Emitted after an MFA credential (email) is deleted. */
+interface MfaEmailDeletedEvent extends AbstractEvent {
+    readonly name: 'mfa_email_deleted'
+}
+
+/** Emitted after a successful mobile number verification. */
+interface PhoneNumberVerifiedEvent extends AbstractEvent {
+    readonly name: 'phone_number_verified'
+    readonly phoneNumber: string
+}
+
+/** Emitted after a passkey was successfully reset. */
+interface WebauthnResetEvent extends AbstractEvent {
+    readonly name: 'webauthn_reset'
+}
+
+/** Emitted after a passkey was successfully created. */
+interface WebauthnCredentialCreatedEvent extends AbstractEvent {
+    readonly name: 'webauthn_credential_created'
+    readonly friendlyName: string
+}
+
+/** Emitted after a passkey was successfully deleted */
+interface WebauthnCredentialDeletedEvent extends AbstractEvent {
+    readonly name: 'webauthn_credential_deleted'
+    readonly deviceId: string
+}
+
+/** Emitted after a successful unlink identity. */
+interface SocialIdentityUnlinkedEvent extends AbstractEvent {
+    readonly name: 'unlink'
+    readonly identityId: string
+}
+
+/** Emitted after trusted devices has been listed. */
+interface WebAuthnDevicesListedEvent extends AbstractEvent {
+    readonly name: 'mfa_trusted_device_listed'
+    readonly devices: TrustedDevice[]
+}
+
+/** Emitted after a device has been added as a trusted device. */
+interface MfaTrustedDeviceAddedEvent extends AbstractEvent {
+    readonly name: 'mfa_trusted_device_added'
+    readonly device: TrustedDevice
+}
+
+/** Emitted after a device has been removed as a trusted device. */
+interface MfaTrustedDeviceDeletedEvent extends AbstractEvent {
+    readonly name: 'mfa_trusted_device_deleted'
+    readonly device: TrustedDevice
+}
+
+type SuccessEvent =
+    | SignupEvent
+    | LoginEvent
+    | SocialLoginEvent
+    | EmailUpdatedEvent
+    | PhoneNumberUpdatedEvent
+    | UserUpdatedEvent
+    | AccountRecoveryEvent
+    | OtpSentEvent
+    | Login2ndStepEvent
+    | PasswordChangedEvent
+    | PasswordResetRequestedEvent
+    | PasswordResetEvent
+    | MfaCredentialsListedEvent
+    | MfaEmailStartRegistration
+    | MfaEmailVerifyRegistration
+    | MfaPhoneNumberStartRegistration
+    | MfaPhoneNumberVerifyRegistration
+    | MfaPhoneNumberDeletedEvent
+    | MfaEmailDeletedEvent
+    | PhoneNumberVerifiedEvent
+    | WebauthnResetEvent
+    | WebauthnCredentialCreatedEvent
+    | WebauthnCredentialDeletedEvent
+    | SocialIdentityUnlinkedEvent
+    | WebAuthnDevicesListedEvent
+    | MfaTrustedDeviceAddedEvent
+    | MfaTrustedDeviceDeletedEvent
 
 type Prettify<T> = {
-    [K in keyof T]: T[K]
-} & {}
+    [K in keyof T]: T[K];
+} & {};
 
 type RecursivePartial<T> = {
-    [P in keyof T]?: RecursivePartial<T[P]>
-} & {}
+    [P in keyof T]?: RecursivePartial<T[P]>;
+} & {};
 
 /**
  * From T, make optional a set of properties whose keys are in the union K
  * @example Optional<{ firstname: string, lastname: string }, 'lastname'> // => { firstname: string, lastname?: string }
  */
-type Optional<T, K extends keyof T> = Pick<Partial<T>, K> & Omit<T, K>;
+type Optional<T, K extends keyof T> = Pick<Partial<T>, K> & Omit<T, K>
 
 type RequiredProperty<T, K extends keyof T> = T & {
     [P in K]-?: T[P];
-}
+};
 
-type ConsentsVersions = { consentsVersions: Record<string, ConsentVersions> }
+type ConsentsVersions = { consentsVersions: Record<string, ConsentVersions> };
 
-type CustomFields = { customFields?: CustomField[] }
+type CustomFields = { customFields?: CustomField[] };
 
-type Config = Config$1 & RemoteSettings & ConsentsVersions & CustomFields
+type Config = Config$1 & RemoteSettings & ConsentsVersions & CustomFields;
 
-type OnSuccess = (...args: any[]) => void
+type OnSuccess = (event: SuccessEvent) => void;
 
-type OnError = (error?: unknown) => void
+type OnError = (error?: unknown) => void;
+
+type I18nMessages = Record<string, string>;
+type I18nNestedMessages = Record<string, string | I18nMessages>;
+type I18nMessageParams = Record<string, unknown>;
+type I18nResolver = (key: string, params?: I18nMessageParams, fallback?: (params?: I18nMessageParams) => string) => string;
 
 declare module 'styled-components' {
     export interface DefaultTheme extends Theme {}
 }
 
-type ThemeOptions = RecursivePartial<Theme>
+type ThemeOptions = RecursivePartial<Theme>;
 
 interface BaseTheme {
     /**
      * @default true
      */
-    animateWidgetEntrance: boolean
+    animateWidgetEntrance: boolean;
     /** Specifies the font-size.
      * @default 14
      */
-    fontSize: number
+    fontSize: number;
     /** Specifies the font-size for small texts.
      * @default 12
      */
-    smallTextFontSize: number
+    smallTextFontSize: number;
     /** Specifies the line-height.
      * @default 1.428571429
      */
-    lineHeight: number
+    lineHeight: number;
     /**
      * @default "#212529"
      */
-    headingColor: NonNullable<CSSProperties['color']>
+    headingColor: NonNullable<CSSProperties['color']>;
     /**
      * @default "#495057"
      */
-    textColor: NonNullable<CSSProperties['color']>
+    textColor: NonNullable<CSSProperties['color']>;
     /**
      * @default "#adb5bd"
      */
-    mutedTextColor: NonNullable<CSSProperties['color']>
-     /**
+    mutedTextColor: NonNullable<CSSProperties['color']>;
+    /**
      * @default "3"
      */
-    borderRadius: number
+    borderRadius: number;
     /**
      * @default "#ced4da "
      */
-    borderColor: NonNullable<CSSProperties['color']>
+    borderColor: NonNullable<CSSProperties['color']>;
     /**
      * @default 1
      */
-    borderWidth: number
+    borderWidth: number;
     /**
      * @default "#ffffff"
      */
-    backgroundColor: NonNullable<CSSProperties['color']>
+    backgroundColor: NonNullable<CSSProperties['color']>;
     /**
      * The button and link default color.
      * @default "#229955"
      */
-    primaryColor: NonNullable<CSSProperties['color']>
+    primaryColor: NonNullable<CSSProperties['color']>;
     /**
      * @default "#dc4e41"
      */
-    dangerColor: NonNullable<CSSProperties['color']>
+    dangerColor: NonNullable<CSSProperties['color']>;
     /**
      * @default "#ffc107"
      */
-    warningColor: NonNullable<CSSProperties['color']>
+    warningColor: NonNullable<CSSProperties['color']>;
     /**
      * @default "#229955"
      */
-    successColor: NonNullable<CSSProperties['color']>
+    successColor: NonNullable<CSSProperties['color']>;
     /**
      * @default "#e9ecef"
      */
-    lightBackgroundColor: NonNullable<CSSProperties['color']>
+    lightBackgroundColor: NonNullable<CSSProperties['color']>;
     /** Specifies the padding for the x axis. (left and right) */
-    paddingX: number
+    paddingX: number;
     /** Specifies the padding for the y axis. (top and bottom) */
-    paddingY: number
-    spacing: number
+    paddingY: number;
+    spacing: number;
     /**
      * @default 400
      */
-    maxWidth: number
-    _absoluteLineHeight: number
-    _blockInnerHeight: number
-    _blockHeight: number
+    maxWidth: number;
+    _absoluteLineHeight: number;
+    _blockInnerHeight: number;
+    _blockHeight: number;
 }
 
 interface LinkTheme {
-    color: NonNullable<CSSProperties['color']>
-    decoration: NonNullable<CSSProperties['textDecoration']>
-    hoverColor: NonNullable<CSSProperties['color']>
-    hoverDecoration: NonNullable<CSSProperties['textDecoration']>
+    color: NonNullable<CSSProperties['color']>;
+    decoration: NonNullable<CSSProperties['textDecoration']>;
+    hoverColor: NonNullable<CSSProperties['color']>;
+    hoverDecoration: NonNullable<CSSProperties['textDecoration']>;
 }
 
 interface InputTheme {
-    color: NonNullable<CSSProperties['color']>
-    placeholderColor: NonNullable<CSSProperties['color']>
-    fontSize: number
-    lineHeight: number
-    paddingX: number
-    paddingY: number
-    borderRadius: number
-    borderColor: NonNullable<CSSProperties['color']>
-    borderWidth: number
-    background: NonNullable<CSSProperties['color']>
-    disabledBackground: NonNullable<CSSProperties['color']>
-    boxShadow: NonNullable<CSSProperties['boxShadow']>
-    focusBorderColor: NonNullable<CSSProperties['color']>
-    focusBoxShadow: (color?: CSSProperties['color']) => NonNullable<CSSProperties['boxShadow']>
-    height: number
+    color: NonNullable<CSSProperties['color']>;
+    placeholderColor: NonNullable<CSSProperties['color']>;
+    fontSize: number;
+    lineHeight: number;
+    paddingX: number;
+    paddingY: number;
+    borderRadius: number;
+    borderColor: NonNullable<CSSProperties['color']>;
+    borderWidth: number;
+    background: NonNullable<CSSProperties['color']>;
+    disabledBackground: NonNullable<CSSProperties['color']>;
+    boxShadow: NonNullable<CSSProperties['boxShadow']>;
+    focusBorderColor: NonNullable<CSSProperties['color']>;
+    focusBoxShadow: (color?: CSSProperties['color']) => NonNullable<CSSProperties['boxShadow']>;
+    height: number;
 }
 
 interface ButtonTheme {
     /** Specifies the font-weight (such as normal, bold, or 900).
      * @default 'bold'
      */
-    fontWeight: NonNullable<CSSProperties['fontWeight']>
+    fontWeight: NonNullable<CSSProperties['fontWeight']>;
     /** Specifies the font-size. */
-    fontSize: number
-     /** Specifies the line-height. */
-    lineHeight: number
+    fontSize: number;
+    /** Specifies the line-height. */
+    lineHeight: number;
     /** Specifies the padding for the x axis. (left and right) */
-    paddingX: number
+    paddingX: number;
     /** Specifies the padding for the y axis. (top and bottom) */
-    paddingY: number
+    paddingY: number;
     /** Specifies the border-color. */
-    borderColor: NonNullable<CSSProperties['color']>,
+    borderColor: NonNullable<CSSProperties['color']>;
     /** Specifies the border-radius. */
-    borderRadius: number
+    borderRadius: number;
     /** Specifies the border-width. */
-    borderWidth: number
+    borderWidth: number;
     /** Function that specifies the box shadow based on the border color. */
-    focusBoxShadow: (color?: CSSProperties['color']) => NonNullable<CSSProperties['boxShadow']>
+    focusBoxShadow: (color?: CSSProperties['color']) => NonNullable<CSSProperties['boxShadow']>;
     /** Specifies the height. */
-    height: number
+    height: number;
 }
 
 interface SocialButtonTheme {
     /** Boolean that specifies if the buttons are inline (horizonally-aligned). */
-    inline: boolean
-     /** Boolean that specifies if the text is visible. */
-    textVisible: boolean
+    inline: boolean;
+    /** Boolean that specifies if the text is visible. */
+    textVisible: boolean;
     /** Specifies the font-weight (such as normal, bold, or 900). */
-    fontWeight: NonNullable<CSSProperties['fontWeight']>
+    fontWeight: NonNullable<CSSProperties['fontWeight']>;
     /** Specifies the font-size. */
-    fontSize: number
-     /** Specifies the line-height. */
-    lineHeight: number
+    fontSize: number;
+    /** Specifies the line-height. */
+    lineHeight: number;
     /** Specifies the padding for the x axis. (left and right) */
-    paddingX: number
+    paddingX: number;
     /** Specifies the padding for the y axis. (top and bottom) */
-    paddingY: number
+    paddingY: number;
     /** Specifies the border-color. */
-    borderColor: NonNullable<CSSProperties['color']>,
+    borderColor: NonNullable<CSSProperties['color']>;
     /** Specifies the border-radius. */
-    borderRadius: number
+    borderRadius: number;
     /** Specifies the border-width. */
-    borderWidth: number
+    borderWidth: number;
     /** Function that specifies the box shadow based on the border color. */
-    focusBoxShadow: (color?: CSSProperties['color']) => NonNullable<CSSProperties['boxShadow']>
+    focusBoxShadow: (color?: CSSProperties['color']) => NonNullable<CSSProperties['boxShadow']>;
     /** Specifies the height. */
-    height: number
+    height: number;
 }
 
 interface PasswordStrengthTheme {
-    color0: NonNullable<CSSProperties['color']>
-    color1: NonNullable<CSSProperties['color']>
-    color2: NonNullable<CSSProperties['color']>
-    color3: NonNullable<CSSProperties['color']>
-    color4: NonNullable<CSSProperties['color']>
+    color0: NonNullable<CSSProperties['color']>;
+    color1: NonNullable<CSSProperties['color']>;
+    color2: NonNullable<CSSProperties['color']>;
+    color3: NonNullable<CSSProperties['color']>;
+    color4: NonNullable<CSSProperties['color']>;
 }
 
 interface Theme extends BaseTheme {
-    link: LinkTheme
-    input: InputTheme
+    link: LinkTheme;
+    input: InputTheme;
     /** Button theming options. */
-    button: ButtonTheme
+    button: ButtonTheme;
     /** Social button theming options. */
-    socialButton: SocialButtonTheme
-    passwordStrengthValidator: PasswordStrengthTheme
+    socialButton: SocialButtonTheme;
+    passwordStrengthValidator: PasswordStrengthTheme;
 }
-
-type I18nMessages = Record<string, string>;
-type I18nNestedMessages = Record<string, string | I18nMessages>;
-type I18nMessageParams = Record<string, unknown>;
-type I18nResolver = (key: string, params?: I18nMessageParams, fallback?: (params?: I18nMessageParams) => string) => string;
 
 type I18nProps$1 = {
     i18n?: I18nNestedMessages;
@@ -242,6 +422,32 @@ type Context = {
     defaultI18n: I18nMessages;
     session?: SessionInfo;
 };
+
+interface MainViewProps$6 {
+    /**
+     * Allow an end-user to create a password instead of a Passkey
+     * @default true
+     */
+    allowCreatePassword?: boolean;
+    /**
+     * Callback function called when the request has succeed.
+     */
+    onSuccess?: OnSuccess;
+    /**
+     * Callback function called when the request has failed.
+     */
+    onError?: OnError;
+    /**
+     * Whether the form fields' labels are displayed on the form view.
+     * @default false
+     */
+    showLabels?: boolean;
+}
+interface SuccessViewProps$1 {
+    loginLink?: string;
+}
+interface AccountRecoveryWidgetProps extends MainViewProps$6, SuccessViewProps$1 {
+}
 
 interface I18nProps {
     i18n: I18nResolver;
@@ -262,18 +468,18 @@ declare class CompoundValidator<T, C = {}> {
     create(i18n: I18nResolver): ValidatorInstance<T, C>;
     and(validator: Validator<T, C> | CompoundValidator<T, C>): CompoundValidator<T, C>;
 }
-type VaildatorError<Extra = {}> = {
+type ValidatorError<Extra = {}> = {
     valid: false;
     error?: string;
 } & Extra;
 type ValidatorSuccess<Extra = {}> = {
     valid: true;
 } & Extra;
-type ValidatorResult<Extra = {}> = VaildatorError<Extra> | ValidatorSuccess<Extra>;
+type ValidatorResult<Extra = {}> = ValidatorError<Extra> | ValidatorSuccess<Extra>;
 type ValidatorInstance<T, C, Extra = {}> = (value: T, ctx: C) => Promise<ValidatorResult<Extra>>;
-type RuleResult<E = {}> = boolean | ValidatorSuccess<E> | VaildatorError<E>;
+type RuleResult<E = {}> = boolean | ValidatorSuccess<E> | ValidatorError<E>;
 type Rule<T, C, E = {}> = (value: T, ctx: C) => RuleResult<E> | Promise<RuleResult<E>>;
-type Hint<T> = (value: T) => (string | undefined);
+type Hint<T> = (value: T) => string | undefined;
 interface ValidatorOptions<T, C, E = {}> {
     rule: Rule<T, C, E>;
     hint?: Hint<T> | string;
@@ -364,6 +570,24 @@ interface FieldProps<T, F, P extends FieldComponentProps<F, ExtraParams, E, K>, 
     extendedParams?: ExtraParams | ((i18n: I18nResolver) => ExtraParams);
 }
 
+interface Option {
+    label: string;
+    value: string;
+}
+interface SelectProps extends React__default.SelectHTMLAttributes<HTMLSelectElement> {
+    hasError?: boolean;
+    options: Option[];
+    placeholder?: string;
+}
+
+type Value$1 = SelectProps['value'];
+type SelectOptions = {
+    values: SelectProps['options'];
+};
+interface SelectFieldProps extends FieldComponentProps<Value$1, SelectOptions> {
+}
+declare function selectField({ values, ...config }: FieldDefinition<string, Value$1> & SelectOptions): FieldCreator<string | number | readonly string[] | undefined, SelectFieldProps, {}, "raw">;
+
 type ConsentFieldOptions$1 = {
     type: ConsentType;
     consentCannotBeGranted?: boolean;
@@ -375,7 +599,7 @@ type ConsentFieldOptions$1 = {
 };
 interface ConsentFieldProps extends FieldComponentProps<boolean, ConsentFieldOptions$1, {}, 'granted'> {
 }
-type Value$1 = {
+type Value = {
     consentType?: ConsentType;
     consentVersion?: {
         language: string;
@@ -383,7 +607,7 @@ type Value$1 = {
     };
     granted: boolean;
 };
-declare function consentField({ type, required, consentCannotBeGranted, description, version, ...props }: Omit<FieldDefinition<Value$1, boolean>, 'defaultValue'> & {
+declare function consentField({ type, required, consentCannotBeGranted, description, version, ...props }: Omit<FieldDefinition<Value, boolean>, 'defaultValue'> & {
     defaultValue?: boolean;
 } & ConsentFieldOptions$1): FieldCreator<boolean, ConsentFieldProps, {}, "granted">;
 
@@ -394,24 +618,6 @@ type ExtraParams$2 = {
 interface DateFieldProps extends FieldComponentProps<Date, ExtraParams$2> {
 }
 declare function dateField({ format, key, label, locale, validator, yearDebounce, ...props }: Optional<FieldDefinition<string, Date>, 'key' | 'label'> & Optional<ExtraParams$2, 'locale'>, config: Config): FieldCreator<Date, DateFieldProps, ExtraParams$2>;
-
-interface Option {
-    label: string;
-    value: string;
-}
-interface SelectProps extends React__default.SelectHTMLAttributes<HTMLSelectElement> {
-    hasError?: boolean;
-    options: Option[];
-    placeholder?: string;
-}
-
-type Value = SelectProps['value'];
-type SelectOptions = {
-    values: SelectProps['options'];
-};
-interface SelectFieldProps extends FieldComponentProps<Value, SelectOptions> {
-}
-declare function selectField({ values, ...config }: FieldDefinition<string, Value> & SelectOptions): FieldCreator<string | number | readonly string[] | undefined, SelectFieldProps, {}, "raw">;
 
 interface CheckboxFieldProps extends FieldComponentProps<boolean> {
 }
@@ -452,7 +658,7 @@ type PhoneNumberOptions = {
     defaultCountry?: Country;
     /**
      * If country is specified then the phone number can only be input in "national" (not "international") format,
-     * and will be parsed as a phonenumber belonging to the country.
+     * and will be parsed as a phone number belonging to the country.
      */
     country?: Country;
     /**
@@ -583,6 +789,163 @@ declare const predefinedFields: {
  */
 type Field = PredefinedFieldOptions | CustomFieldOptions | ConsentFieldOptions;
 
+type StepUpFormData = {
+    authType: StepUpPasswordlessParams$1['authType'];
+};
+interface MainViewProps$5 {
+    /**
+     * **Not recommended**
+     *
+     * The authorization credential JSON Web Token (JWT) used to access the ReachFive API, less than five minutes old.
+     *
+     * If empty, using an existing SSO session cookie.
+     */
+    accessToken?: string;
+    /**
+     * List of authentication options
+     */
+    auth?: AuthOptions;
+    /**
+     * Show the introduction text.
+     *
+     * @default true
+     */
+    showIntro?: boolean;
+    /**
+     * Show the stepup button. Unnecessary for console use
+     *
+     * @default true
+     */
+    showStepUpStart?: boolean;
+    /**
+     * Boolean that specifies whether a device can be trusted during step up.
+     *
+     * @default false
+     */
+    allowTrustDevice?: boolean;
+    /**
+     * Callback function called when the request has succeed.
+     */
+    onSuccess?: OnSuccess;
+    /**
+     * Callback function called when the request has failed.
+     */
+    onError?: OnError;
+}
+type FaSelectionViewState = MFA.StepUpResponse & {
+    allowTrustDevice?: boolean;
+};
+type FaSelectionViewProps = Prettify<Partial<MFA.StepUpResponse> & {
+    showIntro?: boolean;
+    auth?: AuthOptions;
+    allowTrustDevice?: boolean;
+    /**
+     * Callback function called when the request has succeed.
+     */
+    onSuccess?: OnSuccess;
+    /**
+     * Callback function called when the request has failed.
+     */
+    onError?: OnError;
+}>;
+type StepUpResponse = RequiredProperty<PasswordlessResponse, 'challengeId'>;
+type StepUpHandlerResponse = StepUpResponse & StepUpFormData;
+type VerificationCodeViewState = Prettify<StepUpHandlerResponse>;
+type VerificationCodeViewProps$3 = Prettify<Partial<StepUpHandlerResponse> & {
+    /**
+     * List of authentication options
+     */
+    auth?: AuthOptions;
+    /**
+     * Boolean that specifies whether a device can be trusted during step up.
+     *
+     * @default false
+     */
+    allowTrustDevice?: boolean;
+    /**
+     * Callback function called when the request has succeed.
+     */
+    onSuccess?: OnSuccess;
+    /**
+     * Callback function called when the request has failed.
+     */
+    onError?: OnError;
+}>;
+type MfaStepUpProps = MainViewProps$5 & FaSelectionViewProps & VerificationCodeViewProps$3;
+type MfaStepUpWidgetProps = MfaStepUpProps;
+
+/**
+ * The widget’s initial screen.
+ * @enum {('login' | 'login-with-web-authn' | 'signup' | 'forgot-password')}
+ */
+type InitialScreen = 'login' | 'login-with-web-authn' | 'signup' | 'signup-with-password' | 'signup-with-web-authn' | 'forgot-password';
+
+interface ForgotPasswordViewProps {
+    /**
+     * Boolean that specifies whether login is enabled.
+     *
+     * @default true
+     */
+    allowLogin?: boolean;
+    /**
+     * Boolean that specifies whether password reset with phone number is enabled.
+     *
+     * @default false
+     */
+    allowPhoneNumberResetPassword?: boolean;
+    /**
+     * Whether or not to display a safe error message on password reset, given an invalid email address.
+     * This mode ensures not to leak email addresses registered to the platform.
+     *
+     * @default false
+     */
+    displaySafeErrorMessage?: boolean;
+    /**
+     * Whether the signup form fields' labels are displayed on the login view.
+     *
+     * @default false
+     */
+    showLabels?: boolean;
+    initialScreen?: InitialScreen;
+    /**
+     * Boolean that specifies whether biometric login is enabled.
+     *
+     * @default false
+     */
+    allowWebAuthnLogin?: boolean;
+    /**
+     * Phone number field options.
+     */
+    phoneNumberOptions?: PhoneNumberOptions;
+    /**
+     * Boolean that specifies whether reCAPTCHA is enabled or not.
+     */
+    recaptcha_enabled?: boolean;
+    /**
+     * The SITE key that comes from your [reCAPTCHA](https://www.google.com/recaptcha/admin/create) setup.
+     * This must be paired with the appropriate secret key that you received when setting up reCAPTCHA.
+     */
+    recaptcha_site_key?: string;
+    /**
+     * The URL sent in the email to which the user is redirected.
+     * This URL must be whitelisted in the `Allowed Callback URLs` field of your ReachFive client settings.
+     */
+    redirectUrl?: string;
+    /**
+     * Returned in the `redirectUrl` as a query parameter, this parameter is used to redirect users to a specific URL after a password reset.
+     * Important: This parameter should only be used with Hosted Pages.
+     */
+    returnToAfterPasswordReset?: string;
+    /**
+     * Callback function called when the request has succeed.
+     */
+    onSuccess?: OnSuccess;
+    /**
+     * Callback function called when the request has failed.
+     */
+    onError?: OnError;
+}
+
 type LoginViewProps = {
     /**
      * @deprecated
@@ -683,6 +1046,26 @@ type LoginViewProps = {
     onError?: OnError;
 };
 
+interface LoginWithPasswordViewProps {
+    allowForgotPassword?: boolean;
+    allowAccountRecovery?: boolean;
+    auth?: AuthOptions;
+    canShowPassword?: boolean;
+    recaptcha_enabled?: boolean;
+    recaptcha_site_key?: string;
+    showLabels?: boolean;
+    showRememberMe?: boolean;
+    allowTrustDevice?: boolean;
+    /**
+     * Callback function called when the request has succeed.
+     */
+    onSuccess?: OnSuccess;
+    /**
+     * Callback function called when the request has failed.
+     */
+    onError?: OnError;
+}
+
 interface LoginWithWebAuthnViewProps {
     /**
      * @deprecated
@@ -724,16 +1107,52 @@ interface LoginWithWebAuthnViewProps {
     onError?: OnError;
 }
 
-interface LoginWithPasswordViewProps {
-    allowForgotPassword?: boolean;
-    allowAccountRecovery?: boolean;
+interface QuickLoginViewProps {
+    initialScreen?: InitialScreen;
+    /**
+     * Boolean that specifies whether biometric login is enabled.
+     *
+     * @default false
+     */
+    allowWebAuthnLogin?: boolean;
+    /**
+     * List of authentication options
+     */
     auth?: AuthOptions;
-    canShowPassword?: boolean;
-    recaptcha_enabled?: boolean;
-    recaptcha_site_key?: string;
+    /**
+     * Callback function called when the request has succeed.
+     */
+    onSuccess?: OnSuccess;
+    /**
+     * Callback function called when the request has failed.
+     */
+    onError?: OnError;
+}
+
+interface ReauthViewProps {
+    /**
+     * Boolean that specifies if the forgot password option is enabled.
+     *
+     * If the `allowLogin` and `allowSignup` properties are set to `false`, the forgot password feature is enabled even if `allowForgotPassword` is set to `false`.
+     *
+     * @default true
+     */
+    allowForgotPassword?: boolean;
+    /**
+     * List of authentication options
+     */
+    auth?: AuthOptions;
+    /**
+     * Whether the signup form fields' labels are displayed on the login view.
+     *
+     * @default false
+     */
     showLabels?: boolean;
-    showRememberMe?: boolean;
-    allowTrustDevice?: boolean;
+    /**
+     * Lists the available social providers. This is an array of strings.
+     * Tip: If you pass an empty array, social providers will not be displayed.
+     */
+    socialProviders?: string[];
     /**
      * Callback function called when the request has succeed.
      */
@@ -817,12 +1236,6 @@ interface SignupWithWebAuthnViewProps {
     onError?: OnError;
 }
 
-/**
- * The widget’s initial screen.
- * @enum {('login' | 'login-with-web-authn' | 'signup' | 'forgot-password')}
- */
-type InitialScreen = 'login' | 'login-with-web-authn' | 'signup' | 'signup-with-password' | 'signup-with-web-authn' | 'forgot-password';
-
 interface SignupViewProps extends SignupWithPasswordViewProps, SignupWithWebAuthnViewProps {
     /**
      * Boolean that specifies whether login is enabled.
@@ -866,213 +1279,6 @@ interface SignupViewProps extends SignupWithPasswordViewProps, SignupWithWebAuth
     onError?: OnError;
 }
 
-interface ForgotPasswordViewProps {
-    /**
-     * Boolean that specifies whether login is enabled.
-     *
-     * @default true
-     */
-    allowLogin?: boolean;
-    /**
-     * Boolean that specifies whether password reset with phone number is enabled.
-     *
-     * @default false
-     */
-    allowPhoneNumberResetPassword?: boolean;
-    /**
-     * Whether or not to display a safe error message on password reset, given an invalid email address.
-     * This mode ensures not to leak email addresses registered to the platform.
-     *
-     * @default false
-     */
-    displaySafeErrorMessage?: boolean;
-    /**
-     * Whether the signup form fields' labels are displayed on the login view.
-     *
-     * @default false
-     */
-    showLabels?: boolean;
-    initialScreen?: InitialScreen;
-    /**
-     * Boolean that specifies whether biometric login is enabled.
-     *
-     * @default false
-     */
-    allowWebAuthnLogin?: boolean;
-    /**
-     * Phone number field options.
-     */
-    phoneNumberOptions?: PhoneNumberOptions;
-    /**
-     * Boolean that specifies whether reCAPTCHA is enabled or not.
-     */
-    recaptcha_enabled?: boolean;
-    /**
-     * The SITE key that comes from your [reCAPTCHA](https://www.google.com/recaptcha/admin/create) setup.
-     * This must be paired with the appropriate secret key that you received when setting up reCAPTCHA.
-     */
-    recaptcha_site_key?: string;
-    /**
-     * The URL sent in the email to which the user is redirected.
-     * This URL must be whitelisted in the `Allowed Callback URLs` field of your ReachFive client settings.
-     */
-    redirectUrl?: string;
-    /**
-     * Returned in the `redirectUrl` as a query parameter, this parameter is used to redirect users to a specific URL after a password reset.
-     * Important: This parameter should only be used with Hosted Pages.
-     */
-    returnToAfterPasswordReset?: string;
-    /**
-     * Callback function called when the request has succeed.
-     */
-    onSuccess?: OnSuccess;
-    /**
-     * Callback function called when the request has failed.
-     */
-    onError?: OnError;
-}
-
-interface QuickLoginViewProps {
-    initialScreen?: InitialScreen;
-    /**
-     * Boolean that specifies whether biometric login is enabled.
-     *
-     * @default false
-     */
-    allowWebAuthnLogin?: boolean;
-    /**
-     * List of authentication options
-     */
-    auth?: AuthOptions;
-    /**
-     * Callback function called when the request has succeed.
-     */
-    onSuccess?: OnSuccess;
-    /**
-     * Callback function called when the request has failed.
-     */
-    onError?: OnError;
-}
-
-interface ReauthViewProps {
-    /**
-     * Boolean that specifies if the forgot password option is enabled.
-     *
-     * If the `allowLogin` and `allowSignup` properties are set to `false`, the forgot password feature is enabled even if `allowForgotPassword` is set to `false`.
-     *
-     * @default true
-     */
-    allowForgotPassword?: boolean;
-    /**
-     * List of authentication options
-     */
-    auth?: AuthOptions;
-    /**
-     * Whether the signup form fields' labels are displayed on the login view.
-     *
-     * @default false
-     */
-    showLabels?: boolean;
-    /**
-     * Lists the available social providers. This is an array of strings.
-     * Tip: If you pass an empty array, social providers will not be displayed.
-     */
-    socialProviders?: string[];
-    /**
-     * Callback function called when the request has succeed.
-     */
-    onSuccess?: OnSuccess;
-    /**
-     * Callback function called when the request has failed.
-     */
-    onError?: OnError;
-}
-
-type StartPasswordlessFormData = {
-    authType: PasswordlessParams['authType'];
-};
-interface MainViewProps$6 {
-    /**
-     * **Not recommended**
-     *
-     * The authorization credential JSON Web Token (JWT) used to access the ReachFive API, less than five minutes old.
-     *
-     * If empty, using an existing SSO session cookie.
-     */
-    accessToken?: string;
-    /**
-     * List of authentication options
-     */
-    auth?: AuthOptions;
-    /**
-     * Show the introduction text.
-     *
-     * @default true
-     */
-    showIntro?: boolean;
-    /**
-     * Show the stepup button. Unnecessary for console use
-     *
-     * @default true
-     */
-    showStepUpStart?: boolean;
-    /**
-     * Boolean that specifies whether a device can be trusted during step up.
-     *
-     * @default false
-     */
-    allowTrustDevice?: boolean;
-    /**
-     * Callback function called when the request has succeed.
-     */
-    onSuccess?: OnSuccess;
-    /**
-     * Callback function called when the request has failed.
-     */
-    onError?: OnError;
-}
-type FaSelectionViewState = MFA.StepUpResponse & {
-    allowTrustDevice?: boolean;
-};
-type FaSelectionViewProps = Prettify<Partial<MFA.StepUpResponse> & {
-    showIntro?: boolean;
-    auth?: AuthOptions;
-    allowTrustDevice?: boolean;
-    /**
-     * Callback function called when the request has succeed.
-     */
-    onSuccess?: OnSuccess;
-    /**
-     * Callback function called when the request has failed.
-     */
-    onError?: OnError;
-}>;
-type StepUpResponse = RequiredProperty<PasswordlessResponse, 'challengeId'>;
-type StepUpHandlerResponse = StepUpResponse & StartPasswordlessFormData;
-type VerificationCodeViewState = Prettify<StepUpHandlerResponse>;
-type VerificationCodeViewProps$3 = Prettify<Partial<StepUpHandlerResponse> & {
-    /**
-     * List of authentication options
-     */
-    auth?: AuthOptions;
-    /**
-     * Boolean that specifies whether a device can be trusted during step up.
-     *
-     * @default false
-     */
-    allowTrustDevice?: boolean;
-    /**
-     * Callback function called when the request has succeed.
-     */
-    onSuccess?: OnSuccess;
-    /**
-     * Callback function called when the request has failed.
-     */
-    onError?: OnError;
-}>;
-type MfaStepUpProps = MainViewProps$6 & FaSelectionViewProps & VerificationCodeViewProps$3;
-type MfaStepUpWidgetProps = MfaStepUpProps;
-
 interface AuthWidgetProps extends LoginViewProps, LoginWithWebAuthnViewProps, LoginWithPasswordViewProps, SignupViewProps, SignupWithPasswordViewProps, SignupWithWebAuthnViewProps, ForgotPasswordViewProps, QuickLoginViewProps, ReauthViewProps, Omit<FaSelectionViewProps, keyof FaSelectionViewState>, Omit<VerificationCodeViewProps$3, keyof VerificationCodeViewState> {
     /**
      * Boolean that specifies whether quick login is enabled.
@@ -1092,7 +1298,7 @@ interface AuthWidgetProps extends LoginViewProps, LoginWithWebAuthnViewProps, Lo
     initialScreen?: InitialScreen;
 }
 
-interface MainViewProps$5 {
+interface MainViewProps$4 {
     /**
      * The authorization credential JSON Web Token (JWT) used to access the ReachFive API, less than five minutes old.
      */
@@ -1125,8 +1331,111 @@ interface MainViewProps$5 {
      */
     onError?: OnError;
 }
-interface EmailEditorWidgetProps extends MainViewProps$5 {
+interface EmailEditorWidgetProps extends MainViewProps$4 {
 }
+
+type CredentialsProviderProps = {
+    /**
+     * The authorization credential JSON Web Token (JWT) used to access the ReachFive API, less than five minutes old.
+     */
+    accessToken: string;
+    /**
+     * The user's MFA credentials
+     */
+    credentials: MFA.Credential[];
+};
+
+interface MainViewProps$3 {
+    /**
+     * The authorization credential JSON Web Token (JWT) used to access the ReachFive API, less than five minutes old.
+     */
+    accessToken: string;
+    /**
+     * Boolean to enable (`true`) or disable (`false`) whether the option to remove MFA credentials are displayed.
+     *
+     * @default false
+     */
+    requireMfaRegistration?: boolean;
+    /**
+     * Show the introduction text.
+     *
+     * @default true
+     */
+    showIntro?: boolean;
+    /**
+     * Boolean to enable (true) or disable (false) whether the option to remove MFA credentials are displayed.
+     *
+     * @default true
+     */
+    showRemoveMfaCredentials?: boolean;
+    /**
+     * Phone number field options.
+     */
+    phoneNumberOptions?: PhoneNumberOptions;
+    /**
+     * Callback function called when the request has succeed.
+     */
+    onSuccess?: OnSuccess;
+    /**
+     * Callback function called when the request has failed.
+     */
+    onError?: OnError;
+    profileIdentifiers?: Pick<Profile, 'emailVerified' | 'phoneNumber' | 'phoneNumberVerified'>;
+    /**
+     * Allow to trust device during enrollment
+     */
+    allowTrustDevice?: boolean;
+}
+interface VerificationCodeViewProps$2 {
+    /**
+     * The authorization credential JSON Web Token (JWT) used to access the ReachFive API, less than five minutes old.
+     */
+    accessToken: string;
+    /**
+     * Show the introduction text.
+     */
+    showIntro?: boolean;
+    /**
+     * Callback function called when the request has succeed.
+     */
+    onSuccess?: OnSuccess;
+    /**
+     * Callback function called when the request has failed.
+     */
+    onError?: OnError;
+    /**
+     * Display the checkbox to trust device
+     */
+    allowTrustDevice?: boolean;
+}
+type MfaCredentialsProps = Prettify<MainViewProps$3 & VerificationCodeViewProps$2 & CredentialsProviderProps>;
+type MfaCredentialsWidgetProps = Prettify<Omit<MfaCredentialsProps, 'credentials' | 'profileIdentifiers'>>;
+
+type MfaListWidgetProps = {
+    /**
+     * The authorization credential JSON Web Token (JWT) used to access the ReachFive API, less than five minutes old.
+     */
+    accessToken: string;
+    /**
+     * Callback function called when the request has succeeded.
+     */
+    onSuccess?: OnSuccess;
+    /**
+     * Callback function called when the request has failed.
+     */
+    onError?: OnError;
+    /**
+     * Indicates whether delete mfa credential button is displayed
+     */
+    showRemoveMfaCredential?: boolean;
+};
+
+type TrustedDeviceWidgetProps = {
+    accessToken: string;
+    showRemoveTrustedDevice?: boolean;
+    onError?: OnError;
+    onSuccess?: OnSuccess;
+};
 
 interface PasswordEditorFormProps {
     /**
@@ -1174,43 +1483,7 @@ type Authentication = {
 };
 type PasswordEditorWidgetProps = Omit<PasswordEditorProps, 'authentication'>;
 
-interface MainViewProps$4 {
-    /**
-     * The authorization credential JSON Web Token (JWT) used to access the ReachFive API, less than five minutes old.
-     */
-    accessToken: string;
-    /**
-    * Whether the form fields's labels are displayed on the login view.
-    *
-    * @default false
-    */
-    showLabels?: boolean;
-    /**
-     * Phone number field options.
-     */
-    phoneNumberOptions?: PhoneNumberOptions;
-    /**
-     * Callback function called when the request has failed.
-     */
-    onError?: OnError;
-}
-type VerificationCodeViewProps$2 = {
-    /**
-     * The authorization credential JSON Web Token (JWT) used to access the ReachFive API, less than five minutes old.
-     */
-    accessToken: string;
-    /**
-     * Callback function called when the request has succeed.
-     */
-    onSuccess?: OnSuccess;
-    /**
-     * Callback function called when the request has failed.
-     */
-    onError?: OnError;
-};
-type PhoneNumberEditorWidgetProps = Prettify<MainViewProps$4 & VerificationCodeViewProps$2>;
-
-interface MainViewProps$3 {
+interface MainViewProps$2 {
     /**
      * Whether or not to provide the display password in clear text option.
      * @default false
@@ -1230,13 +1503,13 @@ interface MainViewProps$3 {
      */
     showLabels?: boolean;
 }
-interface SuccessViewProps$1 {
+interface SuccessViewProps {
     loginLink?: string;
 }
-interface PasswordResetWidgetProps extends MainViewProps$3, SuccessViewProps$1 {
+interface PasswordResetWidgetProps extends MainViewProps$2, SuccessViewProps {
 }
 
-interface MainViewProps$2 {
+interface MainViewProps$1 {
     /**
      * List of authentication options
      */
@@ -1308,7 +1581,47 @@ interface VerificationCodeViewProps$1 {
      */
     onError?: OnError;
 }
-type PasswordlessWidgetProps = Prettify<MainViewProps$2 & VerificationCodeViewProps$1>;
+type PasswordlessWidgetProps = Prettify<MainViewProps$1 & VerificationCodeViewProps$1>;
+
+interface MainViewProps {
+    /**
+     * The authorization credential JSON Web Token (JWT) used to access the ReachFive API, less than five minutes old.
+     */
+    accessToken: string;
+    /**
+     * Whether the form fields's labels are displayed on the login view.
+     *
+     * @default false
+     */
+    showLabels?: boolean;
+    /**
+     * Phone number field options.
+     */
+    phoneNumberOptions?: PhoneNumberOptions;
+    /**
+     * Callback function called when the request has failed.
+     */
+    onError?: OnError;
+    /**
+     * Callback function called when the request has succeeded
+     */
+    onSuccess?: OnSuccess;
+}
+type VerificationCodeViewProps = {
+    /**
+     * The authorization credential JSON Web Token (JWT) used to access the ReachFive API, less than five minutes old.
+     */
+    accessToken: string;
+    /**
+     * Callback function called when the request has succeed.
+     */
+    onSuccess?: OnSuccess;
+    /**
+     * Callback function called when the request has failed.
+     */
+    onError?: OnError;
+};
+type PhoneNumberEditorWidgetProps = Prettify<MainViewProps & VerificationCodeViewProps>;
 
 type ProfileWithConsents = Profile & {
     consents?: Record<string, UserConsent>;
@@ -1449,127 +1762,6 @@ interface WebAuthnDevicesProps {
 }
 type WebAuthnWidgetProps = Omit<WebAuthnDevicesProps, 'devices'>;
 
-interface MainViewProps$1 {
-    /**
-     * The authorization credential JSON Web Token (JWT) used to access the ReachFive API, less than five minutes old.
-     */
-    accessToken: string;
-    /**
-     * The user’s MFA credentials
-     */
-    credentials: MFA.CredentialsResponse['credentials'];
-    /**
-     * Boolean to enable (`true`) or disable (`false`) whether the option to remove MFA credentials are displayed.
-     *
-     * @default false
-     */
-    requireMfaRegistration?: boolean;
-    /**
-     * Show the introduction text.
-     *
-     * @default true
-     */
-    showIntro?: boolean;
-    /**
-     * Boolean to enable (true) or disable (false) whether the option to remove MFA credentials are displayed.
-     *
-     * @default true
-     */
-    showRemoveMfaCredentials?: boolean;
-    /**
-     * Phone number field options.
-     */
-    phoneNumberOptions?: PhoneNumberOptions;
-    /**
-     * Callback function called when the request has failed.
-     */
-    onError?: OnError;
-    profileIdentifiers?: Pick<Profile, 'emailVerified' | 'phoneNumber' | 'phoneNumberVerified'>;
-    /**
-     * Allow to trust device during enrollment
-     */
-    allowTrustDevice?: boolean;
-}
-interface VerificationCodeViewProps {
-    /**
-     * The authorization credential JSON Web Token (JWT) used to access the ReachFive API, less than five minutes old.
-     */
-    accessToken: string;
-    /**
-     * Show the introduction text.
-     */
-    showIntro?: boolean;
-    /**
-     * Callback function called when the request has succeed.
-     */
-    onSuccess?: OnSuccess;
-    /**
-     * Callback function called when the request has failed.
-     */
-    onError?: OnError;
-    /**
-     * Display the checkbox to trust device
-     */
-    allowTrustDevice?: boolean;
-}
-interface CredentialRegisteredViewProps {
-}
-type CredentialRemovedViewProps = {};
-type MfaCredentialsProps = Prettify<MainViewProps$1 & CredentialRegisteredViewProps & VerificationCodeViewProps & CredentialRemovedViewProps>;
-type MfaCredentialsWidgetProps = Prettify<Omit<MfaCredentialsProps, 'credentials' | 'profileIdentifiers'>>;
-
-type MfaListWidgetProps = {
-    /**
-     * The authorization credential JSON Web Token (JWT) used to access the ReachFive API, less than five minutes old.
-     */
-    accessToken: string;
-    /**
-     * Callback function called when the request has succeeded.
-     */
-    onSuccess?: OnSuccess;
-    /**
-     * Callback function called when the request has failed.
-     */
-    onError?: OnError;
-    /**
-     * Indicates whether delete mfa credential button is displayed
-     */
-    showRemoveMfaCredential?: boolean;
-};
-
-interface MainViewProps {
-    /**
-     * Allow an end-user to create a password instead of a Passkey
-     * @default true
-     */
-    allowCreatePassword?: boolean;
-    /**
-     * Callback function called when the request has succeed.
-     */
-    onSuccess?: OnSuccess;
-    /**
-     * Callback function called when the request has failed.
-     */
-    onError?: OnError;
-    /**
-     * Whether the form fields' labels are displayed on the form view.
-     * @default false
-     */
-    showLabels?: boolean;
-}
-interface SuccessViewProps {
-    loginLink?: string;
-}
-interface AccountRecoveryWidgetProps extends MainViewProps, SuccessViewProps {
-}
-
-type TrustedDeviceWidgetProps = {
-    accessToken: string;
-    showRemoveTrustedDevice?: boolean;
-    onError?: OnError;
-    onSuccess?: OnSuccess;
-};
-
 interface WidgetInstance {
     destroy(): void;
 }
@@ -1577,9 +1769,9 @@ interface WidgetProps {
     /** The DOM element or the `id` of a DOM element in which the widget should be embedded. */
     container: string | HTMLElement;
     /**
-    * The [ISO country](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) code useful to format phone numbers.
-    * Defaults to the predefined country code in your account settings or `FR`.
-    */
+     * The [ISO country](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) code useful to format phone numbers.
+     * Defaults to the predefined country code in your account settings or `FR`.
+     */
     countryCode?: string;
     /**
      * Callback function called after the widget has been successfully loaded and rendered inside the container.

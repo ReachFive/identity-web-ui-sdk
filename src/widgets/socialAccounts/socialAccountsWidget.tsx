@@ -208,15 +208,17 @@ interface LinkAccountProps {
     identities?: Identity[];
     providers: string[];
     unlink: Unlink;
+    onSuccess?: OnSuccess;
+    onError?: OnError;
 }
 
 const LinkAccount = withIdentities(
-    ({ auth, accessToken, identities = [], providers }: LinkAccountProps) => {
+    ({ auth, accessToken, identities = [], providers, onSuccess, onError }: LinkAccountProps) => {
         const i18n = useI18n();
         const availableProviders = findAvailableProviders(providers, identities);
         return (
             <Fragment>
-                <SocialButtons providers={availableProviders} auth={{ ...auth, accessToken }} />
+                <SocialButtons providers={availableProviders} auth={{ ...auth, accessToken }} onSuccess={onSuccess} onError={onError}/>
                 <Alternative>
                     <Link target="links">{i18n('back')}</Link>
                 </Alternative>
