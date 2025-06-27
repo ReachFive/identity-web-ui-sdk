@@ -267,8 +267,10 @@ describe('DOM testing', () => {
 
             expect(verifyPasswordless).toBeCalled();
 
-            expect(onSuccess).not.toBeCalled();
-            expect(onError).toBeCalledWith('Unexpected error');
+            await waitFor(async () => {
+                expect(onSuccess).not.toBeCalledWith(expect.objectContaining({ name: 'login' }));
+                expect(onError).toBeCalledWith('Unexpected error');
+            });
         });
     });
 });

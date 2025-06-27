@@ -22,7 +22,7 @@ import { useReachfive } from '../../../contexts/reachfive';
 import { useRouting } from '../../../contexts/routing';
 import { useSession } from '../../../contexts/session';
 
-import { specializeIdentifierData } from '../../../helpers/utils';
+import { enrichLoginEvent, specializeIdentifierData } from '../../../helpers/utils';
 
 import type { OnError, OnSuccess } from '../../../types';
 
@@ -309,8 +309,8 @@ export const LoginView = ({
     }, [coreClient, auth, allowWebAuthnLogin, signal]);
 
     const callback = (data: WithCaptchaToken<LoginFormData>) => {
-        const { auth: dataAuth, ...specializedData } =
-            specializeIdentifierData<LoginWithPasswordParams>(data);
+        const specializedIdentifierData = specializeIdentifierData<LoginWithPasswordParams>(data);
+        const { auth: dataAuth, ...specializedData } = specializedIdentifierData;
         return coreClient
             .loginWithPassword({
                 ...specializedData,
@@ -327,7 +327,7 @@ export const LoginView = ({
                         allowTrustDevice,
                     });
                 }
-                return res;
+                return enrichLoginEvent(res, 'password', specializedIdentifierData);
             });
     };
 
@@ -363,8 +363,9 @@ export const LoginView = ({
                         'login'
                     )
                 }
-                onSuccess={authResult => {
-                    onSuccess({ name: 'login', authResult });
+                onSuccess={res => {
+                    console.log('Auth result');
+                    onSuccess({ name: 'login', ...res });
                 }}
                 onError={onError}
             />

@@ -16,7 +16,7 @@ import { useI18n } from '../../../contexts/i18n';
 import { useReachfive } from '../../../contexts/reachfive';
 import { useRouting } from '../../../contexts/routing';
 
-import { specializeIdentifierData } from '../../../helpers/utils';
+import { enrichLoginEvent, specializeIdentifierData } from '../../../helpers/utils';
 import { FaSelectionViewState } from '../../stepUp/mfaStepUpWidget';
 
 import type { OnError, OnSuccess } from '../../../types';
@@ -168,8 +168,9 @@ export const LoginWithPasswordView = ({
     }, [recaptcha_site_key]);
 
     const callback = (data: LoginWithPasswordFormData & { captchaToken?: string }) => {
-        const { auth: dataAuth, ...specializedData } =
-            specializeIdentifierData<LoginWithPasswordParams>(data);
+        const specializedIdentifierData = specializeIdentifierData<LoginWithPasswordParams>(data);
+        const { auth: dataAuth, ...specializedData } = specializedIdentifierData;
+
         return coreClient
             .loginWithPassword({
                 ...specializedData,
@@ -187,7 +188,7 @@ export const LoginWithPasswordView = ({
                         allowTrustDevice,
                     });
                 }
-                return res;
+                return enrichLoginEvent(res, 'password', specializedIdentifierData);
             });
     };
 
@@ -209,7 +210,7 @@ export const LoginWithPasswordView = ({
                         'login'
                     )
                 }
-                onSuccess={authResult => onSuccess({ name: 'login', authResult })}
+                onSuccess={res => onSuccess({ name: 'login', ...res })}
                 onError={onError}
             />
             <Alternative>

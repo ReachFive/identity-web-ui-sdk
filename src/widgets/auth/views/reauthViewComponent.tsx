@@ -94,7 +94,9 @@ export const ReauthView = ({
                     showForgotPassword={allowForgotPassword}
                     showEmail={false}
                     handler={handlePasswordLogin}
-                    onSuccess={authResult => onSuccess({ name: 'login', authResult })}
+                    onSuccess={res =>
+                        onSuccess({ name: 'login', authResult: res, authType: 'password' })
+                    }
                     onError={onError}
                 />
             )}

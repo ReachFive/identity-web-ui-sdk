@@ -1,4 +1,20 @@
-import type { AuthResult, MFA, SingleFactorPasswordlessParams, StepUpPasswordlessParams, TrustedDevice } from "@reachfive/identity-core"
+import {
+    AuthResult,
+    MFA,
+    SingleFactorPasswordlessParams,
+    StepUpPasswordlessParams,
+    TrustedDevice
+} from "@reachfive/identity-core"
+
+export type LoginEventWrappingObject = {
+    authResult: AuthResult,
+    identifierType?: IdentifierType,
+    authType: AuthType
+}
+
+export type IdentifierType = 'email' | 'phone_number' | 'custom_identifier'
+
+export type AuthType = SingleFactorPasswordlessParams['authType'] | 'password' | 'webauthn' | 'social'
 
 interface AbstractEvent {
     readonly name: string
@@ -14,6 +30,8 @@ interface SignupEvent extends AbstractEvent {
 interface LoginEvent extends AbstractEvent {
     readonly name: 'login'
     readonly authResult: AuthResult
+    readonly identifierType?: IdentifierType
+    readonly authType: AuthType
 }
 
 interface SocialLoginEvent extends AbstractEvent {
@@ -95,7 +113,7 @@ interface MfaCredentialsListedEvent extends AbstractEvent {
 }
 
 /** Emitted after an MFA credential (phone number) is deleted. */
-interface MfaPhoneNumberDeletedEvent extends AbstractEvent { 
+interface MfaPhoneNumberDeletedEvent extends AbstractEvent {
     readonly name: 'mfa_phone_number_deleted'
 }
 

@@ -1,6 +1,6 @@
 /**
- * @reachfive/identity-ui - v1.36.0-develop
- * Compiled Thu, 26 Jun 2025 14:51:35 UTC
+ * @reachfive/identity-ui - v1.34.1
+ * Compiled Fri, 27 Jun 2025 18:50:42 UTC
  *
  * Copyright (c) ReachFive.
  *
@@ -16,6 +16,10 @@ import { StepUpPasswordlessParams as StepUpPasswordlessParams$1 } from '@reachfi
 import { Country, Value as Value$2 } from 'react-phone-number-input';
 import * as libphonenumber_js from 'libphonenumber-js';
 
+type IdentifierType = 'email' | 'phone_number' | 'custom_identifier'
+
+type AuthType = SingleFactorPasswordlessParams['authType'] | 'password' | 'webauthn' | 'social'
+
 interface AbstractEvent {
     readonly name: string
 }
@@ -30,6 +34,8 @@ interface SignupEvent extends AbstractEvent {
 interface LoginEvent extends AbstractEvent {
     readonly name: 'login'
     readonly authResult: AuthResult
+    readonly identifierType?: IdentifierType
+    readonly authType: AuthType
 }
 
 interface SocialLoginEvent extends AbstractEvent {
@@ -111,7 +117,7 @@ interface MfaCredentialsListedEvent extends AbstractEvent {
 }
 
 /** Emitted after an MFA credential (phone number) is deleted. */
-interface MfaPhoneNumberDeletedEvent extends AbstractEvent { 
+interface MfaPhoneNumberDeletedEvent extends AbstractEvent {
     readonly name: 'mfa_phone_number_deleted'
 }
 

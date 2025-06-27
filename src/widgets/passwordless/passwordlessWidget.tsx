@@ -149,8 +149,8 @@ const MainView = ({
             .then(() => data);
 
     const handleSuccess = (data: EmailFormData | PhoneNumberFormData) => {
+        onSuccess({ name: 'otp_sent', authType });
         if ('email' in data) {
-            onSuccess({ name: 'otp_sent', authType });
             goTo('emailSent');
         } else {
             goTo<VerificationCodeViewState>('verificationCode', data);
@@ -258,11 +258,17 @@ const VerificationCodeView = ({
             })
             .then(result => {
                 if (AuthResult.isAuthResult(result)) {
-                    onSuccess({ name: 'login', authResult: result });
+                    onSuccess({
+                        name: 'login',
+                        authResult: result,
+                        authType,
+                        identifierType: 'phone_number',
+                    });
                 } else {
                     onError();
                 }
-            });
+            })
+            .catch(onError);
     };
 
     return (
