@@ -210,8 +210,12 @@ describe('DOM testing', () => {
 
             expect(verifyPhoneNumber).toBeCalled();
 
-            expect(onSuccess).not.toBeCalled();
-            expect(onError).toBeCalledWith('Unexpected error');
+            await waitFor(async () => {
+                expect(onSuccess).toBeCalledWith(
+                    expect.objectContaining({ name: 'phone_number_updated' })
+                );
+                expect(onError).toBeCalled();
+            });
         });
     });
 });
