@@ -3,8 +3,6 @@ import classes from 'classnames';
 import React, { PropsWithChildren, useCallback } from 'react';
 import styled, { useTheme } from 'styled-components';
 
-import { parseQueryString } from '../../helpers/queryString';
-
 import type { Provider, ProviderId } from '../../providers/providers';
 import { providers as socialProviders } from '../../providers/providers';
 
@@ -178,25 +176,22 @@ export const SocialButtons = styled(
             [coreClient, auth]
         );
 
-        const queryParams = parseQueryString(window.location.search.substring(1));
         return (
             <div className={classes(['r5-social-buttons', className])}>
                 {providers.flatMap(providerKey => {
                     const [providerName] = providerKey.split(':');
-                    if (providerName === 'bconnect' && queryParams.bconnectActivation !== 'true')
-                        return [];
-                    else if (socialProviders[providerName as ProviderId] === undefined) {
+                    if (socialProviders[providerName as ProviderId] === undefined) {
                         console.error(`${providerName} provider not found.`);
                         return [];
-                    } else
-                        return [
-                            <SocialButton
-                                provider={socialProviders[providerName as ProviderId]}
-                                count={providers.length}
-                                onClick={() => clickHandler(providerKey)}
-                                key={providerKey}
-                            />,
-                        ];
+                    }
+                    return [
+                        <SocialButton
+                            provider={socialProviders[providerName as ProviderId]}
+                            count={providers.length}
+                            onClick={() => clickHandler(providerKey)}
+                            key={providerKey}
+                        />,
+                    ];
                 })}
             </div>
         );
