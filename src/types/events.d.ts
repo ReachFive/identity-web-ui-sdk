@@ -160,7 +160,6 @@ interface WebAuthnDevicesListedEvent extends AbstractEvent {
 /** Emitted after a device has been added as a trusted device. */
 interface MfaTrustedDeviceAddedEvent extends AbstractEvent {
     readonly name: 'mfa_trusted_device_added'
-    readonly device: TrustedDevice
 }
 
 /** Emitted after a device has been removed as a trusted device. */

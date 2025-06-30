@@ -198,6 +198,9 @@ const MainView = withCredentials(
                 })
                 .then(resp => {
                     onSuccess({ name: 'mfa_email_start_registration' });
+                    if (data.trustDevice) {
+                        onSuccess({ name: 'mfa_trusted_device_added' });
+                    }
                     return resp;
                 })
                 .catch(error => {
@@ -214,6 +217,9 @@ const MainView = withCredentials(
                 })
                 .then(resp => {
                     onSuccess({ name: 'mfa_phone_number_start_registration' });
+                    if (data.trustDevice) {
+                        onSuccess({ name: 'mfa_trusted_device_added' });
+                    }
                     return resp;
                 })
                 .catch(error => {
@@ -405,6 +411,12 @@ const VerificationCodeView = ({
                 ...data,
                 accessToken,
             })
+            .then(resp => {
+                if (data.trustDevice) {
+                    onSuccess({ name: 'mfa_trusted_device_added' });
+                }
+                return resp;
+            })
             .catch(error => {
                 onError(error);
                 throw error;
@@ -416,6 +428,12 @@ const VerificationCodeView = ({
             .verifyMfaPhoneNumberRegistration({
                 ...data,
                 accessToken,
+            })
+            .then(resp => {
+                if (data.trustDevice) {
+                    onSuccess({ name: 'mfa_trusted_device_added' });
+                }
+                return resp;
             })
             .catch(error => {
                 onError(error);
