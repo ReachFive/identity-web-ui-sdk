@@ -203,7 +203,6 @@ describe('DOM testing', () => {
 
         const validator = new Validator<Date>({
             rule: value => {
-                console.log(value, differenceInYears(new Date(), value));
                 return differenceInYears(new Date(), value) >= 18;
             },
             hint: 'age.minimun',
