@@ -2,7 +2,7 @@ import React, { type ComponentType } from 'react';
 
 import type { WithI18n } from '../../contexts/i18n';
 import type { I18nResolver } from '../../core/i18n';
-import { PathMapping } from '../../core/mapping';
+import { DefaultPathMapping, type PathMapping } from '../../core/mapping';
 import {
     empty as emptyRule,
     isValidatorSuccess,
@@ -91,6 +91,7 @@ export type FieldDefinition<T, F = T, K extends string = 'raw'> = {
     defaultValue?: T;
     format?: Formatter<T, F, K>;
     validator?: Validator<F, any> | CompoundValidator<F, any>;
+    mapping?: PathMapping;
 };
 
 export interface FieldProps<
@@ -125,7 +126,7 @@ export function createField<
     readOnly = false,
     autoComplete,
     validator = emptyRule,
-    mapping = new PathMapping(camelCasePath(path)),
+    mapping = new DefaultPathMapping(camelCasePath(path)),
     format = {
         bind: x => (isValued(x) ? (x as F) : undefined),
         unbind: x =>
