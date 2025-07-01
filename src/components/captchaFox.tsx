@@ -10,7 +10,7 @@ export default class R5CaptchaFox {
     constructor(
         private captchaFoxEnabled: boolean,
         private captchaFoxMode: CaptchaFoxMode,
-        private captchaFoxSiteKey?: string,
+        private captchaFoxSiteKey?: string
     ) {
         this.captchaFoxEnabled = captchaFoxEnabled;
         this.captchaFoxSiteKey = captchaFoxSiteKey;
@@ -38,10 +38,13 @@ export default class R5CaptchaFox {
 
     render() {
         return this.captchaFoxEnabled ? (
-                <div className="mb-4">
-                    <CaptchaFox sitekey={this.captchaFoxSiteKey!} ref={this.captchaRef} mode={this.captchaFoxMode}/>
-                </div>
-    ) :
-        null;
+            <div className="mb-4">
+                <CaptchaFox
+                    sitekey={this.captchaFoxSiteKey!}
+                    ref={this.captchaRef}
+                    mode={this.captchaFoxMode}
+                />
+            </div>
+        ) : null;
     }
 }

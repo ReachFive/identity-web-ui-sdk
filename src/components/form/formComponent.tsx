@@ -10,10 +10,10 @@ import { isAppError } from '../../helpers/errors';
 import { logError } from '../../helpers/logger';
 import { useDebounceCallback } from '../../helpers/useDebounceCallback';
 import { type Config } from '../../types';
+import R5CaptchaFox from '../captchaFox';
 import { ErrorText, MutedText } from '../miscComponent';
 import { PrimaryButton } from './buttonComponent';
 import type { Field, FieldCreator, FieldValue } from './fieldCreator';
-import R5CaptchaFox from '../captchaFox';
 
 const Form = styled.form`
     position: relative;
