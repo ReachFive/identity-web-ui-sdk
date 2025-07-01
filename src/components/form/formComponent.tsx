@@ -13,6 +13,7 @@ import { type Config } from '../../types';
 import { ErrorText, MutedText } from '../miscComponent';
 import { PrimaryButton } from './buttonComponent';
 import type { Field, FieldCreator, FieldValue } from './fieldCreator';
+import R5CaptchaFox from '../captchaFox';
 
 const Form = styled.form`
     position: relative;
@@ -81,6 +82,7 @@ export type FormFields<Fields extends FormFieldsBuilder<P>, P = {}> = {
 };
 
 type FormOptions<P = {}, Model extends Record<PropertyKey, unknown> = {}> = {
+    captchaFox?: R5CaptchaFox;
     fields?: FormFieldsBuilder<P>;
     fieldValidationDebounce?: number;
     prefix?: string;
@@ -121,6 +123,7 @@ export function createForm<Model extends Record<PropertyKey, unknown> = {}, P = 
 
         const {
             beforeSubmit,
+            captchaFox,
             fields = [],
             fieldValidationDebounce = 1000,
             handler,
@@ -371,6 +374,7 @@ export function createForm<Model extends Record<PropertyKey, unknown> = {}, P = 
                           })
                         : field.staticContent
                 )}
+                {captchaFox?.render()}
                 {SubmitComponent ? (
                     <SubmitComponent
                         disabled={isLoading}

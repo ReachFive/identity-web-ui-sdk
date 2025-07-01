@@ -1,16 +1,20 @@
 import { CaptchaFox, CaptchaFoxInstance } from '@captchafox/react';
 import React, { useRef } from 'react';
 
+export type CaptchaFoxMode = 'inline' | 'hidden';
+
 export default class R5CaptchaFox {
     private captchaRef: React.MutableRefObject<CaptchaFoxInstance | null> =
         useRef<CaptchaFoxInstance | null>(null);
 
     constructor(
         private captchaFoxEnabled: boolean,
-        private captchaFoxSiteKey?: string
+        private captchaFoxMode: CaptchaFoxMode,
+        private captchaFoxSiteKey?: string,
     ) {
         this.captchaFoxEnabled = captchaFoxEnabled;
         this.captchaFoxSiteKey = captchaFoxSiteKey;
+        this.captchaFoxMode = captchaFoxMode;
     }
 
     handle = async <T extends { captchaToken?: string }, R = {}>(
@@ -34,7 +38,10 @@ export default class R5CaptchaFox {
 
     render() {
         return this.captchaFoxEnabled ? (
-            <CaptchaFox sitekey={this.captchaFoxSiteKey!} ref={this.captchaRef} mode="hidden" />
-        ) : null;
+                <div className="mb-4">
+                    <CaptchaFox sitekey={this.captchaFoxSiteKey!} ref={this.captchaRef} mode={this.captchaFoxMode}/>
+                </div>
+    ) :
+        null;
     }
 }

@@ -23,7 +23,7 @@ import { useSession } from '../../../contexts/session';
 
 import { specializeIdentifierData } from '../../../helpers/utils';
 
-import R5CaptchaFox from '@/components/captchaFox.tsx';
+import R5CaptchaFox, { CaptchaFoxMode } from '../../../components/captchaFox';
 import type { OnError, OnSuccess } from '../../../types';
 
 type Floating = { floating?: boolean };
@@ -229,6 +229,10 @@ export type LoginViewProps = {
      */
     captchaFoxSiteKey?: string;
     /**
+     * Define how CaptchaFox is displayed (hidden|inline|popup)/ Default to hidden.
+     */
+    captchaFoxMode?: CaptchaFoxMode;
+    /**
      * Whether the signup form fields' labels are displayed on the login view.
      *
      * @default false
@@ -288,6 +292,7 @@ export const LoginView = ({
     recaptcha_site_key,
     captchaFoxEnabled = false,
     captchaFoxSiteKey,
+    captchaFoxMode = 'hidden',
     allowAuthentMailPhone = true,
     allowTrustDevice,
     onError = (() => {}) as OnError,
@@ -343,7 +348,7 @@ export const LoginView = ({
 
     const defaultIdentifier = session?.lastLoginType === 'password' ? session.email : undefined;
 
-    const captchaFox = new R5CaptchaFox(captchaFoxEnabled, captchaFoxSiteKey);
+    const captchaFox = new R5CaptchaFox(captchaFoxEnabled, captchaFoxMode, captchaFoxSiteKey);
     const handleLogin = getCaptchaHandler(
         {
             recaptchaEnabled: recaptcha_enabled,
@@ -371,10 +376,10 @@ export const LoginView = ({
                 allowCustomIdentifier={allowCustomIdentifier}
                 allowAuthentMailPhone={allowAuthentMailPhone}
                 handler={data => handleLogin(data, 'login')}
+                captchaFox={captchaFox}
                 onSuccess={onSuccess}
                 onError={onError}
             />
-            {captchaFox.render()}
             {allowSignup && (
                 <Alternative>
                     <span>{i18n('login.signupLinkPrefix')}</span>

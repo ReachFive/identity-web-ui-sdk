@@ -1,6 +1,6 @@
 /**
  * @reachfive/identity-ui - v1.35.0
- * Compiled Mon, 23 Jun 2025 09:31:48 UTC
+ * Compiled Tue, 01 Jul 2025 08:09:58 UTC
  *
  * Copyright (c) ReachFive.
  *
@@ -316,6 +316,8 @@ declare class Validator<T, C = {}, E = {}> {
 
 type FormValue<T, K extends string = 'raw'> = T | RichFormValue<T, K>;
 type RichFormValue<T, K extends string = 'raw'> = Record<K, T>;
+
+type CaptchaFoxMode = 'inline' | 'hidden';
 
 /** @todo to refine */
 type FormContext<Model> = {
@@ -832,6 +834,10 @@ type LoginViewProps = {
      */
     captchaFoxSiteKey?: string;
     /**
+     * Define how CaptchaFox is displayed (hidden|inline|popup)/ Default to hidden.
+     */
+    captchaFoxMode?: CaptchaFoxMode;
+    /**
      * Whether the signup form fields' labels are displayed on the login view.
      *
      * @default false
@@ -1001,6 +1007,7 @@ interface PasswordSignupFormProps {
     recaptcha_site_key?: string;
     captchaFoxEnabled?: boolean;
     captchaFoxSiteKey?: string;
+    captchaFoxMode?: CaptchaFoxMode;
     redirectUrl?: string;
     returnToAfterEmailConfirmation?: string;
     showLabels?: boolean;
@@ -1152,6 +1159,10 @@ interface MainViewProps$4 {
      * This must be paired with the appropriate secret key that you received when setting up CaptchaFox.
      */
     captchaFoxSiteKey?: string;
+    /**
+     * Define how CaptchaFox is displayed (hidden|inline|popup)/ Default to hidden.
+     */
+    captchaFoxMode?: CaptchaFoxMode;
     /**
      * The URL sent in the email to which the user is redirected.
      * This URL must be whitelisted in the `Allowed Callback URLs` field of your ReachFive client settings.
@@ -1370,6 +1381,10 @@ interface MainViewProps$1 {
      */
     captchaFoxSiteKey?: string;
     /**
+     * Define how CaptchaFox is displayed (hidden|inline|popup)/ Default to hidden.
+     */
+    captchaFoxMode?: CaptchaFoxMode;
+    /**
      * Show the introduction text.
      * @default true
      */
@@ -1422,6 +1437,10 @@ interface VerificationCodeViewProps$1 {
      * This must be paired with the appropriate secret key that you received when setting up CaptchaFox.
      */
     captchaFoxSiteKey?: string;
+    /**
+     * Define how CaptchaFox is displayed (hidden|inline|popup)/ Default to hidden.
+     */
+    captchaFoxMode?: CaptchaFoxMode;
     /**
      * Callback function called when the request has succeed.
      */

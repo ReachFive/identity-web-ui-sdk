@@ -13,7 +13,7 @@ import { useI18n } from '../../contexts/i18n';
 import { useReachfive } from '../../contexts/reachfive';
 import { useRouting } from '../../contexts/routing';
 
-import R5CaptchaFox from '@/components/captchaFox.tsx';
+import R5CaptchaFox, { CaptchaFoxMode } from '../../components/captchaFox';
 import type { OnError, OnSuccess } from '../../types';
 
 type EmailFormData = { email: string };
@@ -55,6 +55,10 @@ interface MainViewProps {
      */
     captchaFoxSiteKey?: string;
     /**
+     * Define how CaptchaFox is displayed (hidden|inline|popup)/ Default to hidden.
+     */
+    captchaFoxMode?: CaptchaFoxMode;
+    /**
      * The URL sent in the email to which the user is redirected.
      * This URL must be whitelisted in the `Allowed Callback URLs` field of your ReachFive client settings.
      */
@@ -79,6 +83,7 @@ const MainView = ({
     recaptcha_enabled = false,
     recaptcha_site_key,
     captchaFoxEnabled = false,
+    captchaFoxMode = 'hidden',
     captchaFoxSiteKey,
     redirectUrl,
     showLabels = false,
@@ -102,7 +107,7 @@ const MainView = ({
         goTo('success');
     };
 
-    const captchaFox = new R5CaptchaFox(captchaFoxEnabled, captchaFoxSiteKey);
+    const captchaFox = new R5CaptchaFox(captchaFoxEnabled, captchaFoxMode, captchaFoxSiteKey);
     const handleCaptcha = getCaptchaHandler(
         {
             recaptchaEnabled: recaptcha_enabled,
@@ -119,6 +124,7 @@ const MainView = ({
             <EmailEditorForm
                 showLabels={showLabels}
                 handler={data => handleCaptcha(data, 'update_email')}
+                captchaFox={captchaFox}
                 onSuccess={handleSuccess}
                 onError={onError}
             />

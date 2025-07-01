@@ -18,7 +18,7 @@ import { useReachfive } from '../../contexts/reachfive';
 
 import { isEqual } from '../../helpers/utils';
 
-import R5CaptchaFox from '@/components/captchaFox.tsx';
+import R5CaptchaFox, { CaptchaFoxMode } from '../../components/captchaFox';
 import type { OnError, OnSuccess } from '../../types';
 
 const SignupForm = createForm<SignupParams['data']>({
@@ -35,6 +35,7 @@ export interface PasswordSignupFormProps {
     recaptcha_site_key?: string;
     captchaFoxEnabled?: boolean;
     captchaFoxSiteKey?: string;
+    captchaFoxMode?: CaptchaFoxMode;
     redirectUrl?: string;
     returnToAfterEmailConfirmation?: string;
     showLabels?: boolean;
@@ -59,6 +60,7 @@ export const PasswordSignupForm = ({
     recaptcha_site_key,
     captchaFoxEnabled = false,
     captchaFoxSiteKey,
+    captchaFoxMode = 'hidden',
     redirectUrl,
     returnToAfterEmailConfirmation,
     showLabels,
@@ -129,7 +131,7 @@ export const PasswordSignupForm = ({
           ]
         : fields;
 
-    const captchaFox = new R5CaptchaFox(captchaFoxEnabled, captchaFoxSiteKey);
+    const captchaFox = new R5CaptchaFox(captchaFoxEnabled, captchaFoxMode, captchaFoxSiteKey);
     const handleCaptcha = getCaptchaHandler(
         {
             recaptchaEnabled: recaptcha_enabled,
@@ -152,10 +154,10 @@ export const PasswordSignupForm = ({
                     ...phoneNumberOptions,
                 }}
                 handler={data => handleCaptcha(data, 'signup')}
+                captchaFox={captchaFox}
                 onSuccess={onSuccess}
                 onError={onError}
             />
-            {captchaFox.render()}
         </>
     );
 };
