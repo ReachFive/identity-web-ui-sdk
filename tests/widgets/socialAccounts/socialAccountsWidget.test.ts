@@ -11,7 +11,7 @@ import 'jest-styled-components';
 import { type Client, type Profile } from '@reachfive/identity-core';
 
 import { type I18nMessages } from '../../../src/core/i18n';
-import type { Config, OnError, OnSuccess } from '../../../src/types';
+import type { Config } from '../../../src/types';
 
 import socialAccountsWidget from '../../../src/widgets/socialAccounts/socialAccountsWidget';
 
@@ -67,7 +67,7 @@ describe('Snapshot', () => {
 
                 await waitFor(() => expect(apiClient.getUser).toHaveBeenCalled());
 
-                rerender(widget);
+                await rerender(widget);
 
                 expect(container).toMatchSnapshot();
             });
@@ -87,8 +87,8 @@ describe('DOM testing', () => {
     const on = jest.fn();
     const off = jest.fn();
 
-    const onError = jest.fn<OnError>();
-    const onSuccess = jest.fn<OnSuccess>();
+    const onError = jest.fn();
+    const onSuccess = jest.fn();
 
     beforeEach(() => {
         getUser.mockClear();
@@ -123,7 +123,7 @@ describe('DOM testing', () => {
 
             await waitFor(() => expect(apiClient.getUser).toHaveBeenCalled());
 
-            rerender(widget);
+            await rerender(widget);
         });
     };
 
@@ -192,12 +192,7 @@ describe('DOM testing', () => {
 
             expect(screen.queryByTestId('identity-google')).not.toBeInTheDocument();
 
-            expect(onSuccess).toBeCalledWith(
-                expect.objectContaining({
-                    identityId: '987654321',
-                    name: 'unlink',
-                })
-            );
+            expect(onSuccess).toBeCalled();
             expect(onError).not.toBeCalled();
         });
 

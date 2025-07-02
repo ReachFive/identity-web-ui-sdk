@@ -107,9 +107,9 @@ export const TrustedDeviceList = ({
         setLoading(true);
         client
             .listTrustedDevices(accessToken)
-            .then(response => {
-                setTrustedDevices(response.trustedDevices);
-                onSuccess({ name: 'mfa_trusted_device_listed', devices: response.trustedDevices });
+            .then(trustedDevicesResponse => {
+                setTrustedDevices(trustedDevicesResponse.trustedDevices);
+                onSuccess(trustedDevicesResponse);
             })
             .catch(onError)
             .finally(() => setLoading(false));
@@ -125,9 +125,9 @@ export const TrustedDeviceList = ({
                 accessToken: accessToken,
                 trustedDeviceId: device.id,
             })
-            .then(() => {
+            .then(res => {
                 fetchTrustedDevices();
-                onSuccess({ name: 'mfa_trusted_device_deleted', device });
+                onSuccess(res);
             })
             .catch(onError);
     };
@@ -139,7 +139,7 @@ export const TrustedDeviceList = ({
     return (
         <div>
             {trustedDevices.length === 0 && (
-                <div className="mb-1 text-center text-theme">{i18n('trustedDevices.empty')}</div>
+                <div className="text-theme mb-1 text-center">{i18n('trustedDevices.empty')}</div>
             )}
             {trustedDevices.map((trustedDevice, _) => (
                 <div

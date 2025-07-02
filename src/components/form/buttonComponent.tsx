@@ -96,18 +96,3 @@ export function PrimaryButton({
         </Button>
     );
 }
-
-interface DestructiveButtonProps extends Omit<ButtonProps, 'background' | 'border'> {}
-
-export function DestructiveButton({
-    children,
-    type = 'submit',
-    ...props
-}: PropsWithChildren<DestructiveButtonProps>) {
-    const theme = useTheme();
-    return (
-        <Button type={type} {...props} $background={theme.dangerColor} $border={theme.dangerColor}>
-            {children}
-        </Button>
-    );
-}

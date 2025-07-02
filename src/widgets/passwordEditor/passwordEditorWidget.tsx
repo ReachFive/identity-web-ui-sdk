@@ -120,7 +120,7 @@ const PasswordEditor = ({
             promptOldPassword={promptOldPassword}
             canShowPassword={canShowPassword}
             showLabels={showLabels}
-            onSuccess={() => onSuccess({ name: 'password_changed' })}
+            onSuccess={onSuccess}
             onError={onError}
         />
     );

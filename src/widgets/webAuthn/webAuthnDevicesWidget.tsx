@@ -174,7 +174,6 @@ function WebAuthnDevices({
         return coreClient
             .removeWebAuthnDevice(accessToken, deviceId)
             .then(() => {
-                onSuccess({ name: 'webauthn_credential_deleted', deviceId });
                 return coreClient
                     .listWebAuthnDevices(accessToken)
                     .then(newDevices => setDevices(newDevices));
@@ -184,7 +183,7 @@ function WebAuthnDevices({
 
     const addNewWebAuthnDevice = ({ friendlyName }: DeviceInputFormData) => {
         return coreClient.addNewWebAuthnDevice(accessToken, friendlyName).then(() => {
-            onSuccess({ name: 'webauthn_credential_created', friendlyName });
+            onSuccess();
             return coreClient
                 .listWebAuthnDevices(accessToken)
                 .then(newDevices => setDevices(newDevices));

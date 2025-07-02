@@ -86,7 +86,7 @@ const ProfileEditor = ({
                 ...phoneNumberOptions,
             }}
             showLabels={showLabels}
-            onSuccess={() => onSuccess({ name: 'user_updated' })}
+            onSuccess={onSuccess}
             onError={onError}
         />
     );
@@ -128,10 +128,7 @@ export default createWidget<ProfileEditorWidgetProps, ProfileEditorProps>({
         }
 
         // This step removes the version from the consents
-        const resolvedFields = buildFormFields(fields, {
-            ...config,
-            errorArchivedConsents: false,
-        });
+        const resolvedFields = buildFormFields(fields, { ...config, errorArchivedConsents: false });
 
         return (
             apiClient

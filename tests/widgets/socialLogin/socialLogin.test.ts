@@ -12,7 +12,7 @@ import { type Client } from '@reachfive/identity-core';
 
 import { I18nMessages } from '../../../src/core/i18n';
 import { providers, type ProviderId } from '../../../src/providers/providers';
-import type { Config, OnError, OnSuccess } from '../../../src/types';
+import { type Config } from '../../../src/types';
 
 import socialLoginWidget from '../../../src/widgets/socialLogin/socialLoginWidget';
 
@@ -68,8 +68,8 @@ describe('Snapshot', () => {
 describe('DOM testing', () => {
     const loginWithSocialProvider = jest.fn<Client['loginWithSocialProvider']>();
 
-    const onError = jest.fn<OnError>();
-    const onSuccess = jest.fn<OnSuccess>();
+    const onError = jest.fn();
+    const onSuccess = jest.fn();
 
     beforeEach(() => {
         loginWithSocialProvider.mockClear();
@@ -111,12 +111,7 @@ describe('DOM testing', () => {
 
         expect(loginWithSocialProvider).toBeCalledWith(provider, undefined);
 
-        expect(onSuccess).toBeCalledWith(
-            expect.objectContaining({
-                name: 'login',
-                authResult: expect.objectContaining({ providerName: 'facebook' }),
-            })
-        );
+        expect(onSuccess).toBeCalled();
         expect(onError).not.toBeCalled();
     });
 

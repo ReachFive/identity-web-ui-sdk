@@ -51,7 +51,7 @@ const MainView = ({
     };
 
     const handleSuccess = () => {
-        onSuccess({ name: 'password_changed' });
+        onSuccess();
         goTo('success');
     };
 

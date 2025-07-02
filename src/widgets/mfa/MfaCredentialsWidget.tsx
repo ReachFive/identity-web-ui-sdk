@@ -4,18 +4,18 @@ import type {
     StartMfaPhoneNumberRegistrationResponse,
 } from '@reachfive/identity-core/es/main/mfaClient';
 import React, { useCallback, useState } from 'react';
+import styled from 'styled-components';
 
 import type { OnError, OnSuccess, Prettify } from '../../types';
 
 import { createMultiViewWidget } from '../../components/widget/widget';
 
-import { DestructiveButton } from '../../components/form/buttonComponent';
 import phoneNumberField, {
     type PhoneNumberOptions,
 } from '../../components/form/fields/phoneNumberField';
 import { simpleField } from '../../components/form/fields/simpleField';
 import { createForm } from '../../components/form/formComponent';
-import { Intro, Separator } from '../../components/miscComponent';
+import { Info, Intro, Separator } from '../../components/miscComponent';
 
 import { UserError } from '../../helpers/errors';
 
@@ -24,12 +24,6 @@ import { useConfig } from '../../contexts/config';
 import { useI18n } from '../../contexts/i18n';
 import { useReachfive } from '../../contexts/reachfive';
 import { useRouting } from '../../contexts/routing';
-
-import {
-    useCredentials,
-    withCredentials,
-    type CredentialsProviderProps,
-} from './contexts/credentials';
 
 type EmailRegisteringCredentialFormData = { trustDevice: boolean };
 
@@ -55,17 +49,11 @@ const EmailRegisteringCredentialForm = createForm<
 const EmailCredentialRemovalForm = createForm({
     prefix: 'r5-mfa-credentials-email-removal-',
     submitLabel: 'mfa.remove.email',
-    SubmitComponent: ({ disabled, label }) => (
-        <DestructiveButton disabled={disabled}>{label}</DestructiveButton>
-    ),
 });
 
 const PhoneNumberCredentialRemovalForm = createForm({
     prefix: 'r5-mfa-credentials-phone-number-removal-',
     submitLabel: 'mfa.remove.phoneNumber',
-    SubmitComponent: ({ disabled, label }) => (
-        <DestructiveButton disabled={disabled}>{label}</DestructiveButton>
-    ),
 });
 
 type VerificationCodeFormData = { verificationCode: string; trustDevice: boolean };
@@ -127,11 +115,20 @@ const PhoneNumberRegisteringCredentialForm = createForm<
     submitLabel: 'mfa.register.phoneNumber',
 });
 
+const DivCredentialBlock = styled.div`
+    margin-left: ${props => props.theme._blockInnerHeight}px;
+    margin-bottom: 5em;
+`;
+
 interface MainViewProps {
     /**
      * The authorization credential JSON Web Token (JWT) used to access the ReachFive API, less than five minutes old.
      */
     accessToken: string;
+    /**
+     * The user’s MFA credentials
+     */
+    credentials: MFA.CredentialsResponse['credentials'];
     /**
      * Boolean to enable (`true`) or disable (`false`) whether the option to remove MFA credentials are displayed.
      *
@@ -155,10 +152,6 @@ interface MainViewProps {
      */
     phoneNumberOptions?: PhoneNumberOptions;
     /**
-     * Callback function called when the request has succeed.
-     */
-    onSuccess?: OnSuccess;
-    /**
      * Callback function called when the request has failed.
      */
     onError?: OnError;
@@ -170,106 +163,81 @@ interface MainViewProps {
     allowTrustDevice?: boolean;
 }
 
-const MainView = withCredentials(
-    ({
-        accessToken,
-        onError = (() => {}) as OnError,
-        onSuccess = (() => {}) as OnSuccess,
-        phoneNumberOptions,
-        requireMfaRegistration = false,
-        showIntro = true,
-        showRemoveMfaCredentials = true,
-        allowTrustDevice = false,
-        profileIdentifiers = {},
-    }: MainViewProps) => {
-        const coreClient = useReachfive();
-        const config = useConfig();
-        const i18n = useI18n();
-        const { goTo } = useRouting();
-        const { credentials, refresh } = useCredentials();
-        const [displayTrustDevicePhoneNumber, setDisplayTrustDevicePhoneNumber] =
-            useState<boolean>(false);
+const MainView = ({
+    accessToken,
+    credentials,
+    onError = (() => {}) as OnError,
+    phoneNumberOptions,
+    requireMfaRegistration = false,
+    showIntro = true,
+    showRemoveMfaCredentials = true,
+    allowTrustDevice = false,
+    profileIdentifiers = {},
+}: MainViewProps) => {
+    const coreClient = useReachfive();
+    const config = useConfig();
+    const i18n = useI18n();
+    const { goTo } = useRouting();
+    const [displayTrustDevicePhoneNumber, setDisplayTrustDevicePhoneNumber] =
+        useState<boolean>(false);
 
-        const onEmailRegistering = (data: EmailRegisteringCredentialFormData) => {
-            return coreClient
-                .startMfaEmailRegistration({
-                    accessToken,
-                    ...data,
-                })
-                .then(resp => {
-                    onSuccess({ name: 'mfa_email_start_registration' });
-                    if (data.trustDevice) {
-                        onSuccess({ name: 'mfa_trusted_device_added' });
-                    }
-                    return resp;
-                })
-                .catch(error => {
-                    onError(error);
-                    throw error;
-                });
-        };
+    const onEmailRegistering = (data: EmailRegisteringCredentialFormData) => {
+        return coreClient.startMfaEmailRegistration({
+            accessToken,
+            ...data,
+        });
+    };
 
-        const onPhoneNumberRegistering = (data: PhoneNumberRegisteringCredentialFormData) => {
-            return coreClient
-                .startMfaPhoneNumberRegistration({
-                    accessToken,
-                    ...data,
-                })
-                .then(resp => {
-                    onSuccess({ name: 'mfa_phone_number_start_registration' });
-                    if (data.trustDevice) {
-                        onSuccess({ name: 'mfa_trusted_device_added' });
-                    }
-                    return resp;
-                })
-                .catch(error => {
-                    onError(error);
-                    throw error;
-                });
-        };
+    const onPhoneNumberRegistering = (data: PhoneNumberRegisteringCredentialFormData) => {
+        return coreClient.startMfaPhoneNumberRegistration({
+            accessToken,
+            ...data,
+        });
+    };
 
-        const onEmailRemoval = () => {
-            return coreClient.removeMfaEmail({
-                accessToken,
-            });
-        };
+    const onEmailRemoval = () => {
+        return coreClient.removeMfaEmail({
+            accessToken,
+        });
+    };
 
-        const onPhoneNumberRemoval = ({ phoneNumber }: MFA.PhoneCredential) => {
-            return coreClient.removeMfaPhoneNumber({
-                accessToken,
-                phoneNumber,
-            });
-        };
+    const onPhoneNumberRemoval = ({ phoneNumber }: MFA.PhoneCredential) => {
+        return coreClient.removeMfaPhoneNumber({
+            accessToken,
+            phoneNumber,
+        });
+    };
 
-        const onPhoneNumberChange = useCallback(
-            (data: PhoneNumberRegisteringCredentialFormData) => {
-                const { phoneNumber } = data;
-                setDisplayTrustDevicePhoneNumber(
-                    profileIdentifiers.phoneNumber != undefined &&
-                        profileIdentifiers.phoneNumber === phoneNumber &&
-                        config.rbaEnabled &&
-                        allowTrustDevice &&
-                        profileIdentifiers.phoneNumberVerified != undefined &&
-                        profileIdentifiers.phoneNumberVerified
-                );
-            },
-            [displayTrustDevicePhoneNumber]
-        );
+    const onPhoneNumberChange = useCallback(
+        (data: PhoneNumberRegisteringCredentialFormData) => {
+            const { phoneNumber } = data;
+            setDisplayTrustDevicePhoneNumber(
+                profileIdentifiers.phoneNumber != undefined &&
+                    profileIdentifiers.phoneNumber === phoneNumber &&
+                    config.rbaEnabled &&
+                    allowTrustDevice &&
+                    profileIdentifiers.phoneNumberVerified != undefined &&
+                    profileIdentifiers.phoneNumberVerified
+            );
+        },
+        [displayTrustDevicePhoneNumber]
+    );
 
-        const phoneNumberCredentialRegistered = credentials.find<MFA.PhoneCredential>(
-            (credential): credential is MFA.PhoneCredential => MFA.isPhoneCredential(credential)
-        );
-        const isEmailCredentialRegistered = credentials.some(credential =>
-            MFA.isEmailCredential(credential)
-        );
-        const isPhoneCredentialRegistered = credentials.some(credential =>
-            MFA.isPhoneCredential(credential)
-        );
+    const phoneNumberCredentialRegistered = credentials.find<MFA.PhoneCredential>(
+        (credential): credential is MFA.PhoneCredential => MFA.isPhoneCredential(credential)
+    );
+    const isEmailCredentialRegistered = credentials.some(credential =>
+        MFA.isEmailCredential(credential)
+    );
+    const isPhoneCredentialRegistered = credentials.some(credential =>
+        MFA.isPhoneCredential(credential)
+    );
 
-        return (
-            <div className="flex flex-col gap-4">
+    return (
+        <div>
+            <DivCredentialBlock>
                 {config.mfaEmailEnabled && !isEmailCredentialRegistered && (
-                    <div id="email-registering-credential">
+                    <div>
                         {showIntro && (
                             <Intro>
                                 {requireMfaRegistration
@@ -303,7 +271,7 @@ const MainView = withCredentials(
                     !isPhoneCredentialRegistered && <Separator text={i18n('or')} />}
 
                 {config.mfaSmsEnabled && !isPhoneCredentialRegistered && (
-                    <div id="phone-number-registering-credential">
+                    <div>
                         {showIntro && <Intro>{i18n('mfa.phoneNumber.explain')}</Intro>}
                         <PhoneNumberRegisteringCredentialForm
                             handler={onPhoneNumberRegistering}
@@ -321,7 +289,8 @@ const MainView = withCredentials(
                         />
                     </div>
                 )}
-
+            </DivCredentialBlock>
+            <DivCredentialBlock>
                 {showRemoveMfaCredentials &&
                     config.mfaEmailEnabled &&
                     isEmailCredentialRegistered && (
@@ -329,10 +298,11 @@ const MainView = withCredentials(
                             {showIntro && <Intro>{i18n('mfa.email.remove.explain')}</Intro>}
                             <EmailCredentialRemovalForm
                                 handler={onEmailRemoval}
-                                onSuccess={async () => {
-                                    onSuccess({ name: 'mfa_email_deleted' });
-                                    await refresh();
-                                }}
+                                onSuccess={() =>
+                                    goTo<CredentialRemovedViewState>('credential-removed', {
+                                        credentialType: 'email',
+                                    })
+                                }
                                 onError={onError}
                             />
                         </div>
@@ -351,18 +321,19 @@ const MainView = withCredentials(
                                 handler={() =>
                                     onPhoneNumberRemoval({ ...phoneNumberCredentialRegistered })
                                 }
-                                onSuccess={async () => {
-                                    onSuccess({ name: 'mfa_phone_number_deleted' });
-                                    await refresh();
-                                }}
+                                onSuccess={() =>
+                                    goTo<CredentialRemovedViewState>('credential-removed', {
+                                        credentialType: 'sms',
+                                    })
+                                }
                                 onError={onError}
                             />
                         </div>
                     )}
-            </div>
-        );
-    }
-);
+            </DivCredentialBlock>
+        </div>
+    );
+};
 
 interface VerificationCodeViewProps {
     /**
@@ -406,60 +377,28 @@ const VerificationCodeView = ({
     const { registrationType, status } = params as VerificationCodeViewState;
 
     const onEmailCodeVerification = (data: VerificationCodeFormData) => {
-        return coreClient
-            .verifyMfaEmailRegistration({
-                ...data,
-                accessToken,
-            })
-            .then(resp => {
-                if (data.trustDevice) {
-                    onSuccess({ name: 'mfa_trusted_device_added' });
-                }
-                return resp;
-            })
-            .catch(error => {
-                onError(error);
-                throw error;
-            });
+        return coreClient.verifyMfaEmailRegistration({
+            ...data,
+            accessToken,
+        });
     };
 
     const onSmsCodeVerification = (data: VerificationCodeFormData) => {
-        return coreClient
-            .verifyMfaPhoneNumberRegistration({
-                ...data,
-                accessToken,
-            })
-            .then(resp => {
-                if (data.trustDevice) {
-                    onSuccess({ name: 'mfa_trusted_device_added' });
-                }
-                return resp;
-            })
-            .catch(error => {
-                onError(error);
-                throw error;
-            });
+        return coreClient.verifyMfaPhoneNumberRegistration({
+            ...data,
+            accessToken,
+        });
     };
 
-    const onCredentialRegistered = async () => {
-        switch (registrationType) {
-            case 'email':
-                onSuccess({ name: 'mfa_email_verify_registration' });
-                break;
-            case 'sms':
-                onSuccess({ name: 'mfa_phone_number_verify_registration' });
-                break;
-        }
-        goTo('main');
+    const onCredentialRegistered = () => {
+        onSuccess();
+        goTo<CredentialRegisteredViewState>('credential-registered', { registrationType });
     };
 
-    React.useEffect(() => {
-        if (status === 'enabled') {
-            (async () => {
-                await onCredentialRegistered();
-            })();
-        }
-    }, [showIntro, status]);
+    if (showIntro && status === 'enabled') {
+        goTo<CredentialRegisteredViewState>('credential-registered', { registrationType });
+        return null;
+    }
 
     return (
         <div>
@@ -486,8 +425,47 @@ const VerificationCodeView = ({
     );
 };
 
+interface CredentialRegisteredViewProps {}
+
+type CredentialRegisteredViewState = {
+    registrationType: MFA.CredentialsResponse['credentials'][number]['type'];
+};
+
+const CredentialRegisteredView = () => {
+    const i18n = useI18n();
+    const { params } = useRouting();
+    const { registrationType } = params as CredentialRegisteredViewState;
+    return (
+        <div>
+            {registrationType === 'email' && <Info>{i18n('mfa.email.registered')}</Info>}
+            {registrationType === 'sms' && <Info>{i18n('mfa.phoneNumber.registered')}</Info>}
+        </div>
+    );
+};
+
+type CredentialRemovedViewProps = {};
+
+type CredentialRemovedViewState = {
+    credentialType: MFA.CredentialsResponse['credentials'][number]['type'];
+};
+
+const CredentialRemovedView = () => {
+    const i18n = useI18n();
+    const { params } = useRouting();
+    const { credentialType } = params as CredentialRemovedViewState;
+    return (
+        <div>
+            {credentialType === 'email' && <Info>{i18n('mfa.email.removed')}</Info>}
+            {credentialType === 'sms' && <Info>{i18n('mfa.phoneNumber.removed')}</Info>}
+        </div>
+    );
+};
+
 type MfaCredentialsProps = Prettify<
-    MainViewProps & VerificationCodeViewProps & CredentialsProviderProps
+    MainViewProps &
+        CredentialRegisteredViewProps &
+        VerificationCodeViewProps &
+        CredentialRemovedViewProps
 >;
 
 export type MfaCredentialsWidgetProps = Prettify<
@@ -498,7 +476,9 @@ export default createMultiViewWidget<MfaCredentialsWidgetProps, MfaCredentialsPr
     initialView: 'main',
     views: {
         main: MainView,
+        'credential-registered': CredentialRegisteredView,
         'verification-code': VerificationCodeView,
+        'credential-removed': CredentialRemovedView,
     },
     prepare: (options, { apiClient }) => {
         return Promise.all([

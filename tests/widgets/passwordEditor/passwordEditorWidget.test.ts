@@ -11,7 +11,7 @@ import 'jest-styled-components';
 import type { Client, PasswordStrengthScore } from '@reachfive/identity-core';
 
 import { type I18nMessages } from '../../../src/core/i18n';
-import type { Config, OnError, OnSuccess } from '../../../src/types';
+import type { Config } from '../../../src/types';
 
 import passwordEditorWidget from '../../../src/widgets/passwordEditor/passwordEditorWidget';
 
@@ -42,9 +42,9 @@ const defaultI18n: I18nMessages = {};
 
 const getPasswordStrengthImplementation = (password: string) => {
     let score = 0;
-    if (/[a-z]+/.exec(password)) score++;
-    if (/[0-9]+/.exec(password)) score++;
-    if (/[^a-z0-9]+/.exec(password)) score++;
+    if (password.match(/[a-z]+/)) score++;
+    if (password.match(/[0-9]+/)) score++;
+    if (password.match(/[^a-z0-9]+/)) score++;
     if (password.length > 8) score++;
     return Promise.resolve({ score: score as PasswordStrengthScore });
 };
@@ -86,8 +86,8 @@ describe('DOM testing', () => {
         .mockImplementation(getPasswordStrengthImplementation);
     const updatePassword = jest.fn<Client['updatePassword']>();
 
-    const onError = jest.fn<OnError>();
-    const onSuccess = jest.fn<OnSuccess>();
+    const onError = jest.fn();
+    const onSuccess = jest.fn();
 
     beforeEach(() => {
         getPasswordStrength.mockClear();
@@ -150,7 +150,7 @@ describe('DOM testing', () => {
                 })
             );
 
-            expect(onSuccess).toBeCalledWith(expect.objectContaining({ name: 'password_changed' }));
+            expect(onSuccess).toBeCalled();
             expect(onError).not.toBeCalled();
         });
 
@@ -202,7 +202,7 @@ describe('DOM testing', () => {
                 })
             );
 
-            expect(onSuccess).toBeCalledWith(expect.objectContaining({ name: 'password_changed' }));
+            expect(onSuccess).toBeCalled();
             expect(onError).not.toBeCalled();
         });
 

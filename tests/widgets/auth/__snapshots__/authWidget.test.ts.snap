@@ -6822,7 +6822,7 @@ exports[`Snapshot signup view with user agreement 1`] = `
         </div>
         <div
           class="c13"
-          data-testid="user-agreement"
+          data-testid="user-aggreement"
           data-text="md"
         >
           <p>

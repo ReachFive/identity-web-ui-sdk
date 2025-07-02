@@ -103,7 +103,7 @@ const MainView = ({
     };
 
     const handleSuccess = () => {
-        onSuccess({ name: 'email_updated' });
+        onSuccess();
         goTo('success');
     };
 

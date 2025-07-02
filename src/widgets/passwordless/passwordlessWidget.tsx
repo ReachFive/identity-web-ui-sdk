@@ -38,10 +38,10 @@ const EmailInputForm = createForm<EmailFormData>({
     ],
 });
 
-type PhoneNumberFormData = { phoneNumber: string; captchaToken?: string };
+type PhoneNumberFormFata = { phoneNumber: string; captchaToken?: string };
 
 const phoneNumberInputForm = (config: Config) =>
-    createForm<PhoneNumberFormData, { phoneNumberOptions?: PhoneNumberOptions }>({
+    createForm<PhoneNumberFormFata, { phoneNumberOptions?: PhoneNumberOptions }>({
         prefix: 'r5-passwordless-sms-',
         fields: ({ phoneNumberOptions }) => [
             phoneNumberField(
@@ -153,7 +153,7 @@ const MainView = ({
         importGoogleRecaptchaScript(recaptcha_site_key);
     }, [recaptcha_site_key]);
 
-    const callback = (data: WithCaptchaToken<EmailFormData | PhoneNumberFormData>) =>
+    const callback = (data: WithCaptchaToken<EmailFormData | PhoneNumberFormFata>) =>
         coreClient
             .startPasswordless(
                 {
@@ -164,9 +164,9 @@ const MainView = ({
             )
             .then(() => data);
 
-    const handleSuccess = (data: EmailFormData | PhoneNumberFormData) => {
-        onSuccess({ name: 'otp_sent', authType });
+    const handleSuccess = (data: EmailFormData | PhoneNumberFormFata) => {
         if ('email' in data) {
+            onSuccess();
             goTo('emailSent');
         } else {
             goTo<VerificationCodeViewState>('verificationCode', data);
@@ -190,12 +190,7 @@ const MainView = ({
     return (
         <div>
             {showSocialLogins && socialProviders && socialProviders.length > 0 && (
-                <SocialButtons
-                    providers={socialProviders}
-                    auth={auth}
-                    onSuccess={onSuccess}
-                    onError={onError}
-                />
+                <SocialButtons providers={socialProviders} auth={auth} />
             )}
             {showSocialLogins && socialProviders && socialProviders.length > 0 && (
                 <Separator text={i18n('or')} />
@@ -289,17 +284,11 @@ const VerificationCodeView = ({
             })
             .then(result => {
                 if (AuthResult.isAuthResult(result)) {
-                    onSuccess({
-                        name: 'login',
-                        authResult: result,
-                        authType,
-                        identifierType: 'phone_number',
-                    });
+                    onSuccess();
                 } else {
                     onError();
                 }
-            })
-            .catch(onError);
+            });
     };
 
     const captchaFox = new R5CaptchaFox(captchaFoxEnabled, captchaFoxMode, captchaFoxSiteKey);

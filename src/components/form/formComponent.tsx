@@ -57,7 +57,7 @@ export type FieldCreators<FF extends FormFieldsBuilder<P>, P = {}> = FF extends 
     : FF;
 
 /**
- * transform fields builder into a record of field values
+ * tranform fields builder into a record of field values
  * @example
  * const builder: FormFieldsBuilder = [
  *   {
@@ -107,9 +107,9 @@ type FormProps<Model extends Record<PropertyKey, unknown> = {}, P = {}, R = void
         beforeSubmit?: (data: Model) => Model;
         handler: (data: Model) => Promise<R>;
         initialModel?: Partial<Model>;
-        onError?: (error: unknown) => void | PromiseLike<void>;
+        onError?: (error: unknown) => void;
         onFieldChange?: (fields: Model) => void;
-        onSuccess?: (result: R) => void | PromiseLike<void>;
+        onSuccess?: (result: R) => void;
         sharedProps?: Record<string, unknown>;
     };
 
@@ -300,8 +300,8 @@ export function createForm<Model extends Record<PropertyKey, unknown> = {}, P = 
             }
         };
 
-        const handleSuccess = async (result: R) => {
-            await onSuccess?.(result);
+        const handleSuccess = (result: R) => {
+            onSuccess?.(result);
 
             setIsLoading(!supportMultipleSubmits);
             setErrorMessage(undefined);
@@ -311,8 +311,8 @@ export function createForm<Model extends Record<PropertyKey, unknown> = {}, P = 
             }
         };
 
-        const handleError = async (err: unknown) => {
-            await onError?.(err);
+        const handleError = (err: unknown) => {
+            onError?.(err);
 
             if (isAppError(err) && !err.errorUserMsg) {
                 if (err.errorDescription) {

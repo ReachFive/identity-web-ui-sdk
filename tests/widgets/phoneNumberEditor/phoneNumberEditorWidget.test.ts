@@ -11,7 +11,7 @@ import 'jest-styled-components';
 import { type Client } from '@reachfive/identity-core';
 
 import { type I18nMessages } from '../../../src/core/i18n';
-import type { Config, OnError, OnSuccess } from '../../../src/types';
+import type { Config } from '../../../src/types';
 
 import phoneNumberEditorWidget from '../../../src/widgets/phoneNumberEditor/phoneNumberEditorWidget';
 
@@ -72,8 +72,8 @@ describe('DOM testing', () => {
     const updatePhoneNumber = jest.fn<Client['updatePhoneNumber']>();
     const verifyPhoneNumber = jest.fn<Client['verifyPhoneNumber']>();
 
-    const onError = jest.fn<OnError>();
-    const onSuccess = jest.fn<OnSuccess>();
+    const onError = jest.fn();
+    const onSuccess = jest.fn();
 
     beforeEach(() => {
         updatePhoneNumber.mockClear();
@@ -147,12 +147,7 @@ describe('DOM testing', () => {
                 })
             );
 
-            expect(onSuccess).toBeCalledWith(
-                expect.objectContaining({
-                    name: 'phone_number_verified',
-                    phoneNumber: '+33123456789',
-                })
-            );
+            expect(onSuccess).toBeCalled();
             expect(onError).not.toBeCalled();
         });
 
@@ -210,12 +205,8 @@ describe('DOM testing', () => {
 
             expect(verifyPhoneNumber).toBeCalled();
 
-            await waitFor(async () => {
-                expect(onSuccess).toBeCalledWith(
-                    expect.objectContaining({ name: 'phone_number_updated' })
-                );
-                expect(onError).toBeCalled();
-            });
+            expect(onSuccess).not.toBeCalled();
+            expect(onError).toBeCalledWith('Unexpected error');
         });
     });
 });

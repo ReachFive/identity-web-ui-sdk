@@ -16,7 +16,7 @@ import { useI18n } from '../../../contexts/i18n';
 import { useReachfive } from '../../../contexts/reachfive';
 import { useRouting } from '../../../contexts/routing';
 
-import { enrichLoginEvent, specializeIdentifierData } from '../../../helpers/utils';
+import { specializeIdentifierData } from '../../../helpers/utils';
 import { FaSelectionViewState } from '../../stepUp/mfaStepUpWidget';
 
 import type { OnError, OnSuccess } from '../../../types';
@@ -168,9 +168,8 @@ export const LoginWithPasswordView = ({
     }, [recaptcha_site_key]);
 
     const callback = (data: LoginWithPasswordFormData & { captchaToken?: string }) => {
-        const specializedIdentifierData = specializeIdentifierData<LoginWithPasswordParams>(data);
-        const { auth: dataAuth, ...specializedData } = specializedIdentifierData;
-
+        const { auth: dataAuth, ...specializedData } =
+            specializeIdentifierData<LoginWithPasswordParams>(data);
         return coreClient
             .loginWithPassword({
                 ...specializedData,
@@ -180,16 +179,15 @@ export const LoginWithPasswordView = ({
                     ...auth,
                 },
             })
-            .then(res => {
-                if (res?.stepUpToken) {
-                    goTo<FaSelectionViewState>('fa-selection', {
-                        token: res.stepUpToken,
-                        amr: res.amr ?? [],
-                        allowTrustDevice,
-                    });
-                }
-                return enrichLoginEvent(res, 'password', specializedIdentifierData);
-            });
+            .then(res =>
+                res?.stepUpToken
+                    ? goTo<FaSelectionViewState>('fa-selection', {
+                          token: res.stepUpToken,
+                          amr: res.amr ?? [],
+                          allowTrustDevice,
+                      })
+                    : res
+            );
     };
 
     return (
@@ -210,7 +208,7 @@ export const LoginWithPasswordView = ({
                         'login'
                     )
                 }
-                onSuccess={res => onSuccess({ name: 'login', ...res })}
+                onSuccess={onSuccess}
                 onError={onError}
             />
             <Alternative>

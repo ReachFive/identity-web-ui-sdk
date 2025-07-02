@@ -4,7 +4,7 @@ import React, { useCallback, useLayoutEffect, useState } from 'react';
 
 import { type PhoneNumberOptions } from './fields/phoneNumberField';
 import { createForm } from './formComponent';
-import { UserAgreementStyle } from './formControlsComponent';
+import { UserAggreementStyle } from './formControlsComponent';
 import { buildFormFields, type Field } from './formFieldFactory';
 
 import { getCaptchaHandler, type WithCaptchaToken } from '../../components/captcha';
@@ -67,7 +67,7 @@ export const PasswordSignupForm = ({
     signupFields = ['given_name', 'family_name', 'email', 'password', 'password_confirmation'],
     userAgreement,
     onError = (() => {}) as OnError,
-    onSuccess = (() => {}) satisfies OnSuccess,
+    onSuccess = (() => {}) as OnSuccess,
 }: PasswordSignupFormProps) => {
     const coreClient = useReachfive();
     const config = useConfig();
@@ -121,9 +121,9 @@ export const PasswordSignupForm = ({
               {
                   staticContent: (
                       <MarkdownContent
-                          key="user-agreement"
-                          data-testid="user-agreement"
-                          root={UserAgreementStyle}
+                          key="user-aggreement"
+                          data-testid="user-aggreement"
+                          root={UserAggreementStyle}
                           source={userAgreement}
                       />
                   ),
@@ -155,9 +155,7 @@ export const PasswordSignupForm = ({
                 }}
                 handler={data => handleCaptcha(data, 'signup')}
                 captchaFox={captchaFox}
-                onSuccess={authResult => {
-                    onSuccess({ name: 'signup', authResult });
-                }}
+                onSuccess={onSuccess}
                 onError={onError}
             />
         </>

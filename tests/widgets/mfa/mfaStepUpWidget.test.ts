@@ -10,7 +10,7 @@ import 'jest-styled-components';
 
 import { Client } from '@reachfive/identity-core';
 import { I18nMessages } from '../../../src/core/i18n';
-import type { Config, OnError, OnSuccess } from '../../../src/types';
+import { Config } from '../../../src/types';
 import mfaStepUpWidget from '../../../src/widgets/stepUp/mfaStepUpWidget';
 
 const defaultConfig: Config = {
@@ -55,8 +55,8 @@ describe('DOM testing', () => {
     const startPasswordless = jest.fn<Client['startPasswordless']>();
     const verifyMfaPasswordless = jest.fn<Client['verifyMfaPasswordless']>();
 
-    const onError = jest.fn<OnError>();
-    const onSuccess = jest.fn<OnSuccess>();
+    const onError = jest.fn();
+    const onSuccess = jest.fn();
 
     beforeEach(() => {
         replaceMock.mockClear();
@@ -142,13 +142,7 @@ describe('DOM testing', () => {
             )
         );
 
-        expect(onSuccess).toBeCalledWith(
-            expect.objectContaining({
-                name: 'login_2nd_step',
-                authResult: expect.objectContaining({}),
-                authType: 'sms',
-            })
-        );
+        expect(onSuccess).toBeCalled();
         expect(onError).not.toBeCalled();
 
         await waitFor(() =>
@@ -215,8 +209,8 @@ describe('DOM testing', () => {
             });
             startPasswordless.mockResolvedValue({
                 challengeId: myChallengeId,
-            });
-            verifyMfaPasswordless.mockResolvedValue({});
+            }),
+                verifyMfaPasswordless.mockResolvedValue({});
         });
 
         test('showStepUpStart: false', async () => {

@@ -99,7 +99,7 @@ const NewPasskey = ({
     };
 
     const handleSuccess = () => {
-        onSuccess({ name: 'webauthn_reset' });
+        onSuccess();
         goTo('passkey-success');
     };
 
@@ -176,7 +176,7 @@ export const NewPasswordView = ({
     };
 
     const handleSuccess = () => {
-        onSuccess({ name: 'password_changed' });
+        onSuccess();
         goTo('password-success');
     };
 
