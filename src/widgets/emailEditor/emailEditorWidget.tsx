@@ -128,7 +128,6 @@ const MainView = ({
                 onSuccess={handleSuccess}
                 onError={onError}
             />
-            {captchaFox.render()}
         </div>
     );
 };
