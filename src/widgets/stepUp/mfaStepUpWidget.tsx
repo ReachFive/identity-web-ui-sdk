@@ -1,5 +1,5 @@
 import { AuthOptions, MFA, PasswordlessResponse } from '@reachfive/identity-core';
-import { PasswordlessParams } from '@reachfive/identity-core/es/main/oAuthClient';
+import { StepUpPasswordlessParams } from '@reachfive/identity-core/es/main/oAuthClient';
 import React, { useCallback, useEffect, useState } from 'react';
 
 import type { OnError, OnSuccess, Prettify, RequiredProperty } from '../../types';
@@ -57,15 +57,15 @@ const VerificationCodeInputForm = createForm<
     },
 });
 
-type StartPasswordlessFormData = {
-    authType: PasswordlessParams['authType'];
+type StepUpFormData = {
+    authType: StepUpPasswordlessParams['authType'];
 };
 
-type StartPasswordlessFormProps = {
+type StepUpFormProps = {
     options: Parameters<typeof radioboxField>[0]['options'];
 };
 
-const StartPasswordlessForm = createForm<StartPasswordlessFormData, StartPasswordlessFormProps>({
+const StepUpForm = createForm<StepUpFormData, StepUpFormProps>({
     prefix: 'r5-mfa-start-passwordless',
     fields({ options }) {
         return [
@@ -122,8 +122,8 @@ export interface MainViewProps {
 export const MainView = ({
     accessToken,
     auth,
-    onError = (() => {}) as OnSuccess,
-    onSuccess = (() => {}) as OnError,
+    onError = (() => {}) as OnError,
+    onSuccess = (() => {}) as OnSuccess,
     showIntro = true,
     showStepUpStart = true,
     allowTrustDevice = false,
@@ -133,19 +133,19 @@ export const MainView = ({
 
     const [response, setResponse] = useState<MFA.StepUpResponse | undefined>();
 
-    const onGetStepUpToken = useCallback(
-        () =>
-            coreClient
-                .getMfaStepUpToken({
-                    options: auth,
-                    accessToken: accessToken,
-                })
-                .then(res => {
-                    setResponse(res);
-                    return res;
-                }),
-        [accessToken, auth, coreClient]
-    );
+    const onGetStepUpToken = useCallback(async () => {
+        try {
+            const res = await coreClient.getMfaStepUpToken({
+                options: auth,
+                accessToken: accessToken,
+            });
+            setResponse(res);
+            return res;
+        } catch (error) {
+            onError(error);
+            throw error;
+        }
+    }, [accessToken, auth, coreClient]);
 
     useEffect(() => {
         if (!showStepUpStart) {
@@ -204,7 +204,7 @@ export type FaSelectionViewProps = Prettify<
 // Unlike single factor authentication, StepUp request always returns a challengeId
 type StepUpResponse = RequiredProperty<PasswordlessResponse, 'challengeId'>;
 
-type StepUpHandlerResponse = StepUpResponse & StartPasswordlessFormData;
+type StepUpHandlerResponse = StepUpResponse & StepUpFormData;
 
 export const FaSelectionView = (props: FaSelectionViewProps) => {
     const coreClient = useReachfive();
@@ -222,7 +222,7 @@ export const FaSelectionView = (props: FaSelectionViewProps) => {
     const [response, setResponse] = useState<StepUpHandlerResponse | undefined>();
 
     const onChooseFa = useCallback(
-        (factor: StartPasswordlessFormData): Promise<void> =>
+        (factor: StepUpFormData): Promise<void> =>
             coreClient.startPasswordless({ ...factor, stepUp: token }).then(resp =>
                 setResponse({
                     ...(resp as StepUpResponse),
@@ -234,7 +234,7 @@ export const FaSelectionView = (props: FaSelectionViewProps) => {
 
     useEffect(() => {
         if (amr.length === 1) {
-            onChooseFa({ authType: amr[0] as PasswordlessParams['authType'] });
+            onChooseFa({ authType: amr[0] as StepUpPasswordlessParams['authType'] }).catch(onError);
         }
     }, [amr, onChooseFa]);
 
@@ -254,7 +254,7 @@ export const FaSelectionView = (props: FaSelectionViewProps) => {
         return (
             <div>
                 {showIntro && <Intro>{i18n('mfa.select.factor')}</Intro>}
-                <StartPasswordlessForm
+                <StepUpForm
                     options={amr.map(factor => ({ key: factor, value: factor, label: factor }))}
                     handler={onChooseFa}
                     onError={onError}
@@ -315,7 +315,10 @@ export const VerificationCodeView = (props: VerificationCodeViewProps) => {
                 trustDevice: data.trustDevice,
             })
             .then(resp => {
-                onSuccess();
+                onSuccess({ name: 'login_2nd_step', authType, authResult: resp });
+                if (data.trustDevice) {
+                    onSuccess({ name: 'mfa_trusted_device_added' });
+                }
                 // @ts-expect-error AuthResult is too complex and is not representative of the real response of this request
                 window.location.replace((auth?.redirectUri ?? '') + '?' + toQueryString(resp));
             });

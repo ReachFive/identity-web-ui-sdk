@@ -22,7 +22,7 @@ import { useReachfive } from '../../../contexts/reachfive';
 import { useRouting } from '../../../contexts/routing';
 import { useSession } from '../../../contexts/session';
 
-import { specializeIdentifierData } from '../../../helpers/utils';
+import { enrichLoginEvent, specializeIdentifierData } from '../../../helpers/utils';
 
 import type { OnError, OnSuccess } from '../../../types';
 
@@ -309,8 +309,8 @@ export const LoginView = ({
     }, [coreClient, auth, allowWebAuthnLogin, signal]);
 
     const callback = (data: WithCaptchaToken<LoginFormData>) => {
-        const { auth: dataAuth, ...specializedData } =
-            specializeIdentifierData<LoginWithPasswordParams>(data);
+        const specializedIdentifierData = specializeIdentifierData<LoginWithPasswordParams>(data);
+        const { auth: dataAuth, ...specializedData } = specializedIdentifierData;
         return coreClient
             .loginWithPassword({
                 ...specializedData,
@@ -319,15 +319,16 @@ export const LoginView = ({
                     ...auth,
                 },
             })
-            .then(res =>
-                res?.stepUpToken
-                    ? goTo<FaSelectionViewState>('fa-selection', {
-                          token: res.stepUpToken,
-                          amr: res.amr ?? [],
-                          allowTrustDevice,
-                      })
-                    : res
-            );
+            .then(res => {
+                if (res?.stepUpToken) {
+                    goTo<FaSelectionViewState>('fa-selection', {
+                        token: res.stepUpToken,
+                        amr: res.amr ?? [],
+                        allowTrustDevice,
+                    });
+                }
+                return enrichLoginEvent(res, 'password', specializedIdentifierData);
+            });
     };
 
     const defaultIdentifier = session?.lastLoginType === 'password' ? session.email : undefined;
@@ -336,7 +337,13 @@ export const LoginView = ({
         <div>
             <Heading>{i18n('login.title')}</Heading>
             {socialProviders && socialProviders.length > 0 && (
-                <SocialButtons providers={socialProviders} auth={auth} acceptTos={acceptTos} />
+                <SocialButtons
+                    providers={socialProviders}
+                    auth={auth}
+                    acceptTos={acceptTos}
+                    onSuccess={onSuccess}
+                    onError={onError}
+                />
             )}
             {socialProviders && socialProviders.length > 0 && <Separator text={i18n('or')} />}
             <LoginForm
@@ -356,7 +363,10 @@ export const LoginView = ({
                         'login'
                     )
                 }
-                onSuccess={onSuccess}
+                onSuccess={res => {
+                    console.log('Auth result');
+                    onSuccess({ name: 'login', ...res });
+                }}
                 onError={onError}
             />
             {allowSignup && (

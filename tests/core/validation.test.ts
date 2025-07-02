@@ -144,7 +144,7 @@ describe('CompoundValidator', () => {
 
 describe('helpers', () => {
     describe('isValidatorError', () => {
-        it('should match VaildatorError', () => {
+        it('should match ValidatorError', () => {
             expect(isValidatorError({ valid: false, error: 'validation.error' })).toBeTruthy();
             expect(isValidatorError({ valid: true })).toBeFalsy();
         });

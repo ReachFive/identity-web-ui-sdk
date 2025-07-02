@@ -1,6 +1,6 @@
 /**
- * @reachfive/identity-ui - v1.35.0
- * Compiled Fri, 13 Jun 2025 14:08:44 UTC
+ * @reachfive/identity-ui - v1.34.1
+ * Compiled Fri, 27 Jun 2025 18:50:42 UTC
  *
  * Copyright (c) ReachFive.
  *
@@ -8,13 +8,199 @@
  * LICENSE file in the root directory of this source tree.
  **/
 import * as _reachfive_identity_core from '@reachfive/identity-core';
-import { Config as Config$1, RemoteSettings, ConsentVersions, CustomField, Client as Client$1, SessionInfo, ConsentType, PasswordStrengthScore, PasswordPolicy, CustomFieldType, MFA, AuthOptions, PasswordlessResponse, Profile, SingleFactorPasswordlessParams, UserConsent, DeviceCredential } from '@reachfive/identity-core';
+import { AuthResult, SingleFactorPasswordlessParams, StepUpPasswordlessParams, MFA, TrustedDevice, Config as Config$1, RemoteSettings, ConsentVersions, CustomField, Client as Client$1, SessionInfo, ConsentType, PasswordStrengthScore, PasswordPolicy, CustomFieldType, AuthOptions, PasswordlessResponse, Profile, UserConsent, DeviceCredential } from '@reachfive/identity-core';
 export { Config } from '@reachfive/identity-core';
 import * as React from 'react';
 import React__default, { CSSProperties, ComponentType } from 'react';
-import { PasswordlessParams } from '@reachfive/identity-core/es/main/oAuthClient';
+import { StepUpPasswordlessParams as StepUpPasswordlessParams$1 } from '@reachfive/identity-core/es/main/oAuthClient';
 import { Country, Value as Value$2 } from 'react-phone-number-input';
 import * as libphonenumber_js from 'libphonenumber-js';
+
+type IdentifierType = 'email' | 'phone_number' | 'custom_identifier'
+
+type AuthType = SingleFactorPasswordlessParams['authType'] | 'password' | 'webauthn' | 'social'
+
+interface AbstractEvent {
+    readonly name: string
+}
+
+/** Emitted after a successful signup. */
+interface SignupEvent extends AbstractEvent {
+    readonly name: 'signup'
+    readonly authResult: AuthResult
+}
+
+/** Emitted after a successful authentication. */
+interface LoginEvent extends AbstractEvent {
+    readonly name: 'login'
+    readonly authResult: AuthResult
+    readonly identifierType?: IdentifierType
+    readonly authType: AuthType
+}
+
+interface SocialLoginEvent extends AbstractEvent {
+    readonly name: 'social_login'
+    readonly provider: string
+}
+
+/** Emitted after a successful email update. */
+interface EmailUpdatedEvent extends AbstractEvent {
+    readonly name: 'email_updated'
+}
+
+/** Emitted after a successful phone number update. */
+interface PhoneNumberUpdatedEvent extends AbstractEvent {
+    readonly name: 'phone_number_updated'
+}
+
+/** Emitted after a successful user update. */
+interface UserUpdatedEvent extends AbstractEvent {
+    readonly name: 'user_updated'
+}
+
+/** Emitted after a successful password change. */
+interface PasswordChangedEvent extends AbstractEvent {
+    readonly name: 'password_changed'
+}
+
+/** Emitted after a successful password reset request. */
+interface PasswordResetRequestedEvent extends AbstractEvent {
+    readonly name: 'password_reset_requested'
+}
+
+/** Emitted after a successful password reset process. */
+interface PasswordResetEvent extends AbstractEvent {
+    readonly name: 'password_reset'
+}
+
+interface AccountRecoveryEvent extends AbstractEvent {
+    readonly name: 'account_recovery'
+}
+
+/** Emitted after a one-time password (otp) is successfully sent (via sms or email) for verification. */
+interface OtpSentEvent extends AbstractEvent {
+    readonly name: 'otp_sent'
+    readonly authType: SingleFactorPasswordlessParams['authType']
+}
+
+/** Emitted after the user has successfully logged in using the Two-factor authentication (2FA) flow. */
+interface Login2ndStepEvent extends AbstractEvent {
+    readonly name: 'login_2nd_step'
+    readonly authType: StepUpPasswordlessParams['authType']
+    readonly authResult: AuthResult
+}
+
+/** Emitted after an email is used to start the MFA registration process. */
+interface MfaEmailStartRegistration extends AbstractEvent {
+    readonly name: 'mfa_email_start_registration'
+}
+
+/** Emitted after an email has been verified as an MFA credential. */
+interface MfaEmailVerifyRegistration extends AbstractEvent {
+    readonly name: 'mfa_email_verify_registration'
+}
+
+/** Emitted after a phone number is used to start the MFA registration process. */
+interface MfaPhoneNumberStartRegistration extends AbstractEvent {
+    readonly name: 'mfa_phone_number_start_registration'
+}
+
+/** Emitted after a phone number has been verified as an MFA credential. */
+interface MfaPhoneNumberVerifyRegistration extends AbstractEvent {
+    readonly name: 'mfa_phone_number_verify_registration'
+}
+
+/** Emitted after a list of MFA credentials was successfully listed. */
+interface MfaCredentialsListedEvent extends AbstractEvent {
+    readonly name: 'mfa_credentials_listed'
+    readonly credentials: MFA.Credential[]
+}
+
+/** Emitted after an MFA credential (phone number) is deleted. */
+interface MfaPhoneNumberDeletedEvent extends AbstractEvent {
+    readonly name: 'mfa_phone_number_deleted'
+}
+
+/** Emitted after an MFA credential (email) is deleted. */
+interface MfaEmailDeletedEvent extends AbstractEvent {
+    readonly name: 'mfa_email_deleted'
+}
+
+/** Emitted after a successful mobile number verification. */
+interface PhoneNumberVerifiedEvent extends AbstractEvent {
+    readonly name: 'phone_number_verified'
+    readonly phoneNumber: string
+}
+
+/** Emitted after a passkey was successfully reset. */
+interface WebauthnResetEvent extends AbstractEvent {
+    readonly name: 'webauthn_reset'
+}
+
+/** Emitted after a passkey was successfully created. */
+interface WebauthnCredentialCreatedEvent extends AbstractEvent {
+    readonly name: 'webauthn_credential_created'
+    readonly friendlyName: string
+}
+
+/** Emitted after a passkey was successfully deleted */
+interface WebauthnCredentialDeletedEvent extends AbstractEvent {
+    readonly name: 'webauthn_credential_deleted'
+    readonly deviceId: string
+}
+
+/** Emitted after a successful unlink identity. */
+interface SocialIdentityUnlinkedEvent extends AbstractEvent {
+    readonly name: 'unlink'
+    readonly identityId: string
+}
+
+/** Emitted after trusted devices has been listed. */
+interface WebAuthnDevicesListedEvent extends AbstractEvent {
+    readonly name: 'mfa_trusted_device_listed'
+    readonly devices: TrustedDevice[]
+}
+
+/** Emitted after a device has been added as a trusted device. */
+interface MfaTrustedDeviceAddedEvent extends AbstractEvent {
+    readonly name: 'mfa_trusted_device_added'
+    readonly device: TrustedDevice
+}
+
+/** Emitted after a device has been removed as a trusted device. */
+interface MfaTrustedDeviceDeletedEvent extends AbstractEvent {
+    readonly name: 'mfa_trusted_device_deleted'
+    readonly device: TrustedDevice
+}
+
+type SuccessEvent =
+    | SignupEvent
+    | LoginEvent
+    | SocialLoginEvent
+    | EmailUpdatedEvent
+    | PhoneNumberUpdatedEvent
+    | UserUpdatedEvent
+    | AccountRecoveryEvent
+    | OtpSentEvent
+    | Login2ndStepEvent
+    | PasswordChangedEvent
+    | PasswordResetRequestedEvent
+    | PasswordResetEvent
+    | MfaCredentialsListedEvent
+    | MfaEmailStartRegistration
+    | MfaEmailVerifyRegistration
+    | MfaPhoneNumberStartRegistration
+    | MfaPhoneNumberVerifyRegistration
+    | MfaPhoneNumberDeletedEvent
+    | MfaEmailDeletedEvent
+    | PhoneNumberVerifiedEvent
+    | WebauthnResetEvent
+    | WebauthnCredentialCreatedEvent
+    | WebauthnCredentialDeletedEvent
+    | SocialIdentityUnlinkedEvent
+    | WebAuthnDevicesListedEvent
+    | MfaTrustedDeviceAddedEvent
+    | MfaTrustedDeviceDeletedEvent
 
 type Prettify<T> = {
     [K in keyof T]: T[K];
@@ -28,7 +214,7 @@ type RecursivePartial<T> = {
  * From T, make optional a set of properties whose keys are in the union K
  * @example Optional<{ firstname: string, lastname: string }, 'lastname'> // => { firstname: string, lastname?: string }
  */
-type Optional<T, K extends keyof T> = Pick<Partial<T>, K> & Omit<T, K>;
+type Optional<T, K extends keyof T> = Pick<Partial<T>, K> & Omit<T, K>
 
 type RequiredProperty<T, K extends keyof T> = T & {
     [P in K]-?: T[P];
@@ -40,7 +226,7 @@ type CustomFields = { customFields?: CustomField[] };
 
 type Config = Config$1 & RemoteSettings & ConsentsVersions & CustomFields;
 
-type OnSuccess = (...args: any[]) => void;
+type OnSuccess = (event: SuccessEvent) => void;
 
 type OnError = (error?: unknown) => void;
 
@@ -288,16 +474,16 @@ declare class CompoundValidator<T, C = {}> {
     create(i18n: I18nResolver): ValidatorInstance<T, C>;
     and(validator: Validator<T, C> | CompoundValidator<T, C>): CompoundValidator<T, C>;
 }
-type VaildatorError<Extra = {}> = {
+type ValidatorError<Extra = {}> = {
     valid: false;
     error?: string;
 } & Extra;
 type ValidatorSuccess<Extra = {}> = {
     valid: true;
 } & Extra;
-type ValidatorResult<Extra = {}> = VaildatorError<Extra> | ValidatorSuccess<Extra>;
+type ValidatorResult<Extra = {}> = ValidatorError<Extra> | ValidatorSuccess<Extra>;
 type ValidatorInstance<T, C, Extra = {}> = (value: T, ctx: C) => Promise<ValidatorResult<Extra>>;
-type RuleResult<E = {}> = boolean | ValidatorSuccess<E> | VaildatorError<E>;
+type RuleResult<E = {}> = boolean | ValidatorSuccess<E> | ValidatorError<E>;
 type Rule<T, C, E = {}> = (value: T, ctx: C) => RuleResult<E> | Promise<RuleResult<E>>;
 type Hint<T> = (value: T) => string | undefined;
 interface ValidatorOptions<T, C, E = {}> {
@@ -478,7 +664,7 @@ type PhoneNumberOptions = {
     defaultCountry?: Country;
     /**
      * If country is specified then the phone number can only be input in "national" (not "international") format,
-     * and will be parsed as a phonenumber belonging to the country.
+     * and will be parsed as a phone number belonging to the country.
      */
     country?: Country;
     /**
@@ -609,8 +795,8 @@ declare const predefinedFields: {
  */
 type Field = PredefinedFieldOptions | CustomFieldOptions | ConsentFieldOptions;
 
-type StartPasswordlessFormData = {
-    authType: PasswordlessParams['authType'];
+type StepUpFormData = {
+    authType: StepUpPasswordlessParams$1['authType'];
 };
 interface MainViewProps$5 {
     /**
@@ -669,7 +855,7 @@ type FaSelectionViewProps = Prettify<Partial<MFA.StepUpResponse> & {
     onError?: OnError;
 }>;
 type StepUpResponse = RequiredProperty<PasswordlessResponse, 'challengeId'>;
-type StepUpHandlerResponse = StepUpResponse & StartPasswordlessFormData;
+type StepUpHandlerResponse = StepUpResponse & StepUpFormData;
 type VerificationCodeViewState = Prettify<StepUpHandlerResponse>;
 type VerificationCodeViewProps$3 = Prettify<Partial<StepUpHandlerResponse> & {
     /**
@@ -1154,15 +1340,22 @@ interface MainViewProps$4 {
 interface EmailEditorWidgetProps extends MainViewProps$4 {
 }
 
-interface MainViewProps$3 {
+type CredentialsProviderProps = {
     /**
      * The authorization credential JSON Web Token (JWT) used to access the ReachFive API, less than five minutes old.
      */
     accessToken: string;
     /**
-     * The user’s MFA credentials
+     * The user's MFA credentials
      */
-    credentials: MFA.CredentialsResponse['credentials'];
+    credentials: MFA.Credential[];
+};
+
+interface MainViewProps$3 {
+    /**
+     * The authorization credential JSON Web Token (JWT) used to access the ReachFive API, less than five minutes old.
+     */
+    accessToken: string;
     /**
      * Boolean to enable (`true`) or disable (`false`) whether the option to remove MFA credentials are displayed.
      *
@@ -1185,6 +1378,10 @@ interface MainViewProps$3 {
      * Phone number field options.
      */
     phoneNumberOptions?: PhoneNumberOptions;
+    /**
+     * Callback function called when the request has succeed.
+     */
+    onSuccess?: OnSuccess;
     /**
      * Callback function called when the request has failed.
      */
@@ -1217,10 +1414,7 @@ interface VerificationCodeViewProps$2 {
      */
     allowTrustDevice?: boolean;
 }
-interface CredentialRegisteredViewProps {
-}
-type CredentialRemovedViewProps = {};
-type MfaCredentialsProps = Prettify<MainViewProps$3 & CredentialRegisteredViewProps & VerificationCodeViewProps$2 & CredentialRemovedViewProps>;
+type MfaCredentialsProps = Prettify<MainViewProps$3 & VerificationCodeViewProps$2 & CredentialsProviderProps>;
 type MfaCredentialsWidgetProps = Prettify<Omit<MfaCredentialsProps, 'credentials' | 'profileIdentifiers'>>;
 
 type MfaListWidgetProps = {
@@ -1414,6 +1608,10 @@ interface MainViewProps {
      * Callback function called when the request has failed.
      */
     onError?: OnError;
+    /**
+     * Callback function called when the request has succeeded
+     */
+    onSuccess?: OnSuccess;
 }
 type VerificationCodeViewProps = {
     /**

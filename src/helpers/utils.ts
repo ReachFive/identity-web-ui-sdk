@@ -1,6 +1,11 @@
-import { LoginWithPasswordParams, LoginWithWebAuthnParams } from '@reachfive/identity-core';
+import {
+    AuthResult,
+    LoginWithPasswordParams,
+    LoginWithWebAuthnParams,
+} from '@reachfive/identity-core';
 import { intlFormat } from 'date-fns';
 import * as libphonenumber from 'libphonenumber-js';
+import type { AuthType, IdentifierType, LoginEventWrappingObject } from '../types';
 
 const CHARS = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
@@ -85,6 +90,28 @@ type IdentifierData<T extends LoginWithPasswordParams | LoginWithWebAuthnParams>
     T extends LoginWithPasswordParams
         ? LoginWithPasswordParams | IdentifierLoginPassword
         : LoginWithWebAuthnParams | IdentifierLoginWithWebAuthn;
+
+export function enrichLoginEvent<T extends LoginWithPasswordParams | LoginWithWebAuthnParams>(
+    authResult: AuthResult,
+    authType: AuthType,
+    data?: T
+): LoginEventWrappingObject {
+    switch (authType) {
+        case 'password':
+        case 'webauthn':
+            const identifierType: IdentifierType =
+                data != undefined
+                    ? 'email' in data
+                        ? 'email'
+                        : 'phoneNumber' in data
+                          ? 'phone_number'
+                          : 'custom_identifier'
+                    : 'email';
+            return { authResult, authType, identifierType };
+        default:
+            return { authResult, authType };
+    }
+}
 
 export const specializeIdentifier = (identifier: string): SpecializedIdentifier =>
     isValidEmail(identifier)

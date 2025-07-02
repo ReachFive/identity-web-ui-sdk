@@ -12,7 +12,7 @@ import { type Client } from '@reachfive/identity-core';
 
 import { type I18nMessages } from '../../../src/core/i18n';
 import { UserError } from '../../../src/helpers/errors';
-import type { Config } from '../../../src/types';
+import type { Config, OnError, OnSuccess } from '../../../src/types';
 
 import webAuthnDevicesWidget from '../../../src/widgets/webAuthn/webAuthnDevicesWidget';
 
@@ -50,8 +50,8 @@ describe('DOM testing', () => {
     const addNewWebAuthnDevice = jest.fn<Client['addNewWebAuthnDevice']>();
     const removeWebAuthnDevice = jest.fn<Client['removeWebAuthnDevice']>();
 
-    const onError = jest.fn();
-    const onSuccess = jest.fn();
+    const onError = jest.fn<OnError>();
+    const onSuccess = jest.fn<OnSuccess>();
 
     beforeEach(() => {
         confirmMock.mockClear();
@@ -177,7 +177,12 @@ describe('DOM testing', () => {
             const devicesAfterRemove = screen.queryAllByTestId('device');
             expect(devicesAfterRemove).toHaveLength(1);
 
-            expect(onSuccess).toBeCalled();
+            expect(onSuccess).toBeCalledWith(
+                expect.objectContaining({
+                    friendlyName: 'myNewDevice',
+                    name: 'webauthn_credential_created',
+                })
+            );
             expect(onError).not.toBeCalled();
         });
 

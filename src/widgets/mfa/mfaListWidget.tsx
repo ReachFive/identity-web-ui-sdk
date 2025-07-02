@@ -1,5 +1,5 @@
 import { MFA } from '@reachfive/identity-core';
-import React, { useEffect } from 'react';
+import React from 'react';
 
 import { createWidget } from '../../components/widget/widget';
 
@@ -21,6 +21,11 @@ import { useI18n } from '../../contexts/i18n';
 import { useReachfive } from '../../contexts/reachfive.tsx';
 import { dateFormat } from '../../helpers/utils.ts';
 import { OnError, OnSuccess } from '../../types';
+import {
+    CredentialsProviderProps,
+    useCredentials,
+    withCredentials,
+} from './contexts/credentials.tsx';
 
 const credentialIconByType = (type: MFA.CredentialsResponse['credentials'][number]['type']) => {
     switch (type) {
@@ -106,116 +111,113 @@ const DeleteButton = ({
     );
 };
 
-export const MfaList = ({
-    accessToken,
-    showRemoveMfaCredential,
-    onError = (() => {}) as OnError,
-    onSuccess = (() => {}) as OnSuccess,
-}: MfaListProps) => {
-    const [isOpen, setIsOpen] = React.useState(false);
-    const [loading, setLoading] = React.useState(true);
-    const [deleteConfirmationTitle, setDeleteConfirmationTitle] = React.useState('');
-    const [credentials, setCredentials] = React.useState<MFA.Credential[]>([]);
-    const i18n = useI18n();
-    const config = useConfig();
-    const client = useReachfive();
+export const MfaList = withCredentials(
+    ({
+        accessToken,
+        showRemoveMfaCredential,
+        onError = (() => {}) as OnError,
+        onSuccess = (() => {}) as OnSuccess,
+    }: MfaListProps) => {
+        const [isOpen, setIsOpen] = React.useState(false);
+        const [loading, setLoading] = React.useState(false);
+        const [deleteConfirmationTitle, setDeleteConfirmationTitle] = React.useState('');
+        const i18n = useI18n();
+        const config = useConfig();
+        const client = useReachfive();
+        const { credentials, refresh } = useCredentials();
 
-    const fetchMfaCredentials = () => {
-        setLoading(true);
-        client
-            .listMfaCredentials(accessToken)
-            .then(mfaCredentialsResponse => {
-                setCredentials(mfaCredentialsResponse.credentials);
-                onSuccess(mfaCredentialsResponse);
-            })
-            .catch(onError)
-            .finally(() => setLoading(false));
-    };
+        const refreshCredentials = async () => {
+            setLoading(true);
+            try {
+                await refresh();
+            } catch (error) {
+                onError(error);
+            } finally {
+                setLoading(false);
+            }
+        };
 
-    useEffect(() => {
-        fetchMfaCredentials();
-    }, [accessToken]);
+        const onDelete = (credential: MFA.Credential) => {
+            switch (credential.type) {
+                case 'sms':
+                    client
+                        .removeMfaPhoneNumber({
+                            accessToken,
+                            phoneNumber: credential.phoneNumber,
+                        })
+                        .then(() => {
+                            refreshCredentials();
+                            onSuccess({ name: 'mfa_phone_number_deleted' });
+                        })
+                        .catch(onError);
+                    break;
+                case 'email':
+                    client
+                        .removeMfaEmail({ accessToken })
+                        .then(() => {
+                            refreshCredentials();
+                            onSuccess({ name: 'mfa_email_deleted' });
+                        })
+                        .catch(onError);
+                    break;
+            }
+        };
 
-    const onDelete = (credential: MFA.Credential) => {
-        switch (credential.type) {
-            case 'sms':
-                client
-                    .removeMfaPhoneNumber({
-                        accessToken,
-                        phoneNumber: credential.phoneNumber,
-                    })
-                    .then(resp => {
-                        fetchMfaCredentials();
-                        onSuccess(resp);
-                    })
-                    .catch(onError);
-                break;
-            case 'email':
-                client
-                    .removeMfaEmail({ accessToken })
-                    .then(resp => {
-                        fetchMfaCredentials();
-                        onSuccess(resp);
-                    })
-                    .catch(onError);
-                break;
+        if (loading) {
+            return <LoaderCircle className="animate-spin" />;
         }
-    };
 
-    if (loading) {
-        return <LoaderCircle className="animate-spin" />;
-    }
-
-    return (
-        <div>
-            {credentials.length === 0 && (
-                <div className="mb-1 text-center text-textColor">
-                    {i18n('mfaList.noCredentials')}
-                </div>
-            )}
-            {credentials.map((credential, _) => (
-                <div
-                    id={`credential-${credential.friendlyName}`}
-                    data-testid="credential"
-                    key={`credential-${credential.friendlyName}`}
-                    className={`flex flex-col ${isOpen ? 'opacity-15' : ''}`}
-                >
-                    <div className="flex flex-row items-center rounded">
-                        <div className="box-border flex flex-row items-center align-middle border border-solid rounded basis-full whitespace-nowrap p-generic">
-                            {credentialIconByType(credential.type)}
-                            <div className="ml-innerBlock w-max justify-items-stretch text-textColor">
-                                <div className="font-bold">{credential.friendlyName}</div>
-                                <div>
-                                    {MFA.isEmailCredential(credential)
-                                        ? credential.email
-                                        : MFA.isPhoneCredential(credential)
-                                          ? credential.phoneNumber
-                                          : 'N/A'}
-                                </div>
-                                <div>
-                                    <span>{i18n('mfaList.createdAt')}&nbsp;: </span>
-                                    <time dateTime={credential.createdAt}>
-                                        {dateFormat(credential.createdAt, config.language)}
-                                    </time>
+        return (
+            <div>
+                {credentials.length === 0 && (
+                    <div className="mb-1 text-center text-textColor">
+                        {i18n('mfaList.noCredentials')}
+                    </div>
+                )}
+                {credentials.map((credential, _) => (
+                    <div
+                        id={`credential-${credential.friendlyName}`}
+                        data-testid="credential"
+                        key={`credential-${credential.friendlyName}`}
+                        className={`flex flex-col ${isOpen ? 'opacity-15' : ''}`}
+                    >
+                        <div className="flex flex-row items-center rounded">
+                            <div className="box-border flex flex-row items-center align-middle border border-solid rounded basis-full whitespace-nowrap p-generic">
+                                {credentialIconByType(credential.type)}
+                                <div className="ml-innerBlock w-max justify-items-stretch text-textColor">
+                                    <div className="font-bold">{credential.friendlyName}</div>
+                                    <div>
+                                        {MFA.isEmailCredential(credential)
+                                            ? credential.email
+                                            : MFA.isPhoneCredential(credential)
+                                              ? credential.phoneNumber
+                                              : 'N/A'}
+                                    </div>
+                                    <div>
+                                        <span>{i18n('mfaList.createdAt')}&nbsp;: </span>
+                                        <time dateTime={credential.createdAt}>
+                                            {dateFormat(credential.createdAt, config.language)}
+                                        </time>
+                                    </div>
                                 </div>
                             </div>
+                            {showRemoveMfaCredential && (
+                                <DeleteButton
+                                    isOpen={isOpen}
+                                    setIsOpen={setIsOpen}
+                                    onDeleteCallback={onDelete}
+                                    deleteConfirmationTitle={deleteConfirmationTitle}
+                                    setDeleteConfirmationTitle={setDeleteConfirmationTitle}
+                                    credential={credential}
+                                />
+                            )}
                         </div>
-                        {showRemoveMfaCredential && (
-                            <DeleteButton
-                                isOpen={isOpen}
-                                setIsOpen={setIsOpen}
-                                onDeleteCallback={onDelete}
-                                deleteConfirmationTitle={deleteConfirmationTitle}
-                                setDeleteConfirmationTitle={setDeleteConfirmationTitle}
-                                credential={credential}
-                            />
-                        )}
                     </div>
-                </div>
-            ))}
-        </div>
-    );
-};
+                ))}
+            </div>
+        );
+    }
+);
 
 export type MfaListWidgetProps = {
     /**
@@ -236,6 +238,22 @@ export type MfaListWidgetProps = {
     showRemoveMfaCredential?: boolean;
 };
 
-export default createWidget<MfaListWidgetProps, MfaListProps>({
+export default createWidget<MfaListWidgetProps, MfaListProps & CredentialsProviderProps>({
     component: MfaList,
+    prepare: async (options, { apiClient }) => {
+        try {
+            const { credentials } = await apiClient.listMfaCredentials(options.accessToken);
+            options.onSuccess?.({
+                name: 'mfa_credentials_listed',
+                credentials,
+            });
+            return {
+                ...options,
+                credentials,
+            };
+        } catch (error) {
+            options.onError?.(error);
+            throw error;
+        }
+    },
 });
