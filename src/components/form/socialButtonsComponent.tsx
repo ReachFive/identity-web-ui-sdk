@@ -164,7 +164,13 @@ export const SocialButtons = styled(
             (provider: string) => {
                 coreClient
                     .loginWithSocialProvider(provider, auth)
-                    .then(() => onSuccess())
+                    .then(() => {
+                        onSuccess({
+                            name: 'login',
+                            authResult: { providerName: provider },
+                            authType: 'social',
+                        });
+                    })
                     .catch(onError);
             },
             [coreClient, auth]
