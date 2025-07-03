@@ -364,7 +364,6 @@ export const LoginView = ({
                     )
                 }
                 onSuccess={res => {
-                    console.log('Auth result');
                     onSuccess({ name: 'login', ...res });
                 }}
                 onError={onError}

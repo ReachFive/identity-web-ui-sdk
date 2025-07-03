@@ -40,7 +40,7 @@
         "classnames": "^2.3.2",
         "clsx": "^2.1.1",
         "date-fns": "^4.1.0",
-        "libphonenumber-js": "^1.12.5",
+        "libphonenumber-js": "^1.12.9",
         "lucide-react": "^0.475.0",
         "marked": "^15.0.6",
         "radix-ui": "^1.1.2",
