@@ -14,7 +14,11 @@ import { useReachfive } from '../../../contexts/reachfive';
 import { useRouting } from '../../../contexts/routing';
 import { useSession } from '../../../contexts/session';
 
-import { isCustomIdentifier, specializeIdentifierData } from '../../../helpers/utils';
+import {
+    enrichLoginEvent,
+    isCustomIdentifier,
+    specializeIdentifierData,
+} from '../../../helpers/utils';
 
 import type { OnError, OnSuccess } from '../../../types';
 
@@ -150,8 +154,9 @@ export const LoginWithWebAuthnView = ({
 
     const handleWebAuthnLogin = React.useCallback(
         (data: LoginWithWebAuthnFormData) => {
-            const { auth: dataAuth, ...identifier } =
+            const specializedIdentifierData =
                 specializeIdentifierData<LoginWithWebAuthnParams>(data);
+            const { auth: dataAuth, ...identifier } = specializedIdentifierData;
 
             if (isCustomIdentifier(identifier)) {
                 console.error('Custom identifier is not a valid WebAuthn identifier.');
@@ -160,13 +165,17 @@ export const LoginWithWebAuthnView = ({
                 );
             }
 
-            return coreClient.loginWithWebAuthn({
-                ...identifier,
-                auth: {
-                    ...dataAuth,
-                    ...auth,
-                },
-            });
+            return coreClient
+                .loginWithWebAuthn({
+                    ...identifier,
+                    auth: {
+                        ...dataAuth,
+                        ...auth,
+                    },
+                })
+                .then(res => {
+                    return enrichLoginEvent(res, 'webauthn', specializedIdentifierData);
+                });
         },
         [coreClient, auth]
     );
@@ -186,14 +195,20 @@ export const LoginWithWebAuthnView = ({
         <div>
             <Heading>{i18n('login.title')}</Heading>
             {socialProviders && socialProviders.length > 0 && (
-                <SocialButtons providers={socialProviders} auth={auth} acceptTos={acceptTos} />
+                <SocialButtons
+                    providers={socialProviders}
+                    auth={auth}
+                    acceptTos={acceptTos}
+                    onSuccess={onSuccess}
+                    onError={onError}
+                />
             )}
             {socialProviders && socialProviders.length > 0 && <Separator text={i18n('or')} />}
             <LoginWithWebAuthnForm
                 showLabels={showLabels}
                 defaultIdentifier={defaultIdentifier}
                 handler={handleWebAuthnLogin}
-                onSuccess={onSuccess}
+                onSuccess={res => onSuccess({ name: 'login', ...res })}
                 onError={onError}
                 showAccountRecovery={allowAccountRecovery}
                 SubmitComponent={({ disabled, onClick }) => (

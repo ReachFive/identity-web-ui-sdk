@@ -53,7 +53,7 @@ export type PhoneNumberOptions = {
     defaultCountry?: Country;
     /**
      * If country is specified then the phone number can only be input in "national" (not "international") format,
-     * and will be parsed as a phonenumber belonging to the country.
+     * and will be parsed as a phone number belonging to the country.
      */
     country?: Country;
     /**

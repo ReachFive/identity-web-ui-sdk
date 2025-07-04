@@ -11,7 +11,7 @@ import 'jest-styled-components';
 import { type Client } from '@reachfive/identity-core';
 
 import { type I18nMessages } from '../../../src/core/i18n';
-import type { Config } from '../../../src/types';
+import type { Config, OnError, OnSuccess } from '../../../src/types';
 
 import passwordlessWidget from '../../../src/widgets/passwordless/passwordlessWidget';
 
@@ -72,8 +72,8 @@ describe('DOM testing', () => {
     const startPasswordless = jest.fn<Client['startPasswordless']>();
     const verifyPasswordless = jest.fn<Client['verifyPasswordless']>();
 
-    const onError = jest.fn();
-    const onSuccess = jest.fn();
+    const onError = jest.fn<OnError>();
+    const onSuccess = jest.fn<OnSuccess>();
 
     beforeEach(() => {
         startPasswordless.mockClear();
@@ -137,7 +137,12 @@ describe('DOM testing', () => {
 
             expect(screen.queryByText('passwordless.emailSent')).toBeInTheDocument();
 
-            expect(onSuccess).toBeCalled();
+            expect(onSuccess).toBeCalledWith(
+                expect.objectContaining({
+                    authType: 'magic_link',
+                    name: 'otp_sent',
+                })
+            );
             expect(onError).not.toBeCalled();
         });
 
@@ -207,7 +212,12 @@ describe('DOM testing', () => {
                 })
             );
 
-            expect(onSuccess).toBeCalled();
+            expect(onSuccess).toBeCalledWith(
+                expect.objectContaining({
+                    authResult: expect.objectContaining({ accessToken: 'abcd1234' }),
+                    name: 'login',
+                })
+            );
             expect(onError).not.toBeCalled();
         });
 
@@ -257,8 +267,10 @@ describe('DOM testing', () => {
 
             expect(verifyPasswordless).toBeCalled();
 
-            expect(onSuccess).not.toBeCalled();
-            expect(onError).toBeCalledWith('Unexpected error');
+            await waitFor(async () => {
+                expect(onSuccess).not.toBeCalledWith(expect.objectContaining({ name: 'login' }));
+                expect(onError).toBeCalledWith('Unexpected error');
+            });
         });
     });
 });

@@ -4,7 +4,7 @@ import React from 'react';
 import { useReachfive } from '../../../contexts/reachfive';
 
 import { createForm } from '../../../components/form/formComponent';
-import { UserAggreementStyle } from '../../../components/form/formControlsComponent';
+import { UserAgreementStyle } from '../../../components/form/formControlsComponent';
 import { buildFormFields, type Field } from '../../../components/form/formFieldFactory';
 import { Alternative, Heading, Link, MarkdownContent } from '../../../components/miscComponent';
 import { useConfig } from '../../../contexts/config';
@@ -108,8 +108,8 @@ export const SignupWithWebAuthnView = ({
               {
                   staticContent: (
                       <MarkdownContent
-                          key="user-aggreement"
-                          root={UserAggreementStyle}
+                          key="user-agreement"
+                          root={UserAgreementStyle}
                           source={userAgreement}
                       />
                   ),
@@ -125,7 +125,7 @@ export const SignupWithWebAuthnView = ({
                 showLabels={showLabels}
                 beforeSubmit={beforeSignup}
                 handler={handleSignup}
-                onSuccess={onSuccess}
+                onSuccess={authResult => onSuccess({ name: 'signup', authResult })}
                 onError={onError}
             />
             <Alternative>

@@ -125,7 +125,7 @@ export const AccountRecoveryView = ({
                 showLabels={showLabels}
                 handler={callback}
                 onSuccess={() => {
-                    onSuccess();
+                    onSuccess({ name: 'account_recovery' });
                     goTo('account-recovery-success');
                 }}
                 onError={onError}
