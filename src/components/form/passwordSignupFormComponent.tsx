@@ -156,8 +156,8 @@ export const PasswordSignupForm = ({
                 handler={data => handleCaptcha(data, 'signup')}
                 captchaFox={captchaFox}
                 onSuccess={authResult => {
-                onSuccess({ name: 'signup', authResult });
-            }}
+                    onSuccess({ name: 'signup', authResult });
+                }}
                 onError={onError}
             />
         </>
