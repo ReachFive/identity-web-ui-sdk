@@ -46,6 +46,10 @@ export interface ReauthViewProps {
      * Callback function called when the request has failed.
      */
     onError?: OnError;
+    /**
+     * Action used in template
+     */
+    action?: string;
 }
 
 export const ReauthView = ({
@@ -54,6 +58,7 @@ export const ReauthView = ({
     session,
     showLabels = false,
     socialProviders,
+    action,
     onError = (() => {}) as OnError,
     onSuccess = (() => {}) as OnSuccess,
 }: PropsWithSession<ReauthViewProps>) => {
@@ -68,6 +73,7 @@ export const ReauthView = ({
             email: session.email ?? '' /** @todo email must be define */,
             password,
             auth: auth,
+            action,
         });
 
     const userSocialProviders = intersection(socialProviders ?? [], session.socialProviders ?? []);

@@ -117,6 +117,10 @@ export interface MainViewProps {
      * Callback function called when the request has failed.
      */
     onError?: OnError;
+    /**
+     * Action used in template
+     */
+    action?: string;
 }
 
 export const MainView = ({
@@ -127,6 +131,7 @@ export const MainView = ({
     showIntro = true,
     showStepUpStart = true,
     allowTrustDevice = false,
+    action,
 }: MainViewProps) => {
     const coreClient = useReachfive();
     const { goTo } = useRouting();
@@ -138,6 +143,7 @@ export const MainView = ({
             const res = await coreClient.getMfaStepUpToken({
                 options: auth,
                 accessToken: accessToken,
+                action,
             });
             setResponse(res);
             return res;

@@ -261,6 +261,10 @@ export type LoginViewProps = {
      * Callback function called when the request has failed.
      */
     onError?: OnError;
+    /**
+     * Action used in template
+     */
+    action?: string;
 };
 
 export const LoginView = ({
@@ -279,6 +283,7 @@ export const LoginView = ({
     recaptcha_site_key,
     allowAuthentMailPhone = true,
     allowTrustDevice,
+    action,
     onError = (() => {}) as OnError,
     onSuccess = (() => {}) as OnSuccess,
 }: LoginViewProps) => {
@@ -314,6 +319,7 @@ export const LoginView = ({
         return coreClient
             .loginWithPassword({
                 ...specializedData,
+                action,
                 auth: {
                     ...dataAuth,
                     ...auth,

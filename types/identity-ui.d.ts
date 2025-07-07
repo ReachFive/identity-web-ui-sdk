@@ -1,6 +1,6 @@
 /**
- * @reachfive/identity-ui - v1.34.1
- * Compiled Fri, 27 Jun 2025 18:50:42 UTC
+ * @reachfive/identity-ui - v1.35.0-develop
+ * Compiled Thu, 03 Jul 2025 06:38:50 UTC
  *
  * Copyright (c) ReachFive.
  *
@@ -164,7 +164,6 @@ interface WebAuthnDevicesListedEvent extends AbstractEvent {
 /** Emitted after a device has been added as a trusted device. */
 interface MfaTrustedDeviceAddedEvent extends AbstractEvent {
     readonly name: 'mfa_trusted_device_added'
-    readonly device: TrustedDevice
 }
 
 /** Emitted after a device has been removed as a trusted device. */
@@ -222,7 +221,10 @@ type RequiredProperty<T, K extends keyof T> = T & {
 
 type ConsentsVersions = { consentsVersions: Record<string, ConsentVersions> };
 
-type CustomFields = { customFields?: CustomField[] };
+type CustomFields = {
+    addressFields?: CustomField[];
+    customFields?: CustomField[];
+};
 
 type Config = Config$1 & RemoteSettings & ConsentsVersions & CustomFields;
 
@@ -460,9 +462,7 @@ interface I18nProps {
 }
 type WithI18n<P> = P & I18nProps;
 
-declare class PathMapping {
-    protected readonly modelPath: string;
-    constructor(modelPath: string);
+interface PathMapping {
     bind<T extends Record<string, unknown>>(model: T): unknown;
     unbind<T extends Record<string, unknown>, V>(model: T, value: V): T | V;
 }
@@ -566,6 +566,7 @@ type FieldDefinition<T, F = T, K extends string = 'raw'> = {
     defaultValue?: T;
     format?: Formatter<T, F, K>;
     validator?: Validator<F, any> | CompoundValidator<F, any>;
+    mapping?: PathMapping;
 };
 interface FieldProps<T, F, P extends FieldComponentProps<F, ExtraParams, E, K>, ExtraParams extends Record<string, unknown> = {}, K extends string = 'raw', E extends Record<string, unknown> = {}> extends FieldDefinition<T, F, K> {
     label: string;
@@ -761,7 +762,16 @@ declare const predefinedFields: {
     }) => FieldCreator<string, SimplePasswordFieldProps, {}, "raw">>;
     gender: PredefinedFieldBuilder<typeof selectField>;
     birthdate: PredefinedFieldBuilder<typeof birthdateField>;
+    'address.title': PredefinedFieldBuilder<({ placeholder, type, ...props }: FieldDefinition<string | number, string> & {
+        placeholder?: string | undefined;
+        type?: React.HTMLInputTypeAttribute | undefined;
+    }) => FieldCreator<string, SimpleFieldProps, {}, "raw">>;
+    'address.addressType': PredefinedFieldBuilder<typeof selectField>;
     'address.streetAddress': PredefinedFieldBuilder<({ placeholder, type, ...props }: FieldDefinition<string | number, string> & {
+        placeholder?: string | undefined;
+        type?: React.HTMLInputTypeAttribute | undefined;
+    }) => FieldCreator<string, SimpleFieldProps, {}, "raw">>;
+    'address.addressComplement': PredefinedFieldBuilder<({ placeholder, type, ...props }: FieldDefinition<string | number, string> & {
         placeholder?: string | undefined;
         type?: React.HTMLInputTypeAttribute | undefined;
     }) => FieldCreator<string, SimpleFieldProps, {}, "raw">>;
@@ -837,6 +847,10 @@ interface MainViewProps$5 {
      * Callback function called when the request has failed.
      */
     onError?: OnError;
+    /**
+     * Action used in template
+     */
+    action?: string;
 }
 type FaSelectionViewState = MFA.StepUpResponse & {
     allowTrustDevice?: boolean;
@@ -1050,6 +1064,10 @@ type LoginViewProps = {
      * Callback function called when the request has failed.
      */
     onError?: OnError;
+    /**
+     * Action used in template
+     */
+    action?: string;
 };
 
 interface LoginWithPasswordViewProps {
@@ -1070,6 +1088,10 @@ interface LoginWithPasswordViewProps {
      * Callback function called when the request has failed.
      */
     onError?: OnError;
+    /**
+     * Action used in template
+     */
+    action?: string;
 }
 
 interface LoginWithWebAuthnViewProps {
@@ -1167,6 +1189,10 @@ interface ReauthViewProps {
      * Callback function called when the request has failed.
      */
     onError?: OnError;
+    /**
+     * Action used in template
+     */
+    action?: string;
 }
 
 interface PasswordSignupFormProps {
@@ -1391,6 +1417,10 @@ interface MainViewProps$3 {
      * Allow to trust device during enrollment
      */
     allowTrustDevice?: boolean;
+    /**
+     * Action used in template
+     */
+    action?: string;
 }
 interface VerificationCodeViewProps$2 {
     /**
