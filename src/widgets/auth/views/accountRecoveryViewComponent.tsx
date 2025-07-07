@@ -1,5 +1,5 @@
 import { RequestAccountRecoveryParams } from '@reachfive/identity-core/es/main/profileClient';
-import React, { useCallback, useLayoutEffect } from 'react';
+import React, { useLayoutEffect } from 'react';
 
 import { isAppError } from '../../../helpers/errors';
 
@@ -8,13 +8,15 @@ import { email } from '../../../core/validation';
 
 import { simpleField } from '../../../components/form/fields/simpleField';
 import { createForm } from '../../../components/form/formComponent';
-import ReCaptcha, { importGoogleRecaptchaScript } from '../../../components/reCaptcha';
+import { importGoogleRecaptchaScript } from '../../../components/reCaptcha';
 
 import { useI18n } from '../../../contexts/i18n';
 import { useReachfive } from '../../../contexts/reachfive';
 import { useRouting } from '../../../contexts/routing';
 
 import type { OnError, OnSuccess } from '../../../types';
+import { getCaptchaHandler } from '../../../components/captcha.ts';
+import R5CaptchaFox, { CaptchaFoxMode } from '../../../components/captchaFox.tsx';
 
 const AccountRecoveryForm = createForm<RequestAccountRecoveryParams>({
     prefix: 'r5-account-recovery-',
@@ -62,6 +64,19 @@ export interface AccountRecoveryViewProps {
      */
     recaptcha_site_key?: string;
     /**
+     * Boolean that specifies whether CaptchaFox is enabled or not.
+     */
+    captchaFoxEnabled?: boolean;
+    /**
+     * The SITE key that comes from your [CaptchaFox](https://docs.captchafox.com/getting-started#get-your-captchafox-keys) setup.
+     * This must be paired with the appropriate secret key that you received when setting up CaptchaFox.
+     */
+    captchaFoxSiteKey?: string;
+    /**
+     * Define how CaptchaFox is displayed (hidden|inline|popup)/ Default to hidden.
+     */
+    captchaFoxMode?: CaptchaFoxMode;
+    /**
      * The URL sent in the email to which the user is redirected.
      * This URL must be whitelisted in the `Allowed Callback URLs` field of your ReachFive client settings.
      */
@@ -87,6 +102,9 @@ export const AccountRecoveryView = ({
     showLabels = false,
     recaptcha_enabled = false,
     recaptcha_site_key,
+    captchaFoxEnabled = false,
+    captchaFoxMode = 'hidden',
+    captchaFoxSiteKey,
     redirectUrl,
     returnToAfterAccountRecovery,
     onError = (() => {}) as OnError,
@@ -96,21 +114,20 @@ export const AccountRecoveryView = ({
     const { goTo } = useRouting();
     const i18n = useI18n();
 
-    const callback = useCallback(
+    const captchaFox = new R5CaptchaFox(captchaFoxEnabled, captchaFoxMode, captchaFoxSiteKey);
+    const handleCaptcha = getCaptchaHandler(
+        {
+            recaptchaEnabled: recaptcha_enabled,
+            recaptchaSiteKey: recaptcha_site_key,
+            captchaFoxEnabled: captchaFoxEnabled,
+            captchaFoxInstance: captchaFox,
+        },
         (data: RequestAccountRecoveryParams) =>
-            ReCaptcha.handle(
-                { ...data, redirectUrl, returnToAfterAccountRecovery },
-                { recaptcha_enabled, recaptcha_site_key },
-                coreClient.requestAccountRecovery,
-                'account_recovery'
-            ),
-        [
-            coreClient,
-            recaptcha_enabled,
-            recaptcha_site_key,
-            redirectUrl,
-            returnToAfterAccountRecovery,
-        ]
+            coreClient.requestAccountRecovery({
+                ...data,
+                redirectUrl,
+                returnToAfterAccountRecovery,
+            })
     );
 
     useLayoutEffect(() => {
@@ -123,11 +140,12 @@ export const AccountRecoveryView = ({
             <Intro>{i18n('accountRecovery.prompt')}</Intro>
             <AccountRecoveryForm
                 showLabels={showLabels}
-                handler={callback}
+                handler={data => handleCaptcha(data, 'account_recovery')}
                 onSuccess={() => {
                     onSuccess({ name: 'account_recovery' });
                     goTo('account-recovery-success');
                 }}
+                captchaFox={captchaFox}
                 onError={onError}
                 skipError={displaySafeErrorMessage && skipError}
             />

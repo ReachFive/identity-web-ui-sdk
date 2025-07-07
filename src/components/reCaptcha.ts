@@ -12,7 +12,9 @@ export type RecaptchaAction =
     | 'update_email'
     | 'passwordless_email'
     | 'passwordless_phone'
-    | 'verify_passwordless_sms';
+    | 'verify_passwordless_sms'
+    | 'account_recovery'
+    | 'forgot_password';
 
 export interface ReCaptchaConf {
     recaptcha_enabled: boolean;
