@@ -14,9 +14,9 @@ import { useI18n } from '../../../contexts/i18n';
 import { useReachfive } from '../../../contexts/reachfive';
 import { useRouting } from '../../../contexts/routing';
 
+import { getCaptchaHandler } from '../../../components/captcha';
+import R5CaptchaFox, { CaptchaFoxMode } from '../../../components/captchaFox';
 import type { OnError, OnSuccess } from '../../../types';
-import { getCaptchaHandler } from '../../../components/captcha.ts';
-import R5CaptchaFox, { CaptchaFoxMode } from '../../../components/captchaFox.tsx';
 
 const AccountRecoveryForm = createForm<RequestAccountRecoveryParams>({
     prefix: 'r5-account-recovery-',

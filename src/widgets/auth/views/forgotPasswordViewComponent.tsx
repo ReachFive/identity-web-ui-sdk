@@ -24,8 +24,8 @@ import { Validator } from '../../../core/validation.ts';
 import { selectLogin } from '../authWidget.tsx';
 
 import type { OnError, OnSuccess } from '../../../types';
-import R5CaptchaFox, {CaptchaFoxMode} from '../../../components/captchaFox.tsx';
-import {getCaptchaHandler} from '../../../components/captcha.ts';
+import R5CaptchaFox, {CaptchaFoxMode} from '../../../components/captchaFox';
+import {getCaptchaHandler} from '../../../components/captcha';
 import {RequestPasswordResetParams} from '@reachfive/identity-core';
 
 type EmailIdentifier = { email: string };
