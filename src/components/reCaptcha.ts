@@ -14,7 +14,7 @@ export type RecaptchaAction =
     | 'passwordless_phone'
     | 'verify_passwordless_sms'
     | 'account_recovery'
-    | 'forgot_password';
+    | 'password_reset_requested';
 
 export interface ReCaptchaConf {
     recaptcha_enabled: boolean;

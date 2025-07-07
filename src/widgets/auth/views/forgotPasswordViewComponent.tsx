@@ -221,14 +221,6 @@ export const ForgotPasswordView = ({
     const { goTo } = useRouting();
     const i18n = useI18n();
 
-    const callback = useCallback(
-        (data: ForgotPasswordEmailFormData) => {
-            return ReCaptcha.handle(
-                { ...data, redirectUrl, returnToAfterPasswordReset },
-                { recaptcha_enabled, recaptcha_site_key },
-                coreClient.requestPasswordReset,
-                'password_reset_requested'
-            );
     const captchaFox = new R5CaptchaFox(captchaFoxEnabled, captchaFoxMode, captchaFoxSiteKey);
     const handleCaptcha = getCaptchaHandler(
         {
