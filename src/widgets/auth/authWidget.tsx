@@ -1,38 +1,25 @@
 import { type SessionInfo } from '@reachfive/identity-core';
+import { ComponentProps } from 'react';
 
 import { createMultiViewWidget } from '../../components/widget/widget';
 import { UserError } from '../../helpers/errors';
 
-import type {
-    FaSelectionViewProps,
-    FaSelectionViewState,
-    VerificationCodeViewProps,
-    VerificationCodeViewState,
-} from '../stepUp/mfaStepUpWidget';
+import type { FaSelectionViewState, VerificationCodeViewState } from '../stepUp/mfaStepUpWidget';
 import { FaSelectionView, VerificationCodeView } from '../stepUp/mfaStepUpWidget';
 import {
     ForgotPasswordCodeView,
     ForgotPasswordPhoneNumberView,
     ForgotPasswordSuccessView,
     ForgotPasswordView,
-    type ForgotPasswordViewProps,
 } from './views/forgotPasswordViewComponent';
-import LoginView, { type LoginViewProps } from './views/loginViewComponent';
-import LoginWithPasswordView, {
-    type LoginWithPasswordViewProps,
-} from './views/loginWithPasswordViewComponent';
-import LoginWithWebAuthnView, {
-    type LoginWithWebAuthnViewProps,
-} from './views/loginWithWebAuthnViewComponent';
-import QuickLoginView, { type QuickLoginViewProps } from './views/quickLoginViewComponent';
-import ReauthView, { type ReauthViewProps } from './views/reauthViewComponent';
-import SignupView, { type SignupViewProps } from './views/signupViewComponent';
-import SignupWithPasswordView, {
-    type SignupWithPasswordViewProps,
-} from './views/signupWithPasswordViewComponent';
-import SignupWithWebAuthnView, {
-    type SignupWithWebAuthnViewProps,
-} from './views/signupWithWebAuthnViewComponent';
+import LoginView from './views/loginViewComponent';
+import LoginWithPasswordView from './views/loginWithPasswordViewComponent';
+import LoginWithWebAuthnView from './views/loginWithWebAuthnViewComponent';
+import QuickLoginView from './views/quickLoginViewComponent';
+import ReauthView from './views/reauthViewComponent';
+import SignupView from './views/signupViewComponent';
+import SignupWithPasswordView from './views/signupWithPasswordViewComponent';
+import SignupWithWebAuthnView from './views/signupWithWebAuthnViewComponent';
 
 import type { PropsWithSession } from '../../contexts/session';
 
@@ -44,17 +31,17 @@ import {
 } from './views/accountRecoveryViewComponent.tsx';
 
 export interface AuthWidgetProps
-    extends LoginViewProps,
-        LoginWithWebAuthnViewProps,
-        LoginWithPasswordViewProps,
-        SignupViewProps,
-        SignupWithPasswordViewProps,
-        SignupWithWebAuthnViewProps,
-        ForgotPasswordViewProps,
-        QuickLoginViewProps,
-        ReauthViewProps,
-        Omit<FaSelectionViewProps, keyof FaSelectionViewState>,
-        Omit<VerificationCodeViewProps, keyof VerificationCodeViewState> {
+    extends ComponentProps<typeof LoginView>,
+        ComponentProps<typeof LoginWithWebAuthnView>,
+        ComponentProps<typeof LoginWithPasswordView>,
+        ComponentProps<typeof SignupView>,
+        ComponentProps<typeof SignupWithPasswordView>,
+        ComponentProps<typeof SignupWithWebAuthnView>,
+        ComponentProps<typeof ForgotPasswordView>,
+        ComponentProps<typeof QuickLoginView>,
+        ComponentProps<typeof ReauthView>,
+        Omit<ComponentProps<typeof FaSelectionView>, keyof FaSelectionViewState>,
+        Omit<ComponentProps<typeof VerificationCodeView>, keyof VerificationCodeViewState> {
     /**
      * Boolean that specifies whether quick login is enabled.
      *

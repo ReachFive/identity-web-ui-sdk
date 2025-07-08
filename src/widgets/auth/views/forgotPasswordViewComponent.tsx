@@ -13,6 +13,7 @@ import { createForm, FormContext } from '../../../components/form/formComponent'
 import { importGoogleRecaptchaScript } from '../../../components/reCaptcha';
 
 import { InitialScreen } from '../../../../constants.ts';
+import { CaptchaProvider, WithCaptchaProps } from '../../../components/captcha.tsx';
 import { DefaultButton } from '../../../components/form/buttonComponent.tsx';
 import passwordField from '../../../components/form/fields/passwordField.tsx';
 import simplePasswordField from '../../../components/form/fields/simplePasswordField';
@@ -215,7 +216,7 @@ export const ForgotPasswordView = ({
     returnToAfterPasswordReset,
     onError = (() => {}) as OnError,
     onSuccess = (() => {}) as OnSuccess,
-}: ForgotPasswordViewProps) => {
+}: WithCaptchaProps<ForgotPasswordViewProps>) => {
     const coreClient = useReachfive();
     const config = useConfig();
     const { goTo } = useRouting();
@@ -289,7 +290,7 @@ export const ForgotPasswordPhoneNumberView = ({
     redirectUrl,
     returnToAfterPasswordReset,
     onError = (() => {}) as OnError,
-}: ForgotPasswordViewProps) => {
+}: WithCaptchaProps<ForgotPasswordViewProps>) => {
     const coreClient = useReachfive();
     const { goTo } = useRouting();
     const i18n = useI18n();

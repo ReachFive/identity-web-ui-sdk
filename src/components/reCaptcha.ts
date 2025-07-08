@@ -1,3 +1,6 @@
+import { AppError } from '@/helpers/errors';
+import { WithCaptchaToken } from './captcha';
+
 declare global {
     interface Window {
         grecaptcha: {
@@ -17,8 +20,15 @@ export type RecaptchaAction =
     | 'password_reset_requested';
 
 export interface ReCaptchaConf {
+    /**
+     * Boolean that specifies whether reCAPTCHA is enabled or not.
+     */
     recaptcha_enabled: boolean;
-    recaptcha_site_key?: string;
+    /**
+     * The SITE key that comes from your [reCAPTCHA](https://www.google.com/recaptcha/admin/create) setup.
+     * This must be paired with the appropriate secret key that you received when setting up reCAPTCHA.
+     */
+    recaptcha_site_key: string;
 }
 
 export default class ReCaptcha {
@@ -26,10 +36,10 @@ export default class ReCaptcha {
         return await window.grecaptcha.execute(siteKey, { action: action });
     };
 
-    static handle = async <T extends { captchaToken?: string }, R = {}>(
+    static handle = async <T, R = {}>(
         data: T,
         conf: ReCaptchaConf,
-        callback: (data: T) => Promise<R>,
+        callback: (data: WithCaptchaToken<T>) => Promise<R>,
         action: string
     ) => {
         if (conf.recaptcha_enabled) {
@@ -41,12 +51,14 @@ export default class ReCaptcha {
                 return callback({ ...data, captchaToken, captchaProvider: 'recaptcha' });
             } catch (_error) {
                 return Promise.reject({
-                    errorUserMsg: 'Error recaptcha',
+                    errorId: '',
+                    error: 'Recaptcha error',
+                    errorDescription: 'Recaptcha error',
                     errorMessageKey: 'recaptcha.error',
-                });
+                } satisfies AppError);
             }
         } else {
-            return callback(data);
+            return callback({ ...data, captchaToken: undefined });
         }
     };
 }

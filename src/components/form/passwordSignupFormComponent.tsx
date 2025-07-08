@@ -7,7 +7,7 @@ import { createForm } from './formComponent';
 import { UserAgreementStyle } from './formControlsComponent';
 import { buildFormFields, type Field } from './formFieldFactory';
 
-import { getCaptchaHandler, type WithCaptchaToken } from '../../components/captcha';
+import { CaptchaProvider, WithCaptchaProps, type WithCaptchaToken } from '../../components/captcha';
 import { snakeCaseProperties } from '../../helpers/transformObjectProperties';
 import { isValued } from '../../helpers/utils';
 import { MarkdownContent } from '../miscComponent';
@@ -18,7 +18,6 @@ import { useReachfive } from '../../contexts/reachfive';
 
 import { isEqual } from '../../helpers/utils';
 
-import R5CaptchaFox, { CaptchaFoxMode } from '../../components/captchaFox';
 import type { OnError, OnSuccess } from '../../types';
 
 const SignupForm = createForm<SignupParams['data']>({
@@ -31,11 +30,6 @@ export interface PasswordSignupFormProps {
     beforeSignup?: <T>(param: T) => T;
     canShowPassword?: boolean;
     phoneNumberOptions?: PhoneNumberOptions;
-    recaptcha_enabled?: boolean;
-    recaptcha_site_key?: string;
-    captchaFoxEnabled?: boolean;
-    captchaFoxSiteKey?: string;
-    captchaFoxMode?: CaptchaFoxMode;
     redirectUrl?: string;
     returnToAfterEmailConfirmation?: string;
     showLabels?: boolean;
@@ -68,7 +62,7 @@ export const PasswordSignupForm = ({
     userAgreement,
     onError = (() => {}) as OnError,
     onSuccess = (() => {}) satisfies OnSuccess,
-}: PasswordSignupFormProps) => {
+}: WithCaptchaProps<PasswordSignupFormProps>) => {
     const coreClient = useReachfive();
     const config = useConfig();
     const [blacklist, setBlacklist] = useState<string[]>([]);
@@ -131,19 +125,15 @@ export const PasswordSignupForm = ({
           ]
         : fields;
 
-    const captchaFox = new R5CaptchaFox(captchaFoxEnabled, captchaFoxMode, captchaFoxSiteKey);
-    const handleCaptcha = getCaptchaHandler(
-        {
-            recaptchaEnabled: recaptcha_enabled,
-            recaptchaSiteKey: recaptcha_site_key,
-            captchaFoxEnabled: captchaFoxEnabled,
-            captchaFoxInstance: captchaFox,
-        },
-        callback
-    );
-
     return (
-        <>
+        <CaptchaProvider
+            recaptcha_enabled={recaptcha_enabled}
+            recaptcha_site_key={recaptcha_site_key}
+            captchaFoxEnabled={captchaFoxEnabled}
+            captchaFoxSiteKey={captchaFoxSiteKey}
+            captchaFoxMode={captchaFoxMode}
+            action="signup"
+        >
             <SignupForm
                 fields={allFields}
                 showLabels={showLabels}
@@ -153,14 +143,13 @@ export const PasswordSignupForm = ({
                     blacklist,
                     ...phoneNumberOptions,
                 }}
-                handler={data => handleCaptcha(data, 'signup')}
-                captchaFox={captchaFox}
+                handler={callback}
                 onSuccess={authResult => {
                     onSuccess({ name: 'signup', authResult });
                 }}
                 onError={onError}
             />
-        </>
+        </CaptchaProvider>
     );
 };
 

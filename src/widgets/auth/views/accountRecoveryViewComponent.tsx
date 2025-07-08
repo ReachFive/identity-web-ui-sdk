@@ -3,9 +3,9 @@ import React, { useLayoutEffect } from 'react';
 
 import { isAppError } from '../../../helpers/errors';
 
-import { Alternative, Heading, Info, Intro, Link } from '../../../components/miscComponent';
 import { email } from '../../../core/validation';
 
+import { CaptchaProvider, WithCaptchaProps } from '../../../components/captcha';
 import { simpleField } from '../../../components/form/fields/simpleField';
 import { createForm } from '../../../components/form/formComponent';
 import { importGoogleRecaptchaScript } from '../../../components/reCaptcha';
@@ -109,7 +109,7 @@ export const AccountRecoveryView = ({
     returnToAfterAccountRecovery,
     onError = (() => {}) as OnError,
     onSuccess = (() => {}) as OnSuccess,
-}: AccountRecoveryViewProps) => {
+}: WithCaptchaProps<AccountRecoveryViewProps>) => {
     const coreClient = useReachfive();
     const { goTo } = useRouting();
     const i18n = useI18n();

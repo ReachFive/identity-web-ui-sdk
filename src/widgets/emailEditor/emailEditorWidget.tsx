@@ -1,8 +1,8 @@
-import React, { useLayoutEffect } from 'react';
+import React, { ComponentProps, useLayoutEffect } from 'react';
 
 import { email } from '../../core/validation';
 
-import { getCaptchaHandler, type WithCaptchaToken } from '../../components/captcha';
+import { CaptchaProvider, WithCaptchaProps, type WithCaptchaToken } from '../../components/captcha';
 import { simpleField } from '../../components/form/fields/simpleField';
 import { createForm } from '../../components/form/formComponent';
 import { Info, Intro } from '../../components/miscComponent';
@@ -13,7 +13,6 @@ import { useI18n } from '../../contexts/i18n';
 import { useReachfive } from '../../contexts/reachfive';
 import { useRouting } from '../../contexts/routing';
 
-import R5CaptchaFox, { CaptchaFoxMode } from '../../components/captchaFox';
 import type { OnError, OnSuccess } from '../../types';
 
 type EmailFormData = { email: string };
@@ -36,28 +35,6 @@ interface MainViewProps {
      * The authorization credential JSON Web Token (JWT) used to access the ReachFive API, less than five minutes old.
      */
     accessToken: string;
-    /**
-     * Boolean that specifies whether reCAPTCHA is enabled or not.
-     */
-    recaptcha_enabled?: boolean;
-    /**
-     * The SITE key that comes from your [reCAPTCHA](https://www.google.com/recaptcha/admin/create) setup.
-     * This must be paired with the appropriate secret key that you received when setting up reCAPTCHA.
-     */
-    recaptcha_site_key?: string;
-    /**
-     * Boolean that specifies whether CaptchaFox is enabled or not.
-     */
-    captchaFoxEnabled?: boolean;
-    /**
-     * The SITE key that comes from your [CaptchaFox](https://docs.captchafox.com/getting-started#get-your-captchafox-keys) setup.
-     * This must be paired with the appropriate secret key that you received when setting up CaptchaFox.
-     */
-    captchaFoxSiteKey?: string;
-    /**
-     * Define how CaptchaFox is displayed (hidden|inline|popup)/ Default to hidden.
-     */
-    captchaFoxMode?: CaptchaFoxMode;
     /**
      * The URL sent in the email to which the user is redirected.
      * This URL must be whitelisted in the `Allowed Callback URLs` field of your ReachFive client settings.
@@ -89,7 +66,7 @@ const MainView = ({
     showLabels = false,
     onError = (() => {}) as OnError,
     onSuccess = (() => {}) as OnSuccess,
-}: MainViewProps) => {
+}: WithCaptchaProps<MainViewProps>) => {
     const coreClient = useReachfive();
     const i18n = useI18n();
     const { goTo } = useRouting();
@@ -107,27 +84,24 @@ const MainView = ({
         goTo('success');
     };
 
-    const captchaFox = new R5CaptchaFox(captchaFoxEnabled, captchaFoxMode, captchaFoxSiteKey);
-    const handleCaptcha = getCaptchaHandler(
-        {
-            recaptchaEnabled: recaptcha_enabled,
-            recaptchaSiteKey: recaptcha_site_key,
-            captchaFoxEnabled: captchaFoxEnabled,
-            captchaFoxInstance: captchaFox,
-        },
-        callback
-    );
-
     return (
         <div>
-            <Intro>{i18n('emailEditor.intro')}</Intro>
-            <EmailEditorForm
-                showLabels={showLabels}
-                handler={data => handleCaptcha(data, 'update_email')}
-                captchaFox={captchaFox}
-                onSuccess={handleSuccess}
-                onError={onError}
-            />
+            <CaptchaProvider
+                recaptcha_enabled={recaptcha_enabled}
+                recaptcha_site_key={recaptcha_site_key}
+                captchaFoxEnabled={captchaFoxEnabled}
+                captchaFoxSiteKey={captchaFoxSiteKey}
+                captchaFoxMode={captchaFoxMode}
+                action="update_email"
+            >
+                <Intro>{i18n('emailEditor.intro')}</Intro>
+                <EmailEditorForm
+                    showLabels={showLabels}
+                    handler={callback}
+                    onSuccess={handleSuccess}
+                    onError={onError}
+                />
+            </CaptchaProvider>
         </div>
     );
 };
@@ -137,7 +111,7 @@ const SuccessView = () => {
     return <Info>{i18n('emailEditor.successMessage')}</Info>;
 };
 
-export interface EmailEditorWidgetProps extends MainViewProps {}
+export interface EmailEditorWidgetProps extends ComponentProps<typeof MainView> {}
 
 export default createMultiViewWidget<EmailEditorWidgetProps>({
     initialView: 'main',

@@ -6,11 +6,12 @@ import styled from 'styled-components';
 
 import { Alternative, Heading, Link } from '../../../components/miscComponent';
 
+import { CaptchaProvider, WithCaptchaProps, WithCaptchaToken } from '../../../components/captcha';
 import checkboxField from '../../../components/form/fields/checkboxField';
 import identifierField from '../../../components/form/fields/identifierField';
 import simplePasswordField from '../../../components/form/fields/simplePasswordField';
 import { createForm } from '../../../components/form/formComponent';
-import ReCaptcha, { importGoogleRecaptchaScript } from '../../../components/reCaptcha';
+import { importGoogleRecaptchaScript } from '../../../components/reCaptcha';
 
 import { useI18n } from '../../../contexts/i18n';
 import { useReachfive } from '../../../contexts/reachfive';
@@ -126,8 +127,6 @@ export interface LoginWithPasswordViewProps {
     allowAccountRecovery?: boolean;
     auth?: AuthOptions;
     canShowPassword?: boolean;
-    recaptcha_enabled?: boolean;
-    recaptcha_site_key?: string;
     showLabels?: boolean;
     showRememberMe?: boolean;
     allowTrustDevice?: boolean;
@@ -157,7 +156,7 @@ export const LoginWithPasswordView = ({
     allowTrustDevice,
     onError = (() => {}) as OnError,
     onSuccess = (() => {}) as OnSuccess,
-}: LoginWithPasswordViewProps) => {
+}: WithCaptchaProps<LoginWithPasswordViewProps>) => {
     const i18n = useI18n();
     const coreClient = useReachfive();
     const { goTo, params } = useRouting();
@@ -167,14 +166,13 @@ export const LoginWithPasswordView = ({
         importGoogleRecaptchaScript(recaptcha_site_key);
     }, [recaptcha_site_key]);
 
-    const callback = (data: LoginWithPasswordFormData & { captchaToken?: string }) => {
+    const callback = (data: WithCaptchaToken<LoginWithPasswordFormData>) => {
         const specializedIdentifierData = specializeIdentifierData<LoginWithPasswordParams>(data);
         const { auth: dataAuth, ...specializedData } = specializedIdentifierData;
 
         return coreClient
             .loginWithPassword({
                 ...specializedData,
-                captchaToken: data.captchaToken,
                 auth: {
                     ...dataAuth,
                     ...auth,
@@ -193,7 +191,11 @@ export const LoginWithPasswordView = ({
     };
 
     return (
-        <div>
+        <CaptchaProvider
+            recaptcha_enabled={recaptcha_enabled}
+            recaptcha_site_key={recaptcha_site_key}
+            action="login"
+        >
             <Heading>{i18n('login.title')}</Heading>
             <LoginWithPasswordForm
                 username={username}
@@ -202,14 +204,7 @@ export const LoginWithPasswordView = ({
                 showForgotPassword={allowForgotPassword}
                 showAccountRecovery={allowAccountRecovery}
                 canShowPassword={canShowPassword}
-                handler={(data: LoginWithPasswordFormData) =>
-                    ReCaptcha.handle(
-                        data,
-                        { recaptcha_enabled, recaptcha_site_key },
-                        callback,
-                        'login'
-                    )
-                }
+                handler={callback}
                 onSuccess={res => onSuccess({ name: 'login', ...res })}
                 onError={onError}
             />
@@ -218,7 +213,7 @@ export const LoginWithPasswordView = ({
                     {i18n('login.password.userAnotherIdentifier')}
                 </Link>
             </Alternative>
-        </div>
+        </CaptchaProvider>
     );
 };
 

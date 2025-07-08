@@ -12,7 +12,11 @@ import { createForm } from '../../../components/form/formComponent';
 import { SocialButtons } from '../../../components/form/socialButtonsComponent';
 import { importGoogleRecaptchaScript } from '../../../components/reCaptcha';
 
-import { getCaptchaHandler, type WithCaptchaToken } from '../../../components/captcha';
+import {
+    CaptchaProvider,
+    WithCaptchaProps,
+    type WithCaptchaToken,
+} from '../../../components/captcha';
 
 import { FaSelectionViewState } from '../../stepUp/mfaStepUpWidget';
 
@@ -23,7 +27,6 @@ import { useSession } from '../../../contexts/session';
 
 import { enrichLoginEvent, specializeIdentifierData } from '../../../helpers/utils';
 
-import R5CaptchaFox, { CaptchaFoxMode } from '../../../components/captchaFox';
 import type { OnError, OnSuccess } from '../../../types';
 
 type Floating = { floating?: boolean };
@@ -211,28 +214,6 @@ export type LoginViewProps = {
      */
     canShowPassword?: boolean;
     /**
-     * Boolean that specifies whether reCAPTCHA is enabled or not.
-     */
-    recaptcha_enabled?: boolean;
-    /**
-     * The SITE key that comes from your [reCAPTCHA](https://www.google.com/recaptcha/admin/create) setup.
-     * This must be paired with the appropriate secret key that you received when setting up reCAPTCHA.
-     */
-    recaptcha_site_key?: string;
-    /**
-     * Boolean that specifies whether CaptchaFox is enabled or not.
-     */
-    captchaFoxEnabled?: boolean;
-    /**
-     * The SITE key that comes from your [CaptchaFox](https://docs.captchafox.com/getting-started#get-your-captchafox-keys) setup.
-     * This must be paired with the appropriate secret key that you received when setting up CaptchaFox.
-     */
-    captchaFoxSiteKey?: string;
-    /**
-     * Define how CaptchaFox is displayed (hidden|inline|popup)/ Default to hidden.
-     */
-    captchaFoxMode?: CaptchaFoxMode;
-    /**
      * Whether the signup form fields' labels are displayed on the login view.
      *
      * @default false
@@ -297,7 +278,7 @@ export const LoginView = ({
     allowTrustDevice,
     onError = (() => {}) as OnError,
     onSuccess = (() => {}) as OnSuccess,
-}: LoginViewProps) => {
+}: WithCaptchaProps<LoginViewProps>) => {
     const i18n = useI18n();
     const coreClient = useReachfive();
     const { goTo } = useRouting();
@@ -349,17 +330,6 @@ export const LoginView = ({
 
     const defaultIdentifier = session?.lastLoginType === 'password' ? session.email : undefined;
 
-    const captchaFox = new R5CaptchaFox(captchaFoxEnabled, captchaFoxMode, captchaFoxSiteKey);
-    const handleLogin = getCaptchaHandler(
-        {
-            recaptchaEnabled: recaptcha_enabled,
-            recaptchaSiteKey: recaptcha_site_key,
-            captchaFoxEnabled: captchaFoxEnabled,
-            captchaFoxInstance: captchaFox,
-        },
-        callback
-    );
-
     return (
         <div>
             <Heading>{i18n('login.title')}</Heading>
@@ -373,23 +343,30 @@ export const LoginView = ({
                 />
             )}
             {socialProviders && socialProviders.length > 0 && <Separator text={i18n('or')} />}
-            <LoginForm
-                showLabels={showLabels}
-                showRememberMe={showRememberMe}
-                showForgotPassword={allowForgotPassword}
-                showAccountRecovery={allowAccountRecovery}
-                canShowPassword={canShowPassword}
-                defaultIdentifier={defaultIdentifier}
-                allowCustomIdentifier={allowCustomIdentifier}
-                allowAuthentMailPhone={allowAuthentMailPhone}
-                handler={data => handleLogin(data, 'login')}
-                captchaFox={captchaFox}
-                onSuccess={res => {
-                    console.log('Auth result');
-                    onSuccess({ name: 'login', ...res });
-                }}
-                onError={onError}
-            />
+            <CaptchaProvider
+                recaptcha_enabled={recaptcha_enabled}
+                recaptcha_site_key={recaptcha_site_key}
+                captchaFoxEnabled={captchaFoxEnabled}
+                captchaFoxSiteKey={captchaFoxSiteKey}
+                captchaFoxMode={captchaFoxMode}
+                action="login"
+            >
+                <LoginForm
+                    showLabels={showLabels}
+                    showRememberMe={showRememberMe}
+                    showForgotPassword={allowForgotPassword}
+                    showAccountRecovery={allowAccountRecovery}
+                    canShowPassword={canShowPassword}
+                    defaultIdentifier={defaultIdentifier}
+                    allowCustomIdentifier={allowCustomIdentifier}
+                    allowAuthentMailPhone={allowAuthentMailPhone}
+                    handler={callback}
+                    onSuccess={res => {
+                        onSuccess({ name: 'login', ...res });
+                    }}
+                    onError={onError}
+                />
+            </CaptchaProvider>
             {allowSignup && (
                 <Alternative>
                     <span>{i18n('login.signupLinkPrefix')}</span>
