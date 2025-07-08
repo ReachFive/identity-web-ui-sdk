@@ -151,6 +151,9 @@ export const LoginWithPasswordView = ({
     canShowPassword,
     recaptcha_enabled = false,
     recaptcha_site_key,
+    captchaFoxEnabled = false,
+    captchaFoxSiteKey,
+    captchaFoxMode,
     showLabels,
     showRememberMe,
     allowTrustDevice,
@@ -194,6 +197,9 @@ export const LoginWithPasswordView = ({
         <CaptchaProvider
             recaptcha_enabled={recaptcha_enabled}
             recaptcha_site_key={recaptcha_site_key}
+            captchaFoxEnabled={captchaFoxEnabled}
+            captchaFoxSiteKey={captchaFoxSiteKey}
+            captchaFoxMode={captchaFoxMode}
             action="login"
         >
             <Heading>{i18n('login.title')}</Heading>
