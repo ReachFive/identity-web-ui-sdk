@@ -25,9 +25,6 @@ import { Validator } from '../../../core/validation.ts';
 import { selectLogin } from '../authWidget.tsx';
 
 import type { OnError, OnSuccess } from '../../../types';
-import R5CaptchaFox, {CaptchaFoxMode} from '../../../components/captchaFox';
-import {getCaptchaHandler} from '../../../components/captcha';
-import {RequestPasswordResetParams} from '@reachfive/identity-core';
 
 type EmailIdentifier = { email: string };
 type PhoneNumberIdentifier = { phoneNumber: string };
@@ -159,28 +156,6 @@ export interface ForgotPasswordViewProps {
      */
     phoneNumberOptions?: PhoneNumberOptions;
     /**
-     * Boolean that specifies whether reCAPTCHA is enabled or not.
-     */
-    recaptcha_enabled?: boolean;
-    /**
-     * The SITE key that comes from your [reCAPTCHA](https://www.google.com/recaptcha/admin/create) setup.
-     * This must be paired with the appropriate secret key that you received when setting up reCAPTCHA.
-     */
-    recaptcha_site_key?: string;
-    /**
-     * Boolean that specifies whether CaptchaFox is enabled or not.
-     */
-    captchaFoxEnabled?: boolean;
-    /**
-     * The SITE key that comes from your [CaptchaFox](https://docs.captchafox.com/getting-started#get-your-captchafox-keys) setup.
-     * This must be paired with the appropriate secret key that you received when setting up CaptchaFox.
-     */
-    captchaFoxSiteKey?: string;
-    /**
-     * Define how CaptchaFox is displayed (hidden|inline|popup)/ Default to hidden.
-     */
-    captchaFoxMode?: CaptchaFoxMode;
-    /**
      * The URL sent in the email to which the user is redirected.
      * This URL must be whitelisted in the `Allowed Callback URLs` field of your ReachFive client settings.
      */
@@ -222,21 +197,12 @@ export const ForgotPasswordView = ({
     const { goTo } = useRouting();
     const i18n = useI18n();
 
-    const captchaFox = new R5CaptchaFox(captchaFoxEnabled, captchaFoxMode, captchaFoxSiteKey);
-    const handleCaptcha = getCaptchaHandler(
-        {
-            recaptchaEnabled: recaptcha_enabled,
-            recaptchaSiteKey: recaptcha_site_key,
-            captchaFoxEnabled: captchaFoxEnabled,
-            captchaFoxInstance: captchaFox,
-        },
-        (data: RequestPasswordResetParams) =>
-            coreClient.requestPasswordReset({
-                ...data,
-                redirectUrl,
-                returnToAfterPasswordReset,
-            })
-    );
+    const callback = (data: ForgotPasswordEmailFormData) =>
+        coreClient.requestPasswordReset({
+            ...data,
+            redirectUrl,
+            returnToAfterPasswordReset,
+        });
 
     useLayoutEffect(() => {
         importGoogleRecaptchaScript(recaptcha_site_key);
@@ -246,17 +212,25 @@ export const ForgotPasswordView = ({
         <div>
             <Heading>{i18n('forgotPassword.title')}</Heading>
             <Intro>{i18n('forgotPassword.prompt')}</Intro>
-            <ForgotPasswordEmailForm
-                showLabels={showLabels}
-                handler={data => handleCaptcha(data, 'password_reset_requested')}
-                onSuccess={() => {
-                    onSuccess({ name: 'password_reset_requested' });
-                    goTo('forgot-password-success');
-                }}
-                captchaFox={captchaFox}
-                onError={onError}
-                skipError={displaySafeErrorMessage && skipError}
-            />
+            <CaptchaProvider
+                recaptcha_enabled={recaptcha_enabled}
+                recaptcha_site_key={recaptcha_site_key}
+                captchaFoxEnabled={captchaFoxEnabled}
+                captchaFoxSiteKey={captchaFoxSiteKey}
+                captchaFoxMode={captchaFoxMode}
+                action="password_reset_requested"
+            >
+                <ForgotPasswordEmailForm
+                    showLabels={showLabels}
+                    handler={callback}
+                    onSuccess={() => {
+                        onSuccess({ name: 'password_reset_requested' });
+                        goTo('forgot-password-success');
+                    }}
+                    onError={onError}
+                    skipError={displaySafeErrorMessage && skipError}
+                />
+            </CaptchaProvider>
             {allowPhoneNumberResetPassword && config.sms && (
                 <Alternative>
                     <DefaultButton onClick={() => goTo('forgot-password-phone-number')}>
@@ -295,21 +269,14 @@ export const ForgotPasswordPhoneNumberView = ({
     const { goTo } = useRouting();
     const i18n = useI18n();
 
-    const captchaFox = new R5CaptchaFox(captchaFoxEnabled, captchaFoxMode, captchaFoxSiteKey);
-    const handleCaptcha = getCaptchaHandler(
-        {
-            recaptchaEnabled: recaptcha_enabled,
-            recaptchaSiteKey: recaptcha_site_key,
-            captchaFoxEnabled: captchaFoxEnabled,
-            captchaFoxInstance: captchaFox,
-        },
-        (data: RequestPasswordResetParams) =>
-            coreClient.requestPasswordReset({
+    const callback = (data: ForgotPasswordPhoneNumberFormData) =>
+        coreClient
+            .requestPasswordReset({
                 ...data,
                 redirectUrl,
                 returnToAfterPasswordReset,
             })
-    );
+            .then(() => data);
 
     const onSuccess = ({ phoneNumber }: PhoneNumberIdentifier) => {
         goTo<PhoneNumberIdentifier>('forgot-password-code', { phoneNumber });
@@ -323,15 +290,23 @@ export const ForgotPasswordPhoneNumberView = ({
         <div>
             <Heading>{i18n('forgotPassword.title')}</Heading>
             <Intro>{i18n('forgotPassword.prompt.phoneNumber')}</Intro>
-            <ForgotPasswordPhoneNumberForm
-                showLabels={showLabels}
-                handler={data => handleCaptcha(data, 'password_reset_requested').then(() => data)}
-                onSuccess={onSuccess}
-                captchaFox={captchaFox}
-                onError={onError}
-                skipError={displaySafeErrorMessage && skipError}
-                phoneNumberOptions={phoneNumberOptions}
-            />
+            <CaptchaProvider
+                recaptcha_enabled={recaptcha_enabled}
+                recaptcha_site_key={recaptcha_site_key}
+                captchaFoxEnabled={captchaFoxEnabled}
+                captchaFoxSiteKey={captchaFoxSiteKey}
+                captchaFoxMode={captchaFoxMode}
+                action="password_reset_requested"
+            >
+                <ForgotPasswordPhoneNumberForm
+                    showLabels={showLabels}
+                    handler={callback}
+                    onSuccess={onSuccess}
+                    onError={onError}
+                    skipError={displaySafeErrorMessage && skipError}
+                    phoneNumberOptions={phoneNumberOptions}
+                />
+            </CaptchaProvider>
             <Alternative>
                 <DefaultButton onClick={() => goTo('forgot-password')}>
                     {i18n('forgotPassword.useEmailButton')}
