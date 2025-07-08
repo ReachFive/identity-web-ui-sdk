@@ -3,7 +3,7 @@ import React, { ComponentType, useRef } from 'react';
 
 import styled from 'styled-components';
 import CaptchaFox, { CaptchaFoxConf } from './captchaFox';
-import ReCaptcha, { ReCaptchaConf } from './reCaptcha';
+import ReCaptcha, { RecaptchaAction, ReCaptchaConf } from './reCaptcha';
 
 const StyledCaptchaFoxWidget = styled(CaptchaFoxWidget)`
     margin-bottom: ${props => props.theme.spacing}px;
@@ -30,7 +30,7 @@ export const useCaptcha = () => {
 
 export type CaptchaProviderProps = WithCaptchaProps<{
     children: React.ReactNode;
-    action: string;
+    action: RecaptchaAction;
 }>;
 
 export const CaptchaProvider = ({ children, action, ...options }: CaptchaProviderProps) => {

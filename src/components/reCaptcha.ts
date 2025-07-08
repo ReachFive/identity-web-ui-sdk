@@ -32,7 +32,7 @@ export interface ReCaptchaConf {
 }
 
 export default class ReCaptcha {
-    static getRecaptchaToken = async (siteKey: string, action: string) => {
+    static getRecaptchaToken = async (siteKey: string, action: RecaptchaAction) => {
         return await window.grecaptcha.execute(siteKey, { action: action });
     };
 
@@ -40,7 +40,7 @@ export default class ReCaptcha {
         data: T,
         conf: ReCaptchaConf,
         callback: (data: WithCaptchaToken<T>) => Promise<R>,
-        action: string
+        action: RecaptchaAction
     ) => {
         if (conf.recaptcha_enabled) {
             try {
