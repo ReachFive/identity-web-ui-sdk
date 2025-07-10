@@ -1,6 +1,6 @@
 /**
- * @reachfive/identity-ui - v1.35.0-develop
- * Compiled Thu, 03 Jul 2025 06:38:50 UTC
+ * @reachfive/identity-ui - v1.35.0
+ * Compiled Thu, 10 Jul 2025 11:59:04 UTC
  *
  * Copyright (c) ReachFive.
  *
@@ -11,9 +11,10 @@ import * as _reachfive_identity_core from '@reachfive/identity-core';
 import { AuthResult, SingleFactorPasswordlessParams, StepUpPasswordlessParams, MFA, TrustedDevice, Config as Config$1, RemoteSettings, ConsentVersions, CustomField, Client as Client$1, SessionInfo, ConsentType, PasswordStrengthScore, PasswordPolicy, CustomFieldType, AuthOptions, PasswordlessResponse, Profile, UserConsent, DeviceCredential } from '@reachfive/identity-core';
 export { Config } from '@reachfive/identity-core';
 import * as React from 'react';
-import React__default, { CSSProperties, ComponentType } from 'react';
+import React__default, { CSSProperties, ComponentType, ComponentProps } from 'react';
 import { StepUpPasswordlessParams as StepUpPasswordlessParams$1 } from '@reachfive/identity-core/es/main/oAuthClient';
 import { Country, Value as Value$2 } from 'react-phone-number-input';
+import { WidgetDisplayMode } from '@captchafox/types';
 import * as libphonenumber_js from 'libphonenumber-js';
 
 type IdentifierType = 'email' | 'phone_number' | 'custom_identifier'
@@ -870,6 +871,7 @@ type FaSelectionViewProps = Prettify<Partial<MFA.StepUpResponse> & {
 }>;
 type StepUpResponse = RequiredProperty<PasswordlessResponse, 'challengeId'>;
 type StepUpHandlerResponse = StepUpResponse & StepUpFormData;
+declare const FaSelectionView: (props: FaSelectionViewProps) => React__default.JSX.Element | null;
 type VerificationCodeViewState = Prettify<StepUpHandlerResponse>;
 type VerificationCodeViewProps$3 = Prettify<Partial<StepUpHandlerResponse> & {
     /**
@@ -891,6 +893,7 @@ type VerificationCodeViewProps$3 = Prettify<Partial<StepUpHandlerResponse> & {
      */
     onError?: OnError;
 }>;
+declare const VerificationCodeView$1: (props: VerificationCodeViewProps$3) => React__default.JSX.Element;
 type MfaStepUpProps = MainViewProps$5 & FaSelectionViewProps & VerificationCodeViewProps$3;
 type MfaStepUpWidgetProps = MfaStepUpProps;
 
@@ -899,6 +902,45 @@ type MfaStepUpWidgetProps = MfaStepUpProps;
  * @enum {('login' | 'login-with-web-authn' | 'signup' | 'forgot-password')}
  */
 type InitialScreen = 'login' | 'login-with-web-authn' | 'signup' | 'signup-with-password' | 'signup-with-web-authn' | 'forgot-password';
+
+interface CaptchaFoxConf {
+    /**
+     * Boolean that specifies whether CaptchaFox is enabled or not.
+     */
+    captchaFoxEnabled: boolean;
+    /**
+     * The SITE key that comes from your [CaptchaFox](https://docs.captchafox.com/getting-started#get-your-captchafox-keys) setup.
+     * This must be paired with the appropriate secret key that you received when setting up CaptchaFox.
+     */
+    captchaFoxSiteKey: string;
+    /**
+     * Define how CaptchaFox is displayed (hidden|inline|popup)/ Default to hidden.
+     */
+    captchaFoxMode?: WidgetDisplayMode;
+}
+
+declare global {
+    interface Window {
+        grecaptcha: {
+            execute(siteKey: string, action: {
+                action: string;
+            }): PromiseLike<string>;
+        };
+    }
+}
+interface ReCaptchaConf {
+    /**
+     * Boolean that specifies whether reCAPTCHA is enabled or not.
+     */
+    recaptcha_enabled: boolean;
+    /**
+     * The SITE key that comes from your [reCAPTCHA](https://www.google.com/recaptcha/admin/create) setup.
+     * This must be paired with the appropriate secret key that you received when setting up reCAPTCHA.
+     */
+    recaptcha_site_key: string;
+}
+
+type WithCaptchaProps<T> = T & Partial<ReCaptchaConf & CaptchaFoxConf>;
 
 interface ForgotPasswordViewProps {
     /**
@@ -938,15 +980,6 @@ interface ForgotPasswordViewProps {
      */
     phoneNumberOptions?: PhoneNumberOptions;
     /**
-     * Boolean that specifies whether reCAPTCHA is enabled or not.
-     */
-    recaptcha_enabled?: boolean;
-    /**
-     * The SITE key that comes from your [reCAPTCHA](https://www.google.com/recaptcha/admin/create) setup.
-     * This must be paired with the appropriate secret key that you received when setting up reCAPTCHA.
-     */
-    recaptcha_site_key?: string;
-    /**
      * The URL sent in the email to which the user is redirected.
      * This URL must be whitelisted in the `Allowed Callback URLs` field of your ReachFive client settings.
      */
@@ -965,6 +998,7 @@ interface ForgotPasswordViewProps {
      */
     onError?: OnError;
 }
+declare const ForgotPasswordView: ({ allowLogin, allowPhoneNumberResetPassword, displaySafeErrorMessage, showLabels, allowWebAuthnLogin, initialScreen, recaptcha_enabled, recaptcha_site_key, captchaFoxEnabled, captchaFoxMode, captchaFoxSiteKey, redirectUrl, returnToAfterPasswordReset, onError, onSuccess, }: WithCaptchaProps<ForgotPasswordViewProps>) => React__default.JSX.Element;
 
 type LoginViewProps = {
     /**
@@ -1014,15 +1048,6 @@ type LoginViewProps = {
      */
     canShowPassword?: boolean;
     /**
-     * Boolean that specifies whether reCAPTCHA is enabled or not.
-     */
-    recaptcha_enabled?: boolean;
-    /**
-     * The SITE key that comes from your [reCAPTCHA](https://www.google.com/recaptcha/admin/create) setup.
-     * This must be paired with the appropriate secret key that you received when setting up reCAPTCHA.
-     */
-    recaptcha_site_key?: string;
-    /**
      * Whether the signup form fields' labels are displayed on the login view.
      *
      * @default false
@@ -1069,14 +1094,13 @@ type LoginViewProps = {
      */
     action?: string;
 };
+declare const LoginView: ({ acceptTos, allowForgotPassword, allowSignup, allowWebAuthnLogin, allowAccountRecovery, auth, canShowPassword, socialProviders, allowCustomIdentifier, showLabels, showRememberMe, recaptcha_enabled, recaptcha_site_key, captchaFoxEnabled, captchaFoxSiteKey, captchaFoxMode, allowAuthentMailPhone, allowTrustDevice, onError, onSuccess, }: WithCaptchaProps<LoginViewProps>) => React__default.JSX.Element;
 
 interface LoginWithPasswordViewProps {
     allowForgotPassword?: boolean;
     allowAccountRecovery?: boolean;
     auth?: AuthOptions;
     canShowPassword?: boolean;
-    recaptcha_enabled?: boolean;
-    recaptcha_site_key?: string;
     showLabels?: boolean;
     showRememberMe?: boolean;
     allowTrustDevice?: boolean;
@@ -1093,6 +1117,7 @@ interface LoginWithPasswordViewProps {
      */
     action?: string;
 }
+declare const LoginWithPasswordView: ({ allowForgotPassword, allowAccountRecovery, auth, canShowPassword, recaptcha_enabled, recaptcha_site_key, captchaFoxEnabled, captchaFoxSiteKey, captchaFoxMode, showLabels, showRememberMe, allowTrustDevice, onError, onSuccess, }: WithCaptchaProps<LoginWithPasswordViewProps>) => React__default.JSX.Element;
 
 interface LoginWithWebAuthnViewProps {
     /**
@@ -1134,6 +1159,11 @@ interface LoginWithWebAuthnViewProps {
      */
     onError?: OnError;
 }
+declare const LoginWithWebAuthnView: ({ acceptTos, allowSignup, auth, enablePasswordAuthentication, showLabels, socialProviders, allowAccountRecovery, onError, onSuccess, }: LoginWithWebAuthnViewProps) => React__default.JSX.Element;
+
+type PropsWithSession<P> = P & {
+    session?: SessionInfo;
+};
 
 interface QuickLoginViewProps {
     initialScreen?: InitialScreen;
@@ -1156,6 +1186,7 @@ interface QuickLoginViewProps {
      */
     onError?: OnError;
 }
+declare const QuickLoginView: ({ initialScreen, allowWebAuthnLogin, auth, session, onError, onSuccess, }: PropsWithSession<QuickLoginViewProps>) => React__default.JSX.Element | null;
 
 interface ReauthViewProps {
     /**
@@ -1194,14 +1225,13 @@ interface ReauthViewProps {
      */
     action?: string;
 }
+declare const ReauthView: ({ allowForgotPassword, auth, session, showLabels, socialProviders, onError, onSuccess, }: PropsWithSession<ReauthViewProps>) => React__default.JSX.Element | null;
 
 interface PasswordSignupFormProps {
     auth?: AuthOptions;
     beforeSignup?: <T>(param: T) => T;
     canShowPassword?: boolean;
     phoneNumberOptions?: PhoneNumberOptions;
-    recaptcha_enabled?: boolean;
-    recaptcha_site_key?: string;
     redirectUrl?: string;
     returnToAfterEmailConfirmation?: string;
     showLabels?: boolean;
@@ -1219,6 +1249,7 @@ interface PasswordSignupFormProps {
 
 interface SignupWithPasswordViewProps extends PasswordSignupFormProps {
 }
+declare const SignupWithPasswordView: (props: SignupWithPasswordViewProps) => React__default.JSX.Element;
 
 interface SignupWithWebAuthnViewProps {
     /**
@@ -1267,6 +1298,7 @@ interface SignupWithWebAuthnViewProps {
      */
     onError?: OnError;
 }
+declare const SignupWithWebAuthnView: ({ auth, beforeSignup, redirectUrl, returnToAfterEmailConfirmation, signupFields, showLabels, userAgreement, onError, onSuccess, }: SignupWithWebAuthnViewProps) => React__default.JSX.Element;
 
 interface SignupViewProps extends SignupWithPasswordViewProps, SignupWithWebAuthnViewProps {
     /**
@@ -1310,8 +1342,9 @@ interface SignupViewProps extends SignupWithPasswordViewProps, SignupWithWebAuth
      */
     onError?: OnError;
 }
+declare const SignupView: ({ allowLogin, initialScreen, allowWebAuthnLogin, allowWebAuthnSignup, enablePasswordAuthentication, socialProviders, ...props }: SignupViewProps) => React__default.JSX.Element;
 
-interface AuthWidgetProps extends LoginViewProps, LoginWithWebAuthnViewProps, LoginWithPasswordViewProps, SignupViewProps, SignupWithPasswordViewProps, SignupWithWebAuthnViewProps, ForgotPasswordViewProps, QuickLoginViewProps, ReauthViewProps, Omit<FaSelectionViewProps, keyof FaSelectionViewState>, Omit<VerificationCodeViewProps$3, keyof VerificationCodeViewState> {
+interface AuthWidgetProps extends ComponentProps<typeof LoginView>, ComponentProps<typeof LoginWithWebAuthnView>, ComponentProps<typeof LoginWithPasswordView>, ComponentProps<typeof SignupView>, ComponentProps<typeof SignupWithPasswordView>, ComponentProps<typeof SignupWithWebAuthnView>, ComponentProps<typeof ForgotPasswordView>, ComponentProps<typeof QuickLoginView>, ComponentProps<typeof ReauthView>, Omit<ComponentProps<typeof FaSelectionView>, keyof FaSelectionViewState>, Omit<ComponentProps<typeof VerificationCodeView$1>, keyof VerificationCodeViewState> {
     /**
      * Boolean that specifies whether quick login is enabled.
      *
@@ -1336,15 +1369,6 @@ interface MainViewProps$4 {
      */
     accessToken: string;
     /**
-     * Boolean that specifies whether reCAPTCHA is enabled or not.
-     */
-    recaptcha_enabled?: boolean;
-    /**
-     * The SITE key that comes from your [reCAPTCHA](https://www.google.com/recaptcha/admin/create) setup.
-     * This must be paired with the appropriate secret key that you received when setting up reCAPTCHA.
-     */
-    recaptcha_site_key?: string;
-    /**
      * The URL sent in the email to which the user is redirected.
      * This URL must be whitelisted in the `Allowed Callback URLs` field of your ReachFive client settings.
      */
@@ -1363,7 +1387,8 @@ interface MainViewProps$4 {
      */
     onError?: OnError;
 }
-interface EmailEditorWidgetProps extends MainViewProps$4 {
+declare const MainView$1: ({ accessToken, recaptcha_enabled, recaptcha_site_key, captchaFoxEnabled, captchaFoxMode, captchaFoxSiteKey, redirectUrl, showLabels, onError, onSuccess, }: WithCaptchaProps<MainViewProps$4>) => React__default.JSX.Element;
+interface EmailEditorWidgetProps extends ComponentProps<typeof MainView$1> {
 }
 
 type CredentialsProviderProps = {
@@ -1556,15 +1581,6 @@ interface MainViewProps$1 {
      */
     authType?: SingleFactorPasswordlessParams['authType'];
     /**
-     * Boolean that specifies whether reCAPTCHA is enabled or not.
-     */
-    recaptcha_enabled?: boolean;
-    /**
-     * The SITE key that comes from your [reCAPTCHA](https://www.google.com/recaptcha/admin/create) setup.
-     * This must be paired with the appropriate secret key that you received when setting up reCAPTCHA.
-     */
-    recaptcha_site_key?: string;
-    /**
      * Show the introduction text.
      * @default true
      */
@@ -1593,21 +1609,13 @@ interface MainViewProps$1 {
      */
     onError?: OnError;
 }
+declare const MainView: ({ auth, authType, recaptcha_enabled, recaptcha_site_key, captchaFoxEnabled, captchaFoxMode, captchaFoxSiteKey, showIntro, showSocialLogins, socialProviders, phoneNumberOptions, onError, onSuccess, }: WithCaptchaProps<MainViewProps$1>) => React__default.JSX.Element;
 interface VerificationCodeViewProps$1 {
     /**
      * The passwordless auth type (`magic_link` or `sms`).
      * @default "magic_link"
      */
     authType?: SingleFactorPasswordlessParams['authType'];
-    /**
-     * Boolean that specifies whether reCAPTCHA is enabled or not.
-     */
-    recaptcha_enabled?: boolean;
-    /**
-     * The SITE key that comes from your [reCAPTCHA](https://www.google.com/recaptcha/admin/create) setup.
-     * This must be paired with the appropriate secret key that you received when setting up reCAPTCHA.
-     */
-    recaptcha_site_key?: string;
     /**
      * Callback function called when the request has succeed.
      */
@@ -1617,7 +1625,8 @@ interface VerificationCodeViewProps$1 {
      */
     onError?: OnError;
 }
-type PasswordlessWidgetProps = Prettify<MainViewProps$1 & VerificationCodeViewProps$1>;
+declare const VerificationCodeView: ({ authType, recaptcha_enabled, recaptcha_site_key, captchaFoxEnabled, captchaFoxMode, captchaFoxSiteKey, onSuccess, onError, }: WithCaptchaProps<VerificationCodeViewProps$1>) => React__default.JSX.Element;
+type PasswordlessWidgetProps = Prettify<ComponentProps<typeof MainView> & ComponentProps<typeof VerificationCodeView>>;
 
 interface MainViewProps {
     /**

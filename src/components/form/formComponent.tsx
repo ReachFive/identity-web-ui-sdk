@@ -10,6 +10,7 @@ import { isAppError } from '../../helpers/errors';
 import { logError } from '../../helpers/logger';
 import { useDebounceCallback } from '../../helpers/useDebounceCallback';
 import { type Config } from '../../types';
+import { useCaptcha } from '../captcha';
 import { ErrorText, MutedText } from '../miscComponent';
 import { PrimaryButton } from './buttonComponent';
 import type { Field, FieldCreator, FieldValue } from './fieldCreator';
@@ -118,6 +119,7 @@ export function createForm<Model extends Record<PropertyKey, unknown> = {}, P = 
         const config = useConfig();
         const i18n = useI18n();
         const client = useReachfive();
+        const { Captcha, handler: captchaHandler } = useCaptcha();
 
         const {
             beforeSubmit,
@@ -346,7 +348,7 @@ export function createForm<Model extends Record<PropertyKey, unknown> = {}, P = 
             event.preventDefault();
 
             await processData(processedData => {
-                handler(processedData)
+                captchaHandler(processedData, handler)
                     .then(handleSuccess)
                     .catch((err: unknown) => {
                         (typeof skipError === 'function' ? skipError(err) : skipError === true)
@@ -371,6 +373,7 @@ export function createForm<Model extends Record<PropertyKey, unknown> = {}, P = 
                           })
                         : field.staticContent
                 )}
+                {Captcha && <Captcha />}
                 {SubmitComponent ? (
                     <SubmitComponent
                         disabled={isLoading}

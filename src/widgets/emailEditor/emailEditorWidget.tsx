@@ -1,14 +1,13 @@
-import React, { useLayoutEffect } from 'react';
+import React, { ComponentProps, useLayoutEffect } from 'react';
 
 import { email } from '../../core/validation';
 
+import { CaptchaProvider, WithCaptchaProps, type WithCaptchaToken } from '../../components/captcha';
 import { simpleField } from '../../components/form/fields/simpleField';
 import { createForm } from '../../components/form/formComponent';
 import { Info, Intro } from '../../components/miscComponent';
-import ReCaptcha, {
-    importGoogleRecaptchaScript,
-    type WithCaptchaToken,
-} from '../../components/reCaptcha';
+import { importGoogleRecaptchaScript } from '../../components/reCaptcha';
+
 import { createMultiViewWidget } from '../../components/widget/widget';
 import { useI18n } from '../../contexts/i18n';
 import { useReachfive } from '../../contexts/reachfive';
@@ -37,15 +36,6 @@ interface MainViewProps {
      */
     accessToken: string;
     /**
-     * Boolean that specifies whether reCAPTCHA is enabled or not.
-     */
-    recaptcha_enabled?: boolean;
-    /**
-     * The SITE key that comes from your [reCAPTCHA](https://www.google.com/recaptcha/admin/create) setup.
-     * This must be paired with the appropriate secret key that you received when setting up reCAPTCHA.
-     */
-    recaptcha_site_key?: string;
-    /**
      * The URL sent in the email to which the user is redirected.
      * This URL must be whitelisted in the `Allowed Callback URLs` field of your ReachFive client settings.
      */
@@ -69,11 +59,14 @@ const MainView = ({
     accessToken,
     recaptcha_enabled = false,
     recaptcha_site_key,
+    captchaFoxEnabled = false,
+    captchaFoxMode = 'hidden',
+    captchaFoxSiteKey,
     redirectUrl,
     showLabels = false,
     onError = (() => {}) as OnError,
     onSuccess = (() => {}) as OnSuccess,
-}: MainViewProps) => {
+}: WithCaptchaProps<MainViewProps>) => {
     const coreClient = useReachfive();
     const i18n = useI18n();
     const { goTo } = useRouting();
@@ -93,20 +86,22 @@ const MainView = ({
 
     return (
         <div>
-            <Intro>{i18n('emailEditor.intro')}</Intro>
-            <EmailEditorForm
-                showLabels={showLabels}
-                handler={(data: EmailFormData) =>
-                    ReCaptcha.handle(
-                        data,
-                        { recaptcha_enabled, recaptcha_site_key },
-                        callback,
-                        'update_email'
-                    )
-                }
-                onSuccess={handleSuccess}
-                onError={onError}
-            />
+            <CaptchaProvider
+                recaptcha_enabled={recaptcha_enabled}
+                recaptcha_site_key={recaptcha_site_key}
+                captchaFoxEnabled={captchaFoxEnabled}
+                captchaFoxSiteKey={captchaFoxSiteKey}
+                captchaFoxMode={captchaFoxMode}
+                action="update_email"
+            >
+                <Intro>{i18n('emailEditor.intro')}</Intro>
+                <EmailEditorForm
+                    showLabels={showLabels}
+                    handler={callback}
+                    onSuccess={handleSuccess}
+                    onError={onError}
+                />
+            </CaptchaProvider>
         </div>
     );
 };
@@ -116,7 +111,7 @@ const SuccessView = () => {
     return <Info>{i18n('emailEditor.successMessage')}</Info>;
 };
 
-export interface EmailEditorWidgetProps extends MainViewProps {}
+export interface EmailEditorWidgetProps extends ComponentProps<typeof MainView> {}
 
 export default createMultiViewWidget<EmailEditorWidgetProps>({
     initialView: 'main',

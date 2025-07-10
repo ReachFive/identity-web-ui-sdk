@@ -3,12 +3,13 @@ import React, { useCallback, useLayoutEffect } from 'react';
 
 import { isAppError } from '../../../helpers/errors';
 
-import { Alternative, Heading, Info, Intro, Link } from '../../../components/miscComponent';
 import { email } from '../../../core/validation';
 
+import { CaptchaProvider, WithCaptchaProps } from '../../../components/captcha';
 import { simpleField } from '../../../components/form/fields/simpleField';
 import { createForm } from '../../../components/form/formComponent';
-import ReCaptcha, { importGoogleRecaptchaScript } from '../../../components/reCaptcha';
+import { Alternative, Heading, Info, Intro, Link } from '../../../components/miscComponent';
+import { importGoogleRecaptchaScript } from '../../../components/reCaptcha';
 
 import { useI18n } from '../../../contexts/i18n';
 import { useReachfive } from '../../../contexts/reachfive';
@@ -53,15 +54,6 @@ export interface AccountRecoveryViewProps {
      */
     showLabels?: boolean;
     /**
-     * Boolean that specifies whether reCAPTCHA is enabled or not.
-     */
-    recaptcha_enabled?: boolean;
-    /**
-     * The SITE key that comes from your [reCAPTCHA](https://www.google.com/recaptcha/admin/create) setup.
-     * This must be paired with the appropriate secret key that you received when setting up reCAPTCHA.
-     */
-    recaptcha_site_key?: string;
-    /**
      * The URL sent in the email to which the user is redirected.
      * This URL must be whitelisted in the `Allowed Callback URLs` field of your ReachFive client settings.
      */
@@ -87,30 +79,27 @@ export const AccountRecoveryView = ({
     showLabels = false,
     recaptcha_enabled = false,
     recaptcha_site_key,
+    captchaFoxEnabled = false,
+    captchaFoxSiteKey,
+    captchaFoxMode,
     redirectUrl,
     returnToAfterAccountRecovery,
     onError = (() => {}) as OnError,
     onSuccess = (() => {}) as OnSuccess,
-}: AccountRecoveryViewProps) => {
+}: WithCaptchaProps<AccountRecoveryViewProps>) => {
     const coreClient = useReachfive();
     const { goTo } = useRouting();
     const i18n = useI18n();
 
     const callback = useCallback(
-        (data: RequestAccountRecoveryParams) =>
-            ReCaptcha.handle(
-                { ...data, redirectUrl, returnToAfterAccountRecovery },
-                { recaptcha_enabled, recaptcha_site_key },
-                coreClient.requestAccountRecovery,
-                'account_recovery'
-            ),
-        [
-            coreClient,
-            recaptcha_enabled,
-            recaptcha_site_key,
-            redirectUrl,
-            returnToAfterAccountRecovery,
-        ]
+        (data: RequestAccountRecoveryParams) => {
+            return coreClient.requestAccountRecovery({
+                ...data,
+                redirectUrl,
+                returnToAfterAccountRecovery,
+            });
+        },
+        [coreClient, redirectUrl, returnToAfterAccountRecovery]
     );
 
     useLayoutEffect(() => {
@@ -121,16 +110,25 @@ export const AccountRecoveryView = ({
         <div>
             <Heading>{i18n('accountRecovery.title')}</Heading>
             <Intro>{i18n('accountRecovery.prompt')}</Intro>
-            <AccountRecoveryForm
-                showLabels={showLabels}
-                handler={callback}
-                onSuccess={() => {
-                    onSuccess({ name: 'account_recovery' });
-                    goTo('account-recovery-success');
-                }}
-                onError={onError}
-                skipError={displaySafeErrorMessage && skipError}
-            />
+            <CaptchaProvider
+                recaptcha_enabled={recaptcha_enabled}
+                recaptcha_site_key={recaptcha_site_key}
+                captchaFoxEnabled={captchaFoxEnabled}
+                captchaFoxSiteKey={captchaFoxSiteKey}
+                captchaFoxMode={captchaFoxMode}
+                action="account_recovery"
+            >
+                <AccountRecoveryForm
+                    showLabels={showLabels}
+                    handler={callback}
+                    onSuccess={() => {
+                        onSuccess({ name: 'account_recovery' });
+                        goTo('account-recovery-success');
+                    }}
+                    onError={onError}
+                    skipError={displaySafeErrorMessage && skipError}
+                />
+            </CaptchaProvider>
             {allowLogin && (
                 <Alternative>
                     <Link target={'login'}>{i18n('accountRecovery.backToLoginLink')}</Link>

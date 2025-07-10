@@ -1,5 +1,5 @@
 import { AuthOptions, AuthResult, SingleFactorPasswordlessParams } from '@reachfive/identity-core';
-import React, { useLayoutEffect } from 'react';
+import React, { ComponentProps, useLayoutEffect } from 'react';
 
 import type { Config, OnError, OnSuccess, Prettify } from '../../types';
 
@@ -14,10 +14,9 @@ import phoneNumberField, {
 import { simpleField } from '../../components/form/fields/simpleField';
 import { createForm } from '../../components/form/formComponent';
 import { SocialButtons } from '../../components/form/socialButtonsComponent';
-import ReCaptcha, {
-    importGoogleRecaptchaScript,
-    type WithCaptchaToken,
-} from '../../components/reCaptcha';
+import { importGoogleRecaptchaScript } from '../../components/reCaptcha';
+
+import { CaptchaProvider, WithCaptchaProps, type WithCaptchaToken } from '../../components/captcha';
 
 import { useConfig } from '../../contexts/config';
 import { useI18n } from '../../contexts/i18n';
@@ -78,15 +77,6 @@ interface MainViewProps {
      */
     authType?: SingleFactorPasswordlessParams['authType'];
     /**
-     * Boolean that specifies whether reCAPTCHA is enabled or not.
-     */
-    recaptcha_enabled?: boolean;
-    /**
-     * The SITE key that comes from your [reCAPTCHA](https://www.google.com/recaptcha/admin/create) setup.
-     * This must be paired with the appropriate secret key that you received when setting up reCAPTCHA.
-     */
-    recaptcha_site_key?: string;
-    /**
      * Show the introduction text.
      * @default true
      */
@@ -121,13 +111,16 @@ const MainView = ({
     authType = 'magic_link',
     recaptcha_enabled = false,
     recaptcha_site_key,
+    captchaFoxEnabled = false,
+    captchaFoxMode = 'hidden',
+    captchaFoxSiteKey,
     showIntro = true,
     showSocialLogins = false,
     socialProviders,
     phoneNumberOptions,
     onError = (() => {}) as OnError,
     onSuccess = (() => {}) as OnSuccess,
-}: MainViewProps) => {
+}: WithCaptchaProps<MainViewProps>) => {
     const coreClient = useReachfive();
     const config = useConfig();
     const i18n = useI18n();
@@ -175,34 +168,38 @@ const MainView = ({
             )}
             {isEmail && showIntro && <Intro>{i18n('passwordless.intro')}</Intro>}
             {isEmail && (
-                <EmailInputForm
-                    handler={(data: EmailFormData) =>
-                        ReCaptcha.handle(
-                            data,
-                            { recaptcha_enabled, recaptcha_site_key },
-                            callback,
-                            'passwordless_email'
-                        )
-                    }
-                    onSuccess={handleSuccess}
-                    onError={onError}
-                />
+                <CaptchaProvider
+                    recaptcha_enabled={recaptcha_enabled}
+                    recaptcha_site_key={recaptcha_site_key}
+                    captchaFoxEnabled={captchaFoxEnabled}
+                    captchaFoxSiteKey={captchaFoxSiteKey}
+                    captchaFoxMode={captchaFoxMode}
+                    action="passwordless_email"
+                >
+                    <EmailInputForm
+                        handler={callback}
+                        onSuccess={handleSuccess}
+                        onError={onError}
+                    />
+                </CaptchaProvider>
             )}
             {!isEmail && showIntro && <Intro>{i18n('passwordless.sms.intro')}</Intro>}
             {!isEmail && (
-                <PhoneNumberInputForm
-                    handler={(data: PhoneNumberFormData) =>
-                        ReCaptcha.handle(
-                            data,
-                            { recaptcha_enabled, recaptcha_site_key },
-                            callback,
-                            'passwordless_phone'
-                        )
-                    }
-                    onSuccess={handleSuccess}
-                    onError={onError}
-                    phoneNumberOptions={phoneNumberOptions}
-                />
+                <CaptchaProvider
+                    recaptcha_enabled={recaptcha_enabled}
+                    recaptcha_site_key={recaptcha_site_key}
+                    captchaFoxEnabled={captchaFoxEnabled}
+                    captchaFoxSiteKey={captchaFoxSiteKey}
+                    captchaFoxMode={captchaFoxMode}
+                    action="passwordless_phone"
+                >
+                    <PhoneNumberInputForm
+                        handler={callback}
+                        onSuccess={handleSuccess}
+                        onError={onError}
+                        phoneNumberOptions={phoneNumberOptions}
+                    />
+                </CaptchaProvider>
             )}
         </div>
     );
@@ -214,15 +211,6 @@ interface VerificationCodeViewProps {
      * @default "magic_link"
      */
     authType?: SingleFactorPasswordlessParams['authType'];
-    /**
-     * Boolean that specifies whether reCAPTCHA is enabled or not.
-     */
-    recaptcha_enabled?: boolean;
-    /**
-     * The SITE key that comes from your [reCAPTCHA](https://www.google.com/recaptcha/admin/create) setup.
-     * This must be paired with the appropriate secret key that you received when setting up reCAPTCHA.
-     */
-    recaptcha_site_key?: string;
     /**
      * Callback function called when the request has succeed.
      */
@@ -241,9 +229,12 @@ const VerificationCodeView = ({
     authType = 'magic_link',
     recaptcha_enabled = false,
     recaptcha_site_key,
+    captchaFoxEnabled = false,
+    captchaFoxMode = 'hidden',
+    captchaFoxSiteKey,
     onSuccess = (() => {}) as OnSuccess,
     onError = (() => {}) as OnError,
-}: VerificationCodeViewProps) => {
+}: WithCaptchaProps<VerificationCodeViewProps>) => {
     const coreClient = useReachfive();
     const i18n = useI18n();
     const { params } = useRouting();
@@ -273,18 +264,17 @@ const VerificationCodeView = ({
 
     return (
         <div>
-            <Info>{i18n('passwordless.sms.verification.intro')}</Info>
-            <VerificationCodeInputForm
-                handler={(data: VerificationCodeFormData) =>
-                    ReCaptcha.handle(
-                        data,
-                        { recaptcha_enabled, recaptcha_site_key },
-                        handleSubmit,
-                        'verify_passwordless_sms'
-                    )
-                }
-                onError={onError}
-            />
+            <CaptchaProvider
+                recaptcha_enabled={recaptcha_enabled}
+                recaptcha_site_key={recaptcha_site_key}
+                captchaFoxEnabled={captchaFoxEnabled}
+                captchaFoxSiteKey={captchaFoxSiteKey}
+                captchaFoxMode={captchaFoxMode}
+                action="verify_passwordless_sms"
+            >
+                <Info>{i18n('passwordless.sms.verification.intro')}</Info>
+                <VerificationCodeInputForm handler={handleSubmit} onError={onError} />
+            </CaptchaProvider>
         </div>
     );
 };
@@ -294,7 +284,9 @@ const EmailSentView = () => {
     return <Info>{i18n('passwordless.emailSent')}</Info>;
 };
 
-export type PasswordlessWidgetProps = Prettify<MainViewProps & VerificationCodeViewProps>;
+export type PasswordlessWidgetProps = Prettify<
+    ComponentProps<typeof MainView> & ComponentProps<typeof VerificationCodeView>
+>;
 
 export default createMultiViewWidget<PasswordlessWidgetProps>({
     initialView: 'main',
