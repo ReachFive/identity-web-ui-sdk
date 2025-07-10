@@ -7,7 +7,13 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+
+## [1.36.0] - 2025-07-10
+
+### Added
+
 - Add CaptchaFox support
+- Add parameter event to onSuccess callback function
 
 ## [1.35.0] - 2025-05-13
 
