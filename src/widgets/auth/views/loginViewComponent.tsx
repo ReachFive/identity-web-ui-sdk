@@ -10,10 +10,13 @@ import { simpleField } from '../../../components/form/fields/simpleField';
 import simplePasswordField from '../../../components/form/fields/simplePasswordField';
 import { createForm } from '../../../components/form/formComponent';
 import { SocialButtons } from '../../../components/form/socialButtonsComponent';
-import ReCaptcha, {
-    importGoogleRecaptchaScript,
+import { importGoogleRecaptchaScript } from '../../../components/reCaptcha';
+
+import {
+    CaptchaProvider,
+    WithCaptchaProps,
     type WithCaptchaToken,
-} from '../../../components/reCaptcha';
+} from '../../../components/captcha';
 
 import { FaSelectionViewState } from '../../stepUp/mfaStepUpWidget';
 
@@ -211,15 +214,6 @@ export type LoginViewProps = {
      */
     canShowPassword?: boolean;
     /**
-     * Boolean that specifies whether reCAPTCHA is enabled or not.
-     */
-    recaptcha_enabled?: boolean;
-    /**
-     * The SITE key that comes from your [reCAPTCHA](https://www.google.com/recaptcha/admin/create) setup.
-     * This must be paired with the appropriate secret key that you received when setting up reCAPTCHA.
-     */
-    recaptcha_site_key?: string;
-    /**
      * Whether the signup form fields' labels are displayed on the login view.
      *
      * @default false
@@ -277,11 +271,14 @@ export const LoginView = ({
     showRememberMe = false,
     recaptcha_enabled = false,
     recaptcha_site_key,
+    captchaFoxEnabled = false,
+    captchaFoxSiteKey,
+    captchaFoxMode = 'hidden',
     allowAuthentMailPhone = true,
     allowTrustDevice,
     onError = (() => {}) as OnError,
     onSuccess = (() => {}) as OnSuccess,
-}: LoginViewProps) => {
+}: WithCaptchaProps<LoginViewProps>) => {
     const i18n = useI18n();
     const coreClient = useReachfive();
     const { goTo } = useRouting();
@@ -346,28 +343,30 @@ export const LoginView = ({
                 />
             )}
             {socialProviders && socialProviders.length > 0 && <Separator text={i18n('or')} />}
-            <LoginForm
-                showLabels={showLabels}
-                showRememberMe={showRememberMe}
-                showForgotPassword={allowForgotPassword}
-                showAccountRecovery={allowAccountRecovery}
-                canShowPassword={canShowPassword}
-                defaultIdentifier={defaultIdentifier}
-                allowCustomIdentifier={allowCustomIdentifier}
-                allowAuthentMailPhone={allowAuthentMailPhone}
-                handler={(data: LoginFormData) =>
-                    ReCaptcha.handle(
-                        data,
-                        { recaptcha_enabled, recaptcha_site_key },
-                        callback,
-                        'login'
-                    )
-                }
-                onSuccess={res => {
-                    onSuccess({ name: 'login', ...res });
-                }}
-                onError={onError}
-            />
+            <CaptchaProvider
+                recaptcha_enabled={recaptcha_enabled}
+                recaptcha_site_key={recaptcha_site_key}
+                captchaFoxEnabled={captchaFoxEnabled}
+                captchaFoxSiteKey={captchaFoxSiteKey}
+                captchaFoxMode={captchaFoxMode}
+                action="login"
+            >
+                <LoginForm
+                    showLabels={showLabels}
+                    showRememberMe={showRememberMe}
+                    showForgotPassword={allowForgotPassword}
+                    showAccountRecovery={allowAccountRecovery}
+                    canShowPassword={canShowPassword}
+                    defaultIdentifier={defaultIdentifier}
+                    allowCustomIdentifier={allowCustomIdentifier}
+                    allowAuthentMailPhone={allowAuthentMailPhone}
+                    handler={callback}
+                    onSuccess={res => {
+                        onSuccess({ name: 'login', ...res });
+                    }}
+                    onError={onError}
+                />
+            </CaptchaProvider>
             {allowSignup && (
                 <Alternative>
                     <span>{i18n('login.signupLinkPrefix')}</span>

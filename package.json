@@ -33,7 +33,8 @@
         "format:check": "prettier --check ."
     },
     "dependencies": {
-        "@reachfive/identity-core": "^1.36.0",
+        "@captchafox/react": "^1.9.0",
+        "@reachfive/identity-core": "^1.37.0",
         "buffer": "^6.0.3",
         "char-info": "0.3.2",
         "class-variance-authority": "^0.7.1",
