@@ -1,6 +1,6 @@
 import { AuthOptions, MFA, PasswordlessResponse } from '@reachfive/identity-core';
 import { StepUpPasswordlessParams } from '@reachfive/identity-core/es/main/oAuthClient';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 
 import type { OnError, OnSuccess, Prettify, RequiredProperty } from '../../types';
 
@@ -158,7 +158,7 @@ export const MainView = ({
             <StartStepUpMfaButton
                 handler={onGetStepUpToken}
                 onSuccess={(data: MFA.StepUpResponse) =>
-                    goTo<FaSelectionViewState>('fa-selection', { ...data, allowTrustDevice })
+                    goTo<FaSelectionViewState>('fa-selection', { ...data, allowTrustDevice, auth })
                 }
                 onError={onError}
             />
@@ -183,6 +183,7 @@ export const MainView = ({
 
 export type FaSelectionViewState = MFA.StepUpResponse & {
     allowTrustDevice?: boolean;
+    auth?: AuthOptions
 };
 
 export type FaSelectionViewProps = Prettify<
@@ -242,7 +243,7 @@ export const FaSelectionView = (props: FaSelectionViewProps) => {
         return (
             <VerificationCodeView
                 {...response}
-                auth={props.auth}
+                auth={state.auth ?? props.auth}
                 allowTrustDevice={props.allowTrustDevice}
                 onError={props.onError}
                 onSuccess={props.onSuccess}
@@ -295,7 +296,7 @@ export const VerificationCodeView = (props: VerificationCodeViewProps) => {
     const coreClient = useReachfive();
     const i18n = useI18n();
     const { params } = useRouting();
-    const { rbaEnabled } = useConfig();
+    const { rbaEnabled, domain } = useConfig();
     const state = params as VerificationCodeViewState;
 
     const {
@@ -307,21 +308,33 @@ export const VerificationCodeView = (props: VerificationCodeViewProps) => {
         onSuccess = (() => {}) as OnSuccess,
     } = { ...props, ...state };
 
-    const handleSubmit = (data: VerificationCodeInputFormData) =>
-        coreClient
-            .verifyMfaPasswordless({
+    const handleSubmit = (data: VerificationCodeInputFormData) => {
+        const isOrchestratedFlow = new URLSearchParams(window.location.search).get('r5_request_token') != null
+        if(isOrchestratedFlow) {
+            window.location.assign(`https://${domain}/identity/v1/passwordless/verify` + '?' + toQueryString({
+                ...data,
                 challengeId,
-                verificationCode: data.verificationCode,
-                trustDevice: data.trustDevice,
-            })
-            .then(resp => {
-                onSuccess({ name: 'login_2nd_step', authType, authResult: resp });
-                if (data.trustDevice) {
-                    onSuccess({ name: 'mfa_trusted_device_added' });
-                }
-                // @ts-expect-error AuthResult is too complex and is not representative of the real response of this request
-                window.location.replace((auth?.redirectUri ?? '') + '?' + toQueryString(resp));
-            });
+            }))
+            return Promise.resolve()
+        }
+      else {
+            return coreClient
+                .verifyMfaPasswordless({
+                    challengeId,
+                    verificationCode: data.verificationCode,
+                    trustDevice: data.trustDevice,
+                })
+                .then(resp => {
+                    onSuccess({ name: 'login_2nd_step', authType, authResult: resp });
+                    if (data.trustDevice) {
+                        onSuccess({ name: 'mfa_trusted_device_added' });
+                    }
+                    // @ts-expect-error AuthResult is too complex and is not representative of the real response of this request
+                    window.location.assign((auth?.redirectUri ?? '') + '?' + toQueryString(resp));
+                });
+        }
+    }
+
 
     return (
         <div>
