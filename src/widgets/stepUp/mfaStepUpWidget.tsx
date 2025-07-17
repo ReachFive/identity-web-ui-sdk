@@ -312,7 +312,7 @@ export const VerificationCodeView = (props: VerificationCodeViewProps) => {
         const isOrchestratedFlow =
             new URLSearchParams(window.location.search).get('r5_request_token') != null;
         if (isOrchestratedFlow) {
-            window.location.assign(
+            window.location.replace(
                 `https://${domain}/identity/v1/passwordless/verify` +
                     '?' +
                     toQueryString({
@@ -334,7 +334,7 @@ export const VerificationCodeView = (props: VerificationCodeViewProps) => {
                         onSuccess({ name: 'mfa_trusted_device_added' });
                     }
                     // @ts-expect-error AuthResult is too complex and is not representative of the real response of this request
-                    window.location.assign((auth?.redirectUri ?? '') + '?' + toQueryString(resp));
+                    window.location.replace((auth?.redirectUri ?? '') + '?' + toQueryString(resp));
                 });
         }
     };
