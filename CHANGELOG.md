@@ -7,6 +7,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.36.1] - 2025-07-17
+
+### Fixes
+
+- release lock at the end of the step up flow
 
 ## [1.36.0] - 2025-07-10
 
@@ -629,7 +634,9 @@ The eye icon is now correctly displayed in the Auth widget.
 
 First version of the SDK Web UI.
 
-[Unreleased]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.35.0...HEAD
+[Unreleased]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.36.1...HEAD
+[1.36.1]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.36.0...v1.36.1
+[1.36.0]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.35.0...v1.36.0
 [1.35.0]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.34.1...v1.35.0
 [1.34.1]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.34.0...v1.34.1
 [1.34.0]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.33.2...v1.34.0
