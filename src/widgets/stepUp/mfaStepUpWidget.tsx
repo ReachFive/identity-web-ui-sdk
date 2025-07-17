@@ -1,6 +1,6 @@
 import { AuthOptions, MFA, PasswordlessResponse } from '@reachfive/identity-core';
 import { StepUpPasswordlessParams } from '@reachfive/identity-core/es/main/oAuthClient';
-import React, {useCallback, useEffect, useState} from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import type { OnError, OnSuccess, Prettify, RequiredProperty } from '../../types';
 
@@ -183,7 +183,7 @@ export const MainView = ({
 
 export type FaSelectionViewState = MFA.StepUpResponse & {
     allowTrustDevice?: boolean;
-    auth?: AuthOptions
+    auth?: AuthOptions;
 };
 
 export type FaSelectionViewProps = Prettify<
@@ -309,15 +309,19 @@ export const VerificationCodeView = (props: VerificationCodeViewProps) => {
     } = { ...props, ...state };
 
     const handleSubmit = (data: VerificationCodeInputFormData) => {
-        const isOrchestratedFlow = new URLSearchParams(window.location.search).get('r5_request_token') != null
-        if(isOrchestratedFlow) {
-            window.location.assign(`https://${domain}/identity/v1/passwordless/verify` + '?' + toQueryString({
-                ...data,
-                challengeId,
-            }))
-            return Promise.resolve()
-        }
-      else {
+        const isOrchestratedFlow =
+            new URLSearchParams(window.location.search).get('r5_request_token') != null;
+        if (isOrchestratedFlow) {
+            window.location.assign(
+                `https://${domain}/identity/v1/passwordless/verify` +
+                    '?' +
+                    toQueryString({
+                        ...data,
+                        challengeId,
+                    })
+            );
+            return Promise.resolve();
+        } else {
             return coreClient
                 .verifyMfaPasswordless({
                     challengeId,
@@ -333,8 +337,7 @@ export const VerificationCodeView = (props: VerificationCodeViewProps) => {
                     window.location.assign((auth?.redirectUri ?? '') + '?' + toQueryString(resp));
                 });
         }
-    }
-
+    };
 
     return (
         <div>
