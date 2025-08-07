@@ -193,6 +193,7 @@ export const LoginWithPasswordView = ({
                         token: res.stepUpToken,
                         amr: res.amr ?? [],
                         allowTrustDevice,
+                        auth,
                     });
                 }
                 return enrichLoginEvent(res, 'password', specializedIdentifierData);
