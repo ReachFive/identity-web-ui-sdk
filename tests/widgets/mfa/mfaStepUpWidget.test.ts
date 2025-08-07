@@ -164,10 +164,10 @@ describe('DOM testing', () => {
                 amr: ['sms'],
                 token: myStepUpToken,
             });
-            startPasswordless.mockResolvedValue({
+            (startPasswordless.mockResolvedValue({
                 challengeId: myChallengeId,
             }),
-                verifyMfaPasswordless.mockResolvedValue({});
+                verifyMfaPasswordless.mockResolvedValue({}));
         });
 
         test('showStepUpStart: true', async () => {
