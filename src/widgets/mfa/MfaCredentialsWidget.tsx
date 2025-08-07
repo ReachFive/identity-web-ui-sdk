@@ -168,6 +168,10 @@ interface MainViewProps {
      * Allow to trust device during enrollment
      */
     allowTrustDevice?: boolean;
+    /**
+     * Action used in template
+     */
+    action?: string;
 }
 
 const MainView = withCredentials(
@@ -181,6 +185,7 @@ const MainView = withCredentials(
         showRemoveMfaCredentials = true,
         allowTrustDevice = false,
         profileIdentifiers = {},
+        action,
     }: MainViewProps) => {
         const coreClient = useReachfive();
         const config = useConfig();
@@ -194,11 +199,12 @@ const MainView = withCredentials(
             return coreClient
                 .startMfaEmailRegistration({
                     accessToken,
+                    action,
                     ...data,
                 })
                 .then(resp => {
                     onSuccess({ name: 'mfa_email_start_registration' });
-                    if (data.trustDevice) {
+                    if (data.trustDevice && resp.status == 'enabled') {
                         onSuccess({ name: 'mfa_trusted_device_added' });
                     }
                     return resp;
@@ -213,11 +219,12 @@ const MainView = withCredentials(
             return coreClient
                 .startMfaPhoneNumberRegistration({
                     accessToken,
+                    action,
                     ...data,
                 })
                 .then(resp => {
                     onSuccess({ name: 'mfa_phone_number_start_registration' });
-                    if (data.trustDevice) {
+                    if (data.trustDevice && resp.status == 'enabled') {
                         onSuccess({ name: 'mfa_trusted_device_added' });
                     }
                     return resp;

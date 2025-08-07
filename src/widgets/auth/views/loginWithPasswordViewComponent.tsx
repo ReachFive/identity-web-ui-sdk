@@ -138,6 +138,10 @@ export interface LoginWithPasswordViewProps {
      * Callback function called when the request has failed.
      */
     onError?: OnError;
+    /**
+     * Action used in template
+     */
+    action?: string;
 }
 
 export type LoginWithPasswordViewState = {
@@ -157,6 +161,7 @@ export const LoginWithPasswordView = ({
     showLabels,
     showRememberMe,
     allowTrustDevice,
+    action,
     onError = (() => {}) as OnError,
     onSuccess = (() => {}) as OnSuccess,
 }: WithCaptchaProps<LoginWithPasswordViewProps>) => {
@@ -180,6 +185,7 @@ export const LoginWithPasswordView = ({
                     ...dataAuth,
                     ...auth,
                 },
+                action,
             })
             .then(res => {
                 if (res?.stepUpToken) {

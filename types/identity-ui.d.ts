@@ -848,6 +848,10 @@ interface MainViewProps$5 {
      * Callback function called when the request has failed.
      */
     onError?: OnError;
+    /**
+     * Action used in template
+     */
+    action?: string;
 }
 type FaSelectionViewState = MFA.StepUpResponse & {
     allowTrustDevice?: boolean;
@@ -1085,6 +1089,10 @@ type LoginViewProps = {
      * Callback function called when the request has failed.
      */
     onError?: OnError;
+    /**
+     * Action used in template
+     */
+    action?: string;
 };
 declare const LoginView: ({ acceptTos, allowForgotPassword, allowSignup, allowWebAuthnLogin, allowAccountRecovery, auth, canShowPassword, socialProviders, allowCustomIdentifier, showLabels, showRememberMe, recaptcha_enabled, recaptcha_site_key, captchaFoxEnabled, captchaFoxSiteKey, captchaFoxMode, allowAuthentMailPhone, allowTrustDevice, onError, onSuccess, }: WithCaptchaProps<LoginViewProps>) => React__default.JSX.Element;
 
@@ -1104,6 +1112,10 @@ interface LoginWithPasswordViewProps {
      * Callback function called when the request has failed.
      */
     onError?: OnError;
+    /**
+     * Action used in template
+     */
+    action?: string;
 }
 declare const LoginWithPasswordView: ({ allowForgotPassword, allowAccountRecovery, auth, canShowPassword, recaptcha_enabled, recaptcha_site_key, captchaFoxEnabled, captchaFoxSiteKey, captchaFoxMode, showLabels, showRememberMe, allowTrustDevice, onError, onSuccess, }: WithCaptchaProps<LoginWithPasswordViewProps>) => React__default.JSX.Element;
 
@@ -1208,6 +1220,10 @@ interface ReauthViewProps {
      * Callback function called when the request has failed.
      */
     onError?: OnError;
+    /**
+     * Action used in template
+     */
+    action?: string;
 }
 declare const ReauthView: ({ allowForgotPassword, auth, session, showLabels, socialProviders, onError, onSuccess, }: PropsWithSession<ReauthViewProps>) => React__default.JSX.Element | null;
 
@@ -1426,6 +1442,10 @@ interface MainViewProps$3 {
      * Allow to trust device during enrollment
      */
     allowTrustDevice?: boolean;
+    /**
+     * Action used in template
+     */
+    action?: string;
 }
 interface VerificationCodeViewProps$2 {
     /**
