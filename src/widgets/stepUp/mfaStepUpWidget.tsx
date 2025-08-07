@@ -309,8 +309,9 @@ export const VerificationCodeView = (props: VerificationCodeViewProps) => {
     } = { ...props, ...state };
 
     const handleSubmit = (data: VerificationCodeInputFormData) => {
-        const isOrchestratedFlow =
-            new URLSearchParams(window.location.search).has('r5_request_token');
+        const isOrchestratedFlow = new URLSearchParams(window.location.search).has(
+            'r5_request_token'
+        );
         if (isOrchestratedFlow) {
             window.location.replace(
                 `https://${domain}/identity/v1/passwordless/verify` +
