@@ -166,8 +166,8 @@ describe('DOM testing', () => {
             });
             startPasswordless.mockResolvedValue({
                 challengeId: myChallengeId,
-            }),
-                verifyMfaPasswordless.mockResolvedValue({});
+            });
+            verifyMfaPasswordless.mockResolvedValue({});
         });
 
         test('showStepUpStart: true', async () => {
