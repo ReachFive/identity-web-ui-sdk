@@ -1,14 +1,31 @@
-import React, { useEffect, useMemo, useState } from 'react'
-import { eachMonthOfInterval, endOfYear, intlFormat, formatISO, getDate, getDaysInMonth, getMonth, getYear, isValid, parseISO, startOfYear } from "date-fns"
+import {
+    eachMonthOfInterval,
+    endOfYear,
+    formatISO,
+    getDate,
+    getDaysInMonth,
+    getMonth,
+    getYear,
+    intlFormat,
+    isValid,
+    parseISO,
+    startOfYear,
+} from 'date-fns';
+import React, { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
-import { ValidatorResult, Validator, isValidatorError } from '../../../core/validation';
+import { Validator, ValidatorResult, isValidatorError } from '../../../core/validation';
 import { useDebounce } from '../../../helpers/useDebounce';
 import { isRichFormValue } from '../../../helpers/utils';
 
-import { createField, type FieldComponentProps, type FieldCreator, type FieldDefinition } from '../fieldCreator';
-import { FormGroup, Input, Select } from '../formControlsComponent';
 import type { Config, Optional } from '../../../types';
+import {
+    createField,
+    type FieldComponentProps,
+    type FieldCreator,
+    type FieldDefinition,
+} from '../fieldCreator';
+import { FormGroup, Input, Select } from '../formControlsComponent';
 
 const inputRowGutter = 10;
 
@@ -19,15 +36,15 @@ const InputRow = styled.div`
     gap: ${inputRowGutter}px;
 `;
 
-const InputCol = styled.div<{ width: number, minWidth?: number }>`
+const InputCol = styled.div<{ width: number; minWidth?: number }>`
     flex-basis: ${props => props.width}%;
-    ${props => props.minWidth ? `min-width: ${props.minWidth}px;` : undefined}
+    ${props => (props.minWidth ? `min-width: ${props.minWidth}px;` : undefined)}
 `;
 
 type ExtraParams = {
-    locale: string
-    yearDebounce?: number
-}
+    locale: string;
+    yearDebounce?: number;
+};
 
 export interface DateFieldProps extends FieldComponentProps<Date, ExtraParams> {}
 
@@ -42,61 +59,75 @@ const DateField = ({
     showLabel,
     validation = {} as ValidatorResult,
     value,
-    yearDebounce = 1000
+    yearDebounce = 1000,
 }: DateFieldProps) => {
-    const date = isRichFormValue(value, 'raw') ? value.raw : value
-    const [day, setDay] = useState(date ? getDate(date) : undefined)
-    const [month, setMonth] = useState(date ? getMonth(date) : undefined)
-    const [year, setYear] = useState(date ? getYear(date) : undefined)
+    const date = isRichFormValue(value, 'raw') ? value.raw : value;
+    const [day, setDay] = useState(date ? getDate(date) : undefined);
+    const [month, setMonth] = useState(date ? getMonth(date) : undefined);
+    const [year, setYear] = useState(date ? getYear(date) : undefined);
 
     // debounce year value to delay value update when user is currently editing it
-    const debouncedYear = useDebounce(year, yearDebounce)
+    const debouncedYear = useDebounce(year, yearDebounce);
 
-    const setDatePart = (setter: React.Dispatch<React.SetStateAction<number | undefined>>, value: string) => {
-        if (Number.isNaN(Number(value))) return // only accept number value
-        setter(Number(value))
-    }
+    const setDatePart = (
+        setter: React.Dispatch<React.SetStateAction<number | undefined>>,
+        value: string
+    ) => {
+        if (Number.isNaN(Number(value))) return; // only accept number value
+        setter(Number(value));
+    };
 
-    const handleDayChange = (event: React.ChangeEvent<HTMLSelectElement>) => setDatePart(setDay, event.target.value)
+    const handleDayChange = (event: React.ChangeEvent<HTMLSelectElement>) =>
+        setDatePart(setDay, event.target.value);
 
-    const handleMonthChange = (event: React.ChangeEvent<HTMLSelectElement>) => setDatePart(setMonth, event.target.value)
+    const handleMonthChange = (event: React.ChangeEvent<HTMLSelectElement>) =>
+        setDatePart(setMonth, event.target.value);
 
-    const handleYearChange = (event: React.ChangeEvent<HTMLInputElement>) => setDatePart(setYear, event.target.value)
+    const handleYearChange = (event: React.ChangeEvent<HTMLInputElement>) =>
+        setDatePart(setYear, event.target.value);
 
-    const error = validation && isValidatorError(validation) ? validation.error : undefined
+    const error = validation && isValidatorError(validation) ? validation.error : undefined;
 
     useEffect(() => {
-        if (typeof day !== 'undefined' && typeof month !== 'undefined' && typeof debouncedYear !== 'undefined') {
+        if (
+            typeof day !== 'undefined' &&
+            typeof month !== 'undefined' &&
+            typeof debouncedYear !== 'undefined'
+        ) {
             onChange({
                 value: new Date(debouncedYear, month, day),
                 isDirty: true,
-            })
+            });
         }
-    }, [debouncedYear, month, day])
+    }, [debouncedYear, month, day]);
 
-    const months = useMemo(() =>
-        eachMonthOfInterval({
-            start: startOfYear(new Date()),
-            end: endOfYear(new Date())
-        }).map(month => intlFormat(month, { month: "long" }, { locale })),
+    const months = useMemo(
+        () =>
+            eachMonthOfInterval({
+                start: startOfYear(new Date()),
+                end: endOfYear(new Date()),
+            }).map(month => intlFormat(month, { month: 'long' }, { locale })),
         [locale]
-    )
+    );
 
-    const daysInMonth = useMemo(() =>
-        [...Array(
-            debouncedYear && month ? getDaysInMonth(new Date(debouncedYear, month, 1)) : 31
-        ).keys()].map(v => v + 1),
+    const daysInMonth = useMemo(
+        () =>
+            [
+                ...Array(
+                    debouncedYear && month ? getDaysInMonth(new Date(debouncedYear, month, 1)) : 31
+                ).keys(),
+            ].map(v => v + 1),
         [debouncedYear, month]
-    )
+    );
 
     // reset day if current value is out of range
     if (day && !daysInMonth.includes(day)) {
-        setDay(undefined)
+        setDay(undefined);
     }
 
-    // datetime parts ordered by locale 
+    // datetime parts ordered by locale
     const parts = useMemo(
-        () => (
+        () =>
             new Intl.DateTimeFormat(locale, {
                 weekday: 'long',
                 year: 'numeric',
@@ -105,10 +136,9 @@ const DateField = ({
             })
                 .formatToParts()
                 .map(part => part.type)
-                .filter(type => ['day', 'month', 'year'].includes(type))
-        ),
+                .filter(type => ['day', 'month', 'year'].includes(type)),
         [locale]
-    )
+    );
 
     const fields: Partial<Record<(typeof parts)[number], React.ReactNode>> = {
         day: (
@@ -157,8 +187,8 @@ const DateField = ({
                     aria-label={i18n('year')}
                 />
             </InputCol>
-        )
-    }
+        ),
+    };
 
     return (
         <FormGroup
@@ -168,12 +198,10 @@ const DateField = ({
             showLabel={showLabel}
             required={required}
         >
-            <InputRow>
-                {parts.flatMap(part => fields[part])}
-            </InputRow>
+            <InputRow>{parts.flatMap(part => fields[part])}</InputRow>
         </FormGroup>
-    )
-}
+    );
+};
 
 const dateFormat = (locale: string) =>
     new Intl.DateTimeFormat(locale)
@@ -181,22 +209,23 @@ const dateFormat = (locale: string) =>
         .map(part => {
             switch (part.type) {
                 case 'day':
-                    return 'dd'
+                    return 'dd';
                 case 'month':
                     return 'mm';
                 case 'year':
-                    return 'yyyy'
+                    return 'yyyy';
                 case 'literal':
                     return part.value;
             }
         })
-        .join('')
+        .join('');
 
-export const datetimeValidator = (locale: string) => new Validator<Date>({
-    rule: (value) => isValid(value),
-    hint: 'date',
-    parameters: { format: dateFormat(locale) }
-})
+export const datetimeValidator = (locale: string) =>
+    new Validator<Date>({
+        rule: value => isValid(value),
+        hint: 'date',
+        parameters: { format: dateFormat(locale) },
+    });
 
 export default function dateField(
     {
@@ -215,23 +244,25 @@ export default function dateField(
         label,
         ...props,
         format: format ?? {
-            bind: (value) => {
-                const dt = value ? parseISO(value) : undefined
-                return dt && isValid(dt) ? { raw: dt } : undefined
+            bind: value => {
+                const dt = value ? parseISO(value) : undefined;
+                return dt && isValid(dt) ? { raw: dt } : undefined;
             },
-            unbind: (value) => {
-                return isRichFormValue(value, 'raw') 
-                    ? formatISO(value.raw, { representation: 'date' }) 
-                    : value 
-                        ? formatISO(value, { representation: 'date' })
-                        : null
-            }
+            unbind: value => {
+                return isRichFormValue(value, 'raw')
+                    ? formatISO(value.raw, { representation: 'date' })
+                    : value
+                      ? formatISO(value, { representation: 'date' })
+                      : null;
+            },
         },
-        validator: validator ? datetimeValidator(config.language).and(validator) : datetimeValidator(config.language),
+        validator: validator
+            ? datetimeValidator(config.language).and(validator)
+            : datetimeValidator(config.language),
         component: DateField,
         extendedParams: {
             locale: locale ?? config.language,
-            yearDebounce
-        }
-    })
+            yearDebounce,
+        },
+    });
 }

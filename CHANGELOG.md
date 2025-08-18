@@ -7,6 +7,46 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.36.1] - 2025-07-17
+
+### Fixes
+
+- release lock at the end of the step up flow
+
+## [1.36.0] - 2025-07-10
+
+### Added
+
+- Add CaptchaFox support
+- Add parameter event to onSuccess callback function
+
+## [1.35.0] - 2025-05-13
+
+### Changed
+
+- BConnect social provider button no longer requires a dedicated query parameter to be displayed.
+
+## [1.34.1] - 2025-05-15
+
+### Fixed
+
+- Reset password with phone number should send phone number value in payload
+
+### Added
+
+- Allow to trust device during mfa credential registration
+
+### Fixed
+
+- Embed TailwindCSS utils in bundle
+- Wrap dialog with theme provider (react portal)
+
+## [1.33.2] - 2025-04-10
+
+### Fixed
+
+- ProfileEditor should update consents with key in snake_case
+
 ## [1.33.1] - 2025-03-19
 
 ### Fixed
@@ -108,6 +148,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ## [1.29.0] - 2024-11-08
 
 ### Changed
+
 - Display additional info on registered passkeys
 - Upgrade SDK Core dependency to 1.34.0
 
@@ -221,6 +262,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ## [1.23.0] - 2023-11-27
 
 ## Added
+
 - Improved mfa step up UX when only one second factor exists
 
 ## [1.22.0] - 2023-11-09
@@ -278,9 +320,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ## [1.19.0] - 2023-02-22
 
 ### Added
+
 Support the social provider Naver
 
 ### Fixed
+
 Wrong consent version from profile in signup/profile editor forms
 
 ## [1.18.0] - 2022-12-12
@@ -302,7 +346,6 @@ New widget for MFA step up
 ### Fixed
 
 Use actual consent language in the signup payload.
-
 
 ## [1.16.2] - 2022-08-03
 
@@ -591,150 +634,83 @@ The eye icon is now correctly displayed in the Auth widget.
 
 First version of the SDK Web UI.
 
-[Unreleased]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.33.1...HEAD
-
+[Unreleased]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.36.1...HEAD
+[1.36.1]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.36.0...v1.36.1
+[1.36.0]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.35.0...v1.36.0
+[1.35.0]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.34.1...v1.35.0
+[1.34.1]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.34.0...v1.34.1
+[1.34.0]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.33.2...v1.34.0
+[1.33.2]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.33.1...v1.33.2
 [1.33.1]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.33.0...v1.33.1
-
 [1.33.0]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.32.2...v1.33.0
-
 [1.32.2]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.32.1...v1.32.2
-
 [1.32.1]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.32.0...v1.32.1
-
 [1.32.0]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.31.3...v1.32.0
-
 [1.31.3]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.31.2...v1.31.3
-
 [1.31.2]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.31.1...v1.31.2
-
 [1.31.1]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.31.0...v1.31.1
-
 [1.31.0]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.30.2...v1.31.0
-
 [1.30.2]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.30.1...v1.30.2
-
 [1.30.1]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.30.0...v1.30.1
-
 [1.30.0]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.29.0...v1.30.0
-
 [1.29.0]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.28.0...v1.29.0
-
 [1.28.0]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.27.0...v1.28.0
-
 [1.27.0]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.26.1...v1.27.0
-
-[1.26.1]:  https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.26.0...v1.26.1
-
-[1.26.0]:  https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.25.7...v1.26.0
-
-[1.25.7]:  https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.25.6...v1.25.7
-
-[1.25.6]:  https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.25.4...v1.25.6
-
-[1.25.4]:  https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.25.3...v1.25.4
-
-[1.25.3]:  https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.25.2...v1.25.3
-
-[1.25.2]:  https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.25.1...v1.25.2
-
-[1.25.1]:  https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.25.0...v1.25.1
-
-[1.25.0]:  https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.24.0...v1.25.0
-
-[1.24.0]:  https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.23.1...v1.24.0
-
+[1.26.1]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.26.0...v1.26.1
+[1.26.0]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.25.7...v1.26.0
+[1.25.7]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.25.6...v1.25.7
+[1.25.6]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.25.4...v1.25.6
+[1.25.4]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.25.3...v1.25.4
+[1.25.3]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.25.2...v1.25.3
+[1.25.2]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.25.1...v1.25.2
+[1.25.1]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.25.0...v1.25.1
+[1.25.0]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.24.0...v1.25.0
+[1.24.0]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.23.1...v1.24.0
 [1.23.1]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.23.0...v1.23.1
-
 [1.23.0]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.22.0...v1.23.0
-
 [1.22.0]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.21.0...v1.22.0
-
 [1.21.0]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.20.2...v1.21.0
-
 [1.20.2]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.20.1...v1.20.2
-
 [1.20.1]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.20.0...v1.20.1
-
 [1.20.0]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.19.0...v1.20.0
-
 [1.19.0]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.18.0...v1.19.0
-
 [1.18.0]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.17.0...v1.18.0
-
 [1.17.0]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.16.2...v1.17.0
-
 [1.16.2]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.16.1...v1.16.2
-
 [1.16.1]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.16.0...v1.16.1
-
 [1.16.0]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.15.0...v1.16.0
-
 [1.15.0]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.14.0...v1.15.0
-
 [1.14.0]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.13.0...v1.14.0
-
 [1.13.0]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.12.0...v1.13.0
-
 [1.12.0]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.11.7...v1.12.0
-
 [1.11.7]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.11.6...v1.11.7
-
 [1.11.6]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.11.5...v1.11.6
-
 [1.11.5]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.11.4...v1.11.5
-
 [1.11.4]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.11.3...v1.11.4
-
 [1.11.3]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.11.2...v1.11.3
-
 [1.11.2]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.11.1...v1.11.2
-
 [1.11.1]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.11.0...v1.11.1
-
 [1.11.0]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.10.1...v1.11.0
-
 [1.10.1]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.10.0...v1.10.1
-
 [1.10.0]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.9.0...v1.10.0
-
 [1.9.0]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.8.0...v1.9.0
-
 [1.8.0]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.7.0...v1.8.0
-
 [1.7.0]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.6.0...v1.7.0
-
 [1.6.0]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.5.0...v1.6.0
-
 [1.5.0]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.4.0...v1.5.0
-
 [1.4.0]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.3.0...v1.4.0
-
 [1.3.0]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.2.1...v1.3.0
-
 [1.2.1]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.2.0...v1.2.1
-
 [1.2.0]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.1.0...v1.2.0
-
 [1.1.0]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.0.1...v1.1.0
-
 [1.0.1]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.0.0-alpha.10...v1.0.1
-
 [1.0.0-alpha.10]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.0.0-alpha.9...v1.0.0-alpha.10
-
 [1.0.0-alpha.9]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.0.0-alpha.8...v1.0.0-alpha.9
-
 [1.0.0-alpha.8]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.0.0-alpha.7...v1.0.0-alpha.8
-
 [1.0.0-alpha.7]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.0.0-alpha.6...v1.0.0-alpha.7
-
 [1.0.0-alpha.6]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.0.0-alpha.5...v1.0.0-alpha.6
-
 [1.0.0-alpha.5]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.0.0-alpha.4...v1.0.0-alpha.5
-
 [1.0.0-alpha.4]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.0.0-alpha.3...v1.0.0-alpha.4
-
 [1.0.0-alpha.3]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.0.0-alpha.2...v1.0.0-alpha.3
-
 [1.0.0-alpha.2]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.0.0-alpha.1...v1.0.0-alpha.2
-
 [1.0.0-alpha.1]: https://github.com/ReachFive/identity-web-ui-sdk/releases/tag/v1.0.0-alpha.1

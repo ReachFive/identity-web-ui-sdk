@@ -1,29 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Snapshot social login basic 1`] = `
-.c0 {
-  font-size: 14px;
-  -webkit-transition: -webkit-transform 400ms ease, opacity 400ms ease;
-  -webkit-transition: transform 400ms ease, opacity 400ms ease;
-  transition: transform 400ms ease, opacity 400ms ease;
-  opacity: 0;
-}
-
-.c1 {
-  --color-primary: #229955;
-  --color-destructive: #dc4e41;
-  --color-background: #ffffff;
-  --color-text: #495057;
-  --color-border: #ced4da;
-  --spacing-padding-y: 9;
-  --spacing-padding-x: 12;
-  --spacing-block-inner-height: 38;
-  --spacing: 10;
-  --font-generic: 14;
-  --border-width: 1;
-  --radius: 3;
-}
-
 .c3 {
   display: block;
   width: 100%;
@@ -44,8 +21,8 @@ exports[`Snapshot social login basic 1`] = `
   font-size: 14px;
   line-height: 1.428571429;
   border-radius: 3px;
-  -webkit-transition: all .15s ease-in-out;
-  transition: all .15s ease-in-out;
+  -webkit-transition: all 0.15s ease-in-out;
+  transition: all 0.15s ease-in-out;
 }
 
 .c3:focus {
@@ -61,7 +38,7 @@ exports[`Snapshot social login basic 1`] = `
 }
 
 .c3[disabled] {
-  opacity: .65;
+  opacity: 0.65;
 }
 
 .c6 {
@@ -84,8 +61,8 @@ exports[`Snapshot social login basic 1`] = `
   font-size: 14px;
   line-height: 1.428571429;
   border-radius: 3px;
-  -webkit-transition: all .15s ease-in-out;
-  transition: all .15s ease-in-out;
+  -webkit-transition: all 0.15s ease-in-out;
+  transition: all 0.15s ease-in-out;
 }
 
 .c6:focus {
@@ -101,7 +78,7 @@ exports[`Snapshot social login basic 1`] = `
 }
 
 .c6[disabled] {
-  opacity: .65;
+  opacity: 0.65;
 }
 
 .c5 {
@@ -127,6 +104,29 @@ exports[`Snapshot social login basic 1`] = `
 
 .c2 {
   text-align: center;
+}
+
+.c0 {
+  font-size: 14px;
+  -webkit-transition: -webkit-transform 400ms ease, opacity 400ms ease;
+  -webkit-transition: transform 400ms ease, opacity 400ms ease;
+  transition: transform 400ms ease, opacity 400ms ease;
+  opacity: 0;
+}
+
+.c1 {
+  --color-primary: #229955;
+  --color-destructive: #dc4e41;
+  --color-background: #ffffff;
+  --color-text: #495057;
+  --color-border: #ced4da;
+  --spacing-padding-y: 9;
+  --spacing-padding-x: 12;
+  --spacing-block-inner-height: 38;
+  --spacing: 10;
+  --font-generic: 14;
+  --border-width: 1;
+  --radius: 3;
 }
 
 <div>

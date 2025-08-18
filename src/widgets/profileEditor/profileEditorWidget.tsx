@@ -1,62 +1,61 @@
-import React from 'react';
 import { ConsentVersions, Profile, UserConsent } from '@reachfive/identity-core';
+import React from 'react';
 
 import { UserError } from '../../helpers/errors';
 import { camelCaseProperties } from '../../helpers/transformObjectProperties';
 
-import { createWidget } from '../../components/widget/widget';
-import { createForm } from '../../components/form/formComponent';
-import { buildFormFields } from '../../components/form/formFieldFactory';
-import { useReachfive } from '../../contexts/reachfive';
 import { FieldCreator } from '../../components/form/fieldCreator';
-import { Field } from '../../components/form/formFieldFactory';
 import { PhoneNumberOptions } from '../../components/form/fields/phoneNumberField';
+import { createForm } from '../../components/form/formComponent';
+import { Field, buildFormFields } from '../../components/form/formFieldFactory';
+import { createWidget } from '../../components/widget/widget';
+import { useReachfive } from '../../contexts/reachfive';
 
 import type { OnError, OnSuccess } from '../../types';
 
-type ProfileWithConsents = Profile & { consents?: Record<string, UserConsent> }
+type ProfileWithConsents = Profile & { consents?: Record<string, UserConsent> };
 
 const ProfileEditorForm = createForm<ProfileWithConsents>({
     prefix: 'r5-profile-editor-',
     supportMultipleSubmits: true,
-    submitLabel: 'save'
+    submitLabel: 'save',
 });
 
 interface ProfileEditorProps {
     /**
      * The authorization credential JSON Web Token (JWT) used to access the ReachFive API, less than five minutes old.
      */
-    accessToken: string
+    accessToken: string;
     /**
      * Callback function called when the request has succeed.
      */
-    onSuccess?: OnSuccess
+    onSuccess?: OnSuccess;
     /**
      * Callback function called when the request has failed.
      */
-    onError?: OnError
+    onError?: OnError;
     /**
      * Phone number field options.
      */
-    phoneNumberOptions?: PhoneNumberOptions
+    phoneNumberOptions?: PhoneNumberOptions;
     /**
-     * 
+     *
      */
-    profile: ProfileWithConsents
+    profile: ProfileWithConsents;
     /**
-     * The URL sent in the email to which the user is redirected. 
+     * The URL sent in the email to which the user is redirected.
      * This URL must be whitelisted in the `Allowed Callback URLs` field of your ReachFive client settings.
      */
-    redirectUrl?: string,
+    redirectUrl?: string;
     /**
-     * 
+     *
      */
-    resolvedFields: FieldCreator<any, any, any, any>[]
+    resolvedFields: FieldCreator<any, any, any, any>[];
     /**
      * Whether the form fields' labels are displayed on the form view.
      * @default false
      */
-    showLabels?: boolean
+    showLabels?: boolean;
 }
 
 const ProfileEditor = ({
@@ -69,13 +68,13 @@ const ProfileEditor = ({
     resolvedFields,
     showLabels = false,
 }: ProfileEditorProps) => {
-    const { client: coreClient } = useReachfive()
+    const { client: coreClient } = useReachfive();
 
     const handleSubmit = (data: ProfileWithConsents) =>
         coreClient.updateProfile({
             data,
             accessToken: accessToken,
-            redirectUrl: redirectUrl
+            redirectUrl: redirectUrl,
         });
 
     return (
@@ -87,25 +86,26 @@ const ProfileEditor = ({
                 ...phoneNumberOptions,
             }}
             showLabels={showLabels}
-            onSuccess={onSuccess}
+            onSuccess={() => onSuccess({ name: 'user_updated' })}
             onError={onError}
         />
-    )
-}
+    );
+};
 
-export interface ProfileEditorWidgetProps extends Omit<ProfileEditorProps, 'profile' | 'resolvedFields'> {
+export interface ProfileEditorWidgetProps
+    extends Omit<ProfileEditorProps, 'profile' | 'resolvedFields'> {
     /**
      * List of the fields to display in the form.
-     * 
+     *
      * **Important:**
-     * 
+     *
      * The following fields can not be changed with this widget:
      * - `password`
      * - `password_confirmation`
-     * 
+     *
      * It is not possible to update the primary identifier submitted at registration (email or phone number). When the primary identifier is the email address (SMS feature disabled), users can only enter a phone number and update without limit.
      */
-    fields?: (string | Field)[]
+    fields?: (string | Field)[];
 }
 
 export default createWidget<ProfileEditorWidgetProps, ProfileEditorProps>({
@@ -114,13 +114,13 @@ export default createWidget<ProfileEditorWidgetProps, ProfileEditorProps>({
         const opts = {
             showLabels: true,
             fields: [],
-            ...options
+            ...options,
         };
         const { accessToken, fields = [] } = opts;
 
         const haveNotAllowedFields = fields.some(field => {
             const fieldName = typeof field === 'string' ? field : field.key;
-            return fieldName === 'password' || fieldName === 'password_confirmation'
+            return fieldName === 'password' || fieldName === 'password_confirmation';
         });
 
         if (haveNotAllowedFields) {
@@ -128,47 +128,92 @@ export default createWidget<ProfileEditorWidgetProps, ProfileEditorProps>({
         }
 
         // This step removes the version from the consents
-        const resolvedFields = buildFormFields(fields, { ...config, errorArchivedConsents: false });
+        const resolvedFields = buildFormFields(fields, {
+            ...config,
+            errorArchivedConsents: false,
+        });
 
-        return client
-            .getUser({
-                accessToken,
-                fields: resolvedFields.map(({ path }) => path).join(',')
-            })
-            .then(profile => camelCaseProperties(profile) as Profile) /** @todo check api response key format in sdk core */
-            .then((profile: Profile) => {
-                const filteredProfileConsents = (profile.consents && Object.keys(profile.consents).length > 0) ? filterProfileConsents(fields, config.consentsVersions, profile.consents) : undefined;
-                const filteredOutConsentsProfile = { ...profile, consents: filteredProfileConsents };
-                return ({
-                    ...opts,
-                    profile: filteredOutConsentsProfile,
-                    resolvedFields: resolvedFields.filter(field => {
-                        return (field.path !== 'email' || !filteredOutConsentsProfile.email)
-                            && (field.path !== 'phone_number' || !config.sms || !filteredOutConsentsProfile.phoneNumber);
-                    })
-                } satisfies ProfileEditorProps)
-            })
-            .catch((error: unknown) => {
-                options.onError?.(error)
-                return Promise.reject(error)
-            });
-    }
+        return (
+            client
+                .getUser({
+                    accessToken,
+                    fields: resolvedFields.map(({ path }) => path).join(','),
+                })
+                /**
+                 * @todo this can be removed when https://github.com/ReachFive/identity-web-core-sdk/pull/260 will be merged
+                 * L'idéal serait que la clé d'un consentement soit en valeur d'une propriété "key" et non une clé de la structure Map utilisée.
+                 * le mieux serait même que `consents` soit un array et non un map.
+                 * Mais bon, difficile de changer ça maintenant sans créer un breaking change pour les utilisateurs de l'api ou du sdk core...
+                 */
+                .then(
+                    ({ consents, ...profile }) =>
+                        ({
+                            ...profile,
+                            consents: consents
+                                ? Object.fromEntries(
+                                      Object.entries(consents).map(([key, value]) => [
+                                          key,
+                                          camelCaseProperties(value) as UserConsent,
+                                      ])
+                                  )
+                                : undefined,
+                        }) as Profile
+                ) /** @todo check api response key format in sdk core */
+                .then((profile: Profile) => {
+                    const filteredProfileConsents =
+                        profile.consents && Object.keys(profile.consents).length > 0
+                            ? filterProfileConsents(
+                                  fields,
+                                  config.consentsVersions,
+                                  profile.consents
+                              )
+                            : undefined;
+                    const filteredOutConsentsProfile = {
+                        ...profile,
+                        consents: filteredProfileConsents,
+                    };
+                    return {
+                        ...opts,
+                        profile: filteredOutConsentsProfile,
+                        resolvedFields: resolvedFields.filter(field => {
+                            return (
+                                (field.path !== 'email' || !filteredOutConsentsProfile.email) &&
+                                (field.path !== 'phone_number' ||
+                                    !config.sms ||
+                                    !filteredOutConsentsProfile.phoneNumber)
+                            );
+                        }),
+                    } satisfies ProfileEditorProps;
+                })
+                .catch((error: unknown) => {
+                    options.onError?.(error);
+                    return Promise.reject(error);
+                })
+        );
+    },
 });
 
 // Filter out the profile consents with different version than the one the given consent field own
-const filterProfileConsents = (fields: (string | Field)[], consentsVersions: Record<string, ConsentVersions>, profileConsents: Record<string, UserConsent>) => {
+const filterProfileConsents = (
+    fields: (string | Field)[],
+    consentsVersions: Record<string, ConsentVersions>,
+    profileConsents: Record<string, UserConsent>
+) => {
     return Object.keys(profileConsents)
         .filter(profileConsentKey => {
-            const consentField = fields.map(f => typeof f === 'string' ? f : f.key).find(field => field.startsWith(`consents.${profileConsentKey}`));
+            const consentField = fields
+                .map(f => (typeof f === 'string' ? f : f.key))
+                .find(field => field.startsWith(`consents.${profileConsentKey}`));
             const consentFieldSplit = consentField ? consentField.split('.v') : [];
             // Find most recent consent version if not given
             const highestConsentVersion = consentsVersions[profileConsentKey].versions[0].versionId;
             const consentFieldVersion = parseInt(consentFieldSplit[1]) || highestConsentVersion;
-            const profileConsentVersion = profileConsents[profileConsentKey].consentVersion?.versionId;
+            const profileConsentVersion =
+                profileConsents[profileConsentKey].consentVersion?.versionId;
             return !consentFieldVersion || consentFieldVersion === profileConsentVersion;
         })
         .reduce<Record<string, UserConsent>>((filteredProfileConsents, consentKey) => {
             filteredProfileConsents[consentKey] = profileConsents[consentKey];
             return filteredProfileConsents;
         }, {});
-}
+};

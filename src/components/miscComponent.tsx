@@ -1,8 +1,14 @@
-import React, { AnchorHTMLAttributes, ComponentType, CSSProperties, HTMLAttributes, MouseEvent } from 'react';
+import React, {
+    AnchorHTMLAttributes,
+    ComponentType,
+    CSSProperties,
+    HTMLAttributes,
+    MouseEvent,
+} from 'react';
 
 import { marked } from 'marked';
 import styled from 'styled-components';
-import { useRouting } from '../contexts/routing'
+import { useRouting } from '../contexts/routing';
 
 export const Heading = styled.div`
     margin-bottom: ${props => props.theme.spacing * 1.5}px;
@@ -28,11 +34,11 @@ export const ErrorText = styled(TextBase)`
 export const Paragraph = styled.p<{ align?: CSSProperties['textAlign'] }>`
     margin-bottom: ${props => props.theme.spacing}px;
     text-align: ${props => props.align ?? 'start'};
-`
+`;
 
 export const MutedText = styled.span`
     color: ${props => props.theme.mutedTextColor};
-`
+`;
 
 export const Intro = Info;
 
@@ -70,7 +76,11 @@ const SeparatorInner = styled.div`
     }
 `;
 
-export const Separator = ({ text }: { text?: string }) => <SeparatorInner><span>{text}</span></SeparatorInner>;
+export const Separator = ({ text }: { text?: string }) => (
+    <SeparatorInner>
+        <span>{text}</span>
+    </SeparatorInner>
+);
 
 export const Alternative = styled.div`
     text-align: center;
@@ -78,21 +88,31 @@ export const Alternative = styled.div`
     color: ${props => props.theme.textColor};
 `;
 
-export const Link = styled(({ target, href = '#', children, className, controller }: {controller?: AbortController} & AnchorHTMLAttributes<HTMLAnchorElement>) => {
-    const { goTo } = useRouting()
+export const Link = styled(
+    ({
+        target,
+        href = '#',
+        children,
+        className,
+        controller,
+    }: { controller?: AbortController } & AnchorHTMLAttributes<HTMLAnchorElement>) => {
+        const { goTo } = useRouting();
 
-    const onClick = target ? ((e: MouseEvent<HTMLAnchorElement>) => {
-        controller?.abort(`Going to ${target}`)
-        e.preventDefault();
-        goTo(target);
-    }) : (() => { });
+        const onClick = target
+            ? (e: MouseEvent<HTMLAnchorElement>) => {
+                  controller?.abort(`Going to ${target}`);
+                  e.preventDefault();
+                  goTo(target);
+              }
+            : () => {};
 
-    return (
-        <a href={href} onClick={onClick} className={className}>
-            {children}
-        </a>
-    );
-})`
+        return (
+            <a href={href} onClick={onClick} className={className}>
+                {children}
+            </a>
+        );
+    }
+)`
     color: ${props => props.theme.link.color};
     text-decoration: ${props => props.theme.link.decoration};
     &:hover {
@@ -104,8 +124,14 @@ export const Link = styled(({ target, href = '#', children, className, controlle
 marked.use({
     renderer: {
         link({ href, text }) {
-            return '<a href="'+ href +'" target="_blank" rel="nofollow noreferrer noopener">' + text + '</a>';
-        }
+            return (
+                '<a href="' +
+                href +
+                '" target="_blank" rel="nofollow noreferrer noopener">' +
+                text +
+                '</a>'
+            );
+        },
     },
     extensions: [
         // specific underline markup is missed in marked module
@@ -124,22 +150,28 @@ marked.use({
                         type: 'underline',
                         raw: match[0],
                         text: match[1],
-                        tokens: this.lexer.inlineTokens(match[1])
+                        tokens: this.lexer.inlineTokens(match[1]),
                     };
                 }
             },
             renderer(token) {
                 return `<u>${token.text}</u>`;
             },
-        }
-    ]
-})
+        },
+    ],
+});
 
 interface MarkdownContentProps<T> extends HTMLAttributes<T> {
-    root: ComponentType<HTMLAttributes<T>>
-    source: string,
+    root: ComponentType<HTMLAttributes<T>>;
+    source: string;
 }
 
 export function MarkdownContent<T>({ root: Root, source, ...props }: MarkdownContentProps<T>) {
-    return <Root data-text='md' dangerouslySetInnerHTML={{ __html: marked.parse(source) }} {...props} />
+    return (
+        <Root
+            data-text="md"
+            dangerouslySetInnerHTML={{ __html: marked.parse(source) }}
+            {...props}
+        />
+    );
 }

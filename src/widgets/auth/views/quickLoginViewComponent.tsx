@@ -1,67 +1,69 @@
+import type { AuthOptions } from '@reachfive/identity-core';
 import React from 'react';
-import type { AuthOptions } from '@reachfive/identity-core'
 
-import { Heading, Intro, Link, Alternative } from '../../../components/miscComponent';
 import { SocialButtons } from '../../../components/form/socialButtonsComponent';
+import { Alternative, Heading, Intro, Link } from '../../../components/miscComponent';
 
 import { useI18n } from '../../../contexts/i18n';
-import { useSession  } from '../../../contexts/session'
+import { useSession } from '../../../contexts/session';
 
-import { selectLogin } from '../authWidget.tsx';
 import { InitialScreen } from '../../../../constants.ts';
+import { selectLogin } from '../authWidget.tsx';
 
 import type { OnError, OnSuccess } from '../../../types';
 
 export interface QuickLoginViewProps {
-    initialScreen?: InitialScreen
+    initialScreen?: InitialScreen;
     /**
      * Boolean that specifies whether biometric login is enabled.
      *
      * @default false
      */
-    allowWebAuthnLogin?: boolean
+    allowWebAuthnLogin?: boolean;
     /**
      * List of authentication options
      */
-    auth?: AuthOptions
+    auth?: AuthOptions;
     /**
      * Callback function called when the request has succeed.
      */
-    onSuccess?: OnSuccess
+    onSuccess?: OnSuccess;
     /**
      * Callback function called when the request has failed.
      */
-    onError?: OnError
+    onError?: OnError;
 }
 
-export const  QuickLoginView = ({
+export const QuickLoginView = ({
     initialScreen,
     allowWebAuthnLogin = false,
     auth,
     onError = (() => {}) as OnError,
     onSuccess = (() => {}) as OnSuccess,
 }: QuickLoginViewProps) => {
-    const session = useSession()
-    const i18n = useI18n()
+    const session = useSession();
+    const i18n = useI18n();
 
     // this component should never be display without session infos defined
     if (!session) return null;
 
     return (
         <div>
-        <Heading>{session.name ?? session.email}</Heading>
-        <Intro>{i18n('lastTimeYouLoggedInWith')}</Intro>
-        <SocialButtons
-            providers={session.lastLoginType ? [session.lastLoginType] : []}
-            auth={auth}
-            onSuccess={onSuccess}
-            onError={onError}
-        />
-        <Alternative>
-            <Link target={selectLogin(initialScreen, allowWebAuthnLogin)}>{i18n('notYourAccount')}</Link>
-        </Alternative>
-    </div>
-    )
-}
+            <Heading>{session.name ?? session.email}</Heading>
+            <Intro>{i18n('lastTimeYouLoggedInWith')}</Intro>
+            <SocialButtons
+                providers={session.lastLoginType ? [session.lastLoginType] : []}
+                auth={auth}
+                onSuccess={onSuccess}
+                onError={onError}
+            />
+            <Alternative>
+                <Link target={selectLogin(initialScreen, allowWebAuthnLogin)}>
+                    {i18n('notYourAccount')}
+                </Link>
+            </Alternative>
+        </div>
+    );
+};
 
-export default QuickLoginView
+export default QuickLoginView;

@@ -1,32 +1,35 @@
-import React, { useCallback, useLayoutEffect, useState } from 'react';
+import React, { useCallback, useLayoutEffect } from 'react';
 
-import { isAppError } from '../../../helpers/errors'
+import { isAppError } from '../../../helpers/errors';
 
+import { Alternative, Heading, Info, Intro, Link } from '../../../components/miscComponent';
 import { email } from '../../../core/validation';
-import { Heading, Intro, Info, Link, Alternative } from '../../../components/miscComponent';
 
-import { createForm, FormContext } from '../../../components/form/formComponent';
-import phoneNumberField, { type PhoneNumberOptions } from '../../../components/form/fields/phoneNumberField';
+import phoneNumberField, {
+    type PhoneNumberOptions,
+} from '../../../components/form/fields/phoneNumberField';
 import { simpleField } from '../../../components/form/fields/simpleField';
-import ReCaptcha, {importGoogleRecaptchaScript} from '../../../components/reCaptcha';
+import { createForm, FormContext } from '../../../components/form/formComponent';
+import { importGoogleRecaptchaScript } from '../../../components/reCaptcha';
 
-import { useI18n } from '../../../contexts/i18n'
-import { useRouting } from '../../../contexts/routing';
-import { useReachfive } from '../../../contexts/reachfive';
-import { selectLogin } from '../authWidget.tsx';
 import { InitialScreen } from '../../../../constants.ts';
+import { CaptchaProvider, type WithCaptchaProps } from '../../../components/captcha.tsx';
+import { DefaultButton } from '../../../components/form/buttonComponent.tsx';
 import passwordField from '../../../components/form/fields/passwordField.tsx';
 import simplePasswordField from '../../../components/form/fields/simplePasswordField';
-import { DefaultButton } from '../../../components/form/buttonComponent.tsx';
+import { useI18n } from '../../../contexts/i18n';
+import { useReachfive } from '../../../contexts/reachfive';
+import { useRouting } from '../../../contexts/routing';
 import { Validator } from '../../../core/validation.ts';
+import { selectLogin } from '../authWidget.tsx';
 
 import type { OnError, OnSuccess } from '../../../types';
 
-type EmailIdentifier = { email: string }
-type PhoneNumberIdentifier = { phoneNumber: string }
+type EmailIdentifier = { email: string };
+type PhoneNumberIdentifier = { phoneNumber: string };
 
-type ForgotPasswordEmailFormData = EmailIdentifier
-type ForgotPasswordPhoneNumberFormData = PhoneNumberIdentifier
+type ForgotPasswordEmailFormData = EmailIdentifier;
+type ForgotPasswordPhoneNumberFormData = PhoneNumberIdentifier;
 
 const ForgotPasswordEmailForm = createForm<ForgotPasswordEmailFormData>({
     prefix: 'r5-forgot-password-',
@@ -39,39 +42,45 @@ const ForgotPasswordEmailForm = createForm<ForgotPasswordEmailFormData>({
                 type: 'email',
                 validator: email,
             }),
-        ]
+        ];
     },
-    submitLabel: 'forgotPassword.submitLabel'
+    submitLabel: 'forgotPassword.submitLabel',
 });
 
-const ForgotPasswordPhoneNumberForm = createForm<ForgotPasswordPhoneNumberFormData, { phoneNumberOptions?: PhoneNumberOptions }>({
+const ForgotPasswordPhoneNumberForm = createForm<
+    ForgotPasswordPhoneNumberFormData,
+    { phoneNumberOptions?: PhoneNumberOptions }
+>({
     prefix: 'r5-forgot-password-',
     fields({ config, phoneNumberOptions }) {
         return [
-            phoneNumberField({
-                key: 'phoneNumber',
-                label: 'phoneNumber',
-                required: true,
-                withCountryCallingCode: false,
-                ...phoneNumberOptions,
-            }, config)
-        ]
+            phoneNumberField(
+                {
+                    key: 'phoneNumber',
+                    label: 'phoneNumber',
+                    required: true,
+                    withCountryCallingCode: false,
+                    ...phoneNumberOptions,
+                },
+                config
+            ),
+        ];
     },
-    submitLabel: 'forgotPassword.submitLabel.code'
+    submitLabel: 'forgotPassword.submitLabel.code',
 });
 
 export type VerificationCodeFormData = {
-    password: string,
-    passwordConfirmation: string
-    verificationCode: string
-}
+    password: string;
+    passwordConfirmation: string;
+    verificationCode: string;
+};
 
 interface VerificationCodeFormProps {
     /**
      * Whether or not to provide the display password in clear text option.
      * @default false
      */
-    canShowPassword?: boolean
+    canShowPassword?: boolean;
 }
 
 const VerificationCodeForm = createForm<VerificationCodeFormData, VerificationCodeFormProps>({
@@ -81,27 +90,31 @@ const VerificationCodeForm = createForm<VerificationCodeFormData, VerificationCo
             simpleField({
                 key: 'verification_code',
                 label: 'verificationCode',
-                type: 'text'
+                type: 'text',
             }),
-            passwordField({
-                label: 'newPassword',
-                autoComplete: 'new-password',
-                canShowPassword
-            }, config),
+            passwordField(
+                {
+                    label: 'newPassword',
+                    autoComplete: 'new-password',
+                    canShowPassword,
+                },
+                config
+            ),
             simplePasswordField({
                 key: 'password_confirmation',
                 label: 'passwordConfirmation',
                 autoComplete: 'new-password',
                 validator: new Validator<string, FormContext<VerificationCodeFormData>>({
-                    rule: (value, ctx) => value === ctx.fields.password.value,
-                    hint: 'passwordMatch'
-                })
-            })
-        ]
-    }
-})
+                    rule: (value, ctx) => value === ctx.fields.password,
+                    hint: 'passwordMatch',
+                }),
+            }),
+        ];
+    },
+});
 
-const skipError = (error: unknown) => isAppError(error) ? error.error === 'resource_not_found' : false;
+const skipError = (error: unknown) =>
+    isAppError(error) ? error.error === 'resource_not_found' : false;
 
 export interface ForgotPasswordViewProps {
     /**
@@ -109,65 +122,56 @@ export interface ForgotPasswordViewProps {
      *
      * @default true
      */
-    allowLogin?: boolean
+    allowLogin?: boolean;
     /**
      * Boolean that specifies whether password reset with phone number is enabled.
      *
      * @default false
      */
-    allowPhoneNumberResetPassword?: boolean
+    allowPhoneNumberResetPassword?: boolean;
     /**
      * Whether or not to display a safe error message on password reset, given an invalid email address.
      * This mode ensures not to leak email addresses registered to the platform.
      *
      * @default false
      */
-    displaySafeErrorMessage?: boolean
+    displaySafeErrorMessage?: boolean;
     /**
      * Whether the signup form fields' labels are displayed on the login view.
      *
      * @default false
      */
-    showLabels?: boolean
+    showLabels?: boolean;
 
-    initialScreen?: InitialScreen
+    initialScreen?: InitialScreen;
     /**
      * Boolean that specifies whether biometric login is enabled.
      *
      * @default false
      */
-    allowWebAuthnLogin?: boolean
+    allowWebAuthnLogin?: boolean;
     /**
      * Phone number field options.
      */
-    phoneNumberOptions?: PhoneNumberOptions
-    /**
-     * Boolean that specifies whether reCAPTCHA is enabled or not.
-     */
-    recaptcha_enabled?: boolean
-    /**
-     * The SITE key that comes from your [reCAPTCHA](https://www.google.com/recaptcha/admin/create) setup.
-     * This must be paired with the appropriate secret key that you received when setting up reCAPTCHA.
-     */
-    recaptcha_site_key?: string
+    phoneNumberOptions?: PhoneNumberOptions;
     /**
      * The URL sent in the email to which the user is redirected.
      * This URL must be whitelisted in the `Allowed Callback URLs` field of your ReachFive client settings.
      */
-    redirectUrl?: string,
+    redirectUrl?: string;
     /**
      * Returned in the `redirectUrl` as a query parameter, this parameter is used to redirect users to a specific URL after a password reset.
      * Important: This parameter should only be used with Hosted Pages.
      */
-    returnToAfterPasswordReset?: string,
+    returnToAfterPasswordReset?: string;
     /**
      * Callback function called when the request has succeed.
      */
-    onSuccess?: OnSuccess
+    onSuccess?: OnSuccess;
     /**
      * Callback function called when the request has failed.
      */
-    onError?: OnError
+    onError?: OnError;
 }
 
 export const ForgotPasswordView = ({
@@ -179,58 +183,69 @@ export const ForgotPasswordView = ({
     initialScreen,
     recaptcha_enabled = false,
     recaptcha_site_key,
+    captchaFoxEnabled = false,
+    captchaFoxMode = 'hidden',
+    captchaFoxSiteKey,
     redirectUrl,
     returnToAfterPasswordReset,
     onError = (() => {}) as OnError,
     onSuccess = (() => {}) as OnSuccess,
-}: ForgotPasswordViewProps) => {
-    const { client: coreClient, config } = useReachfive()
-    const { goTo } = useRouting()
-    const i18n = useI18n()
+}: WithCaptchaProps<ForgotPasswordViewProps>) => {
+    const { client: coreClient, config } = useReachfive();
+    const { goTo } = useRouting();
+    const i18n = useI18n();
 
-    const callback = useCallback(
-        (data: ForgotPasswordEmailFormData) => {
-            return ReCaptcha.handle(
-                {...data, redirectUrl, returnToAfterPasswordReset},
-                { recaptcha_enabled, recaptcha_site_key },
-                coreClient.requestPasswordReset,
-                "forgot_password"
-            )
-        },
-        [coreClient, recaptcha_enabled, recaptcha_site_key, redirectUrl, returnToAfterPasswordReset]
-    )
+    const callback = (data: ForgotPasswordEmailFormData) =>
+        coreClient.requestPasswordReset({
+            ...data,
+            redirectUrl,
+            returnToAfterPasswordReset,
+        });
 
     useLayoutEffect(() => {
-        importGoogleRecaptchaScript(recaptcha_site_key)
-    }, [recaptcha_site_key])
+        importGoogleRecaptchaScript(recaptcha_site_key);
+    }, [recaptcha_site_key]);
 
     return (
         <div>
             <Heading>{i18n('forgotPassword.title')}</Heading>
             <Intro>{i18n('forgotPassword.prompt')}</Intro>
-            <ForgotPasswordEmailForm
-                showLabels={showLabels}
-                handler={callback}
-                onSuccess={() => {
-                    onSuccess()
-                    goTo('forgot-password-success')
-                }}
-                onError={onError}
-                skipError={displaySafeErrorMessage && skipError}
-            />
+            <CaptchaProvider
+                recaptcha_enabled={recaptcha_enabled}
+                recaptcha_site_key={recaptcha_site_key}
+                captchaFoxEnabled={captchaFoxEnabled}
+                captchaFoxSiteKey={captchaFoxSiteKey}
+                captchaFoxMode={captchaFoxMode}
+                action="password_reset_requested"
+            >
+                <ForgotPasswordEmailForm
+                    showLabels={showLabels}
+                    handler={callback}
+                    onSuccess={() => {
+                        onSuccess({ name: 'password_reset_requested' });
+                        goTo('forgot-password-success');
+                    }}
+                    onError={onError}
+                    skipError={displaySafeErrorMessage && skipError}
+                />
+            </CaptchaProvider>
             {allowPhoneNumberResetPassword && config.sms && (
                 <Alternative>
-                    <DefaultButton onClick={() => goTo('forgot-password-phone-number')}>{i18n('forgotPassword.usePhoneNumberButton')}</DefaultButton>
+                    <DefaultButton onClick={() => goTo('forgot-password-phone-number')}>
+                        {i18n('forgotPassword.usePhoneNumberButton')}
+                    </DefaultButton>
                 </Alternative>
             )}
             {allowLogin && (
                 <Alternative>
-                    <Link target={selectLogin(initialScreen, allowWebAuthnLogin)}>{i18n('forgotPassword.backToLoginLink')}</Link>
+                    <Link target={selectLogin(initialScreen, allowWebAuthnLogin)}>
+                        {i18n('forgotPassword.backToLoginLink')}
+                    </Link>
                 </Alternative>
             )}
         </div>
-    )
-}
+    );
+};
 
 export const ForgotPasswordPhoneNumberView = ({
     allowLogin = true,
@@ -241,58 +256,70 @@ export const ForgotPasswordPhoneNumberView = ({
     phoneNumberOptions,
     recaptcha_enabled = false,
     recaptcha_site_key,
+    captchaFoxEnabled = false,
+    captchaFoxMode = 'hidden',
+    captchaFoxSiteKey,
     redirectUrl,
     returnToAfterPasswordReset,
     onError = (() => {}) as OnError,
-}: ForgotPasswordViewProps) => {
-    const { client: coreClient } = useReachfive()
-    const { goTo } = useRouting()
-    const i18n = useI18n()
+}: WithCaptchaProps<ForgotPasswordViewProps>) => {
+    const { client: coreClient } = useReachfive();
+    const { goTo } = useRouting();
+    const i18n = useI18n();
 
-    const [phoneNumber, setPhoneNumber] = useState<string>('')
-    
-    const callback = useCallback(
-        (data: ForgotPasswordPhoneNumberFormData) => {
-            setPhoneNumber(data.phoneNumber)
-            return ReCaptcha.handle(
-                {...data, redirectUrl, returnToAfterPasswordReset},
-                { recaptcha_enabled, recaptcha_site_key },
-                coreClient.requestPasswordReset,
-                "forgot_password"
-            )
-        },
-        [coreClient, recaptcha_enabled, recaptcha_site_key, redirectUrl, returnToAfterPasswordReset]
-    )
+    const callback = (data: ForgotPasswordPhoneNumberFormData) =>
+        coreClient
+            .requestPasswordReset({
+                ...data,
+                redirectUrl,
+                returnToAfterPasswordReset,
+            })
+            .then(() => data);
 
-    const onSuccess = () => goTo<PhoneNumberIdentifier>('forgot-password-code', { phoneNumber })
+    const onSuccess = ({ phoneNumber }: PhoneNumberIdentifier) => {
+        goTo<PhoneNumberIdentifier>('forgot-password-code', { phoneNumber });
+    };
 
     useLayoutEffect(() => {
-        importGoogleRecaptchaScript(recaptcha_site_key)
-    }, [recaptcha_site_key])
+        importGoogleRecaptchaScript(recaptcha_site_key);
+    }, [recaptcha_site_key]);
 
     return (
         <div>
             <Heading>{i18n('forgotPassword.title')}</Heading>
             <Intro>{i18n('forgotPassword.prompt.phoneNumber')}</Intro>
-            <ForgotPasswordPhoneNumberForm
-                showLabels={showLabels}
-                handler={callback}
-                onSuccess={onSuccess}
-                onError={onError}
-                skipError={displaySafeErrorMessage && skipError}
-                phoneNumberOptions={phoneNumberOptions}
-            />
+            <CaptchaProvider
+                recaptcha_enabled={recaptcha_enabled}
+                recaptcha_site_key={recaptcha_site_key}
+                captchaFoxEnabled={captchaFoxEnabled}
+                captchaFoxSiteKey={captchaFoxSiteKey}
+                captchaFoxMode={captchaFoxMode}
+                action="password_reset_requested"
+            >
+                <ForgotPasswordPhoneNumberForm
+                    showLabels={showLabels}
+                    handler={callback}
+                    onSuccess={onSuccess}
+                    onError={onError}
+                    skipError={displaySafeErrorMessage && skipError}
+                    phoneNumberOptions={phoneNumberOptions}
+                />
+            </CaptchaProvider>
             <Alternative>
-                <DefaultButton onClick={() => goTo('forgot-password')}>{i18n('forgotPassword.useEmailButton')}</DefaultButton>
+                <DefaultButton onClick={() => goTo('forgot-password')}>
+                    {i18n('forgotPassword.useEmailButton')}
+                </DefaultButton>
             </Alternative>
             {allowLogin && (
                 <Alternative>
-                    <Link target={selectLogin(initialScreen, allowWebAuthnLogin)}>{i18n('forgotPassword.backToLoginLink')}</Link>
+                    <Link target={selectLogin(initialScreen, allowWebAuthnLogin)}>
+                        {i18n('forgotPassword.backToLoginLink')}
+                    </Link>
                 </Alternative>
             )}
         </div>
-    )
-}
+    );
+};
 
 export const ForgotPasswordCodeView = ({
     allowLogin = true,
@@ -303,19 +330,20 @@ export const ForgotPasswordCodeView = ({
     onError = (() => {}) as OnError,
     onSuccess = (() => {}) as OnSuccess,
 }: ForgotPasswordViewProps) => {
-    const { client: coreClient } = useReachfive()
-    const { goTo, params } = useRouting()
-    const i18n = useI18n()
+    const { client: coreClient } = useReachfive();
+    const { goTo, params } = useRouting();
+    const i18n = useI18n();
+    const { phoneNumber } = params as PhoneNumberIdentifier;
 
     const callback = useCallback(
         ({ passwordConfirmation: _, ...data }: VerificationCodeFormData) => {
             return coreClient.updatePassword({
-                ...(params as PhoneNumberIdentifier),
+                phoneNumber,
                 ...data,
-            })
+            });
         },
         [coreClient, params]
-    )
+    );
 
     return (
         <div>
@@ -325,36 +353,40 @@ export const ForgotPasswordCodeView = ({
                 showLabels={showLabels}
                 handler={callback}
                 onSuccess={() => {
-                    onSuccess()
-                    goTo('login')
+                    onSuccess({ name: 'password_changed' });
+                    goTo('login');
                 }}
                 onError={onError}
                 skipError={displaySafeErrorMessage && skipError}
             />
             {allowLogin && (
                 <Alternative>
-                    <Link target={selectLogin(initialScreen, allowWebAuthnLogin)}>{i18n('back')}</Link>
+                    <Link target={selectLogin(initialScreen, allowWebAuthnLogin)}>
+                        {i18n('back')}
+                    </Link>
                 </Alternative>
             )}
         </div>
-    )
-}
+    );
+};
 
 export const ForgotPasswordSuccessView = ({
     allowLogin = true,
     initialScreen,
-    allowWebAuthnLogin = false
+    allowWebAuthnLogin = false,
 }: ForgotPasswordViewProps) => {
-    const i18n = useI18n()
+    const i18n = useI18n();
     return (
         <div>
             <Heading>{i18n('forgotPassword.title')}</Heading>
             <Info>{i18n('forgotPassword.successMessage')}</Info>
             {allowLogin && (
                 <Alternative>
-                    <Link target={selectLogin(initialScreen, allowWebAuthnLogin)}>{i18n('back')}</Link>
+                    <Link target={selectLogin(initialScreen, allowWebAuthnLogin)}>
+                        {i18n('back')}
+                    </Link>
                 </Alternative>
             )}
         </div>
-    )
-}
+    );
+};

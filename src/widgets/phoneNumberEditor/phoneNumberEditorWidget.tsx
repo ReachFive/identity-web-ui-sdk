@@ -2,31 +2,37 @@ import React, { useMemo } from 'react';
 
 import type { Config, Prettify } from '../../types';
 
-import { createMultiViewWidget } from '../../components/widget/widget';
-import { Info, Intro } from '../../components/miscComponent';
-import { createForm } from '../../components/form/formComponent';
+import phoneNumberField, {
+    type PhoneNumberOptions,
+} from '../../components/form/fields/phoneNumberField';
 import { simpleField } from '../../components/form/fields/simpleField';
-import phoneNumberField, { type PhoneNumberOptions } from '../../components/form/fields/phoneNumberField'
+import { createForm } from '../../components/form/formComponent';
+import { Info, Intro } from '../../components/miscComponent';
+import { createMultiViewWidget } from '../../components/widget/widget';
 
-import { useReachfive } from '../../contexts/reachfive';
 import { useI18n } from '../../contexts/i18n';
+import { useReachfive } from '../../contexts/reachfive';
 import { useRouting } from '../../contexts/routing';
 
 import type { OnError, OnSuccess } from '../../types';
 
-type PhoneNumberFormData = { phoneNumber: string }
+type PhoneNumberFormData = { phoneNumber: string };
 
-const phoneNumberInputForm = (config: Config) => createForm<PhoneNumberFormData, { phoneNumberOptions?: PhoneNumberOptions }>({
-    prefix: 'r5-phonenumber-editor-',
-    fields: ({ phoneNumberOptions }) => ([
-        phoneNumberField({
-            required: true,
-            ...phoneNumberOptions,
-        }, config)
-    ])
-});
+const phoneNumberInputForm = (config: Config) =>
+    createForm<PhoneNumberFormData, { phoneNumberOptions?: PhoneNumberOptions }>({
+        prefix: 'r5-phonenumber-editor-',
+        fields: ({ phoneNumberOptions }) => [
+            phoneNumberField(
+                {
+                    required: true,
+                    ...phoneNumberOptions,
+                },
+                config
+            ),
+        ],
+    });
 
-type VerificationCodeFormData = { verificationCode: string }
+type VerificationCodeFormData = { verificationCode: string };
 
 const VerificationCodeInputForm = createForm<VerificationCodeFormData>({
     prefix: 'r5-phonenumber-editor-',
@@ -34,45 +40,61 @@ const VerificationCodeInputForm = createForm<VerificationCodeFormData>({
         simpleField({
             key: 'verification_code',
             label: 'verificationCode',
-            type: 'text'
-        })
-    ]
+            type: 'text',
+        }),
+    ],
 });
 
 interface MainViewProps {
     /**
      * The authorization credential JSON Web Token (JWT) used to access the ReachFive API, less than five minutes old.
      */
-    accessToken: string
-     /**
+    accessToken: string;
+    /**
      * Whether the form fields's labels are displayed on the login view.
-     * 
+     *
      * @default false
      */
-    showLabels?: boolean
+    showLabels?: boolean;
     /**
      * Phone number field options.
      */
-    phoneNumberOptions?: PhoneNumberOptions
+    phoneNumberOptions?: PhoneNumberOptions;
     /**
      * Callback function called when the request has failed.
      */
-    onError?: OnError
+    onError?: OnError;
+    /**
+     * Callback function called when the request has succeeded
+     */
+    onSuccess?: OnSuccess;
 }
 
-const MainView = ({ accessToken, showLabels = false, phoneNumberOptions, onError = (() => {}) as OnError }: MainViewProps) => {
-    const { client: coreClient, config } = useReachfive()
-    const i18n = useI18n()
-    const { goTo } = useRouting()
-    
+const MainView = ({
+    accessToken,
+    showLabels = false,
+    phoneNumberOptions,
+    onError = (() => {}) as OnError,
+    onSuccess = (() => {}) as OnSuccess,
+}: MainViewProps) => {
+    const { client: coreClient, config } = useReachfive();
+    const i18n = useI18n();
+    const { goTo } = useRouting();
+
     const handleSubmit = (data: PhoneNumberFormData) => {
-        return coreClient.updatePhoneNumber({
-            ...data,
-            accessToken
-        }).then(() => data);
+        return coreClient
+            .updatePhoneNumber({
+                ...data,
+                accessToken,
+            })
+            .then(() => {
+                onSuccess({ name: 'phone_number_updated' });
+                return data;
+            });
     };
 
-    const handleSuccess = (data: PhoneNumberFormData) => goTo<VerificationCodeViewState>('verificationCode', data);
+    const handleSuccess = (data: PhoneNumberFormData) =>
+        goTo<VerificationCodeViewState>('verificationCode', data);
 
     const PhoneNumberInputForm = useMemo(() => phoneNumberInputForm(config), [config]);
 
@@ -87,43 +109,47 @@ const MainView = ({ accessToken, showLabels = false, phoneNumberOptions, onError
                 phoneNumberOptions={phoneNumberOptions}
             />
         </div>
-    )
-}
+    );
+};
 
 type VerificationCodeViewProps = {
     /**
      * The authorization credential JSON Web Token (JWT) used to access the ReachFive API, less than five minutes old.
      */
-    accessToken: string
+    accessToken: string;
     /**
      * Callback function called when the request has succeed.
      */
-    onSuccess?: OnSuccess
+    onSuccess?: OnSuccess;
     /**
      * Callback function called when the request has failed.
      */
-    onError?: OnError
-}
+    onError?: OnError;
+};
 
 type VerificationCodeViewState = {
     /**
      * The phone number to verify.
      */
-    phoneNumber: string
-}
+    phoneNumber: string;
+};
 
 const VerificationCodeView = ({
     accessToken,
     onSuccess = (() => {}) as OnSuccess,
     onError = (() => {}) as OnError,
 }: VerificationCodeViewProps) => {
-    const { client: coreClient } = useReachfive()
-    const i18n = useI18n()
-    const { params } = useRouting()
-    const { phoneNumber } = params as VerificationCodeViewState
+    const { client: coreClient } = useReachfive();
+    const i18n = useI18n();
+    const { params } = useRouting();
+    const { phoneNumber } = params as VerificationCodeViewState;
 
     const handleSubmit = (data: VerificationCodeFormData) => {
-        return coreClient.verifyPhoneNumber({ ...data, phoneNumber, accessToken });
+        return coreClient.verifyPhoneNumber({
+            ...data,
+            phoneNumber,
+            accessToken,
+        });
     };
 
     return (
@@ -131,19 +157,19 @@ const VerificationCodeView = ({
             <Info>{i18n('phoneNumberEditor.verification.intro')}</Info>
             <VerificationCodeInputForm
                 handler={handleSubmit}
-                onSuccess={onSuccess}
+                onSuccess={() => onSuccess({ name: 'phone_number_verified', phoneNumber })}
                 onError={onError}
             />
         </div>
-    )
-}
+    );
+};
 
-export type PhoneNumberEditorWidgetProps = Prettify<MainViewProps & VerificationCodeViewProps>
+export type PhoneNumberEditorWidgetProps = Prettify<MainViewProps & VerificationCodeViewProps>;
 
 export default createMultiViewWidget<PhoneNumberEditorWidgetProps>({
     initialView: 'main',
     views: {
         main: MainView,
         verificationCode: VerificationCodeView,
-    }
+    },
 });

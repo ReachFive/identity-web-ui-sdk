@@ -1,20 +1,28 @@
 import React, { useEffect, useState } from 'react';
-import { default as PhoneInputWithCountrySelect, isSupportedCountry, parsePhoneNumber } from 'react-phone-number-input'
-import { default as PhoneInputWithoutCountrySelect } from 'react-phone-number-input/input';
 import type { Country, Labels, Value } from 'react-phone-number-input';
+import {
+    default as PhoneInputWithCountrySelect,
+    isSupportedCountry,
+    parsePhoneNumber,
+} from 'react-phone-number-input';
+import { default as PhoneInputWithoutCountrySelect } from 'react-phone-number-input/input';
 import { createGlobalStyle } from 'styled-components';
 
 import styles from 'react-phone-number-input/style.css'; // import raw css using `rollup-plugin-import-css'`
 
-import { createField, type FieldComponentProps, type FieldCreator, type FieldDefinition } from '../fieldCreator';
-import { FormGroup } from '../formControlsComponent';
-import { isValidatorError, Validator } from '../../../core/validation';
+import { Validator, isValidatorError } from '../../../core/validation';
+import { isRichFormValue } from '../../../helpers/utils.ts';
 import { Config, Optional } from '../../../types';
-import { Input } from '../formControlsComponent';
-import {isRichFormValue} from "../../../helpers/utils.ts";
+import {
+    createField,
+    type FieldComponentProps,
+    type FieldCreator,
+    type FieldDefinition,
+} from '../fieldCreator';
+import { FormGroup, Input } from '../formControlsComponent';
 
 function isValidCountryCode(code?: string): code is Country {
-    return typeof code === 'string' && isSupportedCountry(code)
+    return typeof code === 'string' && isSupportedCountry(code);
 }
 
 const ReactPhoneNumberInputStyle = createGlobalStyle`
@@ -27,13 +35,14 @@ const ReactPhoneNumberInputStyle = createGlobalStyle`
         --PhoneInputCountrySelectArrow-borderWidth: 2px;
         --PhoneInputCountrySelectArrow-transform: rotate(45deg);
         --PhoneInputCountrySelectArrow-width: 0.3em;
-        --PhoneInputCountryFlag-height: ${props => props.theme.input.height - ((props.theme.input.paddingY + props.theme.input.borderWidth) * 2)}px;
+        --PhoneInputCountryFlag-height: ${props => props.theme.input.height - (props.theme.input.paddingY + props.theme.input.borderWidth) * 2}px;
     }
-`
+`;
 
 function importLocale(locale: string) {
-    return import(`../../../../node_modules/react-phone-number-input/locale/${locale}.json.js`)
-        .then(module => module.default as Labels);
+    return import(
+        `../../../../node_modules/react-phone-number-input/locale/${locale}.json.js`
+    ).then(module => module.default as Labels);
 }
 
 export type PhoneNumberOptions = {
@@ -41,28 +50,28 @@ export type PhoneNumberOptions = {
      * If defaultCountry is specified then the phone number can be input both in "international" format and "national" format.
      * A phone number that's being input in "national" format will be parsed as a phone number belonging to the defaultCountry.
      */
-    defaultCountry?: Country
+    defaultCountry?: Country;
     /**
      * If country is specified then the phone number can only be input in "national" (not "international") format,
-     * and will be parsed as a phonenumber belonging to the country.
+     * and will be parsed as a phone number belonging to the country.
      */
-    country?: Country
+    country?: Country;
     /**
      * If locale is specified then translate component using the given language.
      * @see https://gitlab.com/catamphetamine/react-phone-number-input/tree/master/locale
      */
-    locale?: string
+    locale?: string;
     /**
      * If `withCountryCallingCode` property is explicitly set to true then the "country calling code" part (e.g. "+1" when country is "US") is included in the input field (but still isn't editable).
      * @default true
      */
-    withCountryCallingCode?: boolean
+    withCountryCallingCode?: boolean;
     /**
      * If `withCountrySelect` property is `true` then the user can select the country for the phone number. Must be a supported {@link https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2#Officially_assigned_code_elements country code}.
      * @default false
      */
-    withCountrySelect?: boolean
-}
+    withCountrySelect?: boolean;
+};
 
 /**
  * If neither country nor defaultCountry are specified then the phone number can only be input in "international" format.
@@ -86,15 +95,15 @@ const PhoneNumberField = (props: PhoneNumberFieldProps) => {
         withCountrySelect = false,
     } = props;
 
-    const [labels, setLabels] = useState<Labels>()
-    const currentValue = isRichFormValue(value, 'raw') ? value.raw : value
-    const error = validation && isValidatorError(validation) ? validation.error : undefined
+    const [labels, setLabels] = useState<Labels>();
+    const currentValue = isRichFormValue(value, 'raw') ? value.raw : value;
+    const error = validation && isValidatorError(validation) ? validation.error : undefined;
 
     useEffect(() => {
         async function fetchLabels() {
-            const result = await importLocale(locale)
+            const result = await importLocale(locale);
             if (!ignore) {
-                setLabels(result)
+                setLabels(result);
             }
         }
         /**
@@ -105,16 +114,18 @@ const PhoneNumberField = (props: PhoneNumberFieldProps) => {
         fetchLabels();
         return () => {
             ignore = true;
-        }
-    }, [locale])
+        };
+    }, [locale]);
 
     const handlePhoneChange = (value: Value) => {
         onChange({
             value,
         });
-    }
+    };
 
-    const PhoneInput = withCountrySelect ? PhoneInputWithCountrySelect : PhoneInputWithoutCountrySelect
+    const PhoneInput = withCountrySelect
+        ? PhoneInputWithCountrySelect
+        : PhoneInputWithoutCountrySelect;
 
     return (
         <FormGroup
@@ -137,19 +148,18 @@ const PhoneNumberField = (props: PhoneNumberFieldProps) => {
                 international={true}
                 withCountryCallingCode={withCountryCallingCode}
                 {...(withCountrySelect
-                    ? ({
-                        defaultCountry: country,
-                    })
-                    : ({
-                        country,
-                    })
-                )}
+                    ? {
+                          defaultCountry: country,
+                      }
+                    : {
+                          country,
+                      })}
                 inputComponent={Input}
                 hasError={!!error}
             />
         </FormGroup>
     );
-}
+};
 
 const phoneNumberField = (
     {
@@ -170,34 +180,37 @@ const phoneNumberField = (
         key,
         label,
         format: {
-            bind: (value) => {
-                const phoneNumber = value ? parsePhoneNumber(value) : undefined
+            bind: value => {
+                const phoneNumber = value ? parsePhoneNumber(value) : undefined;
                 return {
                     country: phoneNumber?.country,
-                    raw: phoneNumber?.number ?? '' as Value,
-                    isValid: phoneNumber?.isValid() ?? false
-                }
+                    raw: phoneNumber?.number ?? ('' as Value),
+                    isValid: phoneNumber?.isValid() ?? false,
+                };
             },
             unbind: formValue => {
-                const value = (typeof formValue === 'object' && 'raw' in formValue ? formValue.raw : formValue)
-                return value == "" ? undefined : value
-            }
+                const value =
+                    typeof formValue === 'object' && 'raw' in formValue ? formValue.raw : formValue;
+                return value == '' ? undefined : value;
+            },
         },
         validator: new Validator<Value>({
             rule: value => {
-                const phoneNumber = value ? parsePhoneNumber(value) : undefined
-                return phoneNumber?.isValid() ?? false
+                const phoneNumber = value ? parsePhoneNumber(value) : undefined;
+                return phoneNumber?.isValid() ?? false;
             },
-            hint: 'phone'
+            hint: 'phone',
         }),
         extendedParams: {
             defaultCountry,
-            country: country ?? (isValidCountryCode(config.countryCode) ? config.countryCode : undefined),
+            country:
+                country ??
+                (isValidCountryCode(config.countryCode) ? config.countryCode : undefined),
             locale: locale ?? config.language,
             withCountryCallingCode,
             withCountrySelect,
-        }
+        },
     });
-}
+};
 
-export default phoneNumberField
+export default phoneNumberField;

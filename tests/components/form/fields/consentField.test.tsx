@@ -2,34 +2,36 @@
  * @jest-environment jest-fixed-jsdom
  */
 
-import React from 'react'
 import { describe, expect, jest, test } from '@jest/globals';
+import '@testing-library/jest-dom/jest-globals';
 import { screen, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event'
-import '@testing-library/jest-dom/jest-globals'
+import userEvent from '@testing-library/user-event';
 import 'jest-styled-components';
+import React from 'react';
 
-import { createForm } from '../../../../src/components/form/formComponent'
-import consentField from '../../../../src/components/form/fields/consentField'
+import consentField from '../../../../src/components/form/fields/consentField';
+import { createForm } from '../../../../src/components/form/formComponent';
 import resolveI18n, { I18nMessages } from '../../../../src/core/i18n';
 import { defaultConfig, renderWithContext } from '../../../widgets/renderer';
 
 const defaultI18n: I18nMessages = {
     checkbox: 'Check?',
-}
+};
 
-const i18nResolver = resolveI18n(defaultI18n)
+const i18nResolver = resolveI18n(defaultI18n);
 
-type Model = { 'consents.myconsent.1': string }
+type Model = { 'consents.myconsent.1': string };
 
 describe('DOM testing', () => {
     test('default settings', async () => {
-        const user = userEvent.setup()
+        const user = userEvent.setup();
 
-        const label = 'My Consent'
+        const label = 'My Consent';
 
-        const onFieldChange = jest.fn()
-        const onSubmit = jest.fn<(data: Model) => Promise<Model>>(data => Promise.resolve(data))
+        const onFieldChange = jest.fn();
+        const onSubmit = jest.fn<(data: Model) => Promise<Model>>((data: Model) =>
+            Promise.resolve(data)
+        );
 
         const Form = createForm<Model>({
             fields: [
@@ -40,13 +42,13 @@ describe('DOM testing', () => {
                     type: 'opt-in',
                     version: {
                         versionId: 1,
-                        language: defaultConfig.language
+                        language: defaultConfig.language,
                     },
                     description: 'Lorem ipsum sit amet',
-                    consentCannotBeGranted: false
-                })
+                    consentCannotBeGranted: false,
+                }),
             ],
-        })
+        });
 
         await renderWithContext(
             <Form
@@ -58,56 +60,65 @@ describe('DOM testing', () => {
             {},
             defaultConfig,
             defaultI18n
-        )
+        );
 
-        const checkbox = screen.getByLabelText(i18nResolver(label))
-        expect(checkbox).not.toBeChecked()
+        const checkbox = screen.getByLabelText(i18nResolver(label));
+        expect(checkbox).not.toBeChecked();
 
-        const description = screen.queryByTestId('consents.myconsent.1.description')
-        expect(description).toBeInTheDocument()
-        expect(description).toHaveTextContent('Lorem ipsum sit amet')
-        
-        await user.click(checkbox)
+        const description = screen.queryByTestId('consents.myconsent.1.description');
+        expect(description).toBeInTheDocument();
+        expect(description).toHaveTextContent('Lorem ipsum sit amet');
 
-        expect(checkbox).toBeChecked()
+        await user.click(checkbox);
 
-        await waitFor(() => expect(onFieldChange).toHaveBeenLastCalledWith(
-            expect.objectContaining({
-                'consents.myconsent.1': expect.objectContaining({
-                    isDirty: true,
-                    value: true,
-                })
-            })
-        ))
+        expect(checkbox).toBeChecked();
 
-        const submitBtn = screen.getByRole('button')
-        await user.click(submitBtn)
-
-        await waitFor(() => expect(onSubmit).toHaveBeenCalled())
-
-        await waitFor(() => expect(onSubmit).toBeCalledWith(
-            expect.objectContaining({
-                consents: expect.objectContaining({
-                    'myconsent': expect.objectContaining({
-                        consentType: 'opt-in',
-                        consentVersion: expect.objectContaining({
-                            language: defaultConfig.language,
-                            versionId: 1
+        await waitFor(() =>
+            expect(onFieldChange).toHaveBeenLastCalledWith(
+                expect.objectContaining({
+                    consents: expect.objectContaining({
+                        myconsent: expect.objectContaining({
+                            consentType: 'opt-in',
+                            consentVersion: { language: 'fr', versionId: 1 },
+                            granted: true,
                         }),
-                        granted: true
-                    })
+                    }),
                 })
-            })
-        ))
-    })
+            )
+        );
+
+        const submitBtn = screen.getByRole('button');
+        await user.click(submitBtn);
+
+        await waitFor(() => expect(onSubmit).toHaveBeenCalled());
+
+        await waitFor(() =>
+            expect(onSubmit).toBeCalledWith(
+                expect.objectContaining({
+                    consents: expect.objectContaining({
+                        myconsent: expect.objectContaining({
+                            consentType: 'opt-in',
+                            consentVersion: expect.objectContaining({
+                                language: defaultConfig.language,
+                                versionId: 1,
+                            }),
+                            granted: true,
+                        }),
+                    }),
+                })
+            )
+        );
+    });
 
     test('initially checked', async () => {
-        const user = userEvent.setup()
+        const user = userEvent.setup();
 
-        const label = 'My Consent'
+        const label = 'My Consent';
 
-        const onFieldChange = jest.fn()
-        const onSubmit = jest.fn<(data: Model) => Promise<Model>>(data => Promise.resolve(data))
+        const onFieldChange = jest.fn();
+        const onSubmit = jest.fn<(data: Model) => Promise<Model>>((data: Model) =>
+            Promise.resolve(data)
+        );
 
         const Form = createForm<Model>({
             fields: [
@@ -118,14 +129,14 @@ describe('DOM testing', () => {
                     type: 'opt-in',
                     version: {
                         versionId: 1,
-                        language: defaultConfig.language
+                        language: defaultConfig.language,
                     },
                     description: 'Lorem ipsum sit amet',
                     consentCannotBeGranted: false,
                     defaultValue: true,
-                })
+                }),
             ],
-        })
+        });
 
         await renderWithContext(
             <Form
@@ -137,42 +148,46 @@ describe('DOM testing', () => {
             {},
             defaultConfig,
             defaultI18n
-        )
+        );
 
-        const checkbox = screen.getByLabelText(i18nResolver(label))
-        expect(checkbox).toBeChecked()
-        
-        await user.click(checkbox)
+        const checkbox = screen.getByLabelText(i18nResolver(label));
+        expect(checkbox).toBeChecked();
 
-        expect(checkbox).not.toBeChecked()
+        await user.click(checkbox);
 
-        await waitFor(() => expect(onFieldChange).toHaveBeenLastCalledWith(
-            expect.objectContaining({
-                'consents.myconsent.1': expect.objectContaining({
-                    isDirty: true,
-                    value: false,
-                })
-            })
-        ))
+        expect(checkbox).not.toBeChecked();
 
-        const submitBtn = screen.getByRole('button')
-        await user.click(submitBtn)
-
-        await waitFor(() => expect(onSubmit).toHaveBeenCalled())
-
-        await waitFor(() => expect(onSubmit).toBeCalledWith(
-            expect.objectContaining({
-                consents: expect.objectContaining({
-                    'myconsent': expect.objectContaining({
-                        consentType: 'opt-in',
-                        consentVersion: expect.objectContaining({
-                            language: defaultConfig.language,
-                            versionId: 1
+        await waitFor(() =>
+            expect(onFieldChange).toHaveBeenLastCalledWith(
+                expect.objectContaining({
+                    consents: expect.objectContaining({
+                        myconsent: expect.objectContaining({
+                            consentType: 'opt-in',
+                            consentVersion: { language: 'fr', versionId: 1 },
+                            granted: false,
                         }),
-                        granted: false
-                    })
+                    }),
                 })
-            })
-        ))
-    })
-})
+            )
+        );
+
+        const submitBtn = screen.getByRole('button');
+        await user.click(submitBtn);
+
+        await waitFor(() => expect(onSubmit).toHaveBeenCalled());
+
+        await waitFor(() =>
+            expect(onSubmit).toBeCalledWith(
+                expect.objectContaining({
+                    consents: expect.objectContaining({
+                        myconsent: expect.objectContaining({
+                            consentType: 'opt-in',
+                            consentVersion: { language: 'fr', versionId: 1 },
+                            granted: false,
+                        }),
+                    }),
+                })
+            )
+        );
+    });
+});

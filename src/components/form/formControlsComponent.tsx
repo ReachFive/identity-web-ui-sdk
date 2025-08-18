@@ -5,7 +5,7 @@ import styled, { css, keyframes } from 'styled-components';
 const errorFadeIn = keyframes`
   0% { opacity: 0; }
   100% { opacity: 1; }
-`
+`;
 
 export const FormError = styled.div`
     padding-top: 3px;
@@ -13,23 +13,25 @@ export const FormError = styled.div`
     color: ${props => props.theme.dangerColor};
 `;
 
-type Visibility = { visible?: boolean }
+type Visibility = { visible?: boolean };
 
 export const Label = styled.label.withConfig({
-    shouldForwardProp: (prop) => !['visible'].includes(prop)
+    shouldForwardProp: prop => !['visible'].includes(prop),
 })<Visibility>`
     color: ${props => props.theme.textColor};
     margin-bottom: ${props => props.theme.spacing / 2}px;
-    display: ${props => props.visible ? 'inline-block' : 'none'};
+    display: ${props => (props.visible ? 'inline-block' : 'none')};
 `;
 
 export const TextDanger = styled.span`
     color: ${props => props.theme.dangerColor};
-`
+`;
 
-export const FormGroupContainer = styled.div<{ required?: boolean  }>`
+export const FormGroupContainer = styled.div<{ required?: boolean }>`
     margin-bottom: ${props => props.theme.spacing}px;
-    ${({ required, theme }) => required && `
+    ${({ required, theme }) =>
+        required &&
+        `
         & > label::after {
             content: "\\A0*";
             color: ${theme.dangerColor};
@@ -38,11 +40,11 @@ export const FormGroupContainer = styled.div<{ required?: boolean  }>`
 `;
 
 interface FormGroupProps {
-    inputId: string
-    labelText: string
-    showLabel?: boolean
-    error?: string
-    required?: boolean
+    inputId: string;
+    labelText: string;
+    showLabel?: boolean;
+    error?: string;
+    required?: boolean;
 }
 
 export const FormGroup = ({
@@ -51,12 +53,16 @@ export const FormGroup = ({
     showLabel,
     error,
     required,
-    children
-}: PropsWithChildren<FormGroupProps>) => <FormGroupContainer required={required}>
-        <Label visible={showLabel} htmlFor={inputId}>{labelText}</Label>
+    children,
+}: PropsWithChildren<FormGroupProps>) => (
+    <FormGroupContainer required={required}>
+        <Label visible={showLabel} htmlFor={inputId}>
+            {labelText}
+        </Label>
         {children}
         {error && <FormError data-testid="form-error">{error}</FormError>}
-    </FormGroupContainer>;
+    </FormGroupContainer>
+);
 
 const inputMixin = css<{ hasError?: boolean }>`
     display: block;
@@ -64,27 +70,33 @@ const inputMixin = css<{ hasError?: boolean }>`
     box-sizing: border-box;
     font-size: ${props => props.theme.input.fontSize}px;
     line-height: ${props => props.theme.input.lineHeight};
-    color: ${props => props.hasError ? props.theme.dangerColor : props.theme.input.color};
+    color: ${props => (props.hasError ? props.theme.dangerColor : props.theme.input.color)};
     border-radius: ${props => props.theme.input.borderRadius}px;
     border-width: ${props => props.theme.input.borderWidth}px;
     border-style: solid;
-    border-color: ${props => props.hasError ? props.theme.dangerColor : props.theme.input.borderColor};
+    border-color: ${props =>
+        props.hasError ? props.theme.dangerColor : props.theme.input.borderColor};
     background-color: ${props => props.theme.input.background};
     background-image: none;
     padding: ${props => props.theme.input.paddingY}px ${props => props.theme.input.paddingX}px;
     transition:
-          border-color ease-in-out .15s,
-          box-shadow ease-in-out .15s;
+        border-color ease-in-out 0.15s,
+        box-shadow ease-in-out 0.15s;
     box-shadow: ${props => props.theme.input.boxShadow};
     appearance: none;
 
     &:focus {
-        border-color: ${props => props.hasError ? props.theme.dangerColor : props.theme.input.focusBorderColor};
-        box-shadow: ${props => props.theme.input.focusBoxShadow(props.hasError ? props.theme.dangerColor : props.theme.input.focusBorderColor)};
+        border-color: ${props =>
+            props.hasError ? props.theme.dangerColor : props.theme.input.focusBorderColor};
+        box-shadow: ${props =>
+            props.theme.input.focusBoxShadow(
+                props.hasError ? props.theme.dangerColor : props.theme.input.focusBorderColor
+            )};
         outline: 0;
     }
 
-    &:disabled, &[readonly] {
+    &:disabled,
+    &[readonly] {
         background-color: ${props => props.theme.input.disabledBackground};
     }
 
@@ -93,33 +105,39 @@ const inputMixin = css<{ hasError?: boolean }>`
     }
 `;
 
-type HasError = { hasError: boolean }
+type HasError = { hasError: boolean };
 
 export const Input = styled.input.withConfig({
-    shouldForwardProp: (prop) => !['hasError'].includes(prop)
-})<HasError>`${inputMixin}`
+    shouldForwardProp: prop => !['hasError'].includes(prop),
+})<HasError>`
+    ${inputMixin}
+`;
 
 interface Option {
-    label: string
-    value: string
+    label: string;
+    value: string;
 }
 
 export interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
-    hasError?: boolean
-    options: Option[]
-    placeholder?: string
+    hasError?: boolean;
+    options: Option[];
+    placeholder?: string;
 }
 
-export const Select = styled(({ hasError: _hasError, options, placeholder = '', ...props }: SelectProps) => (
-    <select {...props}>
-        <option value="" disabled>{placeholder}</option>
-        {options.map(({ label: optionLabel, value: optionValue }) => (
-            <option value={optionValue} key={optionValue}>
-                {optionLabel}
+export const Select = styled(
+    ({ hasError: _hasError, options, placeholder = '', ...props }: SelectProps) => (
+        <select {...props}>
+            <option value="" disabled>
+                {placeholder}
             </option>
-        ))}
-    </select>
-))`
+            {options.map(({ label: optionLabel, value: optionValue }) => (
+                <option value={optionValue} key={optionValue}>
+                    {optionLabel}
+                </option>
+            ))}
+        </select>
+    )
+)`
     ${inputMixin}
     appearance: none;
     background-image:
@@ -141,16 +159,17 @@ export const Select = styled(({ hasError: _hasError, options, placeholder = '', 
 const checkboxWidth = 20;
 
 interface CheckProps extends React.InputHTMLAttributes<HTMLInputElement> {
-    label?: ReactNode
-    value?: string | number
-    radio?: boolean
+    label?: ReactNode;
+    value?: string | number;
+    radio?: boolean;
 }
 
 export const Check = styled(({ onSelect, label, radio, className, ...props }: CheckProps) => (
     <label className={className}>
-        <input type={radio ? 'radio' : 'checkbox'}
+        <input
+            type={radio ? 'radio' : 'checkbox'}
             onChange={onSelect}
-            style={radio ? {appearance: 'radio'} : undefined}
+            style={radio ? { appearance: 'radio' } : undefined}
             {...props}
         />
         {label}
@@ -161,7 +180,9 @@ export const Check = styled(({ onSelect, label, radio, className, ...props }: Ch
     cursor: pointer;
     font-weight: normal;
 
-    ${props => props.$inline && `
+    ${props =>
+        props.$inline &&
+        `
         position: relative;
         vertical-align: middle;
         display: inline-block;
@@ -180,30 +201,39 @@ export const Check = styled(({ onSelect, label, radio, className, ...props }: Ch
 `;
 
 interface CheckboxProps extends React.InputHTMLAttributes<HTMLInputElement> {
-    error?: ReactNode
-    label?: ReactNode
-    onToggle?: () => void
-    radio?: boolean
+    error?: ReactNode;
+    label?: ReactNode;
+    onToggle?: () => void;
+    radio?: boolean;
 }
 
-export const Checkbox = styled(({ value, onToggle, label, name, className, error, required, ...props }: CheckboxProps) => (
-    <div className={className}>
-        <Check checked={!!value} onSelect={onToggle} label={label} name={name} required={required} {...props} />
-        {error && <FormError>{error}</FormError>}
-    </div>
-))`
+export const Checkbox = styled(
+    ({ value, onToggle, label, name, className, error, required, ...props }: CheckboxProps) => (
+        <div className={className}>
+            <Check
+                checked={!!value}
+                onSelect={onToggle}
+                label={label}
+                name={name}
+                required={required}
+                {...props}
+            />
+            {error && <FormError>{error}</FormError>}
+        </div>
+    )
+)`
     margin-bottom: ${props => props.theme.spacing}px;
 `;
 
 export interface RadioGroupProps extends FormGroupProps {
-    options: CheckProps[]
-    onChange: (event: { value: HTMLInputElement['value'] }) => void
-    value?: HTMLInputElement['value']
+    options: CheckProps[];
+    onChange: (event: { value: HTMLInputElement['value'] }) => void;
+    value?: HTMLInputElement['value'];
 }
 
 export const RadioGroup = ({ options, onChange, value, inputId, ...props }: RadioGroupProps) => {
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        onChange({value: event.target.value})
+        onChange({ value: event.target.value });
     };
     return (
         <FormGroup inputId={inputId} {...props}>
@@ -221,8 +251,8 @@ export const RadioGroup = ({ options, onChange, value, inputId, ...props }: Radi
             ))}
         </FormGroup>
     );
-}
-export const UserAggreementStyle = styled.div`
+};
+export const UserAgreementStyle = styled.div`
     font-size: ${props => props.theme.fontSize * 0.8}px;
     color: ${props => props.theme.mutedTextColor};
     text-align: center;

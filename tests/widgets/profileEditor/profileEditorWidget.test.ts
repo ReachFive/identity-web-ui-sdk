@@ -2,44 +2,48 @@
  * @jest-environment jest-fixed-jsdom
  */
 
-import { ComponentProps } from 'react';
 import { beforeEach, describe, expect, jest, test } from '@jest/globals';
+import '@testing-library/jest-dom/jest-globals';
 import { screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event'
-import '@testing-library/jest-dom/jest-globals'
+import userEvent from '@testing-library/user-event';
 import 'jest-styled-components';
+import { ComponentProps } from 'react';
 
-import { type Profile, type Client } from '@reachfive/identity-core';
+import { type Client, type Profile } from '@reachfive/identity-core';
 
 import { type I18nMessages } from '../../../src/core/i18n';
 
 import ProfileEditorWidget from '../../../src/widgets/profileEditor/profileEditorWidget';
 
-import { componentGenerator, snapshotGenerator } from '../renderer'
+import { defaultConfig } from '../renderer';
 
-const defaultI18n: I18nMessages = {}
+import { OnError, OnSuccess } from '@/types';
+import { componentGenerator, snapshotGenerator } from '../renderer';
+
+const defaultI18n: I18nMessages = {};
 
 describe('Snapshot', () => {
-    const generateSnapshot = (options: ComponentProps<typeof ProfileEditorWidget>, user: Partial<Profile>) => {
+    const generateSnapshot = (
+        options: ComponentProps<typeof ProfileEditorWidget>,
+        user: Partial<Profile>
+    ) => {
         // @ts-expect-error partial Client
         const apiClient: Client = {
-            getUser: jest.fn<Client['getUser']>().mockResolvedValue(user as Profile)
-        }
+            getUser: jest.fn<Client['getUser']>().mockResolvedValue(user as Profile),
+        };
 
-        const generate = snapshotGenerator(ProfileEditorWidget, apiClient, defaultI18n)
-        
-        return generate(options)
-    }
+        const generate = snapshotGenerator(ProfileEditorWidget, apiClient, defaultI18n);
+
+        return generate(options);
+    };
 
     describe('profile editor', () => {
-        test('basic',
+        test(
+            'basic',
             generateSnapshot(
                 {
                     accessToken: 'azerty',
-                    fields: [
-                        'givenName',
-                        'familyName'
-                    ],
+                    fields: ['givenName', 'familyName'],
                 },
                 {
                     givenName: 'John',
@@ -48,77 +52,92 @@ describe('Snapshot', () => {
             )
         );
     });
-})
+});
 
 describe('DOM testing', () => {
-    const getUser = jest.fn<Client['getUser']>()
-    const updateProfile = jest.fn<Client['updateProfile']>()
+    const getUser = jest.fn<Client['getUser']>();
+    const updateProfile = jest.fn<Client['updateProfile']>();
 
-    const onError = jest.fn()
-    const onSuccess = jest.fn()
-    
+    const onError = jest.fn<OnError>();
+    const onSuccess = jest.fn<OnSuccess>();
+
     beforeEach(() => {
-        getUser.mockClear()
-        updateProfile.mockClear()
-        onError.mockClear()
-        onSuccess.mockClear()
-    })
+        getUser.mockClear();
+        updateProfile.mockClear();
+        onError.mockClear();
+        onSuccess.mockClear();
+    });
 
     // @ts-expect-error partial Client
     const apiClient: Client = {
         getUser,
         updateProfile,
-    }
+    };
 
-    const generateComponent = componentGenerator(ProfileEditorWidget, apiClient, defaultI18n)
+    const generateComponent = componentGenerator(ProfileEditorWidget, apiClient, defaultI18n);
 
     describe('profileEditor', () => {
         test('default', async () => {
-            const user = userEvent.setup()
+            const user = userEvent.setup();
 
-            const profile = {
+            // @ts-expect-error partial Profile
+            const profile: Profile = {
                 givenName: 'John',
                 familyName: 'Do',
-            }
+                consents: {
+                    optinTesting: {
+                        granted: false,
+                        consentType: 'opt-in',
+                        consentVersion: {
+                            versionId: 1,
+                            language: 'fr',
+                        },
+                        date: '2021-01-01T00:00:00.000Z',
+                    },
+                },
+            };
 
-            getUser.mockResolvedValue(profile as Profile)
+            getUser.mockResolvedValue(profile as Profile);
 
-            updateProfile.mockResolvedValue()
+            updateProfile.mockResolvedValue();
 
             await generateComponent({
                 accessToken: 'azerty',
-                fields: [
-                    'given_name',
-                    'family_name'
-                ],
+                fields: ['given_name', 'family_name', 'optinTesting'],
                 onError,
                 onSuccess,
-            })
+            });
 
             expect(getUser).toBeCalledWith(
                 expect.objectContaining({
                     accessToken: 'azerty',
-                    fields: 'givenName,familyName',
+                    fields: 'givenName,familyName,consents.optinTesting',
                 })
-            )
+            );
 
-            const givenNameInput = screen.getByLabelText('givenName')
-            expect(givenNameInput).toBeInTheDocument()
-            expect(givenNameInput).toHaveValue(profile.givenName)
-            
-            const familyNameInput = screen.getByLabelText('familyName')
-            expect(familyNameInput).toBeInTheDocument()
-            expect(familyNameInput).toHaveValue(profile.familyName)
-            
-            await userEvent.clear(givenNameInput)
-            await userEvent.type(givenNameInput, 'alice')
-            await userEvent.clear(familyNameInput)
-            await userEvent.type(familyNameInput, 'reachfive')
-            
-            const submitBtn = screen.getByRole('button', { name: 'save'})
-            expect(submitBtn).toBeInTheDocument()
+            const givenNameInput = screen.getByLabelText('givenName');
+            expect(givenNameInput).toBeInTheDocument();
+            expect(givenNameInput).toHaveValue(profile.givenName);
 
-            await user.click(submitBtn)
+            const familyNameInput = screen.getByLabelText('familyName');
+            expect(familyNameInput).toBeInTheDocument();
+            expect(familyNameInput).toHaveValue(profile.familyName);
+
+            await userEvent.clear(givenNameInput);
+            await userEvent.type(givenNameInput, 'alice');
+            await userEvent.clear(familyNameInput);
+            await userEvent.type(familyNameInput, 'reachfive');
+
+            // const consentCheckbox = screen.getByTestId('consents.optinTesting.1')
+            const consentCheckbox = screen.getByLabelText(
+                defaultConfig.consentsVersions.optinTesting.versions[0].title
+            );
+            await user.click(consentCheckbox);
+
+            const submitBtn = screen.getByRole('button', { name: 'save' });
+            expect(submitBtn).toBeInTheDocument();
+
+            await user.click(submitBtn);
 
             expect(updateProfile).toBeCalledWith(
                 expect.objectContaining({
@@ -126,76 +145,80 @@ describe('DOM testing', () => {
                     data: {
                         givenName: 'alice',
                         familyName: 'reachfive',
-                    }
+                        consents: {
+                            optin_testing: {
+                                // consent key should be snakecase
+                                granted: true,
+                                consentType: 'opt-in',
+                                consentVersion: {
+                                    versionId: 1,
+                                    language: 'fr',
+                                },
+                            },
+                        },
+                    },
                 })
-            )
+            );
 
-            expect(onSuccess).toBeCalled()
-            expect(onError).not.toBeCalled()
-        })
+            expect(onSuccess).toBeCalledWith(expect.objectContaining({ name: 'user_updated' }));
+            expect(onError).not.toBeCalled();
+        });
 
         test('api get user failed', async () => {
-            getUser.mockRejectedValue(new Error('Unexpected error'))
+            getUser.mockRejectedValue(new Error('Unexpected error'));
 
             await generateComponent(
                 {
                     accessToken: 'azerty',
-                    fields: [
-                        'given_name',
-                        'family_name'
-                    ],
+                    fields: ['given_name', 'family_name'],
                     onError,
                     onSuccess,
                 },
                 {},
                 () => expect(getUser).toBeCalled()
-            )
+            );
 
-            expect(onSuccess).not.toBeCalled()
-            expect(onError).toBeCalled()
-            expect(onError).toBeCalledWith(new Error('Unexpected error'))
-        })
+            expect(onSuccess).not.toBeCalled();
+            expect(onError).toBeCalled();
+            expect(onError).toBeCalledWith(new Error('Unexpected error'));
+        });
 
         test('api update user failed', async () => {
-            const user = userEvent.setup()
+            const user = userEvent.setup();
 
             const profile = {
                 givenName: 'John',
                 familyName: 'Do',
-            }
+            };
 
-            getUser.mockResolvedValue(profile as Profile)
+            getUser.mockResolvedValue(profile as Profile);
 
-            updateProfile.mockRejectedValue(new Error('Unexpected error'))
+            updateProfile.mockRejectedValue('Unexpected error');
 
             await generateComponent({
                 accessToken: 'azerty',
-                fields: [
-                    'given_name',
-                    'family_name'
-                ],
+                fields: ['given_name', 'family_name'],
                 onError,
                 onSuccess,
-            })
+            });
 
-            expect(getUser).toBeCalled()
+            expect(getUser).toBeCalled();
 
-            const givenNameInput = screen.getByLabelText('givenName')
-            await userEvent.clear(givenNameInput)
-            await userEvent.type(givenNameInput, 'alice')
+            const givenNameInput = screen.getByLabelText('givenName');
+            await userEvent.clear(givenNameInput);
+            await userEvent.type(givenNameInput, 'alice');
 
-            const familyNameInput = screen.getByLabelText('familyName')
-            await userEvent.clear(familyNameInput)
-            await userEvent.type(familyNameInput, 'reachfive')
-            
-            const submitBtn = screen.getByRole('button', { name: 'save'})
-            await user.click(submitBtn)
+            const familyNameInput = screen.getByLabelText('familyName');
+            await userEvent.clear(familyNameInput);
+            await userEvent.type(familyNameInput, 'reachfive');
 
-            expect(updateProfile).toBeCalled()
+            const submitBtn = screen.getByRole('button', { name: 'save' });
+            await user.click(submitBtn);
 
-            expect(onSuccess).not.toBeCalled()
-            expect(onError).toBeCalledWith(new Error('Unexpected error'))
-        })
-    })
+            expect(updateProfile).toBeCalled();
 
-})
+            expect(onSuccess).not.toBeCalled();
+            expect(onError).toBeCalledWith('Unexpected error');
+        });
+    });
+});

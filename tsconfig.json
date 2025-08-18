@@ -24,8 +24,8 @@
 
     "baseUrl": ".",
     "paths": {
-        "@/*": ["src/*"],
+      "@/*": ["src/*"]
     }
   },
-  "include": ["src"]
+  "include": ["src", "tests", "rollup.config.js", "tailwind.config.cjs", "eslint.config.mjs"]
 }

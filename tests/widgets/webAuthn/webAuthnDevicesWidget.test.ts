@@ -3,9 +3,9 @@
  */
 
 import { afterAll, beforeEach, describe, expect, jest, test } from '@jest/globals';
+import '@testing-library/jest-dom/jest-globals';
 import { screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event'
-import '@testing-library/jest-dom/jest-globals'
+import userEvent from '@testing-library/user-event';
 import 'jest-styled-components';
 
 import { type Client } from '@reachfive/identity-core';
@@ -13,62 +13,62 @@ import { type Client } from '@reachfive/identity-core';
 import { type I18nMessages } from '../../../src/core/i18n';
 import { UserError } from '../../../src/helpers/errors';
 
+import { OnError, OnSuccess } from '@/types';
 import WebAuthnDevicesWidget from '../../../src/widgets/webAuthn/webAuthnDevicesWidget';
 import { componentGenerator } from '../renderer';
 
-const defaultI18n: I18nMessages = {}
+const defaultI18n: I18nMessages = {};
 
-const accessToken = 'azerty'
+const accessToken = 'azerty';
 
 describe('DOM testing', () => {
     const confirmMock = jest.spyOn(window, 'confirm').mockImplementation(() => true);
 
-    const listWebAuthnDevices = jest.fn<Client['listWebAuthnDevices']>()
-    const addNewWebAuthnDevice = jest.fn<Client['addNewWebAuthnDevice']>()
-    const removeWebAuthnDevice = jest.fn<Client['removeWebAuthnDevice']>()
+    const listWebAuthnDevices = jest.fn<Client['listWebAuthnDevices']>();
+    const addNewWebAuthnDevice = jest.fn<Client['addNewWebAuthnDevice']>();
+    const removeWebAuthnDevice = jest.fn<Client['removeWebAuthnDevice']>();
 
-    const onError = jest.fn()
-    const onSuccess = jest.fn()
-    
+    const onError = jest.fn<OnError>();
+    const onSuccess = jest.fn<OnSuccess>();
+
     beforeEach(() => {
-        confirmMock.mockClear()
-        listWebAuthnDevices.mockClear()
-        addNewWebAuthnDevice.mockClear()
-        removeWebAuthnDevice.mockClear()
-        onError.mockClear()
-        onSuccess.mockClear()
-    })
+        confirmMock.mockClear();
+        listWebAuthnDevices.mockClear();
+        addNewWebAuthnDevice.mockClear();
+        removeWebAuthnDevice.mockClear();
+        onError.mockClear();
+        onSuccess.mockClear();
+    });
 
     afterAll(() => {
-        confirmMock.mockRestore()
-    })
+        confirmMock.mockRestore();
+    });
 
     // @ts-expect-error partial Client
     const apiClient: Client = {
         listWebAuthnDevices,
         addNewWebAuthnDevice,
         removeWebAuthnDevice,
-    }
+    };
 
-    const generateComponent = componentGenerator(WebAuthnDevicesWidget, apiClient, defaultI18n)
+    const generateComponent = componentGenerator(WebAuthnDevicesWidget, apiClient, defaultI18n);
 
     describe('webAuthn', () => {
-
         test('WebAuthn feature is not available', async () => {
             await generateComponent(
                 { accessToken: 'azerty', onError, onSuccess },
                 { webAuthn: false },
                 () => {}
-            )
+            );
 
-            expect(onSuccess).not.toBeCalled()
+            expect(onSuccess).not.toBeCalled();
             expect(onError).toBeCalledWith(
                 new UserError('The WebAuthn feature is not available on your account.')
-            )
-        })
+            );
+        });
 
         test('default', async () => {
-            const user = userEvent.setup()
+            const user = userEvent.setup();
 
             // before add
             listWebAuthnDevices.mockResolvedValue([
@@ -77,23 +77,23 @@ describe('DOM testing', () => {
                     id: 'myOldDevice',
                     createdAt: '',
                     lastUsedAt: '',
-                }
-            ])
+                },
+            ]);
 
-            addNewWebAuthnDevice.mockResolvedValue()
-            removeWebAuthnDevice.mockResolvedValue()
+            addNewWebAuthnDevice.mockResolvedValue();
+            removeWebAuthnDevice.mockResolvedValue();
 
-            await generateComponent({ accessToken, onError, onSuccess }, { webAuthn: true })
+            await generateComponent({ accessToken, onError, onSuccess }, { webAuthn: true });
 
-            expect(listWebAuthnDevices).toBeCalledWith(accessToken)
+            expect(listWebAuthnDevices).toBeCalledWith(accessToken);
 
-            const devices = screen.queryAllByTestId('device')
-            expect(devices).toHaveLength(1)
+            const devices = screen.queryAllByTestId('device');
+            expect(devices).toHaveLength(1);
 
-            const friendlyNameInput = screen.getByLabelText('webauthn.friendly.name')
-            await user.type(friendlyNameInput, 'myNewDevice')
+            const friendlyNameInput = screen.getByLabelText('webauthn.friendly.name');
+            await user.type(friendlyNameInput, 'myNewDevice');
 
-            const addBtn = screen.getByRole("button", { name: 'add' })
+            const addBtn = screen.getByRole('button', { name: 'add' });
 
             // after add
             listWebAuthnDevices.mockResolvedValueOnce([
@@ -108,25 +108,20 @@ describe('DOM testing', () => {
                     id: 'myNewDevice',
                     createdAt: '',
                     lastUsedAt: '',
-                }
-            ])
+                },
+            ]);
 
-            await user.click(addBtn)
+            await user.click(addBtn);
 
-            expect(addNewWebAuthnDevice).toBeCalledWith(accessToken, 'myNewDevice')
+            expect(addNewWebAuthnDevice).toBeCalledWith(accessToken, 'myNewDevice');
 
-            expect(listWebAuthnDevices).toBeCalledWith(accessToken)
+            expect(listWebAuthnDevices).toBeCalledWith(accessToken);
 
-            const devicesAfterAdd = await screen.findAllByTestId('device')
-            expect(devicesAfterAdd).toHaveLength(2)
+            const devicesAfterAdd = await screen.findAllByTestId('device');
+            expect(devicesAfterAdd).toHaveLength(2);
 
-            const deviceNames = screen.queryAllByTestId('device-name')
-                .map(el => el.textContent)
-            expect(deviceNames).toEqual(['myOldDevice', 'myNewDevice'])
-            
-            const oldDevice = devicesAfterAdd.find(el => el.textContent === 'myOldDevice')
-            const removeOldDevice = oldDevice?.querySelector('[data-testid="device-remove"]')
-            expect(removeOldDevice).toBeInTheDocument()
+            const deviceNames = screen.queryAllByTestId('device-name').map(el => el.textContent);
+            expect(deviceNames).toEqual(['myOldDevice', 'myNewDevice']);
 
             // after remove
             listWebAuthnDevices.mockResolvedValueOnce([
@@ -135,84 +130,94 @@ describe('DOM testing', () => {
                     id: 'myNewDevice',
                     createdAt: '',
                     lastUsedAt: '',
-                }
-            ])
+                },
+            ]);
 
-            await user.click(removeOldDevice!)
+            const oldDevice = devicesAfterAdd.find(el => el.textContent === 'myOldDevice');
+            const removeOldDevice = oldDevice?.querySelector('[data-testid="device-remove"]');
+            expect(removeOldDevice).toBeInTheDocument();
 
-            expect(confirmMock).toBeCalled()
+            await user.click(removeOldDevice!);
 
-            expect(removeWebAuthnDevice).toBeCalledWith(accessToken, 'myOldDevice')
+            expect(confirmMock).toBeCalled();
 
-            const devicesAfterRemove = screen.queryAllByTestId('device')
-            expect(devicesAfterRemove).toHaveLength(1)
+            expect(removeWebAuthnDevice).toBeCalledWith(accessToken, 'myOldDevice');
 
-            expect(onSuccess).toBeCalled()
-            expect(onError).not.toBeCalled()
-        })
+            const devicesAfterRemove = screen.queryAllByTestId('device');
+            expect(devicesAfterRemove).toHaveLength(1);
+
+            expect(onSuccess).toBeCalledWith(
+                expect.objectContaining({
+                    friendlyName: 'myNewDevice',
+                    name: 'webauthn_credential_created',
+                })
+            );
+            expect(onError).not.toBeCalled();
+        });
 
         test('list devices api failure', async () => {
-            listWebAuthnDevices.mockRejectedValue(new Error('Unexpected error'))
+            listWebAuthnDevices.mockRejectedValue(new Error('Unexpected error'));
 
             await generateComponent(
                 { accessToken, onError, onSuccess },
                 { webAuthn: true },
                 () => {}
-            )
+            );
 
-            expect(listWebAuthnDevices).toBeCalled()
+            expect(listWebAuthnDevices).toBeCalled();
 
-            expect(onSuccess).not.toBeCalled()
-            expect(onError).toBeCalledWith(new Error('Unexpected error'))
-        })
+            expect(onSuccess).not.toBeCalled();
+            expect(onError).toBeCalledWith(new Error('Unexpected error'));
+        });
 
         test('add new device api failure', async () => {
-            const user = userEvent.setup()
+            const user = userEvent.setup();
 
-            listWebAuthnDevices.mockResolvedValue([])
-            addNewWebAuthnDevice.mockRejectedValue(new Error('Unexpected error'))
+            listWebAuthnDevices.mockResolvedValue([]);
+            addNewWebAuthnDevice.mockRejectedValue(new Error('Unexpected error'));
 
-            await generateComponent({ accessToken, onError, onSuccess }, { webAuthn: true })
+            await generateComponent({ accessToken, onError, onSuccess }, { webAuthn: true });
 
-            const friendlyNameInput = screen.getByLabelText('webauthn.friendly.name')
-            await user.type(friendlyNameInput, 'myNewDevice')
+            const friendlyNameInput = screen.getByLabelText('webauthn.friendly.name');
+            await user.type(friendlyNameInput, 'myNewDevice');
 
-            const addBtn = screen.getByRole("button", { name: 'add' })
-            await user.click(addBtn)
+            const addBtn = screen.getByRole('button', { name: 'add' });
+            await user.click(addBtn);
 
-            expect(addNewWebAuthnDevice).toBeCalled()
+            expect(addNewWebAuthnDevice).toBeCalled();
 
-            expect(onSuccess).not.toBeCalled()
-            expect(onError).toBeCalledWith(new Error('Unexpected error'))
-        })
+            expect(onSuccess).not.toBeCalled();
+            expect(onError).toBeCalledWith(new Error('Unexpected error'));
+        });
 
         test('remove device api failure', async () => {
-            const user = userEvent.setup()
+            const user = userEvent.setup();
 
-            listWebAuthnDevices.mockResolvedValue([{
-                friendlyName: 'myOldDevice',
-                id: 'myOldDevice',
-                createdAt: '',
-                lastUsedAt: '',
-            }])
-            removeWebAuthnDevice.mockRejectedValue(new Error('Unexpected error'))
+            listWebAuthnDevices.mockResolvedValue([
+                {
+                    friendlyName: 'myOldDevice',
+                    id: 'myOldDevice',
+                    createdAt: '',
+                    lastUsedAt: '',
+                },
+            ]);
+            removeWebAuthnDevice.mockRejectedValue(new Error('Unexpected error'));
 
-            await generateComponent({ accessToken, onError, onSuccess }, { webAuthn: true })
+            await generateComponent({ accessToken, onError, onSuccess }, { webAuthn: true });
 
-            const devices = screen.queryAllByTestId('device')
-            const oldDevice = devices.find(el => el.textContent === 'myOldDevice')
-            const removeOldDevice = oldDevice?.querySelector('[data-testid="device-remove"]')
-            expect(removeOldDevice).toBeInTheDocument()
+            const devices = screen.queryAllByTestId('device');
+            const oldDevice = devices.find(el => el.textContent === 'myOldDevice');
+            const removeOldDevice = oldDevice?.querySelector('[data-testid="device-remove"]');
+            expect(removeOldDevice).toBeInTheDocument();
 
-            await user.click(removeOldDevice!)
+            await user.click(removeOldDevice!);
 
-            expect(confirmMock).toBeCalled()
+            expect(confirmMock).toBeCalled();
 
-            expect(removeWebAuthnDevice).toBeCalled()
+            expect(removeWebAuthnDevice).toBeCalled();
 
-            expect(onSuccess).not.toBeCalled()
-            expect(onError).toBeCalledWith(new Error('Unexpected error'))
-        })
-    })
-
-})
+            expect(onSuccess).not.toBeCalled();
+            expect(onError).toBeCalledWith(new Error('Unexpected error'));
+        });
+    });
+});

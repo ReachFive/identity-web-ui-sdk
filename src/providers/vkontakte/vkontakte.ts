@@ -1,6 +1,6 @@
 import icon from './vkontakte.svg';
 
-import type { Provider } from '../providers'
+import type { Provider } from '../providers';
 
 export default {
     key: 'vkontakte',
@@ -10,6 +10,6 @@ export default {
     icon,
     windowSize: {
         width: 655,
-        height: 430
-    }
+        height: 430,
+    },
 } satisfies Provider;

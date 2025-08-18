@@ -1,22 +1,23 @@
+import { type AuthOptions } from '@reachfive/identity-core';
+import { LoginWithPasswordParams } from '@reachfive/identity-core/es/main/oAuthClient';
 import React, { useLayoutEffect } from 'react';
-import { type AuthOptions } from '@reachfive/identity-core'
-import { LoginWithPasswordParams } from '@reachfive/identity-core/es/main/oAuthClient'
 
 import styled from 'styled-components';
 
 import { Alternative, Heading, Link } from '../../../components/miscComponent';
 
-import { createForm } from '../../../components/form/formComponent';
-import simplePasswordField from '../../../components/form/fields/simplePasswordField';
+import { CaptchaProvider, WithCaptchaProps, WithCaptchaToken } from '../../../components/captcha';
 import checkboxField from '../../../components/form/fields/checkboxField';
 import identifierField from '../../../components/form/fields/identifierField';
-import ReCaptcha, {importGoogleRecaptchaScript} from '../../../components/reCaptcha';
+import simplePasswordField from '../../../components/form/fields/simplePasswordField';
+import { createForm } from '../../../components/form/formComponent';
+import { importGoogleRecaptchaScript } from '../../../components/reCaptcha';
 
 import { useI18n } from '../../../contexts/i18n';
 import { useReachfive } from '../../../contexts/reachfive';
 import { useRouting } from '../../../contexts/routing';
 
-import { specializeIdentifierData } from '../../../helpers/utils';
+import { enrichLoginEvent, specializeIdentifierData } from '../../../helpers/utils';
 import { FaSelectionViewState } from '../../stepUp/mfaStepUpWidget';
 
 import type { OnError, OnSuccess } from '../../../types';
@@ -24,99 +25,128 @@ import type { OnError, OnSuccess } from '../../../types';
 const ResetCredentialWrapper = styled.div<{ floating?: boolean }>`
     margin-bottom: ${props => props.theme.spacing}px;
     text-align: right;
-    ${props => props.floating && `
+    ${props =>
+        props.floating &&
+        `
         position: absolute;
         right: 0;
     `};
 `;
 
 type LoginWithPasswordFormData = {
-    identifier: string
-    password: string
-}
+    identifier: string;
+    password: string;
+};
 
 interface LoginWithPasswordFormProps {
-    canShowPassword?: boolean
-    showRememberMe?: boolean
-    showForgotPassword: boolean
-    showAccountRecovery?: boolean
-    username?: string
+    canShowPassword?: boolean;
+    showRememberMe?: boolean;
+    showForgotPassword: boolean;
+    showAccountRecovery?: boolean;
+    username?: string;
 }
 
-export const LoginWithPasswordForm = createForm<LoginWithPasswordFormData, LoginWithPasswordFormProps>({
+export const LoginWithPasswordForm = createForm<
+    LoginWithPasswordFormData,
+    LoginWithPasswordFormProps
+>({
     prefix: 'r5-login-',
-    fields({ username, showRememberMe, canShowPassword, showForgotPassword, showAccountRecovery, i18n, config }) {
+    fields({
+        username,
+        showRememberMe,
+        canShowPassword,
+        showForgotPassword,
+        showAccountRecovery,
+        i18n,
+        config,
+    }) {
         return [
-            identifierField({
-                key: 'identifier',
-                defaultValue: username,
-                withPhoneNumber: config.sms,
-                readOnly: true,
-            }, config),
+            identifierField(
+                {
+                    key: 'identifier',
+                    defaultValue: username,
+                    withPhoneNumber: config.sms,
+                    readOnly: true,
+                },
+                config
+            ),
             simplePasswordField({
                 key: 'password',
                 label: 'password',
                 autoComplete: 'current-password',
-                canShowPassword
+                canShowPassword,
             }),
             ...(showForgotPassword && !showAccountRecovery
-                ? [{
-                    staticContent: (
-                        <ResetCredentialWrapper key="forgot-password" floating={showRememberMe}>
-                            <Link target="forgot-password">{i18n('login.forgotPasswordLink')}</Link>
-                        </ResetCredentialWrapper>
-                    )
-                }]
-                : []
-            ),
+                ? [
+                      {
+                          staticContent: (
+                              <ResetCredentialWrapper
+                                  key="forgot-password"
+                                  floating={showRememberMe}
+                              >
+                                  <Link target="forgot-password">
+                                      {i18n('login.forgotPasswordLink')}
+                                  </Link>
+                              </ResetCredentialWrapper>
+                          ),
+                      },
+                  ]
+                : []),
             ...(showAccountRecovery
-                ? [{
-                    staticContent: (
-                        <ResetCredentialWrapper key="account-recovery" floating={showRememberMe}>
-                            <Link target="account-recovery">{i18n('accountRecovery.title')}</Link>
-                        </ResetCredentialWrapper>
-                    )
-                }]
-                : []
-            ),
+                ? [
+                      {
+                          staticContent: (
+                              <ResetCredentialWrapper
+                                  key="account-recovery"
+                                  floating={showRememberMe}
+                              >
+                                  <Link target="account-recovery">
+                                      {i18n('accountRecovery.title')}
+                                  </Link>
+                              </ResetCredentialWrapper>
+                          ),
+                      },
+                  ]
+                : []),
             ...(showRememberMe
                 ? [
-                    checkboxField({
-                        key: 'auth.persistent',
-                        label: 'rememberMe',
-                        defaultValue: false
-                    })
-                ]
-                : []
-            )
+                      checkboxField({
+                          key: 'auth.persistent',
+                          label: 'rememberMe',
+                          defaultValue: false,
+                      }),
+                  ]
+                : []),
         ];
     },
-    submitLabel: 'login.submitLabel'
+    submitLabel: 'login.submitLabel',
 });
 
 export interface LoginWithPasswordViewProps {
-    allowForgotPassword?: boolean
-    allowAccountRecovery?: boolean
-    auth?: AuthOptions
-    canShowPassword?: boolean
-    recaptcha_enabled?: boolean
-    recaptcha_site_key?: string
-    showLabels?: boolean
-    showRememberMe?: boolean
-    allowTrustDevice?: boolean
+    allowForgotPassword?: boolean;
+    allowAccountRecovery?: boolean;
+    auth?: AuthOptions;
+    canShowPassword?: boolean;
+    showLabels?: boolean;
+    showRememberMe?: boolean;
+    allowTrustDevice?: boolean;
     /**
      * Callback function called when the request has succeed.
      */
-    onSuccess?: OnSuccess
+    onSuccess?: OnSuccess;
     /**
      * Callback function called when the request has failed.
      */
-    onError?: OnError
+    onError?: OnError;
+    /**
+     * Action used in template
+     */
+    action?: string;
 }
 
 export type LoginWithPasswordViewState = {
-    username?: string
-}
+    username?: string;
+};
 
 export const LoginWithPasswordView = ({
     allowForgotPassword = true,
@@ -125,36 +155,59 @@ export const LoginWithPasswordView = ({
     canShowPassword,
     recaptcha_enabled = false,
     recaptcha_site_key,
+    captchaFoxEnabled = false,
+    captchaFoxSiteKey,
+    captchaFoxMode,
     showLabels,
     showRememberMe,
     allowTrustDevice,
+    action,
     onError = (() => {}) as OnError,
     onSuccess = (() => {}) as OnSuccess,
-}: LoginWithPasswordViewProps) => {
-    const i18n = useI18n()
-    const { client: coreClient } = useReachfive()
-    const { goTo, params } = useRouting()
-    const { username } = params as LoginWithPasswordViewState
+}: WithCaptchaProps<LoginWithPasswordViewProps>) => {
+    const i18n = useI18n();
+    const { client: coreClient } = useReachfive();
+    const { goTo, params } = useRouting();
+    const { username } = params as LoginWithPasswordViewState;
 
     useLayoutEffect(() => {
-        importGoogleRecaptchaScript(recaptcha_site_key)
-    }, [recaptcha_site_key])
+        importGoogleRecaptchaScript(recaptcha_site_key);
+    }, [recaptcha_site_key]);
 
-    const callback = (data: LoginWithPasswordFormData & { captchaToken?: string }) => {
-        const { auth: dataAuth, ...specializedData} = specializeIdentifierData<LoginWithPasswordParams>(data);
-        return coreClient.loginWithPassword({
-            ...specializedData,
-            captchaToken: data.captchaToken,
-            auth: {
-                ...dataAuth,
-                ...auth,
-            },
-        })
-            .then(res => res?.stepUpToken ? goTo<FaSelectionViewState>('fa-selection', {token: res.stepUpToken, amr: res.amr ?? [], allowTrustDevice}) : res)
-    }
+    const callback = (data: WithCaptchaToken<LoginWithPasswordFormData>) => {
+        const specializedIdentifierData = specializeIdentifierData<LoginWithPasswordParams>(data);
+        const { auth: dataAuth, ...specializedData } = specializedIdentifierData;
+
+        return coreClient
+            .loginWithPassword({
+                ...specializedData,
+                auth: {
+                    ...dataAuth,
+                    ...auth,
+                },
+                action,
+            })
+            .then(res => {
+                if (res?.stepUpToken) {
+                    goTo<FaSelectionViewState>('fa-selection', {
+                        token: res.stepUpToken,
+                        amr: res.amr ?? [],
+                        allowTrustDevice,
+                    });
+                }
+                return enrichLoginEvent(res, 'password', specializedIdentifierData);
+            });
+    };
 
     return (
-        <div>
+        <CaptchaProvider
+            recaptcha_enabled={recaptcha_enabled}
+            recaptcha_site_key={recaptcha_site_key}
+            captchaFoxEnabled={captchaFoxEnabled}
+            captchaFoxSiteKey={captchaFoxSiteKey}
+            captchaFoxMode={captchaFoxMode}
+            action="login"
+        >
             <Heading>{i18n('login.title')}</Heading>
             <LoginWithPasswordForm
                 username={username}
@@ -163,15 +216,17 @@ export const LoginWithPasswordView = ({
                 showForgotPassword={allowForgotPassword}
                 showAccountRecovery={allowAccountRecovery}
                 canShowPassword={canShowPassword}
-                handler={(data: LoginWithPasswordFormData) => ReCaptcha.handle(data, { recaptcha_enabled, recaptcha_site_key }, callback, "login")}
-                onSuccess={onSuccess}
+                handler={callback}
+                onSuccess={res => onSuccess({ name: 'login', ...res })}
                 onError={onError}
             />
             <Alternative>
-                <Link target="login-with-web-authn">{i18n('login.password.userAnotherIdentifier')}</Link>
+                <Link target="login-with-web-authn">
+                    {i18n('login.password.userAnotherIdentifier')}
+                </Link>
             </Alternative>
-        </div>
+        </CaptchaProvider>
     );
-}
+};
 
-export default LoginWithPasswordView
+export default LoginWithPasswordView;
