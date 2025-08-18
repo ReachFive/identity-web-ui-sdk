@@ -1,14 +1,14 @@
-import { afterAll, afterEach, beforeAll } from "@jest/globals";
-import nock from "nock";
+import { afterAll, afterEach, beforeAll } from '@jest/globals';
+import nock from 'nock';
 
 beforeAll(() => {
-    nock.disableNetConnect()
-})
+    nock.disableNetConnect();
+});
 
 afterEach(() => {
-   nock.cleanAll()
-})
+    nock.cleanAll();
+});
 
 afterAll(() => {
-    nock.enableNetConnect()
-})
+    nock.enableNetConnect();
+});
