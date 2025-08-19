@@ -1,20 +1,22 @@
 /**
  * @jest-environment jest-fixed-jsdom
  */
+import React from 'react';
 
 import { beforeEach, describe, expect, jest, test } from '@jest/globals';
-import { Client, PasswordStrengthScore } from '@reachfive/identity-core';
 import '@testing-library/jest-dom/jest-globals';
 import { screen } from '@testing-library/react';
 import 'jest-styled-components';
-import React from 'react';
 
-import type { Config } from '../../../src/types';
+import { Client, PasswordStrengthScore } from '@reachfive/identity-core';
 
-import { createForm } from '../../../src/components/form/formComponent';
-import { buildFormFields } from '../../../src/components/form/formFieldFactory';
-import { I18nMessages } from '../../../src/core/i18n';
+import { createForm } from '@/components/form/formComponent';
+import { buildFormFields } from '@/components/form/formFieldFactory';
+import { I18nMessages } from '@/core/i18n';
+
 import { defaultConfig, renderWithContext } from '../../widgets/renderer';
+
+import type { Config } from '@/types';
 
 const customConfig: Config = {
     ...defaultConfig,

@@ -1,9 +1,9 @@
-import { MFA } from '@reachfive/identity-core';
 import React from 'react';
 
-import { createWidget } from '../../components/widget/widget';
-
 import { LoaderCircle, Mail, MessageSquareMore, X } from 'lucide-react';
+
+import { MFA } from '@reachfive/identity-core';
+
 import {
     AlertDialog,
     AlertDialogAction,
@@ -16,6 +16,7 @@ import {
     AlertDialogTrigger,
 } from '../../components/ui/alert-dialog';
 import { Button } from '../../components/ui/button';
+import { createWidget } from '../../components/widget/widget';
 import { useI18n } from '../../contexts/i18n';
 import { useReachfive } from '../../contexts/reachfive.tsx';
 import { dateFormat } from '../../helpers/utils.ts';

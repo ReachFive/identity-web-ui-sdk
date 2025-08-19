@@ -1,21 +1,19 @@
-import { AuthOptions } from '@reachfive/identity-core';
-import { SignupParams } from '@reachfive/identity-core/es/main/oAuthClient';
 import React, { useCallback, useLayoutEffect, useState } from 'react';
 
+import { AuthOptions } from '@reachfive/identity-core';
+import { SignupParams } from '@reachfive/identity-core/es/main/oAuthClient';
+
+import { CaptchaProvider, WithCaptchaProps, type WithCaptchaToken } from '../../components/captcha';
+import { useReachfive } from '../../contexts/reachfive';
+import { snakeCaseProperties } from '../../helpers/transformObjectProperties';
+import { isValued } from '../../helpers/utils';
+import { isEqual } from '../../helpers/utils';
+import { MarkdownContent } from '../miscComponent';
+import { extractCaptchaTokenFromData, importGoogleRecaptchaScript } from '../reCaptcha';
 import { type PhoneNumberOptions } from './fields/phoneNumberField';
 import { createForm } from './formComponent';
 import { UserAgreementStyle } from './formControlsComponent';
 import { buildFormFields, type Field } from './formFieldFactory';
-
-import { CaptchaProvider, WithCaptchaProps, type WithCaptchaToken } from '../../components/captcha';
-import { snakeCaseProperties } from '../../helpers/transformObjectProperties';
-import { isValued } from '../../helpers/utils';
-import { MarkdownContent } from '../miscComponent';
-import { extractCaptchaTokenFromData, importGoogleRecaptchaScript } from '../reCaptcha';
-
-import { useReachfive } from '../../contexts/reachfive';
-
-import { isEqual } from '../../helpers/utils';
 
 import type { OnError, OnSuccess } from '../../types';
 

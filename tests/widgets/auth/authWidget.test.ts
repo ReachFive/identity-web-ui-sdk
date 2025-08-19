@@ -1,22 +1,20 @@
 /**
  * @jest-environment jest-fixed-jsdom
  */
-
 import { beforeEach, describe, expect, jest, test } from '@jest/globals';
 import '@testing-library/jest-dom/jest-globals';
 import { screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import 'jest-styled-components';
 
 import type { Client, PasswordStrengthScore } from '@reachfive/identity-core';
 
-import { type I18nMessages } from '../../../src/core/i18n';
-import { randomString } from '../../../src/helpers/random';
-import { providers, type ProviderId } from '../../../src/providers/providers';
+import { type I18nMessages } from '@/core/i18n';
+import { AppError } from '@/helpers/errors';
+import { randomString } from '@/helpers/random';
+import { providers, type ProviderId } from '@/providers/providers';
+import AuthWidget from '@/widgets/auth/authWidget';
 
-import AuthWidget from '../../../src/widgets/auth/authWidget';
-
-import userEvent from '@testing-library/user-event';
-import { AppError } from '../../../src/helpers/errors';
 import { componentGenerator, defaultConfig, snapshotGenerator } from '../renderer';
 
 const defaultI18n: I18nMessages = {};

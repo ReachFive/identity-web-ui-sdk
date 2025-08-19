@@ -8,7 +8,8 @@
         "plugin:@typescript-eslint/recommended",
         "plugin:compat/recommended",
         "plugin:react/recommended",
-        "plugin:react-hooks/recommended"
+        "plugin:react-hooks/recommended",
+        "plugin:prettier/recommended"
     ],
     "globals": {
         "process": true

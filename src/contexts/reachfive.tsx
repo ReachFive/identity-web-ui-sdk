@@ -1,15 +1,3 @@
-import {
-    ErrorResponse,
-    type ConsentVersions,
-    type Client as CoreClient,
-    type Config as CoreConfig,
-} from '@reachfive/identity-core';
-import {
-    QueryClient,
-    QueryClientProvider,
-    useSuspenseQueries,
-    useSuspenseQuery,
-} from '@tanstack/react-query';
 import React, {
     ComponentType,
     ReactNode,
@@ -20,12 +8,26 @@ import React, {
 } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 
-import type { I18nMessages } from '../core/i18n';
-import type { Config } from '../types';
+import {
+    QueryClient,
+    QueryClientProvider,
+    useSuspenseQueries,
+    useSuspenseQuery,
+} from '@tanstack/react-query';
+
+import {
+    ErrorResponse,
+    type ConsentVersions,
+    type Client as CoreClient,
+    type Config as CoreConfig,
+} from '@reachfive/identity-core';
 
 import { ErrorText } from '../components/miscComponent';
 import { UserError } from '../helpers/errors';
 import { camelCaseProperties } from '../helpers/transformObjectProperties';
+
+import type { I18nMessages } from '../core/i18n';
+import type { Config } from '../types';
 
 export interface ReachfiveContext {
     client: CoreClient;

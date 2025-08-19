@@ -1,18 +1,20 @@
 /**
  * @jest-environment jest-fixed-jsdom
  */
-
 import { afterAll, beforeAll, beforeEach, describe, expect, jest, test } from '@jest/globals';
 import '@testing-library/jest-dom/jest-globals';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent, { UserEvent } from '@testing-library/user-event';
 import 'jest-styled-components';
 
-import { OnError, OnSuccess } from '@/types';
 import { Client } from '@reachfive/identity-core';
-import { I18nMessages } from '../../../src/core/i18n';
-import MfaStepUpWidget from '../../../src/widgets/stepUp/mfaStepUpWidget';
+
+import MfaStepUpWidget from '@/widgets/stepUp/mfaStepUpWidget';
+
 import { componentGenerator } from '../renderer';
+
+import type { I18nMessages } from '@/core/i18n';
+import type { OnError, OnSuccess } from '@/types';
 
 const defaultI18n: I18nMessages = {};
 
@@ -139,8 +141,8 @@ describe('DOM testing', () => {
             });
             startPasswordless.mockResolvedValue({
                 challengeId: myChallengeId,
-            }),
-                verifyMfaPasswordless.mockResolvedValue({});
+            });
+            verifyMfaPasswordless.mockResolvedValue({});
         });
 
         test('showStepUpStart: true', async () => {

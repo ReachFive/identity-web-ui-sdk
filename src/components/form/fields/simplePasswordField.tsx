@@ -2,13 +2,12 @@ import React, { useState } from 'react';
 
 import styled from 'styled-components';
 
-import { createField, type FieldComponentProps, type FieldDefinition } from '../fieldCreator';
-import { FormGroup, Input } from '../formControlsComponent';
-
 import { isValidatorError } from '../../../core/validation';
 import { isRichFormValue } from '../../../helpers/utils';
 import { ReactComponent as EyeSlashIcon } from '../../../icons/eye-slash.svg';
 import { ReactComponent as EyeIcon } from '../../../icons/eye.svg';
+import { createField, type FieldComponentProps, type FieldDefinition } from '../fieldCreator';
+import { FormGroup, Input } from '../formControlsComponent';
 
 const eyeStyle = `
   position: absolute;

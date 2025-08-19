@@ -1,18 +1,18 @@
-import { useSuspenseQuery } from '@tanstack/react-query';
 import React, { type ComponentType } from 'react';
-import styled, { StyleSheetManager, ThemeProvider, css } from 'styled-components';
 
-import type { I18nNestedMessages } from '../../core/i18n';
-import { buildTheme } from '../../core/theme';
-import type { Prettify } from '../../types';
-import { Theme, ThemeOptions } from '../../types/styled';
+import { useSuspenseQuery } from '@tanstack/react-query';
+import styled, { StyleSheetManager, ThemeProvider, css } from 'styled-components';
 
 import { I18nProvider } from '../../contexts/i18n';
 import { useReachfive, type ReachfiveContext } from '../../contexts/reachfive';
 import { RoutingProvider } from '../../contexts/routing';
 import { PropsWithSession, useSession } from '../../contexts/session';
-
+import { buildTheme } from '../../core/theme';
+import { Theme, ThemeOptions } from '../../types/styled';
 import WidgetContainer, { WidgetContainerProps } from './widgetContainerComponent';
+
+import type { I18nNestedMessages } from '../../core/i18n';
+import type { Prettify } from '../../types';
 
 export type I18nProps = { i18n?: I18nNestedMessages };
 export type ThemeProps = { theme?: ThemeOptions };

@@ -1,13 +1,11 @@
 import React from 'react';
 
-import { Validator } from '../../core/validation';
-
 import passwordField from '../../components/form/fields/passwordField';
 import simplePasswordField from '../../components/form/fields/simplePasswordField';
 import { createForm, FormContext } from '../../components/form/formComponent';
 import { createWidget } from '../../components/widget/widget';
-
 import { useReachfive } from '../../contexts/reachfive';
+import { Validator } from '../../core/validation';
 
 import type { OnError, OnSuccess } from '../../types';
 

@@ -1,6 +1,9 @@
-import { ErrorResponse, type AuthOptions, type SessionInfo } from '@reachfive/identity-core';
-import { useSuspenseQuery } from '@tanstack/react-query';
 import React, { PropsWithChildren, createContext, useContext } from 'react';
+
+import { useSuspenseQuery } from '@tanstack/react-query';
+
+import { ErrorResponse, type AuthOptions, type SessionInfo } from '@reachfive/identity-core';
+
 import { useReachfive } from './reachfive';
 
 type SessionValue = SessionInfo | null | undefined;

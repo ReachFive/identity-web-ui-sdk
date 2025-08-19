@@ -6,9 +6,11 @@ import {
     parsePhoneNumber,
 } from 'react-phone-number-input';
 import { default as PhoneInputWithoutCountrySelect } from 'react-phone-number-input/input';
+import styles from 'react-phone-number-input/style.css';
+
 import { createGlobalStyle } from 'styled-components';
 
-import styles from 'react-phone-number-input/style.css'; // import raw css using `rollup-plugin-import-css'`
+// import raw css using `rollup-plugin-import-css'`
 
 import { Validator, isValidatorError } from '../../../core/validation';
 import { isRichFormValue } from '../../../helpers/utils.ts';

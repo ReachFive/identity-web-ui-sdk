@@ -1,19 +1,21 @@
 /**
  * @jest-environment jest-fixed-jsdom
  */
+import React from 'react';
 
 import { afterEach, beforeEach, describe, expect, jest, test } from '@jest/globals';
-import { PasswordStrengthScore, type Client } from '@reachfive/identity-core';
 import '@testing-library/jest-dom/jest-globals';
 import { queryByText, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import 'jest-styled-components';
-import React from 'react';
 
-import passwordField from '../../../../src/components/form/fields/passwordField';
-import { createForm } from '../../../../src/components/form/formComponent';
-import resolveI18n, { I18nMessages } from '../../../../src/core/i18n';
-import { Validator } from '../../../../src/core/validation';
+import { PasswordStrengthScore, type Client } from '@reachfive/identity-core';
+
+import passwordField from '@/components/form/fields/passwordField';
+import { createForm } from '@/components/form/formComponent';
+import resolveI18n, { I18nMessages } from '@/core/i18n';
+import { Validator } from '@/core/validation';
+
 import { defaultConfig, renderWithContext } from '../../../widgets/renderer';
 
 const defaultI18n: I18nMessages = {

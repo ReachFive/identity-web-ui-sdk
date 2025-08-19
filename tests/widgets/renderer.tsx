@@ -1,18 +1,20 @@
+import React, { ComponentProps, ComponentType } from 'react';
+
 import { expect } from '@jest/globals';
 import '@testing-library/jest-dom/jest-globals';
 import { render, screen, waitFor } from '@testing-library/react';
 import nock from 'nock';
-import React, { ComponentProps, ComponentType } from 'react';
+import { StyleSheetManager, ThemeProvider } from 'styled-components';
 
 import type { Client, Config as CoreConfig } from '@reachfive/identity-core';
 
-import { StyleSheetManager, ThemeProvider } from 'styled-components';
-import { I18nProvider } from '../../src/contexts/i18n';
-import { ReachfiveProvider } from '../../src/contexts/reachfive';
-import { type I18nMessages } from '../../src/core/i18n';
-import { buildTheme } from '../../src/core/theme';
-import type { Config } from '../../src/types';
-import { type Theme } from '../../src/types/styled';
+import { I18nProvider } from '@/contexts/i18n';
+import { ReachfiveProvider } from '@/contexts/reachfive';
+import { type I18nMessages } from '@/core/i18n';
+import { buildTheme } from '@/core/theme';
+import { type Theme } from '@/types/styled';
+
+import type { Config } from '@/types';
 
 export const coreConfig: CoreConfig = {
     clientId: 'local',

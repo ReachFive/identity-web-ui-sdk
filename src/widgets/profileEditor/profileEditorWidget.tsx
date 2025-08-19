@@ -1,8 +1,6 @@
-import { ConsentVersions, Profile, UserConsent } from '@reachfive/identity-core';
 import React from 'react';
 
-import { UserError } from '../../helpers/errors';
-import { camelCaseProperties } from '../../helpers/transformObjectProperties';
+import { ConsentVersions, Profile, UserConsent } from '@reachfive/identity-core';
 
 import { FieldCreator } from '../../components/form/fieldCreator';
 import { PhoneNumberOptions } from '../../components/form/fields/phoneNumberField';
@@ -10,6 +8,8 @@ import { createForm } from '../../components/form/formComponent';
 import { Field, buildFormFields } from '../../components/form/formFieldFactory';
 import { createWidget } from '../../components/widget/widget';
 import { useReachfive } from '../../contexts/reachfive';
+import { UserError } from '../../helpers/errors';
+import { camelCaseProperties } from '../../helpers/transformObjectProperties';
 
 import type { OnError, OnSuccess } from '../../types';
 

@@ -1,13 +1,13 @@
-import type { AuthOptions, Client as CoreClient } from '@reachfive/identity-core';
 import React from 'react';
 
-import { useReachfive } from '../../../contexts/reachfive';
+import type { AuthOptions, Client as CoreClient } from '@reachfive/identity-core';
 
 import { createForm } from '../../../components/form/formComponent';
 import { UserAgreementStyle } from '../../../components/form/formControlsComponent';
 import { buildFormFields, type Field } from '../../../components/form/formFieldFactory';
 import { Alternative, Heading, Link, MarkdownContent } from '../../../components/miscComponent';
 import { useI18n } from '../../../contexts/i18n';
+import { useReachfive } from '../../../contexts/reachfive';
 import { snakeCaseProperties } from '../../../helpers/transformObjectProperties';
 
 import type { OnError, OnSuccess } from '../../../types';

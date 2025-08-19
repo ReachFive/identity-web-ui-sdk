@@ -1,26 +1,23 @@
-import { AuthOptions, AuthResult, SingleFactorPasswordlessParams } from '@reachfive/identity-core';
 import React, { ComponentProps, useLayoutEffect } from 'react';
 
-import type { Config, OnError, OnSuccess, Prettify } from '../../types';
+import { AuthOptions, AuthResult, SingleFactorPasswordlessParams } from '@reachfive/identity-core';
 
-import { email } from '../../core/validation';
-
-import { Info, Intro, Separator } from '../../components/miscComponent';
-import { createMultiViewWidget } from '../../components/widget/widget';
-
+import { CaptchaProvider, WithCaptchaProps, type WithCaptchaToken } from '../../components/captcha';
 import phoneNumberField, {
     type PhoneNumberOptions,
 } from '../../components/form/fields/phoneNumberField';
 import { simpleField } from '../../components/form/fields/simpleField';
 import { createForm } from '../../components/form/formComponent';
 import { SocialButtons } from '../../components/form/socialButtonsComponent';
+import { Info, Intro, Separator } from '../../components/miscComponent';
 import { importGoogleRecaptchaScript } from '../../components/reCaptcha';
-
-import { CaptchaProvider, WithCaptchaProps, type WithCaptchaToken } from '../../components/captcha';
-
+import { createMultiViewWidget } from '../../components/widget/widget';
 import { useI18n } from '../../contexts/i18n';
 import { useReachfive } from '../../contexts/reachfive';
 import { useRouting } from '../../contexts/routing';
+import { email } from '../../core/validation';
+
+import type { Config, OnError, OnSuccess, Prettify } from '../../types';
 
 type EmailFormData = { email: string; captchaToken?: string };
 

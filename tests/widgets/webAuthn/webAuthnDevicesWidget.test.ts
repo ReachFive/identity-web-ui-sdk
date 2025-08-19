@@ -1,7 +1,6 @@
 /**
  * @jest-environment jest-fixed-jsdom
  */
-
 import { afterAll, beforeEach, describe, expect, jest, test } from '@jest/globals';
 import '@testing-library/jest-dom/jest-globals';
 import { screen } from '@testing-library/react';
@@ -10,11 +9,11 @@ import 'jest-styled-components';
 
 import { type Client } from '@reachfive/identity-core';
 
-import { type I18nMessages } from '../../../src/core/i18n';
-import { UserError } from '../../../src/helpers/errors';
-
+import { type I18nMessages } from '@/core/i18n';
+import { UserError } from '@/helpers/errors';
 import { OnError, OnSuccess } from '@/types';
-import WebAuthnDevicesWidget from '../../../src/widgets/webAuthn/webAuthnDevicesWidget';
+import WebAuthnDevicesWidget from '@/widgets/webAuthn/webAuthnDevicesWidget';
+
 import { componentGenerator } from '../renderer';
 
 const defaultI18n: I18nMessages = {};

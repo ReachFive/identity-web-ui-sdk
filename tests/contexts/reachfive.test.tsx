@@ -1,16 +1,18 @@
 /**
  * @jest-environment jest-fixed-jsdom
  */
+import React, { useEffect } from 'react';
 
 import { afterEach, beforeEach, describe, expect, jest, test } from '@jest/globals';
-import { Client, Config } from '@reachfive/identity-core';
 import '@testing-library/jest-dom/jest-globals';
 import { render, screen, waitFor } from '@testing-library/react';
 import 'jest-styled-components';
 import nock from 'nock';
-import React, { useEffect } from 'react';
 
-import { ReachfiveProvider, useReachfive } from '../../src/contexts/reachfive';
+import { Client, Config } from '@reachfive/identity-core';
+
+import { ReachfiveProvider, useReachfive } from '@/contexts/reachfive';
+
 import { defaultConfig } from '../widgets/renderer';
 
 function Consumer() {

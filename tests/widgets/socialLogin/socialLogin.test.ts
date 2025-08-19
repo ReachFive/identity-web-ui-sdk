@@ -1,7 +1,6 @@
 /**
  * @jest-environment jest-fixed-jsdom
  */
-
 import { beforeEach, describe, expect, jest, test } from '@jest/globals';
 import '@testing-library/jest-dom/jest-globals';
 import { screen, waitFor } from '@testing-library/react';
@@ -10,11 +9,11 @@ import 'jest-styled-components';
 
 import { type Client } from '@reachfive/identity-core';
 
-import { type I18nMessages } from '../../../src/core/i18n';
-import { providers, type ProviderId } from '../../../src/providers/providers';
-
+import { type I18nMessages } from '@/core/i18n';
+import { providers, type ProviderId } from '@/providers/providers';
 import { OnError, OnSuccess } from '@/types';
-import SocialLoginWidget from '../../../src/widgets/socialLogin/socialLoginWidget';
+import SocialLoginWidget from '@/widgets/socialLogin/socialLoginWidget';
+
 import { componentGenerator, defaultConfig, snapshotGenerator } from '../renderer';
 
 const defaultI18n: I18nMessages = {};

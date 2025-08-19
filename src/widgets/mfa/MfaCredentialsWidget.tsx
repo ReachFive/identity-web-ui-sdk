@@ -1,34 +1,31 @@
+import React, { useCallback, useState } from 'react';
+
 import { MFA, Profile } from '@reachfive/identity-core';
 import type {
     StartMfaEmailRegistrationResponse,
     StartMfaPhoneNumberRegistrationResponse,
 } from '@reachfive/identity-core/es/main/mfaClient';
-import React, { useCallback, useState } from 'react';
-
-import type { OnError, OnSuccess, Prettify } from '../../types';
-
-import { createMultiViewWidget } from '../../components/widget/widget';
 
 import { DestructiveButton } from '../../components/form/buttonComponent';
+import checkboxField from '../../components/form/fields/checkboxField.tsx';
 import phoneNumberField, {
     type PhoneNumberOptions,
 } from '../../components/form/fields/phoneNumberField';
 import { simpleField } from '../../components/form/fields/simpleField';
 import { createForm } from '../../components/form/formComponent';
 import { Intro, Separator } from '../../components/miscComponent';
-
-import { UserError } from '../../helpers/errors';
-
-import checkboxField from '../../components/form/fields/checkboxField.tsx';
+import { createMultiViewWidget } from '../../components/widget/widget';
 import { useI18n } from '../../contexts/i18n';
 import { useReachfive } from '../../contexts/reachfive';
 import { useRouting } from '../../contexts/routing';
-
+import { UserError } from '../../helpers/errors';
 import {
     useCredentials,
     withCredentials,
     type CredentialsProviderProps,
 } from './contexts/credentials';
+
+import type { OnError, OnSuccess, Prettify } from '../../types';
 
 type EmailRegisteringCredentialFormData = { trustDevice: boolean };
 

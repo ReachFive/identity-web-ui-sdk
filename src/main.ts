@@ -1,5 +1,6 @@
 import type { Config, Client as CoreClient } from '@reachfive/identity-core';
 import { createClient as createCoreClient } from '@reachfive/identity-core';
+
 import { UiClient } from './client';
 
 export type { Config } from '@reachfive/identity-core';
@@ -12,8 +13,8 @@ export { default as MfaCredentials } from './widgets/mfa/MfaCredentialsWidget';
 export { default as MfaList } from './widgets/mfa/mfaListWidget';
 export { default as TrustedDevices } from './widgets/mfa/trustedDevicesWidget.tsx';
 export { default as PasswordEditor } from './widgets/passwordEditor/passwordEditorWidget';
-export { default as PasswordReset } from './widgets/passwordReset/passwordResetWidget';
 export { default as Passwordless } from './widgets/passwordless/passwordlessWidget';
+export { default as PasswordReset } from './widgets/passwordReset/passwordResetWidget';
 export { default as PhoneNumberEditor } from './widgets/phoneNumberEditor/phoneNumberEditorWidget';
 export { default as ProfileEditor } from './widgets/profileEditor/profileEditorWidget';
 export { default as SocialAccounts } from './widgets/socialAccounts/socialAccountsWidget';

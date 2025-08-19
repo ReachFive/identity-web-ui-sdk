@@ -1,6 +1,7 @@
 /**
  * @jest-environment jest-fixed-jsdom
  */
+import React from 'react';
 
 import { describe, expect, jest, test } from '@jest/globals';
 import '@testing-library/jest-dom/jest-globals';
@@ -8,11 +9,11 @@ import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { formatISO, getDate, getMonth, getYear, startOfDay, subYears } from 'date-fns';
 import 'jest-styled-components';
-import React from 'react';
 
-import birthdayField from '../../../../src/components/form/fields/birthdayField';
-import { createForm } from '../../../../src/components/form/formComponent';
-import { I18nMessages } from '../../../../src/core/i18n';
+import birthdayField from '@/components/form/fields/birthdayField';
+import { createForm } from '@/components/form/formComponent';
+import { I18nMessages } from '@/core/i18n';
+
 import { defaultConfig, renderWithContext } from '../../../widgets/renderer';
 
 const defaultI18n: I18nMessages = {

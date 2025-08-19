@@ -5,11 +5,13 @@ import 'jest-styled-components';
 
 import { Client } from '@reachfive/identity-core';
 
-import { OnError, OnSuccess } from '@/types';
-import { I18nMessages } from '../../../src/core/i18n';
-import { AppError } from '../../../src/helpers/errors';
-import TrustedDevicesWidget from '../../../src/widgets/mfa/trustedDevicesWidget';
+import TrustedDevicesWidget from '@/widgets/mfa/trustedDevicesWidget';
+
 import { componentGenerator } from '../renderer';
+
+import type { I18nMessages } from '@/core/i18n';
+import type { AppError } from '@/helpers/errors';
+import type { OnError, OnSuccess } from '@/types';
 
 const defaultI18n: I18nMessages = {};
 

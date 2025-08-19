@@ -1,18 +1,19 @@
 /**
  * @jest-environment jest-fixed-jsdom
  */
+import React from 'react';
+import { formatPhoneNumberIntl, type Value } from 'react-phone-number-input';
 
 import { describe, expect, jest, test } from '@jest/globals';
 import '@testing-library/jest-dom/jest-globals';
 import { Matcher, RenderResult, queryHelpers, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import 'jest-styled-components';
-import React from 'react';
-import { formatPhoneNumberIntl, type Value } from 'react-phone-number-input';
 
-import phoneNumberField from '../../../../src/components/form/fields/phoneNumberField';
-import { createForm } from '../../../../src/components/form/formComponent';
-import resolveI18n, { I18nMessages } from '../../../../src/core/i18n';
+import phoneNumberField from '@/components/form/fields/phoneNumberField';
+import { createForm } from '@/components/form/formComponent';
+import resolveI18n, { I18nMessages } from '@/core/i18n';
+
 import { defaultConfig, renderWithContext } from '../../../widgets/renderer';
 
 const defaultI18n: I18nMessages = {

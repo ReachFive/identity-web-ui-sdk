@@ -6,17 +6,17 @@ import replace from '@rollup/plugin-replace';
 import terser from '@rollup/plugin-terser';
 import url from '@rollup/plugin-url';
 import svg from '@svgr/rollup';
+import path, { dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { addDirective } from 'rollup-plugin-add-directive';
 import dts from 'rollup-plugin-dts';
 import esbuild from 'rollup-plugin-esbuild';
 import postcss from 'rollup-plugin-postcss';
 
-import path, { dirname } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import packageJson from './package.json' with { type: 'json' };
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-import packageJson from './package.json' with { type: 'json' };
 const dependencies = Object.keys(packageJson.dependencies);
 
 const banner = [

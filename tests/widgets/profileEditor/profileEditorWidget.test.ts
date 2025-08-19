@@ -1,23 +1,21 @@
 /**
  * @jest-environment jest-fixed-jsdom
  */
+import { ComponentProps } from 'react';
 
 import { beforeEach, describe, expect, jest, test } from '@jest/globals';
 import '@testing-library/jest-dom/jest-globals';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import 'jest-styled-components';
-import { ComponentProps } from 'react';
 
 import { type Client, type Profile } from '@reachfive/identity-core';
 
-import { type I18nMessages } from '../../../src/core/i18n';
-
-import ProfileEditorWidget from '../../../src/widgets/profileEditor/profileEditorWidget';
+import { type I18nMessages } from '@/core/i18n';
+import { OnError, OnSuccess } from '@/types';
+import ProfileEditorWidget from '@/widgets/profileEditor/profileEditorWidget';
 
 import { defaultConfig } from '../renderer';
-
-import { OnError, OnSuccess } from '@/types';
 import { componentGenerator, snapshotGenerator } from '../renderer';
 
 const defaultI18n: I18nMessages = {};

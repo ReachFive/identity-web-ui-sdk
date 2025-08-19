@@ -1,18 +1,13 @@
-import type { Config, Client as CoreClient } from '@reachfive/identity-core';
 import React, { ComponentType, ReactNode } from 'react';
 import { createRoot } from 'react-dom/client';
 
-import type { Prettify } from './types';
-
-import { UserError } from './helpers/errors';
-import { logError } from './helpers/logger';
+import type { Config, Client as CoreClient } from '@reachfive/identity-core';
 
 import { ErrorText } from './components/miscComponent';
-import type { I18nProps, ThemeProps } from './components/widget/widget';
-
 import { ReachfiveProvider } from './contexts/reachfive.tsx';
 import { withSsoCheck } from './contexts/session.tsx';
-
+import { UserError } from './helpers/errors';
+import { logError } from './helpers/logger';
 import AccountRecoveryWidget, {
     type AccountRecoveryWidgetProps,
 } from './widgets/accountRecovery/accountRecoveryWidget.tsx';
@@ -30,12 +25,12 @@ import TrustedDevicesWidget, {
 import PasswordEditorWidget, {
     type PasswordEditorWidgetProps,
 } from './widgets/passwordEditor/passwordEditorWidget';
-import PasswordResetWidget, {
-    type PasswordResetWidgetProps,
-} from './widgets/passwordReset/passwordResetWidget';
 import PasswordlessWidget, {
     type PasswordlessWidgetProps,
 } from './widgets/passwordless/passwordlessWidget';
+import PasswordResetWidget, {
+    type PasswordResetWidgetProps,
+} from './widgets/passwordReset/passwordResetWidget';
 import PhoneNumberEditorWidget, {
     type PhoneNumberEditorWidgetProps,
 } from './widgets/phoneNumberEditor/phoneNumberEditorWidget';
@@ -50,6 +45,9 @@ import SocialLoginWidget, {
 } from './widgets/socialLogin/socialLoginWidget';
 import MfaStepUpWidget, { type MfaStepUpWidgetProps } from './widgets/stepUp/mfaStepUpWidget';
 import WebAuthnWidget, { type WebAuthnWidgetProps } from './widgets/webAuthn/webAuthnDevicesWidget';
+
+import type { I18nProps, ThemeProps } from './components/widget/widget';
+import type { Prettify } from './types';
 
 export interface WidgetInstance {
     destroy(): void;

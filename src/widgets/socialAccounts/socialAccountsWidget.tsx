@@ -1,20 +1,19 @@
-import { AuthOptions, Identity, Profile } from '@reachfive/identity-core';
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
+
 import styled from 'styled-components';
 
-import { UserError } from '../../helpers/errors';
-
-import { ProviderId, providers as socialProviders } from '../../providers/providers';
-
-import { useI18n } from '../../contexts/i18n';
-import { useReachfive } from '../../contexts/reachfive';
-import { useRouting } from '../../contexts/routing';
+import { AuthOptions, Identity, Profile } from '@reachfive/identity-core';
 
 import { DefaultButton } from '../../components/form/buttonComponent';
 import { Card, CloseIcon } from '../../components/form/cardComponent';
 import { SocialButtons } from '../../components/form/socialButtonsComponent';
 import { Alternative, ErrorText, Info, Link, MutedText } from '../../components/miscComponent';
 import { createMultiViewWidget } from '../../components/widget/widget';
+import { useI18n } from '../../contexts/i18n';
+import { useReachfive } from '../../contexts/reachfive';
+import { useRouting } from '../../contexts/routing';
+import { UserError } from '../../helpers/errors';
+import { ProviderId, providers as socialProviders } from '../../providers/providers';
 
 import type { OnError, OnSuccess } from '../../types';
 

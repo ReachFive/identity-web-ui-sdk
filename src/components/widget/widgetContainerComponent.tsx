@@ -1,7 +1,7 @@
 import React, { ForwardedRef, PropsWithChildren } from 'react';
+import { Transition, TransitionStatus } from 'react-transition-group';
 
 import classes from 'classnames';
-import { Transition, TransitionStatus } from 'react-transition-group';
 import styled, { useTheme } from 'styled-components';
 
 import { Heading, Intro } from '../miscComponent';

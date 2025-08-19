@@ -1,9 +1,9 @@
 import type { AuthResult } from '@reachfive/identity-core';
 
-export type IdTokenPayload = AuthResult['idTokenPayload'];
-
 import { decodeBase64UrlSafe } from './base64';
 import { camelCaseProperties } from './transformObjectProperties';
+
+export type IdTokenPayload = AuthResult['idTokenPayload'];
 
 export function parseJwtTokenPayload(token: string): IdTokenPayload {
     const bodyPart = token.split('.')[1];

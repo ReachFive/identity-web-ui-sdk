@@ -1,15 +1,14 @@
-import { AuthOptions } from '@reachfive/identity-core';
 import React from 'react';
 
-import { intersection } from '../../../helpers/utils';
+import { AuthOptions } from '@reachfive/identity-core';
 
 import { SocialButtons } from '../../../components/form/socialButtonsComponent';
 import { Heading, Intro, Separator } from '../../../components/miscComponent';
-import { LoginForm, type LoginFormData } from './loginViewComponent';
-
 import { useI18n } from '../../../contexts/i18n';
 import { useReachfive } from '../../../contexts/reachfive';
 import { useSession } from '../../../contexts/session';
+import { intersection } from '../../../helpers/utils';
+import { LoginForm, type LoginFormData } from './loginViewComponent';
 
 import type { OnError, OnSuccess } from '../../../types';
 

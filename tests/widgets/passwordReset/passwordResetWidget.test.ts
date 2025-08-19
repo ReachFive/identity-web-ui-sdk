@@ -2,7 +2,6 @@
  * @jest-environment jest-fixed-jsdom
  * @jest-environment-options {"url": "http://localhost/?email=alice@reach5.co&verificationCode=123456"}
  */
-
 import { beforeEach, describe, expect, jest, test } from '@jest/globals';
 import '@testing-library/jest-dom/jest-globals';
 import { screen } from '@testing-library/react';
@@ -11,11 +10,10 @@ import 'jest-styled-components';
 
 import { PasswordStrengthScore, type Client } from '@reachfive/identity-core';
 
-import { type I18nMessages } from '../../../src/core/i18n';
-
-import PasswordResetWidget from '../../../src/widgets/passwordReset/passwordResetWidget';
-
+import { type I18nMessages } from '@/core/i18n';
 import { OnError, OnSuccess } from '@/types';
+import PasswordResetWidget from '@/widgets/passwordReset/passwordResetWidget';
+
 import { componentGenerator, snapshotGenerator } from '../renderer';
 
 const defaultI18n: I18nMessages = {};

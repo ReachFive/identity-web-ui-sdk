@@ -1,20 +1,21 @@
 /**
  * @jest-environment jest-fixed-jsdom
  */
+import { ComponentProps } from 'react';
 
 import { beforeEach, describe, expect, jest, test } from '@jest/globals';
 import '@testing-library/jest-dom/jest-globals';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { ComponentProps } from 'react';
 
 import { Client, MFA } from '@reachfive/identity-core';
 
-import { I18nMessages } from '../../../src/core/i18n';
-import type { Config, OnError, OnSuccess } from '../../../src/types';
+import { I18nMessages } from '@/core/i18n';
+import MfaCredentialsWidget from '@/widgets/mfa/MfaCredentialsWidget';
 
-import MfaCredentialsWidget from '../../../src/widgets/mfa/MfaCredentialsWidget';
 import { componentGenerator, snapshotGenerator } from '../renderer';
+
+import type { Config, OnError, OnSuccess } from '@/types';
 
 const defaultI18n: I18nMessages = {};
 

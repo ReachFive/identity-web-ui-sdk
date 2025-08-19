@@ -1,7 +1,5 @@
 import React, { type ComponentType } from 'react';
 
-import type { WithI18n } from '../../contexts/i18n';
-import type { I18nResolver } from '../../core/i18n';
 import { DefaultPathMapping, type PathMapping } from '../../core/mapping';
 import {
     empty as emptyRule,
@@ -15,6 +13,9 @@ import {
 import generateId from '../../helpers/inputIdGenerator';
 import { camelCasePath } from '../../helpers/transformObjectProperties';
 import { isRichFormValue, isValued, type FormValue } from '../../helpers/utils';
+
+import type { WithI18n } from '../../contexts/i18n';
+import type { I18nResolver } from '../../core/i18n';
 import type { FormContext } from './formComponent';
 
 interface FieldCreateProps {

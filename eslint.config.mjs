@@ -1,5 +1,4 @@
 // @ts-check
-
 import eslint from "@eslint/js";
 import compat from "eslint-plugin-compat";
 import prettier from "eslint-plugin-prettier/recommended";

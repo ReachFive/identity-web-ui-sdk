@@ -1,10 +1,12 @@
+import { intlFormat } from 'date-fns';
+import * as libphonenumber from 'libphonenumber-js';
+
 import {
     AuthResult,
     LoginWithPasswordParams,
     LoginWithWebAuthnParams,
 } from '@reachfive/identity-core';
-import { intlFormat } from 'date-fns';
-import * as libphonenumber from 'libphonenumber-js';
+
 import type { AuthType, IdentifierType, LoginEventWrappingObject } from '../types';
 
 const CHARS = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';

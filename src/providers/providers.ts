@@ -1,23 +1,3 @@
-export interface windowSize {
-    width: number;
-    height: number;
-}
-
-export interface Provider {
-    key: string;
-    name: string;
-    color: string;
-    fontWeight?: number;
-    fontFamily?: string;
-    fontKey?: string;
-    btnBorderColor?: string;
-    btnTextColor?: string;
-    btnBackgroundColor?: string;
-    icon: string;
-    windowSize?: windowSize;
-    hidden?: boolean;
-}
-
 import { default as amazon } from './amazon/amazon';
 import { default as apple } from './apple/apple';
 import { default as bconnect } from './bconnect/bconnect';
@@ -42,6 +22,26 @@ import { default as vkontakte } from './vkontakte/vkontakte';
 import { default as wechat } from './wechat/wechat';
 import { default as weibo } from './weibo/weibo';
 import { default as yandex } from './yandex/yandex';
+
+export interface windowSize {
+    width: number;
+    height: number;
+}
+
+export interface Provider {
+    key: string;
+    name: string;
+    color: string;
+    fontWeight?: number;
+    fontFamily?: string;
+    fontKey?: string;
+    btnBorderColor?: string;
+    btnTextColor?: string;
+    btnBackgroundColor?: string;
+    icon: string;
+    windowSize?: windowSize;
+    hidden?: boolean;
+}
 
 export const providers = {
     amazon: amazon,

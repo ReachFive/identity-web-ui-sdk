@@ -1,7 +1,6 @@
 /**
  * @jest-environment jest-fixed-jsdom
  */
-
 import { beforeEach, describe, expect, jest, test } from '@jest/globals';
 import '@testing-library/jest-dom/jest-globals';
 import { screen } from '@testing-library/react';
@@ -10,10 +9,10 @@ import 'jest-styled-components';
 
 import type { Client, PasswordStrengthScore } from '@reachfive/identity-core';
 
-import { type I18nMessages } from '../../../src/core/i18n';
-
+import { type I18nMessages } from '@/core/i18n';
 import { OnError, OnSuccess } from '@/types';
-import PasswordEditorWidget from '../../../src/widgets/passwordEditor/passwordEditorWidget';
+import PasswordEditorWidget from '@/widgets/passwordEditor/passwordEditorWidget';
+
 import { componentGenerator, snapshotGenerator } from '../renderer';
 
 const defaultI18n: I18nMessages = {};

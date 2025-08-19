@@ -1,18 +1,19 @@
 /**
  * @jest-environment jest-fixed-jsdom
  */
+import React from 'react';
 
 import { describe, expect, jest, test } from '@jest/globals';
 import '@testing-library/jest-dom/jest-globals';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import 'jest-styled-components';
-import React from 'react';
-
 import { format } from 'libphonenumber-js';
-import identifierField from '../../../../src/components/form/fields/identifierField';
-import { createForm } from '../../../../src/components/form/formComponent';
-import resolveI18n, { I18nMessages } from '../../../../src/core/i18n';
+
+import identifierField from '@/components/form/fields/identifierField';
+import { createForm } from '@/components/form/formComponent';
+import resolveI18n, { I18nMessages } from '@/core/i18n';
+
 import { defaultConfig, renderWithContext } from '../../../widgets/renderer';
 
 const defaultI18n: I18nMessages = {

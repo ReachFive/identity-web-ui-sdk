@@ -1,6 +1,8 @@
-import { Client } from '@reachfive/identity-core';
 import React, { useCallback, useEffect, useState } from 'react';
+
 import styled from 'styled-components';
+
+import { Client } from '@reachfive/identity-core';
 
 import { useI18n, type WithI18n } from '../../contexts/i18n';
 import { useReachfive, type WithConfig } from '../../contexts/reachfive';
@@ -12,6 +14,7 @@ import { type Config } from '../../types';
 import { useCaptcha } from '../captcha';
 import { ErrorText, MutedText } from '../miscComponent';
 import { PrimaryButton } from './buttonComponent';
+
 import type { Field, FieldCreator, FieldValue } from './fieldCreator';
 
 const Form = styled.form`

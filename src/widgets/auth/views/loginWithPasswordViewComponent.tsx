@@ -1,22 +1,20 @@
-import { type AuthOptions } from '@reachfive/identity-core';
-import { LoginWithPasswordParams } from '@reachfive/identity-core/es/main/oAuthClient';
 import React, { useLayoutEffect } from 'react';
 
 import styled from 'styled-components';
 
-import { Alternative, Heading, Link } from '../../../components/miscComponent';
+import { type AuthOptions } from '@reachfive/identity-core';
+import { LoginWithPasswordParams } from '@reachfive/identity-core/es/main/oAuthClient';
 
 import { CaptchaProvider, WithCaptchaProps, WithCaptchaToken } from '../../../components/captcha';
 import checkboxField from '../../../components/form/fields/checkboxField';
 import identifierField from '../../../components/form/fields/identifierField';
 import simplePasswordField from '../../../components/form/fields/simplePasswordField';
 import { createForm } from '../../../components/form/formComponent';
+import { Alternative, Heading, Link } from '../../../components/miscComponent';
 import { importGoogleRecaptchaScript } from '../../../components/reCaptcha';
-
 import { useI18n } from '../../../contexts/i18n';
 import { useReachfive } from '../../../contexts/reachfive';
 import { useRouting } from '../../../contexts/routing';
-
 import { enrichLoginEvent, specializeIdentifierData } from '../../../helpers/utils';
 import { FaSelectionViewState } from '../../stepUp/mfaStepUpWidget';
 

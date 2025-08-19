@@ -3,13 +3,11 @@ import React, { PropsWithChildren } from 'react';
 import classes from 'classnames';
 import styled, { useTheme } from 'styled-components';
 
-import { Separator } from '../miscComponent';
-import { Button, type ButtonProps } from './buttonComponent';
-
+import { useI18n } from '../../contexts/i18n';
 import { ReactComponent as FingerPrint } from '../../icons/fingerprint.svg';
 import { ReactComponent as Keyboard } from '../../icons/keyboard.svg';
-
-import { useI18n } from '../../contexts/i18n';
+import { Separator } from '../miscComponent';
+import { Button, type ButtonProps } from './buttonComponent';
 
 const iconStyle = `
     width: 40px;

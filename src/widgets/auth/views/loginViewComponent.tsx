@@ -1,31 +1,28 @@
-import { AuthOptions, LoginWithPasswordParams } from '@reachfive/identity-core';
 import React, { useLayoutEffect } from 'react';
+
 import styled from 'styled-components';
 
-import { Alternative, Heading, Link, Separator } from '../../../components/miscComponent';
-
-import checkboxField from '../../../components/form/fields/checkboxField';
-import identifierField from '../../../components/form/fields/identifierField';
-import { simpleField } from '../../../components/form/fields/simpleField';
-import simplePasswordField from '../../../components/form/fields/simplePasswordField';
-import { createForm } from '../../../components/form/formComponent';
-import { SocialButtons } from '../../../components/form/socialButtonsComponent';
-import { importGoogleRecaptchaScript } from '../../../components/reCaptcha';
+import { AuthOptions, LoginWithPasswordParams } from '@reachfive/identity-core';
 
 import {
     CaptchaProvider,
     WithCaptchaProps,
     type WithCaptchaToken,
 } from '../../../components/captcha';
-
-import { FaSelectionViewState } from '../../stepUp/mfaStepUpWidget';
-
+import checkboxField from '../../../components/form/fields/checkboxField';
+import identifierField from '../../../components/form/fields/identifierField';
+import { simpleField } from '../../../components/form/fields/simpleField';
+import simplePasswordField from '../../../components/form/fields/simplePasswordField';
+import { createForm } from '../../../components/form/formComponent';
+import { SocialButtons } from '../../../components/form/socialButtonsComponent';
+import { Alternative, Heading, Link, Separator } from '../../../components/miscComponent';
+import { importGoogleRecaptchaScript } from '../../../components/reCaptcha';
 import { useI18n } from '../../../contexts/i18n';
 import { useReachfive } from '../../../contexts/reachfive';
 import { useRouting } from '../../../contexts/routing';
 import { useSession } from '../../../contexts/session';
-
 import { enrichLoginEvent, specializeIdentifierData } from '../../../helpers/utils';
+import { FaSelectionViewState } from '../../stepUp/mfaStepUpWidget';
 
 import type { OnError, OnSuccess } from '../../../types';
 
