@@ -150,7 +150,7 @@ describe('DOM testing', () => {
         test('resetPasskeys api failure', async () => {
             const user = userEvent.setup();
 
-            resetPasskeys.mockRejectedValue(new Error('Unexpected error'));
+            resetPasskeys.mockRejectedValue('Unexpected error');
 
             await generateComponent({ onError, onSuccess });
 
@@ -163,13 +163,13 @@ describe('DOM testing', () => {
             expect(resetPasskeys).toBeCalled();
 
             expect(onSuccess).not.toBeCalled();
-            expect(onError).toBeCalled();
+            expect(onError).toBeCalledWith('Unexpected error');
         });
 
         test('updatePassword api failure', async () => {
             const user = userEvent.setup();
 
-            updatePassword.mockRejectedValue(new Error('Unexpected error'));
+            updatePassword.mockRejectedValue('Unexpected error');
 
             await generateComponent({ onError, onSuccess });
 
@@ -195,7 +195,7 @@ describe('DOM testing', () => {
             expect(updatePassword).toBeCalled();
 
             expect(onSuccess).not.toBeCalled();
-            expect(onError).toBeCalled();
+            expect(onError).toBeCalledWith('Unexpected error');
         });
     });
 });

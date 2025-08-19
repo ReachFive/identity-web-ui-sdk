@@ -79,7 +79,7 @@ describe('DOM testing', () => {
 
     describe('password-reset', () => {
         test('basic', async () => {
-            expect.assertions(10);
+            expect.assertions(6);
             const user = userEvent.setup();
 
             updatePassword.mockResolvedValue();

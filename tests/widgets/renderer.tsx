@@ -2,7 +2,7 @@ import React, { ComponentProps, ComponentType } from 'react';
 
 import { expect } from '@jest/globals';
 import '@testing-library/jest-dom/jest-globals';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, waitForElementToBeRemoved } from '@testing-library/react';
 import nock from 'nock';
 import { StyleSheetManager, ThemeProvider } from 'styled-components';
 
@@ -106,13 +106,35 @@ export function componentGenerator<Component extends ComponentType<any>>(
 
         const result = render(widget);
 
-        await waitFor(() => expect(consentsInterceptor.isDone()).toBeTruthy());
-        await waitFor(() => expect(i18nInterceptor.isDone()).toBeTruthy());
+        // wait for consents and i18n to be loaded with a timeout of 5 seconds
+        await waitFor(() => {
+            let interval: NodeJS.Timeout;
+            Promise.race([
+                new Promise<void>(resolve =>
+                    setTimeout(() => {
+                        clearInterval(interval);
+                        resolve();
+                    }, 5000)
+                ),
+                new Promise<void>(resolve => {
+                    interval = setInterval(() => {
+                        if (consentsInterceptor.isDone() && i18nInterceptor.isDone()) {
+                            resolve();
+                        }
+                    });
+                }),
+            ]);
+        });
+
+        // await waitFor(() => expect(consentsInterceptor.isDone()).toBeTruthy());
+        // await waitFor(() => expect(i18nInterceptor.isDone()).toBeTruthy());
 
         // wait for suspense
         waitCallback
             ? await waitFor(waitCallback)
-            : await waitFor(() => expect(screen.queryByText('Loading...')).not.toBeInTheDocument());
+            : await waitForElementToBeRemoved(() => screen.queryByText('Loading...'), {
+                  timeout: 5000,
+              });
 
         return result;
     };

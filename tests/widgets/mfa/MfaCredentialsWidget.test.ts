@@ -203,7 +203,7 @@ describe('DOM testing', () => {
             onSuccess.mockReset();
             onError.mockReset();
 
-            verifyMfaEmailRegistration.mockReset().mockRejectedValue(new Error('Invalid code'));
+            verifyMfaEmailRegistration.mockReset().mockRejectedValue('Invalid code');
 
             await user.click(screen.getByTestId('submit'));
 

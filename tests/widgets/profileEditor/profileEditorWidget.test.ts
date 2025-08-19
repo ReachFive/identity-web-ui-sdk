@@ -15,8 +15,7 @@ import { type I18nMessages } from '@/core/i18n';
 import { OnError, OnSuccess } from '@/types';
 import ProfileEditorWidget from '@/widgets/profileEditor/profileEditorWidget';
 
-import { defaultConfig } from '../renderer';
-import { componentGenerator, snapshotGenerator } from '../renderer';
+import { componentGenerator, defaultConfig, snapshotGenerator } from '../renderer';
 
 const defaultI18n: I18nMessages = {};
 
@@ -163,7 +162,7 @@ describe('DOM testing', () => {
         });
 
         test('api get user failed', async () => {
-            getUser.mockRejectedValue(new Error('Unexpected error'));
+            getUser.mockRejectedValue('Unexpected error');
 
             await generateComponent(
                 {
@@ -177,8 +176,7 @@ describe('DOM testing', () => {
             );
 
             expect(onSuccess).not.toBeCalled();
-            expect(onError).toBeCalled();
-            expect(onError).toBeCalledWith(new Error('Unexpected error'));
+            expect(onError).toBeCalledWith('Unexpected error');
         });
 
         test('api update user failed', async () => {

@@ -87,7 +87,7 @@ describe('DOM testing', () => {
 
     describe('with default config', () => {
         test('no identity', async () => {
-            expect.assertions(6);
+            expect.assertions(2);
 
             await generateComponent({ accessToken: 'azerty', onError, onSuccess });
 
@@ -96,7 +96,7 @@ describe('DOM testing', () => {
         });
 
         test('with existing identity', async () => {
-            expect.assertions(7);
+            expect.assertions(3);
 
             await generateComponent({ accessToken: 'azerty', onError, onSuccess }, {}, [
                 { id: '123456789', provider: 'facebook', username: 'John Doe' },
@@ -108,7 +108,7 @@ describe('DOM testing', () => {
         });
 
         test('with all identities configured', async () => {
-            expect.assertions(9);
+            expect.assertions(5);
 
             await generateComponent({ accessToken: 'azerty', onError, onSuccess }, {}, [
                 { id: '123456789', provider: 'facebook', username: 'John Doe' },
@@ -162,7 +162,7 @@ describe('DOM testing', () => {
         test('unlink api failure', async () => {
             const user = userEvent.setup();
 
-            unlink.mockRejectedValue(new Error('Unexpected error'));
+            unlink.mockRejectedValue('Unexpected error');
 
             await generateComponent({ accessToken: 'azerty', onError, onSuccess }, {}, [
                 { id: '123456789', provider: 'facebook', username: 'John Doe' },

@@ -20,6 +20,7 @@ import type { Config } from '@/types';
 
 const customConfig: Config = {
     ...defaultConfig,
+    countryCode: 'FR',
     customFields: [
         {
             name: 'number',
@@ -180,7 +181,7 @@ describe('DOM testing', () => {
                 'address.postalCode',
                 'address.country',
             ],
-            defaultConfig
+            customConfig
         );
 
         const onSubmit = jest.fn<(data: Model) => Promise<Model>>((data: Model) =>
@@ -221,7 +222,7 @@ describe('DOM testing', () => {
                 { key: 'customFields.birthdate' },
                 { key: 'customFields.checkbox' },
                 { key: 'customFields.select' },
-                { key: 'customFields.phone' },
+                { key: 'customFields.phone', country: 'DE' },
                 { key: 'customFields.email' },
             ],
             customConfig

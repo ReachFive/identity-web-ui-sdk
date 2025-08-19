@@ -56,8 +56,7 @@ describe('DOM testing', () => {
         test('WebAuthn feature is not available', async () => {
             await generateComponent(
                 { accessToken: 'azerty', onError, onSuccess },
-                { webAuthn: false },
-                () => {}
+                { webAuthn: false }
             );
 
             expect(onSuccess).not.toBeCalled();
@@ -155,25 +154,21 @@ describe('DOM testing', () => {
         });
 
         test('list devices api failure', async () => {
-            listWebAuthnDevices.mockRejectedValue(new Error('Unexpected error'));
+            listWebAuthnDevices.mockRejectedValue('Unexpected error');
 
-            await generateComponent(
-                { accessToken, onError, onSuccess },
-                { webAuthn: true },
-                () => {}
-            );
+            await generateComponent({ accessToken, onError, onSuccess }, { webAuthn: true });
 
             expect(listWebAuthnDevices).toBeCalled();
 
             expect(onSuccess).not.toBeCalled();
-            expect(onError).toBeCalledWith(new Error('Unexpected error'));
+            expect(onError).toBeCalledWith('Unexpected error');
         });
 
         test('add new device api failure', async () => {
             const user = userEvent.setup();
 
             listWebAuthnDevices.mockResolvedValue([]);
-            addNewWebAuthnDevice.mockRejectedValue(new Error('Unexpected error'));
+            addNewWebAuthnDevice.mockRejectedValue('Unexpected error');
 
             await generateComponent({ accessToken, onError, onSuccess }, { webAuthn: true });
 
@@ -186,7 +181,7 @@ describe('DOM testing', () => {
             expect(addNewWebAuthnDevice).toBeCalled();
 
             expect(onSuccess).not.toBeCalled();
-            expect(onError).toBeCalledWith(new Error('Unexpected error'));
+            expect(onError).toBeCalledWith('Unexpected error');
         });
 
         test('remove device api failure', async () => {
@@ -200,7 +195,7 @@ describe('DOM testing', () => {
                     lastUsedAt: '',
                 },
             ]);
-            removeWebAuthnDevice.mockRejectedValue(new Error('Unexpected error'));
+            removeWebAuthnDevice.mockRejectedValue('Unexpected error');
 
             await generateComponent({ accessToken, onError, onSuccess }, { webAuthn: true });
 
@@ -216,7 +211,7 @@ describe('DOM testing', () => {
             expect(removeWebAuthnDevice).toBeCalled();
 
             expect(onSuccess).not.toBeCalled();
-            expect(onError).toBeCalledWith(new Error('Unexpected error'));
+            expect(onError).toBeCalledWith('Unexpected error');
         });
     });
 });

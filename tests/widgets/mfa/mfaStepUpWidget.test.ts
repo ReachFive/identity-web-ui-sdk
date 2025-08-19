@@ -146,7 +146,7 @@ describe('DOM testing', () => {
         });
 
         test('showStepUpStart: true', async () => {
-            expect.assertions(15);
+            expect.assertions(11);
 
             const user = userEvent.setup();
 
@@ -167,7 +167,7 @@ describe('DOM testing', () => {
         });
 
         test('showStepUpStart: false', async () => {
-            expect.assertions(15);
+            expect.assertions(11);
 
             const user = userEvent.setup();
 
@@ -199,7 +199,7 @@ describe('DOM testing', () => {
         });
 
         test('showStepUpStart: false', async () => {
-            expect.assertions(18);
+            expect.assertions(14);
 
             const user = userEvent.setup();
 

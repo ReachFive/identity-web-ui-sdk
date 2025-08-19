@@ -176,12 +176,11 @@ exports[`Snapshot phone number editor basic 1`] = `
             class="c7"
             data-testid="phone_number"
             id="phone_number"
-            labels="[object Object]"
             name="phone_number"
             placeholder="phoneNumber"
             required=""
             type="tel"
-            value=""
+            value="+33"
           />
         </div>
         <button

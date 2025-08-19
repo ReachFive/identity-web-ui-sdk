@@ -13,9 +13,14 @@ import { type I18nMessages } from '@/core/i18n';
 import { OnError, OnSuccess } from '@/types';
 import PhoneNumberEditorWidget from '@/widgets/phoneNumberEditor/phoneNumberEditorWidget';
 
-import { componentGenerator, snapshotGenerator } from '../renderer';
+import { componentGenerator, defaultConfig, snapshotGenerator } from '../renderer';
 
 const defaultI18n: I18nMessages = {};
+
+const customConfig = {
+    ...defaultConfig,
+    countryCode: 'FR',
+};
 
 describe('Snapshot', () => {
     // @ts-expect-error partial Client
@@ -26,7 +31,7 @@ describe('Snapshot', () => {
     const generateSnapshot = snapshotGenerator(PhoneNumberEditorWidget, apiClient, defaultI18n);
 
     describe('phone number editor', () => {
-        test('basic', generateSnapshot({ accessToken: 'azerty' }));
+        test('basic', generateSnapshot({ accessToken: 'azerty' }, customConfig));
     });
 });
 
@@ -58,13 +63,13 @@ describe('DOM testing', () => {
             updatePhoneNumber.mockResolvedValue();
             verifyPhoneNumber.mockResolvedValue();
 
-            await generateComponent({ accessToken: 'azerty', onError, onSuccess });
+            await generateComponent({ accessToken: 'azerty', onError, onSuccess }, customConfig);
 
             const phoneNumberInput = screen.getByLabelText('phoneNumber');
             expect(phoneNumberInput).toBeInTheDocument();
 
             await userEvent.clear(phoneNumberInput);
-            await userEvent.type(phoneNumberInput, '+33123456789');
+            await userEvent.type(phoneNumberInput, '0123456789');
 
             const submitBtn = screen.getByRole('button', { name: 'send' });
             expect(submitBtn).toBeInTheDocument();
@@ -111,13 +116,13 @@ describe('DOM testing', () => {
 
             updatePhoneNumber.mockRejectedValue('Unexpected error');
 
-            await generateComponent({ accessToken: 'azerty', onError, onSuccess });
+            await generateComponent({ accessToken: 'azerty', onError, onSuccess }, customConfig);
 
             const phoneNumberInput = screen.getByLabelText('phoneNumber');
             expect(phoneNumberInput).toBeInTheDocument();
 
             await user.clear(phoneNumberInput);
-            await user.type(phoneNumberInput, '+33123456789');
+            await user.type(phoneNumberInput, '0123456789');
 
             const submitBtn = screen.getByRole('button', { name: 'send' });
 
@@ -131,15 +136,15 @@ describe('DOM testing', () => {
             const user = userEvent.setup();
 
             updatePhoneNumber.mockResolvedValue();
-            verifyPhoneNumber.mockRejectedValue(new Error('Unexpected error'));
+            verifyPhoneNumber.mockRejectedValue('Unexpected error');
 
-            await generateComponent({ accessToken: 'azerty', onError, onSuccess });
+            await generateComponent({ accessToken: 'azerty', onError, onSuccess }, customConfig);
 
             const phoneNumberInput = screen.getByLabelText('phoneNumber');
             expect(phoneNumberInput).toBeInTheDocument();
 
             await user.clear(phoneNumberInput);
-            await user.type(phoneNumberInput, '+33123456789');
+            await user.type(phoneNumberInput, '0123456789');
 
             const submitBtn = screen.getByRole('button', { name: 'send' });
             expect(submitBtn).toBeInTheDocument();

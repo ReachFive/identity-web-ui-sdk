@@ -63,8 +63,10 @@ describe('DOM testing', () => {
 
         const fiveYearsOld = subYears(new Date(), 5);
 
-        await user.clear(yearInput);
-        await user.type(yearInput, String(getYear(fiveYearsOld)));
+        await waitFor(async () => {
+            await user.clear(yearInput);
+            await user.type(yearInput, String(getYear(fiveYearsOld)));
+        });
 
         await user.selectOptions(monthInput, String(getMonth(fiveYearsOld)));
 

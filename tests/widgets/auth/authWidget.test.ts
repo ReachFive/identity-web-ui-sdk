@@ -55,7 +55,7 @@ describe('Snapshot', () => {
 
     const loginWithWebAuthn = jest
         .fn<Client['loginWithWebAuthn']>()
-        .mockRejectedValue(new Error('This is a mock.'));
+        .mockRejectedValue('This is a mock.');
 
     beforeEach(() => {
         checkUrlFragment.mockClear();
@@ -368,7 +368,7 @@ describe('DOM testing', () => {
 
     const loginWithWebAuthn = jest
         .fn<Client['loginWithWebAuthn']>()
-        .mockRejectedValue(new Error('This is a mock.'));
+        .mockRejectedValue('This is a mock.');
 
     const requestPasswordReset = jest.fn<Client['requestPasswordReset']>().mockResolvedValue();
 
@@ -582,7 +582,7 @@ describe('DOM testing', () => {
 
     describe('with webauthn feature', () => {
         test('new login view', async () => {
-            loginWithWebAuthn.mockRejectedValue(new Error('This is a mock.'));
+            loginWithWebAuthn.mockRejectedValue('This is a mock.');
 
             await generateComponent(
                 { allowWebAuthnLogin: true, initialScreen: 'login' },
@@ -606,7 +606,7 @@ describe('DOM testing', () => {
         });
 
         test('old login view', async () => {
-            loginWithWebAuthn.mockRejectedValue(new Error('This is a mock.'));
+            loginWithWebAuthn.mockRejectedValue('This is a mock.');
 
             await generateComponent(
                 { allowWebAuthnLogin: true, initialScreen: 'login-with-web-authn' },
@@ -685,7 +685,7 @@ describe('DOM testing', () => {
 
     describe('with webauthn feature and without password', () => {
         test('old login view', async () => {
-            loginWithWebAuthn.mockRejectedValue(new Error('This is a mock.'));
+            loginWithWebAuthn.mockRejectedValue('This is a mock.');
 
             await generateComponent(
                 {
