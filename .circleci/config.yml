@@ -22,7 +22,7 @@ jobs:
           command: npm run build
       - run:
           name: Check format
-          command: npx prettier --version && npm run format:check
+          command: npm run format:check
       - run:
           name: Install JUnit coverage reporter
           command: npm i -D jest-junit
