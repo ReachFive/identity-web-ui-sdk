@@ -97,7 +97,7 @@ const PhoneNumberField = (props: PhoneNumberFieldProps) => {
         withCountrySelect = false,
     } = props;
 
-    const [labels, setLabels] = useState<Labels>();
+    const [labels, setLabels] = useState<Labels>({});
     const currentValue = isRichFormValue(value, 'raw') ? value.raw : value;
     const error = validation && isValidatorError(validation) ? validation.error : undefined;
 
