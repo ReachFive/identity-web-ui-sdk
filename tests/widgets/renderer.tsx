@@ -126,9 +126,6 @@ export function componentGenerator<Component extends ComponentType<any>>(
             ]);
         });
 
-        // await waitFor(() => expect(consentsInterceptor.isDone()).toBeTruthy());
-        // await waitFor(() => expect(i18nInterceptor.isDone()).toBeTruthy());
-
         // wait for suspense
         waitCallback
             ? await waitFor(waitCallback)
