@@ -19,6 +19,20 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 
 const dependencies = Object.keys(packageJson.dependencies);
 
+const makeExternal = id => {
+    // Externalise React et ReactDOM dans tous les cas
+    if (
+        id === 'react' ||
+        id === 'react-dom' ||
+        id.startsWith('react/') ||
+        id.startsWith('react-dom/')
+    ) {
+        return true;
+    }
+    // Externalise aussi les autres dépendances
+    return dependencies.some(dep => id === dep || id.startsWith(dep + '/'));
+};
+
 const banner = [
     `/**`,
     ` * ${packageJson.name} - v${packageJson.version}`,
@@ -68,7 +82,7 @@ const plugins = [
     }),
     nodeResolve({
         browser: true,
-        extensions: ['.tsx', '.ts', '.jsx', '.js', '.json'],
+        extensions: ['.tsx', '.ts', '.jsx', '.js', '.json', '.css'],
         preferBuiltins: true,
     }),
     commonjs({ include: /node_modules/ }),
@@ -76,6 +90,9 @@ const plugins = [
     postcss({
         extract: false,
         minimize: true,
+        use: ['sass'],
+        import: true,
+        modules: false,
     }),
     // Add an inlined version of SVG files: https://www.smooth-code.com/open-source/svgr/docs/rollup/#using-with-url-plugin
     url({ limit: Infinity, include: ['**/*.svg'] }),
@@ -92,7 +109,7 @@ const plugins = [
 export default [
     bundle({
         plugins,
-        external: dependencies,
+        external: makeExternal,
         output: [
             {
                 banner,
@@ -164,6 +181,12 @@ export default [
             file: packageJson.types,
             format: 'es',
         },
-        onwarn: onWarn,
+        onwarn: (warning, warn) => {
+            // Ignore CSS import warnings for type definitions
+            if (warning.code === 'UNRESOLVED_IMPORT' && warning.exporter?.endsWith('.css')) {
+                return;
+            }
+            onWarn(warning);
+        },
     }),
 ];
