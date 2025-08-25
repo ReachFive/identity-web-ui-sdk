@@ -4,7 +4,7 @@ import {
     camelCasePath,
     snakeCasePath,
     transformObjectProperties,
-} from '../../src/helpers/transformObjectProperties';
+} from '@/helpers/transformObjectProperties';
 
 describe('transformObjectProperties', () => {
     test('should pass string value', () => {

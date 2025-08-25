@@ -1,13 +1,12 @@
-import type { AuthOptions } from '@reachfive/identity-core';
 import React from 'react';
 
-import { SocialButtons } from '../../../components/form/socialButtonsComponent';
-import { Alternative, Heading, Intro, Link } from '../../../components/miscComponent';
-
-import { useI18n } from '../../../contexts/i18n';
+import type { AuthOptions } from '@reachfive/identity-core';
 
 import { InitialScreen } from '../../../../constants.ts';
-import { PropsWithSession } from '../../../contexts/session';
+import { SocialButtons } from '../../../components/form/socialButtonsComponent';
+import { Alternative, Heading, Intro, Link } from '../../../components/miscComponent';
+import { useI18n } from '../../../contexts/i18n';
+import { useSession } from '../../../contexts/session';
 import { selectLogin } from '../authWidget.tsx';
 
 import type { OnError, OnSuccess } from '../../../types';
@@ -38,10 +37,10 @@ export const QuickLoginView = ({
     initialScreen,
     allowWebAuthnLogin = false,
     auth,
-    session,
     onError = (() => {}) as OnError,
     onSuccess = (() => {}) as OnSuccess,
-}: PropsWithSession<QuickLoginViewProps>) => {
+}: QuickLoginViewProps) => {
+    const session = useSession();
     const i18n = useI18n();
 
     // this component should never be display without session infos defined

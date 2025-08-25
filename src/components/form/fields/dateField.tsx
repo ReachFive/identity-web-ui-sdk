@@ -1,3 +1,5 @@
+import React, { useEffect, useMemo, useState } from 'react';
+
 import {
     eachMonthOfInterval,
     endOfYear,
@@ -11,14 +13,11 @@ import {
     parseISO,
     startOfYear,
 } from 'date-fns';
-import React, { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
 import { Validator, ValidatorResult, isValidatorError } from '../../../core/validation';
 import { useDebounce } from '../../../helpers/useDebounce';
 import { isRichFormValue } from '../../../helpers/utils';
-
-import type { Config, Optional } from '../../../types';
 import {
     createField,
     type FieldComponentProps,
@@ -26,6 +25,8 @@ import {
     type FieldDefinition,
 } from '../fieldCreator';
 import { FormGroup, Input, Select } from '../formControlsComponent';
+
+import type { Config, Optional } from '../../../types';
 
 const inputRowGutter = 10;
 

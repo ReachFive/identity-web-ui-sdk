@@ -1,17 +1,15 @@
 import React, { ComponentProps, useLayoutEffect } from 'react';
 
-import { email } from '../../core/validation';
-
 import { CaptchaProvider, WithCaptchaProps, type WithCaptchaToken } from '../../components/captcha';
 import { simpleField } from '../../components/form/fields/simpleField';
 import { createForm } from '../../components/form/formComponent';
 import { Info, Intro } from '../../components/miscComponent';
 import { importGoogleRecaptchaScript } from '../../components/reCaptcha';
-
 import { createMultiViewWidget } from '../../components/widget/widget';
 import { useI18n } from '../../contexts/i18n';
 import { useReachfive } from '../../contexts/reachfive';
 import { useRouting } from '../../contexts/routing';
+import { email } from '../../core/validation';
 
 import type { OnError, OnSuccess } from '../../types';
 
@@ -67,7 +65,7 @@ const MainView = ({
     onError = (() => {}) as OnError,
     onSuccess = (() => {}) as OnSuccess,
 }: WithCaptchaProps<MainViewProps>) => {
-    const coreClient = useReachfive();
+    const { client: coreClient } = useReachfive();
     const i18n = useI18n();
     const { goTo } = useRouting();
 

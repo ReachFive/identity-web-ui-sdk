@@ -1,6 +1,8 @@
-import { AppError } from '@/helpers/errors';
 import { CaptchaFoxInstance } from '@captchafox/react';
 import type { WidgetDisplayMode } from '@captchafox/types';
+
+import { AppError } from '@/helpers/errors';
+
 import { WithCaptchaToken } from './captcha';
 
 export interface CaptchaFoxConf {

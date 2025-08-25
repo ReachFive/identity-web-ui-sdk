@@ -1,35 +1,31 @@
+import React, { useCallback, useState } from 'react';
+
 import { MFA, Profile } from '@reachfive/identity-core';
 import type {
     StartMfaEmailRegistrationResponse,
     StartMfaPhoneNumberRegistrationResponse,
 } from '@reachfive/identity-core/es/main/mfaClient';
-import React, { useCallback, useState } from 'react';
-
-import type { OnError, OnSuccess, Prettify } from '../../types';
-
-import { createMultiViewWidget } from '../../components/widget/widget';
 
 import { DestructiveButton } from '../../components/form/buttonComponent';
+import checkboxField from '../../components/form/fields/checkboxField.tsx';
 import phoneNumberField, {
     type PhoneNumberOptions,
 } from '../../components/form/fields/phoneNumberField';
 import { simpleField } from '../../components/form/fields/simpleField';
 import { createForm } from '../../components/form/formComponent';
 import { Intro, Separator } from '../../components/miscComponent';
-
-import { UserError } from '../../helpers/errors';
-
-import checkboxField from '../../components/form/fields/checkboxField.tsx';
-import { useConfig } from '../../contexts/config';
+import { createMultiViewWidget } from '../../components/widget/widget';
 import { useI18n } from '../../contexts/i18n';
 import { useReachfive } from '../../contexts/reachfive';
 import { useRouting } from '../../contexts/routing';
-
+import { UserError } from '../../helpers/errors';
 import {
     useCredentials,
     withCredentials,
     type CredentialsProviderProps,
 } from './contexts/credentials';
+
+import type { OnError, OnSuccess, Prettify } from '../../types';
 
 type EmailRegisteringCredentialFormData = { trustDevice: boolean };
 
@@ -187,8 +183,7 @@ const MainView = withCredentials(
         profileIdentifiers = {},
         action,
     }: MainViewProps) => {
-        const coreClient = useReachfive();
-        const config = useConfig();
+        const { client: coreClient, config } = useReachfive();
         const i18n = useI18n();
         const { goTo } = useRouting();
         const { credentials, refresh } = useCredentials();
@@ -406,9 +401,8 @@ const VerificationCodeView = ({
     showIntro = true,
     allowTrustDevice = false,
 }: VerificationCodeViewProps) => {
-    const coreClient = useReachfive();
+    const { client: coreClient, config } = useReachfive();
     const i18n = useI18n();
-    const config = useConfig();
     const { goTo, params } = useRouting();
     const { registrationType, status } = params as VerificationCodeViewState;
 
@@ -507,10 +501,10 @@ export default createMultiViewWidget<MfaCredentialsWidgetProps, MfaCredentialsPr
         main: MainView,
         'verification-code': VerificationCodeView,
     },
-    prepare: (options, { apiClient }) => {
+    prepare: (options, { client }) => {
         return Promise.all([
-            apiClient.listMfaCredentials(options.accessToken),
-            apiClient.getUser({
+            client.listMfaCredentials(options.accessToken),
+            client.getUser({
                 accessToken: options.accessToken,
                 fields: 'email_verified,phone_number,phone_number_verified',
             }),

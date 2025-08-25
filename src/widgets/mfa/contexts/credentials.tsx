@@ -1,5 +1,6 @@
-import { MFA } from '@reachfive/identity-core';
 import React, { useCallback, useState } from 'react';
+
+import { MFA } from '@reachfive/identity-core';
 
 import { useReachfive } from '../../../contexts/reachfive';
 
@@ -33,7 +34,7 @@ export const CredentialsProvider = ({
     children,
     credentials: initialCredentials,
 }: React.PropsWithChildren<CredentialsProviderProps>) => {
-    const coreClient = useReachfive();
+    const { client: coreClient } = useReachfive();
     const [credentials, setCredentials] = useState<MFA.Credential[]>(initialCredentials);
 
     const refresh = useCallback(() => {

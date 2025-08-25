@@ -1,7 +1,6 @@
 import React from 'react';
-import styled from 'styled-components';
 
-import { parseQueryString } from '../../helpers/queryString';
+import styled from 'styled-components';
 
 import { createForm } from '../../components/form/formComponent';
 import { Alternative, Heading, Info, Intro, Link, Separator } from '../../components/miscComponent';
@@ -9,13 +8,12 @@ import { createMultiViewWidget } from '../../components/widget/widget';
 import { useI18n } from '../../contexts/i18n';
 import { useReachfive } from '../../contexts/reachfive';
 import { useRouting } from '../../contexts/routing';
-
+import { parseQueryString } from '../../helpers/queryString';
+import { ReactComponent as Passkeys } from '../../icons/passkeys.svg';
 import {
     PasswordEditorForm,
     PasswordEditorFormData,
 } from '../passwordEditor/passwordEditorWidget.tsx';
-
-import { ReactComponent as Passkeys } from '../../icons/passkeys.svg';
 
 import type { OnError, OnSuccess } from '../../types';
 
@@ -86,7 +84,7 @@ const NewPasskey = ({
     onSuccess = (() => {}) as OnSuccess,
     onError = (() => {}) as OnError,
 }: PropsWithAuthentication<MainViewProps>) => {
-    const coreClient = useReachfive();
+    const { client: coreClient } = useReachfive();
     const i18n = useI18n();
     const { goTo } = useRouting();
 
@@ -164,7 +162,7 @@ export const NewPasswordView = ({
     onError = (() => {}) as OnError,
     showLabels = false,
 }: PropsWithAuthentication<MainViewProps>) => {
-    const coreClient = useReachfive();
+    const { client: coreClient } = useReachfive();
     const i18n = useI18n();
     const { goTo } = useRouting();
 

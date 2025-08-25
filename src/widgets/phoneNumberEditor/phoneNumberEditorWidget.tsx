@@ -1,7 +1,5 @@
 import React, { useMemo } from 'react';
 
-import type { Config, Prettify } from '../../types';
-
 import phoneNumberField, {
     type PhoneNumberOptions,
 } from '../../components/form/fields/phoneNumberField';
@@ -9,12 +7,11 @@ import { simpleField } from '../../components/form/fields/simpleField';
 import { createForm } from '../../components/form/formComponent';
 import { Info, Intro } from '../../components/miscComponent';
 import { createMultiViewWidget } from '../../components/widget/widget';
-
-import { useConfig } from '../../contexts/config';
 import { useI18n } from '../../contexts/i18n';
 import { useReachfive } from '../../contexts/reachfive';
 import { useRouting } from '../../contexts/routing';
 
+import type { Config, Prettify } from '../../types';
 import type { OnError, OnSuccess } from '../../types';
 
 type PhoneNumberFormData = { phoneNumber: string };
@@ -78,8 +75,7 @@ const MainView = ({
     onError = (() => {}) as OnError,
     onSuccess = (() => {}) as OnSuccess,
 }: MainViewProps) => {
-    const coreClient = useReachfive();
-    const config = useConfig();
+    const { client: coreClient, config } = useReachfive();
     const i18n = useI18n();
     const { goTo } = useRouting();
 
@@ -141,7 +137,7 @@ const VerificationCodeView = ({
     onSuccess = (() => {}) as OnSuccess,
     onError = (() => {}) as OnError,
 }: VerificationCodeViewProps) => {
-    const coreClient = useReachfive();
+    const { client: coreClient } = useReachfive();
     const i18n = useI18n();
     const { params } = useRouting();
     const { phoneNumber } = params as VerificationCodeViewState;

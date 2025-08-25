@@ -1,22 +1,20 @@
-import { AuthOptions, MFA, PasswordlessResponse } from '@reachfive/identity-core';
-import { StepUpPasswordlessParams } from '@reachfive/identity-core/es/main/oAuthClient';
 import React, { useCallback, useEffect, useState } from 'react';
 
-import type { OnError, OnSuccess, Prettify, RequiredProperty } from '../../types';
+import { AuthOptions, MFA, PasswordlessResponse } from '@reachfive/identity-core';
+import { StepUpPasswordlessParams } from '@reachfive/identity-core/es/main/oAuthClient';
 
+import checkboxField from '../../components/form/fields/checkboxField';
 import radioboxField from '../../components/form/fields/radioboxField';
 import { simpleField } from '../../components/form/fields/simpleField';
 import { createForm } from '../../components/form/formComponent';
 import { Info, Intro } from '../../components/miscComponent';
 import { createMultiViewWidget } from '../../components/widget/widget';
-
-import { toQueryString } from '../../helpers/queryString';
-
-import checkboxField from '../../components/form/fields/checkboxField';
-import { useConfig } from '../../contexts/config.tsx';
 import { useI18n } from '../../contexts/i18n';
 import { useReachfive } from '../../contexts/reachfive';
 import { useRouting } from '../../contexts/routing';
+import { toQueryString } from '../../helpers/queryString';
+
+import type { OnError, OnSuccess, Prettify, RequiredProperty } from '../../types';
 
 const StartStepUpMfaButton = createForm({
     prefix: 'r5-mfa-start-step-up-',
@@ -133,7 +131,7 @@ export const MainView = ({
     allowTrustDevice = false,
     action,
 }: MainViewProps) => {
-    const coreClient = useReachfive();
+    const { client: coreClient } = useReachfive();
     const { goTo } = useRouting();
 
     const [response, setResponse] = useState<MFA.StepUpResponse | undefined>();
@@ -214,7 +212,7 @@ type StepUpResponse = RequiredProperty<PasswordlessResponse, 'challengeId'>;
 type StepUpHandlerResponse = StepUpResponse & StepUpFormData;
 
 export const FaSelectionView = (props: FaSelectionViewProps) => {
-    const coreClient = useReachfive();
+    const { client: coreClient } = useReachfive();
     const i18n = useI18n();
     const { params } = useRouting();
     const state = params as FaSelectionViewState;
@@ -299,10 +297,12 @@ export type VerificationCodeViewProps = Prettify<
 >;
 
 export const VerificationCodeView = (props: VerificationCodeViewProps) => {
-    const coreClient = useReachfive();
+    const {
+        client: coreClient,
+        config: { domain, rbaEnabled },
+    } = useReachfive();
     const i18n = useI18n();
     const { params } = useRouting();
-    const { rbaEnabled, domain } = useConfig();
     const state = params as VerificationCodeViewState;
 
     const {

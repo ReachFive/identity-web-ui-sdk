@@ -1,23 +1,22 @@
 import React, { useEffect, useState } from 'react';
 
-import type { PasswordPolicy, PasswordStrengthScore } from '@reachfive/identity-core';
 import { isDigit, isLower, isUpper } from 'char-info';
 import styled, { DefaultTheme } from 'styled-components';
 
-import type { Config, Optional } from '../../../types';
-
-import type { FieldComponentProps, FieldCreator, FieldDefinition } from '../fieldCreator';
-import { FormError, FormGroupContainer, Input, Label } from '../formControlsComponent';
-import { PasswordPolicyRules, type PasswordRule } from './passwordPolicyRules';
+import type { PasswordPolicy, PasswordStrengthScore } from '@reachfive/identity-core';
 
 import { useI18n } from '../../../contexts/i18n';
 import { I18nResolver } from '../../../core/i18n';
 import { Validator, isValidatorError } from '../../../core/validation';
-import { HidePasswordIcon, ShowPasswordIcon } from './simplePasswordField';
-
 import { isRichFormValue } from '../../../helpers/utils';
 import { createField } from '../fieldCreator';
 import { FormContext } from '../formComponent';
+import { FormError, FormGroupContainer, Input, Label } from '../formControlsComponent';
+import { PasswordPolicyRules, type PasswordRule } from './passwordPolicyRules';
+import { HidePasswordIcon, ShowPasswordIcon } from './simplePasswordField';
+
+import type { Config, Optional } from '../../../types';
+import type { FieldComponentProps, FieldCreator, FieldDefinition } from '../fieldCreator';
 
 const SPECIAL_CHARACTERS = ' !"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~';
 const MAX_PASSWORD_LENGTH = 255;

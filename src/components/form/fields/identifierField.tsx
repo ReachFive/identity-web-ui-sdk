@@ -4,7 +4,6 @@ import type { CountryCode } from 'libphonenumber-js';
 import * as libphonenumber from 'libphonenumber-js';
 
 import { email, isValidatorError, Validator } from '../../../core/validation';
-
 import { isRichFormValue } from '../../../helpers/utils';
 import { Config, Optional } from '../../../types';
 import { createField, type FieldComponentProps, type FieldDefinition } from '../fieldCreator';

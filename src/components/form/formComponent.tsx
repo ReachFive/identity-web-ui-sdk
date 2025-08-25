@@ -1,10 +1,11 @@
-import { Client } from '@reachfive/identity-core';
 import React, { useCallback, useEffect, useState } from 'react';
+
 import styled from 'styled-components';
 
-import { useConfig, type WithConfig } from '../../contexts/config';
+import { Client } from '@reachfive/identity-core';
+
 import { useI18n, type WithI18n } from '../../contexts/i18n';
-import { useReachfive } from '../../contexts/reachfive';
+import { useReachfive, type WithConfig } from '../../contexts/reachfive';
 import { type ValidatorResult } from '../../core/validation';
 import { isAppError } from '../../helpers/errors';
 import { logError } from '../../helpers/logger';
@@ -13,6 +14,7 @@ import { type Config } from '../../types';
 import { useCaptcha } from '../captcha';
 import { ErrorText, MutedText } from '../miscComponent';
 import { PrimaryButton } from './buttonComponent';
+
 import type { Field, FieldCreator, FieldValue } from './fieldCreator';
 
 const Form = styled.form`
@@ -116,9 +118,8 @@ export function createForm<Model extends Record<PropertyKey, unknown> = {}, P = 
     formOptions: FormOptions<P>
 ) {
     function FormComponent<R = void>(props: FormProps<Model, P, R>) {
-        const config = useConfig();
         const i18n = useI18n();
-        const client = useReachfive();
+        const { client, config } = useReachfive();
         const { Captcha, handler: captchaHandler } = useCaptcha();
 
         const {

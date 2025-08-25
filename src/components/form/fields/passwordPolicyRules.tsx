@@ -1,10 +1,11 @@
-import { PasswordStrengthScore } from '@reachfive/identity-core';
 import React from 'react';
+
 import styled from 'styled-components';
 
-import { Label } from '../formControlsComponent';
+import { PasswordStrengthScore } from '@reachfive/identity-core';
 
 import { useI18n } from '../../../contexts/i18n';
+import { Label } from '../formControlsComponent';
 
 interface RoundCheckboxProps {
     checked?: boolean;

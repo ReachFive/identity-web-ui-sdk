@@ -1,27 +1,23 @@
 import React, { useCallback, useLayoutEffect } from 'react';
 
-import { isAppError } from '../../../helpers/errors';
-
-import { Alternative, Heading, Info, Intro, Link } from '../../../components/miscComponent';
-import { email } from '../../../core/validation';
-
+import { InitialScreen } from '../../../../constants.ts';
+import { CaptchaProvider, type WithCaptchaProps } from '../../../components/captcha.tsx';
+import { DefaultButton } from '../../../components/form/buttonComponent.tsx';
+import passwordField from '../../../components/form/fields/passwordField.tsx';
 import phoneNumberField, {
     type PhoneNumberOptions,
 } from '../../../components/form/fields/phoneNumberField';
 import { simpleField } from '../../../components/form/fields/simpleField';
-import { createForm, FormContext } from '../../../components/form/formComponent';
-import { importGoogleRecaptchaScript } from '../../../components/reCaptcha';
-
-import { InitialScreen } from '../../../../constants.ts';
-import { CaptchaProvider, WithCaptchaProps } from '../../../components/captcha.tsx';
-import { DefaultButton } from '../../../components/form/buttonComponent.tsx';
-import passwordField from '../../../components/form/fields/passwordField.tsx';
 import simplePasswordField from '../../../components/form/fields/simplePasswordField';
-import { useConfig } from '../../../contexts/config.tsx';
+import { createForm, FormContext } from '../../../components/form/formComponent';
+import { Alternative, Heading, Info, Intro, Link } from '../../../components/miscComponent';
+import { importGoogleRecaptchaScript } from '../../../components/reCaptcha';
 import { useI18n } from '../../../contexts/i18n';
 import { useReachfive } from '../../../contexts/reachfive';
 import { useRouting } from '../../../contexts/routing';
+import { email } from '../../../core/validation';
 import { Validator } from '../../../core/validation.ts';
+import { isAppError } from '../../../helpers/errors';
 import { selectLogin } from '../authWidget.tsx';
 
 import type { OnError, OnSuccess } from '../../../types';
@@ -192,8 +188,7 @@ export const ForgotPasswordView = ({
     onError = (() => {}) as OnError,
     onSuccess = (() => {}) as OnSuccess,
 }: WithCaptchaProps<ForgotPasswordViewProps>) => {
-    const coreClient = useReachfive();
-    const config = useConfig();
+    const { client: coreClient, config } = useReachfive();
     const { goTo } = useRouting();
     const i18n = useI18n();
 
@@ -265,7 +260,7 @@ export const ForgotPasswordPhoneNumberView = ({
     returnToAfterPasswordReset,
     onError = (() => {}) as OnError,
 }: WithCaptchaProps<ForgotPasswordViewProps>) => {
-    const coreClient = useReachfive();
+    const { client: coreClient } = useReachfive();
     const { goTo } = useRouting();
     const i18n = useI18n();
 
@@ -332,9 +327,9 @@ export const ForgotPasswordCodeView = ({
     onError = (() => {}) as OnError,
     onSuccess = (() => {}) as OnSuccess,
 }: ForgotPasswordViewProps) => {
-    const coreClient = useReachfive();
-    const i18n = useI18n();
+    const { client: coreClient } = useReachfive();
     const { goTo, params } = useRouting();
+    const i18n = useI18n();
     const { phoneNumber } = params as PhoneNumberIdentifier;
 
     const callback = useCallback(

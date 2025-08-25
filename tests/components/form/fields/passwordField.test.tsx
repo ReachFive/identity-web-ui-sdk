@@ -1,45 +1,22 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment jest-fixed-jsdom
  */
-
-import { afterEach, beforeEach, describe, expect, jest, test } from '@jest/globals';
-import { PasswordStrengthScore, type Client } from '@reachfive/identity-core';
-import '@testing-library/jest-dom/jest-globals';
-import { queryByText, render, screen, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import 'jest-styled-components';
 import React from 'react';
 
-import type { Config } from '../../../../src/types';
+import { afterEach, beforeEach, describe, expect, jest, test } from '@jest/globals';
+import '@testing-library/jest-dom/jest-globals';
+import { queryByText, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import 'jest-styled-components';
 
-import passwordField from '../../../../src/components/form/fields/passwordField';
-import { createForm } from '../../../../src/components/form/formComponent';
-import resolveI18n, { I18nMessages } from '../../../../src/core/i18n';
-import { Validator } from '../../../../src/core/validation';
-import { WidgetContext } from '../WidgetContext';
+import { PasswordStrengthScore, type Client } from '@reachfive/identity-core';
 
-const defaultConfig: Config = {
-    clientId: 'local',
-    domain: 'local.reach5.net',
-    sso: false,
-    sms: false,
-    webAuthn: false,
-    language: 'fr',
-    pkceEnforced: false,
-    isPublic: true,
-    socialProviders: ['facebook', 'google'],
-    customFields: [],
-    resourceBaseUrl: 'http://localhost',
-    mfaSmsEnabled: false,
-    mfaEmailEnabled: false,
-    rbaEnabled: false,
-    consentsVersions: {},
-    passwordPolicy: {
-        minLength: 8,
-        minStrength: 2,
-        allowUpdateWithAccessTokenOnly: true,
-    },
-};
+import passwordField from '@/components/form/fields/passwordField';
+import { createForm } from '@/components/form/formComponent';
+import resolveI18n, { I18nMessages } from '@/core/i18n';
+import { Validator } from '@/core/validation';
+
+import { defaultConfig, renderWithContext } from '../../../widgets/renderer';
 
 const defaultI18n: I18nMessages = {
     password: 'Password',
@@ -54,9 +31,9 @@ describe('DOM testing', () => {
 
     getPasswordStrength.mockImplementation((password: string) => {
         let score = 0;
-        if (password.match(/[a-z]+/)) score++;
-        if (password.match(/[0-9]+/)) score++;
-        if (password.match(/[^a-z0-9]+/)) score++;
+        if (/[a-z]+/.exec(password)) score++;
+        if (/[0-9]+/.exec(password)) score++;
+        if (/[^a-z0-9]+/.exec(password)) score++;
         if (password.length > 8) score++;
         return Promise.resolve({ score: score as PasswordStrengthScore });
     });
@@ -83,27 +60,24 @@ describe('DOM testing', () => {
         const label = 'password';
 
         const onFieldChange = jest.fn();
-        const onSubmit = jest.fn<(data: Model) => Promise<Model>>(data => Promise.resolve(data));
+        const onSubmit = jest.fn<(data: Model) => Promise<Model>>((data: Model) =>
+            Promise.resolve(data)
+        );
 
         const Form = createForm<Model>({
             fields: [passwordField({ key, label }, defaultConfig)],
         });
 
-        await waitFor(async () => {
-            return render(
-                <WidgetContext
-                    client={apiClient}
-                    config={defaultConfig}
-                    defaultMessages={defaultI18n}
-                >
-                    <Form
-                        fieldValidationDebounce={0} // trigger validation instantly
-                        handler={onSubmit}
-                        onFieldChange={onFieldChange}
-                    />
-                </WidgetContext>
-            );
-        });
+        await renderWithContext(
+            <Form
+                fieldValidationDebounce={0} // trigger validation instantly
+                onFieldChange={onFieldChange}
+                handler={onSubmit}
+            />,
+            apiClient,
+            defaultConfig,
+            defaultI18n
+        );
 
         const input = screen.getByLabelText(i18nResolver(label));
         expect(input).toBeInTheDocument();
@@ -163,27 +137,24 @@ describe('DOM testing', () => {
         const label = 'password';
 
         const onFieldChange = jest.fn();
-        const onSubmit = jest.fn<(data: Model) => Promise<Model>>(data => Promise.resolve(data));
+        const onSubmit = jest.fn<(data: Model) => Promise<Model>>((data: Model) =>
+            Promise.resolve(data)
+        );
 
         const Form = createForm<Model>({
             fields: [passwordField({ key, label, canShowPassword: true }, defaultConfig)],
         });
 
-        await waitFor(async () => {
-            return render(
-                <WidgetContext
-                    client={apiClient}
-                    config={defaultConfig}
-                    defaultMessages={defaultI18n}
-                >
-                    <Form
-                        fieldValidationDebounce={0} // trigger validation instantly
-                        handler={onSubmit}
-                        onFieldChange={onFieldChange}
-                    />
-                </WidgetContext>
-            );
-        });
+        await renderWithContext(
+            <Form
+                fieldValidationDebounce={0} // trigger validation instantly
+                onFieldChange={onFieldChange}
+                handler={onSubmit}
+            />,
+            apiClient,
+            defaultConfig,
+            defaultI18n
+        );
 
         const input = screen.getByLabelText(i18nResolver(label));
         expect(input).toBeInTheDocument();
@@ -219,7 +190,9 @@ describe('DOM testing', () => {
         const matchPassword = '1L0v38anana5';
 
         const onFieldChange = jest.fn();
-        const onSubmit = jest.fn<(data: Model) => Promise<Model>>(data => Promise.resolve(data));
+        const onSubmit = jest.fn<(data: Model) => Promise<Model>>((data: Model) =>
+            Promise.resolve(data)
+        );
 
         const Form = createForm<Model>({
             fields: [
@@ -234,21 +207,16 @@ describe('DOM testing', () => {
             ],
         });
 
-        await waitFor(async () => {
-            return render(
-                <WidgetContext
-                    client={apiClient}
-                    config={defaultConfig}
-                    defaultMessages={defaultI18n}
-                >
-                    <Form
-                        fieldValidationDebounce={0} // trigger validation instantly
-                        onFieldChange={onFieldChange}
-                        handler={onSubmit}
-                    />
-                </WidgetContext>
-            );
-        });
+        await renderWithContext(
+            <Form
+                fieldValidationDebounce={0} // trigger validation instantly
+                onFieldChange={onFieldChange}
+                handler={onSubmit}
+            />,
+            apiClient,
+            defaultConfig,
+            defaultI18n
+        );
 
         const input = screen.getByLabelText(i18nResolver(label));
         expect(input).toBeInTheDocument();

@@ -6,9 +6,9 @@ import {
     parsePhoneNumber,
 } from 'react-phone-number-input';
 import { default as PhoneInputWithoutCountrySelect } from 'react-phone-number-input/input';
-import { createGlobalStyle } from 'styled-components';
+import 'react-phone-number-input/style.css';
 
-import styles from 'react-phone-number-input/style.css'; // import raw css using `rollup-plugin-import-css'`
+import { createGlobalStyle } from 'styled-components';
 
 import { Validator, isValidatorError } from '../../../core/validation';
 import { isRichFormValue } from '../../../helpers/utils.ts';
@@ -26,13 +26,12 @@ function isValidCountryCode(code?: string): code is Country {
 }
 
 const ReactPhoneNumberInputStyle = createGlobalStyle`
-    ${styles}
-
     :root {
         --PhoneInput-color--focus: ${props => props.theme.primaryColor};
         --PhoneInputCountrySelect-marginRight: ${props => props.theme.spacing}px;
         --PhoneInputCountrySelectArrow-marginLeft: var(--PhoneInputCountrySelect-marginRight);
         --PhoneInputCountrySelectArrow-borderWidth: 2px;
+        --PhoneInputCountrySelectArrow-color: ${props => props.theme.textColor};
         --PhoneInputCountrySelectArrow-transform: rotate(45deg);
         --PhoneInputCountrySelectArrow-width: 0.3em;
         --PhoneInputCountryFlag-height: ${props => props.theme.input.height - (props.theme.input.paddingY + props.theme.input.borderWidth) * 2}px;
@@ -95,7 +94,7 @@ const PhoneNumberField = (props: PhoneNumberFieldProps) => {
         withCountrySelect = false,
     } = props;
 
-    const [labels, setLabels] = useState<Labels>();
+    const [labels, setLabels] = useState<Labels>({});
     const currentValue = isRichFormValue(value, 'raw') ? value.raw : value;
     const error = validation && isValidatorError(validation) ? validation.error : undefined;
 

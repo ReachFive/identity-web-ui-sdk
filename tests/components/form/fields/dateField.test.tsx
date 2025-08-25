@@ -1,10 +1,11 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment jest-fixed-jsdom
  */
+import React from 'react';
 
-import { afterEach, beforeEach, describe, expect, jest, test } from '@jest/globals';
+import { describe, expect, jest, test } from '@jest/globals';
 import '@testing-library/jest-dom/jest-globals';
-import { getAllByRole, render, screen, waitFor } from '@testing-library/react';
+import { getAllByRole, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import {
     differenceInYears,
@@ -17,38 +18,13 @@ import {
     subYears,
 } from 'date-fns';
 import 'jest-styled-components';
-import React from 'react';
 
-import type { Config } from '../../../../src/types';
+import dateField from '@/components/form/fields/dateField';
+import { createForm } from '@/components/form/formComponent';
+import resolveI18n, { I18nMessages } from '@/core/i18n';
+import { Validator } from '@/core/validation';
 
-import dateField from '../../../../src/components/form/fields/dateField';
-import { createForm } from '../../../../src/components/form/formComponent';
-import resolveI18n, { I18nMessages } from '../../../../src/core/i18n';
-import { Validator } from '../../../../src/core/validation';
-import { WidgetContext } from '../WidgetContext';
-
-const defaultConfig: Config = {
-    clientId: 'local',
-    domain: 'local.reach5.net',
-    sso: false,
-    sms: false,
-    webAuthn: false,
-    language: 'fr',
-    pkceEnforced: false,
-    isPublic: true,
-    socialProviders: ['facebook', 'google'],
-    customFields: [],
-    resourceBaseUrl: 'http://localhost',
-    mfaSmsEnabled: false,
-    mfaEmailEnabled: false,
-    rbaEnabled: false,
-    consentsVersions: {},
-    passwordPolicy: {
-        minLength: 8,
-        minStrength: 2,
-        allowUpdateWithAccessTokenOnly: true,
-    },
-};
+import { defaultConfig, renderWithContext } from '../../../widgets/renderer';
 
 const defaultI18n: I18nMessages = {
     date: 'Date',
@@ -62,14 +38,8 @@ const i18nResolver = resolveI18n(defaultI18n);
 type Model = { date: string };
 
 describe('DOM testing', () => {
-    beforeEach(() => {
-        jest.useFakeTimers();
-    });
-
-    afterEach(() => {
-        jest.runOnlyPendingTimers();
-        jest.useRealTimers();
-    });
+    // @ts-expect-error partial Client
+    const apiClient: Client = {};
 
     test('default settings', async () => {
         const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
@@ -78,28 +48,31 @@ describe('DOM testing', () => {
         const label = 'date';
 
         const onFieldChange = jest.fn();
-        const onSubmit = jest.fn<(data: Model) => Promise<Model>>(data => Promise.resolve(data));
+        const onSubmit = jest.fn<(data: Model) => Promise<Model>>((data: Model) =>
+            Promise.resolve(data)
+        );
 
         const Form = createForm<Model>({
             fields: [dateField({ key, label }, defaultConfig)],
         });
 
-        await waitFor(async () => {
-            return render(
-                <WidgetContext config={defaultConfig} defaultMessages={defaultI18n}>
-                    <Form
-                        fieldValidationDebounce={0} // trigger validation instantly
-                        onFieldChange={onFieldChange}
-                        handler={onSubmit}
-                    />
-                </WidgetContext>
-            );
-        });
+        await renderWithContext(
+            <Form
+                fieldValidationDebounce={0} // trigger validation instantly
+                onFieldChange={onFieldChange}
+                handler={onSubmit}
+            />,
+            apiClient,
+            defaultConfig,
+            defaultI18n
+        );
+
+        jest.useFakeTimers();
 
         const labelTag = screen.queryByText(i18nResolver(label));
         expect(labelTag).toBeInTheDocument();
 
-        const yearInput = screen.getByTestId('date.year');
+        const yearInput = screen.getByRole('spinbutton', { name: defaultI18n.year });
         expect(yearInput).toBeInTheDocument();
         expect(yearInput).toHaveAttribute('type', 'number');
         expect(yearInput).toHaveAttribute('inputMode', 'numeric');
@@ -107,7 +80,7 @@ describe('DOM testing', () => {
         expect(yearInput).toHaveAttribute('placeholder', i18nResolver('year'));
         expect(yearInput).not.toHaveValue();
 
-        const monthInput = screen.getByTestId('date.month');
+        const monthInput = screen.getByRole('combobox', { name: defaultI18n.month });
         expect(monthInput).toBeInTheDocument();
         expect(monthInput).toHaveAttribute('aria-label', i18nResolver('month'));
         expect(monthInput).not.toHaveValue();
@@ -128,7 +101,7 @@ describe('DOM testing', () => {
             expect.arrayContaining(expectedMonthsOptionsIntl)
         );
 
-        const dayInput = screen.getByTestId('date.day');
+        const dayInput = screen.getByRole('combobox', { name: defaultI18n.day });
         expect(dayInput).toBeInTheDocument();
         expect(dayInput).toHaveAttribute('aria-label', i18nResolver('day'));
         expect(dayInput).not.toHaveValue();
@@ -150,12 +123,19 @@ describe('DOM testing', () => {
         );
 
         const year = 2024;
-        // await user.clear(yearInput)
+        const month = 11; // December
+        const day = 31;
+
+        // await act(async () => {
+        await user.clear(yearInput);
         await user.type(yearInput, String(year));
 
-        const month = 11; // December
         // await user.clear(monthInput)
         await user.selectOptions(monthInput, String(month));
+
+        // Fast-forward until all timers have been executed (handle year debounced value)
+        await jest.runOnlyPendingTimersAsync();
+        // })
 
         // month options should be updated
         const decemberExpectedDaysOptions = [
@@ -164,11 +144,12 @@ describe('DOM testing', () => {
                 String(value + 1)
             ),
         ];
-        expect(
-            getAllByRole(dayInput, 'option').map(option => option.getAttribute('value'))
-        ).toEqual(expect.arrayContaining(decemberExpectedDaysOptions));
+        await waitFor(() =>
+            expect(
+                getAllByRole(dayInput, 'option').map(option => option.getAttribute('value'))
+            ).toEqual(expect.arrayContaining(decemberExpectedDaysOptions))
+        );
 
-        const day = 31;
         // await user.clear(dayInput)
         await user.selectOptions(dayInput, String(day));
 
@@ -183,16 +164,20 @@ describe('DOM testing', () => {
             )
         );
 
-        const submitBtn = screen.getByRole('button');
-        await user.click(submitBtn);
+        await waitFor(async () => {
+            const submitBtn = await screen.findByTestId('submit');
+            await user.click(submitBtn);
+        });
 
-        await waitFor(() => expect(onSubmit).toHaveBeenCalled());
-
-        expect(onSubmit).toBeCalledWith(
-            expect.objectContaining({
-                date: formatISO(new Date(year, month, day), { representation: 'date' }), // value is formatted in handler data
-            })
+        await waitFor(() =>
+            expect(onSubmit).toBeCalledWith(
+                expect.objectContaining({
+                    date: formatISO(new Date(year, month, day), { representation: 'date' }), // value is formatted in handler data
+                })
+            )
         );
+
+        jest.useRealTimers();
     });
 
     test('with custom validation', async () => {
@@ -209,37 +194,47 @@ describe('DOM testing', () => {
         });
 
         const onFieldChange = jest.fn();
-        const onSubmit = jest.fn<(data: Model) => Promise<Model>>(data => Promise.resolve(data));
+        const onSubmit = jest.fn<(data: Model) => Promise<Model>>((data: Model) =>
+            Promise.resolve(data)
+        );
 
         const Form = createForm<Model>({
             fields: [dateField({ key, label, validator }, defaultConfig)],
         });
 
-        await waitFor(async () => {
-            return render(
-                <WidgetContext config={defaultConfig} defaultMessages={defaultI18n}>
-                    <Form
-                        fieldValidationDebounce={0} // trigger validation instantly
-                        onFieldChange={onFieldChange}
-                        handler={onSubmit}
-                    />
-                </WidgetContext>
-            );
-        });
+        await renderWithContext(
+            <Form
+                fieldValidationDebounce={0} // trigger validation instantly
+                onFieldChange={onFieldChange}
+                handler={onSubmit}
+            />,
+            apiClient,
+            defaultConfig,
+            defaultI18n
+        );
 
-        const yearInput = screen.getByTestId('date.year');
-        const monthInput = screen.getByTestId('date.month');
-        const dayInput = screen.getByTestId('date.day');
+        jest.useFakeTimers();
+
+        const yearInput = screen.getByRole('spinbutton', { name: defaultI18n.year });
+        const monthInput = screen.getByRole('combobox', { name: defaultI18n.month });
+        const dayInput = screen.getByRole('combobox', { name: defaultI18n.day });
 
         const tenYearsOld = subYears(new Date(), 10);
+
+        // await act(async () => {
         await user.clear(yearInput);
         await user.type(yearInput, String(getYear(tenYearsOld)));
+
+        await user.selectOptions(monthInput, String(getMonth(tenYearsOld)));
 
         // Fast-forward until all timers have been executed (handle year debounced value)
         await jest.runOnlyPendingTimersAsync();
 
-        await user.selectOptions(monthInput, String(getMonth(tenYearsOld)));
         await user.selectOptions(dayInput, String(getDate(tenYearsOld)));
+
+        // Fast-forward until all timers have been executed (handle year debounced value)
+        await jest.runOnlyPendingTimersAsync();
+        // })
 
         await waitFor(() =>
             expect(onFieldChange).toHaveBeenLastCalledWith(
@@ -249,13 +244,22 @@ describe('DOM testing', () => {
             )
         );
 
-        onFieldChange.mockClear();
-
         const formError = await screen.findByTestId('form-error');
         expect(formError).toBeInTheDocument();
         expect(formError).toHaveTextContent('validation.age.minimun');
 
+        onFieldChange.mockClear();
+
         const eighteenYearsOld = subYears(new Date(), 18);
+
+        await waitFor(async () => {
+            const yearInput = await screen.findByTestId<HTMLInputElement>('date.year');
+            expect(yearInput).toBeInTheDocument();
+        });
+
+        // Fast-forward until all timers have been executed (handle year debounced value)
+        await jest.runOnlyPendingTimersAsync();
+
         await user.clear(yearInput);
         await user.type(yearInput, String(getYear(eighteenYearsOld)));
 
@@ -270,9 +274,8 @@ describe('DOM testing', () => {
             )
         );
 
-        await waitFor(() => {
-            const formError = screen.queryByTestId('form-error');
-            expect(formError).not.toBeInTheDocument();
-        });
+        expect(screen.queryByTestId('form-error')).not.toBeInTheDocument();
+
+        jest.useRealTimers();
     });
 });

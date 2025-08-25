@@ -1,14 +1,13 @@
-import type { AuthOptions, Client as CoreClient } from '@reachfive/identity-core';
 import React from 'react';
 
-import { useReachfive } from '../../../contexts/reachfive';
+import type { AuthOptions, Client as CoreClient } from '@reachfive/identity-core';
 
 import { createForm } from '../../../components/form/formComponent';
 import { UserAgreementStyle } from '../../../components/form/formControlsComponent';
 import { buildFormFields, type Field } from '../../../components/form/formFieldFactory';
 import { Alternative, Heading, Link, MarkdownContent } from '../../../components/miscComponent';
-import { useConfig } from '../../../contexts/config';
 import { useI18n } from '../../../contexts/i18n';
+import { useReachfive } from '../../../contexts/reachfive';
 import { snakeCaseProperties } from '../../../helpers/transformObjectProperties';
 
 import type { OnError, OnSuccess } from '../../../types';
@@ -81,8 +80,7 @@ export const SignupWithWebAuthnView = ({
     onError = (() => {}) as OnError,
     onSuccess = (() => {}) as OnSuccess,
 }: SignupWithWebAuthnViewProps) => {
-    const coreClient = useReachfive();
-    const config = useConfig();
+    const { client: coreClient, config } = useReachfive();
     const i18n = useI18n();
 
     const handleSignup = (data: SignupFormData) =>

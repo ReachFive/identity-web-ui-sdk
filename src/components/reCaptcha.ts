@@ -1,4 +1,5 @@
 import { AppError } from '@/helpers/errors';
+
 import { WithCaptchaToken } from './captcha';
 
 declare global {

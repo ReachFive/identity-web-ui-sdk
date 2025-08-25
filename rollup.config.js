@@ -6,17 +6,32 @@ import replace from '@rollup/plugin-replace';
 import terser from '@rollup/plugin-terser';
 import url from '@rollup/plugin-url';
 import svg from '@svgr/rollup';
+import path, { dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { addDirective } from 'rollup-plugin-add-directive';
 import dts from 'rollup-plugin-dts';
 import esbuild from 'rollup-plugin-esbuild';
 import postcss from 'rollup-plugin-postcss';
 
-import path, { dirname } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import packageJson from './package.json' with { type: 'json' };
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-import packageJson from './package.json' with { type: 'json' };
 const dependencies = Object.keys(packageJson.dependencies);
+
+const makeExternal = id => {
+    // Externalise React et ReactDOM dans tous les cas
+    if (
+        id === 'react' ||
+        id === 'react-dom' ||
+        id.startsWith('react/') ||
+        id.startsWith('react-dom/')
+    ) {
+        return true;
+    }
+    // Externalise aussi les autres dépendances
+    return dependencies.some(dep => id === dep || id.startsWith(dep + '/'));
+};
 
 const banner = [
     `/**`,
@@ -67,7 +82,7 @@ const plugins = [
     }),
     nodeResolve({
         browser: true,
-        extensions: ['.tsx', '.ts', '.jsx', '.js', '.json'],
+        extensions: ['.tsx', '.ts', '.jsx', '.js', '.json', '.css'],
         preferBuiltins: true,
     }),
     commonjs({ include: /node_modules/ }),
@@ -75,9 +90,15 @@ const plugins = [
     postcss({
         extract: false,
         minimize: true,
+        use: ['sass'],
+        import: true,
+        modules: false,
     }),
     // Add an inlined version of SVG files: https://www.smooth-code.com/open-source/svgr/docs/rollup/#using-with-url-plugin
     url({ limit: Infinity, include: ['**/*.svg'] }),
+    addDirective({ pattern: '**/components/*', directive: "'use client';" }),
+    addDirective({ pattern: '**/contexts/*', directive: "'use client';" }),
+    addDirective({ pattern: '**/widgets/*', directive: "'use client';" }),
     esbuild(),
     dynamicImportVars({
         errorWhenNoFilesFound: true,
@@ -88,7 +109,7 @@ const plugins = [
 export default [
     bundle({
         plugins,
-        external: dependencies,
+        external: makeExternal,
         output: [
             {
                 banner,
@@ -127,6 +148,8 @@ export default [
                 inlineDynamicImports: true,
                 globals: {
                     '@reachfive/identity-core': 'reach5',
+                    react: 'React',
+                    'react-dom': 'ReactDOM',
                 },
             },
             {
@@ -138,10 +161,18 @@ export default [
                 inlineDynamicImports: true,
                 globals: {
                     '@reachfive/identity-core': 'reach5',
+                    react: 'React',
+                    'react-dom': 'ReactDOM',
                 },
             },
         ],
         onwarn: onWarn,
+        onLog(level, log, handler) {
+            if (log.cause && log.cause.message === `Can't resolve original location of error.`) {
+                return;
+            }
+            handler(level, log);
+        },
     }),
     bundle({
         plugins: [dts()],
@@ -150,6 +181,12 @@ export default [
             file: packageJson.types,
             format: 'es',
         },
-        onwarn: onWarn,
+        onwarn: warning => {
+            // Ignore CSS import warnings for type definitions
+            if (warning.code === 'UNRESOLVED_IMPORT' && warning.exporter?.endsWith('.css')) {
+                return;
+            }
+            onWarn(warning);
+        },
     }),
 ];

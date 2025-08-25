@@ -1,43 +1,24 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment jest-fixed-jsdom
  */
+import { ComponentProps } from 'react';
 
 import { beforeEach, describe, expect, jest, test } from '@jest/globals';
 import '@testing-library/jest-dom/jest-globals';
-import { render, screen, waitFor } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import { Client, MFA } from '@reachfive/identity-core';
 
-import { I18nMessages } from '../../../src/core/i18n';
-import type { Config, OnError, OnSuccess } from '../../../src/types';
+import { I18nMessages } from '@/core/i18n';
+import MfaCredentialsWidget from '@/widgets/mfa/MfaCredentialsWidget';
 
-import mfaCredentialsWidget from '../../../src/widgets/mfa/MfaCredentialsWidget';
+import { componentGenerator, snapshotGenerator } from '../renderer';
 
-const defaultConfig: Config = {
-    clientId: 'local',
-    domain: 'local.reach5.net',
-    sso: false,
-    sms: false,
-    webAuthn: false,
-    language: 'fr',
-    pkceEnforced: false,
-    isPublic: true,
-    socialProviders: ['facebook', 'google'],
-    customFields: [],
-    resourceBaseUrl: 'http://localhost',
-    mfaSmsEnabled: true,
-    mfaEmailEnabled: true,
-    rbaEnabled: false,
-    consentsVersions: {},
-    passwordPolicy: {
-        minLength: 8,
-        minStrength: 2,
-        allowUpdateWithAccessTokenOnly: true,
-    },
-};
+import type { Config, OnError, OnSuccess } from '@/types';
 
 const defaultI18n: I18nMessages = {};
+
 const profile = {
     emailVerified: true,
     authTypes: [],
@@ -63,43 +44,30 @@ const profile = {
 };
 
 describe('Snapshot', () => {
-    const generateSnapshot =
-        (
-            options: Partial<Parameters<typeof mfaCredentialsWidget>[0]>,
-            config: Partial<Config> = {},
-            credentials: (MFA.EmailCredential | MFA.PhoneCredential)[]
-        ) =>
-        async () => {
-            // @ts-expect-error partial Client
-            const apiClient: Client = {
-                listMfaCredentials: jest
-                    .fn<Client['listMfaCredentials']>()
-                    .mockResolvedValue({ credentials }),
-                getUser: jest.fn<Client['getUser']>().mockResolvedValue(profile),
-            };
-
-            const widget = await mfaCredentialsWidget(
-                { accessToken: 'azerty', showIntro: true, ...options },
-                { apiClient, config: { ...defaultConfig, ...config }, defaultI18n }
-            );
-
-            await waitFor(async () => {
-                const { container, rerender } = await render(widget);
-
-                await waitFor(() => expect(apiClient.listMfaCredentials).toHaveBeenCalled());
-
-                rerender(widget);
-
-                expect(container).toMatchSnapshot();
-            });
+    const generateSnapshot = (
+        options: ComponentProps<typeof MfaCredentialsWidget>,
+        config: Partial<Config> = {},
+        credentials: (MFA.EmailCredential | MFA.PhoneCredential)[]
+    ) => {
+        // @ts-expect-error partial Client
+        const apiClient: Client = {
+            listMfaCredentials: jest
+                .fn<Client['listMfaCredentials']>()
+                .mockResolvedValue({ credentials }),
+            getUser: jest.fn<Client['getUser']>().mockResolvedValue(profile),
         };
 
+        const generate = snapshotGenerator(MfaCredentialsWidget, apiClient, defaultI18n);
+
+        return generate(options, config);
+    };
+
     describe('mfaCredentials', () => {
-        test('default', generateSnapshot({}, undefined, []));
+        test('default', generateSnapshot({ accessToken: 'azerty' }, {}, []));
 
         test(
             'no intro',
-            generateSnapshot({ showIntro: false }, undefined, [
+            generateSnapshot({ accessToken: 'azerty', showIntro: false }, {}, [
                 {
                     type: 'sms',
                     phoneNumber: '33612345678',
@@ -140,7 +108,7 @@ describe('DOM testing', () => {
     });
 
     const generateComponent = async (
-        options: Partial<Parameters<typeof mfaCredentialsWidget>[0]>,
+        options: ComponentProps<typeof MfaCredentialsWidget>,
         config: Partial<Config> = {},
         credentials: (MFA.EmailCredential | MFA.PhoneCredential)[]
     ) => {
@@ -157,29 +125,26 @@ describe('DOM testing', () => {
             verifyMfaPhoneNumberRegistration: verifyMfaEmailRegistration.mockResolvedValue(),
             getUser: getUser.mockResolvedValue(profile),
         };
-        const result = await mfaCredentialsWidget(
-            {
-                accessToken: 'azerty',
-                onError,
-                onSuccess,
-                ...options,
-            },
-            {
-                apiClient,
-                config: { ...defaultConfig, ...config },
-                defaultI18n,
-            }
-        );
-        return await waitFor(async () => render(result));
+
+        const generate = componentGenerator(MfaCredentialsWidget, apiClient, defaultI18n);
+
+        return await generate(options, config);
     };
 
     describe('mfaCredentials', () => {
         test('no credentials', async () => {
             await generateComponent(
-                { showIntro: true, showRemoveMfaCredentials: true },
-                defaultConfig,
+                {
+                    accessToken: 'azerty',
+                    showIntro: true,
+                    showRemoveMfaCredentials: true,
+                    onError,
+                    onSuccess,
+                },
+                {},
                 []
             );
+
             // Email intro
             expect(screen.queryByText('mfa.email.explain')).toBeInTheDocument();
 
@@ -203,8 +168,14 @@ describe('DOM testing', () => {
             const user = userEvent.setup();
 
             await generateComponent(
-                { showIntro: true, showRemoveMfaCredentials: true },
-                defaultConfig,
+                {
+                    accessToken: 'azerty',
+                    showIntro: true,
+                    showRemoveMfaCredentials: true,
+                    onError,
+                    onSuccess,
+                },
+                {},
                 []
             );
 
@@ -232,7 +203,7 @@ describe('DOM testing', () => {
             onSuccess.mockReset();
             onError.mockReset();
 
-            verifyMfaEmailRegistration.mockReset().mockRejectedValue(new Error('Invalid code'));
+            verifyMfaEmailRegistration.mockReset().mockRejectedValue('Invalid code');
 
             await user.click(screen.getByTestId('submit'));
 
@@ -256,8 +227,14 @@ describe('DOM testing', () => {
             const user = userEvent.setup();
 
             await generateComponent(
-                { showIntro: true, showRemoveMfaCredentials: true },
-                defaultConfig,
+                {
+                    accessToken: 'azerty',
+                    showIntro: true,
+                    showRemoveMfaCredentials: true,
+                    onError,
+                    onSuccess,
+                },
+                {},
                 []
             );
 
@@ -291,8 +268,15 @@ describe('DOM testing', () => {
 
         test('requireMfaRegistration', async () => {
             await generateComponent(
-                { showIntro: true, showRemoveMfaCredentials: true, requireMfaRegistration: true },
-                defaultConfig,
+                {
+                    accessToken: 'azerty',
+                    showIntro: true,
+                    showRemoveMfaCredentials: true,
+                    requireMfaRegistration: true,
+                    onError,
+                    onSuccess,
+                },
+                {},
                 []
             );
             // Email intro
@@ -316,8 +300,14 @@ describe('DOM testing', () => {
 
         test('only email credential', async () => {
             await generateComponent(
-                { showIntro: true, showRemoveMfaCredentials: true },
-                defaultConfig,
+                {
+                    accessToken: 'azerty',
+                    showIntro: true,
+                    showRemoveMfaCredentials: true,
+                    onError,
+                    onSuccess,
+                },
+                {},
                 [
                     {
                         type: 'email',
@@ -348,8 +338,14 @@ describe('DOM testing', () => {
 
         test('only sms credential', async () => {
             await generateComponent(
-                { showIntro: true, showRemoveMfaCredentials: true },
-                defaultConfig,
+                {
+                    accessToken: 'azerty',
+                    showIntro: true,
+                    showRemoveMfaCredentials: true,
+                    onError,
+                    onSuccess,
+                },
+                {},
                 [
                     {
                         type: 'sms',
@@ -380,8 +376,14 @@ describe('DOM testing', () => {
 
         test('all credentials', async () => {
             await generateComponent(
-                { showIntro: true, showRemoveMfaCredentials: true },
-                defaultConfig,
+                {
+                    accessToken: 'azerty',
+                    showIntro: true,
+                    showRemoveMfaCredentials: true,
+                    onError,
+                    onSuccess,
+                },
+                {},
                 [
                     {
                         type: 'sms',

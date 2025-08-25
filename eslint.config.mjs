@@ -1,5 +1,4 @@
 // @ts-check
-
 import eslint from "@eslint/js";
 import compat from "eslint-plugin-compat";
 import prettier from "eslint-plugin-prettier/recommended";
@@ -63,7 +62,7 @@ export default tseslint.config(
             ]
         },
         settings: {
-            polyfills: ["Promise", "fetch"],
+            polyfills: ["Promise", "fetch", "URLSearchParams"],
             react: {
                 version: "detect"
             }

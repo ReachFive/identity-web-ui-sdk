@@ -1,7 +1,14 @@
-import React, { AnchorHTMLAttributes, ComponentType, HTMLAttributes, MouseEvent } from 'react';
+import React, {
+    AnchorHTMLAttributes,
+    ComponentType,
+    CSSProperties,
+    HTMLAttributes,
+    MouseEvent,
+} from 'react';
 
 import { marked } from 'marked';
 import styled from 'styled-components';
+
 import { useRouting } from '../contexts/routing';
 
 export const Heading = styled.div`
@@ -23,6 +30,11 @@ export const Info = styled(TextBase)`
 
 export const ErrorText = styled(TextBase)`
     color: ${props => props.theme.dangerColor};
+`;
+
+export const Paragraph = styled.p<{ align?: CSSProperties['textAlign'] }>`
+    margin-bottom: ${props => props.theme.spacing}px;
+    text-align: ${props => props.align ?? 'start'};
 `;
 
 export const MutedText = styled.span`

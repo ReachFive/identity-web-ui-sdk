@@ -4,14 +4,13 @@ import styled from 'styled-components';
 
 import { ConsentType } from '@reachfive/identity-core';
 
-import { MarkdownContent } from '../../miscComponent';
-import { createField, type FieldComponentProps, type FieldDefinition } from '../fieldCreator';
-import { Checkbox } from '../formControlsComponent';
-
 import { DefaultPathMapping } from '../../../core/mapping';
 import { checked, empty, isValidatorError } from '../../../core/validation';
 import { snakeCasePath } from '../../../helpers/transformObjectProperties';
 import { isRichFormValue } from '../../../helpers/utils';
+import { MarkdownContent } from '../../miscComponent';
+import { createField, type FieldComponentProps, type FieldDefinition } from '../fieldCreator';
+import { Checkbox } from '../formControlsComponent';
 
 const Description = styled.div`
     font-size: ${props => props.theme.smallTextFontSize}px;

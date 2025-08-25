@@ -1,13 +1,11 @@
 import React from 'react';
 
-import { Validator } from '../../core/validation';
-
 import passwordField from '../../components/form/fields/passwordField';
 import simplePasswordField from '../../components/form/fields/simplePasswordField';
 import { createForm, FormContext } from '../../components/form/formComponent';
 import { createWidget } from '../../components/widget/widget';
-
 import { useReachfive } from '../../contexts/reachfive';
+import { Validator } from '../../core/validation';
 
 import type { OnError, OnSuccess } from '../../types';
 
@@ -103,7 +101,7 @@ const PasswordEditor = ({
     onSuccess = () => {},
     onError = () => {},
 }: PasswordEditorProps) => {
-    const coreClient = useReachfive();
+    const { client: coreClient } = useReachfive();
 
     const handleSubmit = ({ password, oldPassword }: PasswordEditorFormData) => {
         return coreClient.updatePassword({
