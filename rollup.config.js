@@ -181,7 +181,7 @@ export default [
             file: packageJson.types,
             format: 'es',
         },
-        onwarn: (warning, warn) => {
+        onwarn: warning => {
             // Ignore CSS import warnings for type definitions
             if (warning.code === 'UNRESOLVED_IMPORT' && warning.exporter?.endsWith('.css')) {
                 return;

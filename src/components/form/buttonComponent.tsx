@@ -68,9 +68,9 @@ export function DefaultButton({ children, ...props }: PropsWithChildren<DefaultB
     return (
         <Button
             {...props}
-            $background="#ffffff"
-            $border={theme.borderColor}
-            $color={theme.textColor}
+            $background={theme.backgroundColor}
+            $border={theme.primaryColor}
+            $color={theme.primaryColor}
         >
             {children}
         </Button>

@@ -14,9 +14,9 @@ exports[`Snapshot basic 1`] = `
   user-select: none;
   touch-action: manipulation;
   cursor: pointer;
-  color: #495057;
-  background-color: #ffffff;
-  border: 1px solid #ced4da;
+  color: #ffffff;
+  background-color: #229955;
+  border: 1px solid #229955;
   padding: 9px 12px;
   font-size: 14px;
   line-height: 1.428571429;
@@ -27,14 +27,13 @@ exports[`Snapshot basic 1`] = `
 
 .c7:focus {
   outline: 0;
-  box-shadow: 0 0 0 3px rgba(206,212,218,0.5);
+  box-shadow: 0 0 0 3px rgba(34,153,85,0.5);
 }
 
 .c7:hover,
 .c7:active {
-  color: #495057;
-  background-color: #ebebeb;
-  border-color: #b7c0c8;
+  background-color: #1b7842;
+  border-color: #1b7842;
 }
 
 .c7[disabled] {
@@ -138,7 +137,7 @@ exports[`Snapshot basic 1`] = `
   --spacing: 10;
   --font-generic: 14;
   --border-width: 1;
-  --radius: 3;
+  --border-radius: 3;
 }
 
 .c3 {
@@ -193,6 +192,7 @@ exports[`Snapshot basic 1`] = `
     >
       <button
         class="c7"
+        type="submit"
       >
         socialAccounts.linkNewAccount
       </button>

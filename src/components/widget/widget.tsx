@@ -35,7 +35,7 @@ export const themeVariables = css`
     --font-generic: ${props => props.theme.fontSize};
 
     --border-width: ${props => props.theme.borderWidth};
-    --radius: ${props => props.theme.borderRadius};
+    --border-radius: ${props => props.theme.borderRadius};
 `;
 
 export const ThemeVariablesContainer = styled.div`
