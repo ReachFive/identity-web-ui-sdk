@@ -20,7 +20,7 @@ export { default as ProfileEditor } from './widgets/profileEditor/profileEditorW
 export { default as SocialAccounts } from './widgets/socialAccounts/socialAccountsWidget';
 export { default as SocialLogin } from './widgets/socialLogin/socialLoginWidget';
 export { default as MfaStepUp } from './widgets/stepUp/mfaStepUpWidget';
-export { default as WebAuthn } from './widgets/webAuthn/webAuthnDevicesWidget';
+export { default as WebAuthnDevices } from './widgets/webAuthn/webAuthnDevicesWidget';
 
 export type Client = {
     core: CoreClient;
