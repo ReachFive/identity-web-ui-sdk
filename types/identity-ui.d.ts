@@ -1,6 +1,6 @@
 /**
- * @reachfive/identity-ui - v1.35.0
- * Compiled Thu, 10 Jul 2025 11:59:04 UTC
+ * @reachfive/identity-ui - v1.37.0-develop
+ * Compiled Mon, 08 Sep 2025 08:35:25 UTC
  *
  * Copyright (c) ReachFive.
  *
@@ -29,6 +29,7 @@ interface AbstractEvent {
 interface SignupEvent extends AbstractEvent {
     readonly name: 'signup'
     readonly authResult: AuthResult
+    readonly isIdentifierVerificationRequired: boolean
 }
 
 /** Emitted after a successful authentication. */
@@ -855,6 +856,7 @@ interface MainViewProps$5 {
 }
 type FaSelectionViewState = MFA.StepUpResponse & {
     allowTrustDevice?: boolean;
+    auth?: AuthOptions;
 };
 type FaSelectionViewProps = Prettify<Partial<MFA.StepUpResponse> & {
     showIntro?: boolean;
@@ -1094,7 +1096,7 @@ type LoginViewProps = {
      */
     action?: string;
 };
-declare const LoginView: ({ acceptTos, allowForgotPassword, allowSignup, allowWebAuthnLogin, allowAccountRecovery, auth, canShowPassword, socialProviders, allowCustomIdentifier, showLabels, showRememberMe, recaptcha_enabled, recaptcha_site_key, captchaFoxEnabled, captchaFoxSiteKey, captchaFoxMode, allowAuthentMailPhone, allowTrustDevice, onError, onSuccess, }: WithCaptchaProps<LoginViewProps>) => React__default.JSX.Element;
+declare const LoginView: ({ acceptTos, allowForgotPassword, allowSignup, allowWebAuthnLogin, allowAccountRecovery, auth, canShowPassword, socialProviders, allowCustomIdentifier, showLabels, showRememberMe, recaptcha_enabled, recaptcha_site_key, captchaFoxEnabled, captchaFoxSiteKey, captchaFoxMode, allowAuthentMailPhone, allowTrustDevice, action, onError, onSuccess, }: WithCaptchaProps<LoginViewProps>) => React__default.JSX.Element;
 
 interface LoginWithPasswordViewProps {
     allowForgotPassword?: boolean;
@@ -1117,7 +1119,7 @@ interface LoginWithPasswordViewProps {
      */
     action?: string;
 }
-declare const LoginWithPasswordView: ({ allowForgotPassword, allowAccountRecovery, auth, canShowPassword, recaptcha_enabled, recaptcha_site_key, captchaFoxEnabled, captchaFoxSiteKey, captchaFoxMode, showLabels, showRememberMe, allowTrustDevice, onError, onSuccess, }: WithCaptchaProps<LoginWithPasswordViewProps>) => React__default.JSX.Element;
+declare const LoginWithPasswordView: ({ allowForgotPassword, allowAccountRecovery, auth, canShowPassword, recaptcha_enabled, recaptcha_site_key, captchaFoxEnabled, captchaFoxSiteKey, captchaFoxMode, showLabels, showRememberMe, allowTrustDevice, action, onError, onSuccess, }: WithCaptchaProps<LoginWithPasswordViewProps>) => React__default.JSX.Element;
 
 interface LoginWithWebAuthnViewProps {
     /**
@@ -1225,7 +1227,7 @@ interface ReauthViewProps {
      */
     action?: string;
 }
-declare const ReauthView: ({ allowForgotPassword, auth, session, showLabels, socialProviders, onError, onSuccess, }: PropsWithSession<ReauthViewProps>) => React__default.JSX.Element | null;
+declare const ReauthView: ({ allowForgotPassword, auth, session, showLabels, socialProviders, action, onError, onSuccess, }: PropsWithSession<ReauthViewProps>) => React__default.JSX.Element | null;
 
 interface PasswordSignupFormProps {
     auth?: AuthOptions;

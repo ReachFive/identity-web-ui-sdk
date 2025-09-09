@@ -125,7 +125,12 @@ export const SignupWithWebAuthnView = ({
                 showLabels={showLabels}
                 beforeSubmit={beforeSignup}
                 handler={handleSignup}
-                onSuccess={authResult => onSuccess({ name: 'signup', authResult })}
+                onSuccess={authResult => {
+                    if(authResult != undefined && authResult.accessToken == undefined && authResult.code == undefined) {
+                        onSuccess({ name: 'signup', authResult, isIdentifierVerificationRequired: true });
+                    }
+                    onSuccess({ name: 'signup', authResult, isIdentifierVerificationRequired: false });
+                }}
                 onError={onError}
             />
             <Alternative>
