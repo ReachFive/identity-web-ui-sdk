@@ -1,48 +1,28 @@
-import { AuthOptions, LoginWithPasswordParams } from '@reachfive/identity-core';
 import React, { useLayoutEffect } from 'react';
-import styled from 'styled-components';
 
-import { Alternative, Heading, Link, Separator } from '../../../components/miscComponent';
-
-import checkboxField from '../../../components/form/fields/checkboxField';
-import identifierField from '../../../components/form/fields/identifierField';
-import { simpleField } from '../../../components/form/fields/simpleField';
-import simplePasswordField from '../../../components/form/fields/simplePasswordField';
-import { createForm } from '../../../components/form/formComponent';
-import { SocialButtons } from '../../../components/form/socialButtonsComponent';
-import { importGoogleRecaptchaScript } from '../../../components/reCaptcha';
+import { AuthOptions, LoginWithPasswordParams } from '@reachfive/identity-core';
 
 import {
     CaptchaProvider,
     WithCaptchaProps,
     type WithCaptchaToken,
 } from '../../../components/captcha';
-
-import { FaSelectionViewState } from '../../stepUp/mfaStepUpWidget';
-
+import checkboxField from '../../../components/form/fields/checkboxField';
+import identifierField from '../../../components/form/fields/identifierField';
+import { simpleField } from '../../../components/form/fields/simpleField';
+import simplePasswordField from '../../../components/form/fields/simplePasswordField';
+import { createForm } from '../../../components/form/formComponent';
+import { SocialButtons } from '../../../components/form/socialButtonsComponent';
+import { Alternative, Heading, Link, Separator } from '../../../components/miscComponent';
+import { importGoogleRecaptchaScript } from '../../../components/reCaptcha';
 import { useI18n } from '../../../contexts/i18n';
 import { useReachfive } from '../../../contexts/reachfive';
 import { useRouting } from '../../../contexts/routing';
 import { useSession } from '../../../contexts/session';
-
 import { enrichLoginEvent, specializeIdentifierData } from '../../../helpers/utils';
+import { FaSelectionViewState } from '../../stepUp/mfaStepUpWidget';
 
 import type { OnError, OnSuccess } from '../../../types';
-
-type Floating = { floating?: boolean };
-
-const ResetCredentialWrapper = styled.div.withConfig({
-    shouldForwardProp: prop => !['floating'].includes(prop),
-})<Floating>`
-    margin-bottom: ${props => props.theme.spacing}px;
-    text-align: right;
-    ${props =>
-        props.floating &&
-        `
-        position: absolute;
-        right: 0;
-    `};
-`;
 
 export type LoginFormData =
     | {
@@ -62,7 +42,6 @@ export interface LoginFormOptions {
     enablePasswordAuthentication?: boolean;
     showEmail?: boolean;
     showForgotPassword?: boolean;
-    showAccountRecovery?: boolean;
     showIdentifier?: boolean;
     showRememberMe?: boolean;
 }
@@ -72,13 +51,10 @@ export const LoginForm = createForm<LoginFormData, LoginFormOptions>({
     fields({
         allowCustomIdentifier,
         allowAuthentMailPhone = true,
-        enablePasswordAuthentication = true,
         canShowPassword,
         defaultIdentifier,
         showIdentifier = true,
         showRememberMe,
-        showForgotPassword,
-        showAccountRecovery = false,
         i18n,
         config,
     }) {
@@ -120,38 +96,6 @@ export const LoginForm = createForm<LoginFormData, LoginFormOptions>({
                 autoComplete: 'current-password',
                 canShowPassword,
             }),
-            ...(enablePasswordAuthentication && showForgotPassword && !showAccountRecovery
-                ? [
-                      {
-                          staticContent: (
-                              <ResetCredentialWrapper
-                                  key="forgot-password"
-                                  floating={showRememberMe}
-                              >
-                                  <Link target="forgot-password">
-                                      {i18n('login.forgotPasswordLink')}
-                                  </Link>
-                              </ResetCredentialWrapper>
-                          ),
-                      },
-                  ]
-                : []),
-            ...(showAccountRecovery
-                ? [
-                      {
-                          staticContent: (
-                              <ResetCredentialWrapper
-                                  key="account-recovery"
-                                  floating={showRememberMe}
-                              >
-                                  <Link target="account-recovery">
-                                      {i18n('accountRecovery.title')}
-                                  </Link>
-                              </ResetCredentialWrapper>
-                          ),
-                      },
-                  ]
-                : []),
             ...(showRememberMe
                 ? [
                       checkboxField({
@@ -362,7 +306,6 @@ export const LoginView = ({
                     showLabels={showLabels}
                     showRememberMe={showRememberMe}
                     showForgotPassword={allowForgotPassword}
-                    showAccountRecovery={allowAccountRecovery}
                     canShowPassword={canShowPassword}
                     defaultIdentifier={defaultIdentifier}
                     allowCustomIdentifier={allowCustomIdentifier}
@@ -374,6 +317,16 @@ export const LoginView = ({
                     onError={onError}
                 />
             </CaptchaProvider>
+            {allowForgotPassword && !allowAccountRecovery && (
+                <Alternative>
+                    <Link target="forgot-password">{i18n('login.forgotPasswordLink')}</Link>
+                </Alternative>
+            )}
+            {allowAccountRecovery && (
+                <Alternative>
+                    <Link target="account-recovery">{i18n('accountRecovery.title')}</Link>
+                </Alternative>
+            )}
             {allowSignup && (
                 <Alternative>
                     <span>{i18n('login.signupLinkPrefix')}</span>
