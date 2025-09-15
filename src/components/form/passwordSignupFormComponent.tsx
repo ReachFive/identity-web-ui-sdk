@@ -144,7 +144,14 @@ export const PasswordSignupForm = ({
                     ...phoneNumberOptions,
                 }}
                 handler={callback}
-                onSuccess={authResult => onSuccess({ name: 'signup', authResult, isIdentifierVerificationRequired: authResult?.accessToken == undefined && authResult?.code == undefined })}
+                onSuccess={authResult =>
+                    onSuccess({
+                        name: 'signup',
+                        authResult,
+                        isIdentifierVerificationRequired:
+                            authResult?.accessToken == undefined && authResult?.code == undefined,
+                    })
+                }
                 onError={onError}
             />
         </CaptchaProvider>
