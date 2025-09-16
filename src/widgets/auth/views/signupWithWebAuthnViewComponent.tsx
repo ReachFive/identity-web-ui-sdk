@@ -130,7 +130,9 @@ export const SignupWithWebAuthnView = ({
                         name: 'signup',
                         authResult,
                         isIdentifierVerificationRequired:
-                            authResult != undefined && authResult.accessToken == undefined && authResult?.code == undefined,
+                            authResult != undefined &&
+                            authResult.accessToken == undefined &&
+                            authResult?.code == undefined,
                     })
                 }
                 onError={onError}
