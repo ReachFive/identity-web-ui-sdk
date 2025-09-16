@@ -149,7 +149,7 @@ export const PasswordSignupForm = ({
                         name: 'signup',
                         authResult,
                         isIdentifierVerificationRequired:
-                            authResult?.accessToken == undefined && authResult?.code == undefined,
+                            authResult != undefined && authResult.accessToken == undefined && authResult?.code == undefined,
                     })
                 }
                 onError={onError}
