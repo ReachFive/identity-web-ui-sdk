@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import PasswordSignupForm, {
     type PasswordSignupFormProps,
@@ -10,10 +10,21 @@ export interface SignupWithPasswordViewProps extends PasswordSignupFormProps {}
 
 export const SignupWithPasswordView = (props: SignupWithPasswordViewProps) => {
     const i18n = useI18n();
+    const [isAwaitingIdentifierVerification, setIsAwaitingIdentifierVerification] =
+        useState<boolean>(false);
     return (
         <div>
-            <Heading>{i18n('signup.withPassword')}</Heading>
-            <PasswordSignupForm {...props} />
+            {isAwaitingIdentifierVerification ? (
+                <div className="success">{i18n('signup.awaiting.identifier.verification')}</div>
+            ) : (
+                <Heading>{i18n('signup.withPassword')}</Heading>
+            )}
+            {!isAwaitingIdentifierVerification && (
+                <PasswordSignupForm
+                    {...props}
+                    setIsAwaitingIdentifierVerification={setIsAwaitingIdentifierVerification}
+                />
+            )}
             <Alternative>
                 <Link target={'signup'}>{i18n('back')}</Link>
             </Alternative>

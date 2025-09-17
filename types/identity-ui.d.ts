@@ -1,6 +1,6 @@
 /**
  * @reachfive/identity-ui - v1.37.0-develop
- * Compiled Mon, 08 Sep 2025 08:35:25 UTC
+ * Compiled Wed, 17 Sep 2025 08:12:49 UTC
  *
  * Copyright (c) ReachFive.
  *
@@ -1247,6 +1247,7 @@ interface PasswordSignupFormProps {
      * Callback function called when the request has failed.
      */
     onError?: OnError;
+    setIsAwaitingIdentifierVerification: React__default.Dispatch<React__default.SetStateAction<boolean>>;
 }
 
 interface SignupWithPasswordViewProps extends PasswordSignupFormProps {

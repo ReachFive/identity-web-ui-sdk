@@ -43,6 +43,7 @@ export interface PasswordSignupFormProps {
      * Callback function called when the request has failed.
      */
     onError?: OnError;
+    setIsAwaitingIdentifierVerification: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export const PasswordSignupForm = ({
@@ -62,6 +63,7 @@ export const PasswordSignupForm = ({
     userAgreement,
     onError = (() => {}) as OnError,
     onSuccess = (() => {}) satisfies OnSuccess,
+    setIsAwaitingIdentifierVerification,
 }: WithCaptchaProps<PasswordSignupFormProps>) => {
     const coreClient = useReachfive();
     const config = useConfig();
@@ -144,7 +146,12 @@ export const PasswordSignupForm = ({
                     ...phoneNumberOptions,
                 }}
                 handler={callback}
-                onSuccess={authResult =>
+                onSuccess={authResult => {
+                    setIsAwaitingIdentifierVerification(
+                        authResult != undefined &&
+                            authResult.accessToken == undefined &&
+                            authResult?.code == undefined
+                    );
                     onSuccess({
                         name: 'signup',
                         authResult,
@@ -152,8 +159,8 @@ export const PasswordSignupForm = ({
                             authResult != undefined &&
                             authResult.accessToken == undefined &&
                             authResult?.code == undefined,
-                    })
-                }
+                    });
+                }}
                 onError={onError}
             />
         </CaptchaProvider>
