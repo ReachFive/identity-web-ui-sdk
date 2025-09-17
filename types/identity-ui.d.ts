@@ -1247,7 +1247,7 @@ interface PasswordSignupFormProps {
      * Callback function called when the request has failed.
      */
     onError?: OnError;
-    setIsAwaitingIdentifierVerification: React__default.Dispatch<React__default.SetStateAction<boolean>>;
+    setIsAwaitingIdentifierVerification?: React__default.Dispatch<React__default.SetStateAction<boolean>>;
 }
 
 interface SignupWithPasswordViewProps extends PasswordSignupFormProps {

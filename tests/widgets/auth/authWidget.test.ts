@@ -256,7 +256,7 @@ describe('Snapshot', () => {
         );
 
         test(
-            'login new view with integradted webauthn and password',
+            'login new view with integrated webauthn and password',
             generateSnapshot(
                 {
                     allowWebAuthnLogin: true,

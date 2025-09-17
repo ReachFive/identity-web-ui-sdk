@@ -43,7 +43,7 @@ export interface PasswordSignupFormProps {
      * Callback function called when the request has failed.
      */
     onError?: OnError;
-    setIsAwaitingIdentifierVerification: React.Dispatch<React.SetStateAction<boolean>>;
+    setIsAwaitingIdentifierVerification?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export const PasswordSignupForm = ({
@@ -63,7 +63,7 @@ export const PasswordSignupForm = ({
     userAgreement,
     onError = (() => {}) as OnError,
     onSuccess = (() => {}) satisfies OnSuccess,
-    setIsAwaitingIdentifierVerification,
+    setIsAwaitingIdentifierVerification = (() => {}),
 }: WithCaptchaProps<PasswordSignupFormProps>) => {
     const coreClient = useReachfive();
     const config = useConfig();
