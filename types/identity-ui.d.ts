@@ -1251,7 +1251,7 @@ interface PasswordSignupFormProps {
 
 interface SignupWithPasswordViewProps extends PasswordSignupFormProps {
 }
-declare const SignupWithPasswordView: (props: SignupWithPasswordViewProps) => React__default.JSX.Element;
+declare const SignupWithPasswordView: ({ onSuccess, ...props }: SignupWithPasswordViewProps) => React__default.JSX.Element;
 
 interface SignupWithWebAuthnViewProps {
     /**

@@ -10,11 +10,13 @@ import { useI18n } from '../../../contexts/i18n';
 
 export interface SignupWithPasswordViewProps extends PasswordSignupFormProps {}
 
-export const SignupWithPasswordView = (props: SignupWithPasswordViewProps) => {
+export const SignupWithPasswordView = ({
+    onSuccess = (() => {}) satisfies OnSuccess,
+    ...props
+}: SignupWithPasswordViewProps) => {
     const i18n = useI18n();
     const [isAwaitingIdentifierVerification, setIsAwaitingIdentifierVerification] =
         useState<boolean>(false);
-    const { onSuccess = (() => {}) satisfies OnSuccess } = props;
     const enrichedOnSuccess = (evt: SignupEvent) => {
         setIsAwaitingIdentifierVerification(evt.isIdentifierVerificationRequired);
         onSuccess(evt);
