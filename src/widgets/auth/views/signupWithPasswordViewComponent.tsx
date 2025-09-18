@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 
+import type { OnSuccess } from '@/types';
+import { SignupEvent } from '@/types/events';
 import PasswordSignupForm, {
     type PasswordSignupFormProps,
 } from '../../../components/form/passwordSignupFormComponent';
@@ -12,18 +14,20 @@ export const SignupWithPasswordView = (props: SignupWithPasswordViewProps) => {
     const i18n = useI18n();
     const [isAwaitingIdentifierVerification, setIsAwaitingIdentifierVerification] =
         useState<boolean>(false);
+    const { onSuccess = (() => {}) satisfies OnSuccess } = props;
+    const enrichedOnSuccess = (evt: SignupEvent) => {
+        setIsAwaitingIdentifierVerification(evt.isIdentifierVerificationRequired);
+        onSuccess(evt);
+    };
     return (
         <div>
             {isAwaitingIdentifierVerification ? (
                 <div className="success">{i18n('signup.awaiting.identifier.verification')}</div>
             ) : (
-                <Heading>{i18n('signup.withPassword')}</Heading>
-            )}
-            {!isAwaitingIdentifierVerification && (
-                <PasswordSignupForm
-                    {...props}
-                    setIsAwaitingIdentifierVerification={setIsAwaitingIdentifierVerification}
-                />
+                <div>
+                    <Heading>{i18n('signup.withPassword')}</Heading>
+                    <PasswordSignupForm {...props} onSuccess={enrichedOnSuccess as OnSuccess} />
+                </div>
             )}
             <Alternative>
                 <Link target={'signup'}>{i18n('back')}</Link>

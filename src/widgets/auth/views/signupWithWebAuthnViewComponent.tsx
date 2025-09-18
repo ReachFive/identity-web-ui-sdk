@@ -132,18 +132,15 @@ export const SignupWithWebAuthnView = ({
                         beforeSubmit={beforeSignup}
                         handler={handleSignup}
                         onSuccess={authResult => {
-                            setIsAwaitingIdentifierVerification(
+                            const isIdentifierVerificationRequired =
                                 authResult != undefined &&
-                                    authResult.accessToken == undefined &&
-                                    authResult?.code == undefined
-                            );
+                                authResult.accessToken == undefined &&
+                                authResult?.code == undefined;
+                            setIsAwaitingIdentifierVerification(isIdentifierVerificationRequired);
                             onSuccess({
                                 name: 'signup',
                                 authResult,
-                                isIdentifierVerificationRequired:
-                                    authResult != undefined &&
-                                    authResult.accessToken == undefined &&
-                                    authResult?.code == undefined,
+                                isIdentifierVerificationRequired,
                             });
                         }}
                         onError={onError}
