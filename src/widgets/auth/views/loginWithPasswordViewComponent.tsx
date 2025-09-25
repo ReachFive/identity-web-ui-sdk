@@ -1,37 +1,22 @@
-import { type AuthOptions } from '@reachfive/identity-core';
-import { LoginWithPasswordParams } from '@reachfive/identity-core/es/main/oAuthClient';
 import React, { useLayoutEffect } from 'react';
 
-import styled from 'styled-components';
-
-import { Alternative, Heading, Link } from '../../../components/miscComponent';
+import { type AuthOptions } from '@reachfive/identity-core';
+import { LoginWithPasswordParams } from '@reachfive/identity-core/es/main/oAuthClient';
 
 import { CaptchaProvider, WithCaptchaProps, WithCaptchaToken } from '../../../components/captcha';
 import checkboxField from '../../../components/form/fields/checkboxField';
 import identifierField from '../../../components/form/fields/identifierField';
 import simplePasswordField from '../../../components/form/fields/simplePasswordField';
 import { createForm } from '../../../components/form/formComponent';
+import { Alternative, Heading, Link } from '../../../components/miscComponent';
 import { importGoogleRecaptchaScript } from '../../../components/reCaptcha';
-
 import { useI18n } from '../../../contexts/i18n';
 import { useReachfive } from '../../../contexts/reachfive';
 import { useRouting } from '../../../contexts/routing';
-
 import { enrichLoginEvent, specializeIdentifierData } from '../../../helpers/utils';
 import { FaSelectionViewState } from '../../stepUp/mfaStepUpWidget';
 
 import type { OnError, OnSuccess } from '../../../types';
-
-const ResetCredentialWrapper = styled.div<{ floating?: boolean }>`
-    margin-bottom: ${props => props.theme.spacing}px;
-    text-align: right;
-    ${props =>
-        props.floating &&
-        `
-        position: absolute;
-        right: 0;
-    `};
-`;
 
 type LoginWithPasswordFormData = {
     identifier: string;
@@ -41,8 +26,6 @@ type LoginWithPasswordFormData = {
 interface LoginWithPasswordFormProps {
     canShowPassword?: boolean;
     showRememberMe?: boolean;
-    showForgotPassword: boolean;
-    showAccountRecovery?: boolean;
     username?: string;
 }
 
@@ -51,15 +34,7 @@ export const LoginWithPasswordForm = createForm<
     LoginWithPasswordFormProps
 >({
     prefix: 'r5-login-',
-    fields({
-        username,
-        showRememberMe,
-        canShowPassword,
-        showForgotPassword,
-        showAccountRecovery,
-        i18n,
-        config,
-    }) {
+    fields({ username, showRememberMe, canShowPassword, config }) {
         return [
             identifierField(
                 {
@@ -76,38 +51,6 @@ export const LoginWithPasswordForm = createForm<
                 autoComplete: 'current-password',
                 canShowPassword,
             }),
-            ...(showForgotPassword && !showAccountRecovery
-                ? [
-                      {
-                          staticContent: (
-                              <ResetCredentialWrapper
-                                  key="forgot-password"
-                                  floating={showRememberMe}
-                              >
-                                  <Link target="forgot-password">
-                                      {i18n('login.forgotPasswordLink')}
-                                  </Link>
-                              </ResetCredentialWrapper>
-                          ),
-                      },
-                  ]
-                : []),
-            ...(showAccountRecovery
-                ? [
-                      {
-                          staticContent: (
-                              <ResetCredentialWrapper
-                                  key="account-recovery"
-                                  floating={showRememberMe}
-                              >
-                                  <Link target="account-recovery">
-                                      {i18n('accountRecovery.title')}
-                                  </Link>
-                              </ResetCredentialWrapper>
-                          ),
-                      },
-                  ]
-                : []),
             ...(showRememberMe
                 ? [
                       checkboxField({
@@ -214,13 +157,21 @@ export const LoginWithPasswordView = ({
                 username={username}
                 showLabels={showLabels}
                 showRememberMe={showRememberMe}
-                showForgotPassword={allowForgotPassword}
-                showAccountRecovery={allowAccountRecovery}
                 canShowPassword={canShowPassword}
                 handler={callback}
                 onSuccess={res => onSuccess({ name: 'login', ...res })}
                 onError={onError}
             />
+            {allowForgotPassword && !allowAccountRecovery && (
+                <Alternative>
+                    <Link target="forgot-password">{i18n('login.forgotPasswordLink')}</Link>
+                </Alternative>
+            )}
+            {allowAccountRecovery && (
+                <Alternative>
+                    <Link target="account-recovery">{i18n('accountRecovery.title')}</Link>
+                </Alternative>
+            )}
             <Alternative>
                 <Link target="login-with-web-authn">
                     {i18n('login.password.userAnotherIdentifier')}
