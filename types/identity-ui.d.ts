@@ -1,6 +1,6 @@
 /**
- * @reachfive/identity-ui - v1.37.0-develop
- * Compiled Thu, 18 Sep 2025 08:30:08 UTC
+ * @reachfive/identity-ui - v1.37.0
+ * Compiled Tue, 07 Oct 2025 08:48:20 UTC
  *
  * Copyright (c) ReachFive.
  *
@@ -13,8 +13,8 @@ export { Config } from '@reachfive/identity-core';
 import * as React from 'react';
 import React__default, { CSSProperties, ComponentType, ComponentProps } from 'react';
 import { StepUpPasswordlessParams as StepUpPasswordlessParams$1 } from '@reachfive/identity-core/es/main/oAuthClient';
-import { Country, Value as Value$2 } from 'react-phone-number-input';
 import { WidgetDisplayMode } from '@captchafox/types';
+import { Country, Value as Value$2 } from 'react-phone-number-input';
 import * as libphonenumber_js from 'libphonenumber-js';
 
 type IdentifierType = 'email' | 'phone_number' | 'custom_identifier'
@@ -992,6 +992,10 @@ interface ForgotPasswordViewProps {
      */
     returnToAfterPasswordReset?: string;
     /**
+     * The origin of the request.
+     */
+    origin?: string;
+    /**
      * Callback function called when the request has succeed.
      */
     onSuccess?: OnSuccess;
@@ -1000,7 +1004,7 @@ interface ForgotPasswordViewProps {
      */
     onError?: OnError;
 }
-declare const ForgotPasswordView: ({ allowLogin, allowPhoneNumberResetPassword, displaySafeErrorMessage, showLabels, allowWebAuthnLogin, initialScreen, recaptcha_enabled, recaptcha_site_key, captchaFoxEnabled, captchaFoxMode, captchaFoxSiteKey, redirectUrl, returnToAfterPasswordReset, onError, onSuccess, }: WithCaptchaProps<ForgotPasswordViewProps>) => React__default.JSX.Element;
+declare const ForgotPasswordView: ({ allowLogin, allowPhoneNumberResetPassword, displaySafeErrorMessage, showLabels, allowWebAuthnLogin, initialScreen, recaptcha_enabled, recaptcha_site_key, captchaFoxEnabled, captchaFoxMode, captchaFoxSiteKey, origin, redirectUrl, returnToAfterPasswordReset, onError, onSuccess, }: WithCaptchaProps<ForgotPasswordViewProps>) => React__default.JSX.Element;
 
 type LoginViewProps = {
     /**
@@ -1230,14 +1234,48 @@ interface ReauthViewProps {
 declare const ReauthView: ({ allowForgotPassword, auth, session, showLabels, socialProviders, action, onError, onSuccess, }: PropsWithSession<ReauthViewProps>) => React__default.JSX.Element | null;
 
 interface PasswordSignupFormProps {
+    /**
+     * List of authentication options
+     */
     auth?: AuthOptions;
+    /**
+     * A function that is called before the signup request is made.
+     */
     beforeSignup?: <T>(param: T) => T;
+    /**
+     * Whether or not to provide the display password in clear text option.
+     * @default false
+     */
     canShowPassword?: boolean;
+    /**
+     * Object that lets you set display options for the phone number field.
+     */
     phoneNumberOptions?: PhoneNumberOptions;
+    /**
+     * The URL sent in the email to which the user is redirected. This URL must be whitelisted in the `Allowed Callback URLs` field of your ReachFive client settings.
+     */
     redirectUrl?: string;
+    /**
+     * Returned in the `redirectUrl` as a query parameter, this parameter is used as the post-email confirmation URL.
+     */
     returnToAfterEmailConfirmation?: string;
+    /**
+     * Boolean for whether the signup form fields' labels are displayed on the login view.
+     * @default false
+     * If set to `true`, the labels are shown which includes an asterisk (*) next to required fields.
+     */
     showLabels?: boolean;
+    /**
+     * List of the signup fields to display in the form.
+     *
+     * A field is either a string representing the field’s key (predefined, custom field, or consent) or an object with attributes overriding the default field configuration.
+     *
+     * @default ['given_name', 'family_name', 'email', 'password', 'password_confirmation']
+     */
     signupFields?: (string | Field)[];
+    /**
+     * The user agreement text to display in the form.
+     */
     userAgreement?: string;
     /**
      * Callback function called when the request has succeed.
@@ -1279,14 +1317,19 @@ interface SignupWithWebAuthnViewProps {
     /**
      * List of the signup fields to display in the form.
      *
-     * You can pass a field as an object to override default values :
+     * A field is either a string representing the field’s key (predefined, custom field, or consent) or an object with attributes overriding the default field configuration.
+     *
+     * @default ['given_name', 'family_name', 'email']
      *
      * @example
-     * {
-     *   "key": "family_name",
-     *   "defaultValue": "Moreau",
-     *   "required": true
-     * }
+     * [
+     *   "email",
+     *   {
+     *     "key": "family_name",
+     *     "defaultValue": "Moreau",
+     *     "required": true
+     *   }
+     * ]
      */
     signupFields?: (string | Field)[];
     /**  */

@@ -1,20 +1,20 @@
-import type { Client as CoreClient, SessionInfo } from '@reachfive/identity-core';
 import React, { ComponentType } from 'react';
+
 import styled, { StyleSheetManager, ThemeProvider, css } from 'styled-components';
 
-import type { I18nMessages, I18nNestedMessages } from '../../core/i18n';
-import type { Config, Prettify } from '../../types';
+import type { Client as CoreClient, SessionInfo } from '@reachfive/identity-core';
 
 import { ConfigProvider } from '../../contexts/config';
 import { I18nProvider } from '../../contexts/i18n';
 import { ReachfiveProvider } from '../../contexts/reachfive';
 import { RoutingProvider } from '../../contexts/routing';
 import { SessionProvider } from '../../contexts/session';
-
 import { buildTheme } from '../../core/theme';
 import { Theme, ThemeOptions } from '../../types/styled';
-
 import WidgetContainer, { WidgetContainerProps } from './widgetContainerComponent';
+
+import type { I18nMessages, I18nNestedMessages } from '../../core/i18n';
+import type { Config, Prettify } from '../../types';
 
 export type I18nProps = { i18n?: I18nNestedMessages };
 export type ThemeProps = { theme?: ThemeOptions };

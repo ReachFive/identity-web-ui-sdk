@@ -1,24 +1,22 @@
-import type { AuthOptions, LoginWithWebAuthnParams } from '@reachfive/identity-core';
 import React, { useCallback } from 'react';
-import styled from 'styled-components';
+
+import type { AuthOptions, LoginWithWebAuthnParams } from '@reachfive/identity-core';
 
 import identifierField from '../../../components/form/fields/identifierField';
 import { createForm } from '../../../components/form/formComponent';
 import { SocialButtons } from '../../../components/form/socialButtonsComponent';
 import { WebAuthnLoginViewButtons } from '../../../components/form/webAuthAndPasswordButtonsComponent';
 import { Alternative, Heading, Link, Separator } from '../../../components/miscComponent';
-import { LoginWithPasswordViewState } from './loginWithPasswordViewComponent';
-
 import { useI18n } from '../../../contexts/i18n';
 import { useReachfive } from '../../../contexts/reachfive';
 import { useRouting } from '../../../contexts/routing';
 import { useSession } from '../../../contexts/session';
-
 import {
     enrichLoginEvent,
     isCustomIdentifier,
     specializeIdentifierData,
 } from '../../../helpers/utils';
+import { LoginWithPasswordViewState } from './loginWithPasswordViewComponent';
 
 import type { OnError, OnSuccess } from '../../../types';
 
@@ -27,31 +25,14 @@ type LoginWithWebAuthnFormData = { identifier: string } | { email: string };
 type LoginWithWebAuthnFormProps = {
     defaultIdentifier?: string;
     showIdentifier?: boolean;
-    showAccountRecovery?: boolean;
 };
-
-const ResetCredentialWrapper = styled.div<{ floating?: boolean }>`
-    margin-bottom: ${props => props.theme.spacing}px;
-    text-align: right;
-    ${props =>
-        props.floating &&
-        `
-        right: 0;
-    `};
-`;
 
 export const LoginWithWebAuthnForm = createForm<
     LoginWithWebAuthnFormData,
     LoginWithWebAuthnFormProps
 >({
     prefix: 'r5-login-',
-    fields({
-        showIdentifier = true,
-        defaultIdentifier,
-        config,
-        showAccountRecovery = false,
-        i18n,
-    }) {
+    fields({ showIdentifier = true, defaultIdentifier, config }) {
         return [
             identifierField(
                 {
@@ -62,19 +43,6 @@ export const LoginWithWebAuthnForm = createForm<
                 },
                 config
             ),
-            ...(showAccountRecovery
-                ? [
-                      {
-                          staticContent: (
-                              <ResetCredentialWrapper key="account-recovery" floating={true}>
-                                  <Link target="account-recovery">
-                                      {i18n('accountRecovery.title')}
-                                  </Link>
-                              </ResetCredentialWrapper>
-                          ),
-                      },
-                  ]
-                : []),
         ];
     },
 });
@@ -210,7 +178,6 @@ export const LoginWithWebAuthnView = ({
                 handler={handleWebAuthnLogin}
                 onSuccess={res => onSuccess({ name: 'login', ...res })}
                 onError={onError}
-                showAccountRecovery={allowAccountRecovery}
                 SubmitComponent={({ disabled, onClick }) => (
                     <WebAuthnLoginViewButtons
                         disabled={disabled}
@@ -219,6 +186,11 @@ export const LoginWithWebAuthnView = ({
                     />
                 )}
             />
+            {allowAccountRecovery && (
+                <Alternative>
+                    <Link target="account-recovery">{i18n('accountRecovery.title')}</Link>
+                </Alternative>
+            )}
             {allowSignup && (
                 <Alternative>
                     <span>{i18n('login.signupLinkPrefix')}</span>

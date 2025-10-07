@@ -26,14 +26,48 @@ const SignupForm = createForm<SignupParams['data']>({
 });
 
 export interface PasswordSignupFormProps {
+    /**
+     * List of authentication options
+     */
     auth?: AuthOptions;
+    /**
+     * A function that is called before the signup request is made.
+     */
     beforeSignup?: <T>(param: T) => T;
+    /**
+     * Whether or not to provide the display password in clear text option.
+     * @default false
+     */
     canShowPassword?: boolean;
+    /**
+     * Object that lets you set display options for the phone number field.
+     */
     phoneNumberOptions?: PhoneNumberOptions;
+    /**
+     * The URL sent in the email to which the user is redirected. This URL must be whitelisted in the `Allowed Callback URLs` field of your ReachFive client settings.
+     */
     redirectUrl?: string;
+    /**
+     * Returned in the `redirectUrl` as a query parameter, this parameter is used as the post-email confirmation URL.
+     */
     returnToAfterEmailConfirmation?: string;
+    /**
+     * Boolean for whether the signup form fields' labels are displayed on the login view.
+     * @default false
+     * If set to `true`, the labels are shown which includes an asterisk (*) next to required fields.
+     */
     showLabels?: boolean;
+    /**
+     * List of the signup fields to display in the form.
+     *
+     * A field is either a string representing the field’s key (predefined, custom field, or consent) or an object with attributes overriding the default field configuration.
+     *
+     * @default ['given_name', 'family_name', 'email', 'password', 'password_confirmation']
+     */
     signupFields?: (string | Field)[];
+    /**
+     * The user agreement text to display in the form.
+     */
     userAgreement?: string;
     /**
      * Callback function called when the request has succeed.
