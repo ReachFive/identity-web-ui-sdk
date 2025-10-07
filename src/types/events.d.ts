@@ -24,6 +24,7 @@ interface AbstractEvent {
 interface SignupEvent extends AbstractEvent {
     readonly name: 'signup'
     readonly authResult: AuthResult
+    readonly isIdentifierVerificationRequired: boolean
 }
 
 /** Emitted after a successful authentication. */

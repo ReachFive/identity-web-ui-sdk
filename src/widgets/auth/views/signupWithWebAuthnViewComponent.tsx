@@ -1,5 +1,5 @@
 import type { AuthOptions, Client as CoreClient } from '@reachfive/identity-core';
-import React from 'react';
+import React, { useState } from 'react';
 
 import { useReachfive } from '../../../contexts/reachfive';
 
@@ -89,6 +89,8 @@ export const SignupWithWebAuthnView = ({
     const coreClient = useReachfive();
     const config = useConfig();
     const i18n = useI18n();
+    const [isAwaitingIdentifierVerification, setIsAwaitingIdentifierVerification] =
+        useState<boolean>(false);
 
     const handleSignup = (data: SignupFormData) =>
         coreClient.signupWithWebAuthn(
@@ -124,15 +126,33 @@ export const SignupWithWebAuthnView = ({
 
     return (
         <div>
-            <Heading>{i18n('signup.withBiometrics')}</Heading>
-            <SignupForm
-                fields={allFields}
-                showLabels={showLabels}
-                beforeSubmit={beforeSignup}
-                handler={handleSignup}
-                onSuccess={authResult => onSuccess({ name: 'signup', authResult })}
-                onError={onError}
-            />
+            {isAwaitingIdentifierVerification ? (
+                <div className="success">{i18n('signup.awaiting.identifier.verification')}</div>
+            ) : (
+                <div>
+                    <Heading>{i18n('signup.withBiometrics')}</Heading>
+                    <SignupForm
+                        fields={allFields}
+                        showLabels={showLabels}
+                        beforeSubmit={beforeSignup}
+                        handler={handleSignup}
+                        onSuccess={authResult => {
+                            const isIdentifierVerificationRequired =
+                                authResult != undefined &&
+                                authResult.accessToken == undefined &&
+                                authResult?.code == undefined;
+                            setIsAwaitingIdentifierVerification(isIdentifierVerificationRequired);
+                            onSuccess({
+                                name: 'signup',
+                                authResult,
+                                isIdentifierVerificationRequired,
+                            });
+                        }}
+                        onError={onError}
+                    />
+                </div>
+            )}
+
             <Alternative>
                 <Link target={'signup'}>{i18n('back')}</Link>
             </Alternative>
