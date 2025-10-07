@@ -1,5 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 
+import type { OnSuccess } from '@/types';
+import { SignupEvent } from '@/types/events';
 import PasswordSignupForm, {
     type PasswordSignupFormProps,
 } from '../../../components/form/passwordSignupFormComponent';
@@ -8,12 +10,27 @@ import { useI18n } from '../../../contexts/i18n';
 
 export interface SignupWithPasswordViewProps extends PasswordSignupFormProps {}
 
-export const SignupWithPasswordView = (props: SignupWithPasswordViewProps) => {
+export const SignupWithPasswordView = ({
+    onSuccess = (() => {}) satisfies OnSuccess,
+    ...props
+}: SignupWithPasswordViewProps) => {
     const i18n = useI18n();
+    const [isAwaitingIdentifierVerification, setIsAwaitingIdentifierVerification] =
+        useState<boolean>(false);
+    const enrichedOnSuccess = (evt: SignupEvent) => {
+        setIsAwaitingIdentifierVerification(evt.isIdentifierVerificationRequired);
+        onSuccess(evt);
+    };
     return (
         <div>
-            <Heading>{i18n('signup.withPassword')}</Heading>
-            <PasswordSignupForm {...props} />
+            {isAwaitingIdentifierVerification ? (
+                <div className="success">{i18n('signup.awaiting.identifier.verification')}</div>
+            ) : (
+                <div>
+                    <Heading>{i18n('signup.withPassword')}</Heading>
+                    <PasswordSignupForm {...props} onSuccess={enrichedOnSuccess as OnSuccess} />
+                </div>
+            )}
             <Alternative>
                 <Link target={'signup'}>{i18n('back')}</Link>
             </Alternative>

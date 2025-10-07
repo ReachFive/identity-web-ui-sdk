@@ -29,6 +29,7 @@ interface AbstractEvent {
 interface SignupEvent extends AbstractEvent {
     readonly name: 'signup'
     readonly authResult: AuthResult
+    readonly isIdentifierVerificationRequired: boolean
 }
 
 /** Emitted after a successful authentication. */
@@ -1288,7 +1289,7 @@ interface PasswordSignupFormProps {
 
 interface SignupWithPasswordViewProps extends PasswordSignupFormProps {
 }
-declare const SignupWithPasswordView: (props: SignupWithPasswordViewProps) => React__default.JSX.Element;
+declare const SignupWithPasswordView: ({ onSuccess, ...props }: SignupWithPasswordViewProps) => React__default.JSX.Element;
 
 interface SignupWithWebAuthnViewProps {
     /**

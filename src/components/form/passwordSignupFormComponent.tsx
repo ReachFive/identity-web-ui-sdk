@@ -179,7 +179,15 @@ export const PasswordSignupForm = ({
                 }}
                 handler={callback}
                 onSuccess={authResult => {
-                    onSuccess({ name: 'signup', authResult });
+                    const isIdentifierVerificationRequired =
+                        authResult != undefined &&
+                        authResult.accessToken == undefined &&
+                        authResult?.code == undefined;
+                    onSuccess({
+                        name: 'signup',
+                        authResult,
+                        isIdentifierVerificationRequired,
+                    });
                 }}
                 onError={onError}
             />
