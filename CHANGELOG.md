@@ -7,6 +7,13 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.37.0] - 2025-08-29
+
+### Added
+
+- action field to login and mfa step up
+- support to orchestration flow during step up
+
 ## [1.36.1] - 2025-07-17
 
 ### Fixes
@@ -634,7 +641,8 @@ The eye icon is now correctly displayed in the Auth widget.
 
 First version of the SDK Web UI.
 
-[Unreleased]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.36.1...HEAD
+[Unreleased]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.37.0...HEAD
+[1.37.0]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.36.1...v1.37.0
 [1.36.1]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.36.0...v1.36.1
 [1.36.0]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.35.0...v1.36.0
 [1.35.0]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.34.1...v1.35.0
