@@ -12,6 +12,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Added
 
 - Allow to pass as `origin` option to password revering
+- support blocking login during signup when no identifier is verified
 
 ### Fixed
 
