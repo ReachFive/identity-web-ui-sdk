@@ -48,14 +48,19 @@ export interface SignupWithWebAuthnViewProps {
     /**
      * List of the signup fields to display in the form.
      *
-     * You can pass a field as an object to override default values :
+     * A field is either a string representing the field’s key (predefined, custom field, or consent) or an object with attributes overriding the default field configuration.
+     *
+     * @default ['given_name', 'family_name', 'email']
      *
      * @example
-     * {
-     *   "key": "family_name",
-     *   "defaultValue": "Moreau",
-     *   "required": true
-     * }
+     * [
+     *   "email",
+     *   {
+     *     "key": "family_name",
+     *     "defaultValue": "Moreau",
+     *     "required": true
+     *   }
+     * ]
      */
     signupFields?: (string | Field)[];
     /**  */

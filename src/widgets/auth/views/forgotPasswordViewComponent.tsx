@@ -163,6 +163,10 @@ export interface ForgotPasswordViewProps {
      */
     returnToAfterPasswordReset?: string;
     /**
+     * The origin of the request.
+     */
+    origin?: string;
+    /**
      * Callback function called when the request has succeed.
      */
     onSuccess?: OnSuccess;
@@ -184,6 +188,7 @@ export const ForgotPasswordView = ({
     captchaFoxEnabled = false,
     captchaFoxMode = 'hidden',
     captchaFoxSiteKey,
+    origin,
     redirectUrl,
     returnToAfterPasswordReset,
     onError = (() => {}) as OnError,
@@ -197,6 +202,7 @@ export const ForgotPasswordView = ({
     const callback = (data: ForgotPasswordEmailFormData) =>
         coreClient.requestPasswordReset({
             ...data,
+            origin,
             redirectUrl,
             returnToAfterPasswordReset,
         });
