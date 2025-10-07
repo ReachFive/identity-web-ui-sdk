@@ -13,7 +13,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - Allow to pass as `origin` option to password revering
 
-### Fixes
+### Fixed
 
 - Fix forgot password link and remember me checkbox overlapping
 
