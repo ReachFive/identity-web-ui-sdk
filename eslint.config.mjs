@@ -63,7 +63,7 @@ export default tseslint.config(
             ]
         },
         settings: {
-            polyfills: ["Promise", "fetch"],
+            polyfills: ["Promise", "fetch", "URLSearchParams"],
             react: {
                 version: "detect"
             }

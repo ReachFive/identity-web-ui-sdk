@@ -98,7 +98,7 @@ export function enrichLoginEvent<T extends LoginWithPasswordParams | LoginWithWe
 ): LoginEventWrappingObject {
     switch (authType) {
         case 'password':
-        case 'webauthn':
+        case 'webauthn': {
             const identifierType: IdentifierType =
                 data != undefined
                     ? 'email' in data
@@ -108,6 +108,7 @@ export function enrichLoginEvent<T extends LoginWithPasswordParams | LoginWithWe
                           : 'custom_identifier'
                     : 'email';
             return { authResult, authType, identifierType };
+        }
         default:
             return { authResult, authType };
     }
