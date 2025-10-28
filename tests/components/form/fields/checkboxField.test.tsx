@@ -13,7 +13,7 @@ import type { Config } from '../../../../src/types';
 
 import checkboxField from '../../../../src/components/form/fields/checkboxField';
 import { createForm } from '../../../../src/components/form/formComponent';
-import resolveI18n, { I18nMessages } from '../../../../src/core/i18n';
+import { type I18nMessages } from '../../../../src/contexts/i18n';
 import { WidgetContext } from '../WidgetContext';
 
 const defaultConfig: Config = {
@@ -43,8 +43,6 @@ const defaultI18n: I18nMessages = {
     checkbox: 'Check?',
 };
 
-const i18nResolver = resolveI18n(defaultI18n);
-
 type Model = { check: string };
 
 describe('DOM testing', () => {
@@ -73,7 +71,7 @@ describe('DOM testing', () => {
             );
         });
 
-        const checkbox = screen.getByLabelText(i18nResolver(label));
+        const checkbox = screen.getByLabelText('Check?');
         expect(checkbox).not.toBeChecked();
 
         await user.click(checkbox);
@@ -127,7 +125,7 @@ describe('DOM testing', () => {
             );
         });
 
-        const checkbox = screen.getByLabelText(i18nResolver(label));
+        const checkbox = screen.getByLabelText('Check?');
         expect(checkbox).toBeChecked();
 
         await user.click(checkbox);

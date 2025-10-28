@@ -2,13 +2,13 @@
  * @jest-environment jsdom
  */
 
-import { describe, expect, it, jest } from '@jest/globals';
+import { describe, expect, it } from '@jest/globals';
 import '@testing-library/jest-dom/jest-globals';
 import { render, screen } from '@testing-library/react';
 import React from 'react';
 
-import { I18nProvider, useI18n, withI18n, type WithI18n } from '../../src/contexts/i18n';
-import type { I18nMessages, I18nNestedMessages } from '../../src/core/i18n';
+import type { I18nMessages } from '../../src/contexts/i18n';
+import { I18nProvider, useI18n } from '../../src/contexts/i18n';
 
 // Test component that uses useI18n hook
 function TestComponent({
@@ -22,17 +22,6 @@ function TestComponent({
     return <div data-testid="test-component">{i18n(messageKey, params)}</div>;
 }
 
-// Test component for withI18n HOC
-function TestComponentWithI18n({
-    i18n,
-    messageKey,
-    params,
-}: WithI18n<{ messageKey: string; params?: Record<string, unknown> }>) {
-    return <div data-testid="test-component-hoc">{i18n(messageKey, params)}</div>;
-}
-
-const WrappedTestComponent = withI18n(TestComponentWithI18n);
-
 describe('I18nProvider', () => {
     const defaultMessages: I18nMessages = {
         'test.message': 'Hello {name}',
@@ -40,14 +29,14 @@ describe('I18nProvider', () => {
         'test.nested': 'Nested message',
     };
 
-    const customMessages: I18nNestedMessages = {
+    const customMessages: I18nMessages = {
         'test.message': 'Bonjour {name}',
-        'test.new': 'New message',
+        'test.new': 'Nouveau message',
     };
 
     it('should provide i18n context with default messages only', () => {
         render(
-            <I18nProvider defaultMessages={defaultMessages}>
+            <I18nProvider defaultMessages={defaultMessages} locale="en">
                 <TestComponent messageKey="test.message" params={{ name: 'World' }} />
             </I18nProvider>
         );
@@ -57,7 +46,7 @@ describe('I18nProvider', () => {
 
     it('should provide i18n context with custom messages overriding defaults', () => {
         render(
-            <I18nProvider defaultMessages={defaultMessages} messages={customMessages}>
+            <I18nProvider defaultMessages={defaultMessages} messages={customMessages} locale="fr">
                 <TestComponent messageKey="test.message" params={{ name: 'Monde' }} />
             </I18nProvider>
         );
@@ -67,17 +56,17 @@ describe('I18nProvider', () => {
 
     it('should provide i18n context with custom messages only', () => {
         render(
-            <I18nProvider messages={customMessages}>
+            <I18nProvider messages={customMessages} locale="fr">
                 <TestComponent messageKey="test.new" />
             </I18nProvider>
         );
 
-        expect(screen.getByTestId('test-component')).toHaveTextContent('New message');
+        expect(screen.getByTestId('test-component')).toHaveTextContent('Nouveau message');
     });
 
     it('should provide i18n context with no messages', () => {
         render(
-            <I18nProvider>
+            <I18nProvider locale="en">
                 <TestComponent messageKey="unknown.key" />
             </I18nProvider>
         );
@@ -86,7 +75,7 @@ describe('I18nProvider', () => {
     });
 
     it('should handle nested messages correctly', () => {
-        const nestedMessages: I18nNestedMessages = {
+        const nestedMessages: I18nMessages = {
             validation: {
                 minLength: 'La longueur minimale est de {min}',
                 maxLength: 'La longueur maximale est de {max}',
@@ -94,7 +83,7 @@ describe('I18nProvider', () => {
         };
 
         render(
-            <I18nProvider messages={nestedMessages}>
+            <I18nProvider messages={nestedMessages} locale="en">
                 <TestComponent messageKey="validation.minLength" params={{ min: 5 }} />
             </I18nProvider>
         );
@@ -105,7 +94,7 @@ describe('I18nProvider', () => {
     });
 
     it('should handle complex nested messages', () => {
-        const complexMessages: I18nNestedMessages = {
+        const complexMessages: I18nMessages = {
             auth: {
                 'login.success': 'Connexion réussie',
                 'login.error': 'Erreur de connexion: {error}',
@@ -114,7 +103,7 @@ describe('I18nProvider', () => {
         };
 
         render(
-            <I18nProvider messages={complexMessages}>
+            <I18nProvider messages={complexMessages} locale="en">
                 <TestComponent
                     messageKey="auth.login.error"
                     params={{ error: 'Invalid credentials' }}
@@ -128,7 +117,7 @@ describe('I18nProvider', () => {
     });
 
     it('should handle localized messages', () => {
-        const localizedMessages: I18nNestedMessages = {
+        const localizedMessages: I18nMessages = {
             fr: {
                 'test.message': 'Bonjour {name}',
             },
@@ -148,24 +137,13 @@ describe('I18nProvider', () => {
 });
 
 describe('useI18n', () => {
-    it('should throw error when used outside of I18nProvider', () => {
-        // Suppress console.error for this test since we expect an error
-        const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
-
-        expect(() => {
-            render(<TestComponent messageKey="test.message" />);
-        }).toThrow('No I18nContext provided');
-
-        consoleSpy.mockRestore();
-    });
-
-    it('should return i18n resolver when used inside I18nProvider', () => {
+    it('should return i18n function when used inside I18nProvider', () => {
         const defaultMessages: I18nMessages = {
             'test.message': 'Hello {name}',
         };
 
         render(
-            <I18nProvider defaultMessages={defaultMessages}>
+            <I18nProvider defaultMessages={defaultMessages} locale="en">
                 <TestComponent messageKey="test.message" params={{ name: 'World' }} />
             </I18nProvider>
         );
@@ -182,78 +160,17 @@ describe('useI18n', () => {
             const i18n = useI18n();
             return (
                 <div data-testid="test-component">
-                    {i18n('test.unknown', undefined, () => 'Fallback message')}
+                    {i18n('test.unknown', { defaultValue: 'Fallback message' })}
                 </div>
             );
         }
 
         render(
-            <I18nProvider defaultMessages={defaultMessages}>
+            <I18nProvider defaultMessages={defaultMessages} locale="en">
                 <TestComponentWithFallback />
             </I18nProvider>
         );
 
         expect(screen.getByTestId('test-component')).toHaveTextContent('Fallback message');
-    });
-});
-
-describe('withI18n HOC', () => {
-    const defaultMessages: I18nMessages = {
-        'test.message': 'Hello {name}',
-        'test.simple': 'Simple message',
-    };
-
-    it('should inject i18n prop into wrapped component', () => {
-        render(
-            <I18nProvider defaultMessages={defaultMessages}>
-                <WrappedTestComponent messageKey="test.message" params={{ name: 'World' }} />
-            </I18nProvider>
-        );
-
-        expect(screen.getByTestId('test-component-hoc')).toHaveTextContent('Hello World');
-    });
-
-    it('should pass through all props except i18n', () => {
-        function TestComponentWithProps({
-            i18n,
-            messageKey,
-            customProp,
-        }: WithI18n<{ messageKey: string; customProp: string }>) {
-            return (
-                <div data-testid="test-component-props">
-                    {i18n(messageKey)} - {customProp}
-                </div>
-            );
-        }
-
-        const WrappedWithProps = withI18n(TestComponentWithProps);
-
-        render(
-            <I18nProvider defaultMessages={defaultMessages}>
-                <WrappedWithProps messageKey="test.simple" customProp="custom value" />
-            </I18nProvider>
-        );
-
-        expect(screen.getByTestId('test-component-props')).toHaveTextContent(
-            'Simple message - custom value'
-        );
-    });
-
-    it('should work with multiple wrapped components', () => {
-        function AnotherTestComponent({ i18n, messageKey }: WithI18n<{ messageKey: string }>) {
-            return <div data-testid="another-component">{i18n(messageKey)}</div>;
-        }
-
-        const WrappedAnother = withI18n(AnotherTestComponent);
-
-        render(
-            <I18nProvider defaultMessages={defaultMessages}>
-                <WrappedTestComponent messageKey="test.simple" />
-                <WrappedAnother messageKey="test.message" />
-            </I18nProvider>
-        );
-
-        expect(screen.getByTestId('test-component-hoc')).toHaveTextContent('Simple message');
-        expect(screen.getByTestId('another-component')).toHaveTextContent('Hello {name}');
     });
 });

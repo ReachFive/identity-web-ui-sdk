@@ -4,7 +4,7 @@ import { createRoot } from 'react-dom/client';
 
 import { Config, Prettify } from './types';
 
-import { I18nMessages } from './core/i18n';
+import { type I18nMessages } from './contexts/i18n';
 import { UserError } from './helpers/errors';
 import { logError } from './helpers/logger';
 

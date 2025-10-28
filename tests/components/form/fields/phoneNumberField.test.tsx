@@ -21,7 +21,7 @@ import type { Config } from '../../../../src/types';
 
 import phoneNumberField from '../../../../src/components/form/fields/phoneNumberField';
 import { createForm } from '../../../../src/components/form/formComponent';
-import resolveI18n, { I18nMessages } from '../../../../src/core/i18n';
+import { type I18nMessages } from '../../../../src/contexts/i18n';
 import { WidgetContext } from '../WidgetContext';
 
 const defaultConfig: Config = {
@@ -50,8 +50,6 @@ const defaultConfig: Config = {
 const defaultI18n: I18nMessages = {
     phone: 'Phone number',
 };
-
-const i18nResolver = resolveI18n(defaultI18n);
 
 const queryByName = (renderResult: RenderResult, name: Matcher) => {
     const query = queryHelpers.queryByAttribute.bind(null, 'name');
@@ -110,7 +108,7 @@ describe('DOM testing', () => {
             );
         });
 
-        const input = screen.queryByLabelText(i18nResolver(label));
+        const input = screen.queryByLabelText('Phone number');
         expect(input).toBeInTheDocument();
         expect(input).toHaveAttribute('id', key);
         expect(input).toHaveValue(formatPhoneNumberIntl(initialValue));

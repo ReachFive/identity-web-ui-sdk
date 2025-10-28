@@ -11,10 +11,10 @@ import { FormError, FormGroupContainer, Input, Label } from '../formControlsComp
 import { PasswordPolicyRules, type PasswordRule } from './passwordPolicyRules';
 
 import { useI18n } from '../../../contexts/i18n';
-import { I18nResolver } from '../../../core/i18n';
 import { Validator, isValidatorError } from '../../../core/validation';
 import { HidePasswordIcon, ShowPasswordIcon } from './simplePasswordField';
 
+import { TFunction } from 'i18next';
 import { isRichFormValue } from '../../../helpers/utils';
 import { createField } from '../fieldCreator';
 import { FormContext } from '../formComponent';
@@ -187,7 +187,7 @@ function PasswordField({
 type RuleKeys = Exclude<keyof PasswordPolicy, 'minStrength' | 'allowUpdateWithAccessTokenOnly'>;
 
 export function listEnabledRules(
-    i18n: I18nResolver,
+    i18n: TFunction,
     passwordPolicy: Config['passwordPolicy']
 ): Record<RuleKeys, PasswordRule> {
     if (!passwordPolicy) return {} as Record<RuleKeys, PasswordRule>;

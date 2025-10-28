@@ -23,7 +23,7 @@ import type { Config } from '../../../../src/types';
 
 import dateField from '../../../../src/components/form/fields/dateField';
 import { createForm } from '../../../../src/components/form/formComponent';
-import resolveI18n, { I18nMessages } from '../../../../src/core/i18n';
+import { type I18nMessages } from '../../../../src/contexts/i18n';
 import { Validator } from '../../../../src/core/validation';
 import { WidgetContext } from '../WidgetContext';
 
@@ -56,8 +56,6 @@ const defaultI18n: I18nMessages = {
     month: 'Mois',
     day: 'Jour',
 };
-
-const i18nResolver = resolveI18n(defaultI18n);
 
 type Model = { date: string };
 
@@ -96,20 +94,20 @@ describe('DOM testing', () => {
             );
         });
 
-        const labelTag = screen.queryByText(i18nResolver(label));
+        const labelTag = screen.queryByText('Date');
         expect(labelTag).toBeInTheDocument();
 
         const yearInput = screen.getByTestId('date.year');
         expect(yearInput).toBeInTheDocument();
         expect(yearInput).toHaveAttribute('type', 'number');
         expect(yearInput).toHaveAttribute('inputMode', 'numeric');
-        expect(yearInput).toHaveAttribute('aria-label', i18nResolver('year'));
-        expect(yearInput).toHaveAttribute('placeholder', i18nResolver('year'));
+        expect(yearInput).toHaveAttribute('aria-label', 'Année');
+        expect(yearInput).toHaveAttribute('placeholder', 'Année');
         expect(yearInput).not.toHaveValue();
 
         const monthInput = screen.getByTestId('date.month');
         expect(monthInput).toBeInTheDocument();
-        expect(monthInput).toHaveAttribute('aria-label', i18nResolver('month'));
+        expect(monthInput).toHaveAttribute('aria-label', 'Mois');
         expect(monthInput).not.toHaveValue();
         const expectedMonthsOptions = ['', ...[...Array(12).keys()].map(value => String(value))];
         const options = getAllByRole(monthInput, 'option');
@@ -117,7 +115,7 @@ describe('DOM testing', () => {
             expect.arrayContaining(expectedMonthsOptions)
         );
         const expectedMonthsOptionsIntl = [
-            i18nResolver('month'),
+            'Mois',
             ...[...Array(12).keys()].map(value =>
                 new Intl.DateTimeFormat(defaultConfig.language, { month: 'long' }).format(
                     new Date(2025, Number(value), 1)
@@ -130,7 +128,7 @@ describe('DOM testing', () => {
 
         const dayInput = screen.getByTestId('date.day');
         expect(dayInput).toBeInTheDocument();
-        expect(dayInput).toHaveAttribute('aria-label', i18nResolver('day'));
+        expect(dayInput).toHaveAttribute('aria-label', 'Jour');
         expect(dayInput).not.toHaveValue();
         // default is based on current date
         const expectedDaysOptions = [

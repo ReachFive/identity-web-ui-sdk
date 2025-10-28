@@ -13,7 +13,7 @@ import type { Config } from '../../../src/types';
 import { Client, PasswordStrengthScore } from '@reachfive/identity-core';
 import { createForm } from '../../../src/components/form/formComponent';
 import { buildFormFields } from '../../../src/components/form/formFieldFactory';
-import { I18nMessages } from '../../../src/core/i18n';
+import { type I18nMessages } from '../../../src/contexts/i18n';
 import { WidgetContext } from './WidgetContext';
 
 const defaultConfig: Config = {
@@ -160,9 +160,9 @@ describe('DOM testing', () => {
 
     getPasswordStrength.mockImplementation((password: string) => {
         let score = 0;
-        if (password.match(/[a-z]+/)) score++;
-        if (password.match(/[0-9]+/)) score++;
-        if (password.match(/[^a-z0-9]+/)) score++;
+        if (/[a-z]+/.exec(password)) score++;
+        if (/[0-9]+/.exec(password)) score++;
+        if (/[^a-z0-9]+/.exec(password)) score++;
         if (password.length > 8) score++;
         return Promise.resolve({ score: score as PasswordStrengthScore });
     });

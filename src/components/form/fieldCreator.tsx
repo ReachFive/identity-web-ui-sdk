@@ -1,7 +1,7 @@
 import React, { type ComponentType } from 'react';
 
+import { TFunction } from 'i18next';
 import type { WithI18n } from '../../contexts/i18n';
-import type { I18nResolver } from '../../core/i18n';
 import { DefaultPathMapping, type PathMapping } from '../../core/mapping';
 import {
     empty as emptyRule,
@@ -70,7 +70,7 @@ export type FieldComponentProps<
     rawProperty?: K;
     required?: boolean;
     readOnly?: boolean;
-    i18n: I18nResolver;
+    i18n: TFunction;
     showLabel?: boolean;
     value?: FormValue<T, K>;
     validation?: ValidatorResult<E>;
@@ -107,7 +107,7 @@ export interface FieldProps<
     format?: Formatter<T, F, K>;
     rawProperty?: K;
     component: ComponentType<P>;
-    extendedParams?: ExtraParams | ((i18n: I18nResolver) => ExtraParams);
+    extendedParams?: ExtraParams | ((i18n: TFunction) => ExtraParams);
 }
 
 export function createField<

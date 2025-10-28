@@ -9,7 +9,7 @@ import userEvent, { UserEvent } from '@testing-library/user-event';
 import 'jest-styled-components';
 
 import { Client } from '@reachfive/identity-core';
-import { I18nMessages } from '../../../src/core/i18n';
+import { type I18nMessages } from '../../../src/contexts/i18n';
 import type { Config, OnError, OnSuccess } from '../../../src/types';
 import mfaStepUpWidget from '../../../src/widgets/stepUp/mfaStepUpWidget';
 

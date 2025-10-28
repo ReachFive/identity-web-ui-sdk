@@ -10,7 +10,7 @@ import 'jest-styled-components';
 
 import type { Client, PasswordStrengthScore } from '@reachfive/identity-core';
 
-import { type I18nMessages } from '../../../src/core/i18n';
+import { type I18nMessages } from '../../../src/contexts/i18n';
 import { randomString } from '../../../src/helpers/random';
 import { providers, type ProviderId } from '../../../src/providers/providers';
 import type { Config } from '../../../src/types';
