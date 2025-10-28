@@ -13,10 +13,10 @@ import { buildTheme } from '../../core/theme';
 import { Theme, ThemeOptions } from '../../types/styled';
 import WidgetContainer, { WidgetContainerProps } from './widgetContainerComponent';
 
-import type { I18nMessages, I18nNestedMessages } from '../../core/i18n';
+import type { I18nLocalizedMessages, I18nMessages, I18nNestedMessages } from '../../core/i18n';
 import type { Config, Prettify } from '../../types';
 
-export type I18nProps = { i18n?: I18nNestedMessages };
+export type I18nProps = { i18n?: I18nNestedMessages | I18nLocalizedMessages };
 export type ThemeProps = { theme?: ThemeOptions };
 
 export type PropsWithI18n<P> = Prettify<P & I18nProps>;
@@ -87,6 +87,7 @@ export function createWidget<P, U = P>({
                                         <I18nProvider
                                             defaultMessages={context.defaultI18n}
                                             messages={preparedOptions.i18n}
+                                            locale={context.config.language}
                                         >
                                             <WidgetContainerThemeVariables
                                                 {...widgetAttrs}

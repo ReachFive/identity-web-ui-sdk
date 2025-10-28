@@ -72,7 +72,7 @@ const PasswordStrength = ({ score }: PasswordStrength) => {
                 <PasswordStrengthGauge score={score} />
             </PasswordStrengthGaugeContainer>
             <PasswordStrengthLabel score={score}>
-                {i18n('passwordStrength.score' + score)}
+                {i18n(`passwordStrength.score${score}`)}
             </PasswordStrengthLabel>
         </PasswordStrengthContainer>
     );

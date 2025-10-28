@@ -1,10 +1,17 @@
 import React, { ComponentType, PropsWithChildren, useMemo } from 'react';
 
-import { I18nMessages, I18nNestedMessages, I18nResolver, resolveI18n } from '../core/i18n';
+import {
+    I18nLocalizedMessages,
+    I18nMessages,
+    I18nNestedMessages,
+    I18nResolver,
+    resolveI18n,
+} from '../core/i18n';
 
 export interface Props {
     defaultMessages?: I18nMessages;
-    messages?: I18nNestedMessages;
+    messages?: I18nNestedMessages | I18nLocalizedMessages;
+    locale?: string;
 }
 
 export const I18nContext = React.createContext<I18nResolver | undefined>(undefined);
@@ -41,10 +48,11 @@ export function I18nProvider({
     children,
     defaultMessages,
     messages,
+    locale,
 }: PropsWithChildren<Props>): JSX.Element | null {
     const resolver = useMemo(
-        () => resolveI18n(defaultMessages, messages),
-        [defaultMessages, messages]
+        () => resolveI18n(defaultMessages, messages, locale),
+        [defaultMessages, messages, locale]
     );
     return <I18nContext.Provider value={resolver}>{children}</I18nContext.Provider>;
 }

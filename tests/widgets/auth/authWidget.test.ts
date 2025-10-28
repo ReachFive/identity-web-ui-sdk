@@ -529,6 +529,32 @@ describe('DOM testing', () => {
 
                 expect(screen.queryByText(title)).toBeInTheDocument();
             });
+
+            test('overwrite title - internationalized', async () => {
+                expect.assertions(1);
+                await generateComponent(
+                    {
+                        i18n: {
+                            fr: {
+                                login: {
+                                    title: 'Connexion',
+                                },
+                            },
+                            en: {
+                                login: {
+                                    title: 'Login',
+                                },
+                            },
+                        },
+                    },
+                    {
+                        ...defaultConfig,
+                        language: 'fr',
+                    }
+                );
+
+                expect(screen.queryByText('Connexion')).toBeInTheDocument();
+            });
         });
     });
 

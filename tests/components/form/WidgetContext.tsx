@@ -40,7 +40,9 @@ export function WidgetContext({
         <ConfigProvider config={config}>
             <ReachfiveProvider client={client}>
                 <ThemeProvider theme={theme}>
-                    <I18nProvider defaultMessages={defaultMessages}>{children}</I18nProvider>
+                    <I18nProvider defaultMessages={defaultMessages} locale={config.language}>
+                        {children}
+                    </I18nProvider>
                 </ThemeProvider>
             </ReachfiveProvider>
         </ConfigProvider>
