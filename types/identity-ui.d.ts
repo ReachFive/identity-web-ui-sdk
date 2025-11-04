@@ -1,6 +1,6 @@
 /**
  * @reachfive/identity-ui - v1.38.0
- * Compiled Tue, 07 Oct 2025 11:51:18 UTC
+ * Compiled Tue, 04 Nov 2025 09:42:33 UTC
  *
  * Copyright (c) ReachFive.
  *
@@ -622,11 +622,11 @@ declare function consentField({ type, required, consentCannotBeGranted, descript
 
 type ExtraParams$2 = {
     locale: string;
-    yearDebounce?: number;
+    yearRange?: number;
 };
 interface DateFieldProps extends FieldComponentProps<Date, ExtraParams$2> {
 }
-declare function dateField({ format, key, label, locale, validator, yearDebounce, ...props }: Optional<FieldDefinition<string, Date>, 'key' | 'label'> & Optional<ExtraParams$2, 'locale'>, config: Config): FieldCreator<Date, DateFieldProps, ExtraParams$2>;
+declare function dateField({ format, key, label, locale, validator, yearRange, ...props }: Optional<FieldDefinition<string, Date>, 'key' | 'label'> & Optional<ExtraParams$2, 'locale'>, config: Config): FieldCreator<Date, DateFieldProps, ExtraParams$2>;
 
 interface CheckboxFieldProps extends FieldComponentProps<boolean> {
 }
@@ -706,7 +706,7 @@ declare function birthdateField({ min, max, label, ...props }: Parameters<typeof
     max?: number;
 }, config: Config): FieldCreator<Date, DateFieldProps, {
     locale: string;
-    yearDebounce?: number | undefined;
+    yearRange?: number | undefined;
 }, "raw">;
 
 type FieldBuilder = typeof simpleField | typeof checkboxField | typeof selectField | typeof dateField | typeof birthdateField | typeof phoneNumberField | typeof passwordField | typeof simplePasswordField | typeof consentField;
