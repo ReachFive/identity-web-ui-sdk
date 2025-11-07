@@ -294,7 +294,7 @@ export function createForm<Model extends Record<PropertyKey, unknown> = {}, P = 
                 return i18n(err);
             } else if (isAppError(err)) {
                 return err.errorMessageKey
-                    ? i18n(err.errorMessageKey, {}, () => err.errorUserMsg ?? err.error)
+                    ? i18n(err.errorMessageKey, { defaultValue: err.errorUserMsg ?? err.error })
                     : err.errorUserMsg;
             }
         };

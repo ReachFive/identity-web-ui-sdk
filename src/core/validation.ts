@@ -2,8 +2,8 @@ import isEmail from 'validator/lib/isEmail';
 import isFloat from 'validator/lib/isFloat';
 import isInt from 'validator/lib/isInt';
 
+import { TFunction } from 'i18next';
 import { isValued } from '../helpers/utils';
-import { I18nResolver } from './i18n';
 
 export class CompoundValidator<T, C = {}> {
     current: Validator<T, C> | CompoundValidator<T, C>;
@@ -17,7 +17,7 @@ export class CompoundValidator<T, C = {}> {
         this.next = next;
     }
 
-    create(i18n: I18nResolver): ValidatorInstance<T, C> {
+    create(i18n: TFunction): ValidatorInstance<T, C> {
         const current = this.current.create(i18n);
         const next = this.next.create(i18n);
 
@@ -77,7 +77,7 @@ export class Validator<T, C = {}, E = {}> {
         this.parameters = parameters;
     }
 
-    create(i18n: I18nResolver): ValidatorInstance<T, C, E> {
+    create(i18n: TFunction): ValidatorInstance<T, C, E> {
         const errorMessage = (value: T) => i18n(`validation.${this.hint(value)}`, this.parameters);
         return async (value: T, ctx: C) => {
             const res = this.rule(value, ctx);

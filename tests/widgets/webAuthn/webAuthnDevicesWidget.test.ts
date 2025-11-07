@@ -10,7 +10,7 @@ import 'jest-styled-components';
 
 import { type Client } from '@reachfive/identity-core';
 
-import { type I18nMessages } from '../../../src/core/i18n';
+import { type I18nMessages } from '../../../src/contexts/i18n';
 import { UserError } from '../../../src/helpers/errors';
 import type { Config, OnError, OnSuccess } from '../../../src/types';
 

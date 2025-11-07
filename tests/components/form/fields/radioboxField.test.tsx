@@ -13,7 +13,7 @@ import type { Config } from '../../../../src/types';
 
 import radioboxField from '../../../../src/components/form/fields/radioboxField';
 import { createForm } from '../../../../src/components/form/formComponent';
-import resolveI18n, { I18nMessages } from '../../../../src/core/i18n';
+import { type I18nMessages } from '../../../../src/contexts/i18n';
 import { WidgetContext } from '../WidgetContext';
 
 const defaultConfig: Config = {
@@ -42,8 +42,6 @@ const defaultConfig: Config = {
 const defaultI18n: I18nMessages = {
     radiobox: 'Pet',
 };
-
-const i18nResolver = resolveI18n(defaultI18n);
 
 type Model = { check: string };
 
@@ -78,13 +76,13 @@ describe('DOM testing', () => {
         });
 
         options.map(option => {
-            const input = screen.queryByLabelText(i18nResolver(option.label));
+            const input = screen.queryByLabelText(option.label);
             expect(input).toBeInTheDocument();
             expect(input).not.toBeChecked();
         });
 
         const choice = options[1];
-        const choiceInput = screen.getByLabelText(i18nResolver(choice.label));
+        const choiceInput = screen.getByLabelText('dog');
         await user.click(choiceInput);
 
         expect(choiceInput).toBeChecked();
@@ -150,7 +148,7 @@ describe('DOM testing', () => {
         // })
 
         const choice = options[0];
-        const choiceInput = screen.getByLabelText(i18nResolver(choice.label));
+        const choiceInput = screen.getByLabelText('cat');
         await user.click(choiceInput);
 
         expect(choiceInput).toBeChecked();

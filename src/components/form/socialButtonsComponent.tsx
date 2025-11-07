@@ -58,7 +58,7 @@ const SocialBtn = styled(Button).attrs<SocialBtn>(({ $provider, ...props }) => {
         $background: $provider.btnBackgroundColor ?? $provider.color,
         $border: $provider.btnBorderColor ?? $provider.color,
         className: classes(['r5-btn-social', `r5-btn-social-${$provider.key}`]),
-        title: i18n(`socialButton.${$provider.key}.title`, undefined, () => $provider.name),
+        title: i18n(`socialButton.${$provider.key}.title`, { defaultValue: $provider.name }),
         ...props,
     };
 })<SocialBtn>`
@@ -118,7 +118,7 @@ const SocialButton = ({ provider, onClick, count }: SocialButtonProps) => {
             <SocialButtonIcon icon={provider.icon} textVisible={textVisible} />
             {textVisible && (
                 <SocialButtonText>
-                    {i18n(`socialButton.${provider.key}.title`, undefined, () => provider.name)}
+                    {i18n(`socialButton.${provider.key}.title`, { defaultValue: provider.name })}
                 </SocialButtonText>
             )}
         </SocialBtn>

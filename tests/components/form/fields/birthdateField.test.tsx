@@ -14,7 +14,7 @@ import type { Config } from '../../../../src/types';
 
 import birthdayField from '../../../../src/components/form/fields/birthdayField';
 import { createForm } from '../../../../src/components/form/formComponent';
-import { I18nMessages } from '../../../../src/core/i18n';
+import { type I18nMessages } from '../../../../src/contexts/i18n';
 import { WidgetContext } from '../WidgetContext';
 
 const defaultConfig: Config = {
