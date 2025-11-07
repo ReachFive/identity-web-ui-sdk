@@ -47,7 +47,7 @@ type ExtraParams = {
 
 export interface DateFieldProps extends FieldComponentProps<Date, ExtraParams> {}
 
-const DEFAULT_YEAR_RANGE = 120;
+const DEFAULT_YEAR_RANGE = 129;
 const MAX_DAYS_IN_MONTH = 31;
 
 const DateField = ({
