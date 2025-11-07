@@ -13,7 +13,7 @@ import type { Config } from '../../../../src/types';
 
 import { simpleField } from '../../../../src/components/form/fields/simpleField';
 import { createForm } from '../../../../src/components/form/formComponent';
-import resolveI18n, { I18nMessages } from '../../../../src/core/i18n';
+import { type I18nMessages } from '../../../../src/contexts/i18n';
 import { Validator } from '../../../../src/core/validation';
 import { WidgetContext } from '../WidgetContext';
 
@@ -44,8 +44,6 @@ const defaultI18n: I18nMessages = {
     simple: 'simple',
 };
 
-const i18nResolver = resolveI18n(defaultI18n);
-
 type Model = { simple: string };
 
 describe('DOM testing', () => {
@@ -74,7 +72,7 @@ describe('DOM testing', () => {
             );
         });
 
-        const input = screen.getByLabelText(i18nResolver(label));
+        const input = screen.getByLabelText('simple');
         expect(input).toBeInTheDocument();
         expect(input).toHaveAttribute('id', key);
         expect(input).toHaveValue('');
@@ -129,7 +127,7 @@ describe('DOM testing', () => {
             );
         });
 
-        const input = screen.queryByLabelText(i18nResolver(label));
+        const input = screen.queryByLabelText('simple');
         expect(input).toBeInTheDocument();
         expect(input).toHaveAttribute('id', key);
         expect(input).toHaveAttribute('type', type);
@@ -176,8 +174,8 @@ describe('DOM testing', () => {
             );
         });
 
-        const input = screen.getByLabelText(i18nResolver(label));
-        expect(input).toHaveAttribute('placeholder', i18nResolver(label));
+        const input = screen.getByLabelText('simple');
+        expect(input).toHaveAttribute('placeholder', 'simple');
         expect(input).toBeInTheDocument();
 
         const invalidValue = 'ILoveApples';

@@ -14,7 +14,7 @@ import type { Config } from '../../../../src/types';
 import { format } from 'libphonenumber-js';
 import identifierField from '../../../../src/components/form/fields/identifierField';
 import { createForm } from '../../../../src/components/form/formComponent';
-import resolveI18n, { I18nMessages } from '../../../../src/core/i18n';
+import { type I18nMessages } from '../../../../src/contexts/i18n';
 import { WidgetContext } from '../WidgetContext';
 
 const defaultConfig: Config = {
@@ -44,8 +44,6 @@ const defaultI18n: I18nMessages = {
     identifier: 'Identifiant',
 };
 
-const i18nResolver = resolveI18n(defaultI18n);
-
 type Model = { identifier: string };
 
 describe('DOM testing', () => {
@@ -73,7 +71,7 @@ describe('DOM testing', () => {
             );
         });
 
-        const input = screen.queryByLabelText(i18nResolver(label));
+        const input = screen.queryByLabelText('Identifiant');
         expect(input).toBeInTheDocument();
         expect(input).toHaveAttribute('id', key);
         expect(input).toHaveValue('');
@@ -138,7 +136,7 @@ describe('DOM testing', () => {
             );
         });
 
-        const input = screen.queryByLabelText(i18nResolver(label));
+        const input = screen.queryByLabelText('Identifiant');
         expect(input).toBeInTheDocument();
         expect(input).toHaveAttribute('id', key);
         expect(input).toHaveValue('');
@@ -208,7 +206,7 @@ describe('DOM testing', () => {
             );
         });
 
-        const input = screen.queryByLabelText(i18nResolver(label));
+        const input = screen.queryByLabelText('Identifiant');
         expect(input).toBeInTheDocument();
         expect(input).toHaveAttribute('id', key);
         expect(input).toHaveValue(defaultValue);

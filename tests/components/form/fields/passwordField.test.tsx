@@ -14,7 +14,7 @@ import type { Config } from '../../../../src/types';
 
 import passwordField from '../../../../src/components/form/fields/passwordField';
 import { createForm } from '../../../../src/components/form/formComponent';
-import resolveI18n, { I18nMessages } from '../../../../src/core/i18n';
+import { type I18nMessages } from '../../../../src/contexts/i18n';
 import { Validator } from '../../../../src/core/validation';
 import { WidgetContext } from '../WidgetContext';
 
@@ -45,8 +45,6 @@ const defaultI18n: I18nMessages = {
     password: 'Password',
 };
 
-const i18nResolver = resolveI18n(defaultI18n);
-
 type Model = { password: string };
 
 describe('DOM testing', () => {
@@ -54,9 +52,9 @@ describe('DOM testing', () => {
 
     getPasswordStrength.mockImplementation((password: string) => {
         let score = 0;
-        if (password.match(/[a-z]+/)) score++;
-        if (password.match(/[0-9]+/)) score++;
-        if (password.match(/[^a-z0-9]+/)) score++;
+        if (/[a-z]+/.exec(password)) score++;
+        if (/[0-9]+/.exec(password)) score++;
+        if (/[^a-z0-9]+/.exec(password)) score++;
         if (password.length > 8) score++;
         return Promise.resolve({ score: score as PasswordStrengthScore });
     });
@@ -105,7 +103,7 @@ describe('DOM testing', () => {
             );
         });
 
-        const input = screen.getByLabelText(i18nResolver(label));
+        const input = screen.getByLabelText('Password');
         expect(input).toBeInTheDocument();
         expect(input).toHaveAttribute('id', key);
         expect(input).toHaveValue('');
@@ -185,7 +183,7 @@ describe('DOM testing', () => {
             );
         });
 
-        const input = screen.getByLabelText(i18nResolver(label));
+        const input = screen.getByLabelText('Password');
         expect(input).toBeInTheDocument();
 
         expect(input).toHaveAttribute('type', 'password');
@@ -250,7 +248,7 @@ describe('DOM testing', () => {
             );
         });
 
-        const input = screen.getByLabelText(i18nResolver(label));
+        const input = screen.getByLabelText('Password');
         expect(input).toBeInTheDocument();
 
         expect(screen.queryByTestId('password-strength')).not.toBeInTheDocument();

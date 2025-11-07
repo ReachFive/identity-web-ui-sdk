@@ -7,9 +7,8 @@ import React from 'react';
 import { ThemeProvider } from 'styled-components';
 
 import { ConfigProvider } from '../../../src/contexts/config';
-import { I18nProvider } from '../../../src/contexts/i18n';
+import { I18nProvider, type I18nMessages } from '../../../src/contexts/i18n';
 import { ReachfiveProvider } from '../../../src/contexts/reachfive';
-import { type I18nMessages } from '../../../src/core/i18n';
 import { buildTheme } from '../../../src/core/theme';
 import type { Config } from '../../../src/types';
 import type { Theme } from '../../../src/types/styled';
@@ -40,7 +39,9 @@ export function WidgetContext({
         <ConfigProvider config={config}>
             <ReachfiveProvider client={client}>
                 <ThemeProvider theme={theme}>
-                    <I18nProvider defaultMessages={defaultMessages}>{children}</I18nProvider>
+                    <I18nProvider defaultMessages={defaultMessages} locale={config.language}>
+                        {children}
+                    </I18nProvider>
                 </ThemeProvider>
             </ReachfiveProvider>
         </ConfigProvider>

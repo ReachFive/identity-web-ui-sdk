@@ -1,50 +1,50 @@
-import React, { ComponentType, PropsWithChildren, useMemo } from 'react';
+import i18n, { ResourceKey, TFunction } from 'i18next';
+import React, { PropsWithChildren } from 'react';
+import { I18nextProvider, initReactI18next, useTranslation } from 'react-i18next';
 
-import { I18nMessages, I18nNestedMessages, I18nResolver, resolveI18n } from '../core/i18n';
+export type I18nMessages = Record<string, ResourceKey>;
 
 export interface Props {
     defaultMessages?: I18nMessages;
-    messages?: I18nNestedMessages;
+    messages?: I18nMessages;
+    locale: string;
 }
 
-export const I18nContext = React.createContext<I18nResolver | undefined>(undefined);
+export type WithI18n<T> = T & { i18n: TFunction };
 
-export function useI18n(): I18nResolver {
-    const context = React.useContext(I18nContext);
-    if (!context) {
-        throw new Error('No I18nContext provided');
-    }
-
-    return context;
-}
-
-export interface I18nProps {
-    i18n: I18nResolver;
-}
-
-export type WithI18n<P> = P & I18nProps;
-
-export function withI18n<T extends I18nProps = I18nProps>(WrappedComponent: ComponentType<T>) {
-    const displayName = WrappedComponent.displayName ?? WrappedComponent.name ?? 'Component';
-
-    const ComponentWithI18n = (props: Omit<T, keyof I18nProps>) => {
-        const i18n = useI18n();
-        return <WrappedComponent {...{ i18n }} {...(props as T)} />;
-    };
-
-    ComponentWithI18n.displayName = `withI18n(${displayName})`;
-
-    return ComponentWithI18n;
+export function useI18n(): TFunction {
+    const { t } = useTranslation();
+    return t;
 }
 
 export function I18nProvider({
     children,
-    defaultMessages,
-    messages,
+    defaultMessages = {},
+    messages = {},
+    locale,
 }: PropsWithChildren<Props>): JSX.Element | null {
-    const resolver = useMemo(
-        () => resolveI18n(defaultMessages, messages),
-        [defaultMessages, messages]
-    );
-    return <I18nContext.Provider value={resolver}>{children}</I18nContext.Provider>;
+    i18n.use(initReactI18next).init({
+        lng: locale,
+        interpolation: {
+            escapeValue: false, // react already safes from xss,
+            prefix: '{',
+            suffix: '}',
+        },
+        fallbackLng: ['default', 'dev'],
+        resources: {
+            default: {
+                translation: defaultMessages,
+            },
+            ...(locale in messages
+                ? Object.fromEntries(
+                      Object.entries(messages).map(([language, translation]) => [
+                          language,
+                          { translation },
+                      ])
+                  )
+                : { [locale]: { translation: messages } }),
+        },
+    });
+
+    return <I18nextProvider i18n={i18n}>{children}</I18nextProvider>;
 }

@@ -10,7 +10,7 @@ import 'jest-styled-components';
 
 import type { Client, PasswordStrengthScore } from '@reachfive/identity-core';
 
-import { type I18nMessages } from '../../../src/core/i18n';
+import { type I18nMessages } from '../../../src/contexts/i18n';
 import { randomString } from '../../../src/helpers/random';
 import { providers, type ProviderId } from '../../../src/providers/providers';
 import type { Config } from '../../../src/types';
@@ -528,6 +528,32 @@ describe('DOM testing', () => {
                 });
 
                 expect(screen.queryByText(title)).toBeInTheDocument();
+            });
+
+            test('overwrite title - internationalized', async () => {
+                expect.assertions(1);
+                await generateComponent(
+                    {
+                        i18n: {
+                            fr: {
+                                login: {
+                                    title: 'Connexion',
+                                },
+                            },
+                            en: {
+                                login: {
+                                    title: 'Login',
+                                },
+                            },
+                        },
+                    },
+                    {
+                        ...defaultConfig,
+                        language: 'fr',
+                    }
+                );
+
+                expect(screen.queryByText('Connexion')).toBeInTheDocument();
             });
         });
     });

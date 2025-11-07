@@ -13,7 +13,7 @@ import type { Config } from '../../../../src/types';
 
 import simplePasswordField from '../../../../src/components/form/fields/simplePasswordField';
 import { createForm } from '../../../../src/components/form/formComponent';
-import resolveI18n, { I18nMessages } from '../../../../src/core/i18n';
+import { type I18nMessages } from '../../../../src/contexts/i18n';
 import { WidgetContext } from '../WidgetContext';
 
 const defaultConfig: Config = {
@@ -43,8 +43,6 @@ const defaultI18n: I18nMessages = {
     password: 'password',
 };
 
-const i18nResolver = resolveI18n(defaultI18n);
-
 type Model = { password: string };
 
 describe('DOM testing', () => {
@@ -73,11 +71,11 @@ describe('DOM testing', () => {
             );
         });
 
-        const input = screen.getByLabelText(i18nResolver(label));
+        const input = screen.getByLabelText('password');
         expect(input).toBeInTheDocument();
         expect(input).toHaveAttribute('id', key);
         expect(input).toHaveAttribute('type', 'password');
-        expect(input).toHaveAttribute('placeholder', i18nResolver(label));
+        expect(input).toHaveAttribute('placeholder', 'password');
         expect(input).toHaveValue('');
 
         expect(screen.queryByTestId('show-password-btn')).not.toBeInTheDocument();
@@ -135,7 +133,7 @@ describe('DOM testing', () => {
             );
         });
 
-        const input = screen.queryByLabelText(i18nResolver(label));
+        const input = screen.queryByLabelText('password');
         expect(input).toBeInTheDocument();
         expect(input).toHaveAttribute('id', key);
         expect(input).toHaveAttribute('placeholder', placeholder);
@@ -167,7 +165,7 @@ describe('DOM testing', () => {
             );
         });
 
-        const input = screen.getByLabelText(i18nResolver(label));
+        const input = screen.getByLabelText('password');
         expect(input).toBeInTheDocument();
         expect(input).toHaveAttribute('type', 'password');
 

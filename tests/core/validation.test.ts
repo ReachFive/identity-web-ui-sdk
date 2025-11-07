@@ -1,6 +1,7 @@
-import { describe, expect, it } from '@jest/globals';
+import { beforeAll, describe, expect, it } from '@jest/globals';
+import i18n from 'i18next';
 
-import resolveI18n, { type I18nMessages } from '../../src/core/i18n';
+import { type I18nMessages } from '../../src/contexts/i18n';
 import {
     checked,
     email,
@@ -18,9 +19,23 @@ const defaultI18n: I18nMessages = {
     'validation.maxLength': 'Max length is {max}',
 };
 
-const i18nResolver = resolveI18n(defaultI18n);
-
 describe('Validator', () => {
+    beforeAll(() => {
+        i18n.init({
+            lng: 'en',
+            resources: {
+                en: {
+                    translation: defaultI18n,
+                },
+            },
+            interpolation: {
+                escapeValue: false, // react already safes from xss,
+                prefix: '{',
+                suffix: '}',
+            },
+        });
+    });
+
     it('should instanciate a custom Validator', async () => {
         const matchValidator = (matchText: string) =>
             new Validator<string>({
@@ -28,7 +43,7 @@ describe('Validator', () => {
                 hint: 'match',
             });
 
-        const validate = matchValidator('valid').create(i18nResolver);
+        const validate = matchValidator('valid').create(i18n.t);
 
         const valid = await validate('valid', {});
         expect(valid).toMatchObject({
@@ -50,7 +65,7 @@ describe('Validator', () => {
             parameters: { max: MAX_LENGTH },
         });
 
-        const validate = maxLengthValidator.create(i18nResolver);
+        const validate = maxLengthValidator.create(i18n.t);
 
         const valid = await validate('valid', {});
         expect(valid).toMatchObject({
@@ -70,7 +85,7 @@ describe('Validator', () => {
             hint: 'async',
         });
 
-        const validate = asyncValidator.create(i18nResolver);
+        const validate = asyncValidator.create(i18n.t);
 
         const valid = await validate('valid', {});
         expect(valid).toMatchObject({
@@ -89,7 +104,7 @@ describe('Validator', () => {
             hint: 'extra',
         });
 
-        const validate = enrichedValidator.create(i18nResolver);
+        const validate = enrichedValidator.create(i18n.t);
 
         const valid = await validate(true, {});
         expect(valid).toMatchObject({
@@ -121,7 +136,7 @@ describe('CompoundValidator', () => {
         });
 
         const compoundValidator = minLengthValidator.and(maxLengthValidator);
-        const validate = compoundValidator.create(i18nResolver);
+        const validate = compoundValidator.create(i18n.t);
 
         const valid = await validate('valid', {});
         expect(valid).toMatchObject({
@@ -161,21 +176,21 @@ describe('helpers', () => {
 describe('built-in validators', () => {
     describe('empty', () => {
         it('should be falsy if undefined', async () => {
-            const obtained = await empty.create(i18nResolver)(undefined, {});
+            const obtained = await empty.create(i18n.t)(undefined, {});
             expect(obtained).toMatchObject({
                 valid: true,
             });
         });
 
         it('should be falsy if null', async () => {
-            const obtained = await empty.create(i18nResolver)(null, {});
+            const obtained = await empty.create(i18n.t)(null, {});
             expect(obtained).toMatchObject({
                 valid: true,
             });
         });
 
         it('should be falsy if empty string', async () => {
-            const obtained = await empty.create(i18nResolver)('', {});
+            const obtained = await empty.create(i18n.t)('', {});
             expect(obtained).toMatchObject({
                 valid: true,
             });
@@ -184,7 +199,7 @@ describe('built-in validators', () => {
 
     describe('required', () => {
         it('should be invalid if undefined', async () => {
-            const obtained = await required.create(i18nResolver)(undefined, {});
+            const obtained = await required.create(i18n.t)(undefined, {});
             expect(obtained).toMatchObject({
                 valid: false,
                 error: 'validation.required',
@@ -192,7 +207,7 @@ describe('built-in validators', () => {
         });
 
         it('should be invalid if null', async () => {
-            const obtained = await required.create(i18nResolver)(null, {});
+            const obtained = await required.create(i18n.t)(null, {});
             expect(obtained).toMatchObject({
                 valid: false,
                 error: 'validation.required',
@@ -200,7 +215,7 @@ describe('built-in validators', () => {
         });
 
         it('should be invalid if empty string', async () => {
-            const obtained = await required.create(i18nResolver)('', {});
+            const obtained = await required.create(i18n.t)('', {});
             expect(obtained).toMatchObject({
                 valid: false,
                 error: 'validation.required',
@@ -208,14 +223,14 @@ describe('built-in validators', () => {
         });
 
         it('should be falsy if non-empty string', async () => {
-            const obtained = await required.create(i18nResolver)('abc', {});
+            const obtained = await required.create(i18n.t)('abc', {});
             expect(obtained).toMatchObject({
                 valid: true,
             });
         });
 
         it('should be invalid if NaN', async () => {
-            const obtained = await required.create(i18nResolver)(NaN, {});
+            const obtained = await required.create(i18n.t)(NaN, {});
             expect(obtained).toMatchObject({
                 valid: false,
                 error: 'validation.required',
@@ -223,14 +238,14 @@ describe('built-in validators', () => {
         });
 
         it('should be falsy if number', async () => {
-            const obtained = await required.create(i18nResolver)(42, {});
+            const obtained = await required.create(i18n.t)(42, {});
             expect(obtained).toMatchObject({
                 valid: true,
             });
         });
 
         it('should be invalid if empty array', async () => {
-            const obtained = await required.create(i18nResolver)([], {});
+            const obtained = await required.create(i18n.t)([], {});
             expect(obtained).toMatchObject({
                 valid: false,
                 error: 'validation.required',
@@ -238,21 +253,21 @@ describe('built-in validators', () => {
         });
 
         it('should be falsy if non-empty array', async () => {
-            const obtained = await required.create(i18nResolver)(['foo'], {});
+            const obtained = await required.create(i18n.t)(['foo'], {});
             expect(obtained).toMatchObject({
                 valid: true,
             });
         });
 
         it('should be falsy if true', async () => {
-            const obtained = await required.create(i18nResolver)(true, {});
+            const obtained = await required.create(i18n.t)(true, {});
             expect(obtained).toMatchObject({
                 valid: true,
             });
         });
 
         it('should be falsy if false', async () => {
-            const obtained = await required.create(i18nResolver)(false, {});
+            const obtained = await required.create(i18n.t)(false, {});
             expect(obtained).toMatchObject({
                 valid: true,
             });
@@ -261,14 +276,14 @@ describe('built-in validators', () => {
 
     describe('checked', () => {
         it('should be falsy if true', async () => {
-            const obtained = await checked.create(i18nResolver)(true, {});
+            const obtained = await checked.create(i18n.t)(true, {});
             expect(obtained).toMatchObject({
                 valid: true,
             });
         });
 
         it('should be invalid if false', async () => {
-            const obtained = await checked.create(i18nResolver)(false, {});
+            const obtained = await checked.create(i18n.t)(false, {});
             expect(obtained).toMatchObject({
                 valid: false,
                 error: 'validation.checked',
@@ -276,14 +291,14 @@ describe('built-in validators', () => {
         });
 
         it("should be falsy if 'true'", async () => {
-            const obtained = await checked.create(i18nResolver)('true', {});
+            const obtained = await checked.create(i18n.t)('true', {});
             expect(obtained).toMatchObject({
                 valid: true,
             });
         });
 
         it("should be invalid if 'false'", async () => {
-            const obtained = await checked.create(i18nResolver)('false', {});
+            const obtained = await checked.create(i18n.t)('false', {});
             expect(obtained).toMatchObject({
                 valid: false,
                 error: 'validation.checked',
@@ -293,14 +308,14 @@ describe('built-in validators', () => {
 
     describe('email', () => {
         it('should be falsy if valid email', async () => {
-            const obtained = await email.create(i18nResolver)('alice.do@reach5.co', {});
+            const obtained = await email.create(i18n.t)('alice.do@reach5.co', {});
             expect(obtained).toMatchObject({
                 valid: true,
             });
         });
 
         it('should be invalid if invalid email', async () => {
-            const obtained = await email.create(i18nResolver)('alicereach5.co', {});
+            const obtained = await email.create(i18n.t)('alicereach5.co', {});
             expect(obtained).toMatchObject({
                 valid: false,
                 error: 'validation.email',
@@ -310,21 +325,21 @@ describe('built-in validators', () => {
 
     describe('integer', () => {
         it("should be falsy if '0'", async () => {
-            const obtained = await integer.create(i18nResolver)('0', {});
+            const obtained = await integer.create(i18n.t)('0', {});
             expect(obtained).toMatchObject({
                 valid: true,
             });
         });
 
         it("should be falsy if '42'", async () => {
-            const obtained = await integer.create(i18nResolver)('42', {});
+            const obtained = await integer.create(i18n.t)('42', {});
             expect(obtained).toMatchObject({
                 valid: true,
             });
         });
 
         it("should be falsy if '12.3'", async () => {
-            const obtained = await integer.create(i18nResolver)('12.3', {});
+            const obtained = await integer.create(i18n.t)('12.3', {});
             expect(obtained).toMatchObject({
                 valid: false,
                 error: 'validation.integer',
@@ -332,7 +347,7 @@ describe('built-in validators', () => {
         });
 
         it("should be invalid if 'invalid'", async () => {
-            const obtained = await integer.create(i18nResolver)('invalid', {});
+            const obtained = await integer.create(i18n.t)('invalid', {});
             expect(obtained).toMatchObject({
                 valid: false,
                 error: 'validation.integer',
@@ -342,28 +357,28 @@ describe('built-in validators', () => {
 
     describe('float', () => {
         it("should be falsy if '0'", async () => {
-            const obtained = await float.create(i18nResolver)('0', {});
+            const obtained = await float.create(i18n.t)('0', {});
             expect(obtained).toMatchObject({
                 valid: true,
             });
         });
 
         it("should be falsy if '42'", async () => {
-            const obtained = await float.create(i18nResolver)('42', {});
+            const obtained = await float.create(i18n.t)('42', {});
             expect(obtained).toMatchObject({
                 valid: true,
             });
         });
 
         it("should be falsy if '12.3'", async () => {
-            const obtained = await float.create(i18nResolver)('12.3', {});
+            const obtained = await float.create(i18n.t)('12.3', {});
             expect(obtained).toMatchObject({
                 valid: true,
             });
         });
 
         it("should be invalid if 'invalid'", async () => {
-            const obtained = await float.create(i18nResolver)('invalid', {});
+            const obtained = await float.create(i18n.t)('invalid', {});
             expect(obtained).toMatchObject({
                 valid: false,
                 error: 'validation.float',
