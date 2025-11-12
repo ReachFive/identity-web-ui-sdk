@@ -199,6 +199,14 @@ export const Check = styled(function Check({
     & > input {
         margin-right: 1ch;
     }
+    ${({ required, theme }) =>
+        required &&
+        `
+        &::after {
+            content: "\\A0*";
+            color: ${theme.dangerColor};
+        }
+    `}
 `;
 
 interface CheckboxProps extends React.InputHTMLAttributes<HTMLInputElement> {
