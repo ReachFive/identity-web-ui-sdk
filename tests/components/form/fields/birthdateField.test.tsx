@@ -89,12 +89,7 @@ describe('DOM testing', () => {
         const dayInput = screen.getByTestId('birthday.day');
 
         const fiveYearsOld = subYears(new Date(), 5);
-        await user.clear(yearInput);
-        await user.type(yearInput, String(getYear(fiveYearsOld)));
-
-        // Fast-forward until all timers have been executed (handle year debounced value)
-        await jest.runOnlyPendingTimersAsync();
-
+        await user.selectOptions(yearInput, String(getYear(fiveYearsOld)));
         await user.selectOptions(monthInput, String(getMonth(fiveYearsOld)));
         await user.selectOptions(dayInput, String(getDate(fiveYearsOld)));
 
@@ -107,12 +102,7 @@ describe('DOM testing', () => {
         );
 
         const eighteenYearsOld = subYears(new Date(), 18);
-        await user.clear(yearInput);
-        await user.type(yearInput, String(getYear(eighteenYearsOld)));
-
-        // Fast-forward until all timers have been executed (handle year debounced value)
-        await jest.runOnlyPendingTimersAsync();
-
+        await user.selectOptions(yearInput, String(getYear(eighteenYearsOld)));
         await user.selectOptions(monthInput, String(getMonth(eighteenYearsOld)));
         await user.selectOptions(dayInput, String(getDate(eighteenYearsOld)));
 
