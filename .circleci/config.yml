@@ -18,11 +18,11 @@ jobs:
           name: Install dependencies
           command: npm ci
       - run:
-          name: Build package
-          command: npm run build
-      - run:
           name: Check format
           command: npm run format:check
+      - run:
+          name: Build package
+          command: npm run build
       - run:
           name: Install JUnit coverage reporter
           command: npm i -D jest-junit
