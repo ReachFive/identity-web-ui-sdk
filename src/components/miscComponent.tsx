@@ -36,7 +36,6 @@ const SeparatorInner = styled.div`
     display: block;
     text-align: center;
     overflow: hidden;
-    white-space: nowrap;
     margin: ${props => props.theme.spacing}px 0;
 
     & > span {
