@@ -251,7 +251,6 @@ exports[`Snapshot login view default 1`] = `
   display: block;
   text-align: center;
   overflow: hidden;
-  white-space: nowrap;
   margin: 10px 0;
 }
 
@@ -692,7 +691,6 @@ exports[`Snapshot login view inline social buttons 1`] = `
   display: block;
   text-align: center;
   overflow: hidden;
-  white-space: nowrap;
   margin: 10px 0;
 }
 
@@ -1127,7 +1125,6 @@ exports[`Snapshot login view no forgot password 1`] = `
   display: block;
   text-align: center;
   overflow: hidden;
-  white-space: nowrap;
   margin: 10px 0;
 }
 
@@ -1558,7 +1555,6 @@ exports[`Snapshot login view no signup 1`] = `
   display: block;
   text-align: center;
   overflow: hidden;
-  white-space: nowrap;
   margin: 10px 0;
 }
 
@@ -1985,7 +1981,6 @@ exports[`Snapshot login view with canShowPassword 1`] = `
   display: block;
   text-align: center;
   overflow: hidden;
-  white-space: nowrap;
   margin: 10px 0;
 }
 
@@ -2441,7 +2436,6 @@ exports[`Snapshot login view with remember me 1`] = `
   display: block;
   text-align: center;
   overflow: hidden;
-  white-space: nowrap;
   margin: 10px 0;
 }
 
@@ -2923,7 +2917,6 @@ exports[`Snapshot signup view default 1`] = `
   display: block;
   text-align: center;
   overflow: hidden;
-  white-space: nowrap;
   margin: 10px 0;
 }
 
@@ -3420,7 +3413,6 @@ exports[`Snapshot signup view inline social buttons 1`] = `
   display: block;
   text-align: center;
   overflow: hidden;
-  white-space: nowrap;
   margin: 10px 0;
 }
 
@@ -3911,7 +3903,6 @@ exports[`Snapshot signup view no login 1`] = `
   display: block;
   text-align: center;
   overflow: hidden;
-  white-space: nowrap;
   margin: 10px 0;
 }
 
@@ -4380,7 +4371,6 @@ exports[`Snapshot signup view show labels 1`] = `
   display: block;
   text-align: center;
   overflow: hidden;
-  white-space: nowrap;
   margin: 10px 0;
 }
 
@@ -4889,7 +4879,6 @@ exports[`Snapshot signup view with consents 1`] = `
   display: block;
   text-align: center;
   overflow: hidden;
-  white-space: nowrap;
   margin: 10px 0;
 }
 
@@ -5381,7 +5370,6 @@ exports[`Snapshot signup view with custom fields 1`] = `
   display: block;
   text-align: center;
   overflow: hidden;
-  white-space: nowrap;
   margin: 10px 0;
 }
 
@@ -5851,7 +5839,6 @@ exports[`Snapshot signup view with mandatory consents 1`] = `
   display: block;
   text-align: center;
   overflow: hidden;
-  white-space: nowrap;
   margin: 10px 0;
 }
 
@@ -6349,7 +6336,6 @@ exports[`Snapshot signup view with user agreement 1`] = `
   display: block;
   text-align: center;
   overflow: hidden;
-  white-space: nowrap;
   margin: 10px 0;
 }
 
@@ -6886,7 +6872,6 @@ exports[`Snapshot with webauthn feature and without password login new view with
   display: block;
   text-align: center;
   overflow: hidden;
-  white-space: nowrap;
   margin: 10px 0;
 }
 
@@ -7327,7 +7312,6 @@ exports[`Snapshot with webauthn feature and without password login old view with
   display: block;
   text-align: center;
   overflow: hidden;
-  white-space: nowrap;
   margin: 10px 0;
 }
 
@@ -8632,7 +8616,6 @@ exports[`Snapshot with webauthn feature and without password signup view with we
   display: block;
   text-align: center;
   overflow: hidden;
-  white-space: nowrap;
   margin: 10px 0;
 }
 
@@ -8978,7 +8961,6 @@ exports[`Snapshot with webauthn feature login new view with integrated webauthn 
   display: block;
   text-align: center;
   overflow: hidden;
-  white-space: nowrap;
   margin: 10px 0;
 }
 
@@ -9419,7 +9401,6 @@ exports[`Snapshot with webauthn feature login old view with webauthn or password
   display: block;
   text-align: center;
   overflow: hidden;
-  white-space: nowrap;
   margin: 10px 0;
 }
 
@@ -10482,7 +10463,6 @@ exports[`Snapshot with webauthn feature signup view with webauthn or password 1`
   display: block;
   text-align: center;
   overflow: hidden;
-  white-space: nowrap;
   margin: 10px 0;
 }
 
