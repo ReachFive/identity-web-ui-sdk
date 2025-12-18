@@ -1,3 +1,7 @@
+# Ignore CI/CD files
+.circleci
+.github
+
 # Ignore generated types
 types
 
