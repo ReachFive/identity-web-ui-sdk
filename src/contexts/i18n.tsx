@@ -23,28 +23,37 @@ export function I18nProvider({
     messages = {},
     locale,
 }: PropsWithChildren<Props>): JSX.Element | null {
-    i18n.use(initReactI18next).init({
-        lng: locale,
-        interpolation: {
-            escapeValue: false, // react already safes from xss,
-            prefix: '{',
-            suffix: '}',
-        },
-        fallbackLng: ['default', 'dev'],
-        resources: {
-            default: {
-                translation: defaultMessages,
+    const instance = i18n.createInstance();
+    instance.use(initReactI18next).init(
+        {
+            lng: locale,
+            interpolation: {
+                escapeValue: false, // react already safes from xss,
+                prefix: '{',
+                suffix: '}',
             },
-            ...(locale in messages
-                ? Object.fromEntries(
-                      Object.entries(messages).map(([language, translation]) => [
-                          language,
-                          { translation },
-                      ])
-                  )
-                : { [locale]: { translation: messages } }),
+            fallbackLng: ['default', 'dev'],
+            resources: {
+                default: {
+                    translation: defaultMessages,
+                },
+                ...(locale in messages
+                    ? Object.fromEntries(
+                          Object.entries(messages).map(([language, translation]) => [
+                              language,
+                              { translation },
+                          ])
+                      )
+                    : { [locale]: { translation: messages } }),
+            },
         },
-    });
+        err => {
+            if (err) {
+                console.error(err);
+                return;
+            }
+        }
+    );
 
-    return <I18nextProvider i18n={i18n}>{children}</I18nextProvider>;
+    return <I18nextProvider i18n={instance}>{children}</I18nextProvider>;
 }
