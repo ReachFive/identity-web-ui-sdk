@@ -1,16 +1,13 @@
-import type { AuthOptions, Client as CoreClient, SessionInfo } from '@reachfive/identity-core';
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 
-import { Config, Prettify } from './types';
+import type { AuthOptions, Client as CoreClient, SessionInfo } from '@reachfive/identity-core';
 
+import { ErrorText } from './components/miscComponent';
 import { type I18nMessages } from './contexts/i18n';
 import { UserError } from './helpers/errors';
 import { logError } from './helpers/logger';
-
-import { ErrorText } from './components/miscComponent';
-import type { Context, I18nProps, ThemeProps } from './components/widget/widget';
-
+import { Config, Prettify } from './types';
 import accountRecoveryWidget, {
     type AccountRecoveryWidgetProps,
 } from './widgets/accountRecovery/accountRecoveryWidget.tsx';
@@ -28,12 +25,12 @@ import trustedDevicesWidget, {
 import passwordEditorWidget, {
     type PasswordEditorWidgetProps,
 } from './widgets/passwordEditor/passwordEditorWidget';
-import passwordResetWidget, {
-    type PasswordResetWidgetProps,
-} from './widgets/passwordReset/passwordResetWidget';
 import passwordlessWidget, {
     type PasswordlessWidgetProps,
 } from './widgets/passwordless/passwordlessWidget';
+import passwordResetWidget, {
+    type PasswordResetWidgetProps,
+} from './widgets/passwordReset/passwordResetWidget';
 import phoneNumberEditorWidget, {
     type PhoneNumberEditorWidgetProps,
 } from './widgets/phoneNumberEditor/phoneNumberEditorWidget';
@@ -48,6 +45,8 @@ import socialLoginWidget, {
 } from './widgets/socialLogin/socialLoginWidget';
 import mfaStepUpWidget, { type MfaStepUpWidgetProps } from './widgets/stepUp/mfaStepUpWidget';
 import webAuthnWidget, { type WebAuthnWidgetProps } from './widgets/webAuthn/webAuthnDevicesWidget';
+
+import type { Context, I18nProps, ThemeProps } from './components/widget/widget';
 
 export interface WidgetInstance {
     destroy(): void;
@@ -159,7 +158,9 @@ export class UiClient {
                 : options.container;
 
         if (!container) {
-            throw new Error(`Container '#${options.container}' not found.`);
+            const containerName =
+                typeof options.container === 'string' ? options.container : 'element';
+            throw new Error(`Container '#${containerName}' not found.`);
         }
 
         const root = createRoot(container);
@@ -220,8 +221,8 @@ export class UiClient {
                                         showAuthWidget(session);
                                     }
                                 })
-                                .catch(err => {
-                                    logError(err);
+                                .catch((err: unknown) => {
+                                    logError(err instanceof Error ? err : String(err));
                                     showAuthWidget();
                                 });
                         }

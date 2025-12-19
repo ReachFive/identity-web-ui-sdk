@@ -1,3 +1,5 @@
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+
 import {
     eachMonthOfInterval,
     endOfYear,
@@ -11,13 +13,10 @@ import {
     parseISO,
     startOfYear,
 } from 'date-fns';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
 import { Validator, ValidatorResult, isValidatorError } from '../../../core/validation';
 import { isRichFormValue } from '../../../helpers/utils';
-
-import type { Config, Optional } from '../../../types';
 import {
     createField,
     type FieldComponentProps,
@@ -25,6 +24,8 @@ import {
     type FieldDefinition,
 } from '../fieldCreator';
 import { FormGroup, Select } from '../formControlsComponent';
+
+import type { Config, Optional } from '../../../types';
 
 const inputRowGutter = 10;
 
@@ -115,7 +116,7 @@ const DateField = ({
         (year?: number, month?: number, day?: number) => {
             if (isValidDate(year, month, day)) {
                 onChange({
-                    value: new Date(year!, month!, day!),
+                    value: new Date(year!, month!, day),
                     isDirty: true,
                 });
             }
@@ -296,8 +297,8 @@ const dateFormat = (locale: string): string =>
         })
         .join('');
 
-export const datetimeValidator = (locale: string): Validator<Date> =>
-    new Validator<Date>({
+export const datetimeValidator = (locale: string): Validator<Date, unknown> =>
+    new Validator<Date, unknown>({
         rule: value => isValid(value),
         hint: 'date',
         parameters: { format: dateFormat(locale) },

@@ -1,13 +1,11 @@
 import React from 'react';
 
-import { Validator } from '../../core/validation';
-
 import passwordField from '../../components/form/fields/passwordField';
 import simplePasswordField from '../../components/form/fields/simplePasswordField';
 import { createForm, FormContext } from '../../components/form/formComponent';
 import { createWidget } from '../../components/widget/widget';
-
 import { useReachfive } from '../../contexts/reachfive';
+import { Validator } from '../../core/validation';
 
 import type { OnError, OnSuccess } from '../../types';
 
@@ -54,9 +52,11 @@ export const PasswordEditorForm = createForm<PasswordEditorFormData, PasswordEdi
                 key: 'password_confirmation',
                 label: 'passwordConfirmation',
                 autoComplete: 'new-password',
-                validator: new Validator<string, FormContext<PasswordEditorFormData>>({
+                validator: new Validator<string, unknown>({
                     rule: (value, ctx) => {
-                        return value === ctx.fields.password;
+                        return (
+                            value === (ctx as FormContext<PasswordEditorFormData>).fields.password
+                        );
                     },
                     hint: 'passwordMatch',
                 }),

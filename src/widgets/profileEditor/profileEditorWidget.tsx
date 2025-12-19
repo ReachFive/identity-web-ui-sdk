@@ -1,8 +1,6 @@
-import { ConsentVersions, Profile, UserConsent } from '@reachfive/identity-core';
 import React from 'react';
 
-import { UserError } from '../../helpers/errors';
-import { camelCaseProperties } from '../../helpers/transformObjectProperties';
+import { ConsentVersions, Profile, UserConsent } from '@reachfive/identity-core';
 
 import { FieldCreator } from '../../components/form/fieldCreator';
 import { PhoneNumberOptions } from '../../components/form/fields/phoneNumberField';
@@ -10,6 +8,8 @@ import { createForm } from '../../components/form/formComponent';
 import { Field, buildFormFields } from '../../components/form/formFieldFactory';
 import { createWidget } from '../../components/widget/widget';
 import { useReachfive } from '../../contexts/reachfive';
+import { UserError } from '../../helpers/errors';
+import { camelCaseProperties } from '../../helpers/transformObjectProperties';
 
 import type { OnError, OnSuccess } from '../../types';
 
@@ -47,9 +47,7 @@ interface ProfileEditorProps {
      * This URL must be whitelisted in the `Allowed Callback URLs` field of your ReachFive client settings.
      */
     redirectUrl?: string;
-    /**
-     *
-     */
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     resolvedFields: FieldCreator<any, any, any, any>[];
     /**
      * Whether the form fields' labels are displayed on the form view.
@@ -92,8 +90,10 @@ const ProfileEditor = ({
     );
 };
 
-export interface ProfileEditorWidgetProps
-    extends Omit<ProfileEditorProps, 'profile' | 'resolvedFields'> {
+export interface ProfileEditorWidgetProps extends Omit<
+    ProfileEditorProps,
+    'profile' | 'resolvedFields'
+> {
     /**
      * List of the fields to display in the form.
      *
@@ -187,6 +187,7 @@ export default createWidget<ProfileEditorWidgetProps, ProfileEditorProps>({
                 })
                 .catch((error: unknown) => {
                     options.onError?.(error);
+                    // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
                     return Promise.reject(error);
                 })
         );

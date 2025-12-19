@@ -1,16 +1,16 @@
-import type { AuthOptions } from '@reachfive/identity-core';
-import classes from 'classnames';
 import React, { PropsWithChildren, useCallback } from 'react';
+
+import classes from 'classnames';
 import styled, { useTheme } from 'styled-components';
 
-import type { Provider, ProviderId } from '../../providers/providers';
-import { providers as socialProviders } from '../../providers/providers';
-
-import { useReachfive } from '../../contexts/reachfive';
+import type { AuthOptions } from '@reachfive/identity-core';
 
 import { useI18n } from '../../contexts/i18n';
+import { useReachfive } from '../../contexts/reachfive';
+import { providers as socialProviders } from '../../providers/providers';
 import { Button, type ButtonProps } from './buttonComponent';
 
+import type { Provider, ProviderId } from '../../providers/providers';
 import type { OnError, OnSuccess } from '../../types';
 
 interface SocialButtonIconProps {

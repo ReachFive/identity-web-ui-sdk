@@ -1,6 +1,8 @@
 /**
  * @jest-environment jsdom
  */
+import React from 'react';
+import { formatPhoneNumberIntl, type Value } from 'react-phone-number-input';
 
 import { describe, expect, jest, test } from '@jest/globals';
 import '@testing-library/jest-dom/jest-globals';
@@ -14,15 +16,13 @@ import {
 } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import 'jest-styled-components';
-import React from 'react';
-import { formatPhoneNumberIntl, type Value } from 'react-phone-number-input';
-
-import type { Config } from '../../../../src/types';
 
 import phoneNumberField from '../../../../src/components/form/fields/phoneNumberField';
 import { createForm } from '../../../../src/components/form/formComponent';
 import { type I18nMessages } from '../../../../src/contexts/i18n';
 import { WidgetContext } from '../WidgetContext';
+
+import type { Config } from '../../../../src/types';
 
 const defaultConfig: Config = {
     clientId: 'local',

@@ -1,7 +1,8 @@
-import { CaptchaFoxInstance, CaptchaFox as CaptchaFoxWidget } from '@captchafox/react';
 import React, { ComponentType, useRef } from 'react';
 
+import { CaptchaFoxInstance, CaptchaFox as CaptchaFoxWidget } from '@captchafox/react';
 import styled from 'styled-components';
+
 import CaptchaFox, { CaptchaFoxConf } from './captchaFox';
 import ReCaptcha, { RecaptchaAction, ReCaptchaConf } from './reCaptcha';
 

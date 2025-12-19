@@ -1,20 +1,19 @@
-import { AuthOptions, Identity, Profile } from '@reachfive/identity-core';
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
+
 import styled from 'styled-components';
 
-import { UserError } from '../../helpers/errors';
-
-import { ProviderId, providers as socialProviders } from '../../providers/providers';
-
-import { useI18n } from '../../contexts/i18n';
-import { useReachfive } from '../../contexts/reachfive';
-import { useRouting } from '../../contexts/routing';
+import { AuthOptions, Identity, Profile } from '@reachfive/identity-core';
 
 import { DefaultButton } from '../../components/form/buttonComponent';
 import { Card, CloseIcon } from '../../components/form/cardComponent';
 import { SocialButtons } from '../../components/form/socialButtonsComponent';
 import { Alternative, ErrorText, Info, Link, MutedText } from '../../components/miscComponent';
 import { createMultiViewWidget } from '../../components/widget/widget';
+import { useI18n } from '../../contexts/i18n';
+import { useReachfive } from '../../contexts/reachfive';
+import { useRouting } from '../../contexts/routing';
+import { isAppError, UserError } from '../../helpers/errors';
+import { ProviderId, providers as socialProviders } from '../../providers/providers';
 
 import type { OnError, OnSuccess } from '../../types';
 
@@ -71,10 +70,11 @@ const withIdentities = <T extends WithIdentitiesProps = WithIdentitiesProps>(
                 return coreClient
                     .unlink({ accessToken: props.accessToken, identityId })
                     .then(() => props.onSuccess?.({ name: 'unlink', identityId }))
-                    .catch(error => {
+                    .catch((error: unknown) => {
                         props.onError?.(error);
                         // restore previous identities
                         setIdentities(prevIdentities);
+                        // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
                         return Promise.reject(error);
                     });
             },
@@ -136,9 +136,11 @@ const IdentityList = ({
     const onRemove = (id: string) => {
         unlink(id)
             .then(() => setError(undefined))
-            .catch(error => {
+            .catch((error: unknown) => {
                 onError(error);
-                setError(UserError.fromAppError(error));
+                if (isAppError(error)) {
+                    setError(UserError.fromAppError(error));
+                }
             });
     };
 
@@ -258,7 +260,8 @@ export interface SocialAccountsWidgetProps {
 }
 
 interface SocialAccountsWidgetPropsPrepared
-    extends Omit<SocialAccountsProps, 'identities' | 'unlink'>, // indentities and unlink are injected by HoC `withIdentity`
+    extends
+        Omit<SocialAccountsProps, 'identities' | 'unlink'>, // indentities and unlink are injected by HoC `withIdentity`
         Omit<LinkAccountProps, 'identities' | 'unlink'> {}
 
 export default createMultiViewWidget<SocialAccountsWidgetProps, SocialAccountsWidgetPropsPrepared>({

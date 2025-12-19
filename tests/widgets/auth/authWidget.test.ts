@@ -1,22 +1,21 @@
 /**
  * @jest-environment jsdom
  */
-
 import { describe, expect, jest, test } from '@jest/globals';
 import '@testing-library/jest-dom/jest-globals';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import 'jest-styled-components';
+import { beforeEach } from 'node:test';
 
 import type { Client, PasswordStrengthScore } from '@reachfive/identity-core';
 
 import { type I18nMessages } from '../../../src/contexts/i18n';
 import { randomString } from '../../../src/helpers/random';
 import { providers, type ProviderId } from '../../../src/providers/providers';
-import type { Config } from '../../../src/types';
-
-import { beforeEach } from 'node:test';
 import authWidget from '../../../src/widgets/auth/authWidget';
+
+import type { Config } from '../../../src/types';
 
 const defaultConfig: Config = {
     clientId: 'local',

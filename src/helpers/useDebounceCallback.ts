@@ -2,9 +2,8 @@ import { useEffect, useMemo, useRef } from 'react';
 
 import { debounce } from './utils';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const useDebounceCallback = <T extends unknown[], S>(
-    callback: (...args: T) => S,
+export const useDebounceCallback = <T extends unknown[]>(
+    callback: (...args: T) => void,
     delay: number
 ) => {
     const ref = useRef(callback);
@@ -16,11 +15,10 @@ export const useDebounceCallback = <T extends unknown[], S>(
     const debouncedCallback = useMemo(() => {
         // pass arguments to callback function
         const func = (...arg: T) => {
-            return ref.current(...arg);
+            ref.current(...arg);
         };
 
         return debounce(func, delay);
-        // or just debounce(ref.current, delay)
     }, [delay]);
 
     return debouncedCallback;

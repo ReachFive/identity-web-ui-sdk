@@ -1,4 +1,6 @@
-import { Buffer } from 'buffer/'; // note: the trailing slash is important!
+import { Buffer } from 'buffer/';
+
+// note: the trailing slash is important!
 
 /**
  * return an UTF-8 encoded string as URL Safe Base64
@@ -58,7 +60,7 @@ export function decodeBase64(str: string) {
     // Cf: https://stackoverflow.com/questions/30106476/using-javascripts-atob-to-decode-base64-doesnt-properly-decode-utf-8-strings
     return decodeURIComponent(
         Array.prototype.map
-            .call(window.atob(str), c => {
+            .call(window.atob(str), (c: string) => {
                 return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
             })
             .join('')

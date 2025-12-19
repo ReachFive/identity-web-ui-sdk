@@ -1,22 +1,21 @@
-import { AuthOptions, MFA, PasswordlessResponse } from '@reachfive/identity-core';
-import { StepUpPasswordlessParams } from '@reachfive/identity-core/es/main/oAuthClient';
 import React, { useCallback, useEffect, useState } from 'react';
 
-import type { OnError, OnSuccess, Prettify, RequiredProperty } from '../../types';
+import { AuthOptions, MFA, PasswordlessResponse } from '@reachfive/identity-core';
+import { StepUpPasswordlessParams } from '@reachfive/identity-core/es/main/oAuthClient';
 
+import checkboxField from '../../components/form/fields/checkboxField';
 import radioboxField from '../../components/form/fields/radioboxField';
 import { simpleField } from '../../components/form/fields/simpleField';
 import { createForm } from '../../components/form/formComponent';
 import { Info, Intro } from '../../components/miscComponent';
 import { createMultiViewWidget } from '../../components/widget/widget';
-
-import { toQueryString } from '../../helpers/queryString';
-
-import checkboxField from '../../components/form/fields/checkboxField';
 import { useConfig } from '../../contexts/config.tsx';
 import { useI18n } from '../../contexts/i18n';
 import { useReachfive } from '../../contexts/reachfive';
 import { useRouting } from '../../contexts/routing';
+import { toQueryString } from '../../helpers/queryString';
+
+import type { OnError, OnSuccess, Prettify, RequiredProperty } from '../../types';
 
 const StartStepUpMfaButton = createForm({
     prefix: 'r5-mfa-start-step-up-',
@@ -151,7 +150,7 @@ export const MainView = ({
             onError(error);
             throw error;
         }
-    }, [accessToken, auth, coreClient]);
+    }, [accessToken, action, auth, coreClient, onError]);
 
     useEffect(() => {
         if (!showStepUpStart) {
@@ -243,7 +242,7 @@ export const FaSelectionView = (props: FaSelectionViewProps) => {
         if (amr.length === 1) {
             onChooseFa({ authType: amr[0] as StepUpPasswordlessParams['authType'] }).catch(onError);
         }
-    }, [amr, onChooseFa]);
+    }, [amr, onChooseFa, onError]);
 
     if (response) {
         return (

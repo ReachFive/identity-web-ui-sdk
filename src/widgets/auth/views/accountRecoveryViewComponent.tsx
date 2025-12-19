@@ -1,19 +1,17 @@
-import { RequestAccountRecoveryParams } from '@reachfive/identity-core/es/main/profileClient';
 import React, { useCallback, useLayoutEffect } from 'react';
 
-import { isAppError } from '../../../helpers/errors';
-
-import { email } from '../../../core/validation';
+import { RequestAccountRecoveryParams } from '@reachfive/identity-core/es/main/profileClient';
 
 import { CaptchaProvider, WithCaptchaProps } from '../../../components/captcha';
 import { simpleField } from '../../../components/form/fields/simpleField';
 import { createForm } from '../../../components/form/formComponent';
 import { Alternative, Heading, Info, Intro, Link } from '../../../components/miscComponent';
 import { importGoogleRecaptchaScript } from '../../../components/reCaptcha';
-
 import { useI18n } from '../../../contexts/i18n';
 import { useReachfive } from '../../../contexts/reachfive';
 import { useRouting } from '../../../contexts/routing';
+import { email } from '../../../core/validation';
+import { isAppError } from '../../../helpers/errors';
 
 import type { OnError, OnSuccess } from '../../../types';
 

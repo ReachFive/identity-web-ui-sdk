@@ -1,5 +1,6 @@
-import type { SessionInfo } from '@reachfive/identity-core';
 import React, { PropsWithChildren } from 'react';
+
+import type { SessionInfo } from '@reachfive/identity-core';
 
 export type Props = {
     session?: SessionInfo | null;

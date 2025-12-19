@@ -1,23 +1,22 @@
 import React, { useEffect, useState } from 'react';
 
-import type { PasswordPolicy, PasswordStrengthScore } from '@reachfive/identity-core';
 import { isDigit, isLower, isUpper } from 'char-info';
+import { TFunction } from 'i18next';
 import styled, { DefaultTheme } from 'styled-components';
 
-import type { Config, Optional } from '../../../types';
-
-import type { FieldComponentProps, FieldCreator, FieldDefinition } from '../fieldCreator';
-import { FormError, FormGroupContainer, Input, Label } from '../formControlsComponent';
-import { PasswordPolicyRules, type PasswordRule } from './passwordPolicyRules';
+import type { PasswordPolicy, PasswordStrengthScore } from '@reachfive/identity-core';
 
 import { useI18n } from '../../../contexts/i18n';
 import { Validator, isValidatorError } from '../../../core/validation';
-import { HidePasswordIcon, ShowPasswordIcon } from './simplePasswordField';
-
-import { TFunction } from 'i18next';
 import { isRichFormValue } from '../../../helpers/utils';
 import { createField } from '../fieldCreator';
 import { FormContext } from '../formComponent';
+import { FormError, FormGroupContainer, Input, Label } from '../formControlsComponent';
+import { PasswordPolicyRules, type PasswordRule } from './passwordPolicyRules';
+import { HidePasswordIcon, ShowPasswordIcon } from './simplePasswordField';
+
+import type { Config, Optional } from '../../../types';
+import type { FieldComponentProps, FieldCreator, FieldDefinition } from '../fieldCreator';
 
 const SPECIAL_CHARACTERS = ' !"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~';
 const MAX_PASSWORD_LENGTH = 255;
@@ -146,12 +145,13 @@ function PasswordField({
                     }}
                     onFocus={() => setIsTouched(true)}
                     onBlur={event => {
-                        event?.target.value !== currentValue &&
+                        if (event?.target.value !== currentValue) {
                             onChange({
                                 value: event?.target.value,
                                 validation,
                                 isDirty: true,
                             });
+                        }
                     }}
                     data-testid="password"
                 />
@@ -227,10 +227,10 @@ export function listEnabledRules(
 }
 
 export function passwordStrengthValidator(passwordPolicy?: PasswordPolicy) {
-    return new Validator<string, FormContext<any>>({
+    return new Validator<string, unknown>({
         rule: async (value, ctx) => {
             if (value.length === 0) return false;
-            const strength = await ctx.client.getPasswordStrength(value);
+            const strength = await (ctx as FormContext<unknown>).client.getPasswordStrength(value);
             if (passwordPolicy && strength.score < passwordPolicy.minStrength) {
                 return { valid: false, strength: strength.score };
             }
@@ -240,7 +240,7 @@ export function passwordStrengthValidator(passwordPolicy?: PasswordPolicy) {
     });
 }
 
-export const passwordLengthValidator = new Validator<string, FormContext<any>>({
+export const passwordLengthValidator = new Validator<string, unknown>({
     rule: value => {
         if (value.length > MAX_PASSWORD_LENGTH) return false;
         return true;

@@ -144,7 +144,7 @@ function multiViewWidget<P, U>({
         // _goTo = <View extends keyof typeof views, S extends ComponentProps<(typeof views)[View]>>(view: View, props?: S) => this.setState({
         _goTo = <S extends Record<string, unknown>>(view: keyof typeof views, params?: S) =>
             this.setState({
-                activeView: view as MultiWidgetState['activeView'],
+                activeView: view,
                 ...params,
             });
 

@@ -1,22 +1,23 @@
 /**
  * @jest-environment jsdom
  */
+import React from 'react';
 
 import { afterEach, beforeEach, describe, expect, jest, test } from '@jest/globals';
-import { PasswordStrengthScore, type Client } from '@reachfive/identity-core';
 import '@testing-library/jest-dom/jest-globals';
 import { queryByText, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import 'jest-styled-components';
-import React from 'react';
 
-import type { Config } from '../../../../src/types';
+import { PasswordStrengthScore, type Client } from '@reachfive/identity-core';
 
 import passwordField from '../../../../src/components/form/fields/passwordField';
 import { createForm } from '../../../../src/components/form/formComponent';
 import { type I18nMessages } from '../../../../src/contexts/i18n';
 import { Validator } from '../../../../src/core/validation';
 import { WidgetContext } from '../WidgetContext';
+
+import type { Config } from '../../../../src/types';
 
 const defaultConfig: Config = {
     clientId: 'local',
@@ -205,7 +206,7 @@ describe('DOM testing', () => {
 
     test('extends validators', async () => {
         const passwordMatchValidator = (matchText: string) =>
-            new Validator<string>({
+            new Validator<string, unknown>({
                 rule: value => value === matchText,
                 hint: 'password.match',
             });

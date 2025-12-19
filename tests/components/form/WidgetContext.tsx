@@ -1,15 +1,17 @@
 /**
  * @jest-environment jsdom
  */
+import React from 'react';
+
+import { ThemeProvider } from 'styled-components';
 
 import { Client } from '@reachfive/identity-core';
-import React from 'react';
-import { ThemeProvider } from 'styled-components';
 
 import { ConfigProvider } from '../../../src/contexts/config';
 import { I18nProvider, type I18nMessages } from '../../../src/contexts/i18n';
 import { ReachfiveProvider } from '../../../src/contexts/reachfive';
 import { buildTheme } from '../../../src/core/theme';
+
 import type { Config } from '../../../src/types';
 import type { Theme } from '../../../src/types/styled';
 

@@ -4,14 +4,13 @@ import styled from 'styled-components';
 
 import { ConsentType } from '@reachfive/identity-core';
 
-import { MarkdownContent } from '../../miscComponent';
-import { createField, type FieldComponentProps, type FieldDefinition } from '../fieldCreator';
-import { Checkbox } from '../formControlsComponent';
-
 import { DefaultPathMapping } from '../../../core/mapping';
 import { checked, empty, isValidatorError } from '../../../core/validation';
 import { snakeCasePath } from '../../../helpers/transformObjectProperties';
 import { isRichFormValue } from '../../../helpers/utils';
+import { MarkdownContent } from '../../miscComponent';
+import { createField, type FieldComponentProps, type FieldDefinition } from '../fieldCreator';
+import { Checkbox } from '../formControlsComponent';
 
 const Description = styled.div`
     font-size: ${props => props.theme.smallTextFontSize}px;
@@ -36,8 +35,12 @@ type ConsentFieldOptions = {
     };
 };
 
-export interface ConsentFieldProps
-    extends FieldComponentProps<boolean, ConsentFieldOptions, {}, 'granted'> {}
+export interface ConsentFieldProps extends FieldComponentProps<
+    boolean,
+    ConsentFieldOptions,
+    {},
+    'granted'
+> {}
 
 const ConsentField = ({
     value,
@@ -105,15 +108,11 @@ export default function consentField({
         mapping: new DefaultPathMapping(snakeCasePath(props.path ?? props.key)), // Consent key should be snake_case
         format: {
             bind: value => value,
-            unbind: value =>
-                value !== undefined
-                    ? {
-                          granted:
-                              (isRichFormValue(value, 'granted') ? value.granted : value) ?? false,
-                          consentType: type,
-                          consentVersion: version,
-                      }
-                    : null,
+            unbind: value => ({
+                granted: (isRichFormValue(value, 'granted') ? value.granted : value) ?? false,
+                consentType: type,
+                consentVersion: version,
+            }),
         },
         validator: required ? checked : empty,
         rawProperty: 'granted',

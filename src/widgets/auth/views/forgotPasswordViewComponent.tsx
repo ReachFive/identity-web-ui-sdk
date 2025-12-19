@@ -16,8 +16,7 @@ import { useConfig } from '../../../contexts/config.tsx';
 import { useI18n } from '../../../contexts/i18n';
 import { useReachfive } from '../../../contexts/reachfive';
 import { useRouting } from '../../../contexts/routing';
-import { email } from '../../../core/validation';
-import { Validator } from '../../../core/validation.ts';
+import { email, Validator } from '../../../core/validation';
 import { isAppError } from '../../../helpers/errors';
 import { selectLogin } from '../authWidget.tsx';
 
@@ -102,8 +101,9 @@ const VerificationCodeForm = createForm<VerificationCodeFormData, VerificationCo
                 key: 'password_confirmation',
                 label: 'passwordConfirmation',
                 autoComplete: 'new-password',
-                validator: new Validator<string, FormContext<VerificationCodeFormData>>({
-                    rule: (value, ctx) => value === ctx.fields.password,
+                validator: new Validator<string, unknown>({
+                    rule: (value, ctx) =>
+                        value === (ctx as FormContext<VerificationCodeFormData>).fields.password,
                     hint: 'passwordMatch',
                 }),
             }),

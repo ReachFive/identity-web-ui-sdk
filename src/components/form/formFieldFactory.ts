@@ -117,8 +117,9 @@ const predefinedFields = {
                 label: 'passwordConfirmation',
                 ...props,
                 canShowPassword: false,
-                validator: new Validator<string, FormContext<{ password: string }>>({
-                    rule: (value, ctx) => value === ctx.fields.password,
+                validator: new Validator<string, unknown>({
+                    rule: (value, ctx) =>
+                        value === (ctx as FormContext<{ password: string }>).fields.password,
                     hint: 'passwordMatch',
                 }),
                 // mapping: {
