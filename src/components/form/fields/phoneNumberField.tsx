@@ -33,6 +33,7 @@ const ReactPhoneNumberInputStyle = createGlobalStyle`
         --PhoneInputCountrySelect-marginRight: ${props => props.theme.spacing}px;
         --PhoneInputCountrySelectArrow-marginLeft: var(--PhoneInputCountrySelect-marginRight);
         --PhoneInputCountrySelectArrow-borderWidth: 2px;
+        --PhoneInputCountrySelectArrow-color: ${props => props.theme.textColor};
         --PhoneInputCountrySelectArrow-transform: rotate(45deg);
         --PhoneInputCountrySelectArrow-width: 0.3em;
         --PhoneInputCountryFlag-height: ${props => props.theme.input.height - (props.theme.input.paddingY + props.theme.input.borderWidth) * 2}px;
@@ -95,7 +96,7 @@ const PhoneNumberField = (props: PhoneNumberFieldProps) => {
         withCountrySelect = false,
     } = props;
 
-    const [labels, setLabels] = useState<Labels>();
+    const [labels, setLabels] = useState<Labels>({});
     const currentValue = isRichFormValue(value, 'raw') ? value.raw : value;
     const error = validation && isValidatorError(validation) ? validation.error : undefined;
 
