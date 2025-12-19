@@ -90,8 +90,10 @@ const ProfileEditor = ({
     );
 };
 
-export interface ProfileEditorWidgetProps
-    extends Omit<ProfileEditorProps, 'profile' | 'resolvedFields'> {
+export interface ProfileEditorWidgetProps extends Omit<
+    ProfileEditorProps,
+    'profile' | 'resolvedFields'
+> {
     /**
      * List of the fields to display in the form.
      *
