@@ -23,8 +23,8 @@ const KeyboardIcon = styled(Keyboard)`
 
 const PrimaryButtonWithIcon = styled(
     ({
-        type = 'submit' as const,
-        disabled = false as const,
+        type = 'submit',
+        disabled = false,
         text,
         children,
         className,
@@ -33,9 +33,9 @@ const PrimaryButtonWithIcon = styled(
         const theme = useTheme();
         return (
             <Button
-                type={type as 'submit' | 'reset' | 'button'}
-                disabled={disabled as boolean}
-                {...(props as Omit<ButtonProps, '$background' | '$border' | '$color'>)}
+                type={type}
+                disabled={disabled}
+                {...props}
                 className={classes(['r5-button-with-icon'], className)}
                 $background={theme.backgroundColor}
                 $border={theme.backgroundColor}

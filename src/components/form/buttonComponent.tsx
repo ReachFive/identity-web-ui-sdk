@@ -19,7 +19,11 @@ export type ExtraButtonProps = {
     $themePrefix?: 'button' | 'socialButton';
 };
 
-export type ButtonProps = React.ComponentProps<typeof Button>;
+export type ButtonProps = Omit<
+    React.DetailedHTMLProps<React.ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement>,
+    'ref'
+> &
+    ExtraButtonProps;
 
 export const Button = styled.button<ExtraButtonProps>`
     display: block;
@@ -81,14 +85,14 @@ interface PrimaryButtonProps extends Omit<ButtonProps, 'background' | 'border'> 
 
 export function PrimaryButton({
     children,
-    type = 'submit' as const,
+    type = 'submit',
     ...props
 }: PropsWithChildren<PrimaryButtonProps>) {
     const theme = useTheme();
     return (
         <Button
-            type={type as 'submit' | 'reset' | 'button'}
-            {...(props as Omit<ButtonProps, '$background' | '$border'>)}
+            type={type}
+            {...props}
             $background={theme.primaryColor}
             $border={theme.primaryColor}
         >
@@ -101,17 +105,12 @@ interface DestructiveButtonProps extends Omit<ButtonProps, 'background' | 'borde
 
 export function DestructiveButton({
     children,
-    type = 'submit' as const,
+    type = 'submit',
     ...props
 }: PropsWithChildren<DestructiveButtonProps>) {
     const theme = useTheme();
     return (
-        <Button
-            type={type as 'submit' | 'reset' | 'button'}
-            {...(props as Omit<ButtonProps, '$background' | '$border'>)}
-            $background={theme.dangerColor}
-            $border={theme.dangerColor}
-        >
+        <Button type={type} {...props} $background={theme.dangerColor} $border={theme.dangerColor}>
             {children}
         </Button>
     );
