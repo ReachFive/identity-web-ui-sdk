@@ -1,5 +1,6 @@
-import type { Client as CoreClient } from '@reachfive/identity-core';
 import React, { PropsWithChildren } from 'react';
+
+import type { Client as CoreClient } from '@reachfive/identity-core';
 
 export interface Props {
     client: CoreClient;

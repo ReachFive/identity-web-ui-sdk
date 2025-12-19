@@ -81,14 +81,14 @@ interface PrimaryButtonProps extends Omit<ButtonProps, 'background' | 'border'> 
 
 export function PrimaryButton({
     children,
-    type = 'submit',
+    type = 'submit' as const,
     ...props
 }: PropsWithChildren<PrimaryButtonProps>) {
     const theme = useTheme();
     return (
         <Button
-            type={type}
-            {...props}
+            type={type as 'submit' | 'reset' | 'button'}
+            {...(props as Omit<ButtonProps, '$background' | '$border'>)}
             $background={theme.primaryColor}
             $border={theme.primaryColor}
         >
@@ -101,12 +101,17 @@ interface DestructiveButtonProps extends Omit<ButtonProps, 'background' | 'borde
 
 export function DestructiveButton({
     children,
-    type = 'submit',
+    type = 'submit' as const,
     ...props
 }: PropsWithChildren<DestructiveButtonProps>) {
     const theme = useTheme();
     return (
-        <Button type={type} {...props} $background={theme.dangerColor} $border={theme.dangerColor}>
+        <Button
+            type={type as 'submit' | 'reset' | 'button'}
+            {...(props as Omit<ButtonProps, '$background' | '$border'>)}
+            $background={theme.dangerColor}
+            $border={theme.dangerColor}
+        >
             {children}
         </Button>
     );

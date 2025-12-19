@@ -1,14 +1,15 @@
 /**
  * @jest-environment jsdom
  */
+import React from 'react';
 
 import { describe, expect, it } from '@jest/globals';
 import '@testing-library/jest-dom/jest-globals';
 import { render, screen } from '@testing-library/react';
-import React from 'react';
+
+import { I18nProvider, useI18n } from '../../src/contexts/i18n';
 
 import type { I18nMessages } from '../../src/contexts/i18n';
-import { I18nProvider, useI18n } from '../../src/contexts/i18n';
 
 // Test component that uses useI18n hook
 function TestComponent({

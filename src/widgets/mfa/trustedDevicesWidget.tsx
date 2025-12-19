@@ -1,6 +1,8 @@
-import { TrustedDevice } from '@reachfive/identity-core';
-import { LoaderCircle, X } from 'lucide-react';
 import React, { useEffect } from 'react';
+
+import { LoaderCircle, X } from 'lucide-react';
+
+import { TrustedDevice } from '@reachfive/identity-core';
 
 import {
     AlertDialog,

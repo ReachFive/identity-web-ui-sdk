@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 
-import type { OnSuccess } from '@/types';
 import { SignupEvent } from '@/types/events';
+
 import PasswordSignupForm, {
     type PasswordSignupFormProps,
 } from '../../../components/form/passwordSignupFormComponent';
 import { Alternative, Heading, Link } from '../../../components/miscComponent';
 import { useI18n } from '../../../contexts/i18n';
+
+import type { OnSuccess } from '@/types';
 
 export interface SignupWithPasswordViewProps extends PasswordSignupFormProps {}
 

@@ -1,4 +1,5 @@
 import { ProfileAddress } from '@reachfive/identity-core';
+
 import { getValue, setValue } from '../helpers/propertyHelpers';
 
 export interface PathMapping {

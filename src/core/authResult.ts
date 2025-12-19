@@ -13,7 +13,7 @@ export function enrichAuthResult(response: AuthResult) {
                 idTokenPayload,
             };
         } catch (e) {
-            logError('id token parsing error: ' + e);
+            logError('id token parsing error: ' + String(e));
         }
     }
 

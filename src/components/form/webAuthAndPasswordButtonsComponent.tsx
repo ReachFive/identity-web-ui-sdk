@@ -3,13 +3,11 @@ import React, { PropsWithChildren } from 'react';
 import classes from 'classnames';
 import styled, { useTheme } from 'styled-components';
 
-import { Separator } from '../miscComponent';
-import { Button, type ButtonProps } from './buttonComponent';
-
+import { useI18n } from '../../contexts/i18n';
 import { ReactComponent as FingerPrint } from '../../icons/fingerprint.svg';
 import { ReactComponent as Keyboard } from '../../icons/keyboard.svg';
-
-import { useI18n } from '../../contexts/i18n';
+import { Separator } from '../miscComponent';
+import { Button, type ButtonProps } from './buttonComponent';
 
 const iconStyle = `
     width: 40px;
@@ -25,8 +23,8 @@ const KeyboardIcon = styled(Keyboard)`
 
 const PrimaryButtonWithIcon = styled(
     ({
-        type = 'submit',
-        disabled = false,
+        type = 'submit' as const,
+        disabled = false as const,
         text,
         children,
         className,
@@ -35,9 +33,9 @@ const PrimaryButtonWithIcon = styled(
         const theme = useTheme();
         return (
             <Button
-                type={type}
-                disabled={disabled}
-                {...props}
+                type={type as 'submit' | 'reset' | 'button'}
+                disabled={disabled as boolean}
+                {...(props as Omit<ButtonProps, '$background' | '$border' | '$color'>)}
                 className={classes(['r5-button-with-icon'], className)}
                 $background={theme.backgroundColor}
                 $border={theme.backgroundColor}
@@ -65,9 +63,9 @@ const ButtonsSeparator = styled.div`
 `;
 
 export interface WebAuthnLoginViewButtonsProps {
-    disabled?: ButtonProps['disabled'];
+    disabled?: boolean;
     enablePasswordAuthentication?: boolean;
-    onPasswordClick: ButtonProps['onClick'];
+    onPasswordClick: React.MouseEventHandler<HTMLButtonElement>;
     className?: classes.Argument;
 }
 
@@ -120,8 +118,8 @@ export const WebAuthnLoginViewButtons = styled(
 
 export interface WebAuthnSignupViewButtonsProps {
     enablePasswordAuthentication?: boolean;
-    onBiometricClick: ButtonProps['onClick'];
-    onPasswordClick: ButtonProps['onClick'];
+    onBiometricClick: React.MouseEventHandler<HTMLButtonElement>;
+    onPasswordClick: React.MouseEventHandler<HTMLButtonElement>;
     className?: classes.Argument;
 }
 

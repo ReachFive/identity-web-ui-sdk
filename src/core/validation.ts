@@ -1,11 +1,11 @@
+import { TFunction } from 'i18next';
 import isEmail from 'validator/lib/isEmail';
 import isFloat from 'validator/lib/isFloat';
 import isInt from 'validator/lib/isInt';
 
-import { TFunction } from 'i18next';
 import { isValued } from '../helpers/utils';
 
-export class CompoundValidator<T, C = {}> {
+export class CompoundValidator<T, C = unknown> {
     current: Validator<T, C> | CompoundValidator<T, C>;
     next: Validator<T, C> | CompoundValidator<T, C>;
 
@@ -66,7 +66,7 @@ export interface ValidatorOptions<T, C, E = {}> {
     parameters?: Record<string, unknown>;
 }
 
-export class Validator<T, C = {}, E = {}> {
+export class Validator<T, C = unknown, E = {}> {
     rule: Rule<T, C, E>;
     hint: Hint<T>;
     parameters: Record<string, unknown>;
@@ -97,31 +97,31 @@ export class Validator<T, C = {}, E = {}> {
     }
 }
 
-export const empty = new Validator<unknown>({
+export const empty = new Validator<unknown, unknown>({
     rule: <T>(_value: T) => true,
 });
 
-export const required = new Validator<unknown>({
+export const required = new Validator<unknown, unknown>({
     rule: <T>(value: T | undefined) => isValued(value),
     hint: 'required',
 });
 
-export const checked = new Validator<boolean | string>({
+export const checked = new Validator<boolean | string, unknown>({
     rule: value => (typeof value === 'boolean' ? value === true : value.toLowerCase() === 'true'),
     hint: 'checked',
 });
 
-export const email = new Validator<string>({
+export const email = new Validator<string, unknown>({
     rule: value => isEmail(value),
     hint: 'email',
 });
 
-export const integer = new Validator<string>({
+export const integer = new Validator<string, unknown>({
     rule: value => isInt(value),
     hint: 'integer',
 });
 
-export const float = new Validator<string>({
+export const float = new Validator<string, unknown>({
     rule: value => isFloat(value),
     hint: 'float',
 });

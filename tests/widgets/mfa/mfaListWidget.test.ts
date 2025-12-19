@@ -1,7 +1,6 @@
 /**
  * @jest-environment jsdom
  */
-
 import { beforeEach, describe, expect, jest, test } from '@jest/globals';
 import '@testing-library/jest-dom/jest-globals';
 import { render, screen, waitFor } from '@testing-library/react';
@@ -9,11 +8,11 @@ import 'jest-styled-components';
 
 import type { Client, MFA } from '@reachfive/identity-core';
 
-import type { I18nMessages } from '../../../src/contexts/i18n';
-import type { Config, OnError, OnSuccess } from '../../../src/types';
-
 import { AppError } from '../../../src/helpers/errors';
 import mfaListWidget from '../../../src/widgets/mfa/mfaListWidget';
+
+import type { I18nMessages } from '../../../src/contexts/i18n';
+import type { Config, OnError, OnSuccess } from '../../../src/types';
 
 const defaultConfig: Config = {
     clientId: 'local',

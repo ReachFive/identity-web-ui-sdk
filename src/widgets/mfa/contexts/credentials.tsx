@@ -1,5 +1,6 @@
-import { MFA } from '@reachfive/identity-core';
 import React, { useCallback, useState } from 'react';
+
+import { MFA } from '@reachfive/identity-core';
 
 import { useReachfive } from '../../../contexts/reachfive';
 

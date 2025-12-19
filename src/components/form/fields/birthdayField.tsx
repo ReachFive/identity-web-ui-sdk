@@ -5,7 +5,7 @@ import { Config } from '../../../types';
 import dateField from './dateField';
 
 export const ageLimitValidator = (min = 6, max = 129) =>
-    new Validator<Date>({
+    new Validator<Date, unknown>({
         rule: value => {
             const age = differenceInYears(new Date(), value);
             return min <= age && age <= max;

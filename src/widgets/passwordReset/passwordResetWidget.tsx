@@ -1,12 +1,11 @@
 import React from 'react';
 
-import { parseQueryString } from '../../helpers/queryString';
-
 import { Heading, Info, Link } from '../../components/miscComponent';
 import { createMultiViewWidget } from '../../components/widget/widget';
 import { useI18n } from '../../contexts/i18n';
 import { useReachfive } from '../../contexts/reachfive';
 import { useRouting } from '../../contexts/routing';
+import { parseQueryString } from '../../helpers/queryString';
 import { PasswordEditorForm, PasswordEditorFormData } from '../passwordEditor/passwordEditorWidget';
 
 import type { OnError, OnSuccess } from '../../types';

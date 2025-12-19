@@ -1,18 +1,36 @@
-import { DeviceCredential } from '@reachfive/identity-core';
 import React, { useState } from 'react';
+
 import styled from 'styled-components';
+
+import { DeviceCredential } from '@reachfive/identity-core';
 
 import { Card, CloseIcon } from '../../components/form/cardComponent';
 import { createForm } from '../../components/form/formComponent';
 import { buildFormFields } from '../../components/form/formFieldFactory';
 import { Heading, Info, Separator } from '../../components/miscComponent';
 import { createWidget } from '../../components/widget/widget';
-
 import { useConfig } from '../../contexts/config';
 import { useI18n } from '../../contexts/i18n';
 import { useReachfive } from '../../contexts/reachfive';
-
 import { UserError } from '../../helpers/errors';
+// Source https://github.com/passkeydeveloper/passkey-authenticator-aaguids
+import { ReactComponent as FingerPrint } from '../../icons/fingerprint.svg';
+import { ReactComponent as OnePassword } from '../../icons/webauthn/1password.svg';
+import { ReactComponent as Apple } from '../../icons/webauthn/apple.svg';
+import { ReactComponent as Bitwarden } from '../../icons/webauthn/bitwarden.svg';
+import { ReactComponent as Chrome } from '../../icons/webauthn/chrome.svg';
+import { ReactComponent as Dashlane } from '../../icons/webauthn/dashlane.svg';
+import { ReactComponent as Edge } from '../../icons/webauthn/edge.svg';
+import { ReactComponent as Enpass } from '../../icons/webauthn/enpass.svg';
+import { ReactComponent as GooglePasswordManager } from '../../icons/webauthn/google-password-manager.svg';
+import { ReactComponent as IDmelon } from '../../icons/webauthn/idmelon.svg';
+import { ReactComponent as KeePassXC } from '../../icons/webauthn/keepassxc.svg';
+import { ReactComponent as Keeper } from '../../icons/webauthn/keeper.svg';
+import { ReactComponent as NordPass } from '../../icons/webauthn/nordpass.svg';
+import { ReactComponent as ProtonPass } from '../../icons/webauthn/proton-pass.svg';
+import { ReactComponent as SamsungPass } from '../../icons/webauthn/samsung-pass.svg';
+import { ReactComponent as Thales } from '../../icons/webauthn/thales.svg';
+import { ReactComponent as WindowsHello } from '../../icons/webauthn/windows-hello.svg';
 
 import type { OnError, OnSuccess } from '../../types';
 
@@ -38,7 +56,7 @@ const DevicesListWrapper = styled.div`
 
 interface DevicesListProps {
     devices: DeviceCredential[];
-    removeWebAuthnDevice: (id: string) => void;
+    removeWebAuthnDevice: (id: string) => Promise<void>;
 }
 
 const dateFormat = (dateString: string, locales?: Intl.LocalesArgument) =>
@@ -168,18 +186,17 @@ function WebAuthnDevices({
 
     const [devices, setDevices] = useState<DeviceCredential[]>(initDevices || []);
 
-    const removeWebAuthnDevice = (deviceId: string) => {
+    const removeWebAuthnDevice = async (deviceId: string) => {
         if (!confirm(i18n('webauthn.registredDevices.confirm.removal'))) return;
 
-        return coreClient
-            .removeWebAuthnDevice(accessToken, deviceId)
-            .then(() => {
-                onSuccess({ name: 'webauthn_credential_deleted', deviceId });
-                return coreClient
-                    .listWebAuthnDevices(accessToken)
-                    .then(newDevices => setDevices(newDevices));
-            })
-            .catch(onError);
+        try {
+            await coreClient.removeWebAuthnDevice(accessToken, deviceId);
+            onSuccess({ name: 'webauthn_credential_deleted', deviceId });
+            const newDevices = await coreClient.listWebAuthnDevices(accessToken);
+            setDevices(newDevices);
+        } catch (error) {
+            onError(error);
+        }
     };
 
     const addNewWebAuthnDevice = ({ friendlyName }: DeviceInputFormData) => {
@@ -245,25 +262,6 @@ export default createWidget<WebAuthnWidgetProps, WebAuthnDevicesProps>({
             });
     },
 });
-
-// Source https://github.com/passkeydeveloper/passkey-authenticator-aaguids
-import { ReactComponent as FingerPrint } from '../../icons/fingerprint.svg';
-import { ReactComponent as OnePassword } from '../../icons/webauthn/1password.svg';
-import { ReactComponent as Apple } from '../../icons/webauthn/apple.svg';
-import { ReactComponent as Bitwarden } from '../../icons/webauthn/bitwarden.svg';
-import { ReactComponent as Chrome } from '../../icons/webauthn/chrome.svg';
-import { ReactComponent as Dashlane } from '../../icons/webauthn/dashlane.svg';
-import { ReactComponent as Edge } from '../../icons/webauthn/edge.svg';
-import { ReactComponent as Enpass } from '../../icons/webauthn/enpass.svg';
-import { ReactComponent as GooglePasswordManager } from '../../icons/webauthn/google-password-manager.svg';
-import { ReactComponent as IDmelon } from '../../icons/webauthn/idmelon.svg';
-import { ReactComponent as KeePassXC } from '../../icons/webauthn/keepassxc.svg';
-import { ReactComponent as Keeper } from '../../icons/webauthn/keeper.svg';
-import { ReactComponent as NordPass } from '../../icons/webauthn/nordpass.svg';
-import { ReactComponent as ProtonPass } from '../../icons/webauthn/proton-pass.svg';
-import { ReactComponent as SamsungPass } from '../../icons/webauthn/samsung-pass.svg';
-import { ReactComponent as Thales } from '../../icons/webauthn/thales.svg';
-import { ReactComponent as WindowsHello } from '../../icons/webauthn/windows-hello.svg';
 
 const providerData = new Map<
     string,
