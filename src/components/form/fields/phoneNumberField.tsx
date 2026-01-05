@@ -6,9 +6,11 @@ import {
     parsePhoneNumber,
 } from 'react-phone-number-input';
 import { default as PhoneInputWithoutCountrySelect } from 'react-phone-number-input/input';
+import styles from 'react-phone-number-input/style.css';
+
 import { createGlobalStyle } from 'styled-components';
 
-import styles from 'react-phone-number-input/style.css'; // import raw css using `rollup-plugin-import-css'`
+// import raw css using `rollup-plugin-import-css'`
 
 import { Validator, isValidatorError } from '../../../core/validation';
 import { isRichFormValue } from '../../../helpers/utils.ts';
@@ -43,7 +45,7 @@ const ReactPhoneNumberInputStyle = createGlobalStyle`
 function importLocale(locale: string) {
     return import(
         `../../../../node_modules/react-phone-number-input/locale/${locale}.json.js`
-    ).then(module => module.default as Labels);
+    ).then((module: { default: Labels }) => module.default);
 }
 
 export type PhoneNumberOptions = {
@@ -195,7 +197,7 @@ const phoneNumberField = (
                 return value == '' ? undefined : value;
             },
         },
-        validator: new Validator<Value>({
+        validator: new Validator<Value, unknown>({
             rule: value => {
                 const phoneNumber = value ? parsePhoneNumber(value) : undefined;
                 return phoneNumber?.isValid() ?? false;

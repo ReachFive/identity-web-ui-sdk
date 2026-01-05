@@ -1,6 +1,8 @@
-import { AppError } from '@/helpers/errors';
 import { CaptchaFoxInstance } from '@captchafox/react';
 import type { WidgetDisplayMode } from '@captchafox/types';
+
+import { UserError } from '@/helpers/errors';
+
 import { WithCaptchaToken } from './captcha';
 
 export interface CaptchaFoxConf {
@@ -29,12 +31,14 @@ export default class CaptchaFox {
             const captchaToken = await instance?.execute();
             return callback({ ...data, captchaToken, captchaProvider: 'captchafox' });
         } catch (_error) {
-            return Promise.reject({
-                errorId: '',
-                error: 'CaptchaFox error',
-                errorDescription: 'CaptchaFox Error',
-                errorMessageKey: 'captchaFox.error',
-            } satisfies AppError);
+            return Promise.reject(
+                UserError.fromAppError({
+                    errorId: '',
+                    error: 'CaptchaFox error',
+                    errorDescription: 'CaptchaFox Error',
+                    errorMessageKey: 'captchaFox.error',
+                })
+            );
         }
     };
 }

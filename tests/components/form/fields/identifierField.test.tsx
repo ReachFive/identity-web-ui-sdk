@@ -1,21 +1,21 @@
 /**
  * @jest-environment jsdom
  */
+import React from 'react';
 
 import { describe, expect, jest, test } from '@jest/globals';
 import '@testing-library/jest-dom/jest-globals';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import 'jest-styled-components';
-import React from 'react';
-
-import type { Config } from '../../../../src/types';
-
 import { format } from 'libphonenumber-js';
+
 import identifierField from '../../../../src/components/form/fields/identifierField';
 import { createForm } from '../../../../src/components/form/formComponent';
 import { type I18nMessages } from '../../../../src/contexts/i18n';
 import { WidgetContext } from '../WidgetContext';
+
+import type { Config } from '../../../../src/types';
 
 const defaultConfig: Config = {
     clientId: 'local',

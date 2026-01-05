@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+import React from 'react';
 
 import { afterEach, beforeEach, describe, expect, jest, test } from '@jest/globals';
 import '@testing-library/jest-dom/jest-globals';
@@ -17,15 +18,14 @@ import {
     subYears,
 } from 'date-fns';
 import 'jest-styled-components';
-import React from 'react';
-
-import type { Config } from '../../../../src/types';
 
 import dateField from '../../../../src/components/form/fields/dateField';
 import { createForm } from '../../../../src/components/form/formComponent';
 import { type I18nMessages } from '../../../../src/contexts/i18n';
 import { Validator } from '../../../../src/core/validation';
 import { WidgetContext } from '../WidgetContext';
+
+import type { Config } from '../../../../src/types';
 
 const defaultConfig: Config = {
     clientId: 'local',
@@ -205,7 +205,7 @@ describe('DOM testing', () => {
         const key = 'date';
         const label = 'date';
 
-        const validator = new Validator<Date>({
+        const validator = new Validator<Date, unknown>({
             rule: value => {
                 return differenceInYears(new Date(), value) >= 18;
             },

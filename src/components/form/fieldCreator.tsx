@@ -1,7 +1,7 @@
 import React, { type ComponentType } from 'react';
 
 import { TFunction } from 'i18next';
-import type { WithI18n } from '../../contexts/i18n';
+
 import { DefaultPathMapping, type PathMapping } from '../../core/mapping';
 import {
     empty as emptyRule,
@@ -15,6 +15,8 @@ import {
 import generateId from '../../helpers/inputIdGenerator';
 import { camelCasePath } from '../../helpers/transformObjectProperties';
 import { isRichFormValue, isValued, type FormValue } from '../../helpers/utils';
+
+import type { WithI18n } from '../../contexts/i18n';
 import type { FormContext } from './formComponent';
 
 interface FieldCreateProps {
@@ -45,7 +47,7 @@ export interface Field<
     ) => React.ReactNode;
     initialize: <M extends Record<PropertyKey, unknown>>(model: Partial<M>) => FieldValue<T, K>;
     unbind: <M extends Record<PropertyKey, unknown>>(model: M, state: FieldValue<T, K, E>) => M;
-    validate: (data: FieldValue<T, K, E>, ctx: FormContext<any>) => Promise<ValidatorResult>;
+    validate: (data: FieldValue<T, K, E>, ctx: FormContext<unknown>) => Promise<ValidatorResult>;
 }
 
 export type FieldValue<T, K extends string = 'raw', E extends Record<string, unknown> = {}> = E & {
@@ -90,7 +92,7 @@ export type FieldDefinition<T, F = T, K extends string = 'raw'> = {
     autoComplete?: AutoFill;
     defaultValue?: T;
     format?: Formatter<T, F, K>;
-    validator?: Validator<F, any> | CompoundValidator<F, any>;
+    validator?: Validator<F, unknown> | CompoundValidator<F, unknown>;
     mapping?: PathMapping;
 };
 
@@ -183,7 +185,7 @@ export function createField<
                 ): M => mapping.unbind(model, format.unbind(value)) as M,
                 validate: async (
                     { value: formValue }: FieldValue<F, K, E>,
-                    ctx: FormContext<any>
+                    ctx: FormContext<unknown>
                 ): Promise<ValidatorResult<E>> => {
                     const value = isRichFormValue(formValue, rawProperty)
                         ? formValue[rawProperty]

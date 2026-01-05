@@ -2,7 +2,7 @@ export function getValue<T extends Record<string, unknown>>(
     object: T = {} as T,
     path: string
 ): unknown {
-    return path.split('.').reduce<Record<string, unknown> | unknown>((acc, field) => {
+    return path.split('.').reduce<unknown>((acc, field) => {
         if (acc && typeof acc === 'object' && field in acc) {
             return (acc as Record<string, unknown>)[field];
         }
@@ -26,14 +26,14 @@ function _setValueR<T extends Record<string, unknown>, V>(
     // Si la clé est un nombre, on traite comme un tableau
     if (!isNaN(Number(key))) {
         const array = Array.isArray(object) ? object : [];
-        array[Number(key)] = _setValueR((array[Number(key)] || {}) as T, path, index + 1, value);
+        array[Number(key)] = _setValueR((array[Number(key)] ?? {}) as T, path, index + 1, value);
         return array as unknown as T;
     }
 
     // Sinon on traite comme un objet
     return {
         ...object,
-        [key]: _setValueR((currentValue || {}) as T, path, index + 1, value),
+        [key]: _setValueR((currentValue ?? {}) as T, path, index + 1, value),
     };
 }
 

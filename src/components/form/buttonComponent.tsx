@@ -19,7 +19,11 @@ export type ExtraButtonProps = {
     $themePrefix?: 'button' | 'socialButton';
 };
 
-export type ButtonProps = React.ComponentProps<typeof Button>;
+export type ButtonProps = Omit<
+    React.DetailedHTMLProps<React.ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement>,
+    'ref'
+> &
+    ExtraButtonProps;
 
 export const Button = styled.button<ExtraButtonProps>`
     display: block;

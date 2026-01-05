@@ -1,7 +1,5 @@
 import React, { useMemo } from 'react';
 
-import type { Config, Prettify } from '../../types';
-
 import phoneNumberField, {
     type PhoneNumberOptions,
 } from '../../components/form/fields/phoneNumberField';
@@ -9,13 +7,12 @@ import { simpleField } from '../../components/form/fields/simpleField';
 import { createForm } from '../../components/form/formComponent';
 import { Info, Intro } from '../../components/miscComponent';
 import { createMultiViewWidget } from '../../components/widget/widget';
-
 import { useConfig } from '../../contexts/config';
 import { useI18n } from '../../contexts/i18n';
 import { useReachfive } from '../../contexts/reachfive';
 import { useRouting } from '../../contexts/routing';
 
-import type { OnError, OnSuccess } from '../../types';
+import type { Config, Prettify, OnError, OnSuccess } from '../../types';
 
 type PhoneNumberFormData = { phoneNumber: string };
 

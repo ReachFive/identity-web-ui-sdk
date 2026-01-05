@@ -7,3 +7,25 @@ types
 
 # Ignore markdown files
 *.md
+
+# Ignore package locks
+pnpm-lock.yaml
+package-lock.json
+
+# Ignore build files
+dist
+cjs
+es
+umd
+
+# Ignore CI/CD files
+.circleci
+.github
+
+# Ignore misc files
+.editorconfig
+.eslintrc.json
+.prettierrc
+.prettierignore
+.gitignore
+.gitignore
