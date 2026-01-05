@@ -1,13 +1,12 @@
 import React, { useState } from 'react';
+import styled, { type CSSProperties } from 'styled-components';
 
-import styled from 'styled-components';
-
-import { DeviceCredential } from '@reachfive/identity-core';
+import { type DeviceCredential } from '@reachfive/identity-core';
 
 import { Card, CloseIcon } from '../../components/form/cardComponent';
 import { createForm } from '../../components/form/formComponent';
 import { buildFormFields } from '../../components/form/formFieldFactory';
-import { Heading, Info, Separator } from '../../components/miscComponent';
+import { Heading, Info, MutedText, Paragraph } from '../../components/miscComponent';
 import { createWidget } from '../../components/widget/widget';
 import { useConfig } from '../../contexts/config';
 import { useI18n } from '../../contexts/i18n';
@@ -31,6 +30,8 @@ import { ReactComponent as ProtonPass } from '../../icons/webauthn/proton-pass.s
 import { ReactComponent as SamsungPass } from '../../icons/webauthn/samsung-pass.svg';
 import { ReactComponent as Thales } from '../../icons/webauthn/thales.svg';
 import { ReactComponent as WindowsHello } from '../../icons/webauthn/windows-hello.svg';
+
+// Source https://github.com/passkeydeveloper/passkey-authenticator-aaguids
 
 import type { OnError, OnSuccess } from '../../types';
 
@@ -69,10 +70,10 @@ const dateFormat = (dateString: string, locales?: Intl.LocalesArgument) =>
         minute: '2-digit',
     });
 
-const iconStyle = `
-    width: 40px;
-    height: 40px;
-`;
+const iconStyle: CSSProperties = {
+    width: '40px',
+    height: '40px',
+};
 const CardContent = styled.div`
     display: flex;
     align-items: center;
@@ -97,18 +98,13 @@ const DevicesList = ({ devices, removeWebAuthnDevice }: DevicesListProps) => {
             <div>
                 {devices.map(device => {
                     const { id, friendlyName, createdAt, lastUsedAt, aaguid } = device;
-                    const [provider, icon] = getProviderData(aaguid ?? '');
-                    const Icon =
-                        icon &&
-                        styled(icon)`
-                            ${iconStyle}
-                        `;
+                    const [provider, Icon] = getProviderData(aaguid ?? '');
 
                     return (
                         <Card key={id} data-testid="device">
                             <CardContent>
                                 <CardIcon>
-                                    <Icon />
+                                    <Icon style={iconStyle} />
                                 </CardIcon>
                                 <CardText>
                                     <DeviceName data-testid="device-name">
@@ -218,7 +214,9 @@ function WebAuthnDevices({
                 <DevicesList devices={devices} removeWebAuthnDevice={removeWebAuthnDevice} />
             )}
 
-            <Separator text={i18n('webauthn.registredDevices.add')} />
+            <Paragraph align="center">
+                <MutedText>{i18n('webauthn.registredDevices.add')}</MutedText>
+            </Paragraph>
 
             <DeviceInputForm
                 fields={fields}

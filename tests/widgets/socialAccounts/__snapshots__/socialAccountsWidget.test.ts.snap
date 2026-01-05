@@ -14,9 +14,9 @@ exports[`Snapshot basic 1`] = `
   user-select: none;
   touch-action: manipulation;
   cursor: pointer;
-  color: #495057;
+  color: #229955;
   background-color: #ffffff;
-  border: 1px solid #ced4da;
+  border: 1px solid #229955;
   padding: 9px 12px;
   font-size: 14px;
   line-height: 1.428571429;
@@ -27,14 +27,14 @@ exports[`Snapshot basic 1`] = `
 
 .c5:focus {
   outline: 0;
-  box-shadow: 0 0 0 3px rgba(206,212,218,0.5);
+  box-shadow: 0 0 0 3px rgba(34,153,85,0.5);
 }
 
 .c5:hover,
 .c5:active {
-  color: #495057;
+  color: #229955;
   background-color: #ebebeb;
-  border-color: #b7c0c8;
+  border-color: #1b7842;
 }
 
 .c5[disabled] {
