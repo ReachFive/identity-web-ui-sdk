@@ -1,41 +1,20 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment jest-fixed-jsdom
  */
 import { afterAll, beforeAll, beforeEach, describe, expect, jest, test } from '@jest/globals';
 import '@testing-library/jest-dom/jest-globals';
-import { render, screen, waitFor } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent, { UserEvent } from '@testing-library/user-event';
 import 'jest-styled-components';
 
 import { Client } from '@reachfive/identity-core';
 
-import { type I18nMessages } from '../../../src/contexts/i18n';
-import mfaStepUpWidget from '../../../src/widgets/stepUp/mfaStepUpWidget';
+import MfaStepUpWidget from '@/widgets/stepUp/mfaStepUpWidget';
 
-import type { Config, OnError, OnSuccess } from '../../../src/types';
+import { componentGenerator } from '../renderer';
 
-const defaultConfig: Config = {
-    clientId: 'local',
-    domain: 'local.reach5.net',
-    sso: false,
-    sms: false,
-    webAuthn: false,
-    language: 'fr',
-    pkceEnforced: false,
-    isPublic: true,
-    socialProviders: ['facebook', 'google'],
-    customFields: [],
-    resourceBaseUrl: 'http://localhost',
-    mfaSmsEnabled: true,
-    mfaEmailEnabled: true,
-    rbaEnabled: false,
-    consentsVersions: {},
-    passwordPolicy: {
-        minLength: 8,
-        minStrength: 2,
-        allowUpdateWithAccessTokenOnly: true,
-    },
-};
+import type { I18nMessages } from '@/contexts/i18n';
+import type { OnError, OnSuccess } from '@/types';
 
 const defaultI18n: I18nMessages = {};
 
@@ -78,25 +57,20 @@ describe('DOM testing', () => {
     });
 
     afterAll(() => {
-        Object.defineProperty(window, 'location', location);
+        Object.defineProperty(window, 'location', {
+            value: location,
+            writable: true,
+        });
     });
 
-    const generateComponent = async (
-        options: Partial<Parameters<typeof mfaStepUpWidget>[0]>,
-        config: Partial<Config> = {}
-    ) => {
-        // @ts-expect-error partial Client
-        const apiClient: Client = {
-            getMfaStepUpToken,
-            startPasswordless,
-            verifyMfaPasswordless,
-        };
-        const result = await mfaStepUpWidget(
-            { onError, onSuccess, ...options },
-            { apiClient, config: { ...defaultConfig, ...config }, defaultI18n }
-        );
-        return render(result);
+    // @ts-expect-error partial Client
+    const apiClient: Client = {
+        getMfaStepUpToken,
+        startPasswordless,
+        verifyMfaPasswordless,
     };
+
+    const generateComponent = componentGenerator(MfaStepUpWidget, apiClient, defaultI18n);
 
     const assertStepUpWorkflow = async (user: UserEvent, amr: string[]) => {
         expect(getMfaStepUpToken).toHaveBeenCalledTimes(1);
@@ -111,7 +85,7 @@ describe('DOM testing', () => {
             await user.click(screen.getByTestId('submit'));
         }
 
-        await waitFor(async () => {
+        await waitFor(() => {
             expect(startPasswordless).toHaveBeenNthCalledWith(
                 1,
                 expect.objectContaining({
@@ -124,7 +98,7 @@ describe('DOM testing', () => {
         // wait for view redirect to code verification view
         expect(await screen.findByText('passwordless.sms.verification.intro')).toBeInTheDocument();
 
-        expect(screen.queryByLabelText('verificationCode')).toBeInTheDocument();
+        expect(screen.getByLabelText('verificationCode')).toBeInTheDocument();
         const input = screen.getByPlaceholderText('verificationCode');
         expect(input).toBeInTheDocument();
         const submitBtn = screen.getByTestId('submit');
@@ -179,6 +153,8 @@ describe('DOM testing', () => {
             await generateComponent({
                 auth,
                 showStepUpStart: true,
+                onError,
+                onSuccess,
             });
 
             // StepUp start button
@@ -191,13 +167,15 @@ describe('DOM testing', () => {
         });
 
         test('showStepUpStart: false', async () => {
-            expect.assertions(12);
+            expect.assertions(11);
 
             const user = userEvent.setup();
 
             await generateComponent({
                 auth,
                 showStepUpStart: false,
+                onError,
+                onSuccess,
             });
 
             // StepUp start button
@@ -228,6 +206,8 @@ describe('DOM testing', () => {
             await generateComponent({
                 auth,
                 showStepUpStart: false,
+                onError,
+                onSuccess,
             });
 
             // StepUp start button

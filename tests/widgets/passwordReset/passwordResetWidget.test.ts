@@ -1,49 +1,27 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment jest-fixed-jsdom
  * @jest-environment-options {"url": "http://localhost/?email=alice@reach5.co&verificationCode=123456"}
  */
 import { beforeEach, describe, expect, jest, test } from '@jest/globals';
 import '@testing-library/jest-dom/jest-globals';
-import { render, screen, waitFor } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import 'jest-styled-components';
 
 import { PasswordStrengthScore, type Client } from '@reachfive/identity-core';
 
-import { type I18nMessages } from '../../../src/contexts/i18n';
-import passwordResetWidget from '../../../src/widgets/passwordReset/passwordResetWidget';
+import { type I18nMessages } from '@/contexts/i18n';
+import { OnError, OnSuccess } from '@/types';
+import PasswordResetWidget from '@/widgets/passwordReset/passwordResetWidget';
 
-import type { Config, OnError, OnSuccess } from '../../../src/types';
-
-const defaultConfig: Config = {
-    clientId: 'local',
-    domain: 'local.reach5.net',
-    sso: false,
-    sms: false,
-    webAuthn: false,
-    language: 'fr',
-    pkceEnforced: false,
-    isPublic: true,
-    socialProviders: ['facebook', 'google'],
-    customFields: [],
-    resourceBaseUrl: 'http://localhost',
-    mfaSmsEnabled: false,
-    mfaEmailEnabled: false,
-    rbaEnabled: false,
-    consentsVersions: {},
-    passwordPolicy: {
-        minLength: 8,
-        minStrength: 2,
-        allowUpdateWithAccessTokenOnly: true,
-    },
-};
+import { componentGenerator, snapshotGenerator } from '../renderer';
 
 const defaultI18n: I18nMessages = {};
 
 describe('Snapshot', () => {
     const getPasswordStrength = jest
         .fn<Client['getPasswordStrength']>()
-        .mockImplementation(password => {
+        .mockImplementation((password: string) => {
             let score = 0;
             if (/[a-z]+/.exec(password)) score++;
             if (/[0-9]+/.exec(password)) score++;
@@ -56,35 +34,22 @@ describe('Snapshot', () => {
         getPasswordStrength.mockClear();
     });
 
-    const generateSnapshot =
-        (options: Parameters<typeof passwordResetWidget>[0] = {}, config: Partial<Config> = {}) =>
-        async () => {
-            // @ts-expect-error partial Client
-            const apiClient: Client = {
-                getPasswordStrength,
-            };
+    // @ts-expect-error partial Client
+    const apiClient: Client = {
+        getPasswordStrength,
+    };
 
-            const widget = await passwordResetWidget(options, {
-                config: { ...defaultConfig, ...config },
-                apiClient,
-                defaultI18n,
-            });
-
-            await waitFor(async () => {
-                const { container } = await render(widget);
-                expect(container).toMatchSnapshot();
-            });
-        };
+    const generateSnapshot = snapshotGenerator(PasswordResetWidget, apiClient, defaultI18n);
 
     describe('password-reset', () => {
-        test('default', generateSnapshot());
+        test('default', generateSnapshot({}));
     });
 });
 
 describe('DOM testing', () => {
     const getPasswordStrength = jest
         .fn<Client['getPasswordStrength']>()
-        .mockImplementation(password => {
+        .mockImplementation((password: string) => {
             let score = 0;
             if (/[a-z]+/.exec(password)) score++;
             if (/[0-9]+/.exec(password)) score++;
@@ -104,23 +69,13 @@ describe('DOM testing', () => {
         onSuccess.mockClear();
     });
 
-    const generateComponent = async (
-        options: Parameters<typeof passwordResetWidget>[0] = {},
-        config: Partial<Config> = {}
-    ) => {
-        // @ts-expect-error partial Client
-        const apiClient: Client = {
-            getPasswordStrength,
-            updatePassword,
-        };
-
-        const result = await passwordResetWidget(
-            { onError, onSuccess, ...options },
-            { config: { ...defaultConfig, ...config }, apiClient, defaultI18n }
-        );
-
-        return render(result);
+    // @ts-expect-error partial Client
+    const apiClient: Client = {
+        getPasswordStrength,
+        updatePassword,
     };
+
+    const generateComponent = componentGenerator(PasswordResetWidget, apiClient, defaultI18n);
 
     describe('password-reset', () => {
         test('basic', async () => {
@@ -129,7 +84,7 @@ describe('DOM testing', () => {
 
             updatePassword.mockResolvedValue();
 
-            await generateComponent();
+            await generateComponent({ onError, onSuccess });
 
             const password = screen.getByTestId('password');
             expect(password).toBeInTheDocument();
@@ -159,7 +114,7 @@ describe('DOM testing', () => {
 
             updatePassword.mockRejectedValue('Unexpected error');
 
-            await generateComponent();
+            await generateComponent({ onError, onSuccess });
 
             const password = screen.getByTestId('password');
             const passwordConfirmation = screen.getByTestId('password_confirmation');

@@ -1,46 +1,22 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment jest-fixed-jsdom
  */
 import React from 'react';
 
-import { afterEach, beforeEach, describe, expect, jest, test } from '@jest/globals';
+import { beforeEach, describe, expect, jest, test } from '@jest/globals';
 import '@testing-library/jest-dom/jest-globals';
-import { queryByText, render, screen, waitFor } from '@testing-library/react';
+import { queryByText, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import 'jest-styled-components';
 
 import { PasswordStrengthScore, type Client } from '@reachfive/identity-core';
 
-import passwordField from '../../../../src/components/form/fields/passwordField';
-import { createForm } from '../../../../src/components/form/formComponent';
-import { type I18nMessages } from '../../../../src/contexts/i18n';
-import { Validator } from '../../../../src/core/validation';
-import { WidgetContext } from '../WidgetContext';
+import passwordField from '@/components/form/fields/passwordField';
+import { createForm } from '@/components/form/formComponent';
+import { I18nMessages } from '@/contexts/i18n';
+import { Validator } from '@/core/validation';
 
-import type { Config } from '../../../../src/types';
-
-const defaultConfig: Config = {
-    clientId: 'local',
-    domain: 'local.reach5.net',
-    sso: false,
-    sms: false,
-    webAuthn: false,
-    language: 'fr',
-    pkceEnforced: false,
-    isPublic: true,
-    socialProviders: ['facebook', 'google'],
-    customFields: [],
-    resourceBaseUrl: 'http://localhost',
-    mfaSmsEnabled: false,
-    mfaEmailEnabled: false,
-    rbaEnabled: false,
-    consentsVersions: {},
-    passwordPolicy: {
-        minLength: 8,
-        minStrength: 2,
-        allowUpdateWithAccessTokenOnly: true,
-    },
-};
+import { defaultConfig, renderWithContext } from '../../../widgets/renderer';
 
 const defaultI18n: I18nMessages = {
     password: 'Password',
@@ -67,42 +43,33 @@ describe('DOM testing', () => {
 
     beforeEach(() => {
         getPasswordStrength.mockClear();
-        jest.useFakeTimers();
-    });
-
-    afterEach(() => {
-        jest.runOnlyPendingTimers();
-        jest.useRealTimers();
     });
 
     test('default settings', async () => {
-        const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTimeAsync });
+        const user = userEvent.setup();
 
         const key = 'password';
         const label = 'password';
 
         const onFieldChange = jest.fn();
-        const onSubmit = jest.fn<(data: Model) => Promise<Model>>(data => Promise.resolve(data));
+        const onSubmit = jest.fn<(data: Model) => Promise<Model>>((data: Model) =>
+            Promise.resolve(data)
+        );
 
         const Form = createForm<Model>({
             fields: [passwordField({ key, label }, defaultConfig)],
         });
 
-        await waitFor(async () => {
-            return render(
-                <WidgetContext
-                    client={apiClient}
-                    config={defaultConfig}
-                    defaultMessages={defaultI18n}
-                >
-                    <Form
-                        fieldValidationDebounce={0} // trigger validation instantly
-                        handler={onSubmit}
-                        onFieldChange={onFieldChange}
-                    />
-                </WidgetContext>
-            );
-        });
+        await renderWithContext(
+            <Form
+                fieldValidationDebounce={0} // trigger validation instantly
+                onFieldChange={onFieldChange}
+                handler={onSubmit}
+            />,
+            apiClient,
+            defaultConfig,
+            defaultI18n
+        );
 
         const input = screen.getByLabelText('Password');
         expect(input).toBeInTheDocument();
@@ -121,8 +88,8 @@ describe('DOM testing', () => {
         await user.clear(input);
         await user.type(input, invalidPassword);
 
-        expect(screen.queryByTestId('password-strength')).toBeInTheDocument();
-        expect(screen.queryByTestId('password-policy-rules')).toBeInTheDocument();
+        expect(screen.getByTestId('password-strength')).toBeInTheDocument();
+        expect(screen.getByTestId('password-policy-rules')).toBeInTheDocument();
 
         await waitFor(() =>
             expect(onFieldChange).toHaveBeenLastCalledWith(
@@ -141,8 +108,8 @@ describe('DOM testing', () => {
         await user.clear(input);
         await user.type(input, validPassword);
 
-        expect(screen.queryByTestId('password-strength')).toBeInTheDocument();
-        expect(screen.queryByTestId('password-policy-rules')).toBeInTheDocument();
+        expect(screen.getByTestId('password-strength')).toBeInTheDocument();
+        expect(screen.getByTestId('password-policy-rules')).toBeInTheDocument();
 
         await waitFor(() =>
             expect(onFieldChange).toHaveBeenLastCalledWith(
@@ -156,33 +123,30 @@ describe('DOM testing', () => {
     });
 
     test('with canShowPassword enabled', async () => {
-        const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTimeAsync });
+        const user = userEvent.setup();
 
         const key = 'password';
         const label = 'password';
 
         const onFieldChange = jest.fn();
-        const onSubmit = jest.fn<(data: Model) => Promise<Model>>(data => Promise.resolve(data));
+        const onSubmit = jest.fn<(data: Model) => Promise<Model>>((data: Model) =>
+            Promise.resolve(data)
+        );
 
         const Form = createForm<Model>({
             fields: [passwordField({ key, label, canShowPassword: true }, defaultConfig)],
         });
 
-        await waitFor(async () => {
-            return render(
-                <WidgetContext
-                    client={apiClient}
-                    config={defaultConfig}
-                    defaultMessages={defaultI18n}
-                >
-                    <Form
-                        fieldValidationDebounce={0} // trigger validation instantly
-                        handler={onSubmit}
-                        onFieldChange={onFieldChange}
-                    />
-                </WidgetContext>
-            );
-        });
+        await renderWithContext(
+            <Form
+                fieldValidationDebounce={0} // trigger validation instantly
+                onFieldChange={onFieldChange}
+                handler={onSubmit}
+            />,
+            apiClient,
+            defaultConfig,
+            defaultI18n
+        );
 
         const input = screen.getByLabelText('Password');
         expect(input).toBeInTheDocument();
@@ -211,14 +175,16 @@ describe('DOM testing', () => {
                 hint: 'password.match',
             });
 
-        const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTimeAsync });
+        const user = userEvent.setup();
 
         const key = 'password';
         const label = 'password';
         const matchPassword = '1L0v38anana5';
 
         const onFieldChange = jest.fn();
-        const onSubmit = jest.fn<(data: Model) => Promise<Model>>(data => Promise.resolve(data));
+        const onSubmit = jest.fn<(data: Model) => Promise<Model>>((data: Model) =>
+            Promise.resolve(data)
+        );
 
         const Form = createForm<Model>({
             fields: [
@@ -233,21 +199,16 @@ describe('DOM testing', () => {
             ],
         });
 
-        await waitFor(async () => {
-            return render(
-                <WidgetContext
-                    client={apiClient}
-                    config={defaultConfig}
-                    defaultMessages={defaultI18n}
-                >
-                    <Form
-                        fieldValidationDebounce={0} // trigger validation instantly
-                        onFieldChange={onFieldChange}
-                        handler={onSubmit}
-                    />
-                </WidgetContext>
-            );
-        });
+        await renderWithContext(
+            <Form
+                fieldValidationDebounce={0} // trigger validation instantly
+                onFieldChange={onFieldChange}
+                handler={onSubmit}
+            />,
+            apiClient,
+            defaultConfig,
+            defaultI18n
+        );
 
         const input = screen.getByLabelText('Password');
         expect(input).toBeInTheDocument();
@@ -258,9 +219,6 @@ describe('DOM testing', () => {
         const invalidPassword = 'ILoveApples';
         await user.clear(input);
         await user.type(input, invalidPassword);
-
-        // Fast-forward until all timers have been executed
-        await jest.runOnlyPendingTimersAsync();
 
         await waitFor(() =>
             expect(onFieldChange).toHaveBeenLastCalledWith(

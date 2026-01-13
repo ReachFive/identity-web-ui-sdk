@@ -1,10 +1,10 @@
 import React, { ComponentType, useRef } from 'react';
 
-import { CaptchaFoxInstance, CaptchaFox as CaptchaFoxWidget } from '@captchafox/react';
+import { type CaptchaFoxInstance, CaptchaFox as CaptchaFoxWidget } from '@captchafox/react';
 import styled from 'styled-components';
 
-import CaptchaFox, { CaptchaFoxConf } from './captchaFox';
-import ReCaptcha, { RecaptchaAction, ReCaptchaConf } from './reCaptcha';
+import CaptchaFox, { type CaptchaFoxConf } from './captchaFox';
+import ReCaptcha, { type RecaptchaAction, type ReCaptchaConf } from './reCaptcha';
 
 const StyledCaptchaFoxWidget = styled(CaptchaFoxWidget)`
     margin-bottom: ${props => props.theme.spacing}px;

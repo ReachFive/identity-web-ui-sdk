@@ -27,7 +27,7 @@ exports[`Snapshot basic 1`] = `
   --spacing: 10;
   --font-generic: 14;
   --border-width: 1;
-  --radius: 3;
+  --border-radius: 3;
 }
 
 <div>
@@ -190,7 +190,7 @@ exports[`Snapshot empty 1`] = `
   --spacing: 10;
   --font-generic: 14;
   --border-width: 1;
-  --radius: 3;
+  --border-radius: 3;
 }
 
 <div>

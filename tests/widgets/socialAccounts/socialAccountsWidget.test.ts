@@ -1,82 +1,51 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment jest-fixed-jsdom
  */
+import { ComponentProps } from 'react';
+
 import { beforeEach, describe, expect, jest, test } from '@jest/globals';
 import '@testing-library/jest-dom/jest-globals';
-import { render, screen, waitFor } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import 'jest-styled-components';
 
 import { type Client, type Profile } from '@reachfive/identity-core';
 
-import { type I18nMessages } from '../../../src/contexts/i18n';
-import socialAccountsWidget from '../../../src/widgets/socialAccounts/socialAccountsWidget';
+import { type I18nMessages } from '@/contexts/i18n';
+import SocialAccountsWidget from '@/widgets/socialAccounts/socialAccountsWidget';
 
-import type { Config, OnError, OnSuccess } from '../../../src/types';
+import { componentGenerator, snapshotGenerator } from '../renderer';
 
-const defaultConfig: Config = {
-    clientId: 'local',
-    domain: 'local.reach5.net',
-    sso: false,
-    sms: false,
-    webAuthn: false,
-    language: 'fr',
-    pkceEnforced: false,
-    isPublic: true,
-    socialProviders: ['facebook', 'google', 'line:custom'],
-    customFields: [],
-    resourceBaseUrl: 'http://localhost',
-    mfaSmsEnabled: false,
-    mfaEmailEnabled: false,
-    rbaEnabled: false,
-    consentsVersions: {},
-    passwordPolicy: {
-        minLength: 8,
-        minStrength: 2,
-        allowUpdateWithAccessTokenOnly: true,
-    },
-};
+import type { Config, OnError, OnSuccess } from '@/types';
 
 const defaultI18n: I18nMessages = {};
 
 describe('Snapshot', () => {
-    const generateSnapshot =
-        (
-            options = {},
-            config = defaultConfig,
-            socialIdentities: Profile['socialIdentities'] = []
-        ) =>
-        async () => {
-            // @ts-expect-error partial Client
-            const apiClient: Client = {
-                // @ts-expect-error partial Profile
-                getUser: jest.fn<Client['getUser']>().mockResolvedValue({ socialIdentities }),
-                unlink: jest.fn<Client['unlink']>(),
-                on: jest.fn(),
-                off: jest.fn(),
-            };
-
-            const widget = await socialAccountsWidget(
-                { ...options, accessToken: 'azerty' },
-                { apiClient, config: { ...defaultConfig, ...config }, defaultI18n }
-            );
-
-            await waitFor(async () => {
-                const { container, rerender } = await render(widget);
-
-                await waitFor(() => expect(apiClient.getUser).toHaveBeenCalled());
-
-                rerender(widget);
-
-                expect(container).toMatchSnapshot();
-            });
+    const generateSnapshot = (
+        options: ComponentProps<typeof SocialAccountsWidget>,
+        config: Partial<Config> = {},
+        socialIdentities: Profile['socialIdentities'] = []
+    ) => {
+        // @ts-expect-error partial Client
+        const apiClient: Client = {
+            getUser: jest
+                .fn<Client['getUser']>()
+                .mockResolvedValue({ socialIdentities } as Profile),
+            unlink: jest.fn<Client['unlink']>(),
+            on: jest.fn(),
+            off: jest.fn(),
         };
+
+        const generate = snapshotGenerator(SocialAccountsWidget, apiClient, defaultI18n);
+
+        return generate(options, config);
+    };
 
     test(
         'basic',
-        generateSnapshot({
-            socialIdentities: [{ id: '123456778', provider: 'facebook', name: 'John Doe' }],
-        })
+        generateSnapshot({ accessToken: 'azerty' }, {}, [
+            { id: '123456778', provider: 'facebook', username: 'John Doe' },
+        ])
     );
 });
 
@@ -99,68 +68,58 @@ describe('DOM testing', () => {
     });
 
     const generateComponent = async (
-        options: Partial<Parameters<typeof socialAccountsWidget>[0]> = {},
-        config = defaultConfig,
+        options: ComponentProps<typeof SocialAccountsWidget>,
+        config: Partial<Config> = {},
         socialIdentities: Profile['socialIdentities'] = []
     ) => {
         // @ts-expect-error partial Client
         const apiClient: Client = {
-            // @ts-expect-error partial Profile
-            getUser: getUser.mockResolvedValue({ socialIdentities }),
+            getUser: getUser.mockResolvedValue({ socialIdentities } as Profile),
             unlink,
             on,
             off,
         };
 
-        const widget = await socialAccountsWidget(
-            { onError, onSuccess, ...options, accessToken: 'azerty' },
-            { apiClient, config: { ...defaultConfig, ...config }, defaultI18n }
-        );
+        const generate = componentGenerator(SocialAccountsWidget, apiClient, defaultI18n);
 
-        await waitFor(async () => {
-            const { rerender } = await render(widget);
-
-            await waitFor(() => expect(apiClient.getUser).toHaveBeenCalled());
-
-            rerender(widget);
-        });
+        return await generate(options, config);
     };
 
     describe('with default config', () => {
         test('no identity', async () => {
-            expect.assertions(3);
+            expect.assertions(2);
 
-            await generateComponent({});
+            await generateComponent({ accessToken: 'azerty', onError, onSuccess });
 
-            expect(screen.queryByText('socialAccounts.noLinkedAccount')).toBeInTheDocument();
-            expect(screen.queryByText('socialAccounts.linkNewAccount')).toBeInTheDocument();
+            expect(screen.getByText('socialAccounts.noLinkedAccount')).toBeInTheDocument();
+            expect(screen.getByText('socialAccounts.linkNewAccount')).toBeInTheDocument();
         });
 
         test('with existing identity', async () => {
-            expect.assertions(4);
+            expect.assertions(3);
 
-            await generateComponent({}, defaultConfig, [
+            await generateComponent({ accessToken: 'azerty', onError, onSuccess }, {}, [
                 { id: '123456789', provider: 'facebook', username: 'John Doe' },
             ]);
 
             expect(screen.queryByText('socialAccounts.noLinkedAccount')).not.toBeInTheDocument();
-            expect(screen.queryByTestId('identity-facebook')).toBeInTheDocument();
-            expect(screen.queryByText('socialAccounts.linkNewAccount')).toBeInTheDocument();
+            expect(screen.getByTestId('identity-facebook')).toBeInTheDocument();
+            expect(screen.getByText('socialAccounts.linkNewAccount')).toBeInTheDocument();
         });
 
         test('with all identities configured', async () => {
-            expect.assertions(6);
+            expect.assertions(5);
 
-            await generateComponent({}, defaultConfig, [
+            await generateComponent({ accessToken: 'azerty', onError, onSuccess }, {}, [
                 { id: '123456789', provider: 'facebook', username: 'John Doe' },
                 { id: '987654321', provider: 'google', username: 'John Doe' },
                 { id: '000000000', provider: 'line', username: 'John Doe' },
             ]);
 
             expect(screen.queryByText('socialAccounts.noLinkedAccount')).not.toBeInTheDocument();
-            expect(screen.queryByTestId('identity-facebook')).toBeInTheDocument();
-            expect(screen.queryByTestId('identity-google')).toBeInTheDocument();
-            expect(screen.queryByTestId('identity-line')).toBeInTheDocument();
+            expect(screen.getByTestId('identity-facebook')).toBeInTheDocument();
+            expect(screen.getByTestId('identity-google')).toBeInTheDocument();
+            expect(screen.getByTestId('identity-line')).toBeInTheDocument();
             expect(screen.queryByText('socialAccounts.linkNewAccount')).not.toBeInTheDocument();
         });
 
@@ -169,13 +128,13 @@ describe('DOM testing', () => {
 
             unlink.mockResolvedValue();
 
-            await generateComponent({}, defaultConfig, [
+            await generateComponent({ accessToken: 'azerty', onError, onSuccess }, {}, [
                 { id: '123456789', provider: 'facebook', username: 'John Doe' },
                 { id: '987654321', provider: 'google', username: 'John Doe' },
                 { id: '000000000', provider: 'line', username: 'John Doe' },
             ]);
 
-            expect(screen.queryByTestId('identity-google')).toBeInTheDocument();
+            expect(screen.getByTestId('identity-google')).toBeInTheDocument();
 
             const unlinkBtn = screen.getByTestId('identity-google-unlink');
             expect(unlinkBtn).toBeInTheDocument();
@@ -205,7 +164,7 @@ describe('DOM testing', () => {
 
             unlink.mockRejectedValue('Unexpected error');
 
-            await generateComponent({}, defaultConfig, [
+            await generateComponent({ accessToken: 'azerty', onError, onSuccess }, {}, [
                 { id: '123456789', provider: 'facebook', username: 'John Doe' },
                 { id: '987654321', provider: 'google', username: 'John Doe' },
                 { id: '000000000', provider: 'line', username: 'John Doe' },

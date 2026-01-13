@@ -6,15 +6,12 @@ import {
     parsePhoneNumber,
 } from 'react-phone-number-input';
 import { default as PhoneInputWithoutCountrySelect } from 'react-phone-number-input/input';
-import styles from 'react-phone-number-input/style.css';
+import 'react-phone-number-input/style.css';
 
 import { createGlobalStyle } from 'styled-components';
 
-// import raw css using `rollup-plugin-import-css'`
-
 import { Validator, isValidatorError } from '../../../core/validation';
 import { isRichFormValue } from '../../../helpers/utils.ts';
-import { Config, Optional } from '../../../types';
 import {
     createField,
     type FieldComponentProps,
@@ -23,13 +20,13 @@ import {
 } from '../fieldCreator';
 import { FormGroup, Input } from '../formControlsComponent';
 
+import type { Config, Optional } from '../../../types';
+
 function isValidCountryCode(code?: string): code is Country {
     return typeof code === 'string' && isSupportedCountry(code);
 }
 
 const ReactPhoneNumberInputStyle = createGlobalStyle`
-    ${styles}
-
     :root {
         --PhoneInput-color--focus: ${props => props.theme.primaryColor};
         --PhoneInputCountrySelect-marginRight: ${props => props.theme.spacing}px;

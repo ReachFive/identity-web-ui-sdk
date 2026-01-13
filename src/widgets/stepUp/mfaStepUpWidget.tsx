@@ -9,7 +9,6 @@ import { simpleField } from '../../components/form/fields/simpleField';
 import { createForm } from '../../components/form/formComponent';
 import { Info, Intro } from '../../components/miscComponent';
 import { createMultiViewWidget } from '../../components/widget/widget';
-import { useConfig } from '../../contexts/config.tsx';
 import { useI18n } from '../../contexts/i18n';
 import { useReachfive } from '../../contexts/reachfive';
 import { useRouting } from '../../contexts/routing';
@@ -132,7 +131,7 @@ export const MainView = ({
     allowTrustDevice = false,
     action,
 }: MainViewProps) => {
-    const coreClient = useReachfive();
+    const { client: coreClient } = useReachfive();
     const { goTo } = useRouting();
 
     const [response, setResponse] = useState<MFA.StepUpResponse | undefined>();
@@ -213,7 +212,7 @@ type StepUpResponse = RequiredProperty<PasswordlessResponse, 'challengeId'>;
 type StepUpHandlerResponse = StepUpResponse & StepUpFormData;
 
 export const FaSelectionView = (props: FaSelectionViewProps) => {
-    const coreClient = useReachfive();
+    const { client: coreClient } = useReachfive();
     const i18n = useI18n();
     const { params } = useRouting();
     const state = params as FaSelectionViewState;
@@ -298,10 +297,12 @@ export type VerificationCodeViewProps = Prettify<
 >;
 
 export const VerificationCodeView = (props: VerificationCodeViewProps) => {
-    const coreClient = useReachfive();
+    const {
+        client: coreClient,
+        config: { domain, rbaEnabled },
+    } = useReachfive();
     const i18n = useI18n();
     const { params } = useRouting();
-    const { rbaEnabled, domain } = useConfig();
     const state = params as VerificationCodeViewState;
 
     const {

@@ -11,9 +11,9 @@ import {
     paddingX,
     paddingY,
     primitiveTheme,
-} from '../src/core/theme';
+} from '@/core/theme';
 
-import type { Theme } from '../src/types/styled';
+import type { Theme } from '@/types/styled';
 
 function expectValidTheme(theme: Partial<Theme>) {
     // base

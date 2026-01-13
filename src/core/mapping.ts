@@ -1,4 +1,4 @@
-import { ProfileAddress } from '@reachfive/identity-core';
+import { type ProfileAddress } from '@reachfive/identity-core';
 
 import { getValue, setValue } from '../helpers/propertyHelpers';
 

@@ -1,0 +1,178 @@
+import React, { ComponentProps, ComponentType } from 'react';
+
+import { expect } from '@jest/globals';
+import '@testing-library/jest-dom/jest-globals';
+import { render, screen, waitFor, waitForElementToBeRemoved } from '@testing-library/react';
+import nock from 'nock';
+import { StyleSheetManager, ThemeProvider } from 'styled-components';
+
+import type { Client, Config as CoreConfig } from '@reachfive/identity-core';
+
+import { I18nProvider, type I18nMessages } from '@/contexts/i18n';
+import { ReachfiveProvider } from '@/contexts/reachfive';
+import { buildTheme } from '@/core/theme';
+import { type Theme } from '@/types/styled';
+
+import type { Config } from '@/types';
+
+export const coreConfig: CoreConfig = {
+    clientId: 'local',
+    domain: 'local.reach5.net',
+};
+
+export const defaultConfig: Config = {
+    ...coreConfig,
+    sso: false,
+    sms: false,
+    webAuthn: false,
+    language: 'fr',
+    pkceEnforced: false,
+    isPublic: true,
+    socialProviders: ['facebook', 'google'],
+    customFields: [],
+    resourceBaseUrl: 'http://localhost',
+    mfaSmsEnabled: true,
+    mfaEmailEnabled: true,
+    rbaEnabled: false,
+    consentsVersions: {
+        aConsent: {
+            key: 'aConsent',
+            versions: [
+                {
+                    versionId: 1,
+                    title: 'consent title',
+                    description: 'consent description',
+                    language: 'fr',
+                },
+            ],
+            consentType: 'opt-in',
+            status: 'active',
+        },
+        optinTesting: {
+            key: 'optinTesting',
+            consentType: 'opt-in',
+            status: 'active',
+            versions: [
+                {
+                    versionId: 1,
+                    title: 'Opt-in Testing v1',
+                    language: 'fr',
+                    description: 'This is just a test',
+                },
+            ],
+        },
+    },
+    passwordPolicy: {
+        minLength: 8,
+        minStrength: 2,
+        allowUpdateWithAccessTokenOnly: true,
+    },
+};
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function componentGenerator<Component extends ComponentType<any>>(
+    Component: Component,
+    coreClient: Client,
+    defaultI18n: I18nMessages = {}
+) {
+    return async (
+        options: ComponentProps<Component>,
+        config: Partial<Config> = {},
+        waitCallback?: () => void
+    ) => {
+        const remoteSettings = { ...defaultConfig, ...config };
+
+        const consentsInterceptor = nock(`https://${remoteSettings.domain}`)
+            .persist()
+            .get(/\/identity\/v1\/config\/consents/)
+            .reply(200, remoteSettings.consentsVersions);
+
+        const i18nInterceptor = nock(remoteSettings.resourceBaseUrl)
+            .persist()
+            .get(/\/[a-z]+\.json$/)
+            .reply(200, defaultI18n);
+
+        const client = {
+            ...coreClient,
+            remoteSettings: Promise.resolve(remoteSettings),
+        };
+
+        const widget = (
+            // <ReachfiveProvider client={apiClient} config={{ ...defaultConfig, ...config }} i18n={defaultI18n}>
+            <ReachfiveProvider client={client} config={coreConfig} fallback={<p>Loading...</p>}>
+                <Component {...options} />
+            </ReachfiveProvider>
+        );
+
+        const view = render(widget);
+
+        // wait for consents and i18n to be loaded with a timeout of 5 seconds
+        await waitFor(async () => {
+            let interval: NodeJS.Timeout;
+            await Promise.race([
+                new Promise<void>(resolve =>
+                    setTimeout(() => {
+                        clearInterval(interval);
+                        resolve();
+                    }, 5000)
+                ),
+                new Promise<void>(resolve => {
+                    interval = setInterval(() => {
+                        if (consentsInterceptor.isDone() && i18nInterceptor.isDone()) {
+                            resolve();
+                        }
+                    });
+                }),
+            ]);
+        });
+
+        // wait for suspense
+        if (waitCallback) {
+            await waitFor(waitCallback);
+        } else {
+            await waitForElementToBeRemoved(() => screen.queryByText('Loading...'), {
+                timeout: 5000,
+            });
+        }
+
+        return view;
+    };
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function snapshotGenerator<Component extends ComponentType<any>>(
+    Component: Component,
+    coreClient: Client,
+    defaultI18n: I18nMessages = {}
+) {
+    const generateComponent = componentGenerator(Component, coreClient, defaultI18n);
+
+    return (options: ComponentProps<Component>, config: Partial<Config> = {}) =>
+        async () => {
+            const { container } = await generateComponent(options, config);
+            expect(container).toMatchSnapshot();
+        };
+}
+
+export async function renderWithContext(
+    children: React.ReactNode,
+    // @ts-expect-error partial Client
+    coreClient?: Client = {},
+    config: Config,
+    defaultI18n?: I18nMessages = {}
+) {
+    const theme: Theme = buildTheme();
+
+    const WidgetWithContext = () => (
+        <StyleSheetManager>
+            <ThemeProvider theme={theme}>
+                <I18nProvider defaultMessages={defaultI18n} locale={config.language}>
+                    {children}
+                </I18nProvider>
+            </ThemeProvider>
+        </StyleSheetManager>
+    );
+
+    const generateComponent = componentGenerator(WidgetWithContext, coreClient, defaultI18n);
+    return await generateComponent({}, config);
+}

@@ -1,6 +1,6 @@
 import React, { type ComponentType } from 'react';
 
-import { TFunction } from 'i18next';
+import { type TFunction } from 'i18next';
 
 import { DefaultPathMapping, type PathMapping } from '../../core/mapping';
 import {

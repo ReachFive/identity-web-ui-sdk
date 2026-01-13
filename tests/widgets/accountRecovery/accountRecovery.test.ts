@@ -1,42 +1,20 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment jest-fixed-jsdom
  * @jest-environment-options {"url": "http://localhost/?email=alice@reach5.co&verificationCode=123456&email=alice@reach5.co&clientId=local"}
  */
 import { beforeEach, describe, expect, jest, test } from '@jest/globals';
 import '@testing-library/jest-dom/jest-globals';
-import { render, screen, waitFor } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import 'jest-styled-components';
 
 import type { Client, PasswordStrengthScore } from '@reachfive/identity-core';
 
-import { type I18nMessages } from '../../../src/contexts/i18n';
-import accountRecoveryWidget from '../../../src/widgets/accountRecovery/accountRecoveryWidget';
+import { type I18nMessages } from '@/contexts/i18n';
+import { OnError, OnSuccess } from '@/types';
+import AccountRecoveryWidget from '@/widgets/accountRecovery/accountRecoveryWidget';
 
-import type { Config, OnError, OnSuccess } from '../../../src/types';
-
-const defaultConfig: Config = {
-    clientId: 'local',
-    domain: 'local.reach5.net',
-    sso: false,
-    sms: false,
-    webAuthn: false,
-    language: 'fr',
-    pkceEnforced: false,
-    isPublic: true,
-    socialProviders: ['facebook', 'google'],
-    customFields: [],
-    resourceBaseUrl: 'http://localhost',
-    mfaSmsEnabled: false,
-    mfaEmailEnabled: false,
-    rbaEnabled: false,
-    consentsVersions: {},
-    passwordPolicy: {
-        minLength: 8,
-        minStrength: 2,
-        allowUpdateWithAccessTokenOnly: true,
-    },
-};
+import { componentGenerator } from '../renderer';
 
 const defaultI18n: I18nMessages = {};
 
@@ -67,26 +45,14 @@ describe('DOM testing', () => {
         onSuccess.mockClear();
     });
 
-    const generateComponent = async (
-        options: Partial<Parameters<typeof accountRecoveryWidget>[0]> = {},
-        config: Partial<Config> = {}
-    ) => {
-        // @ts-expect-error partial Client
-        const apiClient: Client = {
-            getPasswordStrength,
-            resetPasskeys,
-            updatePassword,
-        };
-
-        const result = await accountRecoveryWidget(
-            { onError, onSuccess, ...options },
-            { config: { ...defaultConfig, ...config }, apiClient, defaultI18n }
-        );
-
-        return waitFor(async () => {
-            return render(result);
-        });
+    // @ts-expect-error partial Client
+    const apiClient: Client = {
+        getPasswordStrength,
+        resetPasskeys,
+        updatePassword,
     };
+
+    const generateComponent = componentGenerator(AccountRecoveryWidget, apiClient, defaultI18n);
 
     describe('accountRecovery', () => {
         test('default', async () => {
@@ -94,7 +60,7 @@ describe('DOM testing', () => {
 
             resetPasskeys.mockResolvedValue();
 
-            await generateComponent({});
+            await generateComponent({ onError, onSuccess });
 
             const passkeyResetBtn = screen.getByRole('button', {
                 name: 'accountRecovery.passkeyReset.button',
@@ -112,7 +78,7 @@ describe('DOM testing', () => {
             );
 
             expect(
-                screen.queryByText('accountRecovery.passkeyReset.successMessage')
+                screen.getByText('accountRecovery.passkeyReset.successMessage')
             ).toBeInTheDocument();
 
             expect(onSuccess).toBeCalledWith(
@@ -140,7 +106,7 @@ describe('DOM testing', () => {
 
             updatePassword.mockResolvedValue();
 
-            await generateComponent({});
+            await generateComponent({ onError, onSuccess });
 
             const createNewPasswordBtn = screen.getByRole('link', {
                 name: 'accountRecovery.password.title',
@@ -171,7 +137,7 @@ describe('DOM testing', () => {
                 })
             );
 
-            expect(screen.queryByText('passwordReset.successMessage')).toBeInTheDocument();
+            expect(screen.getByText('passwordReset.successMessage')).toBeInTheDocument();
 
             expect(onSuccess).toBeCalledWith(
                 expect.objectContaining({
@@ -186,7 +152,7 @@ describe('DOM testing', () => {
 
             resetPasskeys.mockRejectedValue('Unexpected error');
 
-            await generateComponent({});
+            await generateComponent({ onError, onSuccess });
 
             const passkeyResetBtn = screen.getByRole('button', {
                 name: 'accountRecovery.passkeyReset.button',
@@ -197,7 +163,7 @@ describe('DOM testing', () => {
             expect(resetPasskeys).toBeCalled();
 
             expect(onSuccess).not.toBeCalled();
-            expect(onError).toBeCalled();
+            expect(onError).toBeCalledWith('Unexpected error');
         });
 
         test('updatePassword api failure', async () => {
@@ -205,7 +171,7 @@ describe('DOM testing', () => {
 
             updatePassword.mockRejectedValue('Unexpected error');
 
-            await generateComponent({});
+            await generateComponent({ onError, onSuccess });
 
             const createNewPasswordBtn = screen.getByRole('link', {
                 name: 'accountRecovery.password.title',
@@ -229,7 +195,7 @@ describe('DOM testing', () => {
             expect(updatePassword).toBeCalled();
 
             expect(onSuccess).not.toBeCalled();
-            expect(onError).toBeCalled();
+            expect(onError).toBeCalledWith('Unexpected error');
         });
     });
 });

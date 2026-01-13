@@ -1,5 +1,6 @@
 import { SocialButtons } from '../../components/form/socialButtonsComponent';
 import { createWidget } from '../../components/widget/widget';
+import { withSsoCheck } from '../../contexts/session';
 
 import type { SocialButtonsProps } from '../../components/form/socialButtonsComponent';
 
@@ -12,12 +13,15 @@ export interface SocialLoginWidgetProps extends Omit<SocialButtonsProps, 'provid
     socialProviders?: SocialButtonsProps['providers'];
 }
 
-export default createWidget<SocialLoginWidgetProps, SocialButtonsProps>({
-    name: 'social-login',
-    standalone: false,
-    component: SocialButtons,
-    prepare: ({ socialProviders, ...options }, { config }) => ({
-        providers: (Array.isArray(socialProviders) && socialProviders) || config.socialProviders,
-        ...options,
-    }),
-});
+export default withSsoCheck(
+    createWidget<SocialLoginWidgetProps, SocialButtonsProps>({
+        name: 'social-login',
+        standalone: false,
+        component: SocialButtons,
+        prepare: ({ socialProviders, ...options }, { config }) => ({
+            providers:
+                (Array.isArray(socialProviders) && socialProviders) || config.socialProviders,
+            ...options,
+        }),
+    })
+);

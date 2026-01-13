@@ -28,7 +28,7 @@ const SocialButtonIcon = styled(({ className }: SocialButtonIconProps) => (
     bottom: 0;
     width: ${props => (!props.textVisible ? '100%' : props.theme.socialButton.height - 2 + 'px')};
     box-sizing: border-box;
-    border-radius: ${props => props.theme.socialButton.borderRadius - 1}px;
+    border-radius: ${props => Number(props.theme.socialButton.borderRadius) - 1}px;
     background-image: url(${props => props.icon});
     background-repeat: no-repeat;
     background-size: ${props => props.theme.socialButton.height / 2}px
@@ -158,7 +158,7 @@ export const SocialButtons = styled(
         onError = (() => {}) as OnError,
         onSuccess = (() => {}) as OnSuccess,
     }: SocialButtonsProps & { className?: string }) => {
-        const coreClient = useReachfive();
+        const { client: coreClient } = useReachfive();
 
         const clickHandler = useCallback(
             (provider: string) => {

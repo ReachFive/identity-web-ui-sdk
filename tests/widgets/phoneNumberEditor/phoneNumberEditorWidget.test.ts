@@ -1,69 +1,37 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment jest-fixed-jsdom
  */
 import { beforeEach, describe, expect, jest, test } from '@jest/globals';
 import '@testing-library/jest-dom/jest-globals';
-import { render, screen, waitFor } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import 'jest-styled-components';
 
 import { type Client } from '@reachfive/identity-core';
 
-import { type I18nMessages } from '../../../src/contexts/i18n';
-import phoneNumberEditorWidget from '../../../src/widgets/phoneNumberEditor/phoneNumberEditorWidget';
+import { type I18nMessages } from '@/contexts/i18n';
+import { OnError, OnSuccess } from '@/types';
+import PhoneNumberEditorWidget from '@/widgets/phoneNumberEditor/phoneNumberEditorWidget';
 
-import type { Config, OnError, OnSuccess } from '../../../src/types';
-
-const defaultConfig: Config = {
-    clientId: 'local',
-    domain: 'local.reach5.net',
-    sso: false,
-    sms: false,
-    webAuthn: false,
-    language: 'fr',
-    pkceEnforced: false,
-    isPublic: true,
-    socialProviders: ['facebook', 'google'],
-    customFields: [],
-    resourceBaseUrl: 'http://localhost',
-    mfaSmsEnabled: false,
-    mfaEmailEnabled: false,
-    rbaEnabled: false,
-    consentsVersions: {},
-    passwordPolicy: {
-        minLength: 8,
-        minStrength: 2,
-        allowUpdateWithAccessTokenOnly: true,
-    },
-};
+import { componentGenerator, defaultConfig, snapshotGenerator } from '../renderer';
 
 const defaultI18n: I18nMessages = {};
 
+const customConfig = {
+    ...defaultConfig,
+    countryCode: 'FR',
+};
+
 describe('Snapshot', () => {
-    const generateSnapshot =
-        (
-            options: Partial<Parameters<typeof phoneNumberEditorWidget>[0]> = {},
-            config: Partial<Config> = {}
-        ) =>
-        async () => {
-            // @ts-expect-error partial Client
-            const apiClient: Client = {
-                updatePhoneNumber: jest.fn<Client['updatePhoneNumber']>().mockResolvedValue(),
-            };
+    // @ts-expect-error partial Client
+    const apiClient: Client = {
+        updatePhoneNumber: jest.fn<Client['updatePhoneNumber']>().mockResolvedValue(),
+    };
 
-            const widget = await phoneNumberEditorWidget(
-                { ...options, accessToken: 'azerty' },
-                { apiClient, config: { ...defaultConfig, ...config }, defaultI18n }
-            );
-
-            await waitFor(async () => {
-                const { container } = await render(widget);
-                expect(container).toMatchSnapshot();
-            });
-        };
+    const generateSnapshot = snapshotGenerator(PhoneNumberEditorWidget, apiClient, defaultI18n);
 
     describe('phone number editor', () => {
-        test('basic', generateSnapshot({}));
+        test('basic', generateSnapshot({ accessToken: 'azerty' }, customConfig));
     });
 });
 
@@ -80,25 +48,13 @@ describe('DOM testing', () => {
         onSuccess.mockClear();
     });
 
-    const generateComponent = async (
-        options: Partial<Parameters<typeof phoneNumberEditorWidget>[0]> = {},
-        config: Partial<Config> = {}
-    ) => {
-        // @ts-expect-error partial Client
-        const apiClient: Client = {
-            updatePhoneNumber,
-            verifyPhoneNumber,
-        };
-
-        const result = await phoneNumberEditorWidget(
-            { onError, onSuccess, ...options, accessToken: 'azerty' },
-            { config: { ...defaultConfig, ...config }, apiClient, defaultI18n }
-        );
-
-        return waitFor(async () => {
-            return render(result);
-        });
+    // @ts-expect-error partial Client
+    const apiClient: Client = {
+        updatePhoneNumber,
+        verifyPhoneNumber,
     };
+
+    const generateComponent = componentGenerator(PhoneNumberEditorWidget, apiClient, defaultI18n);
 
     describe('phoneNumberEditor', () => {
         test('default', async () => {
@@ -107,13 +63,13 @@ describe('DOM testing', () => {
             updatePhoneNumber.mockResolvedValue();
             verifyPhoneNumber.mockResolvedValue();
 
-            await generateComponent({});
+            await generateComponent({ accessToken: 'azerty', onError, onSuccess }, customConfig);
 
             const phoneNumberInput = screen.getByLabelText('phoneNumber');
             expect(phoneNumberInput).toBeInTheDocument();
 
             await userEvent.clear(phoneNumberInput);
-            await userEvent.type(phoneNumberInput, '+33123456789');
+            await userEvent.type(phoneNumberInput, '0123456789');
 
             const submitBtn = screen.getByRole('button', { name: 'send' });
             expect(submitBtn).toBeInTheDocument();
@@ -130,8 +86,8 @@ describe('DOM testing', () => {
             const verificationCodeInput = screen.getByLabelText('verificationCode');
             expect(verificationCodeInput).toBeInTheDocument();
 
-            await userEvent.clear(verificationCodeInput);
-            await userEvent.type(verificationCodeInput, '123456');
+            await user.clear(verificationCodeInput);
+            await user.type(verificationCodeInput, '123456');
 
             const submitCodeBtn = screen.getByRole('button', { name: 'send' });
             expect(submitCodeBtn).toBeInTheDocument();
@@ -160,13 +116,13 @@ describe('DOM testing', () => {
 
             updatePhoneNumber.mockRejectedValue('Unexpected error');
 
-            await generateComponent({});
+            await generateComponent({ accessToken: 'azerty', onError, onSuccess }, customConfig);
 
             const phoneNumberInput = screen.getByLabelText('phoneNumber');
             expect(phoneNumberInput).toBeInTheDocument();
 
-            await userEvent.clear(phoneNumberInput);
-            await userEvent.type(phoneNumberInput, '+33123456789');
+            await user.clear(phoneNumberInput);
+            await user.type(phoneNumberInput, '0123456789');
 
             const submitBtn = screen.getByRole('button', { name: 'send' });
 
@@ -182,13 +138,13 @@ describe('DOM testing', () => {
             updatePhoneNumber.mockResolvedValue();
             verifyPhoneNumber.mockRejectedValue('Unexpected error');
 
-            await generateComponent({});
+            await generateComponent({ accessToken: 'azerty', onError, onSuccess }, customConfig);
 
             const phoneNumberInput = screen.getByLabelText('phoneNumber');
             expect(phoneNumberInput).toBeInTheDocument();
 
-            await userEvent.clear(phoneNumberInput);
-            await userEvent.type(phoneNumberInput, '+33123456789');
+            await user.clear(phoneNumberInput);
+            await user.type(phoneNumberInput, '0123456789');
 
             const submitBtn = screen.getByRole('button', { name: 'send' });
             expect(submitBtn).toBeInTheDocument();
@@ -209,12 +165,10 @@ describe('DOM testing', () => {
 
             expect(verifyPhoneNumber).toBeCalled();
 
-            await waitFor(async () => {
-                expect(onSuccess).toBeCalledWith(
-                    expect.objectContaining({ name: 'phone_number_updated' })
-                );
-                expect(onError).toBeCalled();
-            });
+            expect(onSuccess).toBeCalledWith(
+                expect.objectContaining({ name: 'phone_number_updated' })
+            );
+            expect(onError).toBeCalled();
         });
     });
 });

@@ -2,11 +2,10 @@ import React, { useCallback, useEffect, useState } from 'react';
 
 import styled from 'styled-components';
 
-import { Client } from '@reachfive/identity-core';
+import { type Client } from '@reachfive/identity-core';
 
-import { useConfig, type WithConfig } from '../../contexts/config';
 import { useI18n, type WithI18n } from '../../contexts/i18n';
-import { useReachfive } from '../../contexts/reachfive';
+import { useReachfive, type WithConfig } from '../../contexts/reachfive';
 import { type ValidatorResult } from '../../core/validation';
 import { isAppError } from '../../helpers/errors';
 import { logError } from '../../helpers/logger';
@@ -127,9 +126,8 @@ export function createForm<Model extends Record<PropertyKey, unknown> = {}, P = 
     formOptions: FormOptions<P>
 ) {
     function FormComponent<R = void>(props: FormProps<Model, P, R>) {
-        const config = useConfig();
         const i18n = useI18n();
-        const client = useReachfive();
+        const { client, config } = useReachfive();
         const { Captcha, handler: captchaHandler } = useCaptcha();
 
         const {
@@ -235,6 +233,7 @@ export function createForm<Model extends Record<PropertyKey, unknown> = {}, P = 
             const { hasErrors, values: newFieldValues } = await inputFields.reduce(
                 async (acc, field) => {
                     const fieldState = getFieldValue(field.key);
+                    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
                     const validation = await validateField(field, fieldState, {
                         client,
                         config,
@@ -380,7 +379,7 @@ export function createForm<Model extends Record<PropertyKey, unknown> = {}, P = 
                     !('staticContent' in field)
                         ? field.render({
                               state: getFieldValue(field.key),
-                              onChange: newState => {
+                              onChange: (newState: FieldValue<typeof field.key>) => {
                                   handleFieldChange(field.key, newState);
                                   handleFieldValidationDebounced(field.key, newState);
                               },

@@ -1,6 +1,7 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   important: ".r5-widget",
+  prefix: "r5-",
   corePlugins: {
     container: false,
     preflight: false,
@@ -28,7 +29,7 @@ module.exports = {
         DEFAULT: "calc(var(--spacing)*1px)",
       },
       borderRadius: {
-        DEFAULT: "calc(var(--radius)*1px)",
+        DEFAULT: "calc(var(--border-radius)*1px)",
       },
       fontSize: {
         generic: ["calc(var(--generic)*1px)", { lineHeight: "1.5" }],

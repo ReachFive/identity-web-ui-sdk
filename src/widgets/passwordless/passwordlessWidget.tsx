@@ -12,10 +12,10 @@ import { SocialButtons } from '../../components/form/socialButtonsComponent';
 import { Info, Intro, Separator } from '../../components/miscComponent';
 import { importGoogleRecaptchaScript } from '../../components/reCaptcha';
 import { createMultiViewWidget } from '../../components/widget/widget';
-import { useConfig } from '../../contexts/config';
 import { useI18n } from '../../contexts/i18n';
 import { useReachfive } from '../../contexts/reachfive';
 import { useRouting } from '../../contexts/routing';
+import { withSsoCheck } from '../../contexts/session';
 import { email } from '../../core/validation';
 
 import type { Config, OnError, OnSuccess, Prettify } from '../../types';
@@ -118,8 +118,7 @@ const MainView = ({
     onError = (() => {}) as OnError,
     onSuccess = (() => {}) as OnSuccess,
 }: WithCaptchaProps<MainViewProps>) => {
-    const coreClient = useReachfive();
-    const config = useConfig();
+    const { client: coreClient, config } = useReachfive();
     const i18n = useI18n();
     const { goTo } = useRouting();
 
@@ -232,7 +231,7 @@ const VerificationCodeView = ({
     onSuccess = (() => {}) as OnSuccess,
     onError = (() => {}) as OnError,
 }: WithCaptchaProps<VerificationCodeViewProps>) => {
-    const coreClient = useReachfive();
+    const { client: coreClient } = useReachfive();
     const i18n = useI18n();
     const { params } = useRouting();
     const { phoneNumber } = params as VerificationCodeViewState;
@@ -285,15 +284,17 @@ export type PasswordlessWidgetProps = Prettify<
     ComponentProps<typeof MainView> & ComponentProps<typeof VerificationCodeView>
 >;
 
-export default createMultiViewWidget<PasswordlessWidgetProps>({
-    initialView: 'main',
-    views: {
-        main: MainView,
-        emailSent: EmailSentView,
-        verificationCode: VerificationCodeView,
-    },
-    prepare: (options, { config }) => ({
-        socialProviders: config.socialProviders,
-        ...options,
-    }),
-});
+export default withSsoCheck(
+    createMultiViewWidget<PasswordlessWidgetProps>({
+        initialView: 'main',
+        views: {
+            main: MainView,
+            emailSent: EmailSentView,
+            verificationCode: VerificationCodeView,
+        },
+        prepare: (options, { config }) => ({
+            socialProviders: config.socialProviders,
+            ...options,
+        }),
+    })
+);

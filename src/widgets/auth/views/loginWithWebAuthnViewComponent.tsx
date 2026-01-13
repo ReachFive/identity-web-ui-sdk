@@ -101,7 +101,7 @@ export const LoginWithWebAuthnView = ({
     onError = (() => {}) as OnError,
     onSuccess = (() => {}) as OnSuccess,
 }: LoginWithWebAuthnViewProps) => {
-    const coreClient = useReachfive();
+    const { client: coreClient } = useReachfive();
     const { goTo } = useRouting();
     const i18n = useI18n();
     const session = useSession();

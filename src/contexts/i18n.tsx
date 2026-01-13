@@ -1,7 +1,8 @@
 import React, { PropsWithChildren } from 'react';
 import { I18nextProvider, initReactI18next, useTranslation } from 'react-i18next';
 
-import i18n, { ResourceKey, TFunction } from 'i18next';
+import type { ResourceKey, TFunction } from 'i18next';
+import i18n from 'i18next';
 
 export type I18nMessages = Record<string, ResourceKey>;
 

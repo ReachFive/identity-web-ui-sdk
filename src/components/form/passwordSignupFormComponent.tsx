@@ -1,13 +1,16 @@
 import React, { useCallback, useLayoutEffect, useState } from 'react';
 
-import { AuthOptions } from '@reachfive/identity-core';
-import { SignupParams } from '@reachfive/identity-core/es/main/oAuthClient';
+import { type AuthOptions } from '@reachfive/identity-core';
+import { type SignupParams } from '@reachfive/identity-core/es/main/oAuthClient';
 
-import { CaptchaProvider, WithCaptchaProps, type WithCaptchaToken } from '../../components/captcha';
-import { useConfig } from '../../contexts/config';
+import {
+    CaptchaProvider,
+    type WithCaptchaProps,
+    type WithCaptchaToken,
+} from '../../components/captcha';
 import { useReachfive } from '../../contexts/reachfive';
 import { snakeCaseProperties } from '../../helpers/transformObjectProperties';
-import { isValued, isEqual } from '../../helpers/utils';
+import { isEqual, isValued } from '../../helpers/utils';
 import { MarkdownContent } from '../miscComponent';
 import { extractCaptchaTokenFromData, importGoogleRecaptchaScript } from '../reCaptcha';
 import { type PhoneNumberOptions } from './fields/phoneNumberField';
@@ -92,10 +95,9 @@ export const PasswordSignupForm = ({
     signupFields = ['given_name', 'family_name', 'email', 'password', 'password_confirmation'],
     userAgreement,
     onError = (() => {}) as OnError,
-    onSuccess = (() => {}) satisfies OnSuccess,
+    onSuccess = (() => {}) as OnSuccess,
 }: WithCaptchaProps<PasswordSignupFormProps>) => {
-    const coreClient = useReachfive();
-    const config = useConfig();
+    const { client: coreClient, config } = useReachfive();
     const [blacklist, setBlacklist] = useState<string[]>([]);
 
     useLayoutEffect(() => {

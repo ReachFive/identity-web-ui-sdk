@@ -2,7 +2,6 @@ import { beforeEach, describe, expect, jest, test } from '@jest/globals';
 
 import { LoginWithPasswordParams, LoginWithWebAuthnParams } from '@reachfive/identity-core';
 
-import { specializeIdentifierData } from '../../src/helpers/utils';
 import {
     camelCase,
     debounce,
@@ -12,7 +11,8 @@ import {
     isEmpty,
     isEqual,
     snakeCase,
-} from '../../src/helpers/utils';
+    specializeIdentifierData,
+} from '@/helpers/utils';
 
 describe('utils', () => {
     /** @see https://lodash.com/docs/4.17.15#camelCase */
