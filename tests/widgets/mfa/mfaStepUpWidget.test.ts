@@ -13,7 +13,7 @@ import MfaStepUpWidget from '@/widgets/stepUp/mfaStepUpWidget';
 
 import { componentGenerator } from '../renderer';
 
-import type { I18nMessages } from '@/core/i18n';
+import type { I18nMessages } from '@/contexts/i18n';
 import type { OnError, OnSuccess } from '@/types';
 
 const defaultI18n: I18nMessages = {};
@@ -85,7 +85,7 @@ describe('DOM testing', () => {
             await user.click(screen.getByTestId('submit'));
         }
 
-        await waitFor(async () => {
+        await waitFor(() => {
             expect(startPasswordless).toHaveBeenNthCalledWith(
                 1,
                 expect.objectContaining({
@@ -98,7 +98,7 @@ describe('DOM testing', () => {
         // wait for view redirect to code verification view
         expect(await screen.findByText('passwordless.sms.verification.intro')).toBeInTheDocument();
 
-        expect(screen.queryByLabelText('verificationCode')).toBeInTheDocument();
+        expect(screen.getByLabelText('verificationCode')).toBeInTheDocument();
         const input = screen.getByPlaceholderText('verificationCode');
         expect(input).toBeInTheDocument();
         const submitBtn = screen.getByTestId('submit');

@@ -12,7 +12,6 @@ import { createGlobalStyle } from 'styled-components';
 
 import { Validator, isValidatorError } from '../../../core/validation';
 import { isRichFormValue } from '../../../helpers/utils.ts';
-import { Config, Optional } from '../../../types';
 import {
     createField,
     type FieldComponentProps,
@@ -20,6 +19,8 @@ import {
     type FieldDefinition,
 } from '../fieldCreator';
 import { FormGroup, Input } from '../formControlsComponent';
+
+import type { Config, Optional } from '../../../types';
 
 function isValidCountryCode(code?: string): code is Country {
     return typeof code === 'string' && isSupportedCountry(code);
@@ -41,7 +42,7 @@ const ReactPhoneNumberInputStyle = createGlobalStyle`
 function importLocale(locale: string) {
     return import(
         `../../../../node_modules/react-phone-number-input/locale/${locale}.json.js`
-    ).then(module => module.default as Labels);
+    ).then((module: { default: Labels }) => module.default);
 }
 
 export type PhoneNumberOptions = {
@@ -193,7 +194,7 @@ const phoneNumberField = (
                 return value == '' ? undefined : value;
             },
         },
-        validator: new Validator<Value>({
+        validator: new Validator<Value, unknown>({
             rule: value => {
                 const phoneNumber = value ? parsePhoneNumber(value) : undefined;
                 return phoneNumber?.isValid() ?? false;

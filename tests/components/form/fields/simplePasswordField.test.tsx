@@ -11,15 +11,13 @@ import 'jest-styled-components';
 
 import simplePasswordField from '@/components/form/fields/simplePasswordField';
 import { createForm } from '@/components/form/formComponent';
-import resolveI18n, { I18nMessages } from '@/core/i18n';
+import { I18nMessages } from '@/contexts/i18n';
 
 import { defaultConfig, renderWithContext } from '../../../widgets/renderer';
 
 const defaultI18n: I18nMessages = {
     password: 'password',
 };
-
-const i18nResolver = resolveI18n(defaultI18n);
 
 type Model = { password: string };
 
@@ -51,11 +49,11 @@ describe('DOM testing', () => {
             defaultI18n
         );
 
-        const input = screen.getByLabelText(i18nResolver(label));
+        const input = screen.getByLabelText('password');
         expect(input).toBeInTheDocument();
         expect(input).toHaveAttribute('id', key);
         expect(input).toHaveAttribute('type', 'password');
-        expect(input).toHaveAttribute('placeholder', i18nResolver(label));
+        expect(input).toHaveAttribute('placeholder', 'password');
         expect(input).toHaveValue('');
 
         expect(screen.queryByTestId('show-password-btn')).not.toBeInTheDocument();
@@ -115,7 +113,7 @@ describe('DOM testing', () => {
             defaultI18n
         );
 
-        const input = screen.queryByLabelText(i18nResolver(label));
+        const input = screen.queryByLabelText('password');
         expect(input).toBeInTheDocument();
         expect(input).toHaveAttribute('id', key);
         expect(input).toHaveAttribute('placeholder', placeholder);
@@ -149,11 +147,11 @@ describe('DOM testing', () => {
             defaultI18n
         );
 
-        const input = screen.getByLabelText(i18nResolver(label));
+        const input = screen.getByLabelText('password');
         expect(input).toBeInTheDocument();
         expect(input).toHaveAttribute('type', 'password');
 
-        expect(screen.queryByTestId('show-password-btn')).toBeInTheDocument();
+        expect(screen.getByTestId('show-password-btn')).toBeInTheDocument();
         expect(screen.queryByTestId('hide-password-btn')).not.toBeInTheDocument();
 
         const newValue = 'azerty';
@@ -166,19 +164,19 @@ describe('DOM testing', () => {
             })
         );
 
-        expect(screen.queryByTestId('show-password-btn')).toBeInTheDocument();
+        expect(screen.getByTestId('show-password-btn')).toBeInTheDocument();
         expect(screen.queryByTestId('hide-password-btn')).not.toBeInTheDocument();
 
         await user.click(screen.queryByTestId('show-password-btn')!);
 
         expect(input).toHaveAttribute('type', 'text');
         expect(screen.queryByTestId('show-password-btn')).not.toBeInTheDocument();
-        expect(screen.queryByTestId('hide-password-btn')).toBeInTheDocument();
+        expect(screen.getByTestId('hide-password-btn')).toBeInTheDocument();
 
         await user.click(screen.queryByTestId('hide-password-btn')!);
 
         expect(input).toHaveAttribute('type', 'password');
-        expect(screen.queryByTestId('show-password-btn')).toBeInTheDocument();
+        expect(screen.getByTestId('show-password-btn')).toBeInTheDocument();
         expect(screen.queryByTestId('hide-password-btn')).not.toBeInTheDocument();
     });
 });

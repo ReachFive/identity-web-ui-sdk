@@ -28,7 +28,7 @@ const SocialButtonIcon = styled(({ className }: SocialButtonIconProps) => (
     bottom: 0;
     width: ${props => (!props.textVisible ? '100%' : props.theme.socialButton.height - 2 + 'px')};
     box-sizing: border-box;
-    border-radius: ${props => props.theme.socialButton.borderRadius - 1}px;
+    border-radius: ${props => Number(props.theme.socialButton.borderRadius) - 1}px;
     background-image: url(${props => props.icon});
     background-repeat: no-repeat;
     background-size: ${props => props.theme.socialButton.height / 2}px
@@ -58,7 +58,7 @@ const SocialBtn = styled(Button).attrs<SocialBtn>(({ $provider, ...props }) => {
         $background: $provider.btnBackgroundColor ?? $provider.color,
         $border: $provider.btnBorderColor ?? $provider.color,
         className: classes(['r5-btn-social', `r5-btn-social-${$provider.key}`]),
-        title: i18n(`socialButton.${$provider.key}.title`, undefined, () => $provider.name),
+        title: i18n(`socialButton.${$provider.key}.title`, { defaultValue: $provider.name }),
         ...props,
     };
 })<SocialBtn>`
@@ -118,7 +118,7 @@ const SocialButton = ({ provider, onClick, count }: SocialButtonProps) => {
             <SocialButtonIcon icon={provider.icon} textVisible={textVisible} />
             {textVisible && (
                 <SocialButtonText>
-                    {i18n(`socialButton.${provider.key}.title`, undefined, () => provider.name)}
+                    {i18n(`socialButton.${provider.key}.title`, { defaultValue: provider.name })}
                 </SocialButtonText>
             )}
         </SocialBtn>

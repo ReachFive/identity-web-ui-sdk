@@ -10,7 +10,7 @@ import 'jest-styled-components';
 
 import { PasswordStrengthScore, type Client } from '@reachfive/identity-core';
 
-import { type I18nMessages } from '@/core/i18n';
+import { type I18nMessages } from '@/contexts/i18n';
 import { OnError, OnSuccess } from '@/types';
 import PasswordResetWidget from '@/widgets/passwordReset/passwordResetWidget';
 

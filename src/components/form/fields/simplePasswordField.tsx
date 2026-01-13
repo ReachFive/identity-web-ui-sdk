@@ -33,8 +33,10 @@ type SimplePasswordFieldOptions = {
     placeholder?: React.InputHTMLAttributes<HTMLInputElement>['placeholder'];
 };
 
-export interface SimplePasswordFieldProps
-    extends FieldComponentProps<string, SimplePasswordFieldOptions> {}
+export interface SimplePasswordFieldProps extends FieldComponentProps<
+    string,
+    SimplePasswordFieldOptions
+> {}
 
 function SimplePasswordField({
     autoComplete,

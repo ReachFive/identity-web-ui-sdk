@@ -9,7 +9,7 @@ import 'jest-styled-components';
 
 import type { Client, PasswordStrengthScore } from '@reachfive/identity-core';
 
-import { type I18nMessages } from '@/core/i18n';
+import { type I18nMessages } from '@/contexts/i18n';
 import { OnError, OnSuccess } from '@/types';
 import PasswordEditorWidget from '@/widgets/passwordEditor/passwordEditorWidget';
 

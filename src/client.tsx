@@ -146,7 +146,7 @@ export class UiClient {
         this._showWidget(TrustedDevicesWidget, options);
     }
 
-    async _showWidget<P extends WidgetProps>(
+    _showWidget<P extends WidgetProps>(
         Widget: ComponentType<Omit<P, keyof WidgetProps>>,
         options: P = {} as P,
         props = {}
@@ -165,7 +165,9 @@ export class UiClient {
                 : options.container;
 
         if (!container) {
-            throw new Error(`Container '#${options.container}' not found.`);
+            const containerName =
+                typeof options.container === 'string' ? options.container : 'element';
+            throw new Error(`Container '#${containerName}' not found.`);
         }
 
         const root = createRoot(container);

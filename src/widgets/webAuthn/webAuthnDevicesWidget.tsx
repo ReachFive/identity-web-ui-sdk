@@ -55,7 +55,7 @@ const DevicesListWrapper = styled.div`
 
 interface DevicesListProps {
     devices: DeviceCredential[];
-    removeWebAuthnDevice: (id: string) => void;
+    removeWebAuthnDevice: (id: string) => Promise<void>;
 }
 
 const dateFormat = (dateString: string, locales?: Intl.LocalesArgument) =>
@@ -179,18 +179,17 @@ function WebAuthnDevices({
 
     const [devices, setDevices] = useState<DeviceCredential[]>(initDevices || []);
 
-    const removeWebAuthnDevice = (deviceId: string) => {
+    const removeWebAuthnDevice = async (deviceId: string) => {
         if (!confirm(i18n('webauthn.registredDevices.confirm.removal'))) return;
 
-        return coreClient
-            .removeWebAuthnDevice(accessToken, deviceId)
-            .then(() => {
-                onSuccess({ name: 'webauthn_credential_deleted', deviceId });
-                return coreClient
-                    .listWebAuthnDevices(accessToken)
-                    .then(newDevices => setDevices(newDevices));
-            })
-            .catch(onError);
+        try {
+            await coreClient.removeWebAuthnDevice(accessToken, deviceId);
+            onSuccess({ name: 'webauthn_credential_deleted', deviceId });
+            const newDevices = await coreClient.listWebAuthnDevices(accessToken);
+            setDevices(newDevices);
+        } catch (error) {
+            onError(error);
+        }
     };
 
     const addNewWebAuthnDevice = ({ friendlyName }: DeviceInputFormData) => {

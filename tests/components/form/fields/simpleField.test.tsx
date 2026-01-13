@@ -11,7 +11,7 @@ import 'jest-styled-components';
 
 import { simpleField } from '@/components/form/fields/simpleField';
 import { createForm } from '@/components/form/formComponent';
-import resolveI18n, { I18nMessages } from '@/core/i18n';
+import { I18nMessages } from '@/contexts/i18n';
 import { Validator } from '@/core/validation';
 
 import { defaultConfig, renderWithContext } from '../../../widgets/renderer';
@@ -19,8 +19,6 @@ import { defaultConfig, renderWithContext } from '../../../widgets/renderer';
 const defaultI18n: I18nMessages = {
     simple: 'simple',
 };
-
-const i18nResolver = resolveI18n(defaultI18n);
 
 type Model = { simple: string };
 
@@ -52,7 +50,7 @@ describe('DOM testing', () => {
             defaultI18n
         );
 
-        const input = screen.getByLabelText(i18nResolver(label));
+        const input = screen.getByLabelText('simple');
         expect(input).toBeInTheDocument();
         expect(input).toHaveAttribute('id', key);
         expect(input).toHaveValue('');
@@ -109,7 +107,7 @@ describe('DOM testing', () => {
             defaultI18n
         );
 
-        const input = screen.queryByLabelText(i18nResolver(label));
+        const input = screen.queryByLabelText('simple');
         expect(input).toBeInTheDocument();
         expect(input).toHaveAttribute('id', key);
         expect(input).toHaveAttribute('type', type);
@@ -119,7 +117,7 @@ describe('DOM testing', () => {
 
     test('extends validators', async () => {
         const matchValidator = (matchText: string) =>
-            new Validator<string>({
+            new Validator<string, unknown>({
                 rule: value => value === matchText,
                 hint: 'value.match',
             });
@@ -158,8 +156,8 @@ describe('DOM testing', () => {
             defaultI18n
         );
 
-        const input = screen.getByLabelText(i18nResolver(label));
-        expect(input).toHaveAttribute('placeholder', i18nResolver(label));
+        const input = screen.getByLabelText('simple');
+        expect(input).toHaveAttribute('placeholder', 'simple');
         expect(input).toBeInTheDocument();
 
         const invalidValue = 'ILoveApples';

@@ -1,7 +1,5 @@
 import React, { useLayoutEffect } from 'react';
 
-import styled from 'styled-components';
-
 import { AuthOptions, LoginWithPasswordParams } from '@reachfive/identity-core';
 
 import {
@@ -26,21 +24,6 @@ import { FaSelectionViewState } from '../../stepUp/mfaStepUpWidget';
 
 import type { OnError, OnSuccess } from '../../../types';
 
-type Floating = { floating?: boolean };
-
-const ResetCredentialWrapper = styled.div.withConfig({
-    shouldForwardProp: prop => !['floating'].includes(prop),
-})<Floating>`
-    margin-bottom: ${props => props.theme.spacing}px;
-    text-align: right;
-    ${props =>
-        props.floating &&
-        `
-        position: absolute;
-        right: 0;
-    `};
-`;
-
 export type LoginFormData =
     | {
           identifier: string;
@@ -59,7 +42,6 @@ export interface LoginFormOptions {
     enablePasswordAuthentication?: boolean;
     showEmail?: boolean;
     showForgotPassword?: boolean;
-    showAccountRecovery?: boolean;
     showIdentifier?: boolean;
     showRememberMe?: boolean;
 }
@@ -69,13 +51,10 @@ export const LoginForm = createForm<LoginFormData, LoginFormOptions>({
     fields({
         allowCustomIdentifier,
         allowAuthentMailPhone = true,
-        enablePasswordAuthentication = true,
         canShowPassword,
         defaultIdentifier,
         showIdentifier = true,
         showRememberMe,
-        showForgotPassword,
-        showAccountRecovery = false,
         i18n,
         config,
     }) {
@@ -117,38 +96,6 @@ export const LoginForm = createForm<LoginFormData, LoginFormOptions>({
                 autoComplete: 'current-password',
                 canShowPassword,
             }),
-            ...(enablePasswordAuthentication && showForgotPassword && !showAccountRecovery
-                ? [
-                      {
-                          staticContent: (
-                              <ResetCredentialWrapper
-                                  key="forgot-password"
-                                  floating={showRememberMe}
-                              >
-                                  <Link target="forgot-password">
-                                      {i18n('login.forgotPasswordLink')}
-                                  </Link>
-                              </ResetCredentialWrapper>
-                          ),
-                      },
-                  ]
-                : []),
-            ...(showAccountRecovery
-                ? [
-                      {
-                          staticContent: (
-                              <ResetCredentialWrapper
-                                  key="account-recovery"
-                                  floating={showRememberMe}
-                              >
-                                  <Link target="account-recovery">
-                                      {i18n('accountRecovery.title')}
-                                  </Link>
-                              </ResetCredentialWrapper>
-                          ),
-                      },
-                  ]
-                : []),
             ...(showRememberMe
                 ? [
                       checkboxField({
@@ -359,7 +306,6 @@ export const LoginView = ({
                     showLabels={showLabels}
                     showRememberMe={showRememberMe}
                     showForgotPassword={allowForgotPassword}
-                    showAccountRecovery={allowAccountRecovery}
                     canShowPassword={canShowPassword}
                     defaultIdentifier={defaultIdentifier}
                     allowCustomIdentifier={allowCustomIdentifier}
@@ -371,6 +317,16 @@ export const LoginView = ({
                     onError={onError}
                 />
             </CaptchaProvider>
+            {allowForgotPassword && !allowAccountRecovery && (
+                <Alternative>
+                    <Link target="forgot-password">{i18n('login.forgotPasswordLink')}</Link>
+                </Alternative>
+            )}
+            {allowAccountRecovery && (
+                <Alternative>
+                    <Link target="account-recovery">{i18n('accountRecovery.title')}</Link>
+                </Alternative>
+            )}
             {allowSignup && (
                 <Alternative>
                     <span>{i18n('login.signupLinkPrefix')}</span>

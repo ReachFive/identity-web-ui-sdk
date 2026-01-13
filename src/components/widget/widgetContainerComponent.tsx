@@ -1,5 +1,5 @@
 import React, { ForwardedRef, PropsWithChildren } from 'react';
-import { Transition, TransitionStatus } from 'react-transition-group';
+import { Transition, type TransitionStatus } from 'react-transition-group';
 
 import classes from 'classnames';
 import styled, { useTheme } from 'styled-components';

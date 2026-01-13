@@ -28,7 +28,8 @@ import SignupWithWebAuthnView from './views/signupWithWebAuthnViewComponent';
 import type { FaSelectionViewState, VerificationCodeViewState } from '../stepUp/mfaStepUpWidget';
 
 export interface AuthWidgetProps
-    extends ComponentProps<typeof LoginView>,
+    extends
+        ComponentProps<typeof LoginView>,
         ComponentProps<typeof LoginWithWebAuthnView>,
         ComponentProps<typeof LoginWithPasswordView>,
         ComponentProps<typeof SignupView>,

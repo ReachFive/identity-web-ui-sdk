@@ -9,7 +9,7 @@ import 'jest-styled-components';
 
 import { type Client } from '@reachfive/identity-core';
 
-import { type I18nMessages } from '@/core/i18n';
+import { type I18nMessages } from '@/contexts/i18n';
 import { OnError, OnSuccess } from '@/types';
 import PasswordlessWidget from '@/widgets/passwordless/passwordlessWidget';
 
@@ -63,10 +63,10 @@ describe('DOM testing', () => {
             await generateComponent({ onError, onSuccess });
 
             // Intro
-            expect(screen.queryByText('passwordless.intro')).toBeInTheDocument();
+            expect(screen.getByText('passwordless.intro')).toBeInTheDocument();
 
             // Label
-            expect(screen.queryByLabelText('email')).toBeInTheDocument();
+            expect(screen.getByLabelText('email')).toBeInTheDocument();
 
             // Input email
             const emailInput = screen.getByTestId('email');
@@ -87,7 +87,7 @@ describe('DOM testing', () => {
                 undefined // auth
             );
 
-            expect(screen.queryByText('passwordless.emailSent')).toBeInTheDocument();
+            expect(screen.getByText('passwordless.emailSent')).toBeInTheDocument();
 
             expect(onSuccess).toBeCalledWith(
                 expect.objectContaining({
@@ -120,10 +120,10 @@ describe('DOM testing', () => {
             await generateComponent({ authType: 'sms', onError, onSuccess });
 
             // Intro
-            expect(screen.queryByText('passwordless.sms.intro')).toBeInTheDocument();
+            expect(screen.getByText('passwordless.sms.intro')).toBeInTheDocument();
 
             // Label
-            expect(screen.queryByLabelText('phoneNumber')).toBeInTheDocument();
+            expect(screen.getByLabelText('phoneNumber')).toBeInTheDocument();
 
             // Input phone number
             const phoneNumberInput = screen.getByTestId('phone_number');

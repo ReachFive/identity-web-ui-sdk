@@ -23,7 +23,7 @@ export function transformObjectProperties<T>(
     transform: (string: string) => unknown
 ): TransformObjectProperties<T> {
     if (Array.isArray(input)) {
-        return input.map(item =>
+        return input.map((item: unknown) =>
             transformObjectProperties(item, transform)
         ) as TransformObjectProperties<T>;
     }

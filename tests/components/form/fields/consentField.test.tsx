@@ -11,15 +11,13 @@ import 'jest-styled-components';
 
 import consentField from '@/components/form/fields/consentField';
 import { createForm } from '@/components/form/formComponent';
-import resolveI18n, { I18nMessages } from '@/core/i18n';
+import { I18nMessages } from '@/contexts/i18n';
 
 import { defaultConfig, renderWithContext } from '../../../widgets/renderer';
 
 const defaultI18n: I18nMessages = {
     checkbox: 'Check?',
 };
-
-const i18nResolver = resolveI18n(defaultI18n);
 
 type Model = { 'consents.myconsent.1': string };
 
@@ -63,7 +61,7 @@ describe('DOM testing', () => {
             defaultI18n
         );
 
-        const checkbox = screen.getByLabelText(i18nResolver(label));
+        const checkbox = screen.getByLabelText('My Consent');
         expect(checkbox).not.toBeChecked();
 
         const description = screen.queryByTestId('consents.myconsent.1.description');
@@ -151,7 +149,7 @@ describe('DOM testing', () => {
             defaultI18n
         );
 
-        const checkbox = screen.getByLabelText(i18nResolver(label));
+        const checkbox = screen.getByLabelText('My Consent');
         expect(checkbox).toBeChecked();
 
         await user.click(checkbox);

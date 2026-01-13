@@ -10,7 +10,7 @@ import userEvent from '@testing-library/user-event';
 
 import { Client, MFA } from '@reachfive/identity-core';
 
-import { I18nMessages } from '@/core/i18n';
+import { I18nMessages } from '@/contexts/i18n';
 import MfaCredentialsWidget from '@/widgets/mfa/MfaCredentialsWidget';
 
 import { componentGenerator, snapshotGenerator } from '../renderer';
@@ -146,16 +146,16 @@ describe('DOM testing', () => {
             );
 
             // Email intro
-            expect(screen.queryByText('mfa.email.explain')).toBeInTheDocument();
+            expect(screen.getByText('mfa.email.explain')).toBeInTheDocument();
 
             // Form button email
-            expect(screen.queryByText('mfa.register.email')).toBeInTheDocument();
+            expect(screen.getByText('mfa.register.email')).toBeInTheDocument();
 
             // Sms intro
-            expect(screen.queryByText('mfa.phoneNumber.explain')).toBeInTheDocument();
+            expect(screen.getByText('mfa.phoneNumber.explain')).toBeInTheDocument();
 
             // Form button sms
-            expect(screen.queryByText('mfa.register.phoneNumber')).toBeInTheDocument();
+            expect(screen.getByText('mfa.register.phoneNumber')).toBeInTheDocument();
 
             // Form button remove email
             expect(screen.queryByText('mfa.remove.email')).not.toBeInTheDocument();
@@ -186,8 +186,8 @@ describe('DOM testing', () => {
             await user.click(emailButton);
             expect(startMfaEmailRegistration).toBeCalled();
 
-            await waitFor(async () => {
-                expect(screen.queryByText('mfa.verify.email')).toBeInTheDocument();
+            await waitFor(() => {
+                expect(screen.getByText('mfa.verify.email')).toBeInTheDocument();
             });
 
             const verificationCodeInput = screen.getByTestId('verification_code');
@@ -215,7 +215,7 @@ describe('DOM testing', () => {
 
             await user.click(screen.getByTestId('submit'));
 
-            await waitFor(async () => {
+            await waitFor(() => {
                 expect(onSuccess).toBeCalledWith(
                     expect.objectContaining({ name: 'mfa_email_verify_registration' })
                 );
@@ -249,8 +249,8 @@ describe('DOM testing', () => {
             await user.click(phoneNumberButton);
             expect(startMfaPhoneNumberRegistration).toBeCalled();
 
-            await waitFor(async () => {
-                expect(screen.queryByText('mfa.verify.sms')).toBeInTheDocument();
+            await waitFor(() => {
+                expect(screen.getByText('mfa.verify.sms')).toBeInTheDocument();
             });
 
             const verificationCodeInput = screen.getByTestId('verification_code');
@@ -258,7 +258,7 @@ describe('DOM testing', () => {
             await user.type(verificationCodeInput, '123456');
             await user.click(screen.getByTestId('submit'));
 
-            await waitFor(async () => {
+            await waitFor(() => {
                 expect(onSuccess).toBeCalledWith(
                     expect.objectContaining({ name: 'mfa_phone_number_verify_registration' })
                 );
@@ -280,16 +280,16 @@ describe('DOM testing', () => {
                 []
             );
             // Email intro
-            expect(screen.queryByText('mfa.email.explain.required')).toBeInTheDocument();
+            expect(screen.getByText('mfa.email.explain.required')).toBeInTheDocument();
 
             // Form button email
-            expect(screen.queryByText('mfa.register.email')).toBeInTheDocument();
+            expect(screen.getByText('mfa.register.email')).toBeInTheDocument();
 
             // Sms intro
-            expect(screen.queryByText('mfa.phoneNumber.explain')).toBeInTheDocument();
+            expect(screen.getByText('mfa.phoneNumber.explain')).toBeInTheDocument();
 
             // Form button sms
-            expect(screen.queryByText('mfa.register.phoneNumber')).toBeInTheDocument();
+            expect(screen.getByText('mfa.register.phoneNumber')).toBeInTheDocument();
 
             // Form button remove email
             expect(screen.queryByText('mfa.remove.email')).not.toBeInTheDocument();
@@ -324,13 +324,13 @@ describe('DOM testing', () => {
             expect(screen.queryByText('mfa.register.email')).not.toBeInTheDocument();
 
             // Sms intro
-            expect(screen.queryByText('mfa.phoneNumber.explain')).toBeInTheDocument();
+            expect(screen.getByText('mfa.phoneNumber.explain')).toBeInTheDocument();
 
             // Form button sms
-            expect(screen.queryByText('mfa.register.phoneNumber')).toBeInTheDocument();
+            expect(screen.getByText('mfa.register.phoneNumber')).toBeInTheDocument();
 
             // Form button remove email
-            expect(screen.queryByText('mfa.remove.email')).toBeInTheDocument();
+            expect(screen.getByText('mfa.remove.email')).toBeInTheDocument();
 
             // Form button remove phone number
             expect(screen.queryByText('mfa.remove.phoneNumber')).not.toBeInTheDocument();
@@ -356,10 +356,10 @@ describe('DOM testing', () => {
                 ]
             );
             // Email intro
-            expect(screen.queryByText('mfa.email.explain')).toBeInTheDocument();
+            expect(screen.getByText('mfa.email.explain')).toBeInTheDocument();
 
             // Form button email
-            expect(screen.queryByText('mfa.register.email')).toBeInTheDocument();
+            expect(screen.getByText('mfa.register.email')).toBeInTheDocument();
 
             // Sms intro
             expect(screen.queryByText('mfa.phoneNumber.explain')).not.toBeInTheDocument();
@@ -371,7 +371,7 @@ describe('DOM testing', () => {
             expect(screen.queryByText('mfa.remove.email')).not.toBeInTheDocument();
 
             // Form button remove phone number
-            expect(screen.queryByText('mfa.remove.phoneNumber')).toBeInTheDocument();
+            expect(screen.getByText('mfa.remove.phoneNumber')).toBeInTheDocument();
         });
 
         test('all credentials', async () => {
@@ -412,10 +412,10 @@ describe('DOM testing', () => {
             expect(screen.queryByText('mfa.register.phoneNumber')).not.toBeInTheDocument();
 
             // Form button remove email
-            expect(screen.queryByText('mfa.remove.email')).toBeInTheDocument();
+            expect(screen.getByText('mfa.remove.email')).toBeInTheDocument();
 
             // Form button remove phone number
-            expect(screen.queryByText('mfa.remove.phoneNumber')).toBeInTheDocument();
+            expect(screen.getByText('mfa.remove.phoneNumber')).toBeInTheDocument();
         });
     });
 });

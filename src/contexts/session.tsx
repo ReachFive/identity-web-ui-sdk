@@ -43,9 +43,10 @@ export function SessionProvider({ auth, children }: PropsWithChildren<Props>) {
                         return session;
                     }
                 } catch (error) {
-                    ErrorResponse.isErrorResponse(error)
-                        ? console.log(error.errorUserMsg ?? error.errorDescription ?? error.error)
-                        : console.error(error);
+                    const message = ErrorResponse.isErrorResponse(error)
+                        ? (error.errorUserMsg ?? error.errorDescription ?? error.error)
+                        : error;
+                    console.error(message);
                     return null;
                 }
             }

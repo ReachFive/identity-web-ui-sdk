@@ -12,7 +12,7 @@ import { Client, PasswordStrengthScore } from '@reachfive/identity-core';
 
 import { createForm } from '@/components/form/formComponent';
 import { buildFormFields } from '@/components/form/formFieldFactory';
-import { I18nMessages } from '@/core/i18n';
+import { I18nMessages } from '@/contexts/i18n';
 
 import { defaultConfig, renderWithContext } from '../../widgets/renderer';
 
@@ -194,23 +194,23 @@ describe('DOM testing', () => {
 
         await renderWithContext(<Form handler={onSubmit} />, apiClient, customConfig, defaultI18n);
 
-        expect(screen.queryByTestId('customIdentifier')).toBeInTheDocument();
-        expect(screen.queryByTestId('givenName')).toBeInTheDocument();
-        expect(screen.queryByTestId('familyName')).toBeInTheDocument();
-        expect(screen.queryByTestId('friendlyName')).toBeInTheDocument();
-        expect(screen.queryByTestId('email')).toBeInTheDocument();
-        expect(screen.queryByTestId('phoneNumber')).toBeInTheDocument();
-        expect(screen.queryByTestId('password')).toBeInTheDocument();
-        expect(screen.queryByTestId('passwordConfirmation')).toBeInTheDocument();
-        expect(screen.queryByTestId('gender')).toBeInTheDocument();
-        expect(screen.queryByTestId('birthdate.day')).toBeInTheDocument();
-        expect(screen.queryByTestId('birthdate.month')).toBeInTheDocument();
-        expect(screen.queryByTestId('birthdate.year')).toBeInTheDocument();
-        expect(screen.queryByTestId('address.streetAddress')).toBeInTheDocument();
-        expect(screen.queryByTestId('address.locality')).toBeInTheDocument();
-        expect(screen.queryByTestId('address.region')).toBeInTheDocument();
-        expect(screen.queryByTestId('address.postalCode')).toBeInTheDocument();
-        expect(screen.queryByTestId('address.country')).toBeInTheDocument();
+        expect(screen.getByTestId('customIdentifier')).toBeInTheDocument();
+        expect(screen.getByTestId('givenName')).toBeInTheDocument();
+        expect(screen.getByTestId('familyName')).toBeInTheDocument();
+        expect(screen.getByTestId('friendlyName')).toBeInTheDocument();
+        expect(screen.getByTestId('email')).toBeInTheDocument();
+        expect(screen.getByTestId('phoneNumber')).toBeInTheDocument();
+        expect(screen.getByTestId('password')).toBeInTheDocument();
+        expect(screen.getByTestId('passwordConfirmation')).toBeInTheDocument();
+        expect(screen.getByTestId('gender')).toBeInTheDocument();
+        expect(screen.getByTestId('birthdate.day')).toBeInTheDocument();
+        expect(screen.getByTestId('birthdate.month')).toBeInTheDocument();
+        expect(screen.getByTestId('birthdate.year')).toBeInTheDocument();
+        expect(screen.getByTestId('address.streetAddress')).toBeInTheDocument();
+        expect(screen.getByTestId('address.locality')).toBeInTheDocument();
+        expect(screen.getByTestId('address.region')).toBeInTheDocument();
+        expect(screen.getByTestId('address.postalCode')).toBeInTheDocument();
+        expect(screen.getByTestId('address.country')).toBeInTheDocument();
     });
 
     test('build custom fields', async () => {
@@ -253,9 +253,9 @@ describe('DOM testing', () => {
         const username = screen.queryByTestId('custom_fields.username');
         expect(username).toBeInTheDocument();
 
-        expect(screen.queryByTestId('custom_fields.birthdate.day')).toBeInTheDocument();
-        expect(screen.queryByTestId('custom_fields.birthdate.month')).toBeInTheDocument();
-        expect(screen.queryByTestId('custom_fields.birthdate.year')).toBeInTheDocument();
+        expect(screen.getByTestId('custom_fields.birthdate.day')).toBeInTheDocument();
+        expect(screen.getByTestId('custom_fields.birthdate.month')).toBeInTheDocument();
+        expect(screen.getByTestId('custom_fields.birthdate.year')).toBeInTheDocument();
 
         const checkbox = screen.queryByTestId('custom_fields.checkbox');
         expect(checkbox).toBeInTheDocument();

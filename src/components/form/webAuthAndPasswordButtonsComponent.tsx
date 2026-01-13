@@ -63,9 +63,9 @@ const ButtonsSeparator = styled.div`
 `;
 
 export interface WebAuthnLoginViewButtonsProps {
-    disabled?: ButtonProps['disabled'];
+    disabled?: boolean;
     enablePasswordAuthentication?: boolean;
-    onPasswordClick: ButtonProps['onClick'];
+    onPasswordClick: React.MouseEventHandler<HTMLButtonElement>;
     className?: classes.Argument;
 }
 
@@ -118,8 +118,8 @@ export const WebAuthnLoginViewButtons = styled(
 
 export interface WebAuthnSignupViewButtonsProps {
     enablePasswordAuthentication?: boolean;
-    onBiometricClick: ButtonProps['onClick'];
-    onPasswordClick: ButtonProps['onClick'];
+    onBiometricClick: React.MouseEventHandler<HTMLButtonElement>;
+    onPasswordClick: React.MouseEventHandler<HTMLButtonElement>;
     className?: classes.Argument;
 }
 

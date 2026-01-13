@@ -1,6 +1,6 @@
-import { AppError } from '@/helpers/errors';
+import { UserError } from '@/helpers/errors';
 
-import { WithCaptchaToken } from './captcha';
+import { type WithCaptchaToken } from './captcha';
 
 declare global {
     interface Window {
@@ -51,12 +51,14 @@ export default class ReCaptcha {
                 );
                 return callback({ ...data, captchaToken, captchaProvider: 'recaptcha' });
             } catch (_error) {
-                return Promise.reject({
-                    errorId: '',
-                    error: 'Recaptcha error',
-                    errorDescription: 'Recaptcha error',
-                    errorMessageKey: 'recaptcha.error',
-                } satisfies AppError);
+                return Promise.reject(
+                    UserError.fromAppError({
+                        errorId: '',
+                        error: 'Recaptcha error',
+                        errorDescription: 'Recaptcha error',
+                        errorMessageKey: 'recaptcha.error',
+                    })
+                );
             }
         } else {
             return callback({ ...data, captchaToken: undefined });

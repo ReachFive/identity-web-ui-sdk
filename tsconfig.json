@@ -27,5 +27,6 @@
       "@/*": ["src/*"]
     }
   },
-  "include": ["src", "tests", "rollup.config.js", "tailwind.config.cjs", "eslint.config.mjs"]
+  "include": ["src", "tests", "rollup.config.js", "tailwind.config.cjs", "eslint.config.mjs"],
+  "exclude": ["node_modules", "cjs", "es", "umd", "eslint.config.mjs"]
 }

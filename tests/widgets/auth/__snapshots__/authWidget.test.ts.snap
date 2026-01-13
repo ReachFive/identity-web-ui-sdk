@@ -280,19 +280,19 @@ exports[`Snapshot login view default 1`] = `
   margin-left: 14px;
 }
 
-.c16 {
+.c14 {
   text-align: center;
   margin-top: 15px;
   color: #495057;
 }
 
-.c14 {
+.c15 {
   color: #229955;
   -webkit-text-decoration: none;
   text-decoration: none;
 }
 
-.c14:hover {
+.c15:hover {
   color: #145a32;
   -webkit-text-decoration: none;
   text-decoration: none;
@@ -471,7 +471,7 @@ exports[`Snapshot login view default 1`] = `
   opacity: 0.65;
 }
 
-.c15 {
+.c13 {
   display: block;
   width: 100%;
   box-sizing: border-box;
@@ -495,18 +495,18 @@ exports[`Snapshot login view default 1`] = `
   transition: all 0.15s ease-in-out;
 }
 
-.c15:focus {
+.c13:focus {
   outline: 0;
   box-shadow: 0 0 0 3px rgba(34,153,85,0.5);
 }
 
-.c15:hover,
-.c15:active {
+.c13:hover,
+.c13:active {
   background-color: #1b7842;
   border-color: #1b7842;
 }
 
-.c15[disabled] {
+.c13[disabled] {
   opacity: 0.65;
 }
 
@@ -537,11 +537,6 @@ exports[`Snapshot login view default 1`] = `
 
 .c3 {
   text-align: center;
-}
-
-.c13 {
-  margin-bottom: 10px;
-  text-align: right;
 }
 
 <div>
@@ -646,18 +641,8 @@ exports[`Snapshot login view default 1`] = `
             />
           </div>
         </div>
-        <div
-          class="c13"
-        >
-          <a
-            class="c14"
-            href="#"
-          >
-            login.forgotPasswordLink
-          </a>
-        </div>
         <button
-          class="c15"
+          class="c13"
           data-testid="submit"
           type="submit"
         >
@@ -665,14 +650,24 @@ exports[`Snapshot login view default 1`] = `
         </button>
       </form>
       <div
-        class="c16"
+        class="c14"
+      >
+        <a
+          class="c15"
+          href="#"
+        >
+          login.forgotPasswordLink
+        </a>
+      </div>
+      <div
+        class="c14"
       >
         <span>
           login.signupLinkPrefix
         </span>
          
         <a
-          class="c14"
+          class="c15"
           href="#"
         >
           login.signupLink
@@ -726,19 +721,19 @@ exports[`Snapshot login view inline social buttons 1`] = `
   margin-left: 14px;
 }
 
-.c16 {
+.c14 {
   text-align: center;
   margin-top: 15px;
   color: #495057;
 }
 
-.c14 {
+.c15 {
   color: #229955;
   -webkit-text-decoration: none;
   text-decoration: none;
 }
 
-.c14:hover {
+.c15:hover {
   color: #145a32;
   -webkit-text-decoration: none;
   text-decoration: none;
@@ -917,7 +912,7 @@ exports[`Snapshot login view inline social buttons 1`] = `
   opacity: 0.65;
 }
 
-.c15 {
+.c13 {
   display: block;
   width: 100%;
   box-sizing: border-box;
@@ -941,18 +936,18 @@ exports[`Snapshot login view inline social buttons 1`] = `
   transition: all 0.15s ease-in-out;
 }
 
-.c15:focus {
+.c13:focus {
   outline: 0;
   box-shadow: 0 0 0 3px rgba(34,153,85,0.5);
 }
 
-.c15:hover,
-.c15:active {
+.c13:hover,
+.c13:active {
   background-color: #1b7842;
   border-color: #1b7842;
 }
 
-.c15[disabled] {
+.c13[disabled] {
   opacity: 0.65;
 }
 
@@ -987,11 +982,6 @@ exports[`Snapshot login view inline social buttons 1`] = `
 .c3 {
   text-align: center;
   margin: 0 -4px;
-}
-
-.c13 {
-  margin-bottom: 10px;
-  text-align: right;
 }
 
 <div>
@@ -1086,18 +1076,8 @@ exports[`Snapshot login view inline social buttons 1`] = `
             />
           </div>
         </div>
-        <div
-          class="c13"
-        >
-          <a
-            class="c14"
-            href="#"
-          >
-            login.forgotPasswordLink
-          </a>
-        </div>
         <button
-          class="c15"
+          class="c13"
           data-testid="submit"
           type="submit"
         >
@@ -1105,14 +1085,24 @@ exports[`Snapshot login view inline social buttons 1`] = `
         </button>
       </form>
       <div
-        class="c16"
+        class="c14"
+      >
+        <a
+          class="c15"
+          href="#"
+        >
+          login.forgotPasswordLink
+        </a>
+      </div>
+      <div
+        class="c14"
       >
         <span>
           login.signupLinkPrefix
         </span>
          
         <a
-          class="c14"
+          class="c15"
           href="#"
         >
           login.signupLink
@@ -1598,432 +1588,6 @@ exports[`Snapshot login view no signup 1`] = `
 }
 
 .c14 {
-  color: #229955;
-  -webkit-text-decoration: none;
-  text-decoration: none;
-}
-
-.c14:hover {
-  color: #145a32;
-  -webkit-text-decoration: none;
-  text-decoration: none;
-}
-
-.c0 {
-  font-size: 14px;
-  -webkit-transition: -webkit-transform 400ms ease, opacity 400ms ease;
-  -webkit-transition: transform 400ms ease, opacity 400ms ease;
-  transition: transform 400ms ease, opacity 400ms ease;
-  opacity: 0;
-  padding: 20px;
-  border-radius: 3px;
-  background-color: #ffffff;
-  max-width: 400px;
-  box-sizing: border-box;
-  margin: 0 auto;
-}
-
-.c1 {
-  --color-primary: #229955;
-  --color-destructive: #dc4e41;
-  --color-background: #ffffff;
-  --color-text: #495057;
-  --color-border: #ced4da;
-  --spacing-padding-y: 9;
-  --spacing-padding-x: 12;
-  --spacing-block-inner-height: 38;
-  --spacing: 10;
-  --font-generic: 14;
-  --border-width: 1;
-  --border-radius: 3;
-}
-
-.c11 {
-  color: #495057;
-  margin-bottom: 5px;
-  display: none;
-}
-
-.c10 {
-  margin-bottom: 10px;
-}
-
-.c10 > label::after {
-  content: "\\A0*";
-  color: #dc4e41;
-}
-
-.c12 {
-  display: block;
-  width: 100%;
-  box-sizing: border-box;
-  font-size: 14px;
-  line-height: 1.428571429;
-  color: #495057;
-  border-radius: 3px;
-  border-width: 1px;
-  border-style: solid;
-  border-color: #ced4da;
-  background-color: #fff;
-  background-image: none;
-  padding: 9px 12px;
-  -webkit-transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
-  transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
-  box-shadow: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-}
-
-.c12:focus {
-  border-color: #5fdb94;
-  box-shadow: 0 0 0 3px rgba(95,219,148,0.5);
-  outline: 0;
-}
-
-.c12:disabled,
-.c12[readonly] {
-  background-color: #e9ecef;
-}
-
-.c12::-webkit-input-placeholder {
-  color: #868e96;
-}
-
-.c12::-moz-placeholder {
-  color: #868e96;
-}
-
-.c12:-ms-input-placeholder {
-  color: #868e96;
-}
-
-.c12::placeholder {
-  color: #868e96;
-}
-
-.c4 {
-  display: block;
-  width: 100%;
-  box-sizing: border-box;
-  text-align: center;
-  font-weight: bold;
-  vertical-align: middle;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-  touch-action: manipulation;
-  cursor: pointer;
-  color: #ffffff;
-  background-color: #3b5998;
-  border: 1px solid #3b5998;
-  padding: 9px 12px;
-  font-size: 14px;
-  line-height: 1.428571429;
-  border-radius: 3px;
-  -webkit-transition: all 0.15s ease-in-out;
-  transition: all 0.15s ease-in-out;
-}
-
-.c4:focus {
-  outline: 0;
-  box-shadow: 0 0 0 3px rgba(59,89,152,0.5);
-}
-
-.c4:hover,
-.c4:active {
-  color: #ffffff;
-  background-color: #30487b;
-  border-color: #30487b;
-}
-
-.c4[disabled] {
-  opacity: 0.65;
-}
-
-.c7 {
-  display: block;
-  width: 100%;
-  box-sizing: border-box;
-  text-align: center;
-  font-weight: bold;
-  vertical-align: middle;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-  touch-action: manipulation;
-  cursor: pointer;
-  color: #58666e;
-  background-color: #ffffff;
-  border: 1px solid rgba(0,0,0,.15);
-  padding: 9px 12px;
-  font-size: 14px;
-  line-height: 1.428571429;
-  border-radius: 3px;
-  -webkit-transition: all 0.15s ease-in-out;
-  transition: all 0.15s ease-in-out;
-}
-
-.c7:focus {
-  outline: 0;
-  box-shadow: 0 0 0 3px rgba(0,0,0,0);
-}
-
-.c7:hover,
-.c7:active {
-  color: #58666e;
-  background-color: #ebebeb;
-  border-color: rgba(0,0,0,0.15);
-}
-
-.c7[disabled] {
-  opacity: 0.65;
-}
-
-.c15 {
-  display: block;
-  width: 100%;
-  box-sizing: border-box;
-  text-align: center;
-  font-weight: bold;
-  vertical-align: middle;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-  touch-action: manipulation;
-  cursor: pointer;
-  color: #ffffff;
-  background-color: #229955;
-  border: 1px solid #229955;
-  padding: 9px 12px;
-  font-size: 14px;
-  line-height: 1.428571429;
-  border-radius: 3px;
-  -webkit-transition: all 0.15s ease-in-out;
-  transition: all 0.15s ease-in-out;
-}
-
-.c15:focus {
-  outline: 0;
-  box-shadow: 0 0 0 3px rgba(34,153,85,0.5);
-}
-
-.c15:hover,
-.c15:active {
-  background-color: #1b7842;
-  border-color: #1b7842;
-}
-
-.c15[disabled] {
-  opacity: 0.65;
-}
-
-.c9 {
-  position: relative;
-}
-
-.c6 {
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 38px;
-  box-sizing: border-box;
-  border-radius: 2px;
-  background-image: url(svg);
-  background-repeat: no-repeat;
-  background-size: 20px 20px;
-  background-position: center center;
-}
-
-.c5 {
-  margin-bottom: 10px;
-  position: relative;
-  width: 100%;
-  height: 40px;
-}
-
-.c3 {
-  text-align: center;
-}
-
-.c13 {
-  margin-bottom: 10px;
-  text-align: right;
-}
-
-<div>
-  <div
-    class="c0 c1 r5-widget"
-    transition="entering"
-  >
-    <div>
-      <div
-        class="c2"
-      >
-        login.title
-      </div>
-      <div
-        class="r5-social-buttons c3"
-      >
-        <button
-          class="c4 c5 r5-btn-social r5-btn-social-facebook"
-          title="Facebook"
-        >
-          <span
-            class="r5-btn-social-icon c6"
-          />
-          <span
-            class="r5-btn-social-text"
-          >
-            Facebook
-          </span>
-        </button>
-        <button
-          class="c7 c5 r5-btn-social r5-btn-social-google"
-          title="Google"
-        >
-          <span
-            class="r5-btn-social-icon c6"
-          />
-          <span
-            class="r5-btn-social-text"
-          >
-            Google
-          </span>
-        </button>
-      </div>
-      <div
-        class="c8"
-      >
-        <span>
-          or
-        </span>
-      </div>
-      <form
-        class="c9"
-        novalidate=""
-      >
-        <div
-          class="c10"
-          required=""
-        >
-          <label
-            class="c11"
-            for="identifier"
-          >
-            identifier
-          </label>
-          <input
-            autocomplete="username webauthn"
-            class="c12"
-            data-testid="identifier"
-            id="identifier"
-            name="identifier"
-            placeholder="identifier"
-            required=""
-            title="identifier"
-            type="text"
-            value=""
-          />
-        </div>
-        <div
-          class="c10"
-          required=""
-        >
-          <label
-            class="c11"
-            for="password"
-          >
-            password
-          </label>
-          <div
-            style="position: relative;"
-          >
-            <input
-              autocomplete="current-password"
-              class="c12"
-              data-testid="password"
-              id="password"
-              name="password"
-              placeholder="password"
-              required=""
-              title="password"
-              type="password"
-              value=""
-            />
-          </div>
-        </div>
-        <div
-          class="c13"
-        >
-          <a
-            class="c14"
-            href="#"
-          >
-            login.forgotPasswordLink
-          </a>
-        </div>
-        <button
-          class="c15"
-          data-testid="submit"
-          type="submit"
-        >
-          login.submitLabel
-        </button>
-      </form>
-    </div>
-  </div>
-</div>
-`;
-
-exports[`Snapshot login view with canShowPassword 1`] = `
-.c2 {
-  margin-bottom: 15px;
-  text-align: center;
-  color: #212529;
-  font-weight: bold;
-  font-size: 16.8px;
-}
-
-.c8 {
-  color: #adb5bd;
-  display: block;
-  text-align: center;
-  overflow: hidden;
-  white-space: nowrap;
-  margin: 10px 0;
-}
-
-.c8 > span {
-  position: relative;
-  display: inline-block;
-}
-
-.c8 > span:before,
-.c8 > span:after {
-  content: '';
-  position: absolute;
-  top: 50%;
-  width: 9999px;
-  height: 1px;
-  background: #ced4da;
-}
-
-.c8 > span:before {
-  right: 100%;
-  margin-right: 14px;
-}
-
-.c8 > span:after {
-  left: 100%;
-  margin-left: 14px;
-}
-
-.c17 {
   text-align: center;
   margin-top: 15px;
   color: #495057;
@@ -2214,7 +1778,7 @@ exports[`Snapshot login view with canShowPassword 1`] = `
   opacity: 0.65;
 }
 
-.c16 {
+.c13 {
   display: block;
   width: 100%;
   box-sizing: border-box;
@@ -2238,18 +1802,445 @@ exports[`Snapshot login view with canShowPassword 1`] = `
   transition: all 0.15s ease-in-out;
 }
 
-.c16:focus {
+.c13:focus {
   outline: 0;
   box-shadow: 0 0 0 3px rgba(34,153,85,0.5);
 }
 
-.c16:hover,
-.c16:active {
+.c13:hover,
+.c13:active {
   background-color: #1b7842;
   border-color: #1b7842;
 }
 
-.c16[disabled] {
+.c13[disabled] {
+  opacity: 0.65;
+}
+
+.c9 {
+  position: relative;
+}
+
+.c6 {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 38px;
+  box-sizing: border-box;
+  border-radius: 2px;
+  background-image: url(svg);
+  background-repeat: no-repeat;
+  background-size: 20px 20px;
+  background-position: center center;
+}
+
+.c5 {
+  margin-bottom: 10px;
+  position: relative;
+  width: 100%;
+  height: 40px;
+}
+
+.c3 {
+  text-align: center;
+}
+
+<div>
+  <div
+    class="c0 c1 r5-widget"
+    transition="entering"
+  >
+    <div>
+      <div
+        class="c2"
+      >
+        login.title
+      </div>
+      <div
+        class="r5-social-buttons c3"
+      >
+        <button
+          class="c4 c5 r5-btn-social r5-btn-social-facebook"
+          title="Facebook"
+        >
+          <span
+            class="r5-btn-social-icon c6"
+          />
+          <span
+            class="r5-btn-social-text"
+          >
+            Facebook
+          </span>
+        </button>
+        <button
+          class="c7 c5 r5-btn-social r5-btn-social-google"
+          title="Google"
+        >
+          <span
+            class="r5-btn-social-icon c6"
+          />
+          <span
+            class="r5-btn-social-text"
+          >
+            Google
+          </span>
+        </button>
+      </div>
+      <div
+        class="c8"
+      >
+        <span>
+          or
+        </span>
+      </div>
+      <form
+        class="c9"
+        novalidate=""
+      >
+        <div
+          class="c10"
+          required=""
+        >
+          <label
+            class="c11"
+            for="identifier"
+          >
+            identifier
+          </label>
+          <input
+            autocomplete="username webauthn"
+            class="c12"
+            data-testid="identifier"
+            id="identifier"
+            name="identifier"
+            placeholder="identifier"
+            required=""
+            title="identifier"
+            type="text"
+            value=""
+          />
+        </div>
+        <div
+          class="c10"
+          required=""
+        >
+          <label
+            class="c11"
+            for="password"
+          >
+            password
+          </label>
+          <div
+            style="position: relative;"
+          >
+            <input
+              autocomplete="current-password"
+              class="c12"
+              data-testid="password"
+              id="password"
+              name="password"
+              placeholder="password"
+              required=""
+              title="password"
+              type="password"
+              value=""
+            />
+          </div>
+        </div>
+        <button
+          class="c13"
+          data-testid="submit"
+          type="submit"
+        >
+          login.submitLabel
+        </button>
+      </form>
+      <div
+        class="c14"
+      >
+        <a
+          class="c15"
+          href="#"
+        >
+          login.forgotPasswordLink
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Snapshot login view with canShowPassword 1`] = `
+.c2 {
+  margin-bottom: 15px;
+  text-align: center;
+  color: #212529;
+  font-weight: bold;
+  font-size: 16.8px;
+}
+
+.c8 {
+  color: #adb5bd;
+  display: block;
+  text-align: center;
+  overflow: hidden;
+  white-space: nowrap;
+  margin: 10px 0;
+}
+
+.c8 > span {
+  position: relative;
+  display: inline-block;
+}
+
+.c8 > span:before,
+.c8 > span:after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 9999px;
+  height: 1px;
+  background: #ced4da;
+}
+
+.c8 > span:before {
+  right: 100%;
+  margin-right: 14px;
+}
+
+.c8 > span:after {
+  left: 100%;
+  margin-left: 14px;
+}
+
+.c15 {
+  text-align: center;
+  margin-top: 15px;
+  color: #495057;
+}
+
+.c16 {
+  color: #229955;
+  -webkit-text-decoration: none;
+  text-decoration: none;
+}
+
+.c16:hover {
+  color: #145a32;
+  -webkit-text-decoration: none;
+  text-decoration: none;
+}
+
+.c0 {
+  font-size: 14px;
+  -webkit-transition: -webkit-transform 400ms ease, opacity 400ms ease;
+  -webkit-transition: transform 400ms ease, opacity 400ms ease;
+  transition: transform 400ms ease, opacity 400ms ease;
+  opacity: 0;
+  padding: 20px;
+  border-radius: 3px;
+  background-color: #ffffff;
+  max-width: 400px;
+  box-sizing: border-box;
+  margin: 0 auto;
+}
+
+.c1 {
+  --color-primary: #229955;
+  --color-destructive: #dc4e41;
+  --color-background: #ffffff;
+  --color-text: #495057;
+  --color-border: #ced4da;
+  --spacing-padding-y: 9;
+  --spacing-padding-x: 12;
+  --spacing-block-inner-height: 38;
+  --spacing: 10;
+  --font-generic: 14;
+  --border-width: 1;
+  --border-radius: 3;
+}
+
+.c11 {
+  color: #495057;
+  margin-bottom: 5px;
+  display: none;
+}
+
+.c10 {
+  margin-bottom: 10px;
+}
+
+.c10 > label::after {
+  content: "\\A0*";
+  color: #dc4e41;
+}
+
+.c12 {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  font-size: 14px;
+  line-height: 1.428571429;
+  color: #495057;
+  border-radius: 3px;
+  border-width: 1px;
+  border-style: solid;
+  border-color: #ced4da;
+  background-color: #fff;
+  background-image: none;
+  padding: 9px 12px;
+  -webkit-transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
+  transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
+  box-shadow: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+.c12:focus {
+  border-color: #5fdb94;
+  box-shadow: 0 0 0 3px rgba(95,219,148,0.5);
+  outline: 0;
+}
+
+.c12:disabled,
+.c12[readonly] {
+  background-color: #e9ecef;
+}
+
+.c12::-webkit-input-placeholder {
+  color: #868e96;
+}
+
+.c12::-moz-placeholder {
+  color: #868e96;
+}
+
+.c12:-ms-input-placeholder {
+  color: #868e96;
+}
+
+.c12::placeholder {
+  color: #868e96;
+}
+
+.c4 {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: center;
+  font-weight: bold;
+  vertical-align: middle;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  touch-action: manipulation;
+  cursor: pointer;
+  color: #ffffff;
+  background-color: #3b5998;
+  border: 1px solid #3b5998;
+  padding: 9px 12px;
+  font-size: 14px;
+  line-height: 1.428571429;
+  border-radius: 3px;
+  -webkit-transition: all 0.15s ease-in-out;
+  transition: all 0.15s ease-in-out;
+}
+
+.c4:focus {
+  outline: 0;
+  box-shadow: 0 0 0 3px rgba(59,89,152,0.5);
+}
+
+.c4:hover,
+.c4:active {
+  color: #ffffff;
+  background-color: #30487b;
+  border-color: #30487b;
+}
+
+.c4[disabled] {
+  opacity: 0.65;
+}
+
+.c7 {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: center;
+  font-weight: bold;
+  vertical-align: middle;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  touch-action: manipulation;
+  cursor: pointer;
+  color: #58666e;
+  background-color: #ffffff;
+  border: 1px solid rgba(0,0,0,.15);
+  padding: 9px 12px;
+  font-size: 14px;
+  line-height: 1.428571429;
+  border-radius: 3px;
+  -webkit-transition: all 0.15s ease-in-out;
+  transition: all 0.15s ease-in-out;
+}
+
+.c7:focus {
+  outline: 0;
+  box-shadow: 0 0 0 3px rgba(0,0,0,0);
+}
+
+.c7:hover,
+.c7:active {
+  color: #58666e;
+  background-color: #ebebeb;
+  border-color: rgba(0,0,0,0.15);
+}
+
+.c7[disabled] {
+  opacity: 0.65;
+}
+
+.c14 {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: center;
+  font-weight: bold;
+  vertical-align: middle;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  touch-action: manipulation;
+  cursor: pointer;
+  color: #ffffff;
+  background-color: #229955;
+  border: 1px solid #229955;
+  padding: 9px 12px;
+  font-size: 14px;
+  line-height: 1.428571429;
+  border-radius: 3px;
+  -webkit-transition: all 0.15s ease-in-out;
+  transition: all 0.15s ease-in-out;
+}
+
+.c14:focus {
+  outline: 0;
+  box-shadow: 0 0 0 3px rgba(34,153,85,0.5);
+}
+
+.c14:hover,
+.c14:active {
+  background-color: #1b7842;
+  border-color: #1b7842;
+}
+
+.c14[disabled] {
   opacity: 0.65;
 }
 
@@ -2291,11 +2282,6 @@ exports[`Snapshot login view with canShowPassword 1`] = `
 
 .c3 {
   text-align: center;
-}
-
-.c14 {
-  margin-bottom: 10px;
-  text-align: right;
 }
 
 <div>
@@ -2404,18 +2390,8 @@ exports[`Snapshot login view with canShowPassword 1`] = `
             />
           </div>
         </div>
-        <div
-          class="c14"
-        >
-          <a
-            class="c15"
-            href="#"
-          >
-            login.forgotPasswordLink
-          </a>
-        </div>
         <button
-          class="c16"
+          class="c14"
           data-testid="submit"
           type="submit"
         >
@@ -2423,14 +2399,24 @@ exports[`Snapshot login view with canShowPassword 1`] = `
         </button>
       </form>
       <div
-        class="c17"
+        class="c15"
+      >
+        <a
+          class="c16"
+          href="#"
+        >
+          login.forgotPasswordLink
+        </a>
+      </div>
+      <div
+        class="c15"
       >
         <span>
           login.signupLinkPrefix
         </span>
          
         <a
-          class="c15"
+          class="c16"
           href="#"
         >
           login.signupLink
@@ -2484,19 +2470,19 @@ exports[`Snapshot login view with remember me 1`] = `
   margin-left: 14px;
 }
 
-.c18 {
+.c16 {
   text-align: center;
   margin-top: 15px;
   color: #495057;
 }
 
-.c14 {
+.c17 {
   color: #229955;
   -webkit-text-decoration: none;
   text-decoration: none;
 }
 
-.c14:hover {
+.c17:hover {
   color: #145a32;
   -webkit-text-decoration: none;
   text-decoration: none;
@@ -2595,21 +2581,29 @@ exports[`Snapshot login view with remember me 1`] = `
   color: #868e96;
 }
 
-.c16 {
-  padding-left: 20px;
-  margin-bottom: 0;
+.c14 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
   cursor: pointer;
   font-weight: normal;
 }
 
-.c16 > input {
-  position: absolute;
-  margin-left: -20px;
-  margin-top: 2px;
-  line-height: normal;
+.c14 > input {
+  margin-right: 1ch;
 }
 
-.c15 {
+.c14::after {
+  content: "\\A0*";
+  color: #dc4e41;
+}
+
+.c13 {
   margin-bottom: 10px;
 }
 
@@ -2693,7 +2687,7 @@ exports[`Snapshot login view with remember me 1`] = `
   opacity: 0.65;
 }
 
-.c17 {
+.c15 {
   display: block;
   width: 100%;
   box-sizing: border-box;
@@ -2717,18 +2711,18 @@ exports[`Snapshot login view with remember me 1`] = `
   transition: all 0.15s ease-in-out;
 }
 
-.c17:focus {
+.c15:focus {
   outline: 0;
   box-shadow: 0 0 0 3px rgba(34,153,85,0.5);
 }
 
-.c17:hover,
-.c17:active {
+.c15:hover,
+.c15:active {
   background-color: #1b7842;
   border-color: #1b7842;
 }
 
-.c17[disabled] {
+.c15[disabled] {
   opacity: 0.65;
 }
 
@@ -2759,13 +2753,6 @@ exports[`Snapshot login view with remember me 1`] = `
 
 .c3 {
   text-align: center;
-}
-
-.c13 {
-  margin-bottom: 10px;
-  text-align: right;
-  position: absolute;
-  right: 0;
 }
 
 <div>
@@ -2873,18 +2860,8 @@ exports[`Snapshot login view with remember me 1`] = `
         <div
           class="c13"
         >
-          <a
-            class="c14"
-            href="#"
-          >
-            login.forgotPasswordLink
-          </a>
-        </div>
-        <div
-          class="c15"
-        >
           <label
-            class="c16"
+            class="c14"
           >
             <input
               data-testid="auth.persistent"
@@ -2896,7 +2873,7 @@ exports[`Snapshot login view with remember me 1`] = `
           </label>
         </div>
         <button
-          class="c17"
+          class="c15"
           data-testid="submit"
           type="submit"
         >
@@ -2904,14 +2881,24 @@ exports[`Snapshot login view with remember me 1`] = `
         </button>
       </form>
       <div
-        class="c18"
+        class="c16"
+      >
+        <a
+          class="c17"
+          href="#"
+        >
+          login.forgotPasswordLink
+        </a>
+      </div>
+      <div
+        class="c16"
       >
         <span>
           login.signupLinkPrefix
         </span>
          
         <a
-          class="c14"
+          class="c17"
           href="#"
         >
           login.signupLink
@@ -5043,17 +5030,20 @@ exports[`Snapshot signup view with consents 1`] = `
 }
 
 .c14 {
-  padding-left: 20px;
-  margin-bottom: 0;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
   cursor: pointer;
   font-weight: normal;
 }
 
 .c14 > input {
-  position: absolute;
-  margin-left: -20px;
-  margin-top: 2px;
-  line-height: normal;
+  margin-right: 1ch;
 }
 
 .c13 {
@@ -5532,17 +5522,25 @@ exports[`Snapshot signup view with custom fields 1`] = `
 }
 
 .c14 {
-  padding-left: 20px;
-  margin-bottom: 0;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
   cursor: pointer;
   font-weight: normal;
 }
 
 .c14 > input {
-  position: absolute;
-  margin-left: -20px;
-  margin-top: 2px;
-  line-height: normal;
+  margin-right: 1ch;
+}
+
+.c14::after {
+  content: "\\A0*";
+  color: #dc4e41;
 }
 
 .c13 {
@@ -5994,17 +5992,25 @@ exports[`Snapshot signup view with mandatory consents 1`] = `
 }
 
 .c14 {
-  padding-left: 20px;
-  margin-bottom: 0;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
   cursor: pointer;
   font-weight: normal;
 }
 
 .c14 > input {
-  position: absolute;
-  margin-left: -20px;
-  margin-top: 2px;
-  line-height: normal;
+  margin-right: 1ch;
+}
+
+.c14::after {
+  content: "\\A0*";
+  color: #dc4e41;
 }
 
 .c13 {
@@ -6909,19 +6915,19 @@ exports[`Snapshot with webauthn feature and without password login new view with
   margin-left: 14px;
 }
 
-.c16 {
+.c14 {
   text-align: center;
   margin-top: 15px;
   color: #495057;
 }
 
-.c14 {
+.c15 {
   color: #229955;
   -webkit-text-decoration: none;
   text-decoration: none;
 }
 
-.c14:hover {
+.c15:hover {
   color: #145a32;
   -webkit-text-decoration: none;
   text-decoration: none;
@@ -7100,7 +7106,7 @@ exports[`Snapshot with webauthn feature and without password login new view with
   opacity: 0.65;
 }
 
-.c15 {
+.c13 {
   display: block;
   width: 100%;
   box-sizing: border-box;
@@ -7124,18 +7130,18 @@ exports[`Snapshot with webauthn feature and without password login new view with
   transition: all 0.15s ease-in-out;
 }
 
-.c15:focus {
+.c13:focus {
   outline: 0;
   box-shadow: 0 0 0 3px rgba(34,153,85,0.5);
 }
 
-.c15:hover,
-.c15:active {
+.c13:hover,
+.c13:active {
   background-color: #1b7842;
   border-color: #1b7842;
 }
 
-.c15[disabled] {
+.c13[disabled] {
   opacity: 0.65;
 }
 
@@ -7166,11 +7172,6 @@ exports[`Snapshot with webauthn feature and without password login new view with
 
 .c3 {
   text-align: center;
-}
-
-.c13 {
-  margin-bottom: 10px;
-  text-align: right;
 }
 
 <div>
@@ -7275,18 +7276,8 @@ exports[`Snapshot with webauthn feature and without password login new view with
             />
           </div>
         </div>
-        <div
-          class="c13"
-        >
-          <a
-            class="c14"
-            href="#"
-          >
-            login.forgotPasswordLink
-          </a>
-        </div>
         <button
-          class="c15"
+          class="c13"
           data-testid="submit"
           type="submit"
         >
@@ -7294,14 +7285,24 @@ exports[`Snapshot with webauthn feature and without password login new view with
         </button>
       </form>
       <div
-        class="c16"
+        class="c14"
+      >
+        <a
+          class="c15"
+          href="#"
+        >
+          login.forgotPasswordLink
+        </a>
+      </div>
+      <div
+        class="c14"
       >
         <span>
           login.signupLinkPrefix
         </span>
          
         <a
-          class="c14"
+          class="c15"
           href="#"
         >
           login.signupLink
@@ -7933,139 +7934,141 @@ exports[`Snapshot with webauthn feature and without password signup form view wi
     transition="entering"
   >
     <div>
-      <div
-        class="c2"
-      >
-        signup.withPassword
+      <div>
+        <div
+          class="c2"
+        >
+          signup.withPassword
+        </div>
+        <form
+          class="c3"
+          novalidate=""
+        >
+          <div
+            class="c4"
+            required=""
+          >
+            <label
+              class="c5"
+              for="givenName"
+            >
+              givenName
+            </label>
+            <input
+              class="c6"
+              data-testid="givenName"
+              id="givenName"
+              name="givenName"
+              placeholder="givenName"
+              required=""
+              title="givenName"
+              value=""
+            />
+          </div>
+          <div
+            class="c4"
+            required=""
+          >
+            <label
+              class="c5"
+              for="familyName"
+            >
+              familyName
+            </label>
+            <input
+              class="c6"
+              data-testid="familyName"
+              id="familyName"
+              name="familyName"
+              placeholder="familyName"
+              required=""
+              title="familyName"
+              value=""
+            />
+          </div>
+          <div
+            class="c4"
+            required=""
+          >
+            <label
+              class="c5"
+              for="email"
+            >
+              email
+            </label>
+            <input
+              class="c6"
+              data-testid="email"
+              id="email"
+              name="email"
+              placeholder="email"
+              required=""
+              title="email"
+              type="email"
+              value=""
+            />
+          </div>
+          <div
+            class="c4"
+            required=""
+          >
+            <label
+              class="c5"
+              for="password"
+            >
+              password
+            </label>
+            <div
+              style="position: relative;"
+            >
+              <input
+                class="c6"
+                data-testid="password"
+                id="password"
+                name="password"
+                placeholder="password"
+                required=""
+                title="password"
+                type="password"
+                value=""
+              />
+            </div>
+          </div>
+          <div
+            class="c4"
+            required=""
+          >
+            <label
+              class="c5"
+              for="passwordConfirmation"
+            >
+              passwordConfirmation
+            </label>
+            <div
+              style="position: relative;"
+            >
+              <input
+                class="c6"
+                data-testid="passwordConfirmation"
+                id="passwordConfirmation"
+                name="passwordConfirmation"
+                placeholder="passwordConfirmation"
+                required=""
+                title="passwordConfirmation"
+                type="password"
+                value=""
+              />
+            </div>
+          </div>
+          <button
+            class="c7"
+            data-testid="submit"
+            type="submit"
+          >
+            signup.submitLabel
+          </button>
+        </form>
       </div>
-      <form
-        class="c3"
-        novalidate=""
-      >
-        <div
-          class="c4"
-          required=""
-        >
-          <label
-            class="c5"
-            for="givenName"
-          >
-            givenName
-          </label>
-          <input
-            class="c6"
-            data-testid="givenName"
-            id="givenName"
-            name="givenName"
-            placeholder="givenName"
-            required=""
-            title="givenName"
-            value=""
-          />
-        </div>
-        <div
-          class="c4"
-          required=""
-        >
-          <label
-            class="c5"
-            for="familyName"
-          >
-            familyName
-          </label>
-          <input
-            class="c6"
-            data-testid="familyName"
-            id="familyName"
-            name="familyName"
-            placeholder="familyName"
-            required=""
-            title="familyName"
-            value=""
-          />
-        </div>
-        <div
-          class="c4"
-          required=""
-        >
-          <label
-            class="c5"
-            for="email"
-          >
-            email
-          </label>
-          <input
-            class="c6"
-            data-testid="email"
-            id="email"
-            name="email"
-            placeholder="email"
-            required=""
-            title="email"
-            type="email"
-            value=""
-          />
-        </div>
-        <div
-          class="c4"
-          required=""
-        >
-          <label
-            class="c5"
-            for="password"
-          >
-            password
-          </label>
-          <div
-            style="position: relative;"
-          >
-            <input
-              class="c6"
-              data-testid="password"
-              id="password"
-              name="password"
-              placeholder="password"
-              required=""
-              title="password"
-              type="password"
-              value=""
-            />
-          </div>
-        </div>
-        <div
-          class="c4"
-          required=""
-        >
-          <label
-            class="c5"
-            for="passwordConfirmation"
-          >
-            passwordConfirmation
-          </label>
-          <div
-            style="position: relative;"
-          >
-            <input
-              class="c6"
-              data-testid="passwordConfirmation"
-              id="passwordConfirmation"
-              name="passwordConfirmation"
-              placeholder="passwordConfirmation"
-              required=""
-              title="passwordConfirmation"
-              type="password"
-              value=""
-            />
-          </div>
-        </div>
-        <button
-          class="c7"
-          data-testid="submit"
-          type="submit"
-        >
-          signup.submitLabel
-        </button>
-      </form>
       <div
         class="c8"
       >
@@ -8250,87 +8253,89 @@ exports[`Snapshot with webauthn feature and without password signup form view wi
     transition="entering"
   >
     <div>
-      <div
-        class="c2"
-      >
-        signup.withBiometrics
+      <div>
+        <div
+          class="c2"
+        >
+          signup.withBiometrics
+        </div>
+        <form
+          class="c3"
+          novalidate=""
+        >
+          <div
+            class="c4"
+            required=""
+          >
+            <label
+              class="c5"
+              for="givenName"
+            >
+              givenName
+            </label>
+            <input
+              class="c6"
+              data-testid="givenName"
+              id="givenName"
+              name="givenName"
+              placeholder="givenName"
+              required=""
+              title="givenName"
+              value=""
+            />
+          </div>
+          <div
+            class="c4"
+            required=""
+          >
+            <label
+              class="c5"
+              for="familyName"
+            >
+              familyName
+            </label>
+            <input
+              class="c6"
+              data-testid="familyName"
+              id="familyName"
+              name="familyName"
+              placeholder="familyName"
+              required=""
+              title="familyName"
+              value=""
+            />
+          </div>
+          <div
+            class="c4"
+            required=""
+          >
+            <label
+              class="c5"
+              for="email"
+            >
+              email
+            </label>
+            <input
+              class="c6"
+              data-testid="email"
+              id="email"
+              name="email"
+              placeholder="email"
+              required=""
+              title="email"
+              type="email"
+              value=""
+            />
+          </div>
+          <button
+            class="c7"
+            data-testid="submit"
+            type="submit"
+          >
+            signup.submitLabel
+          </button>
+        </form>
       </div>
-      <form
-        class="c3"
-        novalidate=""
-      >
-        <div
-          class="c4"
-          required=""
-        >
-          <label
-            class="c5"
-            for="givenName"
-          >
-            givenName
-          </label>
-          <input
-            class="c6"
-            data-testid="givenName"
-            id="givenName"
-            name="givenName"
-            placeholder="givenName"
-            required=""
-            title="givenName"
-            value=""
-          />
-        </div>
-        <div
-          class="c4"
-          required=""
-        >
-          <label
-            class="c5"
-            for="familyName"
-          >
-            familyName
-          </label>
-          <input
-            class="c6"
-            data-testid="familyName"
-            id="familyName"
-            name="familyName"
-            placeholder="familyName"
-            required=""
-            title="familyName"
-            value=""
-          />
-        </div>
-        <div
-          class="c4"
-          required=""
-        >
-          <label
-            class="c5"
-            for="email"
-          >
-            email
-          </label>
-          <input
-            class="c6"
-            data-testid="email"
-            id="email"
-            name="email"
-            placeholder="email"
-            required=""
-            title="email"
-            type="email"
-            value=""
-          />
-        </div>
-        <button
-          class="c7"
-          data-testid="submit"
-          type="submit"
-        >
-          signup.submitLabel
-        </button>
-      </form>
       <div
         class="c8"
       >
@@ -8515,87 +8520,89 @@ exports[`Snapshot with webauthn feature and without password signup form view wi
     transition="entering"
   >
     <div>
-      <div
-        class="c2"
-      >
-        signup.withBiometrics
+      <div>
+        <div
+          class="c2"
+        >
+          signup.withBiometrics
+        </div>
+        <form
+          class="c3"
+          novalidate=""
+        >
+          <div
+            class="c4"
+            required=""
+          >
+            <label
+              class="c5"
+              for="givenName"
+            >
+              givenName
+            </label>
+            <input
+              class="c6"
+              data-testid="givenName"
+              id="givenName"
+              name="givenName"
+              placeholder="givenName"
+              required=""
+              title="givenName"
+              value=""
+            />
+          </div>
+          <div
+            class="c4"
+            required=""
+          >
+            <label
+              class="c5"
+              for="familyName"
+            >
+              familyName
+            </label>
+            <input
+              class="c6"
+              data-testid="familyName"
+              id="familyName"
+              name="familyName"
+              placeholder="familyName"
+              required=""
+              title="familyName"
+              value=""
+            />
+          </div>
+          <div
+            class="c4"
+            required=""
+          >
+            <label
+              class="c5"
+              for="email"
+            >
+              email
+            </label>
+            <input
+              class="c6"
+              data-testid="email"
+              id="email"
+              name="email"
+              placeholder="email"
+              required=""
+              title="email"
+              type="email"
+              value=""
+            />
+          </div>
+          <button
+            class="c7"
+            data-testid="submit"
+            type="submit"
+          >
+            signup.submitLabel
+          </button>
+        </form>
       </div>
-      <form
-        class="c3"
-        novalidate=""
-      >
-        <div
-          class="c4"
-          required=""
-        >
-          <label
-            class="c5"
-            for="givenName"
-          >
-            givenName
-          </label>
-          <input
-            class="c6"
-            data-testid="givenName"
-            id="givenName"
-            name="givenName"
-            placeholder="givenName"
-            required=""
-            title="givenName"
-            value=""
-          />
-        </div>
-        <div
-          class="c4"
-          required=""
-        >
-          <label
-            class="c5"
-            for="familyName"
-          >
-            familyName
-          </label>
-          <input
-            class="c6"
-            data-testid="familyName"
-            id="familyName"
-            name="familyName"
-            placeholder="familyName"
-            required=""
-            title="familyName"
-            value=""
-          />
-        </div>
-        <div
-          class="c4"
-          required=""
-        >
-          <label
-            class="c5"
-            for="email"
-          >
-            email
-          </label>
-          <input
-            class="c6"
-            data-testid="email"
-            id="email"
-            name="email"
-            placeholder="email"
-            required=""
-            title="email"
-            type="email"
-            value=""
-          />
-        </div>
-        <button
-          class="c7"
-          data-testid="submit"
-          type="submit"
-        >
-          signup.submitLabel
-        </button>
-      </form>
       <div
         class="c8"
       >
@@ -8957,7 +8964,7 @@ exports[`Snapshot with webauthn feature and without password signup view with we
 </div>
 `;
 
-exports[`Snapshot with webauthn feature login new view with integradted webauthn and password 1`] = `
+exports[`Snapshot with webauthn feature login new view with integrated webauthn and password 1`] = `
 .c2 {
   margin-bottom: 15px;
   text-align: center;
@@ -9000,19 +9007,19 @@ exports[`Snapshot with webauthn feature login new view with integradted webauthn
   margin-left: 14px;
 }
 
-.c16 {
+.c14 {
   text-align: center;
   margin-top: 15px;
   color: #495057;
 }
 
-.c14 {
+.c15 {
   color: #229955;
   -webkit-text-decoration: none;
   text-decoration: none;
 }
 
-.c14:hover {
+.c15:hover {
   color: #145a32;
   -webkit-text-decoration: none;
   text-decoration: none;
@@ -9191,7 +9198,7 @@ exports[`Snapshot with webauthn feature login new view with integradted webauthn
   opacity: 0.65;
 }
 
-.c15 {
+.c13 {
   display: block;
   width: 100%;
   box-sizing: border-box;
@@ -9215,18 +9222,18 @@ exports[`Snapshot with webauthn feature login new view with integradted webauthn
   transition: all 0.15s ease-in-out;
 }
 
-.c15:focus {
+.c13:focus {
   outline: 0;
   box-shadow: 0 0 0 3px rgba(34,153,85,0.5);
 }
 
-.c15:hover,
-.c15:active {
+.c13:hover,
+.c13:active {
   background-color: #1b7842;
   border-color: #1b7842;
 }
 
-.c15[disabled] {
+.c13[disabled] {
   opacity: 0.65;
 }
 
@@ -9257,11 +9264,6 @@ exports[`Snapshot with webauthn feature login new view with integradted webauthn
 
 .c3 {
   text-align: center;
-}
-
-.c13 {
-  margin-bottom: 10px;
-  text-align: right;
 }
 
 <div>
@@ -9366,18 +9368,8 @@ exports[`Snapshot with webauthn feature login new view with integradted webauthn
             />
           </div>
         </div>
-        <div
-          class="c13"
-        >
-          <a
-            class="c14"
-            href="#"
-          >
-            login.forgotPasswordLink
-          </a>
-        </div>
         <button
-          class="c15"
+          class="c13"
           data-testid="submit"
           type="submit"
         >
@@ -9385,14 +9377,24 @@ exports[`Snapshot with webauthn feature login new view with integradted webauthn
         </button>
       </form>
       <div
-        class="c16"
+        class="c14"
+      >
+        <a
+          class="c15"
+          href="#"
+        >
+          login.forgotPasswordLink
+        </a>
+      </div>
+      <div
+        class="c14"
       >
         <span>
           login.signupLinkPrefix
         </span>
          
         <a
-          class="c14"
+          class="c15"
           href="#"
         >
           login.signupLink
@@ -10049,139 +10051,141 @@ exports[`Snapshot with webauthn feature signup form view with password 1`] = `
     transition="entering"
   >
     <div>
-      <div
-        class="c2"
-      >
-        signup.withPassword
+      <div>
+        <div
+          class="c2"
+        >
+          signup.withPassword
+        </div>
+        <form
+          class="c3"
+          novalidate=""
+        >
+          <div
+            class="c4"
+            required=""
+          >
+            <label
+              class="c5"
+              for="givenName"
+            >
+              givenName
+            </label>
+            <input
+              class="c6"
+              data-testid="givenName"
+              id="givenName"
+              name="givenName"
+              placeholder="givenName"
+              required=""
+              title="givenName"
+              value=""
+            />
+          </div>
+          <div
+            class="c4"
+            required=""
+          >
+            <label
+              class="c5"
+              for="familyName"
+            >
+              familyName
+            </label>
+            <input
+              class="c6"
+              data-testid="familyName"
+              id="familyName"
+              name="familyName"
+              placeholder="familyName"
+              required=""
+              title="familyName"
+              value=""
+            />
+          </div>
+          <div
+            class="c4"
+            required=""
+          >
+            <label
+              class="c5"
+              for="email"
+            >
+              email
+            </label>
+            <input
+              class="c6"
+              data-testid="email"
+              id="email"
+              name="email"
+              placeholder="email"
+              required=""
+              title="email"
+              type="email"
+              value=""
+            />
+          </div>
+          <div
+            class="c4"
+            required=""
+          >
+            <label
+              class="c5"
+              for="password"
+            >
+              password
+            </label>
+            <div
+              style="position: relative;"
+            >
+              <input
+                class="c6"
+                data-testid="password"
+                id="password"
+                name="password"
+                placeholder="password"
+                required=""
+                title="password"
+                type="password"
+                value=""
+              />
+            </div>
+          </div>
+          <div
+            class="c4"
+            required=""
+          >
+            <label
+              class="c5"
+              for="passwordConfirmation"
+            >
+              passwordConfirmation
+            </label>
+            <div
+              style="position: relative;"
+            >
+              <input
+                class="c6"
+                data-testid="passwordConfirmation"
+                id="passwordConfirmation"
+                name="passwordConfirmation"
+                placeholder="passwordConfirmation"
+                required=""
+                title="passwordConfirmation"
+                type="password"
+                value=""
+              />
+            </div>
+          </div>
+          <button
+            class="c7"
+            data-testid="submit"
+            type="submit"
+          >
+            signup.submitLabel
+          </button>
+        </form>
       </div>
-      <form
-        class="c3"
-        novalidate=""
-      >
-        <div
-          class="c4"
-          required=""
-        >
-          <label
-            class="c5"
-            for="givenName"
-          >
-            givenName
-          </label>
-          <input
-            class="c6"
-            data-testid="givenName"
-            id="givenName"
-            name="givenName"
-            placeholder="givenName"
-            required=""
-            title="givenName"
-            value=""
-          />
-        </div>
-        <div
-          class="c4"
-          required=""
-        >
-          <label
-            class="c5"
-            for="familyName"
-          >
-            familyName
-          </label>
-          <input
-            class="c6"
-            data-testid="familyName"
-            id="familyName"
-            name="familyName"
-            placeholder="familyName"
-            required=""
-            title="familyName"
-            value=""
-          />
-        </div>
-        <div
-          class="c4"
-          required=""
-        >
-          <label
-            class="c5"
-            for="email"
-          >
-            email
-          </label>
-          <input
-            class="c6"
-            data-testid="email"
-            id="email"
-            name="email"
-            placeholder="email"
-            required=""
-            title="email"
-            type="email"
-            value=""
-          />
-        </div>
-        <div
-          class="c4"
-          required=""
-        >
-          <label
-            class="c5"
-            for="password"
-          >
-            password
-          </label>
-          <div
-            style="position: relative;"
-          >
-            <input
-              class="c6"
-              data-testid="password"
-              id="password"
-              name="password"
-              placeholder="password"
-              required=""
-              title="password"
-              type="password"
-              value=""
-            />
-          </div>
-        </div>
-        <div
-          class="c4"
-          required=""
-        >
-          <label
-            class="c5"
-            for="passwordConfirmation"
-          >
-            passwordConfirmation
-          </label>
-          <div
-            style="position: relative;"
-          >
-            <input
-              class="c6"
-              data-testid="passwordConfirmation"
-              id="passwordConfirmation"
-              name="passwordConfirmation"
-              placeholder="passwordConfirmation"
-              required=""
-              title="passwordConfirmation"
-              type="password"
-              value=""
-            />
-          </div>
-        </div>
-        <button
-          class="c7"
-          data-testid="submit"
-          type="submit"
-        >
-          signup.submitLabel
-        </button>
-      </form>
       <div
         class="c8"
       >
@@ -10366,87 +10370,89 @@ exports[`Snapshot with webauthn feature signup form view with webauthn 1`] = `
     transition="entering"
   >
     <div>
-      <div
-        class="c2"
-      >
-        signup.withBiometrics
+      <div>
+        <div
+          class="c2"
+        >
+          signup.withBiometrics
+        </div>
+        <form
+          class="c3"
+          novalidate=""
+        >
+          <div
+            class="c4"
+            required=""
+          >
+            <label
+              class="c5"
+              for="givenName"
+            >
+              givenName
+            </label>
+            <input
+              class="c6"
+              data-testid="givenName"
+              id="givenName"
+              name="givenName"
+              placeholder="givenName"
+              required=""
+              title="givenName"
+              value=""
+            />
+          </div>
+          <div
+            class="c4"
+            required=""
+          >
+            <label
+              class="c5"
+              for="familyName"
+            >
+              familyName
+            </label>
+            <input
+              class="c6"
+              data-testid="familyName"
+              id="familyName"
+              name="familyName"
+              placeholder="familyName"
+              required=""
+              title="familyName"
+              value=""
+            />
+          </div>
+          <div
+            class="c4"
+            required=""
+          >
+            <label
+              class="c5"
+              for="email"
+            >
+              email
+            </label>
+            <input
+              class="c6"
+              data-testid="email"
+              id="email"
+              name="email"
+              placeholder="email"
+              required=""
+              title="email"
+              type="email"
+              value=""
+            />
+          </div>
+          <button
+            class="c7"
+            data-testid="submit"
+            type="submit"
+          >
+            signup.submitLabel
+          </button>
+        </form>
       </div>
-      <form
-        class="c3"
-        novalidate=""
-      >
-        <div
-          class="c4"
-          required=""
-        >
-          <label
-            class="c5"
-            for="givenName"
-          >
-            givenName
-          </label>
-          <input
-            class="c6"
-            data-testid="givenName"
-            id="givenName"
-            name="givenName"
-            placeholder="givenName"
-            required=""
-            title="givenName"
-            value=""
-          />
-        </div>
-        <div
-          class="c4"
-          required=""
-        >
-          <label
-            class="c5"
-            for="familyName"
-          >
-            familyName
-          </label>
-          <input
-            class="c6"
-            data-testid="familyName"
-            id="familyName"
-            name="familyName"
-            placeholder="familyName"
-            required=""
-            title="familyName"
-            value=""
-          />
-        </div>
-        <div
-          class="c4"
-          required=""
-        >
-          <label
-            class="c5"
-            for="email"
-          >
-            email
-          </label>
-          <input
-            class="c6"
-            data-testid="email"
-            id="email"
-            name="email"
-            placeholder="email"
-            required=""
-            title="email"
-            type="email"
-            value=""
-          />
-        </div>
-        <button
-          class="c7"
-          data-testid="submit"
-          type="submit"
-        >
-          signup.submitLabel
-        </button>
-      </form>
       <div
         class="c8"
       >

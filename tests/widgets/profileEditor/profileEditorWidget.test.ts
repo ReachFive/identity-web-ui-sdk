@@ -11,7 +11,7 @@ import 'jest-styled-components';
 
 import { type Client, type Profile } from '@reachfive/identity-core';
 
-import { type I18nMessages } from '@/core/i18n';
+import { type I18nMessages } from '@/contexts/i18n';
 import { OnError, OnSuccess } from '@/types';
 import ProfileEditorWidget from '@/widgets/profileEditor/profileEditorWidget';
 
@@ -94,7 +94,7 @@ describe('DOM testing', () => {
                 },
             };
 
-            getUser.mockResolvedValue(profile as Profile);
+            getUser.mockResolvedValue(profile);
 
             updateProfile.mockResolvedValue();
 

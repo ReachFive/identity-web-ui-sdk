@@ -11,8 +11,7 @@ import { useI18n } from '../../contexts/i18n';
 import { useReachfive } from '../../contexts/reachfive';
 import { useRouting } from '../../contexts/routing';
 
-import type { Config, Prettify } from '../../types';
-import type { OnError, OnSuccess } from '../../types';
+import type { Config, OnError, OnSuccess, Prettify } from '../../types';
 
 type PhoneNumberFormData = { phoneNumber: string };
 

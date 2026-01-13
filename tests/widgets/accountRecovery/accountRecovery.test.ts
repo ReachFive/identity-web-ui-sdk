@@ -10,7 +10,7 @@ import 'jest-styled-components';
 
 import type { Client, PasswordStrengthScore } from '@reachfive/identity-core';
 
-import { type I18nMessages } from '@/core/i18n';
+import { type I18nMessages } from '@/contexts/i18n';
 import { OnError, OnSuccess } from '@/types';
 import AccountRecoveryWidget from '@/widgets/accountRecovery/accountRecoveryWidget';
 
@@ -78,7 +78,7 @@ describe('DOM testing', () => {
             );
 
             expect(
-                screen.queryByText('accountRecovery.passkeyReset.successMessage')
+                screen.getByText('accountRecovery.passkeyReset.successMessage')
             ).toBeInTheDocument();
 
             expect(onSuccess).toBeCalledWith(
@@ -137,7 +137,7 @@ describe('DOM testing', () => {
                 })
             );
 
-            expect(screen.queryByText('passwordReset.successMessage')).toBeInTheDocument();
+            expect(screen.getByText('passwordReset.successMessage')).toBeInTheDocument();
 
             expect(onSuccess).toBeCalledWith(
                 expect.objectContaining({

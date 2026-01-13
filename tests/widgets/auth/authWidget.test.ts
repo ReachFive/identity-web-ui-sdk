@@ -9,7 +9,7 @@ import 'jest-styled-components';
 
 import type { Client, PasswordStrengthScore } from '@reachfive/identity-core';
 
-import { type I18nMessages } from '@/core/i18n';
+import { type I18nMessages } from '@/contexts/i18n';
 import { AppError } from '@/helpers/errors';
 import { randomString } from '@/helpers/random';
 import { providers, type ProviderId } from '@/providers/providers';
@@ -22,7 +22,7 @@ const defaultI18n: I18nMessages = {};
 function expectSocialButtons(toBeInTheDocument = true) {
     defaultConfig.socialProviders.forEach(provider => {
         if (toBeInTheDocument) {
-            expect(screen.queryByTitle(providers[provider as ProviderId].name)).toBeInTheDocument();
+            expect(screen.getByTitle(providers[provider as ProviderId].name)).toBeInTheDocument();
         } else {
             expect(
                 screen.queryByTitle(providers[provider as ProviderId].name)
@@ -217,7 +217,7 @@ describe('Snapshot', () => {
         );
 
         test(
-            'login new view with integradted webauthn and password',
+            'login new view with integrated webauthn and password',
             generateSnapshot(
                 {
                     allowWebAuthnLogin: true,
@@ -400,11 +400,11 @@ describe('DOM testing', () => {
             await generateComponent({});
 
             // Form button
-            expect(screen.queryByText('login.submitLabel')).toBeInTheDocument();
+            expect(screen.getByText('login.submitLabel')).toBeInTheDocument();
 
             // Links
-            expect(screen.queryByText('login.forgotPasswordLink')).toBeInTheDocument();
-            expect(screen.queryByText('login.signupLink')).toBeInTheDocument();
+            expect(screen.getByText('login.forgotPasswordLink')).toBeInTheDocument();
+            expect(screen.getByText('login.signupLink')).toBeInTheDocument();
 
             // Social buttons
             expectSocialButtons(true);
@@ -418,7 +418,7 @@ describe('DOM testing', () => {
                 allowSignup: false,
             });
 
-            expect(screen.queryByText('login.forgotPasswordLink')).toBeInTheDocument();
+            expect(screen.getByText('login.forgotPasswordLink')).toBeInTheDocument();
             expect(screen.queryByText('login.signupLinkk')).not.toBeInTheDocument();
         });
 
@@ -438,7 +438,7 @@ describe('DOM testing', () => {
                 showRememberMe: true,
             });
 
-            expect(screen.queryByLabelText('rememberMe')).toBeInTheDocument();
+            expect(screen.getByLabelText('rememberMe')).toBeInTheDocument();
         });
 
         test('with canShowPassword', async () => {
@@ -472,7 +472,7 @@ describe('DOM testing', () => {
                     },
                 });
 
-                expect(screen.queryByText(title)).toBeInTheDocument();
+                expect(screen.getByText(title)).toBeInTheDocument();
             });
 
             test('overwrite title - expanded', async () => {
@@ -485,7 +485,33 @@ describe('DOM testing', () => {
                     },
                 });
 
-                expect(screen.queryByText(title)).toBeInTheDocument();
+                expect(screen.getByText(title)).toBeInTheDocument();
+            });
+
+            test('overwrite title - internationalized', async () => {
+                expect.assertions(1);
+                await generateComponent(
+                    {
+                        i18n: {
+                            fr: {
+                                login: {
+                                    title: 'Connexion',
+                                },
+                            },
+                            en: {
+                                login: {
+                                    title: 'Login',
+                                },
+                            },
+                        },
+                    },
+                    {
+                        ...defaultConfig,
+                        language: 'fr',
+                    }
+                );
+
+                expect(screen.getByText('Connexion')).toBeInTheDocument();
             });
         });
     });
@@ -497,10 +523,10 @@ describe('DOM testing', () => {
             });
 
             // Form button
-            expect(screen.queryByText('signup.submitLabel')).toBeInTheDocument();
+            expect(screen.getByText('signup.submitLabel')).toBeInTheDocument();
 
             // Login link
-            expect(screen.queryByText('signup.loginLink')).toBeInTheDocument();
+            expect(screen.getByText('signup.loginLink')).toBeInTheDocument();
 
             // Social buttons
             expectSocialButtons(true);
@@ -526,7 +552,7 @@ describe('DOM testing', () => {
                 userAgreement: 'I agreed [terms of use](https://example.com/termsofuse).',
             });
 
-            expect(screen.queryByText('terms of use')).toBeInTheDocument();
+            expect(screen.getByText('terms of use')).toBeInTheDocument();
         });
 
         test('default signup fields', async () => {
@@ -535,11 +561,11 @@ describe('DOM testing', () => {
             });
 
             // form inputs
-            expect(screen.queryByTestId('givenName')).toBeInTheDocument();
-            expect(screen.queryByTestId('familyName')).toBeInTheDocument();
-            expect(screen.queryByTestId('email')).toBeInTheDocument();
-            expect(screen.queryByTestId('password')).toBeInTheDocument();
-            expect(screen.queryByTestId('passwordConfirmation')).toBeInTheDocument();
+            expect(screen.getByTestId('givenName')).toBeInTheDocument();
+            expect(screen.getByTestId('familyName')).toBeInTheDocument();
+            expect(screen.getByTestId('email')).toBeInTheDocument();
+            expect(screen.getByTestId('password')).toBeInTheDocument();
+            expect(screen.getByTestId('passwordConfirmation')).toBeInTheDocument();
         });
 
         test('signup fields selection', async () => {
@@ -550,7 +576,7 @@ describe('DOM testing', () => {
             });
 
             signupFields.forEach(field => {
-                expect(screen.queryByTestId(field)).toBeInTheDocument();
+                expect(screen.getByTestId(field)).toBeInTheDocument();
             });
         });
 
@@ -574,9 +600,9 @@ describe('DOM testing', () => {
                 }
             );
 
-            expect(screen.queryByTestId('email')).toBeInTheDocument();
-            expect(screen.queryByTestId('password')).toBeInTheDocument();
-            expect(screen.queryByTestId('custom_fields.newsletter_optin')).toBeInTheDocument();
+            expect(screen.getByTestId('email')).toBeInTheDocument();
+            expect(screen.getByTestId('password')).toBeInTheDocument();
+            expect(screen.getByTestId('custom_fields.newsletter_optin')).toBeInTheDocument();
         });
     });
 
@@ -593,16 +619,16 @@ describe('DOM testing', () => {
             expectSocialButtons(true);
 
             // Email input
-            expect(screen.queryByTestId('identifier')).toBeInTheDocument();
+            expect(screen.getByTestId('identifier')).toBeInTheDocument();
 
             // Form button
-            expect(screen.queryByText('login.submitLabel')).toBeInTheDocument();
+            expect(screen.getByText('login.submitLabel')).toBeInTheDocument();
 
             // Links
-            expect(screen.queryByText('login.forgotPasswordLink')).toBeInTheDocument();
+            expect(screen.getByText('login.forgotPasswordLink')).toBeInTheDocument();
 
             // Sign in link
-            expect(screen.queryByText('login.signupLink')).toBeInTheDocument();
+            expect(screen.getByText('login.signupLink')).toBeInTheDocument();
         });
 
         test('old login view', async () => {
@@ -617,14 +643,14 @@ describe('DOM testing', () => {
             expectSocialButtons(true);
 
             // Email input
-            expect(screen.queryByTestId('identifier')).toBeInTheDocument();
+            expect(screen.getByTestId('identifier')).toBeInTheDocument();
 
             // Form buttons
-            expect(screen.queryByTestId('webauthn-button')).toBeInTheDocument();
-            expect(screen.queryByTestId('password-button')).toBeInTheDocument();
+            expect(screen.getByTestId('webauthn-button')).toBeInTheDocument();
+            expect(screen.getByTestId('password-button')).toBeInTheDocument();
 
             // Sign in link
-            expect(screen.queryByText('login.signupLink')).toBeInTheDocument();
+            expect(screen.getByText('login.signupLink')).toBeInTheDocument();
         });
 
         test('signup view with password or webauthn', async () => {
@@ -637,11 +663,11 @@ describe('DOM testing', () => {
             expectSocialButtons(true);
 
             // Form buttons
-            expect(screen.queryByTestId('webauthn-button')).toBeInTheDocument();
-            expect(screen.queryByTestId('password-button')).toBeInTheDocument();
+            expect(screen.getByTestId('webauthn-button')).toBeInTheDocument();
+            expect(screen.getByTestId('password-button')).toBeInTheDocument();
 
             // Login in link
-            expect(screen.queryByText('signup.loginLink')).toBeInTheDocument();
+            expect(screen.getByText('signup.loginLink')).toBeInTheDocument();
         });
 
         test('signup form view with password', async () => {
@@ -651,17 +677,17 @@ describe('DOM testing', () => {
             );
 
             // Form fields
-            expect(screen.queryByTestId('givenName')).toBeInTheDocument();
-            expect(screen.queryByTestId('familyName')).toBeInTheDocument();
-            expect(screen.queryByTestId('email')).toBeInTheDocument();
-            expect(screen.queryByTestId('password')).toBeInTheDocument();
-            expect(screen.queryByTestId('passwordConfirmation')).toBeInTheDocument();
+            expect(screen.getByTestId('givenName')).toBeInTheDocument();
+            expect(screen.getByTestId('familyName')).toBeInTheDocument();
+            expect(screen.getByTestId('email')).toBeInTheDocument();
+            expect(screen.getByTestId('password')).toBeInTheDocument();
+            expect(screen.getByTestId('passwordConfirmation')).toBeInTheDocument();
 
             // Form button
-            expect(screen.queryByText('signup.submitLabel')).toBeInTheDocument();
+            expect(screen.getByText('signup.submitLabel')).toBeInTheDocument();
 
             // Back link
-            expect(screen.queryByText('back')).toBeInTheDocument();
+            expect(screen.getByText('back')).toBeInTheDocument();
         });
 
         test('signup form view with webauthn', async () => {
@@ -671,15 +697,15 @@ describe('DOM testing', () => {
             );
 
             // Form fields
-            expect(screen.queryByTestId('givenName')).toBeInTheDocument();
-            expect(screen.queryByTestId('familyName')).toBeInTheDocument();
-            expect(screen.queryByTestId('email')).toBeInTheDocument();
+            expect(screen.getByTestId('givenName')).toBeInTheDocument();
+            expect(screen.getByTestId('familyName')).toBeInTheDocument();
+            expect(screen.getByTestId('email')).toBeInTheDocument();
 
             // Form button
-            expect(screen.queryByText('signup.submitLabel')).toBeInTheDocument();
+            expect(screen.getByText('signup.submitLabel')).toBeInTheDocument();
 
             // Back link
-            expect(screen.queryByText('back')).toBeInTheDocument();
+            expect(screen.getByText('back')).toBeInTheDocument();
         });
     });
 
@@ -700,14 +726,14 @@ describe('DOM testing', () => {
             expectSocialButtons(true);
 
             // Email input
-            expect(screen.queryByTestId('identifier')).toBeInTheDocument();
+            expect(screen.getByTestId('identifier')).toBeInTheDocument();
 
             // Form buttons
-            expect(screen.queryByTestId('webauthn-button')).toBeInTheDocument();
+            expect(screen.getByTestId('webauthn-button')).toBeInTheDocument();
             expect(screen.queryByTestId('password-button')).toBeNull();
 
             // Sign in link
-            expect(screen.queryByText('login.signupLink')).toBeInTheDocument();
+            expect(screen.getByText('login.signupLink')).toBeInTheDocument();
         });
 
         test('signup view without password and with webauthn', async () => {
@@ -724,11 +750,11 @@ describe('DOM testing', () => {
             expectSocialButtons(true);
 
             // Form buttons
-            expect(screen.queryByTestId('webauthn-button')).toBeInTheDocument();
+            expect(screen.getByTestId('webauthn-button')).toBeInTheDocument();
             expect(screen.queryByTestId('password-button')).toBeNull();
 
             // Login in link
-            expect(screen.queryByText('signup.loginLink')).toBeInTheDocument();
+            expect(screen.getByText('signup.loginLink')).toBeInTheDocument();
         });
 
         test('signup form view with webauthn and without password', async () => {
@@ -742,15 +768,15 @@ describe('DOM testing', () => {
             );
 
             // Form fields
-            expect(screen.queryByTestId('givenName')).toBeInTheDocument();
-            expect(screen.queryByTestId('familyName')).toBeInTheDocument();
-            expect(screen.queryByTestId('email')).toBeInTheDocument();
+            expect(screen.getByTestId('givenName')).toBeInTheDocument();
+            expect(screen.getByTestId('familyName')).toBeInTheDocument();
+            expect(screen.getByTestId('email')).toBeInTheDocument();
 
             // Form button
-            expect(screen.queryByText('signup.submitLabel')).toBeInTheDocument();
+            expect(screen.getByText('signup.submitLabel')).toBeInTheDocument();
 
             // Back link
-            expect(screen.queryByText('back')).toBeInTheDocument();
+            expect(screen.getByText('back')).toBeInTheDocument();
         });
     });
 
@@ -795,7 +821,7 @@ describe('DOM testing', () => {
 
             await user.click(usePhoneNumberButton);
 
-            expect(screen.queryByText('forgotPassword.prompt.phoneNumber')).toBeInTheDocument();
+            expect(screen.getByText('forgotPassword.prompt.phoneNumber')).toBeInTheDocument();
 
             const phoneNumberField = screen.getByLabelText('phoneNumber');
             const submitPhoneNumberButton = screen.getByRole('button', {

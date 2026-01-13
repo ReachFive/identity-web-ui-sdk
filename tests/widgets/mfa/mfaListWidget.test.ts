@@ -15,7 +15,7 @@ import MfaListWidget from '@/widgets/mfa/mfaListWidget';
 
 import { componentGenerator, snapshotGenerator } from '../renderer';
 
-import type { I18nMessages } from '@/core/i18n';
+import type { I18nMessages } from '@/contexts/i18n';
 import type { Config, OnError, OnSuccess } from '@/types';
 
 const defaultI18n: I18nMessages = {};
@@ -155,15 +155,9 @@ describe('DOM testing', () => {
             };
             listMfaCredentials.mockRejectedValue(error);
 
-            expect(
-                async () =>
-                    await generateComponent({ accessToken: 'azerty', onError, onSuccess }, {}, () =>
-                        expect(listMfaCredentials).toBeCalled()
-                    )
-            ).rejects.toThrow();
-
+            await generateComponent({ accessToken: 'azerty', onError, onSuccess });
             expect(onSuccess).not.toBeCalled();
-            // expect(onError).toBeCalledWith(error);
+            expect(onError).toBeCalledWith(error);
         });
     });
 });

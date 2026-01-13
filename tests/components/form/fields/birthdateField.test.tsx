@@ -12,7 +12,7 @@ import 'jest-styled-components';
 
 import birthdayField from '@/components/form/fields/birthdayField';
 import { createForm } from '@/components/form/formComponent';
-import { I18nMessages } from '@/core/i18n';
+import { I18nMessages } from '@/contexts/i18n';
 
 import { defaultConfig, renderWithContext } from '../../../widgets/renderer';
 
@@ -57,22 +57,13 @@ describe('DOM testing', () => {
 
         jest.useFakeTimers();
 
-        const yearInput = screen.getByRole('spinbutton', { name: defaultI18n.year });
-        const monthInput = screen.getByRole('combobox', { name: defaultI18n.month });
-        const dayInput = screen.getByRole('combobox', { name: defaultI18n.day });
+        const yearInput = screen.getByRole('combobox', { name: defaultI18n.year as string });
+        const monthInput = screen.getByRole('combobox', { name: defaultI18n.month as string });
+        const dayInput = screen.getByRole('combobox', { name: defaultI18n.day as string });
 
         const fiveYearsOld = subYears(new Date(), 5);
-
-        await waitFor(async () => {
-            await user.clear(yearInput);
-            await user.type(yearInput, String(getYear(fiveYearsOld)));
-        });
-
+        await user.selectOptions(yearInput, String(getYear(fiveYearsOld)));
         await user.selectOptions(monthInput, String(getMonth(fiveYearsOld)));
-
-        // Fast-forward until all timers have been executed (handle year debounced value)
-        await jest.runOnlyPendingTimersAsync();
-
         await user.selectOptions(dayInput, String(getDate(fiveYearsOld)));
 
         // Fast-forward until all timers have been executed (handle year debounced value)
@@ -90,12 +81,7 @@ describe('DOM testing', () => {
         await jest.runOnlyPendingTimersAsync();
 
         const eighteenYearsOld = subYears(new Date(), 18);
-        await user.clear(yearInput);
-        await user.type(yearInput, String(getYear(eighteenYearsOld)));
-
-        // Fast-forward until all timers have been executed (handle year debounced value)
-        await jest.runOnlyPendingTimersAsync();
-
+        await user.selectOptions(yearInput, String(getYear(eighteenYearsOld)));
         await user.selectOptions(monthInput, String(getMonth(eighteenYearsOld)));
         await user.selectOptions(dayInput, String(getDate(eighteenYearsOld)));
 

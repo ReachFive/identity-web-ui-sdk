@@ -3,8 +3,8 @@ import * as libphonenumber from 'libphonenumber-js';
 
 import {
     AuthResult,
-    LoginWithPasswordParams,
-    LoginWithWebAuthnParams,
+    type LoginWithPasswordParams,
+    type LoginWithWebAuthnParams,
 } from '@reachfive/identity-core';
 
 import type { AuthType, IdentifierType, LoginEventWrappingObject } from '../types';
@@ -127,11 +127,9 @@ export function specializeIdentifierData<
     T extends LoginWithPasswordParams | LoginWithWebAuthnParams,
 >(data: IdentifierData<T>): T {
     if ('identifier' in data && typeof data.identifier === 'string') {
-        const { identifier, ...rest } = data as
-            | IdentifierLoginPassword
-            | IdentifierLoginWithWebAuthn;
+        const { identifier, ...rest } = data;
         const specializedIdentifier = specializeIdentifier(identifier);
-        return { ...specializedIdentifier, ...rest } as T;
+        return { ...specializedIdentifier, ...rest } as unknown as T;
     }
     return data as T;
 }
@@ -196,14 +194,14 @@ export function find<T>(collection: Record<string, T>, predicate: (item: T) => b
     return Object.values(collection ?? {}).find(value => predicate(value));
 }
 
-export function debounce(
-    func: (...args: any[]) => void,
+export function debounce<T extends unknown[]>(
+    func: (...args: T) => void,
     delay: number,
     { leading }: { leading?: boolean } = {}
 ) {
     let timerId: NodeJS.Timeout;
 
-    return (...args: any[]) => {
+    return (...args: T) => {
         if (!timerId && leading) {
             func(...args);
         }

@@ -12,15 +12,13 @@ import 'jest-styled-components';
 
 import phoneNumberField from '@/components/form/fields/phoneNumberField';
 import { createForm } from '@/components/form/formComponent';
-import resolveI18n, { I18nMessages } from '@/core/i18n';
+import { I18nMessages } from '@/contexts/i18n';
 
 import { defaultConfig, renderWithContext } from '../../../widgets/renderer';
 
 const defaultI18n: I18nMessages = {
     phone: 'Phone number',
 };
-
-const i18nResolver = resolveI18n(defaultI18n);
 
 const queryByName = (renderResult: RenderResult, name: Matcher) => {
     const query = queryHelpers.queryByAttribute.bind(null, 'name');
@@ -74,7 +72,7 @@ describe('DOM testing', () => {
             defaultI18n
         );
 
-        const input = screen.queryByLabelText(i18nResolver(label));
+        const input = screen.queryByLabelText('Phone number');
         expect(input).toBeInTheDocument();
         expect(input).toHaveAttribute('id', key);
         expect(input).toHaveValue(formatPhoneNumberIntl(initialValue));

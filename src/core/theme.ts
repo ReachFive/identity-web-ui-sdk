@@ -11,7 +11,6 @@ import {
     ThemeOptions,
 } from '../types/styled';
 
-/* eslint-disable @typescript-eslint/no-unused-vars */
 const white = '#fff';
 // const gray100 = '#f8f9fa';
 const gray200 = '#e9ecef';
@@ -23,7 +22,6 @@ const gray700 = '#495057';
 // const gray800 = '#343a40';
 const gray900 = '#212529';
 // const black = '#000';
-/* eslint-enable @typescript-eslint/no-unused-vars */
 
 type PrimitiveTheme = Omit<
     BaseTheme,

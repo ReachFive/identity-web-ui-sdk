@@ -11,7 +11,7 @@ import 'jest-styled-components';
 
 import { type Client, type Profile } from '@reachfive/identity-core';
 
-import { type I18nMessages } from '@/core/i18n';
+import { type I18nMessages } from '@/contexts/i18n';
 import SocialAccountsWidget from '@/widgets/socialAccounts/socialAccountsWidget';
 
 import { componentGenerator, snapshotGenerator } from '../renderer';
@@ -91,8 +91,8 @@ describe('DOM testing', () => {
 
             await generateComponent({ accessToken: 'azerty', onError, onSuccess });
 
-            expect(screen.queryByText('socialAccounts.noLinkedAccount')).toBeInTheDocument();
-            expect(screen.queryByText('socialAccounts.linkNewAccount')).toBeInTheDocument();
+            expect(screen.getByText('socialAccounts.noLinkedAccount')).toBeInTheDocument();
+            expect(screen.getByText('socialAccounts.linkNewAccount')).toBeInTheDocument();
         });
 
         test('with existing identity', async () => {
@@ -103,8 +103,8 @@ describe('DOM testing', () => {
             ]);
 
             expect(screen.queryByText('socialAccounts.noLinkedAccount')).not.toBeInTheDocument();
-            expect(screen.queryByTestId('identity-facebook')).toBeInTheDocument();
-            expect(screen.queryByText('socialAccounts.linkNewAccount')).toBeInTheDocument();
+            expect(screen.getByTestId('identity-facebook')).toBeInTheDocument();
+            expect(screen.getByText('socialAccounts.linkNewAccount')).toBeInTheDocument();
         });
 
         test('with all identities configured', async () => {
@@ -117,9 +117,9 @@ describe('DOM testing', () => {
             ]);
 
             expect(screen.queryByText('socialAccounts.noLinkedAccount')).not.toBeInTheDocument();
-            expect(screen.queryByTestId('identity-facebook')).toBeInTheDocument();
-            expect(screen.queryByTestId('identity-google')).toBeInTheDocument();
-            expect(screen.queryByTestId('identity-line')).toBeInTheDocument();
+            expect(screen.getByTestId('identity-facebook')).toBeInTheDocument();
+            expect(screen.getByTestId('identity-google')).toBeInTheDocument();
+            expect(screen.getByTestId('identity-line')).toBeInTheDocument();
             expect(screen.queryByText('socialAccounts.linkNewAccount')).not.toBeInTheDocument();
         });
 
@@ -134,7 +134,7 @@ describe('DOM testing', () => {
                 { id: '000000000', provider: 'line', username: 'John Doe' },
             ]);
 
-            expect(screen.queryByTestId('identity-google')).toBeInTheDocument();
+            expect(screen.getByTestId('identity-google')).toBeInTheDocument();
 
             const unlinkBtn = screen.getByTestId('identity-google-unlink');
             expect(unlinkBtn).toBeInTheDocument();

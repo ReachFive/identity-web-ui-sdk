@@ -19,6 +19,7 @@
     ],
     "importOrderCaseInsensitive": true,
     "importOrderSeparation": true,
+    "importOrderParserPlugins": ["typescript", "jsx", "decorators-legacy"],
     "overrides": [
         {
             "files": ["*.yml"],

@@ -63,8 +63,10 @@ type IdentifierFieldExtraProps = {
     withPhoneNumber?: boolean;
 };
 
-export interface IdentifierFieldProps
-    extends FieldComponentProps<IdentifierData, IdentifierFieldExtraProps> {}
+export interface IdentifierFieldProps extends FieldComponentProps<
+    IdentifierData,
+    IdentifierFieldExtraProps
+> {}
 
 function IdentifierField({
     autoComplete,
@@ -180,23 +182,25 @@ export default function identifierField(
                             isValid: true,
                         }) satisfies IdentifierData
                 ),
-            unbind: value =>
-                value
+            unbind: value => {
+                const identifier = isRichFormValue(value, 'raw') ? value.raw : value;
+                return identifier
                     ? specializeRefinedIdentifier(
-                          isRichFormValue(value, 'raw') ? value.raw : value,
+                          identifier,
                           v => v?.formatted ?? v?.value ?? null,
                           v => v?.value ?? null,
                           v => v?.value ?? null
                       )
-                    : null,
+                    : null;
+            },
         },
-        validator: new Validator<IdentifierData>({
+        validator: new Validator<IdentifierData, unknown>({
             rule: (value, ctx) =>
                 specializeRefinedIdentifier(
                     value,
-                    v => v?.isValid ?? !props.withPhoneNumber,
-                    v => email.rule(v?.value ?? '', ctx),
-                    v => v?.isValid
+                    v => v.isValid ?? !props.withPhoneNumber,
+                    v => email.rule(v.value ?? '', ctx),
+                    v => v.isValid ?? true
                 ) ?? true,
             hint: value =>
                 specializeRefinedIdentifier(

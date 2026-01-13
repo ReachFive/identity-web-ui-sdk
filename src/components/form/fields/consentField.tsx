@@ -35,8 +35,12 @@ type ConsentFieldOptions = {
     };
 };
 
-export interface ConsentFieldProps
-    extends FieldComponentProps<boolean, ConsentFieldOptions, {}, 'granted'> {}
+export interface ConsentFieldProps extends FieldComponentProps<
+    boolean,
+    ConsentFieldOptions,
+    {},
+    'granted'
+> {}
 
 const ConsentField = ({
     value,
@@ -104,15 +108,11 @@ export default function consentField({
         mapping: new DefaultPathMapping(snakeCasePath(props.path ?? props.key)), // Consent key should be snake_case
         format: {
             bind: value => value,
-            unbind: value =>
-                value !== undefined
-                    ? {
-                          granted:
-                              (isRichFormValue(value, 'granted') ? value.granted : value) ?? false,
-                          consentType: type,
-                          consentVersion: version,
-                      }
-                    : null,
+            unbind: value => ({
+                granted: (isRichFormValue(value, 'granted') ? value.granted : value) ?? false,
+                consentType: type,
+                consentVersion: version,
+            }),
         },
         validator: required ? checked : empty,
         rawProperty: 'granted',

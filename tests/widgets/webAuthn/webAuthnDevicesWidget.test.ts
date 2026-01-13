@@ -9,7 +9,7 @@ import 'jest-styled-components';
 
 import { type Client } from '@reachfive/identity-core';
 
-import { type I18nMessages } from '@/core/i18n';
+import { type I18nMessages } from '@/contexts/i18n';
 import { UserError } from '@/helpers/errors';
 import { OnError, OnSuccess } from '@/types';
 import WebAuthnDevicesWidget from '@/widgets/webAuthn/webAuthnDevicesWidget';

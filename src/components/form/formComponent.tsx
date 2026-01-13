@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 
 import styled from 'styled-components';
 
-import { Client } from '@reachfive/identity-core';
+import { type Client } from '@reachfive/identity-core';
 
 import { useI18n, type WithI18n } from '../../contexts/i18n';
 import { useReachfive, type WithConfig } from '../../contexts/reachfive';
@@ -48,13 +48,14 @@ export type FieldValues<T> = {
 
 export type FieldOptions<P> = WithConfig<WithI18n<P>>;
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type FormField = FieldCreator<any, any, any, any> | StaticContent;
 
 export type FormFieldsBuilder<P = {}> = FormField[] | ((options: FieldOptions<P>) => FormField[]);
 
 export type FieldCreators<FF extends FormFieldsBuilder<P>, P = {}> = FF extends (
-    ...args: any
-) => any
+    ...args: unknown[]
+) => unknown
     ? ReturnType<FF>
     : FF;
 
@@ -77,11 +78,18 @@ export type FieldCreators<FF extends FormFieldsBuilder<P>, P = {}> = FF extends 
  * type Test = FormFields<typeof builder>
  * // { test: { value: '', isDirty: false, validation: { valid: true } } }
  */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export type FormFields<Fields extends FormFieldsBuilder<P>, P = {}> = {
-    [F in FieldCreators<Fields, P>[number] as F extends FieldCreator<any, any, any, any>
+    [F in Extract<FieldCreators<Fields, P>, readonly any[]>[number] as F extends FieldCreator<
+        any,
+        any,
+        any,
+        any
+    >
         ? F['key']
         : never]: F extends FieldCreator<infer T, P, any, infer K> ? FieldValue<T, K> : never;
 };
+/* eslint-enable @typescript-eslint/no-explicit-any */
 
 type FormOptions<P = {}, Model extends Record<PropertyKey, unknown> = {}> = {
     fields?: FormFieldsBuilder<P>;
@@ -149,7 +157,8 @@ export function createForm<Model extends Record<PropertyKey, unknown> = {}, P = 
             typeof fields === 'function' ? fields({ config, i18n, ...(props as P) }) : fields
         )
             .filter(
-                (field): field is FieldCreator<Model, P> | StaticContent => !!field
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                (field): field is FieldCreator<any, any, any, any> | StaticContent => !!field
             ) /** @todo: is this useless ? */
             .map(field =>
                 'staticContent' in field ? field : field.create({ i18n, showLabel: showLabels })
@@ -187,7 +196,7 @@ export function createForm<Model extends Record<PropertyKey, unknown> = {}, P = 
         };
 
         useEffect(() => {
-            onFieldChange && onFieldChange(valuesToModel());
+            onFieldChange?.(valuesToModel());
         }, [fieldValues]);
 
         const handleFieldChange = <K extends FieldKey>(
@@ -213,6 +222,7 @@ export function createForm<Model extends Record<PropertyKey, unknown> = {}, P = 
         };
 
         const validateField = async <K extends string>(
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             field: Field<Model, P, any, K>,
             fieldState: FieldValue<K>,
             ctx: FormContext<Model>
@@ -223,6 +233,7 @@ export function createForm<Model extends Record<PropertyKey, unknown> = {}, P = 
             const { hasErrors, values: newFieldValues } = await inputFields.reduce(
                 async (acc, field) => {
                     const fieldState = getFieldValue(field.key);
+                    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
                     const validation = await validateField(field, fieldState, {
                         client,
                         config,
@@ -248,7 +259,7 @@ export function createForm<Model extends Record<PropertyKey, unknown> = {}, P = 
             setHasErrors(hasErrors);
             setFieldValues(newFieldValues);
 
-            callback && callback(!hasErrors);
+            callback?.(!hasErrors);
         };
 
         const handleFieldValidation = useCallback(
@@ -295,7 +306,7 @@ export function createForm<Model extends Record<PropertyKey, unknown> = {}, P = 
                 return i18n(err);
             } else if (isAppError(err)) {
                 return err.errorMessageKey
-                    ? i18n(err.errorMessageKey, {}, () => err.errorUserMsg ?? err.error)
+                    ? i18n(err.errorMessageKey, { defaultValue: err.errorUserMsg ?? err.error })
                     : err.errorUserMsg;
             }
         };
@@ -352,9 +363,11 @@ export function createForm<Model extends Record<PropertyKey, unknown> = {}, P = 
                 captchaHandler(processedData, handler)
                     .then(handleSuccess)
                     .catch((err: unknown) => {
-                        (typeof skipError === 'function' ? skipError(err) : skipError === true)
-                            ? handleSuccess({} as R)
-                            : handleError(err);
+                        if (typeof skipError === 'function' ? skipError(err) : skipError === true) {
+                            handleSuccess({} as R);
+                        } else {
+                            handleError(err);
+                        }
                     });
             });
         };
@@ -366,7 +379,7 @@ export function createForm<Model extends Record<PropertyKey, unknown> = {}, P = 
                     !('staticContent' in field)
                         ? field.render({
                               state: getFieldValue(field.key),
-                              onChange: newState => {
+                              onChange: (newState: FieldValue<typeof field.key>) => {
                                   handleFieldChange(field.key, newState);
                                   handleFieldValidationDebounced(field.key, newState);
                               },

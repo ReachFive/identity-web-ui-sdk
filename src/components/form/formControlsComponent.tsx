@@ -64,6 +64,16 @@ export const FormGroup = ({
     </FormGroupContainer>
 );
 
+const Inline = styled.div`
+    display: flex;
+    flex-direction: row;
+    row-gap: ${props => props.theme.spacing}px;
+    column-gap: ${props => 2 * props.theme.spacing}px;
+    align-items: center;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+`;
+
 const inputMixin = css<{ hasError?: boolean }>`
     display: block;
     width: 100%;
@@ -156,48 +166,47 @@ export const Select = styled(
     }
 `;
 
-const checkboxWidth = 20;
-
 interface CheckProps extends React.InputHTMLAttributes<HTMLInputElement> {
     label?: ReactNode;
     value?: string | number;
     radio?: boolean;
 }
 
-export const Check = styled(({ onSelect, label, radio, className, ...props }: CheckProps) => (
-    <label className={className}>
-        <input
-            type={radio ? 'radio' : 'checkbox'}
-            onChange={onSelect}
-            style={radio ? { appearance: 'radio' } : undefined}
-            {...props}
-        />
-        {label}
-    </label>
-))<{ $inline?: boolean }>`
-    padding-left: ${checkboxWidth}px;
-    margin-bottom: 0;
+export const Check = styled(function Check({
+    onSelect,
+    label,
+    radio,
+    className,
+    ...props
+}: CheckProps) {
+    return (
+        <label className={className}>
+            <input
+                type={radio ? 'radio' : 'checkbox'}
+                onChange={onSelect}
+                style={radio ? { appearance: 'radio' } : undefined}
+                {...props}
+            />
+            {label}
+        </label>
+    );
+})`
+    display: flex;
+    align-items: center;
+    // margin-bottom: ${props => props.theme.spacing}px;
     cursor: pointer;
     font-weight: normal;
-
-    ${props =>
-        props.$inline &&
+    & > input {
+        margin-right: 1ch;
+    }
+    ${({ required, theme }) =>
+        required &&
         `
-        position: relative;
-        vertical-align: middle;
-        display: inline-block;
-
-        & + & {
-            margin-left: ${props.theme.spacing}px;
+        &::after {
+            content: "\\A0*";
+            color: ${theme.dangerColor};
         }
     `}
-
-    & > input {
-        position: absolute;
-        margin-left: -${checkboxWidth}px;
-        margin-top: 2px;
-        line-height: normal;
-    }
 `;
 
 interface CheckboxProps extends React.InputHTMLAttributes<HTMLInputElement> {
@@ -207,8 +216,17 @@ interface CheckboxProps extends React.InputHTMLAttributes<HTMLInputElement> {
     radio?: boolean;
 }
 
-export const Checkbox = styled(
-    ({ value, onToggle, label, name, className, error, required, ...props }: CheckboxProps) => (
+export const Checkbox = styled(function Checkbox({
+    value,
+    onToggle,
+    label,
+    name,
+    className,
+    error,
+    required,
+    ...props
+}: CheckboxProps) {
+    return (
         <div className={className}>
             <Check
                 checked={!!value}
@@ -220,8 +238,8 @@ export const Checkbox = styled(
             />
             {error && <FormError>{error}</FormError>}
         </div>
-    )
-)`
+    );
+})`
     margin-bottom: ${props => props.theme.spacing}px;
 `;
 
@@ -237,18 +255,19 @@ export const RadioGroup = ({ options, onChange, value, inputId, ...props }: Radi
     };
     return (
         <FormGroup inputId={inputId} {...props}>
-            {options.map(({ label: optionLabel, value: optionValue }) => (
-                <Check
-                    key={optionValue}
-                    checked={value === optionValue}
-                    onSelect={handleChange}
-                    label={optionLabel}
-                    name={String(optionValue)}
-                    $inline={true}
-                    value={optionValue}
-                    radio
-                />
-            ))}
+            <Inline>
+                {options.map(({ label: optionLabel, value: optionValue }) => (
+                    <Check
+                        key={optionValue}
+                        checked={value === optionValue}
+                        onSelect={handleChange}
+                        label={optionLabel}
+                        name={String(optionValue)}
+                        value={optionValue}
+                        radio
+                    />
+                ))}
+            </Inline>
         </FormGroup>
     );
 };

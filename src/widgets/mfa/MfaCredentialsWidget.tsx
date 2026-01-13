@@ -18,7 +18,7 @@ import { createMultiViewWidget } from '../../components/widget/widget';
 import { useI18n } from '../../contexts/i18n';
 import { useReachfive } from '../../contexts/reachfive';
 import { useRouting } from '../../contexts/routing';
-import { UserError } from '../../helpers/errors';
+import { isAppError, UserError } from '../../helpers/errors';
 import {
     useCredentials,
     withCredentials,
@@ -442,7 +442,7 @@ const VerificationCodeView = ({
             });
     };
 
-    const onCredentialRegistered = async () => {
+    const onCredentialRegistered = () => {
         switch (registrationType) {
             case 'email':
                 onSuccess({ name: 'mfa_email_verify_registration' });
@@ -456,9 +456,7 @@ const VerificationCodeView = ({
 
     React.useEffect(() => {
         if (status === 'enabled') {
-            (async () => {
-                await onCredentialRegistered();
-            })();
+            onCredentialRegistered();
         }
     }, [showIntro, status]);
 
@@ -520,9 +518,13 @@ export default createMultiViewWidget<MfaCredentialsWidgetProps, MfaCredentialsPr
                     profileIdentifiers,
                 };
             })
-            .catch(error => {
+            .catch((error: unknown) => {
                 options.onError?.(error);
-                throw UserError.fromAppError(error);
+                if (isAppError(error)) {
+                    throw UserError.fromAppError(error);
+                } else {
+                    throw error;
+                }
             });
     },
 });

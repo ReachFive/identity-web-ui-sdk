@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import {
     eachMonthOfInterval,
@@ -16,7 +16,6 @@ import {
 import styled from 'styled-components';
 
 import { Validator, ValidatorResult, isValidatorError } from '../../../core/validation';
-import { useDebounce } from '../../../helpers/useDebounce';
 import { isRichFormValue } from '../../../helpers/utils';
 import {
     createField,
@@ -24,7 +23,7 @@ import {
     type FieldCreator,
     type FieldDefinition,
 } from '../fieldCreator';
-import { FormGroup, Input, Select } from '../formControlsComponent';
+import { FormGroup, Select } from '../formControlsComponent';
 
 import type { Config, Optional } from '../../../types';
 
@@ -39,15 +38,18 @@ const InputRow = styled.div`
 
 const InputCol = styled.div<{ width: number; minWidth?: number }>`
     flex-basis: ${props => props.width}%;
-    ${props => (props.minWidth ? `min-width: ${props.minWidth}px;` : undefined)}
+    ${props => (props.minWidth ? `min-width: ${props.minWidth}px;` : '')}
 `;
 
 type ExtraParams = {
     locale: string;
-    yearDebounce?: number;
+    yearRange?: number;
 };
 
 export interface DateFieldProps extends FieldComponentProps<Date, ExtraParams> {}
+
+const DEFAULT_YEAR_RANGE = 129;
+const MAX_DAYS_IN_MONTH = 31;
 
 const DateField = ({
     i18n,
@@ -60,47 +62,104 @@ const DateField = ({
     showLabel,
     validation = {} as ValidatorResult,
     value,
-    yearDebounce = 1000,
+    yearRange = DEFAULT_YEAR_RANGE,
 }: DateFieldProps) => {
     const date = isRichFormValue(value, 'raw') ? value.raw : value;
-    const [day, setDay] = useState(date ? getDate(date) : undefined);
-    const [month, setMonth] = useState(date ? getMonth(date) : undefined);
-    const [year, setYear] = useState(date ? getYear(date) : undefined);
 
-    // debounce year value to delay value update when user is currently editing it
-    const debouncedYear = useDebounce(year, yearDebounce);
+    const [day, setDay] = useState<number | undefined>(() => (date ? getDate(date) : undefined));
+    const [month, setMonth] = useState<number | undefined>(() =>
+        date ? getMonth(date) : undefined
+    );
+    const [year, setYear] = useState<number | undefined>(() => (date ? getYear(date) : undefined));
 
-    const setDatePart = (
-        setter: React.Dispatch<React.SetStateAction<number | undefined>>,
-        value: string
-    ) => {
-        if (Number.isNaN(Number(value))) return; // only accept number value
-        setter(Number(value));
-    };
-
-    const handleDayChange = (event: React.ChangeEvent<HTMLSelectElement>) =>
-        setDatePart(setDay, event.target.value);
-
-    const handleMonthChange = (event: React.ChangeEvent<HTMLSelectElement>) =>
-        setDatePart(setMonth, event.target.value);
-
-    const handleYearChange = (event: React.ChangeEvent<HTMLInputElement>) =>
-        setDatePart(setYear, event.target.value);
-
-    const error = validation && isValidatorError(validation) ? validation.error : undefined;
-
+    // Sync the local state with the value prop
     useEffect(() => {
-        if (
-            typeof day !== 'undefined' &&
-            typeof month !== 'undefined' &&
-            typeof debouncedYear !== 'undefined'
-        ) {
-            onChange({
-                value: new Date(debouncedYear, month, day),
-                isDirty: true,
-            });
+        const newDate = isRichFormValue(value, 'raw') ? value.raw : value;
+        if (newDate && isValid(newDate)) {
+            setDay(getDate(newDate));
+            setMonth(getMonth(newDate));
+            setYear(getYear(newDate));
+        } else if (!newDate) {
+            setDay(undefined);
+            setMonth(undefined);
+            setYear(undefined);
         }
-    }, [debouncedYear, month, day]);
+    }, [value]);
+
+    const isValidDate = useCallback((year?: number, month?: number, day?: number): boolean => {
+        if (year === undefined || month === undefined || day === undefined) {
+            return false;
+        }
+
+        // Check that the month is valid (0-11)
+        if (month < 0 || month > 11) {
+            return false;
+        }
+
+        // Check that the day is valid for this month/year
+        const maxDays = getDaysInMonth(new Date(year, month));
+        if (day < 1 || day > maxDays) {
+            return false;
+        }
+
+        // Create the date and check that it matches the entered values
+        const date = new Date(year, month, day);
+        return (
+            !isNaN(date.getTime()) &&
+            date.getFullYear() === year &&
+            date.getMonth() === month &&
+            date.getDate() === day
+        );
+    }, []);
+
+    const updateDate = useCallback(
+        (year?: number, month?: number, day?: number) => {
+            if (isValidDate(year, month, day)) {
+                onChange({
+                    value: new Date(year!, month!, day),
+                    isDirty: true,
+                });
+            }
+        },
+        [isValidDate, onChange]
+    );
+
+    // Generic handler to handle all date changes
+    const createChangeHandler = useCallback(
+        (part: 'day' | 'month' | 'year') => (event: React.ChangeEvent<HTMLSelectElement>) => {
+            const newValue = Number(event.target.value);
+            if (Number.isNaN(newValue)) return;
+
+            const newYear = part === 'year' ? newValue : year;
+            const newMonth = part === 'month' ? newValue : month;
+            let newDay = part === 'day' ? newValue : day;
+
+            // Setter
+            const setters = { day: setDay, month: setMonth, year: setYear };
+            setters[part](newValue);
+
+            // Validate and adjust the day if year or month change
+            if (
+                part !== 'day' &&
+                newYear !== undefined &&
+                newMonth !== undefined &&
+                newDay !== undefined
+            ) {
+                const maxDays = getDaysInMonth(new Date(newYear, newMonth));
+                if (newDay > maxDays) {
+                    newDay = undefined;
+                    setDay(undefined);
+                }
+            }
+
+            updateDate(newYear, newMonth, newDay);
+        },
+        [year, month, day, updateDate]
+    );
+
+    const handleDayChange = useMemo(() => createChangeHandler('day'), [createChangeHandler]);
+    const handleMonthChange = useMemo(() => createChangeHandler('month'), [createChangeHandler]);
+    const handleYearChange = useMemo(() => createChangeHandler('year'), [createChangeHandler]);
 
     const months = useMemo(
         () =>
@@ -111,37 +170,54 @@ const DateField = ({
         [locale]
     );
 
-    const daysInMonth = useMemo(
-        () =>
-            [
-                ...Array(
-                    debouncedYear && month ? getDaysInMonth(new Date(debouncedYear, month, 1)) : 31
-                ).keys(),
-            ].map(v => v + 1),
-        [debouncedYear, month]
-    );
+    const years = useMemo(() => {
+        const currentYear = getYear(new Date());
+        return Array.from({ length: yearRange + 1 }, (_, i) => currentYear - i);
+    }, [yearRange]);
 
-    // reset day if current value is out of range
-    if (day && !daysInMonth.includes(day)) {
-        setDay(undefined);
-    }
+    // Days in month
+    const daysInMonth = useMemo(() => {
+        const maxDays =
+            year !== undefined && month !== undefined
+                ? getDaysInMonth(new Date(year, month))
+                : MAX_DAYS_IN_MONTH;
+        return Array.from({ length: maxDays }, (_, i) => i + 1);
+    }, [year, month]);
 
-    // datetime parts ordered by locale
+    // Date parts ordered by locale (memoized)
     const parts = useMemo(
         () =>
             new Intl.DateTimeFormat(locale, {
-                weekday: 'long',
                 year: 'numeric',
                 month: 'long',
                 day: 'numeric',
             })
                 .formatToParts()
                 .map(part => part.type)
-                .filter(type => ['day', 'month', 'year'].includes(type)),
+                .filter((type): type is 'day' | 'month' | 'year' =>
+                    ['day', 'month', 'year'].includes(type)
+                ),
         [locale]
     );
 
-    const fields: Partial<Record<(typeof parts)[number], React.ReactNode>> = {
+    const error = validation && isValidatorError(validation) ? validation.error : undefined;
+
+    const dayOptions = useMemo(
+        () => daysInMonth.map(day => ({ value: String(day), label: String(day) })),
+        [daysInMonth]
+    );
+
+    const monthOptions = useMemo(
+        () => months.map((month, index) => ({ value: String(index), label: month })),
+        [months]
+    );
+
+    const yearOptions = useMemo(
+        () => years.map(year => ({ value: String(year), label: String(year) })),
+        [years]
+    );
+
+    const fields: Record<'day' | 'month' | 'year', React.ReactNode> = {
         day: (
             <InputCol key="day" width={20} minWidth={70}>
                 <Select
@@ -151,7 +227,7 @@ const DateField = ({
                     required={required}
                     onChange={handleDayChange}
                     placeholder={i18n('day')}
-                    options={daysInMonth.map(day => ({ value: `${day}`, label: `${day}` }))}
+                    options={dayOptions}
                     data-testid={`${path}.day`}
                     aria-label={i18n('day')}
                 />
@@ -166,7 +242,7 @@ const DateField = ({
                     required={required}
                     onChange={handleMonthChange}
                     placeholder={i18n('month')}
-                    options={months.map((month, index) => ({ value: `${index}`, label: month }))}
+                    options={monthOptions}
                     data-testid={`${path}.month`}
                     aria-label={i18n('month')}
                 />
@@ -174,16 +250,14 @@ const DateField = ({
         ),
         year: (
             <InputCol key="year" width={30} minWidth={100}>
-                <Input
-                    type="number"
-                    maxLength={4}
-                    inputMode="numeric"
+                <Select
                     name={`${path}.year`}
                     value={year ?? ''}
                     hasError={!!error}
                     required={required}
                     onChange={handleYearChange}
                     placeholder={i18n('year')}
+                    options={yearOptions}
                     data-testid={`${path}.year`}
                     aria-label={i18n('year')}
                 />
@@ -199,12 +273,12 @@ const DateField = ({
             showLabel={showLabel}
             required={required}
         >
-            <InputRow>{parts.flatMap(part => fields[part])}</InputRow>
+            <InputRow>{parts.map(part => fields[part])}</InputRow>
         </FormGroup>
     );
 };
 
-const dateFormat = (locale: string) =>
+const dateFormat = (locale: string): string =>
     new Intl.DateTimeFormat(locale)
         .formatToParts()
         .map(part => {
@@ -217,12 +291,14 @@ const dateFormat = (locale: string) =>
                     return 'yyyy';
                 case 'literal':
                     return part.value;
+                default:
+                    return '';
             }
         })
         .join('');
 
-export const datetimeValidator = (locale: string) =>
-    new Validator<Date>({
+export const datetimeValidator = (locale: string): Validator<Date, unknown> =>
+    new Validator<Date, unknown>({
         rule: value => isValid(value),
         hint: 'date',
         parameters: { format: dateFormat(locale) },
@@ -235,7 +311,7 @@ export default function dateField(
         label = 'date',
         locale,
         validator,
-        yearDebounce,
+        yearRange,
         ...props
     }: Optional<FieldDefinition<string, Date>, 'key' | 'label'> & Optional<ExtraParams, 'locale'>,
     config: Config
@@ -263,7 +339,7 @@ export default function dateField(
         component: DateField,
         extendedParams: {
             locale: locale ?? config.language,
-            yearDebounce,
+            yearRange,
         },
     });
 }

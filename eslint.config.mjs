@@ -1,25 +1,31 @@
-// @ts-check
 import eslint from "@eslint/js";
 import compat from "eslint-plugin-compat";
+import importPlugin from "eslint-plugin-import";
+import jestDom from "eslint-plugin-jest-dom";
 import prettier from "eslint-plugin-prettier/recommended";
 import react from "eslint-plugin-react";
-import reactHooks from "eslint-plugin-react-hooks";
+import testingLibrary from "eslint-plugin-testing-library";
+import { defineConfig } from "eslint/config";
 import globals from "globals";
 import tseslint from "typescript-eslint";
 
-export default tseslint.config(
+export default defineConfig(
+    {
+        ignores: ["**/*.svg"]
+    },
     eslint.configs.recommended,
-    tseslint.configs.eslintRecommended,
-    ...tseslint.configs.stylisticTypeChecked,
+    importPlugin.flatConfigs.recommended,
+    tseslint.configs.recommendedTypeChecked,
+    tseslint.configs.stylisticTypeChecked,
     react.configs.flat.recommended,
     react.configs.flat["jsx-runtime"],
     prettier,
-    // reactHooks.configs.recommended,
+    // reactHooks.configs.flat.recommended,
     compat.configs["flat/recommended"],
     {
         files: ["**/*.{js,jsx,mjs,cjs,ts,tsx}"],
         languageOptions: {
-            ...react.configs.flat?.recommended.languageOptions,
+            ...react.configs.flat.recommended.languageOptions,
             parserOptions: {
                 projectService: true,
                 tsconfigRootDir: import.meta.dirname
@@ -28,8 +34,14 @@ export default tseslint.config(
                 ...globals.browser
             }
         },
-        plugins: {
-            "react-hooks": reactHooks.configs.recommended
+        settings: {
+            polyfills: ["Promise", "fetch", "URLSearchParams"],
+            react: {
+                version: "detect"
+            },
+            "import/resolver": {
+                typescript: true
+            }
         },
         rules: {
             "no-unused-vars": "off",
@@ -50,6 +62,10 @@ export default tseslint.config(
                     allow: ["arrowFunctions"]
                 }
             ],
+            "@typescript-eslint/no-empty-object-type": "off",
+            "@typescript-eslint/no-floating-promises": "warn",
+            "@typescript-eslint/no-misused-promises": "warn",
+            "@typescript-eslint/no-unsafe-argument": "warn",
             "@typescript-eslint/no-unused-vars": [
                 "error",
                 {
@@ -60,12 +76,11 @@ export default tseslint.config(
                     varsIgnorePattern: "^_"
                 }
             ]
-        },
-        settings: {
-            polyfills: ["Promise", "fetch", "URLSearchParams"],
-            react: {
-                version: "detect"
-            }
         }
+    },
+    {
+        files: ["tests/**/*.{ts,tsx}"],
+        ...jestDom.configs["flat/recommended"],
+        ...testingLibrary.configs["flat/react"]
     }
 );

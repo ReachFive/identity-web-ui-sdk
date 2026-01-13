@@ -21,7 +21,7 @@ import 'jest-styled-components';
 
 import dateField from '@/components/form/fields/dateField';
 import { createForm } from '@/components/form/formComponent';
-import resolveI18n, { I18nMessages } from '@/core/i18n';
+import { I18nMessages } from '@/contexts/i18n';
 import { Validator } from '@/core/validation';
 
 import { defaultConfig, renderWithContext } from '../../../widgets/renderer';
@@ -33,8 +33,6 @@ const defaultI18n: I18nMessages = {
     day: 'Jour',
 };
 
-const i18nResolver = resolveI18n(defaultI18n);
-
 type Model = { date: string };
 
 describe('DOM testing', () => {
@@ -42,7 +40,9 @@ describe('DOM testing', () => {
     const apiClient: Client = {};
 
     test('default settings', async () => {
-        const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
+        const user = userEvent.setup({
+            advanceTimers: (delay: number) => jest.advanceTimersByTime(delay),
+        });
 
         const key = 'date';
         const label = 'date';
@@ -69,20 +69,32 @@ describe('DOM testing', () => {
 
         jest.useFakeTimers();
 
-        const labelTag = screen.queryByText(i18nResolver(label));
+        const labelTag = screen.queryByText('Date');
         expect(labelTag).toBeInTheDocument();
 
-        const yearInput = screen.getByRole('spinbutton', { name: defaultI18n.year });
+        const yearInput = screen.getByRole('combobox', { name: defaultI18n.year as string });
         expect(yearInput).toBeInTheDocument();
-        expect(yearInput).toHaveAttribute('type', 'number');
-        expect(yearInput).toHaveAttribute('inputMode', 'numeric');
-        expect(yearInput).toHaveAttribute('aria-label', i18nResolver('year'));
-        expect(yearInput).toHaveAttribute('placeholder', i18nResolver('year'));
+        expect(yearInput).toHaveAttribute('aria-label', 'Année');
         expect(yearInput).not.toHaveValue();
+        // Verify year options (current year to current year - 120)
+        const currentYear = getYear(new Date());
+        const expectedYearsOptions = [
+            '',
+            ...Array.from({ length: 121 }, (_, i) => String(currentYear - i)),
+        ];
+        const yearOptions = getAllByRole(yearInput, 'option');
+        expect(yearOptions.map(option => option.getAttribute('value'))).toEqual(
+            expect.arrayContaining(expectedYearsOptions)
+        );
+        // Verify placeholder option exists
+        const placeholderOption = yearOptions[0];
+        expect(placeholderOption).toHaveTextContent('Année');
+        expect(placeholderOption).toHaveAttribute('value', '');
+        expect(placeholderOption).toBeDisabled();
 
-        const monthInput = screen.getByRole('combobox', { name: defaultI18n.month });
+        const monthInput = screen.getByRole('combobox', { name: defaultI18n.month as string });
         expect(monthInput).toBeInTheDocument();
-        expect(monthInput).toHaveAttribute('aria-label', i18nResolver('month'));
+        expect(monthInput).toHaveAttribute('aria-label', 'Mois');
         expect(monthInput).not.toHaveValue();
         const expectedMonthsOptions = ['', ...[...Array(12).keys()].map(value => String(value))];
         const options = getAllByRole(monthInput, 'option');
@@ -90,7 +102,7 @@ describe('DOM testing', () => {
             expect.arrayContaining(expectedMonthsOptions)
         );
         const expectedMonthsOptionsIntl = [
-            i18nResolver('month'),
+            'Mois',
             ...[...Array(12).keys()].map(value =>
                 new Intl.DateTimeFormat(defaultConfig.language, { month: 'long' }).format(
                     new Date(2025, Number(value), 1)
@@ -101,9 +113,9 @@ describe('DOM testing', () => {
             expect.arrayContaining(expectedMonthsOptionsIntl)
         );
 
-        const dayInput = screen.getByRole('combobox', { name: defaultI18n.day });
+        const dayInput = screen.getByRole('combobox', { name: defaultI18n.day as string });
         expect(dayInput).toBeInTheDocument();
-        expect(dayInput).toHaveAttribute('aria-label', i18nResolver('day'));
+        expect(dayInput).toHaveAttribute('aria-label', 'Jour');
         expect(dayInput).not.toHaveValue();
         // default is based on current date
         const expectedDaysOptions = [
@@ -123,19 +135,13 @@ describe('DOM testing', () => {
         );
 
         const year = 2024;
+        await user.selectOptions(yearInput, String(year));
+
         const month = 11; // December
-        const day = 31;
-
-        // await act(async () => {
-        await user.clear(yearInput);
-        await user.type(yearInput, String(year));
-
-        // await user.clear(monthInput)
         await user.selectOptions(monthInput, String(month));
 
         // Fast-forward until all timers have been executed (handle year debounced value)
         await jest.runOnlyPendingTimersAsync();
-        // })
 
         // month options should be updated
         const decemberExpectedDaysOptions = [
@@ -150,11 +156,8 @@ describe('DOM testing', () => {
             ).toEqual(expect.arrayContaining(decemberExpectedDaysOptions))
         );
 
-        // await user.clear(dayInput)
+        const day = 31;
         await user.selectOptions(dayInput, String(day));
-
-        // Fast-forward until all timers have been executed (handle year debounced value)
-        await jest.runOnlyPendingTimersAsync();
 
         await waitFor(() =>
             expect(onFieldChange).toHaveBeenLastCalledWith(
@@ -164,10 +167,8 @@ describe('DOM testing', () => {
             )
         );
 
-        await waitFor(async () => {
-            const submitBtn = await screen.findByTestId('submit');
-            await user.click(submitBtn);
-        });
+        const submitBtn = await screen.findByTestId('submit');
+        await user.click(submitBtn);
 
         await waitFor(() =>
             expect(onSubmit).toBeCalledWith(
@@ -181,12 +182,14 @@ describe('DOM testing', () => {
     });
 
     test('with custom validation', async () => {
-        const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTimeAsync });
+        const user = userEvent.setup({
+            advanceTimers: (delay: number) => jest.advanceTimersByTimeAsync(delay),
+        });
 
         const key = 'date';
         const label = 'date';
 
-        const validator = new Validator<Date>({
+        const validator = new Validator<Date, unknown>({
             rule: value => {
                 return differenceInYears(new Date(), value) >= 18;
             },
@@ -215,26 +218,17 @@ describe('DOM testing', () => {
 
         jest.useFakeTimers();
 
-        const yearInput = screen.getByRole('spinbutton', { name: defaultI18n.year });
-        const monthInput = screen.getByRole('combobox', { name: defaultI18n.month });
-        const dayInput = screen.getByRole('combobox', { name: defaultI18n.day });
+        const yearInput = screen.getByRole('combobox', { name: defaultI18n.year as string });
+        const monthInput = screen.getByRole('combobox', { name: defaultI18n.month as string });
+        const dayInput = screen.getByRole('combobox', { name: defaultI18n.day as string });
 
         const tenYearsOld = subYears(new Date(), 10);
-
-        // await act(async () => {
-        await user.clear(yearInput);
-        await user.type(yearInput, String(getYear(tenYearsOld)));
-
+        await user.selectOptions(yearInput, String(getYear(tenYearsOld)));
         await user.selectOptions(monthInput, String(getMonth(tenYearsOld)));
-
-        // Fast-forward until all timers have been executed (handle year debounced value)
-        await jest.runOnlyPendingTimersAsync();
-
         await user.selectOptions(dayInput, String(getDate(tenYearsOld)));
 
         // Fast-forward until all timers have been executed (handle year debounced value)
         await jest.runOnlyPendingTimersAsync();
-        // })
 
         await waitFor(() =>
             expect(onFieldChange).toHaveBeenLastCalledWith(
@@ -251,20 +245,7 @@ describe('DOM testing', () => {
         onFieldChange.mockClear();
 
         const eighteenYearsOld = subYears(new Date(), 18);
-
-        await waitFor(async () => {
-            const yearInput = await screen.findByTestId<HTMLInputElement>('date.year');
-            expect(yearInput).toBeInTheDocument();
-        });
-
-        // Fast-forward until all timers have been executed (handle year debounced value)
-        await jest.runOnlyPendingTimersAsync();
-
-        await user.clear(yearInput);
-        await user.type(yearInput, String(getYear(eighteenYearsOld)));
-
-        // Fast-forward until all timers have been executed (handle year debounced value)
-        await jest.runOnlyPendingTimersAsync();
+        await user.selectOptions(yearInput, String(getYear(eighteenYearsOld)));
 
         await waitFor(() =>
             expect(onFieldChange).toHaveBeenLastCalledWith(

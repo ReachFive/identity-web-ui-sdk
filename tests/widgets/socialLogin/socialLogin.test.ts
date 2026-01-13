@@ -9,7 +9,7 @@ import 'jest-styled-components';
 
 import { type Client } from '@reachfive/identity-core';
 
-import { type I18nMessages } from '@/core/i18n';
+import { type I18nMessages } from '@/contexts/i18n';
 import { providers, type ProviderId } from '@/providers/providers';
 import { OnError, OnSuccess } from '@/types';
 import SocialLoginWidget from '@/widgets/socialLogin/socialLoginWidget';
@@ -56,7 +56,7 @@ describe('DOM testing', () => {
         await generateComponent({ onError, onSuccess });
 
         defaultConfig.socialProviders.forEach(provider => {
-            expect(screen.queryByTitle(providers[provider as ProviderId].name)).toBeInTheDocument();
+            expect(screen.getByTitle(providers[provider as ProviderId].name)).toBeInTheDocument();
         });
 
         const provider = defaultConfig.socialProviders[0] as ProviderId;
@@ -84,7 +84,7 @@ describe('DOM testing', () => {
         });
 
         defaultConfig.socialProviders.forEach(provider => {
-            expect(screen.queryByTitle(providers[provider as ProviderId].name)).toBeInTheDocument();
+            expect(screen.getByTitle(providers[provider as ProviderId].name)).toBeInTheDocument();
         });
     });
 
@@ -97,7 +97,7 @@ describe('DOM testing', () => {
         await generateComponent({ onError, onSuccess });
 
         defaultConfig.socialProviders.forEach(provider => {
-            expect(screen.queryByTitle(providers[provider as ProviderId].name)).toBeInTheDocument();
+            expect(screen.getByTitle(providers[provider as ProviderId].name)).toBeInTheDocument();
         });
 
         const provider = defaultConfig.socialProviders[0] as ProviderId;

@@ -3,7 +3,7 @@
  */
 import React from 'react';
 
-import { afterEach, beforeEach, describe, expect, jest, test } from '@jest/globals';
+import { beforeEach, describe, expect, jest, test } from '@jest/globals';
 import '@testing-library/jest-dom/jest-globals';
 import { queryByText, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -13,7 +13,7 @@ import { PasswordStrengthScore, type Client } from '@reachfive/identity-core';
 
 import passwordField from '@/components/form/fields/passwordField';
 import { createForm } from '@/components/form/formComponent';
-import resolveI18n, { I18nMessages } from '@/core/i18n';
+import { I18nMessages } from '@/contexts/i18n';
 import { Validator } from '@/core/validation';
 
 import { defaultConfig, renderWithContext } from '../../../widgets/renderer';
@@ -21,8 +21,6 @@ import { defaultConfig, renderWithContext } from '../../../widgets/renderer';
 const defaultI18n: I18nMessages = {
     password: 'Password',
 };
-
-const i18nResolver = resolveI18n(defaultI18n);
 
 type Model = { password: string };
 
@@ -45,16 +43,10 @@ describe('DOM testing', () => {
 
     beforeEach(() => {
         getPasswordStrength.mockClear();
-        jest.useFakeTimers();
-    });
-
-    afterEach(() => {
-        jest.runOnlyPendingTimers();
-        jest.useRealTimers();
     });
 
     test('default settings', async () => {
-        const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTimeAsync });
+        const user = userEvent.setup();
 
         const key = 'password';
         const label = 'password';
@@ -79,7 +71,7 @@ describe('DOM testing', () => {
             defaultI18n
         );
 
-        const input = screen.getByLabelText(i18nResolver(label));
+        const input = screen.getByLabelText('Password');
         expect(input).toBeInTheDocument();
         expect(input).toHaveAttribute('id', key);
         expect(input).toHaveValue('');
@@ -96,8 +88,8 @@ describe('DOM testing', () => {
         await user.clear(input);
         await user.type(input, invalidPassword);
 
-        expect(screen.queryByTestId('password-strength')).toBeInTheDocument();
-        expect(screen.queryByTestId('password-policy-rules')).toBeInTheDocument();
+        expect(screen.getByTestId('password-strength')).toBeInTheDocument();
+        expect(screen.getByTestId('password-policy-rules')).toBeInTheDocument();
 
         await waitFor(() =>
             expect(onFieldChange).toHaveBeenLastCalledWith(
@@ -116,8 +108,8 @@ describe('DOM testing', () => {
         await user.clear(input);
         await user.type(input, validPassword);
 
-        expect(screen.queryByTestId('password-strength')).toBeInTheDocument();
-        expect(screen.queryByTestId('password-policy-rules')).toBeInTheDocument();
+        expect(screen.getByTestId('password-strength')).toBeInTheDocument();
+        expect(screen.getByTestId('password-policy-rules')).toBeInTheDocument();
 
         await waitFor(() =>
             expect(onFieldChange).toHaveBeenLastCalledWith(
@@ -131,7 +123,7 @@ describe('DOM testing', () => {
     });
 
     test('with canShowPassword enabled', async () => {
-        const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTimeAsync });
+        const user = userEvent.setup();
 
         const key = 'password';
         const label = 'password';
@@ -156,7 +148,7 @@ describe('DOM testing', () => {
             defaultI18n
         );
 
-        const input = screen.getByLabelText(i18nResolver(label));
+        const input = screen.getByLabelText('Password');
         expect(input).toBeInTheDocument();
 
         expect(input).toHaveAttribute('type', 'password');
@@ -178,12 +170,12 @@ describe('DOM testing', () => {
 
     test('extends validators', async () => {
         const passwordMatchValidator = (matchText: string) =>
-            new Validator<string>({
+            new Validator<string, unknown>({
                 rule: value => value === matchText,
                 hint: 'password.match',
             });
 
-        const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTimeAsync });
+        const user = userEvent.setup();
 
         const key = 'password';
         const label = 'password';
@@ -218,7 +210,7 @@ describe('DOM testing', () => {
             defaultI18n
         );
 
-        const input = screen.getByLabelText(i18nResolver(label));
+        const input = screen.getByLabelText('Password');
         expect(input).toBeInTheDocument();
 
         expect(screen.queryByTestId('password-strength')).not.toBeInTheDocument();
@@ -227,9 +219,6 @@ describe('DOM testing', () => {
         const invalidPassword = 'ILoveApples';
         await user.clear(input);
         await user.type(input, invalidPassword);
-
-        // Fast-forward until all timers have been executed
-        await jest.runOnlyPendingTimersAsync();
 
         await waitFor(() =>
             expect(onFieldChange).toHaveBeenLastCalledWith(

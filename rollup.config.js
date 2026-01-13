@@ -19,6 +19,10 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 
 const dependencies = Object.keys(packageJson.dependencies);
 
+/**
+ * @param {string} id
+ * @returns {boolean}
+ */
 const makeExternal = id => {
     // Externalise React et ReactDOM dans tous les cas
     if (
@@ -168,7 +172,7 @@ export default [
         ],
         onwarn: onWarn,
         onLog(level, log, handler) {
-            if (log.cause && log.cause.message === `Can't resolve original location of error.`) {
+            if (log.cause?.message === `Can't resolve original location of error.`) {
                 return;
             }
             handler(level, log);

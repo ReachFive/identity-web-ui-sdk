@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 
 import { isDigit, isLower, isUpper } from 'char-info';
+import { TFunction } from 'i18next';
 import styled, { DefaultTheme } from 'styled-components';
 
 import type { PasswordPolicy, PasswordStrengthScore } from '@reachfive/identity-core';
 
 import { useI18n } from '../../../contexts/i18n';
-import { I18nResolver } from '../../../core/i18n';
 import { Validator, isValidatorError } from '../../../core/validation';
 import { isRichFormValue } from '../../../helpers/utils';
 import { createField } from '../fieldCreator';
@@ -71,7 +71,7 @@ const PasswordStrength = ({ score }: PasswordStrength) => {
                 <PasswordStrengthGauge score={score} />
             </PasswordStrengthGaugeContainer>
             <PasswordStrengthLabel score={score}>
-                {i18n('passwordStrength.score' + score)}
+                {i18n(`passwordStrength.score${score}`)}
             </PasswordStrengthLabel>
         </PasswordStrengthContainer>
     );
@@ -145,12 +145,13 @@ function PasswordField({
                     }}
                     onFocus={() => setIsTouched(true)}
                     onBlur={event => {
-                        event?.target.value !== currentValue &&
+                        if (event?.target.value !== currentValue) {
                             onChange({
                                 value: event?.target.value,
                                 validation,
                                 isDirty: true,
                             });
+                        }
                     }}
                     data-testid="password"
                 />
@@ -186,7 +187,7 @@ function PasswordField({
 type RuleKeys = Exclude<keyof PasswordPolicy, 'minStrength' | 'allowUpdateWithAccessTokenOnly'>;
 
 export function listEnabledRules(
-    i18n: I18nResolver,
+    i18n: TFunction,
     passwordPolicy: Config['passwordPolicy']
 ): Record<RuleKeys, PasswordRule> {
     if (!passwordPolicy) return {} as Record<RuleKeys, PasswordRule>;
@@ -226,10 +227,10 @@ export function listEnabledRules(
 }
 
 export function passwordStrengthValidator(passwordPolicy?: PasswordPolicy) {
-    return new Validator<string, FormContext<any>>({
+    return new Validator<string, unknown>({
         rule: async (value, ctx) => {
             if (value.length === 0) return false;
-            const strength = await ctx.client.getPasswordStrength(value);
+            const strength = await (ctx as FormContext<unknown>).client.getPasswordStrength(value);
             if (passwordPolicy && strength.score < passwordPolicy.minStrength) {
                 return { valid: false, strength: strength.score };
             }
@@ -239,7 +240,7 @@ export function passwordStrengthValidator(passwordPolicy?: PasswordPolicy) {
     });
 }
 
-export const passwordLengthValidator = new Validator<string, FormContext<any>>({
+export const passwordLengthValidator = new Validator<string, unknown>({
     rule: value => {
         if (value.length > MAX_PASSWORD_LENGTH) return false;
         return true;

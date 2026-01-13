@@ -11,15 +11,13 @@ import 'jest-styled-components';
 
 import checkboxField from '@/components/form/fields/checkboxField';
 import { createForm } from '@/components/form/formComponent';
-import resolveI18n, { I18nMessages } from '@/core/i18n';
+import { I18nMessages } from '@/contexts/i18n';
 
 import { defaultConfig, renderWithContext } from '../../../widgets/renderer';
 
 const defaultI18n: I18nMessages = {
     checkbox: 'Check?',
 };
-
-const i18nResolver = resolveI18n(defaultI18n);
 
 type Model = { check: string };
 
@@ -51,7 +49,7 @@ describe('DOM testing', () => {
             defaultI18n
         );
 
-        const checkbox = screen.getByLabelText(i18nResolver(label));
+        const checkbox = screen.getByLabelText('Check?');
         expect(checkbox).not.toBeChecked();
 
         await user.click(checkbox);
@@ -107,7 +105,7 @@ describe('DOM testing', () => {
             defaultI18n
         );
 
-        const checkbox = screen.getByLabelText(i18nResolver(label));
+        const checkbox = screen.getByLabelText('Check?');
         expect(checkbox).toBeChecked();
 
         await user.click(checkbox);

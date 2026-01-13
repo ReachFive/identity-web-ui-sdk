@@ -26,7 +26,7 @@ import { ErrorText } from '../components/miscComponent';
 import { UserError } from '../helpers/errors';
 import { camelCaseProperties } from '../helpers/transformObjectProperties';
 
-import type { I18nMessages } from '../core/i18n';
+import type { I18nMessages } from '../contexts/i18n';
 import type { Config } from '../types';
 
 export interface ReachfiveContext {
@@ -148,7 +148,10 @@ function ConfigProvider({
                     const consentsResponse = await fetch(
                         `https://${coreConfig.domain}/identity/v1/config/consents?lang=${language}`
                     );
-                    const consentsVersions = await consentsResponse.json();
+                    const consentsVersions = (await consentsResponse.json()) as Record<
+                        string,
+                        unknown
+                    >;
                     return camelCaseProperties(consentsVersions) as Record<string, ConsentVersions>;
                 },
             },

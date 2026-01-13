@@ -6,15 +6,15 @@ import styled, { StyleSheetManager, ThemeProvider, css } from 'styled-components
 import { I18nProvider } from '../../contexts/i18n';
 import { useReachfive, type ReachfiveContext } from '../../contexts/reachfive';
 import { RoutingProvider } from '../../contexts/routing';
-import { PropsWithSession, useSession } from '../../contexts/session';
+import { useSession, type PropsWithSession } from '../../contexts/session';
 import { buildTheme } from '../../core/theme';
-import { Theme, ThemeOptions } from '../../types/styled';
-import WidgetContainer, { WidgetContainerProps } from './widgetContainerComponent';
+import WidgetContainer, { type WidgetContainerProps } from './widgetContainerComponent';
 
-import type { I18nNestedMessages } from '../../core/i18n';
+import type { I18nMessages } from '../../contexts/i18n';
 import type { Prettify } from '../../types';
+import type { Theme, ThemeOptions } from '../../types/styled';
 
-export type I18nProps = { i18n?: I18nNestedMessages };
+export type I18nProps = { i18n?: I18nMessages };
 export type ThemeProps = { theme?: ThemeOptions };
 
 export type PropsWithI18n<P> = Prettify<P & I18nProps>;
@@ -98,7 +98,11 @@ export function createWidget<P extends {}, U extends {} = P>({
         return (
             <StyleSheetManager>
                 <ThemeProvider theme={theme}>
-                    <I18nProvider defaultMessages={context.i18n} messages={i18n}>
+                    <I18nProvider
+                        defaultMessages={context.i18n}
+                        messages={i18n}
+                        locale={context.config.language}
+                    >
                         <WidgetContainerThemeVariables {...widgetAttrs} className="r5-widget">
                             <Component {...(props as U)} />
                         </WidgetContainerThemeVariables>
@@ -147,7 +151,7 @@ function multiViewWidget<P, U>({
         // _goTo = <View extends keyof typeof views, S extends ComponentProps<(typeof views)[View]>>(view: View, props?: S) => this.setState({
         _goTo = <S extends Record<string, unknown>>(view: keyof typeof views, params?: S) =>
             this.setState({
-                activeView: view as MultiWidgetState['activeView'],
+                activeView: view,
                 ...params,
             });
 

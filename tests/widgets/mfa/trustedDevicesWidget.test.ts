@@ -9,7 +9,7 @@ import TrustedDevicesWidget from '@/widgets/mfa/trustedDevicesWidget';
 
 import { componentGenerator } from '../renderer';
 
-import type { I18nMessages } from '@/core/i18n';
+import type { I18nMessages } from '@/contexts/i18n';
 import type { AppError } from '@/helpers/errors';
 import type { OnError, OnSuccess } from '@/types';
 
@@ -44,7 +44,7 @@ describe('DOM testing', () => {
                 showRemoveTrustedDevice: true,
             });
 
-            expect(screen.queryByText('trustedDevices.empty')).toBeInTheDocument();
+            expect(screen.getByText('trustedDevices.empty')).toBeInTheDocument();
         });
 
         test('has trusted devices', async () => {

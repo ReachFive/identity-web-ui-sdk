@@ -8,9 +8,8 @@ import { StyleSheetManager, ThemeProvider } from 'styled-components';
 
 import type { Client, Config as CoreConfig } from '@reachfive/identity-core';
 
-import { I18nProvider } from '@/contexts/i18n';
+import { I18nProvider, type I18nMessages } from '@/contexts/i18n';
 import { ReachfiveProvider } from '@/contexts/reachfive';
-import { type I18nMessages } from '@/core/i18n';
 import { buildTheme } from '@/core/theme';
 import { type Theme } from '@/types/styled';
 
@@ -70,6 +69,7 @@ export const defaultConfig: Config = {
     },
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function componentGenerator<Component extends ComponentType<any>>(
     Component: Component,
     coreClient: Client,
@@ -104,12 +104,12 @@ export function componentGenerator<Component extends ComponentType<any>>(
             </ReachfiveProvider>
         );
 
-        const result = render(widget);
+        const view = render(widget);
 
         // wait for consents and i18n to be loaded with a timeout of 5 seconds
-        await waitFor(() => {
+        await waitFor(async () => {
             let interval: NodeJS.Timeout;
-            Promise.race([
+            await Promise.race([
                 new Promise<void>(resolve =>
                     setTimeout(() => {
                         clearInterval(interval);
@@ -127,16 +127,19 @@ export function componentGenerator<Component extends ComponentType<any>>(
         });
 
         // wait for suspense
-        waitCallback
-            ? await waitFor(waitCallback)
-            : await waitForElementToBeRemoved(() => screen.queryByText('Loading...'), {
-                  timeout: 5000,
-              });
+        if (waitCallback) {
+            await waitFor(waitCallback);
+        } else {
+            await waitForElementToBeRemoved(() => screen.queryByText('Loading...'), {
+                timeout: 5000,
+            });
+        }
 
-        return result;
+        return view;
     };
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function snapshotGenerator<Component extends ComponentType<any>>(
     Component: Component,
     coreClient: Client,
@@ -163,7 +166,9 @@ export async function renderWithContext(
     const WidgetWithContext = () => (
         <StyleSheetManager>
             <ThemeProvider theme={theme}>
-                <I18nProvider defaultMessages={defaultI18n}>{children}</I18nProvider>
+                <I18nProvider defaultMessages={defaultI18n} locale={config.language}>
+                    {children}
+                </I18nProvider>
             </ThemeProvider>
         </StyleSheetManager>
     );

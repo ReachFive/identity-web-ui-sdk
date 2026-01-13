@@ -149,7 +149,7 @@ export const MainView = ({
             onError(error);
             throw error;
         }
-    }, [accessToken, auth, coreClient]);
+    }, [accessToken, action, auth, coreClient, onError]);
 
     useEffect(() => {
         if (!showStepUpStart) {
@@ -241,7 +241,7 @@ export const FaSelectionView = (props: FaSelectionViewProps) => {
         if (amr.length === 1) {
             onChooseFa({ authType: amr[0] as StepUpPasswordlessParams['authType'] }).catch(onError);
         }
-    }, [amr, onChooseFa]);
+    }, [amr, onChooseFa, onError]);
 
     if (response) {
         return (

@@ -11,15 +11,13 @@ import 'jest-styled-components';
 
 import selectField from '@/components/form/fields/selectField';
 import { createForm } from '@/components/form/formComponent';
-import resolveI18n, { I18nMessages } from '@/core/i18n';
+import { I18nMessages } from '@/contexts/i18n';
 
 import { defaultConfig, renderWithContext } from '../../../widgets/renderer';
 
 const defaultI18n: I18nMessages = {
     selectbox: 'Pet',
 };
-
-const i18nResolver = resolveI18n(defaultI18n);
 
 type Model = { check: string };
 
@@ -55,7 +53,7 @@ describe('DOM testing', () => {
             defaultI18n
         );
 
-        const selectbox = screen.getByLabelText(i18nResolver(label));
+        const selectbox = screen.getByLabelText('Pet');
 
         expect(selectbox).toHaveValue('');
         options.forEach(option => {
@@ -126,7 +124,7 @@ describe('DOM testing', () => {
             defaultI18n
         );
 
-        const selectbox = screen.getByLabelText(i18nResolver(label));
+        const selectbox = screen.getByLabelText('Pet');
 
         expect(selectbox).toHaveValue(defaultOption.value);
         expect(
