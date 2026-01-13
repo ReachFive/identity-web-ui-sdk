@@ -5,7 +5,6 @@ import type { Config, Client as CoreClient } from '@reachfive/identity-core';
 
 import { ErrorText } from './components/miscComponent';
 import { ReachfiveProvider } from './contexts/reachfive.tsx';
-import { withSsoCheck } from './contexts/session.tsx';
 import { UserError } from './helpers/errors';
 import { logError } from './helpers/logger';
 import AccountRecoveryWidget, {
@@ -87,7 +86,7 @@ export class UiClient {
     }
 
     showAuth(options: WidgetOptions<AuthWidgetProps>) {
-        this._showWidget(withSsoCheck(AuthWidget), options);
+        this._showWidget(AuthWidget, options);
     }
 
     showAccountRecovery(options: WidgetOptions<AccountRecoveryWidgetProps>) {
@@ -95,11 +94,11 @@ export class UiClient {
     }
 
     showSocialLogin(options: WidgetOptions<SocialLoginWidgetProps>) {
-        this._showWidget(withSsoCheck(SocialLoginWidget), options);
+        this._showWidget(SocialLoginWidget, options);
     }
 
     showPasswordless(options: WidgetOptions<PasswordlessWidgetProps>) {
-        this._showWidget(withSsoCheck(PasswordlessWidget), options);
+        this._showWidget(PasswordlessWidget, options);
     }
 
     showEmailEditor(options: WidgetOptions<EmailEditorWidgetProps>) {
