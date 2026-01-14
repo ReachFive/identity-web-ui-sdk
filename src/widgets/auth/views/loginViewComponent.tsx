@@ -102,6 +102,7 @@ export const LoginForm = createForm<LoginFormData, LoginFormOptions>({
                           key: 'auth.persistent',
                           label: 'rememberMe',
                           defaultValue: false,
+                          required: false,
                       }),
                   ]
                 : []),
