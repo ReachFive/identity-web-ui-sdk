@@ -57,6 +57,7 @@ export const LoginWithPasswordForm = createForm<
                           key: 'auth.persistent',
                           label: 'rememberMe',
                           defaultValue: false,
+                          required: false,
                       }),
                   ]
                 : []),
