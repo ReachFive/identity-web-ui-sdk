@@ -1,6 +1,6 @@
 import { describe, expect, test } from '@jest/globals';
 
-import { getValue, setValue } from '../../src/helpers/propertyHelpers';
+import { getValue, setValue } from '@/helpers/propertyHelpers';
 
 describe('propertyHelpers', () => {
     describe('getValue', () => {

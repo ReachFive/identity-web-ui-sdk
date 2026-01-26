@@ -1,42 +1,20 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment jest-fixed-jsdom
  */
 import { afterAll, beforeEach, describe, expect, jest, test } from '@jest/globals';
 import '@testing-library/jest-dom/jest-globals';
-import { render, screen, waitFor } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import 'jest-styled-components';
 
 import { type Client } from '@reachfive/identity-core';
 
-import { type I18nMessages } from '../../../src/contexts/i18n';
-import { UserError } from '../../../src/helpers/errors';
-import webAuthnDevicesWidget from '../../../src/widgets/webAuthn/webAuthnDevicesWidget';
+import { type I18nMessages } from '@/contexts/i18n';
+import { UserError } from '@/helpers/errors';
+import { OnError, OnSuccess } from '@/types';
+import WebAuthnDevicesWidget from '@/widgets/webAuthn/webAuthnDevicesWidget';
 
-import type { Config, OnError, OnSuccess } from '../../../src/types';
-
-const defaultConfig: Config = {
-    clientId: 'local',
-    domain: 'local.reach5.net',
-    sso: false,
-    sms: false,
-    webAuthn: true,
-    language: 'fr',
-    pkceEnforced: false,
-    isPublic: true,
-    socialProviders: ['facebook', 'google'],
-    customFields: [],
-    resourceBaseUrl: 'http://localhost',
-    mfaSmsEnabled: false,
-    mfaEmailEnabled: false,
-    rbaEnabled: false,
-    consentsVersions: {},
-    passwordPolicy: {
-        minLength: 8,
-        minStrength: 2,
-        allowUpdateWithAccessTokenOnly: true,
-    },
-};
+import { componentGenerator } from '../renderer';
 
 const defaultI18n: I18nMessages = {};
 
@@ -65,31 +43,20 @@ describe('DOM testing', () => {
         confirmMock.mockRestore();
     });
 
-    const generateComponent = async (
-        options: Partial<Parameters<typeof webAuthnDevicesWidget>[0]> = {},
-        config: Partial<Config> = {}
-    ) => {
-        // @ts-expect-error partial Client
-        const apiClient: Client = {
-            listWebAuthnDevices,
-            addNewWebAuthnDevice,
-            removeWebAuthnDevice,
-        };
-
-        const result = await webAuthnDevicesWidget(
-            { onError, onSuccess, ...options, accessToken },
-            { config: { ...defaultConfig, ...config }, apiClient, defaultI18n }
-        );
-
-        return waitFor(async () => {
-            return render(result);
-        });
+    // @ts-expect-error partial Client
+    const apiClient: Client = {
+        listWebAuthnDevices,
+        addNewWebAuthnDevice,
+        removeWebAuthnDevice,
     };
+
+    const generateComponent = componentGenerator(WebAuthnDevicesWidget, apiClient, defaultI18n);
 
     describe('webAuthn', () => {
         test('WebAuthn feature is not available', async () => {
-            await expect(generateComponent({}, { webAuthn: false })).rejects.toThrow(
-                'The WebAuthn feature is not available on your account.'
+            await generateComponent(
+                { accessToken: 'azerty', onError, onSuccess },
+                { webAuthn: false }
             );
 
             expect(onSuccess).not.toBeCalled();
@@ -101,45 +68,20 @@ describe('DOM testing', () => {
         test('default', async () => {
             const user = userEvent.setup();
 
-            listWebAuthnDevices
-                // before add
-                .mockResolvedValueOnce([
-                    {
-                        friendlyName: 'myOldDevice',
-                        id: 'myOldDevice',
-                        createdAt: '',
-                        lastUsedAt: '',
-                    },
-                ])
-                // after add
-                .mockResolvedValueOnce([
-                    {
-                        friendlyName: 'myOldDevice',
-                        id: 'myOldDevice',
-                        createdAt: '',
-                        lastUsedAt: '',
-                    },
-                    {
-                        friendlyName: 'myNewDevice',
-                        id: 'myNewDevice',
-                        createdAt: '',
-                        lastUsedAt: '',
-                    },
-                ])
-                // after remove
-                .mockResolvedValueOnce([
-                    {
-                        friendlyName: 'myNewDevice',
-                        id: 'myNewDevice',
-                        createdAt: '',
-                        lastUsedAt: '',
-                    },
-                ]);
+            // before add
+            listWebAuthnDevices.mockResolvedValue([
+                {
+                    friendlyName: 'myOldDevice',
+                    id: 'myOldDevice',
+                    createdAt: '',
+                    lastUsedAt: '',
+                },
+            ]);
 
             addNewWebAuthnDevice.mockResolvedValue();
             removeWebAuthnDevice.mockResolvedValue();
 
-            await generateComponent({});
+            await generateComponent({ accessToken, onError, onSuccess }, { webAuthn: true });
 
             expect(listWebAuthnDevices).toBeCalledWith(accessToken);
 
@@ -151,17 +93,43 @@ describe('DOM testing', () => {
 
             const addBtn = screen.getByRole('button', { name: 'add' });
 
+            // after add
+            listWebAuthnDevices.mockResolvedValueOnce([
+                {
+                    friendlyName: 'myOldDevice',
+                    id: 'myOldDevice',
+                    createdAt: '',
+                    lastUsedAt: '',
+                },
+                {
+                    friendlyName: 'myNewDevice',
+                    id: 'myNewDevice',
+                    createdAt: '',
+                    lastUsedAt: '',
+                },
+            ]);
+
             await user.click(addBtn);
 
             expect(addNewWebAuthnDevice).toBeCalledWith(accessToken, 'myNewDevice');
 
             expect(listWebAuthnDevices).toBeCalledWith(accessToken);
 
-            const devicesAfterAdd = screen.queryAllByTestId('device');
+            const devicesAfterAdd = await screen.findAllByTestId('device');
             expect(devicesAfterAdd).toHaveLength(2);
 
             const deviceNames = screen.queryAllByTestId('device-name').map(el => el.textContent);
             expect(deviceNames).toEqual(['myOldDevice', 'myNewDevice']);
+
+            // after remove
+            listWebAuthnDevices.mockResolvedValueOnce([
+                {
+                    friendlyName: 'myNewDevice',
+                    id: 'myNewDevice',
+                    createdAt: '',
+                    lastUsedAt: '',
+                },
+            ]);
 
             const oldDevice = devicesAfterAdd.find(el => el.textContent === 'myOldDevice');
             const removeOldDevice = oldDevice?.querySelector('[data-testid="device-remove"]');
@@ -188,7 +156,9 @@ describe('DOM testing', () => {
         test('list devices api failure', async () => {
             listWebAuthnDevices.mockRejectedValue('Unexpected error');
 
-            await expect(generateComponent({})).rejects.toMatch('Unexpected error');
+            await generateComponent({ accessToken, onError, onSuccess }, { webAuthn: true });
+
+            expect(listWebAuthnDevices).toBeCalled();
 
             expect(onSuccess).not.toBeCalled();
             expect(onError).toBeCalledWith('Unexpected error');
@@ -200,7 +170,7 @@ describe('DOM testing', () => {
             listWebAuthnDevices.mockResolvedValue([]);
             addNewWebAuthnDevice.mockRejectedValue('Unexpected error');
 
-            await generateComponent({});
+            await generateComponent({ accessToken, onError, onSuccess }, { webAuthn: true });
 
             const friendlyNameInput = screen.getByLabelText('webauthn.friendly.name');
             await user.type(friendlyNameInput, 'myNewDevice');
@@ -227,7 +197,7 @@ describe('DOM testing', () => {
             ]);
             removeWebAuthnDevice.mockRejectedValue('Unexpected error');
 
-            await generateComponent({});
+            await generateComponent({ accessToken, onError, onSuccess }, { webAuthn: true });
 
             const devices = screen.queryAllByTestId('device');
             const oldDevice = devices.find(el => el.textContent === 'myOldDevice');

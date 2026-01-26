@@ -1,32 +1,26 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment jest-fixed-jsdom
  */
 import React from 'react';
 
 import { beforeEach, describe, expect, jest, test } from '@jest/globals';
 import '@testing-library/jest-dom/jest-globals';
-import { render, screen, waitFor } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import 'jest-styled-components';
 
 import { Client, PasswordStrengthScore } from '@reachfive/identity-core';
 
-import { createForm } from '../../../src/components/form/formComponent';
-import { buildFormFields } from '../../../src/components/form/formFieldFactory';
-import { type I18nMessages } from '../../../src/contexts/i18n';
-import { WidgetContext } from './WidgetContext';
+import { createForm } from '@/components/form/formComponent';
+import { buildFormFields } from '@/components/form/formFieldFactory';
+import { I18nMessages } from '@/contexts/i18n';
 
-import type { Config } from '../../../src/types';
+import { defaultConfig, renderWithContext } from '../../widgets/renderer';
 
-const defaultConfig: Config = {
-    clientId: 'local',
-    domain: 'local.reach5.net',
-    sso: false,
-    sms: false,
-    webAuthn: false,
-    language: 'fr',
-    pkceEnforced: false,
-    isPublic: true,
-    socialProviders: ['facebook', 'google'],
+import type { Config } from '@/types';
+
+const customConfig: Config = {
+    ...defaultConfig,
+    countryCode: 'FR',
     customFields: [
         {
             name: 'number',
@@ -87,10 +81,6 @@ const defaultConfig: Config = {
             dataType: 'email',
         },
     ],
-    resourceBaseUrl: 'http://localhost',
-    mfaSmsEnabled: false,
-    mfaEmailEnabled: false,
-    rbaEnabled: false,
     consentsVersions: {
         myconsent: {
             key: 'myconsent',
@@ -119,15 +109,10 @@ const defaultConfig: Config = {
             ],
         },
     },
-    passwordPolicy: {
-        minLength: 8,
-        minStrength: 2,
-        allowUpdateWithAccessTokenOnly: true,
-    },
 };
 
 // function customFieldLabel(path: string, langCode: string) {
-//     return defaultConfig.customFields
+//     return customConfig.customFields
 //         .find(customFields => customFields.path === path)
 //         ?.nameTranslations
 //         ?.find(translation => translation.langCode == langCode)
@@ -196,44 +181,36 @@ describe('DOM testing', () => {
                 'address.postalCode',
                 'address.country',
             ],
-            defaultConfig
+            customConfig
         );
 
-        const onSubmit = jest.fn<(data: Model) => Promise<Model>>(data => Promise.resolve(data));
+        const onSubmit = jest.fn<(data: Model) => Promise<Model>>((data: Model) =>
+            Promise.resolve(data)
+        );
 
         const Form = createForm<Model>({
             fields,
         });
 
-        await waitFor(async () => {
-            return render(
-                <WidgetContext
-                    client={apiClient}
-                    config={defaultConfig}
-                    defaultMessages={defaultI18n}
-                >
-                    <Form handler={onSubmit} />
-                </WidgetContext>
-            );
-        });
+        await renderWithContext(<Form handler={onSubmit} />, apiClient, customConfig, defaultI18n);
 
-        expect(screen.queryByTestId('customIdentifier')).toBeInTheDocument();
-        expect(screen.queryByTestId('givenName')).toBeInTheDocument();
-        expect(screen.queryByTestId('familyName')).toBeInTheDocument();
-        expect(screen.queryByTestId('friendlyName')).toBeInTheDocument();
-        expect(screen.queryByTestId('email')).toBeInTheDocument();
-        expect(screen.queryByTestId('phoneNumber')).toBeInTheDocument();
-        expect(screen.queryByTestId('password')).toBeInTheDocument();
-        expect(screen.queryByTestId('passwordConfirmation')).toBeInTheDocument();
-        expect(screen.queryByTestId('gender')).toBeInTheDocument();
-        expect(screen.queryByTestId('birthdate.day')).toBeInTheDocument();
-        expect(screen.queryByTestId('birthdate.month')).toBeInTheDocument();
-        expect(screen.queryByTestId('birthdate.year')).toBeInTheDocument();
-        expect(screen.queryByTestId('address.streetAddress')).toBeInTheDocument();
-        expect(screen.queryByTestId('address.locality')).toBeInTheDocument();
-        expect(screen.queryByTestId('address.region')).toBeInTheDocument();
-        expect(screen.queryByTestId('address.postalCode')).toBeInTheDocument();
-        expect(screen.queryByTestId('address.country')).toBeInTheDocument();
+        expect(screen.getByTestId('customIdentifier')).toBeInTheDocument();
+        expect(screen.getByTestId('givenName')).toBeInTheDocument();
+        expect(screen.getByTestId('familyName')).toBeInTheDocument();
+        expect(screen.getByTestId('friendlyName')).toBeInTheDocument();
+        expect(screen.getByTestId('email')).toBeInTheDocument();
+        expect(screen.getByTestId('phoneNumber')).toBeInTheDocument();
+        expect(screen.getByTestId('password')).toBeInTheDocument();
+        expect(screen.getByTestId('passwordConfirmation')).toBeInTheDocument();
+        expect(screen.getByTestId('gender')).toBeInTheDocument();
+        expect(screen.getByTestId('birthdate.day')).toBeInTheDocument();
+        expect(screen.getByTestId('birthdate.month')).toBeInTheDocument();
+        expect(screen.getByTestId('birthdate.year')).toBeInTheDocument();
+        expect(screen.getByTestId('address.streetAddress')).toBeInTheDocument();
+        expect(screen.getByTestId('address.locality')).toBeInTheDocument();
+        expect(screen.getByTestId('address.region')).toBeInTheDocument();
+        expect(screen.getByTestId('address.postalCode')).toBeInTheDocument();
+        expect(screen.getByTestId('address.country')).toBeInTheDocument();
     });
 
     test('build custom fields', async () => {
@@ -245,25 +222,21 @@ describe('DOM testing', () => {
                 { key: 'customFields.birthdate' },
                 { key: 'customFields.checkbox' },
                 { key: 'customFields.select' },
-                { key: 'customFields.phone' },
+                { key: 'customFields.phone', country: 'DE' },
                 { key: 'customFields.email' },
             ],
-            defaultConfig
+            customConfig
         );
 
-        const onSubmit = jest.fn<(data: Model) => Promise<Model>>(data => Promise.resolve(data));
+        const onSubmit = jest.fn<(data: Model) => Promise<Model>>((data: Model) =>
+            Promise.resolve(data)
+        );
 
         const Form = createForm<Model>({
             fields,
         });
 
-        await waitFor(async () => {
-            return render(
-                <WidgetContext config={defaultConfig} defaultMessages={defaultI18n}>
-                    <Form handler={onSubmit} />
-                </WidgetContext>
-            );
-        });
+        await renderWithContext(<Form handler={onSubmit} />, apiClient, customConfig, defaultI18n);
 
         // const label = customFieldLabel('custom_fields.username', 'fr')
         // const input = screen.queryByLabelText(label!)
@@ -280,16 +253,16 @@ describe('DOM testing', () => {
         const username = screen.queryByTestId('custom_fields.username');
         expect(username).toBeInTheDocument();
 
-        expect(screen.queryByTestId('custom_fields.birthdate.day')).toBeInTheDocument();
-        expect(screen.queryByTestId('custom_fields.birthdate.month')).toBeInTheDocument();
-        expect(screen.queryByTestId('custom_fields.birthdate.year')).toBeInTheDocument();
+        expect(screen.getByTestId('custom_fields.birthdate.day')).toBeInTheDocument();
+        expect(screen.getByTestId('custom_fields.birthdate.month')).toBeInTheDocument();
+        expect(screen.getByTestId('custom_fields.birthdate.year')).toBeInTheDocument();
 
         const checkbox = screen.queryByTestId('custom_fields.checkbox');
         expect(checkbox).toBeInTheDocument();
 
         const select = screen.queryByTestId('custom_fields.select');
         expect(select).toBeInTheDocument();
-        defaultConfig.customFields
+        customConfig.customFields
             .find(({ path }) => path === 'select')
             ?.selectableValues?.forEach(value => {
                 expect(screen.getByRole('option', { name: value.label })).toBeInTheDocument();
@@ -307,22 +280,18 @@ describe('DOM testing', () => {
     test('build consent fields', async () => {
         const fields = buildFormFields(
             [{ key: 'consents.myconsent' }, { key: 'consents.oldconsent' }],
-            { ...defaultConfig }
+            { ...customConfig }
         );
 
-        const onSubmit = jest.fn<(data: Model) => Promise<Model>>(data => Promise.resolve(data));
+        const onSubmit = jest.fn<(data: Model) => Promise<Model>>((data: Model) =>
+            Promise.resolve(data)
+        );
 
         const Form = createForm<Model>({
             fields,
         });
 
-        await waitFor(async () => {
-            return render(
-                <WidgetContext config={defaultConfig} defaultMessages={defaultI18n}>
-                    <Form handler={onSubmit} />
-                </WidgetContext>
-            );
-        });
+        await renderWithContext(<Form handler={onSubmit} />, apiClient, customConfig, defaultI18n);
 
         const myconsent = screen.getByLabelText('My Consent');
         expect(myconsent).toBeInTheDocument();
@@ -339,7 +308,7 @@ describe('DOM testing', () => {
     test('build archived consent field with option `errorArchivedConsents = true` should throw an error', async () => {
         expect(() => {
             buildFormFields([{ key: 'consents.myconsent' }, { key: 'consents.oldconsent' }], {
-                ...defaultConfig,
+                ...customConfig,
                 errorArchivedConsents: true,
             });
         }).toThrow("The 'oldconsent' consent is archived and cannot be displayed.");

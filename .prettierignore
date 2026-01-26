@@ -29,3 +29,6 @@ umd
 .prettierignore
 .gitignore
 .gitignore
+
+# Ignore test setup file - has critical import order that must not be changed
+setup-jest.ts

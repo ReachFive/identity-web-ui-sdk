@@ -230,9 +230,9 @@ export const LoginView = ({
     onSuccess = (() => {}) as OnSuccess,
 }: WithCaptchaProps<LoginViewProps>) => {
     const i18n = useI18n();
-    const coreClient = useReachfive();
-    const { goTo } = useRouting();
+    const { client: coreClient } = useReachfive();
     const session = useSession();
+    const { goTo } = useRouting();
 
     useLayoutEffect(() => {
         importGoogleRecaptchaScript(recaptcha_site_key);

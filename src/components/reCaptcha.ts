@@ -1,6 +1,6 @@
 import { UserError } from '@/helpers/errors';
 
-import { WithCaptchaToken } from './captcha';
+import { type WithCaptchaToken } from './captcha';
 
 declare global {
     interface Window {

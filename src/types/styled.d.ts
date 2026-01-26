@@ -41,7 +41,7 @@ export interface BaseTheme {
     /**
      * @default "3"
      */
-    borderRadius: number;
+    borderRadius: NonNullable<CSSProperties['borderRadius']>;
     /**
      * @default "#ced4da "
      */
@@ -103,7 +103,7 @@ export interface InputTheme {
     lineHeight: number;
     paddingX: number;
     paddingY: number;
-    borderRadius: number;
+    borderRadius: NonNullable<CSSProperties['borderRadius']>;
     borderColor: NonNullable<CSSProperties['color']>;
     borderWidth: number;
     background: NonNullable<CSSProperties['color']>;
@@ -130,7 +130,7 @@ export interface ButtonTheme {
     /** Specifies the border-color. */
     borderColor: NonNullable<CSSProperties['color']>;
     /** Specifies the border-radius. */
-    borderRadius: number;
+    borderRadius: NonNullable<CSSProperties['borderRadius']>;
     /** Specifies the border-width. */
     borderWidth: number;
     /** Function that specifies the box shadow based on the border color. */
@@ -157,7 +157,7 @@ export interface SocialButtonTheme {
     /** Specifies the border-color. */
     borderColor: NonNullable<CSSProperties['color']>;
     /** Specifies the border-radius. */
-    borderRadius: number;
+    borderRadius: NonNullable<CSSProperties['borderRadius']>;
     /** Specifies the border-width. */
     borderWidth: number;
     /** Function that specifies the box shadow based on the border color. */

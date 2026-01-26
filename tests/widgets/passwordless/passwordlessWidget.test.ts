@@ -1,65 +1,30 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment jest-fixed-jsdom
  */
 import { beforeEach, describe, expect, jest, test } from '@jest/globals';
 import '@testing-library/jest-dom/jest-globals';
-import { render, screen, waitFor } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import 'jest-styled-components';
 
 import { type Client } from '@reachfive/identity-core';
 
-import { type I18nMessages } from '../../../src/contexts/i18n';
-import passwordlessWidget from '../../../src/widgets/passwordless/passwordlessWidget';
+import { type I18nMessages } from '@/contexts/i18n';
+import { OnError, OnSuccess } from '@/types';
+import PasswordlessWidget from '@/widgets/passwordless/passwordlessWidget';
 
-import type { Config, OnError, OnSuccess } from '../../../src/types';
-
-const defaultConfig: Config = {
-    clientId: 'local',
-    domain: 'local.reach5.net',
-    sso: false,
-    sms: false,
-    webAuthn: false,
-    language: 'fr',
-    pkceEnforced: false,
-    isPublic: true,
-    socialProviders: ['facebook', 'google'],
-    customFields: [],
-    resourceBaseUrl: 'http://localhost',
-    mfaSmsEnabled: false,
-    mfaEmailEnabled: false,
-    rbaEnabled: false,
-    consentsVersions: {},
-    passwordPolicy: {
-        minLength: 8,
-        minStrength: 2,
-        allowUpdateWithAccessTokenOnly: true,
-    },
-};
+import { componentGenerator, snapshotGenerator } from '../renderer';
 
 const defaultI18n: I18nMessages = {};
 
 describe('Snapshot', () => {
-    const generateSnapshot =
-        (options: Parameters<typeof passwordlessWidget>[0] = {}, config: Partial<Config> = {}) =>
-        async () => {
-            // @ts-expect-error partial Client
-            const apiClient: Client = {};
+    // @ts-expect-error partial Client
+    const apiClient: Client = {};
 
-            const widget = await passwordlessWidget(options, {
-                config: { ...defaultConfig, ...config },
-                apiClient,
-                defaultI18n,
-            });
-
-            await waitFor(async () => {
-                const { container } = await render(widget);
-                expect(container).toMatchSnapshot();
-            });
-        };
+    const generateSnapshot = snapshotGenerator(PasswordlessWidget, apiClient, defaultI18n);
 
     describe('passwordless', () => {
-        test('default', generateSnapshot());
+        test('default', generateSnapshot({}));
 
         test('no intro', generateSnapshot({ showIntro: false }));
 
@@ -81,39 +46,27 @@ describe('DOM testing', () => {
         onSuccess.mockClear();
     });
 
-    const generateComponent = async (
-        options: Parameters<typeof passwordlessWidget>[0] = {},
-        config: Partial<Config> = {}
-    ) => {
-        // @ts-expect-error partial Client
-        const apiClient: Client = {
-            startPasswordless,
-            verifyPasswordless,
-        };
-
-        const result = await passwordlessWidget(
-            { onError, onSuccess, ...options },
-            { config: { ...defaultConfig, ...config }, apiClient, defaultI18n }
-        );
-
-        return waitFor(async () => render(result));
+    // @ts-expect-error partial Client
+    const apiClient: Client = {
+        startPasswordless,
+        verifyPasswordless,
     };
+
+    const generateComponent = componentGenerator(PasswordlessWidget, apiClient, defaultI18n);
 
     describe('passwordless', () => {
         test('default', async () => {
-            expect.assertions(8);
-
             const user = userEvent.setup();
 
             startPasswordless.mockResolvedValue({});
 
-            await generateComponent();
+            await generateComponent({ onError, onSuccess });
 
             // Intro
-            expect(screen.queryByText('passwordless.intro')).toBeInTheDocument();
+            expect(screen.getByText('passwordless.intro')).toBeInTheDocument();
 
             // Label
-            expect(screen.queryByLabelText('email')).toBeInTheDocument();
+            expect(screen.getByLabelText('email')).toBeInTheDocument();
 
             // Input email
             const emailInput = screen.getByTestId('email');
@@ -134,7 +87,7 @@ describe('DOM testing', () => {
                 undefined // auth
             );
 
-            expect(screen.queryByText('passwordless.emailSent')).toBeInTheDocument();
+            expect(screen.getByText('passwordless.emailSent')).toBeInTheDocument();
 
             expect(onSuccess).toBeCalledWith(
                 expect.objectContaining({
@@ -146,8 +99,7 @@ describe('DOM testing', () => {
         });
 
         test('no intro', async () => {
-            expect.assertions(2);
-            await generateComponent({ showIntro: false });
+            await generateComponent({ showIntro: false, onError, onSuccess });
 
             // Intro
             expect(screen.queryByText('passwordless.intro')).not.toBeInTheDocument();
@@ -155,8 +107,6 @@ describe('DOM testing', () => {
         });
 
         test('by phone number', async () => {
-            expect.assertions(10);
-
             const user = userEvent.setup();
 
             startPasswordless.mockResolvedValue({
@@ -167,13 +117,13 @@ describe('DOM testing', () => {
                 accessToken: 'abcd1234',
             });
 
-            await generateComponent({ authType: 'sms' });
+            await generateComponent({ authType: 'sms', onError, onSuccess });
 
             // Intro
-            expect(screen.queryByText('passwordless.sms.intro')).toBeInTheDocument();
+            expect(screen.getByText('passwordless.sms.intro')).toBeInTheDocument();
 
             // Label
-            expect(screen.queryByLabelText('phoneNumber')).toBeInTheDocument();
+            expect(screen.getByLabelText('phoneNumber')).toBeInTheDocument();
 
             // Input phone number
             const phoneNumberInput = screen.getByTestId('phone_number');
@@ -225,7 +175,7 @@ describe('DOM testing', () => {
 
             startPasswordless.mockRejectedValue('Unexpected error');
 
-            await generateComponent();
+            await generateComponent({ onError, onSuccess });
 
             const emailInput = screen.getByTestId('email');
             const submitBtn = screen.getByTestId('submit');
@@ -248,7 +198,7 @@ describe('DOM testing', () => {
 
             verifyPasswordless.mockRejectedValue('Unexpected error');
 
-            await generateComponent({ authType: 'sms' });
+            await generateComponent({ authType: 'sms', onSuccess, onError });
 
             const phoneNumberInput = screen.getByTestId('phone_number');
             const submitBtn = screen.getByTestId('submit');
@@ -266,10 +216,8 @@ describe('DOM testing', () => {
 
             expect(verifyPasswordless).toBeCalled();
 
-            await waitFor(async () => {
-                expect(onSuccess).not.toBeCalledWith(expect.objectContaining({ name: 'login' }));
-                expect(onError).toBeCalledWith('Unexpected error');
-            });
+            expect(onSuccess).not.toBeCalledWith(expect.objectContaining({ name: 'login' }));
+            expect(onError).toBeCalledWith('Unexpected error');
         });
     });
 });

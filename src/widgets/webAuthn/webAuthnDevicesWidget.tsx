@@ -1,15 +1,14 @@
 import React, { useState } from 'react';
 
-import styled, { type CSSProperties } from 'styled-components';
+import styled, { CSSProperties } from 'styled-components';
 
-import { type DeviceCredential } from '@reachfive/identity-core';
+import { DeviceCredential } from '@reachfive/identity-core';
 
 import { Card, CloseIcon } from '../../components/form/cardComponent';
 import { createForm } from '../../components/form/formComponent';
 import { buildFormFields } from '../../components/form/formFieldFactory';
 import { Heading, Info, MutedText, Paragraph } from '../../components/miscComponent';
 import { createWidget } from '../../components/widget/widget';
-import { useConfig } from '../../contexts/config';
 import { useI18n } from '../../contexts/i18n';
 import { useReachfive } from '../../contexts/reachfive';
 import { UserError } from '../../helpers/errors';
@@ -31,8 +30,6 @@ import { ReactComponent as ProtonPass } from '../../icons/webauthn/proton-pass.s
 import { ReactComponent as SamsungPass } from '../../icons/webauthn/samsung-pass.svg';
 import { ReactComponent as Thales } from '../../icons/webauthn/thales.svg';
 import { ReactComponent as WindowsHello } from '../../icons/webauthn/windows-hello.svg';
-
-// Source https://github.com/passkeydeveloper/passkey-authenticator-aaguids
 
 import type { OnError, OnSuccess } from '../../types';
 
@@ -89,8 +86,8 @@ const CardText = styled.div`
 `;
 
 const DevicesList = ({ devices, removeWebAuthnDevice }: DevicesListProps) => {
+    const { config } = useReachfive();
     const i18n = useI18n();
-    const config = useConfig();
 
     return (
         <DevicesListWrapper>
@@ -177,8 +174,7 @@ function WebAuthnDevices({
     onError = (() => {}) as OnError,
     onSuccess = (() => {}) as OnSuccess,
 }: WebAuthnDevicesProps) {
-    const coreClient = useReachfive();
-    const config = useConfig();
+    const { client: coreClient, config } = useReachfive();
     const i18n = useI18n();
 
     const [devices, setDevices] = useState<DeviceCredential[]>(initDevices || []);
@@ -234,7 +230,7 @@ export type WebAuthnWidgetProps = Omit<WebAuthnDevicesProps, 'devices'>;
 export default createWidget<WebAuthnWidgetProps, WebAuthnDevicesProps>({
     name: 'webauthn-devices',
     component: WebAuthnDevices,
-    prepare: (options, { apiClient, config }) => {
+    prepare: (options, { client, config }) => {
         const { accessToken } = options;
 
         if (!config.webAuthn) {
@@ -249,7 +245,7 @@ export default createWidget<WebAuthnWidgetProps, WebAuthnDevicesProps>({
             throw error;
         }
 
-        return apiClient
+        return client
             .listWebAuthnDevices(accessToken)
             .then(devices => ({
                 ...options,

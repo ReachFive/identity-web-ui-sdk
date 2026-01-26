@@ -4,7 +4,7 @@ import styled from 'styled-components';
 
 import { AuthOptions, Identity, Profile } from '@reachfive/identity-core';
 
-import { DefaultButton } from '../../components/form/buttonComponent';
+import { PrimaryButton } from '../../components/form/buttonComponent';
 import { Card, CloseIcon } from '../../components/form/cardComponent';
 import { SocialButtons } from '../../components/form/socialButtonsComponent';
 import { Alternative, ErrorText, Info, Link, MutedText } from '../../components/miscComponent';
@@ -47,7 +47,7 @@ const withIdentities = <T extends WithIdentitiesProps = WithIdentitiesProps>(
     const displayName = WrappedComponent.displayName ?? WrappedComponent.name ?? 'Component';
 
     const ComponentWithIdentities = (props: Omit<T, 'identities' | 'unlink'>) => {
-        const coreClient = useReachfive();
+        const { client: coreClient } = useReachfive();
         const { goTo } = useRouting();
         const [identities, setIdentities] = useState<Identity[]>([]);
 
@@ -194,9 +194,9 @@ const SocialAccounts = withIdentities(
                 <IdentityList identities={identities} unlink={unlink} />
                 {availableProviders.length > 0 && (
                     <AvailableProvider>
-                        <DefaultButton onClick={() => goTo('link-account')}>
+                        <PrimaryButton onClick={() => goTo('link-account')}>
                             {i18n('socialAccounts.linkNewAccount')}
-                        </DefaultButton>
+                        </PrimaryButton>
                     </AvailableProvider>
                 )}
             </Fragment>

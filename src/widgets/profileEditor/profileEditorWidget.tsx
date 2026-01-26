@@ -66,7 +66,7 @@ const ProfileEditor = ({
     resolvedFields,
     showLabels = false,
 }: ProfileEditorProps) => {
-    const coreClient = useReachfive();
+    const { client: coreClient } = useReachfive();
 
     const handleSubmit = (data: ProfileWithConsents) =>
         coreClient.updateProfile({
@@ -110,7 +110,7 @@ export interface ProfileEditorWidgetProps extends Omit<
 
 export default createWidget<ProfileEditorWidgetProps, ProfileEditorProps>({
     component: ProfileEditor,
-    prepare: (options, { apiClient, config }) => {
+    prepare: (options, { client, config }) => {
         const opts = {
             showLabels: true,
             fields: [],
@@ -134,7 +134,7 @@ export default createWidget<ProfileEditorWidgetProps, ProfileEditorProps>({
         });
 
         return (
-            apiClient
+            client
                 .getUser({
                     accessToken,
                     fields: resolvedFields.map(({ path }) => path).join(','),

@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Snapshot basic 1`] = `
-.c5 {
+.c7 {
   display: block;
   width: 100%;
   box-sizing: border-box;
@@ -14,8 +14,8 @@ exports[`Snapshot basic 1`] = `
   user-select: none;
   touch-action: manipulation;
   cursor: pointer;
-  color: #229955;
-  background-color: #ffffff;
+  color: #ffffff;
+  background-color: #229955;
   border: 1px solid #229955;
   padding: 9px 12px;
   font-size: 14px;
@@ -25,29 +25,90 @@ exports[`Snapshot basic 1`] = `
   transition: all 0.15s ease-in-out;
 }
 
-.c5:focus {
+.c7:focus {
   outline: 0;
   box-shadow: 0 0 0 3px rgba(34,153,85,0.5);
 }
 
-.c5:hover,
-.c5:active {
-  color: #229955;
-  background-color: #ebebeb;
+.c7:hover,
+.c7:active {
+  background-color: #1b7842;
   border-color: #1b7842;
 }
 
-.c5[disabled] {
+.c7[disabled] {
   opacity: 0.65;
 }
 
-.c2 {
-  text-align: center;
-  margin-bottom: 10px;
+.c5 {
+  position: absolute;
+  right: 9px;
+  top: 9px;
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
-.c3 {
+.c5:hover::before,
+.c5:hover::after {
+  background: #748290;
+}
+
+.c5::before,
+.c5::after {
+  content: '';
+  position: absolute;
+  height: 3px;
+  width: 75%;
+  top: 50%;
+  left: 0;
+  margin-top: -1px;
+  background: #adb5bd;
+  background-position: center center;
+}
+
+.c5::before {
+  -webkit-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  transform: rotate(45deg);
+}
+
+.c5::after {
+  -webkit-transform: rotate(-45deg);
+  -ms-transform: rotate(-45deg);
+  transform: rotate(-45deg);
+}
+
+.c2 {
+  padding: 9px 38px;
+  border: 1px solid #ced4da;
   color: #495057;
+  box-sizing: border-box;
+  white-space: nowrap;
+  vertical-align: middle;
+  position: relative;
+}
+
+.c2:only-child {
+  border-radius: 3px;
+}
+
+.c2:not(:only-child):first-child {
+  border-radius: 3px 3px 0 0;
+}
+
+.c2:not(:only-child):last-child {
+  border-radius: 0 0 3px 3px;
+}
+
+.c2:not(:only-child):not(:last-child) {
+  border-bottom-width: 0;
+}
+
+.c4 {
+  color: #adb5bd;
 }
 
 .c0 {
@@ -76,10 +137,23 @@ exports[`Snapshot basic 1`] = `
   --spacing: 10;
   --font-generic: 14;
   --border-width: 1;
-  --radius: 3;
+  --border-radius: 3;
 }
 
-.c4 {
+.c3 {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 38px;
+  box-sizing: border-box;
+  background-image: url(svg);
+  background-repeat: no-repeat;
+  background-size: 20px 20px;
+  background-position: center center;
+}
+
+.c6 {
   margin-top: 10px;
 }
 
@@ -90,16 +164,35 @@ exports[`Snapshot basic 1`] = `
   >
     <div>
       <div
-        class="c2 c3"
+        class="c2"
+        data-testid="identity-facebook"
       >
-        socialAccounts.noLinkedAccount
+        <span
+          class="c3"
+        />
+        <span>
+          Facebook
+        </span>
+         
+        <span
+          class="c4"
+        >
+          - 
+          John Doe
+        </span>
+        <span
+          class="c5"
+          data-testid="identity-facebook-unlink"
+          title="remove"
+        />
       </div>
     </div>
     <div
-      class="c4"
+      class="c6"
     >
       <button
-        class="c5"
+        class="c7"
+        type="submit"
       >
         socialAccounts.linkNewAccount
       </button>

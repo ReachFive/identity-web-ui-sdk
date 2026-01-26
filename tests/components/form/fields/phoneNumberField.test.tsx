@@ -1,51 +1,20 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment jest-fixed-jsdom
  */
 import React from 'react';
 import { formatPhoneNumberIntl, type Value } from 'react-phone-number-input';
 
 import { describe, expect, jest, test } from '@jest/globals';
 import '@testing-library/jest-dom/jest-globals';
-import {
-    Matcher,
-    RenderResult,
-    queryHelpers,
-    render,
-    screen,
-    waitFor,
-} from '@testing-library/react';
+import { Matcher, RenderResult, queryHelpers, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import 'jest-styled-components';
 
-import phoneNumberField from '../../../../src/components/form/fields/phoneNumberField';
-import { createForm } from '../../../../src/components/form/formComponent';
-import { type I18nMessages } from '../../../../src/contexts/i18n';
-import { WidgetContext } from '../WidgetContext';
+import phoneNumberField from '@/components/form/fields/phoneNumberField';
+import { createForm } from '@/components/form/formComponent';
+import { I18nMessages } from '@/contexts/i18n';
 
-import type { Config } from '../../../../src/types';
-
-const defaultConfig: Config = {
-    clientId: 'local',
-    domain: 'local.reach5.net',
-    sso: false,
-    sms: false,
-    webAuthn: false,
-    language: 'fr',
-    pkceEnforced: false,
-    isPublic: true,
-    socialProviders: ['facebook', 'google'],
-    customFields: [],
-    resourceBaseUrl: 'http://localhost',
-    mfaSmsEnabled: false,
-    mfaEmailEnabled: false,
-    rbaEnabled: false,
-    consentsVersions: {},
-    passwordPolicy: {
-        minLength: 8,
-        minStrength: 2,
-        allowUpdateWithAccessTokenOnly: true,
-    },
-};
+import { defaultConfig, renderWithContext } from '../../../widgets/renderer';
 
 const defaultI18n: I18nMessages = {
     phone: 'Phone number',
@@ -92,21 +61,16 @@ describe('DOM testing', () => {
             ],
         });
 
-        const renderResult = await waitFor(async () => {
-            return render(
-                <WidgetContext
-                    client={apiClient}
-                    config={defaultConfig}
-                    defaultMessages={defaultI18n}
-                >
-                    <Form
-                        fieldValidationDebounce={0} // trigger validation instantly
-                        onFieldChange={onFieldChange}
-                        handler={onSubmit}
-                    />
-                </WidgetContext>
-            );
-        });
+        const renderResult = await renderWithContext(
+            <Form
+                fieldValidationDebounce={0} // trigger validation instantly
+                onFieldChange={onFieldChange}
+                handler={onSubmit}
+            />,
+            apiClient,
+            defaultConfig,
+            defaultI18n
+        );
 
         const input = screen.queryByLabelText('Phone number');
         expect(input).toBeInTheDocument();
@@ -168,21 +132,16 @@ describe('DOM testing', () => {
             ],
         });
 
-        await waitFor(async () => {
-            return render(
-                <WidgetContext
-                    client={apiClient}
-                    config={defaultConfig}
-                    defaultMessages={defaultI18n}
-                >
-                    <Form
-                        fieldValidationDebounce={0} // trigger validation instantly
-                        onFieldChange={onFieldChange}
-                        handler={onSubmit}
-                    />
-                </WidgetContext>
-            );
-        });
+        await renderWithContext(
+            <Form
+                fieldValidationDebounce={0} // trigger validation instantly
+                onFieldChange={onFieldChange}
+                handler={onSubmit}
+            />,
+            apiClient,
+            defaultConfig,
+            defaultI18n
+        );
 
         const submitBtn = screen.getByRole('button');
         await user.click(submitBtn);

@@ -3,8 +3,8 @@ import * as libphonenumber from 'libphonenumber-js';
 
 import {
     AuthResult,
-    LoginWithPasswordParams,
-    LoginWithWebAuthnParams,
+    type LoginWithPasswordParams,
+    type LoginWithWebAuthnParams,
 } from '@reachfive/identity-core';
 
 import type { AuthType, IdentifierType, LoginEventWrappingObject } from '../types';

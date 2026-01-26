@@ -1,67 +1,28 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment jest-fixed-jsdom
  */
-import { describe, expect, jest, test } from '@jest/globals';
+import { beforeEach, describe, expect, jest, test } from '@jest/globals';
 import '@testing-library/jest-dom/jest-globals';
-import { render, screen, waitFor } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import 'jest-styled-components';
-import { beforeEach } from 'node:test';
 
 import type { Client, PasswordStrengthScore } from '@reachfive/identity-core';
 
-import { type I18nMessages } from '../../../src/contexts/i18n';
-import { randomString } from '../../../src/helpers/random';
-import { providers, type ProviderId } from '../../../src/providers/providers';
-import authWidget from '../../../src/widgets/auth/authWidget';
+import { type I18nMessages } from '@/contexts/i18n';
+import { AppError } from '@/helpers/errors';
+import { randomString } from '@/helpers/random';
+import { providers, type ProviderId } from '@/providers/providers';
+import AuthWidget from '@/widgets/auth/authWidget';
 
-import type { Config } from '../../../src/types';
-
-const defaultConfig: Config = {
-    clientId: 'local',
-    domain: 'local.reach5.net',
-    sso: false,
-    sms: false,
-    webAuthn: false,
-    language: 'fr',
-    pkceEnforced: false,
-    isPublic: true,
-    socialProviders: ['facebook', 'google'],
-    customFields: [],
-    resourceBaseUrl: 'http://localhost',
-    mfaSmsEnabled: false,
-    mfaEmailEnabled: false,
-    rbaEnabled: false,
-    consentsVersions: {
-        aConsent: {
-            key: 'aConsent',
-            versions: [
-                {
-                    versionId: 1,
-                    title: 'consent title',
-                    description: 'consent description',
-                    language: 'fr',
-                },
-            ],
-            consentType: 'opt-in',
-            status: 'active',
-        },
-    },
-    passwordPolicy: {
-        minLength: 8,
-        minStrength: 2,
-        allowUpdateWithAccessTokenOnly: true,
-    },
-};
+import { componentGenerator, defaultConfig, snapshotGenerator } from '../renderer';
 
 const defaultI18n: I18nMessages = {};
-
-const webauthnConfig = { ...defaultConfig, webAuthn: true };
 
 function expectSocialButtons(toBeInTheDocument = true) {
     defaultConfig.socialProviders.forEach(provider => {
         if (toBeInTheDocument) {
-            expect(screen.queryByTitle(providers[provider as ProviderId].name)).toBeInTheDocument();
+            expect(screen.getByTitle(providers[provider as ProviderId].name)).toBeInTheDocument();
         } else {
             expect(
                 screen.queryByTitle(providers[provider as ProviderId].name)
@@ -71,9 +32,19 @@ function expectSocialButtons(toBeInTheDocument = true) {
 }
 
 describe('Snapshot', () => {
+    const checkUrlFragment = jest
+        .fn<Client['checkUrlFragment']>()
+        .mockImplementation((_url?: string) => false);
+
+    const getSessionInfo = jest.fn<Client['getSessionInfo']>().mockRejectedValue({
+        errorId: 'azerty',
+        errorDescription: 'The user is not logged in',
+        error: 'login_required',
+    } satisfies AppError);
+
     const getPasswordStrength = jest
         .fn<Client['getPasswordStrength']>()
-        .mockImplementation(password => {
+        .mockImplementation((password: string) => {
             let score = 0;
             if (/[a-z]+/.exec(password)) score++;
             if (/[0-9]+/.exec(password)) score++;
@@ -84,33 +55,24 @@ describe('Snapshot', () => {
 
     const loginWithWebAuthn = jest
         .fn<Client['loginWithWebAuthn']>()
-        .mockRejectedValue(new Error('This is a mock.'));
-
-    // @ts-expect-error partial Client
-    const apiClient: Client = {
-        getPasswordStrength,
-        loginWithWebAuthn,
-    };
+        .mockRejectedValue('This is a mock.');
 
     beforeEach(() => {
+        checkUrlFragment.mockClear();
+        getSessionInfo.mockClear();
         getPasswordStrength.mockClear();
         loginWithWebAuthn.mockClear();
     });
 
-    const generateSnapshot =
-        (options: Parameters<typeof authWidget>[0] = {}, config: Partial<Config> = {}) =>
-        async () => {
-            const widget = await authWidget(options, {
-                config: { ...defaultConfig, ...config },
-                apiClient,
-                defaultI18n,
-            });
+    // @ts-expect-error partial Client
+    const apiClient: Client = {
+        checkUrlFragment,
+        getSessionInfo,
+        getPasswordStrength,
+        loginWithWebAuthn,
+    };
 
-            await waitFor(async () => {
-                const { container } = await render(widget);
-                expect(container).toMatchSnapshot();
-            });
-        };
+    const generateSnapshot = snapshotGenerator(AuthWidget, apiClient, defaultI18n);
 
     describe('login view', () => {
         test(
@@ -250,7 +212,7 @@ describe('Snapshot', () => {
                 {
                     allowWebAuthnLogin: true,
                 },
-                webauthnConfig
+                { webAuthn: true }
             )
         );
 
@@ -261,7 +223,7 @@ describe('Snapshot', () => {
                     allowWebAuthnLogin: true,
                     initialScreen: 'login',
                 },
-                webauthnConfig
+                { webAuthn: true }
             )
         );
 
@@ -272,7 +234,7 @@ describe('Snapshot', () => {
                     allowWebAuthnSignup: true,
                     initialScreen: 'signup',
                 },
-                webauthnConfig
+                { webAuthn: true }
             )
         );
 
@@ -283,7 +245,7 @@ describe('Snapshot', () => {
                     allowWebAuthnSignup: true,
                     initialScreen: 'signup-with-password',
                 },
-                webauthnConfig
+                { webAuthn: true }
             )
         );
 
@@ -294,7 +256,7 @@ describe('Snapshot', () => {
                     allowWebAuthnSignup: true,
                     initialScreen: 'signup-with-web-authn',
                 },
-                webauthnConfig
+                { webAuthn: true }
             )
         );
     });
@@ -307,7 +269,7 @@ describe('Snapshot', () => {
                     allowWebAuthnLogin: true,
                     enablePasswordAuthentication: false,
                 },
-                webauthnConfig
+                { webAuthn: true }
             )
         );
 
@@ -319,7 +281,7 @@ describe('Snapshot', () => {
                     enablePasswordAuthentication: false,
                     initialScreen: 'login',
                 },
-                webauthnConfig
+                { webAuthn: true }
             )
         );
 
@@ -331,7 +293,7 @@ describe('Snapshot', () => {
                     enablePasswordAuthentication: false,
                     initialScreen: 'signup',
                 },
-                webauthnConfig
+                { webAuthn: true }
             )
         );
 
@@ -343,7 +305,7 @@ describe('Snapshot', () => {
                     enablePasswordAuthentication: false,
                     initialScreen: 'signup-with-password',
                 },
-                webauthnConfig
+                { webAuthn: true }
             )
         );
 
@@ -355,7 +317,7 @@ describe('Snapshot', () => {
                     enablePasswordAuthentication: false,
                     initialScreen: 'signup-with-web-authn',
                 },
-                webauthnConfig
+                { webAuthn: true }
             )
         );
 
@@ -367,7 +329,7 @@ describe('Snapshot', () => {
                     enablePasswordAuthentication: false,
                     initialScreen: 'signup-with-web-authn',
                 },
-                webauthnConfig
+                { webAuthn: true }
             )
         );
     });
@@ -383,9 +345,19 @@ describe('Snapshot', () => {
 });
 
 describe('DOM testing', () => {
+    const checkUrlFragment = jest
+        .fn<Client['checkUrlFragment']>()
+        .mockImplementation((_url?: string) => false);
+
+    const getSessionInfo = jest.fn<Client['getSessionInfo']>().mockRejectedValue({
+        errorId: 'azerty',
+        errorDescription: 'The user is not logged in',
+        error: 'login_required',
+    } satisfies AppError);
+
     const getPasswordStrength = jest
         .fn<Client['getPasswordStrength']>()
-        .mockImplementation(password => {
+        .mockImplementation((password: string) => {
             let score = 0;
             if (/[a-z]+/.exec(password)) score++;
             if (/[0-9]+/.exec(password)) score++;
@@ -396,49 +368,43 @@ describe('DOM testing', () => {
 
     const loginWithWebAuthn = jest
         .fn<Client['loginWithWebAuthn']>()
-        .mockRejectedValue(new Error('This is a mock.'));
+        .mockRejectedValue('This is a mock.');
 
     const requestPasswordReset = jest.fn<Client['requestPasswordReset']>().mockResolvedValue();
 
     const updatePassword = jest.fn<Client['updatePassword']>().mockResolvedValue();
 
     beforeEach(() => {
+        checkUrlFragment.mockClear();
+        getSessionInfo.mockClear();
         getPasswordStrength.mockClear();
         loginWithWebAuthn.mockClear();
         requestPasswordReset.mockClear();
         updatePassword.mockClear();
     });
 
-    const generateComponent = async (
-        options: Parameters<typeof authWidget>[0] = {},
-        config: Partial<Config> = {}
-    ) => {
-        // @ts-expect-error partial Client
-        const apiClient: Client = {
-            getPasswordStrength,
-            loginWithWebAuthn,
-            requestPasswordReset,
-            updatePassword,
-        };
-        const result = await authWidget(options, {
-            config: { ...defaultConfig, ...config },
-            apiClient,
-            defaultI18n,
-        });
-        return render(result);
+    // @ts-expect-error partial Client
+    const apiClient: Client = {
+        checkUrlFragment,
+        getSessionInfo,
+        getPasswordStrength,
+        loginWithWebAuthn,
+        requestPasswordReset,
+        updatePassword,
     };
+
+    const generateComponent = componentGenerator(AuthWidget, apiClient, defaultI18n);
 
     describe('login view', () => {
         test('default config', async () => {
-            expect.assertions(6);
             await generateComponent({});
 
             // Form button
-            expect(screen.queryByText('login.submitLabel')).toBeInTheDocument();
+            expect(screen.getByText('login.submitLabel')).toBeInTheDocument();
 
             // Links
-            expect(screen.queryByText('login.forgotPasswordLink')).toBeInTheDocument();
-            expect(screen.queryByText('login.signupLink')).toBeInTheDocument();
+            expect(screen.getByText('login.forgotPasswordLink')).toBeInTheDocument();
+            expect(screen.getByText('login.signupLink')).toBeInTheDocument();
 
             // Social buttons
             expectSocialButtons(true);
@@ -448,17 +414,15 @@ describe('DOM testing', () => {
         });
 
         test('login only', async () => {
-            expect.assertions(2);
             await generateComponent({
                 allowSignup: false,
             });
 
-            expect(screen.queryByText('login.forgotPasswordLink')).toBeInTheDocument();
+            expect(screen.getByText('login.forgotPasswordLink')).toBeInTheDocument();
             expect(screen.queryByText('login.signupLinkk')).not.toBeInTheDocument();
         });
 
         test('without forgot password', async () => {
-            expect.assertions(3);
             await generateComponent({
                 allowSignup: false,
                 allowForgotPassword: false,
@@ -470,16 +434,14 @@ describe('DOM testing', () => {
         });
 
         test('with remember me', async () => {
-            expect.assertions(1);
             await generateComponent({
                 showRememberMe: true,
             });
 
-            expect(screen.queryByLabelText('rememberMe')).toBeInTheDocument();
+            expect(screen.getByLabelText('rememberMe')).toBeInTheDocument();
         });
 
         test('with canShowPassword', async () => {
-            expect.assertions(1);
             await generateComponent({
                 canShowPassword: true,
             });
@@ -489,7 +451,6 @@ describe('DOM testing', () => {
         });
 
         test('inline social buttons', async () => {
-            expect.assertions(2);
             await generateComponent({
                 theme: {
                     socialButton: {
@@ -504,7 +465,6 @@ describe('DOM testing', () => {
 
         describe('i18n', () => {
             test('overwrite title', async () => {
-                expect.assertions(1);
                 const title = randomString();
                 await generateComponent({
                     i18n: {
@@ -512,11 +472,10 @@ describe('DOM testing', () => {
                     },
                 });
 
-                expect(screen.queryByText(title)).toBeInTheDocument();
+                expect(screen.getByText(title)).toBeInTheDocument();
             });
 
             test('overwrite title - expanded', async () => {
-                expect.assertions(1);
                 const title = randomString();
                 await generateComponent({
                     i18n: {
@@ -526,7 +485,7 @@ describe('DOM testing', () => {
                     },
                 });
 
-                expect(screen.queryByText(title)).toBeInTheDocument();
+                expect(screen.getByText(title)).toBeInTheDocument();
             });
 
             test('overwrite title - internationalized', async () => {
@@ -552,30 +511,28 @@ describe('DOM testing', () => {
                     }
                 );
 
-                expect(screen.queryByText('Connexion')).toBeInTheDocument();
+                expect(screen.getByText('Connexion')).toBeInTheDocument();
             });
         });
     });
 
     describe('signup view', () => {
         test('default config', async () => {
-            expect.assertions(4);
             await generateComponent({
                 initialScreen: 'signup',
             });
 
             // Form button
-            expect(screen.queryByText('signup.submitLabel')).toBeInTheDocument();
+            expect(screen.getByText('signup.submitLabel')).toBeInTheDocument();
 
             // Login link
-            expect(screen.queryByText('signup.loginLink')).toBeInTheDocument();
+            expect(screen.getByText('signup.loginLink')).toBeInTheDocument();
 
             // Social buttons
             expectSocialButtons(true);
         });
 
         test('inline social buttons', async () => {
-            expect.assertions(2);
             await generateComponent({
                 initialScreen: 'signup',
                 theme: {
@@ -590,31 +547,28 @@ describe('DOM testing', () => {
         });
 
         test('with user agreement', async () => {
-            expect.assertions(1);
             await generateComponent({
                 initialScreen: 'signup',
                 userAgreement: 'I agreed [terms of use](https://example.com/termsofuse).',
             });
 
-            expect(screen.queryByText('terms of use')).toBeInTheDocument();
+            expect(screen.getByText('terms of use')).toBeInTheDocument();
         });
 
         test('default signup fields', async () => {
-            expect.assertions(5);
             await generateComponent({
                 initialScreen: 'signup',
             });
 
             // form inputs
-            expect(screen.queryByTestId('givenName')).toBeInTheDocument();
-            expect(screen.queryByTestId('familyName')).toBeInTheDocument();
-            expect(screen.queryByTestId('email')).toBeInTheDocument();
-            expect(screen.queryByTestId('password')).toBeInTheDocument();
-            expect(screen.queryByTestId('passwordConfirmation')).toBeInTheDocument();
+            expect(screen.getByTestId('givenName')).toBeInTheDocument();
+            expect(screen.getByTestId('familyName')).toBeInTheDocument();
+            expect(screen.getByTestId('email')).toBeInTheDocument();
+            expect(screen.getByTestId('password')).toBeInTheDocument();
+            expect(screen.getByTestId('passwordConfirmation')).toBeInTheDocument();
         });
 
         test('signup fields selection', async () => {
-            expect.assertions(3);
             const signupFields = ['email', 'password', 'passwordConfirmation'];
             await generateComponent({
                 initialScreen: 'signup',
@@ -622,12 +576,11 @@ describe('DOM testing', () => {
             });
 
             signupFields.forEach(field => {
-                expect(screen.queryByTestId(field)).toBeInTheDocument();
+                expect(screen.getByTestId(field)).toBeInTheDocument();
             });
         });
 
         test('signup fields selection with custom field', async () => {
-            expect.assertions(3);
             const signupFields = ['email', 'password', 'custom_fields.newsletter_optin'];
             await generateComponent(
                 {
@@ -647,136 +600,118 @@ describe('DOM testing', () => {
                 }
             );
 
-            expect(screen.queryByTestId('email')).toBeInTheDocument();
-            expect(screen.queryByTestId('password')).toBeInTheDocument();
-            expect(screen.queryByTestId('custom_fields.newsletter_optin')).toBeInTheDocument();
+            expect(screen.getByTestId('email')).toBeInTheDocument();
+            expect(screen.getByTestId('password')).toBeInTheDocument();
+            expect(screen.getByTestId('custom_fields.newsletter_optin')).toBeInTheDocument();
         });
     });
 
     describe('with webauthn feature', () => {
         test('new login view', async () => {
-            expect.assertions(6);
-
-            loginWithWebAuthn.mockRejectedValue(new Error('This is a mock.'));
+            loginWithWebAuthn.mockRejectedValue('This is a mock.');
 
             await generateComponent(
                 { allowWebAuthnLogin: true, initialScreen: 'login' },
-                webauthnConfig
+                { webAuthn: true }
             );
 
             // Social buttons
             expectSocialButtons(true);
 
             // Email input
-            expect(screen.queryByTestId('identifier')).toBeInTheDocument();
+            expect(screen.getByTestId('identifier')).toBeInTheDocument();
 
             // Form button
-            expect(screen.queryByText('login.submitLabel')).toBeInTheDocument();
+            expect(screen.getByText('login.submitLabel')).toBeInTheDocument();
 
             // Links
-            expect(screen.queryByText('login.forgotPasswordLink')).toBeInTheDocument();
+            expect(screen.getByText('login.forgotPasswordLink')).toBeInTheDocument();
 
             // Sign in link
-            expect(screen.queryByText('login.signupLink')).toBeInTheDocument();
+            expect(screen.getByText('login.signupLink')).toBeInTheDocument();
         });
 
         test('old login view', async () => {
-            expect.assertions(6);
-
-            loginWithWebAuthn.mockRejectedValue(new Error('This is a mock.'));
+            loginWithWebAuthn.mockRejectedValue('This is a mock.');
 
             await generateComponent(
-                {
-                    allowWebAuthnLogin: true,
-                    initialScreen: 'login-with-web-authn',
-                },
-                webauthnConfig
+                { allowWebAuthnLogin: true, initialScreen: 'login-with-web-authn' },
+                { webAuthn: true }
             );
 
             // Social buttons
             expectSocialButtons(true);
 
             // Email input
-            expect(screen.queryByTestId('identifier')).toBeInTheDocument();
+            expect(screen.getByTestId('identifier')).toBeInTheDocument();
 
             // Form buttons
-            expect(screen.queryByTestId('webauthn-button')).toBeInTheDocument();
-            expect(screen.queryByTestId('password-button')).toBeInTheDocument();
+            expect(screen.getByTestId('webauthn-button')).toBeInTheDocument();
+            expect(screen.getByTestId('password-button')).toBeInTheDocument();
 
             // Sign in link
-            expect(screen.queryByText('login.signupLink')).toBeInTheDocument();
+            expect(screen.getByText('login.signupLink')).toBeInTheDocument();
         });
 
         test('signup view with password or webauthn', async () => {
-            expect.assertions(5);
             await generateComponent(
                 { allowWebAuthnSignup: true, initialScreen: 'signup' },
-                webauthnConfig
+                { webAuthn: true }
             );
 
             // Social buttons
             expectSocialButtons(true);
 
             // Form buttons
-            expect(screen.queryByTestId('webauthn-button')).toBeInTheDocument();
-            expect(screen.queryByTestId('password-button')).toBeInTheDocument();
+            expect(screen.getByTestId('webauthn-button')).toBeInTheDocument();
+            expect(screen.getByTestId('password-button')).toBeInTheDocument();
 
             // Login in link
-            expect(screen.queryByText('signup.loginLink')).toBeInTheDocument();
+            expect(screen.getByText('signup.loginLink')).toBeInTheDocument();
         });
 
         test('signup form view with password', async () => {
-            expect.assertions(7);
             await generateComponent(
-                {
-                    allowWebAuthnSignup: true,
-                    initialScreen: 'signup-with-password',
-                },
-                webauthnConfig
+                { allowWebAuthnSignup: true, initialScreen: 'signup-with-password' },
+                { webAuthn: true }
             );
 
             // Form fields
-            expect(screen.queryByTestId('givenName')).toBeInTheDocument();
-            expect(screen.queryByTestId('familyName')).toBeInTheDocument();
-            expect(screen.queryByTestId('email')).toBeInTheDocument();
-            expect(screen.queryByTestId('password')).toBeInTheDocument();
-            expect(screen.queryByTestId('passwordConfirmation')).toBeInTheDocument();
+            expect(screen.getByTestId('givenName')).toBeInTheDocument();
+            expect(screen.getByTestId('familyName')).toBeInTheDocument();
+            expect(screen.getByTestId('email')).toBeInTheDocument();
+            expect(screen.getByTestId('password')).toBeInTheDocument();
+            expect(screen.getByTestId('passwordConfirmation')).toBeInTheDocument();
 
             // Form button
-            expect(screen.queryByText('signup.submitLabel')).toBeInTheDocument();
+            expect(screen.getByText('signup.submitLabel')).toBeInTheDocument();
 
             // Back link
-            expect(screen.queryByText('back')).toBeInTheDocument();
+            expect(screen.getByText('back')).toBeInTheDocument();
         });
 
         test('signup form view with webauthn', async () => {
-            expect.assertions(5);
             await generateComponent(
-                {
-                    allowWebAuthnSignup: true,
-                    initialScreen: 'signup-with-web-authn',
-                },
-                webauthnConfig
+                { allowWebAuthnSignup: true, initialScreen: 'signup-with-web-authn' },
+                { webAuthn: true }
             );
 
             // Form fields
-            expect(screen.queryByTestId('givenName')).toBeInTheDocument();
-            expect(screen.queryByTestId('familyName')).toBeInTheDocument();
-            expect(screen.queryByTestId('email')).toBeInTheDocument();
+            expect(screen.getByTestId('givenName')).toBeInTheDocument();
+            expect(screen.getByTestId('familyName')).toBeInTheDocument();
+            expect(screen.getByTestId('email')).toBeInTheDocument();
 
             // Form button
-            expect(screen.queryByText('signup.submitLabel')).toBeInTheDocument();
+            expect(screen.getByText('signup.submitLabel')).toBeInTheDocument();
 
             // Back link
-            expect(screen.queryByText('back')).toBeInTheDocument();
+            expect(screen.getByText('back')).toBeInTheDocument();
         });
     });
 
     describe('with webauthn feature and without password', () => {
         test('old login view', async () => {
-            expect.assertions(6);
-
-            loginWithWebAuthn.mockRejectedValue(new Error('This is a mock.'));
+            loginWithWebAuthn.mockRejectedValue('This is a mock.');
 
             await generateComponent(
                 {
@@ -784,66 +719,64 @@ describe('DOM testing', () => {
                     enablePasswordAuthentication: false,
                     initialScreen: 'login-with-web-authn',
                 },
-                webauthnConfig
+                { webAuthn: true }
             );
 
             // Social buttons
             expectSocialButtons(true);
 
             // Email input
-            expect(screen.queryByTestId('identifier')).toBeInTheDocument();
+            expect(screen.getByTestId('identifier')).toBeInTheDocument();
 
             // Form buttons
-            expect(screen.queryByTestId('webauthn-button')).toBeInTheDocument();
+            expect(screen.getByTestId('webauthn-button')).toBeInTheDocument();
             expect(screen.queryByTestId('password-button')).toBeNull();
 
             // Sign in link
-            expect(screen.queryByText('login.signupLink')).toBeInTheDocument();
+            expect(screen.getByText('login.signupLink')).toBeInTheDocument();
         });
 
         test('signup view without password and with webauthn', async () => {
-            expect.assertions(5);
             await generateComponent(
                 {
                     allowWebAuthnSignup: true,
                     enablePasswordAuthentication: false,
                     initialScreen: 'signup',
                 },
-                webauthnConfig
+                { webAuthn: true }
             );
 
             // Social buttons
             expectSocialButtons(true);
 
             // Form buttons
-            expect(screen.queryByTestId('webauthn-button')).toBeInTheDocument();
+            expect(screen.getByTestId('webauthn-button')).toBeInTheDocument();
             expect(screen.queryByTestId('password-button')).toBeNull();
 
             // Login in link
-            expect(screen.queryByText('signup.loginLink')).toBeInTheDocument();
+            expect(screen.getByText('signup.loginLink')).toBeInTheDocument();
         });
 
         test('signup form view with webauthn and without password', async () => {
-            expect.assertions(5);
             await generateComponent(
                 {
                     allowWebAuthnSignup: true,
                     enablePasswordAuthentication: false,
                     initialScreen: 'signup-with-web-authn',
                 },
-                webauthnConfig
+                { webAuthn: true }
             );
 
             // Form fields
-            expect(screen.queryByTestId('givenName')).toBeInTheDocument();
-            expect(screen.queryByTestId('familyName')).toBeInTheDocument();
-            expect(screen.queryByTestId('email')).toBeInTheDocument();
+            expect(screen.getByTestId('givenName')).toBeInTheDocument();
+            expect(screen.getByTestId('familyName')).toBeInTheDocument();
+            expect(screen.getByTestId('email')).toBeInTheDocument();
 
             // Form button
-            expect(screen.queryByText('signup.submitLabel')).toBeInTheDocument();
+            expect(screen.getByText('signup.submitLabel')).toBeInTheDocument();
 
             // Back link
-            expect(screen.queryByText('back')).toBeInTheDocument();
+            expect(screen.getByText('back')).toBeInTheDocument();
         });
     });
 
@@ -861,7 +794,7 @@ describe('DOM testing', () => {
             await user.type(emailField, 'test@example.com');
             await user.click(useEmailButton);
 
-            expect(requestPasswordReset).toHaveBeenCalledWith(
+            expect(apiClient.requestPasswordReset).toHaveBeenCalledWith(
                 expect.objectContaining({
                     email: 'test@example.com',
                 })
@@ -888,7 +821,7 @@ describe('DOM testing', () => {
 
             await user.click(usePhoneNumberButton);
 
-            expect(screen.queryByText('forgotPassword.prompt.phoneNumber')).toBeInTheDocument();
+            expect(screen.getByText('forgotPassword.prompt.phoneNumber')).toBeInTheDocument();
 
             const phoneNumberField = screen.getByLabelText('phoneNumber');
             const submitPhoneNumberButton = screen.getByRole('button', {
@@ -898,7 +831,7 @@ describe('DOM testing', () => {
             await user.type(phoneNumberField, '0123456789');
             await user.click(submitPhoneNumberButton);
 
-            expect(requestPasswordReset).toHaveBeenCalledWith(
+            expect(apiClient.requestPasswordReset).toHaveBeenCalledWith(
                 expect.objectContaining({
                     phoneNumber: '+33123456789',
                 })
@@ -916,7 +849,7 @@ describe('DOM testing', () => {
             await user.type(passwordConfirmationField, 'Wond3rFu11_Pa55w0rD*$');
             await user.click(sendCodeButton);
 
-            expect(updatePassword).toHaveBeenCalledWith(
+            expect(apiClient.updatePassword).toHaveBeenCalledWith(
                 expect.objectContaining({
                     password: 'Wond3rFu11_Pa55w0rD*$',
                     phoneNumber: '+33123456789',

@@ -1,4 +1,4 @@
-import { TFunction } from 'i18next';
+import { type TFunction } from 'i18next';
 import isEmail from 'validator/lib/isEmail';
 import isFloat from 'validator/lib/isFloat';
 import isInt from 'validator/lib/isInt';

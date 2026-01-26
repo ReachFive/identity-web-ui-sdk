@@ -84,7 +84,7 @@ const NewPasskey = ({
     onSuccess = (() => {}) as OnSuccess,
     onError = (() => {}) as OnError,
 }: PropsWithAuthentication<MainViewProps>) => {
-    const coreClient = useReachfive();
+    const { client: coreClient } = useReachfive();
     const i18n = useI18n();
     const { goTo } = useRouting();
 
@@ -162,7 +162,7 @@ export const NewPasswordView = ({
     onError = (() => {}) as OnError,
     showLabels = false,
 }: PropsWithAuthentication<MainViewProps>) => {
-    const coreClient = useReachfive();
+    const { client: coreClient } = useReachfive();
     const i18n = useI18n();
     const { goTo } = useRouting();
 

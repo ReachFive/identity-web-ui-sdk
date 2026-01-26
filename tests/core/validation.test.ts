@@ -1,7 +1,7 @@
 import { beforeAll, describe, expect, it } from '@jest/globals';
 import i18n from 'i18next';
 
-import { type I18nMessages } from '../../src/contexts/i18n';
+import { type I18nMessages } from '@/contexts/i18n';
 import {
     checked,
     email,
@@ -12,7 +12,7 @@ import {
     isValidatorSuccess,
     required,
     Validator,
-} from '../../src/core/validation';
+} from '@/core/validation';
 
 const defaultI18n: I18nMessages = {
     'validation.minLength': 'Min length is {min}',

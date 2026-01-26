@@ -1,44 +1,20 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment jest-fixed-jsdom
  */
 import React from 'react';
 
 import { describe, expect, jest, test } from '@jest/globals';
 import '@testing-library/jest-dom/jest-globals';
-import { render, screen, waitFor } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import 'jest-styled-components';
 import { format } from 'libphonenumber-js';
 
-import identifierField from '../../../../src/components/form/fields/identifierField';
-import { createForm } from '../../../../src/components/form/formComponent';
-import { type I18nMessages } from '../../../../src/contexts/i18n';
-import { WidgetContext } from '../WidgetContext';
+import identifierField from '@/components/form/fields/identifierField';
+import { createForm } from '@/components/form/formComponent';
+import { I18nMessages } from '@/contexts/i18n';
 
-import type { Config } from '../../../../src/types';
-
-const defaultConfig: Config = {
-    clientId: 'local',
-    domain: 'local.reach5.net',
-    sso: false,
-    sms: false,
-    webAuthn: false,
-    language: 'fr',
-    pkceEnforced: false,
-    isPublic: true,
-    socialProviders: ['facebook', 'google'],
-    customFields: [],
-    resourceBaseUrl: 'http://localhost',
-    mfaSmsEnabled: false,
-    mfaEmailEnabled: false,
-    rbaEnabled: false,
-    consentsVersions: {},
-    passwordPolicy: {
-        minLength: 8,
-        minStrength: 2,
-        allowUpdateWithAccessTokenOnly: true,
-    },
-};
+import { defaultConfig, renderWithContext } from '../../../widgets/renderer';
 
 const defaultI18n: I18nMessages = {
     identifier: 'Identifiant',
@@ -53,23 +29,25 @@ describe('DOM testing', () => {
         const key = 'identifier';
         const label = 'identifier';
         const onFieldChange = jest.fn();
-        const onSubmit = jest.fn<(data: Model) => Promise<Model>>(data => Promise.resolve(data));
+        const onSubmit = jest.fn<(data: Model) => Promise<Model>>((data: Model) =>
+            Promise.resolve(data)
+        );
 
         const Form = createForm<Model>({
             fields: [identifierField({ key, label, withPhoneNumber: true }, defaultConfig)],
         });
 
-        await waitFor(async () => {
-            return render(
-                <WidgetContext config={defaultConfig} defaultMessages={defaultI18n}>
-                    <Form
-                        fieldValidationDebounce={0} // trigger validation instantly
-                        handler={onSubmit}
-                        onFieldChange={onFieldChange}
-                    />
-                </WidgetContext>
-            );
-        });
+        await renderWithContext(
+            <Form
+                fieldValidationDebounce={0} // trigger validation instantly
+                onFieldChange={onFieldChange}
+                handler={onSubmit}
+            />,
+            // @ts-expect-error partial Client
+            {},
+            defaultConfig,
+            defaultI18n
+        );
 
         const input = screen.queryByLabelText('Identifiant');
         expect(input).toBeInTheDocument();
@@ -118,23 +96,25 @@ describe('DOM testing', () => {
         const key = 'identifier';
         const label = 'identifier';
         const onFieldChange = jest.fn();
-        const onSubmit = jest.fn<(data: Model) => Promise<Model>>(data => Promise.resolve(data));
+        const onSubmit = jest.fn<(data: Model) => Promise<Model>>((data: Model) =>
+            Promise.resolve(data)
+        );
 
         const Form = createForm<Model>({
             fields: [identifierField({ key, label, withPhoneNumber: false }, defaultConfig)],
         });
 
-        await waitFor(async () => {
-            return render(
-                <WidgetContext config={defaultConfig} defaultMessages={defaultI18n}>
-                    <Form
-                        fieldValidationDebounce={0} // trigger validation instantly
-                        handler={onSubmit}
-                        onFieldChange={onFieldChange}
-                    />
-                </WidgetContext>
-            );
-        });
+        await renderWithContext(
+            <Form
+                fieldValidationDebounce={0} // trigger validation instantly
+                onFieldChange={onFieldChange}
+                handler={onSubmit}
+            />,
+            // @ts-expect-error partial Client
+            {},
+            defaultConfig,
+            defaultI18n
+        );
 
         const input = screen.queryByLabelText('Identifiant');
         expect(input).toBeInTheDocument();
@@ -186,7 +166,9 @@ describe('DOM testing', () => {
         const defaultValue = 'alice@reach5.co';
 
         const onFieldChange = jest.fn();
-        const onSubmit = jest.fn<(data: Model) => Promise<Model>>(data => Promise.resolve(data));
+        const onSubmit = jest.fn<(data: Model) => Promise<Model>>((data: Model) =>
+            Promise.resolve(data)
+        );
 
         const Form = createForm<Model>({
             fields: [
@@ -194,17 +176,17 @@ describe('DOM testing', () => {
             ],
         });
 
-        await waitFor(async () => {
-            return render(
-                <WidgetContext config={defaultConfig} defaultMessages={defaultI18n}>
-                    <Form
-                        fieldValidationDebounce={0} // trigger validation instantly
-                        handler={onSubmit}
-                        onFieldChange={onFieldChange}
-                    />
-                </WidgetContext>
-            );
-        });
+        await renderWithContext(
+            <Form
+                fieldValidationDebounce={0} // trigger validation instantly
+                onFieldChange={onFieldChange}
+                handler={onSubmit}
+            />,
+            // @ts-expect-error partial Client
+            {},
+            defaultConfig,
+            defaultI18n
+        );
 
         const input = screen.queryByLabelText('Identifiant');
         expect(input).toBeInTheDocument();

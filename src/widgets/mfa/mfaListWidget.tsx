@@ -17,7 +17,6 @@ import {
 } from '../../components/ui/alert-dialog';
 import { Button } from '../../components/ui/button';
 import { createWidget } from '../../components/widget/widget';
-import { useConfig } from '../../contexts/config';
 import { useI18n } from '../../contexts/i18n';
 import { useReachfive } from '../../contexts/reachfive.tsx';
 import { dateFormat } from '../../helpers/utils.ts';
@@ -123,8 +122,7 @@ export const MfaList = withCredentials(
         const [loading, setLoading] = React.useState(false);
         const [deleteConfirmationTitle, setDeleteConfirmationTitle] = React.useState('');
         const i18n = useI18n();
-        const config = useConfig();
-        const client = useReachfive();
+        const { client, config } = useReachfive();
         const { credentials, refresh } = useCredentials();
 
         const refreshCredentials = async () => {
@@ -241,9 +239,9 @@ export type MfaListWidgetProps = {
 
 export default createWidget<MfaListWidgetProps, MfaListProps & CredentialsProviderProps>({
     component: MfaList,
-    prepare: async (options, { apiClient }) => {
+    prepare: async (options, { client }) => {
         try {
-            const { credentials } = await apiClient.listMfaCredentials(options.accessToken);
+            const { credentials } = await client.listMfaCredentials(options.accessToken);
             options.onSuccess?.({
                 name: 'mfa_credentials_listed',
                 credentials,

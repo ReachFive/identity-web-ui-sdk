@@ -1,44 +1,20 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment jest-fixed-jsdom
  */
 import React from 'react';
 
 import { describe, expect, jest, test } from '@jest/globals';
 import '@testing-library/jest-dom/jest-globals';
-import { render, screen, waitFor } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import 'jest-styled-components';
 
-import { simpleField } from '../../../../src/components/form/fields/simpleField';
-import { createForm } from '../../../../src/components/form/formComponent';
-import { type I18nMessages } from '../../../../src/contexts/i18n';
-import { Validator } from '../../../../src/core/validation';
-import { WidgetContext } from '../WidgetContext';
+import { simpleField } from '@/components/form/fields/simpleField';
+import { createForm } from '@/components/form/formComponent';
+import { I18nMessages } from '@/contexts/i18n';
+import { Validator } from '@/core/validation';
 
-import type { Config } from '../../../../src/types';
-
-const defaultConfig: Config = {
-    clientId: 'local',
-    domain: 'local.reach5.net',
-    sso: false,
-    sms: false,
-    webAuthn: false,
-    language: 'fr',
-    pkceEnforced: false,
-    isPublic: true,
-    socialProviders: ['facebook', 'google'],
-    customFields: [],
-    resourceBaseUrl: 'http://localhost',
-    mfaSmsEnabled: false,
-    mfaEmailEnabled: false,
-    rbaEnabled: false,
-    consentsVersions: {},
-    passwordPolicy: {
-        minLength: 8,
-        minStrength: 2,
-        allowUpdateWithAccessTokenOnly: true,
-    },
-};
+import { defaultConfig, renderWithContext } from '../../../widgets/renderer';
 
 const defaultI18n: I18nMessages = {
     simple: 'simple',
@@ -54,23 +30,25 @@ describe('DOM testing', () => {
         const label = 'simple';
 
         const onFieldChange = jest.fn();
-        const onSubmit = jest.fn<(data: Model) => Promise<Model>>(data => Promise.resolve(data));
+        const onSubmit = jest.fn<(data: Model) => Promise<Model>>((data: Model) =>
+            Promise.resolve(data)
+        );
 
         const Form = createForm<Model>({
             fields: [simpleField({ type: 'text', key, label })],
         });
 
-        await waitFor(async () => {
-            return render(
-                <WidgetContext config={defaultConfig} defaultMessages={defaultI18n}>
-                    <Form
-                        fieldValidationDebounce={0} // trigger validation instantly
-                        onFieldChange={onFieldChange}
-                        handler={onSubmit}
-                    />
-                </WidgetContext>
-            );
-        });
+        await renderWithContext(
+            <Form
+                fieldValidationDebounce={0} // trigger validation instantly
+                onFieldChange={onFieldChange}
+                handler={onSubmit}
+            />,
+            // @ts-expect-error partial Client
+            {},
+            defaultConfig,
+            defaultI18n
+        );
 
         const input = screen.getByLabelText('simple');
         expect(input).toBeInTheDocument();
@@ -109,23 +87,25 @@ describe('DOM testing', () => {
         const defaultValue = 'my value';
 
         const onFieldChange = jest.fn();
-        const onSubmit = jest.fn<(data: Model) => Promise<Model>>(data => Promise.resolve(data));
+        const onSubmit = jest.fn<(data: Model) => Promise<Model>>((data: Model) =>
+            Promise.resolve(data)
+        );
 
         const Form = createForm<Model>({
             fields: [simpleField({ key, label, type, placeholder, defaultValue })],
         });
 
-        await waitFor(async () => {
-            return render(
-                <WidgetContext config={defaultConfig} defaultMessages={defaultI18n}>
-                    <Form
-                        fieldValidationDebounce={0} // trigger validation instantly
-                        onFieldChange={onFieldChange}
-                        handler={onSubmit}
-                    />
-                </WidgetContext>
-            );
-        });
+        await renderWithContext(
+            <Form
+                fieldValidationDebounce={0} // trigger validation instantly
+                onFieldChange={onFieldChange}
+                handler={onSubmit}
+            />,
+            // @ts-expect-error partial Client
+            {},
+            defaultConfig,
+            defaultI18n
+        );
 
         const input = screen.queryByLabelText('simple');
         expect(input).toBeInTheDocument();
@@ -149,7 +129,9 @@ describe('DOM testing', () => {
         const matchPassword = 'match value';
 
         const onFieldChange = jest.fn();
-        const onSubmit = jest.fn<(data: Model) => Promise<Model>>(data => Promise.resolve(data));
+        const onSubmit = jest.fn<(data: Model) => Promise<Model>>((data: Model) =>
+            Promise.resolve(data)
+        );
 
         const Form = createForm<Model>({
             fields: [
@@ -162,17 +144,17 @@ describe('DOM testing', () => {
             ],
         });
 
-        await waitFor(async () => {
-            return render(
-                <WidgetContext config={defaultConfig} defaultMessages={defaultI18n}>
-                    <Form
-                        fieldValidationDebounce={0} // trigger validation instantly
-                        handler={onSubmit}
-                        onFieldChange={onFieldChange}
-                    />
-                </WidgetContext>
-            );
-        });
+        await renderWithContext(
+            <Form
+                fieldValidationDebounce={0} // trigger validation instantly
+                onFieldChange={onFieldChange}
+                handler={onSubmit}
+            />,
+            // @ts-expect-error partial Client
+            {},
+            defaultConfig,
+            defaultI18n
+        );
 
         const input = screen.getByLabelText('simple');
         expect(input).toHaveAttribute('placeholder', 'simple');
