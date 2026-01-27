@@ -44,12 +44,14 @@ export interface LoginFormOptions {
     showForgotPassword?: boolean;
     showIdentifier?: boolean;
     showRememberMe?: boolean;
+    allowWebAuthnLogin?: boolean;
 }
 
 export const LoginForm = createForm<LoginFormData, LoginFormOptions>({
     prefix: 'r5-login-',
     fields({
-        allowCustomIdentifier,
+        allowWebAuthnLogin,
+        allowCustomIdentifier = true,
         allowAuthentMailPhone = true,
         canShowPassword,
         defaultIdentifier,
@@ -58,13 +60,14 @@ export const LoginForm = createForm<LoginFormData, LoginFormOptions>({
         i18n,
         config,
     }) {
+        const hasIdentifierField = allowAuthentMailPhone && (config.loginTypeAllowed.email || config.loginTypeAllowed.phoneNumber || allowWebAuthnLogin)
         return [
-            ...(allowAuthentMailPhone
+            ...(hasIdentifierField
                 ? [
                       identifierField(
                           {
                               defaultValue: defaultIdentifier,
-                              withPhoneNumber: showIdentifier && config.sms,
+                              withPhoneNumber: showIdentifier && config.loginTypeAllowed.phoneNumber,
                               required: !allowCustomIdentifier,
                               autoComplete: 'username webauthn',
                           },
@@ -72,7 +75,7 @@ export const LoginForm = createForm<LoginFormData, LoginFormOptions>({
                       ),
                   ]
                 : []),
-            ...(allowCustomIdentifier && allowAuthentMailPhone
+            ...(allowCustomIdentifier && hasIdentifierField
                 ? [
                       {
                           staticContent: <Separator text={i18n('or')} />,
