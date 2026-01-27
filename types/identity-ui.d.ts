@@ -1,6 +1,6 @@
 /**
- * @reachfive/identity-ui - v1.38.0
- * Compiled Tue, 04 Nov 2025 09:42:33 UTC
+ * @reachfive/identity-ui - v1.40.0
+ * Compiled Mon, 26 Jan 2026 08:53:59 UTC
  *
  * Copyright (c) ReachFive.
  *
@@ -12,10 +12,16 @@ import { AuthResult, SingleFactorPasswordlessParams, StepUpPasswordlessParams, M
 export { Config } from '@reachfive/identity-core';
 import * as React from 'react';
 import React__default, { CSSProperties, ComponentType, ComponentProps } from 'react';
+import { ResourceKey, TFunction } from 'i18next';
 import { StepUpPasswordlessParams as StepUpPasswordlessParams$1 } from '@reachfive/identity-core/es/main/oAuthClient';
 import { WidgetDisplayMode } from '@captchafox/types';
 import { Country, Value as Value$2 } from 'react-phone-number-input';
 import * as libphonenumber_js from 'libphonenumber-js';
+
+type I18nMessages = Record<string, ResourceKey>;
+type WithI18n<T> = T & {
+    i18n: TFunction;
+};
 
 type IdentifierType = 'email' | 'phone_number' | 'custom_identifier'
 
@@ -234,11 +240,6 @@ type OnSuccess = (event: SuccessEvent) => void;
 
 type OnError = (error?: unknown) => void;
 
-type I18nMessages = Record<string, string>;
-type I18nNestedMessages = Record<string, string | I18nMessages>;
-type I18nMessageParams = Record<string, unknown>;
-type I18nResolver = (key: string, params?: I18nMessageParams, fallback?: (params?: I18nMessageParams) => string) => string;
-
 declare module 'styled-components' {
     export interface DefaultTheme extends Theme {}
 }
@@ -420,8 +421,8 @@ interface Theme extends BaseTheme {
     passwordStrengthValidator: PasswordStrengthTheme;
 }
 
-type I18nProps$1 = {
-    i18n?: I18nNestedMessages;
+type I18nProps = {
+    i18n?: I18nMessages;
 };
 type ThemeProps = {
     theme?: ThemeOptions;
@@ -459,21 +460,16 @@ interface SuccessViewProps$1 {
 interface AccountRecoveryWidgetProps extends MainViewProps$6, SuccessViewProps$1 {
 }
 
-interface I18nProps {
-    i18n: I18nResolver;
-}
-type WithI18n<P> = P & I18nProps;
-
 interface PathMapping {
     bind<T extends Record<string, unknown>>(model: T): unknown;
     unbind<T extends Record<string, unknown>, V>(model: T, value: V): T | V;
 }
 
-declare class CompoundValidator<T, C = {}> {
+declare class CompoundValidator<T, C = unknown> {
     current: Validator<T, C> | CompoundValidator<T, C>;
     next: Validator<T, C> | CompoundValidator<T, C>;
     constructor(current: Validator<T, C> | CompoundValidator<T, C>, next: Validator<T, C> | CompoundValidator<T, C>);
-    create(i18n: I18nResolver): ValidatorInstance<T, C>;
+    create(i18n: TFunction): ValidatorInstance<T, C>;
     and(validator: Validator<T, C> | CompoundValidator<T, C>): CompoundValidator<T, C>;
 }
 type ValidatorError<Extra = {}> = {
@@ -493,12 +489,12 @@ interface ValidatorOptions<T, C, E = {}> {
     hint?: Hint<T> | string;
     parameters?: Record<string, unknown>;
 }
-declare class Validator<T, C = {}, E = {}> {
+declare class Validator<T, C = unknown, E = {}> {
     rule: Rule<T, C, E>;
     hint: Hint<T>;
     parameters: Record<string, unknown>;
     constructor({ rule, hint, parameters }: ValidatorOptions<T, C, E>);
-    create(i18n: I18nResolver): ValidatorInstance<T, C, E>;
+    create(i18n: TFunction): ValidatorInstance<T, C, E>;
     and(validator: Validator<T, C> | CompoundValidator<T, C>): CompoundValidator<T, C>;
 }
 
@@ -531,7 +527,7 @@ interface Field$1<T, P = {}, E extends Record<string, unknown> = {}, K extends s
     }) => React__default.ReactNode;
     initialize: <M extends Record<PropertyKey, unknown>>(model: Partial<M>) => FieldValue<T, K>;
     unbind: <M extends Record<PropertyKey, unknown>>(model: M, state: FieldValue<T, K, E>) => M;
-    validate: (data: FieldValue<T, K, E>, ctx: FormContext<any>) => Promise<ValidatorResult>;
+    validate: (data: FieldValue<T, K, E>, ctx: FormContext<unknown>) => Promise<ValidatorResult>;
 }
 type FieldValue<T, K extends string = 'raw', E extends Record<string, unknown> = {}> = E & {
     value?: FormValue<T, K>;
@@ -549,7 +545,7 @@ type FieldComponentProps<T, P = {}, E extends Record<string, unknown> = {}, K ex
     rawProperty?: K;
     required?: boolean;
     readOnly?: boolean;
-    i18n: I18nResolver;
+    i18n: TFunction;
     showLabel?: boolean;
     value?: FormValue<T, K>;
     validation?: ValidatorResult<E>;
@@ -567,7 +563,7 @@ type FieldDefinition<T, F = T, K extends string = 'raw'> = {
     autoComplete?: AutoFill;
     defaultValue?: T;
     format?: Formatter<T, F, K>;
-    validator?: Validator<F, any> | CompoundValidator<F, any>;
+    validator?: Validator<F, unknown> | CompoundValidator<F, unknown>;
     mapping?: PathMapping;
 };
 interface FieldProps<T, F, P extends FieldComponentProps<F, ExtraParams, E, K>, ExtraParams extends Record<string, unknown> = {}, K extends string = 'raw', E extends Record<string, unknown> = {}> extends FieldDefinition<T, F, K> {
@@ -576,7 +572,7 @@ interface FieldProps<T, F, P extends FieldComponentProps<F, ExtraParams, E, K>, 
     format?: Formatter<T, F, K>;
     rawProperty?: K;
     component: ComponentType<P>;
-    extendedParams?: ExtraParams | ((i18n: I18nResolver) => ExtraParams);
+    extendedParams?: ExtraParams | ((i18n: TFunction) => ExtraParams);
 }
 
 interface Option {
@@ -807,6 +803,12 @@ declare const predefinedFields: {
  */
 type Field = PredefinedFieldOptions | CustomFieldOptions | ConsentFieldOptions;
 
+/**
+ * The widget’s initial screen.
+ * @enum {('login' | 'login-with-web-authn' | 'signup' | 'forgot-password')}
+ */
+type InitialScreen = 'login' | 'login-with-web-authn' | 'signup' | 'signup-with-password' | 'signup-with-web-authn' | 'forgot-password';
+
 type StepUpFormData = {
     authType: StepUpPasswordlessParams$1['authType'];
 };
@@ -898,12 +900,6 @@ type VerificationCodeViewProps$3 = Prettify<Partial<StepUpHandlerResponse> & {
 declare const VerificationCodeView$1: (props: VerificationCodeViewProps$3) => React__default.JSX.Element;
 type MfaStepUpProps = MainViewProps$5 & FaSelectionViewProps & VerificationCodeViewProps$3;
 type MfaStepUpWidgetProps = MfaStepUpProps;
-
-/**
- * The widget’s initial screen.
- * @enum {('login' | 'login-with-web-authn' | 'signup' | 'forgot-password')}
- */
-type InitialScreen = 'login' | 'login-with-web-authn' | 'signup' | 'signup-with-password' | 'signup-with-web-authn' | 'forgot-password';
 
 interface CaptchaFoxConf {
     /**
@@ -1591,32 +1587,6 @@ type PasswordEditorWidgetProps = Omit<PasswordEditorProps, 'authentication'>;
 
 interface MainViewProps$2 {
     /**
-     * Whether or not to provide the display password in clear text option.
-     * @default false
-     */
-    canShowPassword?: boolean;
-    /**
-     * Callback function called when the request has succeed.
-     */
-    onSuccess?: OnSuccess;
-    /**
-     * Callback function called when the request has failed.
-     */
-    onError?: OnError;
-    /**
-     * Whether the form fields' labels are displayed on the form view.
-     * @default false
-     */
-    showLabels?: boolean;
-}
-interface SuccessViewProps {
-    loginLink?: string;
-}
-interface PasswordResetWidgetProps extends MainViewProps$2, SuccessViewProps {
-}
-
-interface MainViewProps$1 {
-    /**
      * List of authentication options
      */
     auth?: AuthOptions;
@@ -1654,7 +1624,7 @@ interface MainViewProps$1 {
      */
     onError?: OnError;
 }
-declare const MainView: ({ auth, authType, recaptcha_enabled, recaptcha_site_key, captchaFoxEnabled, captchaFoxMode, captchaFoxSiteKey, showIntro, showSocialLogins, socialProviders, phoneNumberOptions, onError, onSuccess, }: WithCaptchaProps<MainViewProps$1>) => React__default.JSX.Element;
+declare const MainView: ({ auth, authType, recaptcha_enabled, recaptcha_site_key, captchaFoxEnabled, captchaFoxMode, captchaFoxSiteKey, showIntro, showSocialLogins, socialProviders, phoneNumberOptions, onError, onSuccess, }: WithCaptchaProps<MainViewProps$2>) => React__default.JSX.Element;
 interface VerificationCodeViewProps$1 {
     /**
      * The passwordless auth type (`magic_link` or `sms`).
@@ -1672,6 +1642,32 @@ interface VerificationCodeViewProps$1 {
 }
 declare const VerificationCodeView: ({ authType, recaptcha_enabled, recaptcha_site_key, captchaFoxEnabled, captchaFoxMode, captchaFoxSiteKey, onSuccess, onError, }: WithCaptchaProps<VerificationCodeViewProps$1>) => React__default.JSX.Element;
 type PasswordlessWidgetProps = Prettify<ComponentProps<typeof MainView> & ComponentProps<typeof VerificationCodeView>>;
+
+interface MainViewProps$1 {
+    /**
+     * Whether or not to provide the display password in clear text option.
+     * @default false
+     */
+    canShowPassword?: boolean;
+    /**
+     * Callback function called when the request has succeed.
+     */
+    onSuccess?: OnSuccess;
+    /**
+     * Callback function called when the request has failed.
+     */
+    onError?: OnError;
+    /**
+     * Whether the form fields' labels are displayed on the form view.
+     * @default false
+     */
+    showLabels?: boolean;
+}
+interface SuccessViewProps {
+    loginLink?: string;
+}
+interface PasswordResetWidgetProps extends MainViewProps$1, SuccessViewProps {
+}
 
 interface MainViewProps {
     /**
@@ -1742,9 +1738,6 @@ interface ProfileEditorProps {
      * This URL must be whitelisted in the `Allowed Callback URLs` field of your ReachFive client settings.
      */
     redirectUrl?: string;
-    /**
-     *
-     */
     resolvedFields: FieldCreator<any, any, any, any>[];
     /**
      * Whether the form fields' labels are displayed on the form view.
@@ -1869,7 +1862,7 @@ interface WidgetProps {
      */
     onReady?: (instance: WidgetInstance) => void;
 }
-type WidgetOptions<P> = Prettify<P & WidgetProps & I18nProps$1 & ThemeProps>;
+type WidgetOptions<P> = Prettify<P & WidgetProps & I18nProps & ThemeProps>;
 type Widget<P> = (props: P, ctx: Context) => Promise<React__default.JSX.Element>;
 declare class UiClient {
     config: Config;
