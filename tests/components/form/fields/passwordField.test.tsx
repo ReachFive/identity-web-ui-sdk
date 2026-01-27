@@ -43,9 +43,9 @@ const defaultConfig: Config = {
     loginTypeAllowed: {
         email: true,
         phoneNumber: true,
-        customIdentifier: true
+        customIdentifier: true,
     },
-    isImplicitFlowForbidden: false
+    isImplicitFlowForbidden: false,
 };
 
 const defaultI18n: I18nMessages = {

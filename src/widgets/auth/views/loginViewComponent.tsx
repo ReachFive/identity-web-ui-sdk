@@ -60,14 +60,19 @@ export const LoginForm = createForm<LoginFormData, LoginFormOptions>({
         i18n,
         config,
     }) {
-        const hasIdentifierField = allowAuthentMailPhone && (config.loginTypeAllowed.email || config.loginTypeAllowed.phoneNumber || allowWebAuthnLogin)
+        const hasIdentifierField =
+            allowAuthentMailPhone &&
+            (config.loginTypeAllowed.email ||
+                config.loginTypeAllowed.phoneNumber ||
+                allowWebAuthnLogin);
         return [
             ...(hasIdentifierField
                 ? [
                       identifierField(
                           {
                               defaultValue: defaultIdentifier,
-                              withPhoneNumber: showIdentifier && config.loginTypeAllowed.phoneNumber,
+                              withPhoneNumber:
+                                  showIdentifier && config.loginTypeAllowed.phoneNumber,
                               required: !allowCustomIdentifier,
                               autoComplete: 'username webauthn',
                           },

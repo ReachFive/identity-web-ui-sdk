@@ -127,9 +127,9 @@ const defaultConfig: Config = {
     loginTypeAllowed: {
         email: true,
         phoneNumber: true,
-        customIdentifier: true
+        customIdentifier: true,
     },
-    isImplicitFlowForbidden: false
+    isImplicitFlowForbidden: false,
 };
 
 // function customFieldLabel(path: string, langCode: string) {

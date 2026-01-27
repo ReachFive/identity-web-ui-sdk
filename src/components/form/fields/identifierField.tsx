@@ -143,13 +143,13 @@ function isValidCountryCode(code?: string): code is CountryCode {
 }
 
 function computeDefaultKeyLabel(config: Config) {
-    const loginTypeAllowed = config.loginTypeAllowed
-    if(loginTypeAllowed.email && loginTypeAllowed.phoneNumber) {
-        return {k: 'identifier', l: 'identifier'}
-    } else if(loginTypeAllowed.email) {
-        return {k: 'email', l: 'email'}
+    const loginTypeAllowed = config.loginTypeAllowed;
+    if (loginTypeAllowed.email && loginTypeAllowed.phoneNumber) {
+        return { k: 'identifier', l: 'identifier' };
+    } else if (loginTypeAllowed.email) {
+        return { k: 'email', l: 'email' };
     } else {
-        return {k: 'phone_number', l: 'phoneNumber'}
+        return { k: 'phone_number', l: 'phoneNumber' };
     }
 }
 
@@ -162,7 +162,7 @@ export default function identifierField(
         IdentifierFieldExtraProps,
     config: Config
 ) {
-    const {k, l} = computeDefaultKeyLabel(config)
+    const { k, l } = computeDefaultKeyLabel(config);
 
     return createField<string, IdentifierData, IdentifierFieldProps>({
         ...props,
