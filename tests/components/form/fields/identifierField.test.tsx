@@ -49,7 +49,7 @@ const defaultConfig: Config = {
 const defaultI18n: I18nMessages = {
     identifier: 'Identifiant',
     email: 'Mon Email',
-    phoneNumber: 'Mon Numéro de téléphone'
+    phoneNumber: 'Mon Numéro de téléphone',
 };
 
 type Model = { identifier: string };
@@ -188,14 +188,14 @@ describe('DOM testing', () => {
 
     test('with phone number enabled login type email not allowed and no key/label', async () => {
         const user = userEvent.setup();
-        const configWithEmailLoginNotAllowed: Config =
-            {
-                ...defaultConfig, loginTypeAllowed: {
-                    email: false,
-                    phoneNumber: true,
-                    customIdentifier: true
-                }
-            }
+        const configWithEmailLoginNotAllowed: Config = {
+            ...defaultConfig,
+            loginTypeAllowed: {
+                email: false,
+                phoneNumber: true,
+                customIdentifier: true,
+            },
+        };
         const onFieldChange = jest.fn();
         const onSubmit = jest.fn<(data: Model) => Promise<Model>>(data => Promise.resolve(data));
 
@@ -217,7 +217,7 @@ describe('DOM testing', () => {
 
         const input = screen.queryByLabelText('Mon Numéro de téléphone');
         expect(input).toBeInTheDocument();
-        expect(input).toHaveAttribute('id', "phone_number");
+        expect(input).toHaveAttribute('id', 'phone_number');
         expect(input).toHaveValue('');
 
         if (!input) return;
@@ -259,20 +259,22 @@ describe('DOM testing', () => {
     test('with phone number disabled login type phone number not allowed and no key/label', async () => {
         const user = userEvent.setup();
 
-        const configWithPhoneNumberLoginNotAllowed: Config =
-            {
-                ...defaultConfig, loginTypeAllowed: {
-                    email: true,
-                    phoneNumber: false,
-                    customIdentifier: true
-                }
-            }
+        const configWithPhoneNumberLoginNotAllowed: Config = {
+            ...defaultConfig,
+            loginTypeAllowed: {
+                email: true,
+                phoneNumber: false,
+                customIdentifier: true,
+            },
+        };
 
         const onFieldChange = jest.fn();
         const onSubmit = jest.fn<(data: Model) => Promise<Model>>(data => Promise.resolve(data));
 
         const Form = createForm<Model>({
-            fields: [identifierField({ withPhoneNumber: false }, configWithPhoneNumberLoginNotAllowed)],
+            fields: [
+                identifierField({ withPhoneNumber: false }, configWithPhoneNumberLoginNotAllowed),
+            ],
         });
 
         await waitFor(async () => {
@@ -335,20 +337,25 @@ describe('DOM testing', () => {
         const key = 'identifier';
         const label = 'identifier';
 
-        const configWithEmailLoginNotAllowed: Config =
-            {
-                ...defaultConfig, loginTypeAllowed: {
-                    email: true,
-                    phoneNumber: false,
-                    customIdentifier: true
-                }
-            }
+        const configWithEmailLoginNotAllowed: Config = {
+            ...defaultConfig,
+            loginTypeAllowed: {
+                email: true,
+                phoneNumber: false,
+                customIdentifier: true,
+            },
+        };
 
         const onFieldChange = jest.fn();
         const onSubmit = jest.fn<(data: Model) => Promise<Model>>(data => Promise.resolve(data));
 
         const Form = createForm<Model>({
-            fields: [identifierField({key, label, withPhoneNumber: true }, configWithEmailLoginNotAllowed)],
+            fields: [
+                identifierField(
+                    { key, label, withPhoneNumber: true },
+                    configWithEmailLoginNotAllowed
+                ),
+            ],
         });
 
         await waitFor(async () => {
