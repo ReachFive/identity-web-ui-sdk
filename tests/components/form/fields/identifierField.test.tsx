@@ -48,6 +48,8 @@ const defaultConfig: Config = {
 
 const defaultI18n: I18nMessages = {
     identifier: 'Identifiant',
+    email: 'Mon Email',
+    phoneNumber: 'Mon Numéro de téléphone'
 };
 
 type Model = { identifier: string };
@@ -184,7 +186,225 @@ describe('DOM testing', () => {
         );
     });
 
-    test('with defaultIdentifier setted', async () => {
+    test('with phone number enabled login type email not allowed and no key/label', async () => {
+        const user = userEvent.setup();
+        const configWithEmailLoginNotAllowed: Config =
+            {
+                ...defaultConfig, loginTypeAllowed: {
+                    email: false,
+                    phoneNumber: true,
+                    customIdentifier: true
+                }
+            }
+        const onFieldChange = jest.fn();
+        const onSubmit = jest.fn<(data: Model) => Promise<Model>>(data => Promise.resolve(data));
+
+        const Form = createForm<Model>({
+            fields: [identifierField({ withPhoneNumber: true }, configWithEmailLoginNotAllowed)],
+        });
+
+        await waitFor(async () => {
+            return render(
+                <WidgetContext config={defaultConfig} defaultMessages={defaultI18n}>
+                    <Form
+                        fieldValidationDebounce={0} // trigger validation instantly
+                        handler={onSubmit}
+                        onFieldChange={onFieldChange}
+                    />
+                </WidgetContext>
+            );
+        });
+
+        const input = screen.queryByLabelText('Mon Numéro de téléphone');
+        expect(input).toBeInTheDocument();
+        expect(input).toHaveAttribute('id', "phone_number");
+        expect(input).toHaveValue('');
+
+        if (!input) return;
+
+        const emailValue = 'alice@reach5.co';
+        await user.clear(input);
+        await user.type(input, emailValue);
+        expect(input).toHaveValue(emailValue);
+
+        expect(onFieldChange).toHaveBeenLastCalledWith(
+            expect.objectContaining({
+                phoneNumber: emailValue,
+            })
+        );
+
+        const phoneValue = '+33123456789';
+        await user.clear(input);
+        await user.type(input, phoneValue);
+        expect(input).toHaveValue(phoneValue);
+
+        expect(onFieldChange).toHaveBeenLastCalledWith(
+            expect.objectContaining({
+                phoneNumber: format(phoneValue, 'FR', 'INTERNATIONAL'),
+            })
+        );
+
+        const otherValue = 'Alice971';
+        await user.clear(input);
+        await user.type(input, otherValue);
+        expect(input).toHaveValue(otherValue);
+
+        expect(onFieldChange).toHaveBeenLastCalledWith(
+            expect.objectContaining({
+                phoneNumber: otherValue,
+            })
+        );
+    });
+
+    test('with phone number disabled login type phone number not allowed and no key/label', async () => {
+        const user = userEvent.setup();
+
+        const configWithPhoneNumberLoginNotAllowed: Config =
+            {
+                ...defaultConfig, loginTypeAllowed: {
+                    email: true,
+                    phoneNumber: false,
+                    customIdentifier: true
+                }
+            }
+
+        const onFieldChange = jest.fn();
+        const onSubmit = jest.fn<(data: Model) => Promise<Model>>(data => Promise.resolve(data));
+
+        const Form = createForm<Model>({
+            fields: [identifierField({ withPhoneNumber: false }, configWithPhoneNumberLoginNotAllowed)],
+        });
+
+        await waitFor(async () => {
+            return render(
+                <WidgetContext config={defaultConfig} defaultMessages={defaultI18n}>
+                    <Form
+                        fieldValidationDebounce={0} // trigger validation instantly
+                        handler={onSubmit}
+                        onFieldChange={onFieldChange}
+                    />
+                </WidgetContext>
+            );
+        });
+
+        const input = screen.queryByLabelText('Mon Email');
+        expect(input).toBeInTheDocument();
+        expect(input).toHaveAttribute('id', 'email');
+        expect(input).toHaveValue('');
+
+        if (!input) return;
+
+        const emailValue = 'alice@reach5.co';
+        await user.clear(input);
+        await user.type(input, emailValue);
+        expect(input).toHaveValue(emailValue);
+
+        expect(onFieldChange).toHaveBeenLastCalledWith(
+            expect.objectContaining({
+                email: emailValue,
+            })
+        );
+
+        const phoneValue = '+33123456789';
+        await user.clear(input);
+        await user.type(input, phoneValue);
+        expect(input).toHaveValue(phoneValue);
+
+        // phone value is handled as "other" value type
+        expect(onFieldChange).toHaveBeenLastCalledWith(
+            expect.objectContaining({
+                email: phoneValue,
+            })
+        );
+
+        const otherValue = 'Alice971';
+        await user.clear(input);
+        await user.type(input, otherValue);
+        expect(input).toHaveValue(otherValue);
+
+        expect(onFieldChange).toHaveBeenLastCalledWith(
+            expect.objectContaining({
+                email: otherValue,
+            })
+        );
+    });
+
+    test('with phone number disabled login type phone number not allowed and key/label', async () => {
+        const user = userEvent.setup();
+
+        const key = 'identifier';
+        const label = 'identifier';
+
+        const configWithEmailLoginNotAllowed: Config =
+            {
+                ...defaultConfig, loginTypeAllowed: {
+                    email: true,
+                    phoneNumber: false,
+                    customIdentifier: true
+                }
+            }
+
+        const onFieldChange = jest.fn();
+        const onSubmit = jest.fn<(data: Model) => Promise<Model>>(data => Promise.resolve(data));
+
+        const Form = createForm<Model>({
+            fields: [identifierField({key, label, withPhoneNumber: true }, configWithEmailLoginNotAllowed)],
+        });
+
+        await waitFor(async () => {
+            return render(
+                <WidgetContext config={defaultConfig} defaultMessages={defaultI18n}>
+                    <Form
+                        fieldValidationDebounce={0} // trigger validation instantly
+                        handler={onSubmit}
+                        onFieldChange={onFieldChange}
+                    />
+                </WidgetContext>
+            );
+        });
+
+        const input = screen.queryByLabelText('Identifiant');
+        expect(input).toBeInTheDocument();
+        expect(input).toHaveAttribute('id', key);
+        expect(input).toHaveValue('');
+
+        if (!input) return;
+
+        const emailValue = 'alice@reach5.co';
+        await user.clear(input);
+        await user.type(input, emailValue);
+        expect(input).toHaveValue(emailValue);
+
+        expect(onFieldChange).toHaveBeenLastCalledWith(
+            expect.objectContaining({
+                identifier: emailValue,
+            })
+        );
+
+        const phoneValue = '+33123456789';
+        await user.clear(input);
+        await user.type(input, phoneValue);
+        expect(input).toHaveValue(phoneValue);
+
+        expect(onFieldChange).toHaveBeenLastCalledWith(
+            expect.objectContaining({
+                identifier: format(phoneValue, 'FR', 'INTERNATIONAL'),
+            })
+        );
+
+        const otherValue = 'Alice971';
+        await user.clear(input);
+        await user.type(input, otherValue);
+        expect(input).toHaveValue(otherValue);
+
+        expect(onFieldChange).toHaveBeenLastCalledWith(
+            expect.objectContaining({
+                identifier: otherValue,
+            })
+        );
+    });
+
+    test('with defaultIdentifier set', async () => {
         const user = userEvent.setup();
 
         const key = 'identifier';
