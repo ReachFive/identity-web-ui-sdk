@@ -40,7 +40,7 @@ export const LoginWithPasswordForm = createForm<
                 {
                     key: 'identifier',
                     defaultValue: username,
-                    withPhoneNumber: config.sms,
+                    withPhoneNumber: config.loginTypeAllowed.phoneNumber,
                     readOnly: true,
                 },
                 config
