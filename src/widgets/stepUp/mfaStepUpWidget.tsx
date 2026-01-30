@@ -154,7 +154,7 @@ export const MainView = ({
 
     useEffect(() => {
         if (!showStepUpStart) {
-            onGetStepUpToken();
+            onGetStepUpToken().catch(onError);
         }
     }, [showStepUpStart, onGetStepUpToken]);
 
@@ -212,29 +212,29 @@ type StepUpResponse = RequiredProperty<PasswordlessResponse, 'challengeId'>;
 
 type StepUpHandlerResponse = StepUpResponse & StepUpFormData;
 
-export const FaSelectionView = (props: FaSelectionViewProps) => {
+export const FaSelectionView = ({
+    onError = (() => {}) as OnError,
+    onSuccess,
+    ...props
+}: FaSelectionViewProps) => {
     const coreClient = useReachfive();
     const i18n = useI18n();
     const { params } = useRouting();
     const state = params as FaSelectionViewState;
 
-    const {
-        amr,
-        onError = (() => {}) as OnError,
-        showIntro = true,
-        token,
-    } = { ...props, ...state };
+    const { allowTrustDevice, amr, auth, showIntro = true, token } = { ...props, ...state };
 
     const [response, setResponse] = useState<StepUpHandlerResponse | undefined>();
 
     const onChooseFa = useCallback(
-        (factor: StepUpFormData): Promise<void> =>
-            coreClient.startPasswordless({ ...factor, stepUp: token }).then(resp =>
+        async (factor: StepUpFormData): Promise<void> => {
+            await coreClient.startPasswordless({ ...factor, stepUp: token }).then(resp =>
                 setResponse({
                     ...(resp as StepUpResponse),
                     ...factor,
                 })
-            ),
+            );
+        },
         [coreClient, token]
     );
 
@@ -242,16 +242,16 @@ export const FaSelectionView = (props: FaSelectionViewProps) => {
         if (amr.length === 1) {
             onChooseFa({ authType: amr[0] as StepUpPasswordlessParams['authType'] }).catch(onError);
         }
-    }, [amr, onChooseFa, onError]);
+    }, [amr, onChooseFa]);
 
     if (response) {
         return (
             <VerificationCodeView
                 {...response}
-                auth={state.auth ?? props.auth}
-                allowTrustDevice={props.allowTrustDevice}
-                onError={props.onError}
-                onSuccess={props.onSuccess}
+                auth={auth}
+                allowTrustDevice={allowTrustDevice}
+                onError={onError}
+                onSuccess={onSuccess}
             />
         );
     }
@@ -297,21 +297,18 @@ export type VerificationCodeViewProps = Prettify<
     }
 >;
 
-export const VerificationCodeView = (props: VerificationCodeViewProps) => {
+export const VerificationCodeView = ({
+    onError = (() => {}) as OnError,
+    onSuccess = (() => {}) as OnSuccess,
+    ...props
+}: VerificationCodeViewProps) => {
     const coreClient = useReachfive();
     const i18n = useI18n();
     const { params } = useRouting();
     const { rbaEnabled, domain } = useConfig();
     const state = params as VerificationCodeViewState;
 
-    const {
-        auth,
-        authType,
-        challengeId,
-        allowTrustDevice,
-        onError = (() => {}) as OnError,
-        onSuccess = (() => {}) as OnSuccess,
-    } = { ...props, ...state };
+    const { auth, authType, challengeId, allowTrustDevice } = { ...props, ...state };
 
     const handleSubmit = (data: VerificationCodeInputFormData) => {
         const isOrchestratedFlow = new URLSearchParams(window.location.search).has(
