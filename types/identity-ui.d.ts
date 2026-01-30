@@ -1,6 +1,6 @@
 /**
- * @reachfive/identity-ui - v1.40.0
- * Compiled Mon, 26 Jan 2026 08:53:59 UTC
+ * @reachfive/identity-ui - v1.40.1
+ * Compiled Fri, 30 Jan 2026 08:49:30 UTC
  *
  * Copyright (c) ReachFive.
  *
@@ -875,7 +875,7 @@ type FaSelectionViewProps = Prettify<Partial<MFA.StepUpResponse> & {
 }>;
 type StepUpResponse = RequiredProperty<PasswordlessResponse, 'challengeId'>;
 type StepUpHandlerResponse = StepUpResponse & StepUpFormData;
-declare const FaSelectionView: (props: FaSelectionViewProps) => React__default.JSX.Element | null;
+declare const FaSelectionView: ({ onError, onSuccess, ...props }: FaSelectionViewProps) => React__default.JSX.Element | null;
 type VerificationCodeViewState = Prettify<StepUpHandlerResponse>;
 type VerificationCodeViewProps$3 = Prettify<Partial<StepUpHandlerResponse> & {
     /**
@@ -897,7 +897,7 @@ type VerificationCodeViewProps$3 = Prettify<Partial<StepUpHandlerResponse> & {
      */
     onError?: OnError;
 }>;
-declare const VerificationCodeView$1: (props: VerificationCodeViewProps$3) => React__default.JSX.Element;
+declare const VerificationCodeView$1: ({ onError, onSuccess, ...props }: VerificationCodeViewProps$3) => React__default.JSX.Element;
 type MfaStepUpProps = MainViewProps$5 & FaSelectionViewProps & VerificationCodeViewProps$3;
 type MfaStepUpWidgetProps = MfaStepUpProps;
 

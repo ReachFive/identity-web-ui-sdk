@@ -7,6 +7,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.40.1] - 2025-01-30
+
+### Fixed
+
+- Fix to avoid multiples passwordless start call on the step up workflow when the onError callback is not defined.
+
 ## [1.40.0] - 2025-01-26
 
 ### Changed
@@ -676,7 +682,8 @@ The eye icon is now correctly displayed in the Auth widget.
 
 First version of the SDK Web UI.
 
-[Unreleased]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.40.0...HEAD
+[Unreleased]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.40.1...HEAD
+[1.40.1]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.40.0...v1.40.1
 [1.40.0]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.39.0...v1.40.0
 [1.39.0]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.38.0...v1.39.0
 [1.38.0]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.37.0...v1.38.0
