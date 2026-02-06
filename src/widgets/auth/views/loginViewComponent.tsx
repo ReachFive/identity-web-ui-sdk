@@ -44,14 +44,12 @@ export interface LoginFormOptions {
     showForgotPassword?: boolean;
     showIdentifier?: boolean;
     showRememberMe?: boolean;
-    allowWebAuthnLogin?: boolean;
 }
 
 export const LoginForm = createForm<LoginFormData, LoginFormOptions>({
     prefix: 'r5-login-',
     fields({
-        allowWebAuthnLogin,
-        allowCustomIdentifier = true,
+        allowCustomIdentifier,
         allowAuthentMailPhone = true,
         canShowPassword,
         defaultIdentifier,
@@ -62,9 +60,7 @@ export const LoginForm = createForm<LoginFormData, LoginFormOptions>({
     }) {
         const hasIdentifierField =
             allowAuthentMailPhone &&
-            (config.loginTypeAllowed.email ||
-                config.loginTypeAllowed.phoneNumber ||
-                allowWebAuthnLogin);
+            (config.loginTypeAllowed.email || config.loginTypeAllowed.phoneNumber);
         return [
             ...(hasIdentifierField
                 ? [
@@ -75,7 +71,6 @@ export const LoginForm = createForm<LoginFormData, LoginFormOptions>({
                                   showIdentifier && config.loginTypeAllowed.phoneNumber,
                               required: !allowCustomIdentifier,
                               autoComplete: 'username webauthn',
-                              allowWebAuthnLogin,
                           },
                           config
                       ),

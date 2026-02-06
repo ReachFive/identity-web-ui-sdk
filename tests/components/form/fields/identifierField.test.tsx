@@ -186,7 +186,7 @@ describe('DOM testing', () => {
         );
     });
 
-    test('with phone number enabled login type email not allowed and no key/label', async () => {
+    test('withPhoneNumber = true | loginTypeAllowed.phoneNumber = true | loginTypeAllowed.email = false | no key/label', async () => {
         const user = userEvent.setup();
         const configWithEmailLoginNotAllowed: Config = {
             ...defaultConfig,
@@ -256,7 +256,7 @@ describe('DOM testing', () => {
         );
     });
 
-    test('with phone number disabled login type phone number not allowed and no key/label', async () => {
+    test('withPhoneNumber = false | loginTypeAllowed.phoneNumber = false | loginTypeAllowed.email = true | no key/label', async () => {
         const user = userEvent.setup();
 
         const configWithPhoneNumberLoginNotAllowed: Config = {
@@ -331,7 +331,7 @@ describe('DOM testing', () => {
         );
     });
 
-    test('with phone number disabled login type phone number not allowed and key/label', async () => {
+    test('withPhoneNumber = false | loginTypeAllowed.phoneNumber = false | loginTypeAllowed.email = true | key/label', async () => {
         const user = userEvent.setup();
 
         const key = 'identifier';
@@ -410,7 +410,7 @@ describe('DOM testing', () => {
             })
         );
     });
-    test('with login type phone number disabled email login type disabled and no default key/label', async () => {
+    test('withPhoneNumber = false | loginTypeAllowed.phoneNumber = true | loginTypeAllowed.email = true | no key/label', async () => {
         const user = userEvent.setup();
 
         const configWithEmailLoginNotAllowed: Config = {
@@ -550,7 +550,7 @@ describe('DOM testing', () => {
         );
     });
 
-    test('with login type phone number disabled | email login type enabled | allowWebAuthnLogin true', async () => {
+    test('withPhoneNumber = true | loginTypeAllowed.phoneNumber = false | loginTypeAllowed.email = true | isWebAuthnLogin = true | no key/label', async () => {
         const user = userEvent.setup();
 
         const configWithEmailLoginNotAllowed: Config = {
@@ -568,7 +568,7 @@ describe('DOM testing', () => {
         const Form = createForm<Model>({
             fields: [
                 identifierField(
-                    { withPhoneNumber: false, allowWebAuthnLogin: true },
+                    { withPhoneNumber: false, isWebAuthnLogin: true },
                     configWithEmailLoginNotAllowed
                 ),
             ],

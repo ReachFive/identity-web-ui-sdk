@@ -40,6 +40,7 @@ export const LoginWithWebAuthnForm = createForm<
                     withPhoneNumber: showIdentifier && config.loginTypeAllowed.phoneNumber,
                     required: true,
                     autoComplete: 'username webauthn',
+                    isWebAuthnLogin: true,
                 },
                 config
             ),
