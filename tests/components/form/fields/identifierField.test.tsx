@@ -410,6 +410,76 @@ describe('DOM testing', () => {
             })
         );
     });
+    test('with login type phone number disabled email login type disabled and no default key/label', async () => {
+        const user = userEvent.setup();
+
+        const configWithEmailLoginNotAllowed: Config = {
+            ...defaultConfig,
+            loginTypeAllowed: {
+                email: false,
+                phoneNumber: false,
+                customIdentifier: true,
+            },
+        };
+
+        const onFieldChange = jest.fn();
+        const onSubmit = jest.fn<(data: Model) => Promise<Model>>(data => Promise.resolve(data));
+
+        const Form = createForm<Model>({
+            fields: [identifierField({ withPhoneNumber: false }, configWithEmailLoginNotAllowed)],
+        });
+
+        await waitFor(async () => {
+            return render(
+                <WidgetContext config={defaultConfig} defaultMessages={defaultI18n}>
+                    <Form
+                        fieldValidationDebounce={0} // trigger validation instantly
+                        handler={onSubmit}
+                        onFieldChange={onFieldChange}
+                    />
+                </WidgetContext>
+            );
+        });
+
+        const input = screen.queryByLabelText('Identifiant');
+        expect(input).toBeInTheDocument();
+        expect(input).toHaveValue('');
+
+        if (!input) return;
+
+        const emailValue = 'alice@reach5.co';
+        await user.clear(input);
+        await user.type(input, emailValue);
+        expect(input).toHaveValue(emailValue);
+
+        expect(onFieldChange).toHaveBeenLastCalledWith(
+            expect.objectContaining({
+                identifier: emailValue,
+            })
+        );
+
+        const phoneValue = '+33123456789';
+        await user.clear(input);
+        await user.type(input, phoneValue);
+        expect(input).toHaveValue(phoneValue);
+
+        expect(onFieldChange).toHaveBeenLastCalledWith(
+            expect.objectContaining({
+                identifier: phoneValue,
+            })
+        );
+
+        const otherValue = 'Alice971';
+        await user.clear(input);
+        await user.type(input, otherValue);
+        expect(input).toHaveValue(otherValue);
+
+        expect(onFieldChange).toHaveBeenLastCalledWith(
+            expect.objectContaining({
+                identifier: otherValue,
+            })
+        );
+    });
 
     test('with defaultIdentifier set', async () => {
         const user = userEvent.setup();

@@ -148,8 +148,10 @@ function computeDefaultKeyLabel(config: Config) {
         return { k: 'identifier', l: 'identifier' };
     } else if (loginTypeAllowed.email) {
         return { k: 'email', l: 'email' };
-    } else {
+    } else if (loginTypeAllowed.phoneNumber) {
         return { k: 'phone_number', l: 'phoneNumber' };
+    } else {
+        return { k: 'identifier', l: 'identifier' };
     }
 }
 
