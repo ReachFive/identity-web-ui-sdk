@@ -75,6 +75,7 @@ export const LoginForm = createForm<LoginFormData, LoginFormOptions>({
                                   showIdentifier && config.loginTypeAllowed.phoneNumber,
                               required: !allowCustomIdentifier,
                               autoComplete: 'username webauthn',
+                              allowWebAuthnLogin,
                           },
                           config
                       ),
