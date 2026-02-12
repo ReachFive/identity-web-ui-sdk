@@ -117,7 +117,7 @@ describe('DOM testing', () => {
             await user.click(screen.getByTestId('submit'));
         }
 
-        await waitFor(async () => {
+        await waitFor(() => {
             expect(startPasswordless).toHaveBeenNthCalledWith(
                 1,
                 expect.objectContaining({
@@ -130,7 +130,7 @@ describe('DOM testing', () => {
         // wait for view redirect to code verification view
         expect(await screen.findByText('passwordless.sms.verification.intro')).toBeInTheDocument();
 
-        expect(screen.queryByLabelText('verificationCode')).toBeInTheDocument();
+        expect(screen.getByLabelText('verificationCode')).toBeInTheDocument();
         const input = screen.getByPlaceholderText('verificationCode');
         expect(input).toBeInTheDocument();
         const submitBtn = screen.getByTestId('submit');
@@ -209,6 +209,28 @@ describe('DOM testing', () => {
             // StepUp start button
             const stepUpStartBtn = screen.queryByText('mfa.stepUp.start');
             expect(stepUpStartBtn).not.toBeInTheDocument();
+
+            await assertStepUpWorkflow(user, ['sms']);
+        });
+
+        /**
+         * @link https://reach5.atlassian.net/browse/CA-5809
+         */
+        test('without onError callback', async () => {
+            expect.assertions(11);
+
+            const user = userEvent.setup();
+
+            await generateComponent({
+                auth,
+                onError: undefined,
+            });
+
+            // StepUp start button
+            const stepUpStartBtn = screen.getByText('mfa.stepUp.start');
+            expect(stepUpStartBtn).toBeInTheDocument();
+
+            await user.click(stepUpStartBtn);
 
             await assertStepUpWorkflow(user, ['sms']);
         });
