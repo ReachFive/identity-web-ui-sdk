@@ -37,6 +37,12 @@ const defaultConfig: Config = {
         minStrength: 2,
         allowUpdateWithAccessTokenOnly: true,
     },
+    loginTypeAllowed: {
+        email: true,
+        phoneNumber: true,
+        customIdentifier: true,
+    },
+    isImplicitFlowForbidden: false,
 };
 
 const defaultI18n: I18nMessages = {

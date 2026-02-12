@@ -61,6 +61,7 @@ function specializeRefinedIdentifier<T>(
 
 type IdentifierFieldExtraProps = {
     withPhoneNumber?: boolean;
+    isWebAuthnLogin?: boolean;
 };
 
 export interface IdentifierFieldProps extends FieldComponentProps<
@@ -142,19 +143,35 @@ function isValidCountryCode(code?: string): code is CountryCode {
     return typeof code === 'string' && libphonenumber.isSupportedCountry(code);
 }
 
+function computeDefaultKeyLabel(config: Config, isWebAuthnLogin: boolean) {
+    const loginTypeAllowed = config.loginTypeAllowed;
+    if ((loginTypeAllowed.email && loginTypeAllowed.phoneNumber) || isWebAuthnLogin) {
+        return { k: 'identifier', l: 'identifier' };
+    } else if (loginTypeAllowed.email) {
+        return { k: 'email', l: 'email' };
+    } else if (loginTypeAllowed.phoneNumber) {
+        return { k: 'phone_number', l: 'phoneNumber' };
+    } else {
+        return { k: 'identifier', l: 'identifier' };
+    }
+}
+
 export default function identifierField(
     {
-        key = 'identifier',
-        label = 'identifier',
+        key,
+        label,
+        isWebAuthnLogin = false,
         ...props
     }: Optional<FieldDefinition<string, IdentifierData>, 'key' | 'label'> &
         IdentifierFieldExtraProps,
     config: Config
 ) {
+    const { k, l } = computeDefaultKeyLabel(config, isWebAuthnLogin);
+
     return createField<string, IdentifierData, IdentifierFieldProps>({
         ...props,
-        key,
-        label,
+        key: key ?? k,
+        label: label ?? l,
         format: {
             bind: value =>
                 specializeRawIdentifier(

@@ -124,6 +124,12 @@ const defaultConfig: Config = {
         minStrength: 2,
         allowUpdateWithAccessTokenOnly: true,
     },
+    loginTypeAllowed: {
+        email: true,
+        phoneNumber: true,
+        customIdentifier: true,
+    },
+    isImplicitFlowForbidden: false,
 };
 
 // function customFieldLabel(path: string, langCode: string) {

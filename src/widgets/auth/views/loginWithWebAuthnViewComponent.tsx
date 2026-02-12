@@ -37,9 +37,10 @@ export const LoginWithWebAuthnForm = createForm<
             identifierField(
                 {
                     defaultValue: defaultIdentifier,
-                    withPhoneNumber: showIdentifier && config.sms,
+                    withPhoneNumber: showIdentifier && config.loginTypeAllowed.phoneNumber,
                     required: true,
                     autoComplete: 'username webauthn',
+                    isWebAuthnLogin: true,
                 },
                 config
             ),
