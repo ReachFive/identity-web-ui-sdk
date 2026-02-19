@@ -16,6 +16,14 @@ import packageJson from './package.json' with { type: 'json' };
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
+/** @type {import('@rollup/plugin-alias').AliasEntry[]} */
+const aliasEntries = [
+    {
+        find: /^@\/(.*)/,
+        replacement: path.resolve(__dirname, './src/$1'),
+    },
+];
+
 const dependencies = Object.keys(packageJson.dependencies);
 
 const banner = [
@@ -51,14 +59,7 @@ const bundle = config => ({
 
 /** @type {import('rollup').InputPluginOption} */
 const plugins = [
-    alias({
-        entries: [
-            {
-                find: /^@\/(.*)/,
-                replacement: path.resolve(__dirname, './src/$1'),
-            },
-        ],
-    }),
+    alias({ entries: aliasEntries }),
     replace({
         preventAssignment: true,
         values: {
@@ -144,7 +145,7 @@ export default [
         onwarn: onWarn,
     }),
     bundle({
-        plugins: [dts()],
+        plugins: [alias({ entries: aliasEntries }), dts()],
         output: {
             banner,
             file: packageJson.types,

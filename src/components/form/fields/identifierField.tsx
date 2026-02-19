@@ -1,18 +1,29 @@
 import React from 'react';
 
-import type { CountryCode } from 'libphonenumber-js';
-import * as libphonenumber from 'libphonenumber-js';
+import {
+    AsYouType,
+    isSupportedCountry,
+    isValidPhoneNumber,
+    parsePhoneNumberFromString,
+    type CountryCode,
+} from 'libphonenumber-js';
+import isEmail from 'validator/lib/isEmail';
 
-import { email, isValidatorError, Validator } from '../../../core/validation';
-import { isRichFormValue } from '../../../helpers/utils';
-import { Config, Optional } from '../../../types';
-import { createField, type FieldComponentProps, type FieldDefinition } from '../fieldCreator';
-import { FormGroup, Input } from '../formControlsComponent';
+import {
+    createField,
+    type FieldComponentProps,
+    type FieldDefinition,
+} from '@/components/form/fieldCreator';
+import { FormGroup, Input } from '@/components/form/formControlsComponent';
+import { useConfig } from '@/contexts/config';
+import { isValidatorError, Validator } from '@/core/validation';
+import { isRichFormValue } from '@/helpers/utils';
+import { Config, Optional } from '@/types';
 
 /*
  * All possible Identifier data is in the `value` prop, they should all be preserved when the type changes.
  */
-interface IdentifierData {
+export interface IdentifierData {
     value?: string;
     type?: 'tel' | 'email' | 'text';
     country?: CountryCode;
@@ -27,23 +38,29 @@ function specializeRawIdentifier(
     emailCall?: (value?: string) => IdentifierData,
     otherCall?: (value?: string) => IdentifierData
 ): IdentifierData {
-    if (withPhoneNumber && inputValue && /^\+?[0-9]+$/.test(inputValue)) {
+    if (withPhoneNumber && inputValue && /^\+?[0-9\s\-()]+$/.test(inputValue)) {
         return {
+            type: 'tel',
+            country: undefined,
+            formatted: undefined,
             value: inputValue,
             ...(telCall?.(inputValue) ?? {}),
-            type: 'tel',
         };
-    } else if (inputValue?.includes('@')) {
+    } else if (inputValue && isEmail(inputValue)) {
         return {
+            type: 'email',
+            country: undefined,
+            formatted: undefined,
             value: inputValue,
             ...(emailCall?.(inputValue) ?? {}),
-            type: 'email',
         };
     } else {
         return {
+            type: 'text',
+            country: undefined,
+            formatted: undefined,
             value: inputValue,
             ...(otherCall?.(inputValue) ?? {}),
-            type: 'text',
         };
     }
 }
@@ -83,23 +100,36 @@ function IdentifierField({
     value,
     withPhoneNumber,
 }: IdentifierFieldProps) {
+    const config = useConfig();
+
     const currentValue = isRichFormValue(value, 'raw') ? value.raw : value;
+
+    const country: CountryCode = React.useMemo(() => {
+        if (currentValue?.value) {
+            const parsed = parsePhoneNumberFromString(currentValue.value);
+            if (parsed?.country) return parsed.country;
+        }
+        if (config.locale && isSupportedCountry(config.locale)) return config.locale;
+        if (config.countryCode && isSupportedCountry(config.countryCode.toLocaleUpperCase()))
+            return config.countryCode.toLocaleUpperCase() as CountryCode;
+        if (config.language && isSupportedCountry(config.language.toLocaleUpperCase()))
+            return config.language.toLocaleUpperCase() as CountryCode;
+        return 'FR' satisfies CountryCode;
+    }, [currentValue]);
 
     const asYouType = (inputValue?: string): IdentifierData => {
         if (!inputValue) return {};
-
-        const parsed = libphonenumber.parsePhoneNumberFromString(inputValue);
-        return parsed
-            ? {
-                  country: parsed.country,
-                  formatted: parsed.formatInternational(),
-                  isValid: parsed.isValid(),
-                  value: inputValue,
-              }
-            : {
-                  isValid: false,
-                  value: inputValue,
-              };
+        const formatter = new AsYouType(country);
+        const formatted = formatter.input(inputValue);
+        const parsed = parsePhoneNumberFromString(formatted, country);
+        const isValid = parsed?.number ? isValidPhoneNumber(parsed.number) : false;
+        return {
+            country: parsed?.country ?? formatter.country ?? country,
+            formatted,
+            isValid,
+            type: 'tel',
+            value: parsed?.number ?? inputValue,
+        };
     };
 
     const changeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -124,7 +154,7 @@ function IdentifierField({
                 id={inputId}
                 name={path}
                 type="text"
-                value={currentValue?.value ?? ''}
+                value={currentValue?.formatted ?? currentValue?.value ?? ''}
                 placeholder={placeholder}
                 title={label}
                 autoComplete={autoComplete}
@@ -139,12 +169,7 @@ function IdentifierField({
     );
 }
 
-function isValidCountryCode(code?: string): code is CountryCode {
-    return typeof code === 'string' && libphonenumber.isSupportedCountry(code);
-}
-
-function computeDefaultKeyLabel(config: Config, isWebAuthnLogin: boolean) {
-    const loginTypeAllowed = config.loginTypeAllowed;
+function computeDefaultKeyLabel({ loginTypeAllowed }: Config, isWebAuthnLogin: boolean) {
     if ((loginTypeAllowed.email && loginTypeAllowed.phoneNumber) || isWebAuthnLogin) {
         return { k: 'identifier', l: 'identifier' };
     } else if (loginTypeAllowed.email) {
@@ -177,34 +202,16 @@ export default function identifierField(
                 specializeRawIdentifier(
                     props.withPhoneNumber,
                     value,
-                    () =>
-                        ({
-                            country: isValidCountryCode(config.countryCode)
-                                ? config.countryCode
-                                : undefined,
-                            isValid: true,
-                        }) satisfies IdentifierData,
-                    () =>
-                        ({
-                            country: isValidCountryCode(config.countryCode)
-                                ? config.countryCode
-                                : undefined,
-                            isValid: true,
-                        }) satisfies IdentifierData,
-                    () =>
-                        ({
-                            country: isValidCountryCode(config.countryCode)
-                                ? config.countryCode
-                                : undefined,
-                            isValid: true,
-                        }) satisfies IdentifierData
+                    () => ({ isValid: isValidPhoneNumber(value ?? '') }) satisfies IdentifierData,
+                    () => ({ isValid: isEmail(value ?? '') }) satisfies IdentifierData,
+                    () => ({ isValid: true }) satisfies IdentifierData
                 ),
             unbind: value => {
                 const identifier = isRichFormValue(value, 'raw') ? value.raw : value;
                 return identifier
                     ? specializeRefinedIdentifier(
                           identifier,
-                          v => v?.formatted ?? v?.value ?? null,
+                          v => v?.value ?? null,
                           v => v?.value ?? null,
                           v => v?.value ?? null
                       )
@@ -212,11 +219,11 @@ export default function identifierField(
             },
         },
         validator: new Validator<IdentifierData, unknown>({
-            rule: (value, ctx) =>
-                specializeRefinedIdentifier(
+            rule: (value: IdentifierData) =>
+                specializeRefinedIdentifier<boolean>(
                     value,
                     v => v.isValid ?? !props.withPhoneNumber,
-                    v => email.rule(v.value ?? '', ctx),
+                    v => isEmail(v.value ?? ''),
                     v => v.isValid ?? true
                 ) ?? true,
             hint: value =>

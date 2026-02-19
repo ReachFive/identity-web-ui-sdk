@@ -66,10 +66,16 @@ export default class ReCaptcha {
     };
 }
 
-export function importGoogleRecaptchaScript(site_key?: string) {
-    const script = document.createElement('script');
-    script.src = 'https://www.google.com/recaptcha/api.js?render=' + site_key;
-    document.body.appendChild(script);
+export function importGoogleRecaptchaScript(siteKey?: string) {
+    const src = `https://www.google.com/recaptcha/api.js?render=${siteKey}`;
+    if (!document.body.querySelector(`script[src="${src}"]`)) {
+        const script = document.createElement('script');
+        script.type = 'text/javascript';
+        script.async = true;
+        script.defer = true;
+        script.src = src;
+        document.body.appendChild(script);
+    }
 }
 
 export function extractCaptchaTokenFromData<T extends { captchaToken?: string }>(data: T) {

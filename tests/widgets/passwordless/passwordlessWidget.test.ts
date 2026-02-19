@@ -3,7 +3,7 @@
  */
 import { beforeEach, describe, expect, jest, test } from '@jest/globals';
 import '@testing-library/jest-dom/jest-globals';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import 'jest-styled-components';
 
@@ -58,10 +58,8 @@ describe('Snapshot', () => {
                 defaultI18n,
             });
 
-            await waitFor(async () => {
-                const { container } = await render(widget);
-                expect(container).toMatchSnapshot();
-            });
+            const { container } = render(widget);
+            expect(container).toMatchSnapshot();
         };
 
     describe('passwordless', () => {
@@ -102,7 +100,7 @@ describe('DOM testing', () => {
             { config: { ...defaultConfig, ...config }, apiClient, defaultI18n }
         );
 
-        return waitFor(async () => render(result));
+        return render(result);
     };
 
     describe('passwordless', () => {
@@ -116,10 +114,10 @@ describe('DOM testing', () => {
             await generateComponent();
 
             // Intro
-            expect(screen.queryByText('passwordless.intro')).toBeInTheDocument();
+            expect(screen.getByText('passwordless.intro')).toBeInTheDocument();
 
             // Label
-            expect(screen.queryByLabelText('email')).toBeInTheDocument();
+            expect(screen.getByLabelText('email')).toBeInTheDocument();
 
             // Input email
             const emailInput = screen.getByTestId('email');
@@ -140,7 +138,7 @@ describe('DOM testing', () => {
                 undefined // auth
             );
 
-            expect(screen.queryByText('passwordless.emailSent')).toBeInTheDocument();
+            expect(screen.getByText('passwordless.emailSent')).toBeInTheDocument();
 
             expect(onSuccess).toBeCalledWith(
                 expect.objectContaining({
@@ -176,10 +174,10 @@ describe('DOM testing', () => {
             await generateComponent({ authType: 'sms' });
 
             // Intro
-            expect(screen.queryByText('passwordless.sms.intro')).toBeInTheDocument();
+            expect(screen.getByText('passwordless.sms.intro')).toBeInTheDocument();
 
             // Label
-            expect(screen.queryByLabelText('phoneNumber')).toBeInTheDocument();
+            expect(screen.getByLabelText('phoneNumber')).toBeInTheDocument();
 
             // Input phone number
             const phoneNumberInput = screen.getByTestId('phone_number');
@@ -272,10 +270,8 @@ describe('DOM testing', () => {
 
             expect(verifyPasswordless).toBeCalled();
 
-            await waitFor(async () => {
-                expect(onSuccess).not.toBeCalledWith(expect.objectContaining({ name: 'login' }));
-                expect(onError).toBeCalledWith('Unexpected error');
-            });
+            expect(onSuccess).not.toBeCalledWith(expect.objectContaining({ name: 'login' }));
+            expect(onError).toBeCalledWith('Unexpected error');
         });
     });
 });
