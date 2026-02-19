@@ -23,6 +23,7 @@ import {
     type FieldCreator,
     type FieldDefinition,
 } from '../fieldCreator';
+import { type FormContext } from '../formComponent';
 import { FormGroup, Select } from '../formControlsComponent';
 
 import type { Config, Optional } from '../../../types';
@@ -297,7 +298,7 @@ const dateFormat = (locale: string): string =>
         })
         .join('');
 
-export const datetimeValidator = (locale: string): Validator<Date, unknown> =>
+export const datetimeValidator = <C,>(locale: string): Validator<Date, FormContext<C>> =>
     new Validator<Date, unknown>({
         rule: value => isValid(value),
         hint: 'date',

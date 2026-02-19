@@ -28,10 +28,11 @@ export interface FieldCreator<
     P = {},
     E extends Record<string, unknown> = {},
     K extends string = 'raw',
+    C = unknown,
 > {
     key: string;
     path: string;
-    create: (options: WithI18n<FieldCreateProps>) => Field<T, P, E, K>;
+    create: (options: WithI18n<FieldCreateProps>) => Field<T, P, E, K, C>;
 }
 
 export interface Field<
@@ -39,6 +40,7 @@ export interface Field<
     P = {},
     E extends Record<string, unknown> = {},
     K extends string = 'raw',
+    C = unknown,
 > {
     key: string;
     render: (
@@ -47,7 +49,7 @@ export interface Field<
     ) => React.ReactNode;
     initialize: <M extends Record<PropertyKey, unknown>>(model: Partial<M>) => FieldValue<T, K>;
     unbind: <M extends Record<PropertyKey, unknown>>(model: M, state: FieldValue<T, K, E>) => M;
-    validate: (data: FieldValue<T, K, E>, ctx: FormContext<unknown>) => Promise<ValidatorResult>;
+    validate: (data: FieldValue<T, K, E>, ctx: FormContext<C>) => Promise<ValidatorResult>;
 }
 
 export type FieldValue<T, K extends string = 'raw', E extends Record<string, unknown> = {}> = E & {
@@ -83,7 +85,7 @@ export interface Formatter<T, F, K extends string> {
     unbind: (value?: FormValue<F, K>) => T | null | undefined;
 }
 
-export type FieldDefinition<T, F = T, K extends string = 'raw'> = {
+export type FieldDefinition<T, F = T, K extends string = 'raw', C = unknown> = {
     key: string;
     path?: string;
     label: string;
@@ -92,7 +94,7 @@ export type FieldDefinition<T, F = T, K extends string = 'raw'> = {
     autoComplete?: AutoFill;
     defaultValue?: T;
     format?: Formatter<T, F, K>;
-    validator?: Validator<F, unknown> | CompoundValidator<F, unknown>;
+    validator?: Validator<F, FormContext<C>> | CompoundValidator<F, FormContext<C>>;
     mapping?: PathMapping;
 };
 
@@ -103,7 +105,8 @@ export interface FieldProps<
     ExtraParams extends Record<string, unknown> = {},
     K extends string = 'raw',
     E extends Record<string, unknown> = {},
-> extends FieldDefinition<T, F, K> {
+    C = unknown,
+> extends FieldDefinition<T, F, K, C> {
     label: string;
     mapping?: PathMapping;
     format?: Formatter<T, F, K>;
@@ -119,6 +122,7 @@ export function createField<
     ExtraParams extends Record<string, unknown> = {},
     K extends string = 'raw',
     E extends Record<string, unknown> = {},
+    C = unknown,
 >({
     key,
     path = key,
@@ -137,11 +141,11 @@ export function createField<
     rawProperty = 'raw' as K,
     component: Component,
     extendedParams = {} as ExtraParams,
-}: FieldProps<T, F, P, ExtraParams, K, E>): FieldCreator<F, P, E, K> {
+}: FieldProps<T, F, P, ExtraParams, K, E, C>): FieldCreator<F, P, E, K, C> {
     return {
         key,
         path: path,
-        create: ({ i18n, showLabel }: WithI18n<FieldCreateProps>): Field<F, P, E, K> => {
+        create: ({ i18n, showLabel }: WithI18n<FieldCreateProps>): Field<F, P, E, K, C> => {
             const extParams =
                 typeof extendedParams === 'function' ? extendedParams(i18n) : extendedParams;
             const staticProps: Partial<FieldComponentProps<F, {}, E, K>> = {
@@ -185,7 +189,7 @@ export function createField<
                 ): M => mapping.unbind(model, format.unbind(value)) as M,
                 validate: async (
                     { value: formValue }: FieldValue<F, K, E>,
-                    ctx: FormContext<unknown>
+                    ctx: FormContext<C>
                 ): Promise<ValidatorResult<E>> => {
                     const value = isRichFormValue(formValue, rawProperty)
                         ? formValue[rawProperty]

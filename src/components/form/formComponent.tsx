@@ -309,6 +309,8 @@ export function createForm<Model extends Record<PropertyKey, unknown> = {}, P = 
                 return err.errorMessageKey
                     ? i18n(err.errorMessageKey, { defaultValue: err.errorUserMsg ?? err.error })
                     : err.errorUserMsg;
+            } else if (err instanceof Error) {
+                return i18n(err.message);
             }
         };
 

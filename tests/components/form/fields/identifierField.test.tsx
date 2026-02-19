@@ -67,7 +67,7 @@ describe('DOM testing', () => {
             fields: [identifierField({ key, label, withPhoneNumber: true }, defaultConfig)],
         });
 
-        await waitFor(async () => {
+        await waitFor(() => {
             return render(
                 <WidgetContext config={defaultConfig} defaultMessages={defaultI18n}>
                     <Form
@@ -100,11 +100,11 @@ describe('DOM testing', () => {
         const phoneValue = '+33123456789';
         await user.clear(input);
         await user.type(input, phoneValue);
-        expect(input).toHaveValue(phoneValue);
+        expect(input).toHaveValue(format(phoneValue, 'FR', 'INTERNATIONAL'));
 
         expect(onFieldChange).toHaveBeenLastCalledWith(
             expect.objectContaining({
-                identifier: format(phoneValue, 'FR', 'INTERNATIONAL'),
+                identifier: format(phoneValue, 'FR', 'E.164'),
             })
         );
 
@@ -132,7 +132,7 @@ describe('DOM testing', () => {
             fields: [identifierField({ key, label, withPhoneNumber: false }, defaultConfig)],
         });
 
-        await waitFor(async () => {
+        await waitFor(() => {
             return render(
                 <WidgetContext config={defaultConfig} defaultMessages={defaultI18n}>
                     <Form
@@ -203,7 +203,7 @@ describe('DOM testing', () => {
             fields: [identifierField({ withPhoneNumber: true }, configWithEmailLoginNotAllowed)],
         });
 
-        await waitFor(async () => {
+        await waitFor(() => {
             return render(
                 <WidgetContext config={defaultConfig} defaultMessages={defaultI18n}>
                     <Form
@@ -236,11 +236,11 @@ describe('DOM testing', () => {
         const phoneValue = '+33123456789';
         await user.clear(input);
         await user.type(input, phoneValue);
-        expect(input).toHaveValue(phoneValue);
+        expect(input).toHaveValue(format(phoneValue, 'FR', 'INTERNATIONAL'));
 
         expect(onFieldChange).toHaveBeenLastCalledWith(
             expect.objectContaining({
-                phoneNumber: format(phoneValue, 'FR', 'INTERNATIONAL'),
+                phoneNumber: format(phoneValue, 'FR', 'E.164'),
             })
         );
 
@@ -277,7 +277,7 @@ describe('DOM testing', () => {
             ],
         });
 
-        await waitFor(async () => {
+        await waitFor(() => {
             return render(
                 <WidgetContext config={defaultConfig} defaultMessages={defaultI18n}>
                     <Form
@@ -358,7 +358,7 @@ describe('DOM testing', () => {
             ],
         });
 
-        await waitFor(async () => {
+        await waitFor(() => {
             return render(
                 <WidgetContext config={defaultConfig} defaultMessages={defaultI18n}>
                     <Form
@@ -391,11 +391,11 @@ describe('DOM testing', () => {
         const phoneValue = '+33123456789';
         await user.clear(input);
         await user.type(input, phoneValue);
-        expect(input).toHaveValue(phoneValue);
+        expect(input).toHaveValue(format(phoneValue, 'FR', 'INTERNATIONAL'));
 
         expect(onFieldChange).toHaveBeenLastCalledWith(
             expect.objectContaining({
-                identifier: format(phoneValue, 'FR', 'INTERNATIONAL'),
+                identifier: format(phoneValue, 'FR', 'E.164'),
             })
         );
 
@@ -429,7 +429,7 @@ describe('DOM testing', () => {
             fields: [identifierField({ withPhoneNumber: false }, configWithEmailLoginNotAllowed)],
         });
 
-        await waitFor(async () => {
+        await waitFor(() => {
             return render(
                 <WidgetContext config={defaultConfig} defaultMessages={defaultI18n}>
                     <Form
@@ -497,7 +497,7 @@ describe('DOM testing', () => {
             ],
         });
 
-        await waitFor(async () => {
+        await waitFor(() => {
             return render(
                 <WidgetContext config={defaultConfig} defaultMessages={defaultI18n}>
                     <Form
@@ -519,11 +519,11 @@ describe('DOM testing', () => {
         const phoneValue = '+33123456789';
         await user.clear(input);
         await user.type(input, phoneValue);
-        expect(input).toHaveValue(phoneValue);
+        expect(input).toHaveValue(format(phoneValue, 'FR', 'INTERNATIONAL'));
 
         expect(onFieldChange).toHaveBeenLastCalledWith(
             expect.objectContaining({
-                identifier: format(phoneValue, 'FR', 'INTERNATIONAL'),
+                identifier: format(phoneValue, 'FR', 'E.164'),
             })
         );
 
@@ -574,7 +574,7 @@ describe('DOM testing', () => {
             ],
         });
 
-        await waitFor(async () => {
+        await waitFor(() => {
             return render(
                 <WidgetContext config={defaultConfig} defaultMessages={defaultI18n}>
                     <Form
