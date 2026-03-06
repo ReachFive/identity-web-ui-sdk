@@ -306,9 +306,15 @@ export function createForm<Model extends Record<PropertyKey, unknown> = {}, P = 
             if (typeof err === 'string') {
                 return i18n(err);
             } else if (isAppError(err)) {
-                return err.errorMessageKey
-                    ? i18n(err.errorMessageKey, { defaultValue: err.errorUserMsg ?? err.error })
-                    : err.errorUserMsg;
+                if (err.errorDetails && err.errorDetails.length > 0) {
+                    return i18n(err.errorDetails[0].message);
+                } else if (err.errorMessageKey) {
+                    return i18n(err.errorMessageKey, {
+                        defaultValue: err.errorUserMsg ?? err.errorDescription ?? err.error,
+                    });
+                } else {
+                    return i18n(err.errorUserMsg ?? err.errorDescription ?? err.error);
+                }
             } else if (err instanceof Error) {
                 return i18n(err.message);
             }
@@ -328,11 +334,11 @@ export function createForm<Model extends Record<PropertyKey, unknown> = {}, P = 
         const handleError = async (err: unknown) => {
             await onError?.(err);
 
-            if (isAppError(err) && !err.errorUserMsg) {
-                if (err.errorDescription) {
-                    logError(err.errorDescription);
+            if (isAppError(err)) {
+                if (err.errorDetails && err.errorDetails.length > 0) {
+                    logError(err.errorDetails[0].message);
                 } else {
-                    logError(err.error);
+                    logError(err.errorUserMsg ?? err.errorDescription ?? err.error);
                 }
             } else if (typeof err === 'string' || err instanceof Error) {
                 logError(err);

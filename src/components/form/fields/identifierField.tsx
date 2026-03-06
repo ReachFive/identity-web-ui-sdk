@@ -32,12 +32,16 @@ export interface IdentifierData {
 }
 
 function specializeRawIdentifier(
-    withPhoneNumber?: boolean,
     inputValue?: string,
-    telCall?: (value?: string) => IdentifierData,
-    emailCall?: (value?: string) => IdentifierData,
-    otherCall?: (value?: string) => IdentifierData
+    options?: {
+        telCall?: (value?: string) => IdentifierData;
+        emailCall?: (value?: string) => IdentifierData;
+        otherCall?: (value?: string) => IdentifierData;
+        withCustomIdentifier?: boolean;
+        withPhoneNumber?: boolean;
+    }
 ): IdentifierData {
+    const { telCall, emailCall, otherCall, withPhoneNumber, withCustomIdentifier } = options ?? {};
     if (withPhoneNumber && inputValue && /^\+?[0-9\s\-()]+$/.test(inputValue)) {
         return {
             type: 'tel',
@@ -60,6 +64,7 @@ function specializeRawIdentifier(
             country: undefined,
             formatted: undefined,
             value: inputValue,
+            isValid: withCustomIdentifier,
             ...(otherCall?.(inputValue) ?? {}),
         };
     }
@@ -77,6 +82,7 @@ function specializeRefinedIdentifier<T>(
 }
 
 type IdentifierFieldExtraProps = {
+    withCustomIdentifier?: boolean;
     withPhoneNumber?: boolean;
     isWebAuthnLogin?: boolean;
 };
@@ -98,6 +104,7 @@ function IdentifierField({
     readOnly,
     validation,
     value,
+    withCustomIdentifier,
     withPhoneNumber,
 }: IdentifierFieldProps) {
     const config = useConfig();
@@ -135,7 +142,11 @@ function IdentifierField({
     const changeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
         const newValue: IdentifierData = {
             ...currentValue,
-            ...specializeRawIdentifier(withPhoneNumber, event.target.value, asYouType),
+            ...specializeRawIdentifier(event.target.value, {
+                telCall: asYouType,
+                withCustomIdentifier,
+                withPhoneNumber,
+            }),
         };
         onChange({ value: newValue, isDirty: false });
     };
@@ -186,6 +197,8 @@ export default function identifierField(
         key,
         label,
         isWebAuthnLogin = false,
+        withCustomIdentifier = true,
+        withPhoneNumber = true,
         ...props
     }: Optional<FieldDefinition<string, IdentifierData>, 'key' | 'label'> &
         IdentifierFieldExtraProps,
@@ -199,13 +212,14 @@ export default function identifierField(
         label: label ?? l,
         format: {
             bind: value =>
-                specializeRawIdentifier(
-                    props.withPhoneNumber,
-                    value,
-                    () => ({ isValid: isValidPhoneNumber(value ?? '') }) satisfies IdentifierData,
-                    () => ({ isValid: isEmail(value ?? '') }) satisfies IdentifierData,
-                    () => ({ isValid: true }) satisfies IdentifierData
-                ),
+                specializeRawIdentifier(value, {
+                    telCall: () =>
+                        ({ isValid: isValidPhoneNumber(value ?? '') }) satisfies IdentifierData,
+                    emailCall: () => ({ isValid: isEmail(value ?? '') }) satisfies IdentifierData,
+                    otherCall: () => ({ isValid: true }) satisfies IdentifierData,
+                    withCustomIdentifier,
+                    withPhoneNumber,
+                }),
             unbind: value => {
                 const identifier = isRichFormValue(value, 'raw') ? value.raw : value;
                 return identifier
@@ -222,7 +236,7 @@ export default function identifierField(
             rule: (value: IdentifierData) =>
                 specializeRefinedIdentifier<boolean>(
                     value,
-                    v => v.isValid ?? !props.withPhoneNumber,
+                    v => v.isValid ?? !withPhoneNumber,
                     v => isEmail(v.value ?? ''),
                     v => v.isValid ?? true
                 ) ?? true,
@@ -236,7 +250,8 @@ export default function identifierField(
         }),
         component: IdentifierField,
         extendedParams: {
-            withPhoneNumber: props.withPhoneNumber,
+            withCustomIdentifier,
+            withPhoneNumber,
         },
     });
 }

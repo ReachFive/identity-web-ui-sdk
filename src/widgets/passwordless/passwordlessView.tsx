@@ -65,6 +65,7 @@ const identityInputForm = (config: Config) =>
             identifierField(
                 {
                     required: true,
+                    withCustomIdentifier: false,
                     withPhoneNumber: config.sms,
                 },
                 config
@@ -204,6 +205,7 @@ export const PasswordlessView = ({
                         phoneNumberOptions={phoneNumberOptions}
                     />
                 )}
+                {showIdentity && showIntro && <Intro>{i18n('passwordless.identity.intro')}</Intro>}
                 {showIdentity && <IdentityInputForm handler={handleIdentity} onError={onError} />}
             </CaptchaProvider>
         </div>
