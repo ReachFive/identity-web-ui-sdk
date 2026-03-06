@@ -148,8 +148,7 @@ const PhoneNumberField = (props: PhoneNumberFieldProps) => {
                 data-testid={path}
                 onChange={handlePhoneChange}
                 labels={labels}
-                international={true}
-                withCountryCallingCode={withCountryCallingCode}
+                {...(country !== undefined ? { international: true, withCountryCallingCode } : {})}
                 {...(withCountrySelect
                     ? {
                           defaultCountry: country,
@@ -164,7 +163,7 @@ const PhoneNumberField = (props: PhoneNumberFieldProps) => {
     );
 };
 
-const phoneNumberField = (
+export const phoneNumberField = (
     {
         key = 'phone_number',
         label = 'phoneNumber',

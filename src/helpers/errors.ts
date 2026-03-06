@@ -3,8 +3,14 @@ export interface AppError {
     errorDescription: string;
     error: string;
     errorUserMsg?: string;
-    errorDetails?: string;
+    errorDetails?: FieldError[];
     errorMessageKey?: string;
+}
+
+interface FieldError {
+    field?: string;
+    message: string;
+    code: string;
 }
 
 export function isAppError(err: unknown): err is AppError {
