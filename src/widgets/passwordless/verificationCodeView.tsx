@@ -13,11 +13,6 @@ import { OnError, OnSuccess } from '@/types';
 
 export interface VerificationCodeViewProps {
     /**
-     * The passwordless auth type (`magic_link` or `sms`).
-     * @default "magic_link"
-     */
-    authType?: SingleFactorPasswordlessParams['authType'];
-    /**
      * Callback function called when the request has succeed.
      */
     onSuccess?: OnSuccess;
@@ -28,6 +23,7 @@ export interface VerificationCodeViewProps {
 }
 
 export type VerificationCodeViewState = {
+    authType: SingleFactorPasswordlessParams['authType'];
     phoneNumber: string;
 };
 
@@ -45,7 +41,6 @@ const VerificationCodeInputForm = createForm<VerificationCodeFormData>({
 });
 
 export const VerificationCodeView = ({
-    authType = 'magic_link',
     recaptcha_enabled = false,
     recaptcha_site_key,
     captchaFoxEnabled = false,
@@ -57,7 +52,7 @@ export const VerificationCodeView = ({
     const coreClient = useReachfive();
     const i18n = useI18n();
     const { params } = useRouting();
-    const { phoneNumber } = params as VerificationCodeViewState;
+    const { authType, phoneNumber } = params as VerificationCodeViewState;
 
     const handleSubmit = async (data: WithCaptchaToken<VerificationCodeFormData>) => {
         try {

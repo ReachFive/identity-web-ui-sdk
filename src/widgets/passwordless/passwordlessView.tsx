@@ -147,7 +147,7 @@ export const PasswordlessView = ({
     const sendSms = async (data: WithCaptchaToken<PhoneNumberFormData>) => {
         await coreClient.startPasswordless({ authType: 'sms', ...data }, auth);
         onSuccess({ name: 'otp_sent', authType: 'sms' });
-        goTo<VerificationCodeViewState>('verificationCode', data);
+        goTo<VerificationCodeViewState>('verificationCode', { authType: 'sms', ...data });
     };
 
     const handleIdentity = async (data: WithCaptchaToken<IdentityFormData>) => {
