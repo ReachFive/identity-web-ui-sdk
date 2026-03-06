@@ -73,6 +73,7 @@ export const VerificationCodeView = ({
             }
         } catch (error) {
             onError(error);
+            throw error; // rethrow to be caught by the form
         }
     };
 
