@@ -307,14 +307,29 @@ export function createForm<Model extends Record<PropertyKey, unknown> = {}, P = 
                 return i18n(err);
             } else if (isAppError(err)) {
                 if (err.errorDetails && err.errorDetails.length > 0) {
-                    return i18n(err.errorDetails[0].message);
-                } else if (err.errorMessageKey) {
-                    return i18n(err.errorMessageKey, {
-                        defaultValue: err.errorUserMsg ?? err.errorDescription ?? err.error,
+                    setFieldValues(fieldValues => {
+                        err.errorDetails?.forEach(errorDetail => {
+                            if (!errorDetail.field) return fieldValues;
+                            fieldValues[errorDetail.field] = {
+                                ...fieldValues[errorDetail.field],
+                                validation: {
+                                    valid: false,
+                                    error:
+                                        errorDetail.code === 'missing'
+                                            ? i18n('validation.required')
+                                            : i18n(`validation.${errorDetail.field}`, {
+                                                  defaultValue: errorDetail.message,
+                                              }),
+                                },
+                            };
+                        });
+                        return fieldValues;
                     });
-                } else {
-                    return i18n(err.errorUserMsg ?? err.errorDescription ?? err.error);
                 }
+                return i18n(
+                    err.errorMessageKey ?? '',
+                    err.errorUserMsg ?? err.errorDescription ?? err.error
+                );
             } else if (err instanceof Error) {
                 return i18n(err.message);
             }
