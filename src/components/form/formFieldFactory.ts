@@ -444,7 +444,7 @@ type FieldConf<K extends string> = K extends PredefinedFieldKey
         ? ConsentFieldOptions
         : CustomFieldOptions | ConsentFieldOptions;
 
-const resolveField = <K extends string>(
+export const resolveField = <K extends string>(
     fieldConfig: FieldConf<K> & ExtraOptions,
     config: Config
 ) => {
