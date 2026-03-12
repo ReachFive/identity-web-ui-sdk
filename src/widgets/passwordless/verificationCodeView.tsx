@@ -1,7 +1,5 @@
 import React from 'react';
 
-import { AuthResult, SingleFactorPasswordlessParams } from '@reachfive/identity-core';
-
 import { CaptchaProvider, WithCaptchaProps, type WithCaptchaToken } from '@/components/captcha';
 import { simpleField } from '@/components/form/fields/simpleField';
 import { createForm } from '@/components/form/formComponent';
@@ -22,10 +20,15 @@ export interface VerificationCodeViewProps {
     onError?: OnError;
 }
 
-export type VerificationCodeViewState = {
-    authType: SingleFactorPasswordlessParams['authType'];
-    phoneNumber: string;
-};
+export type VerificationCodeViewState =
+    | {
+          authType: 'sms';
+          phoneNumber: string;
+      }
+    | {
+          authType: 'magic_link';
+          email: string;
+      };
 
 export type VerificationCodeFormData = { verificationCode: string };
 
@@ -52,29 +55,19 @@ export const VerificationCodeView = ({
     const coreClient = useReachfive();
     const i18n = useI18n();
     const { params } = useRouting();
-    const { authType, phoneNumber } = params as VerificationCodeViewState;
+    const state = params as VerificationCodeViewState;
 
     const handleSubmit = async (data: WithCaptchaToken<VerificationCodeFormData>) => {
-        try {
-            const result = await coreClient.verifyPasswordless({
-                authType,
-                phoneNumber,
-                ...data,
-            });
-            if (AuthResult.isAuthResult(result)) {
-                onSuccess({
-                    name: 'login',
-                    authResult: result,
-                    authType,
-                    identifierType: 'phone_number',
-                });
-            } else {
-                onError();
-            }
-        } catch (error) {
-            onError(error);
-            throw error; // rethrow to be caught by the form
-        }
+        const result = await coreClient.verifyPasswordless({
+            ...state,
+            ...data,
+        });
+        onSuccess({
+            name: 'login',
+            authResult: result ?? {},
+            authType: state.authType,
+            identifierType: state.authType === 'sms' ? 'phone_number' : 'email',
+        });
     };
 
     return (
@@ -85,9 +78,13 @@ export const VerificationCodeView = ({
                 captchaFoxEnabled={captchaFoxEnabled}
                 captchaFoxSiteKey={captchaFoxSiteKey}
                 captchaFoxMode={captchaFoxMode}
-                action="verify_passwordless_sms"
+                action={`verify_passwordless_${state.authType}`}
             >
-                <Info>{i18n('passwordless.sms.verification.intro')}</Info>
+                <Info>
+                    {state.authType === 'sms'
+                        ? i18n('passwordless.sms.verification.intro')
+                        : i18n('passwordless.email.verification.intro')}
+                </Info>
                 <VerificationCodeInputForm handler={handleSubmit} onError={onError} />
             </CaptchaProvider>
         </div>

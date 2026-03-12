@@ -17,6 +17,7 @@ export type RecaptchaAction =
     | 'passwordless_email'
     | 'passwordless_phone'
     | 'verify_passwordless_sms'
+    | 'verify_passwordless_magic_link'
     | 'account_recovery'
     | 'password_reset_requested';
 

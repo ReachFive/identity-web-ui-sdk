@@ -14,6 +14,11 @@ const EmailSentView = () => {
     return <Info>{i18n('passwordless.emailSent')}</Info>;
 };
 
+const SmsSentView = () => {
+    const i18n = useI18n();
+    return <Info>{i18n('passwordless.smsSent')}</Info>;
+};
+
 export type PasswordlessWidgetProps = Prettify<
     ComponentProps<typeof PasswordlessView> & ComponentProps<typeof VerificationCodeView>
 >;
@@ -23,6 +28,7 @@ export default createMultiViewWidget<PasswordlessWidgetProps>({
     views: {
         main: PasswordlessView,
         emailSent: EmailSentView,
+        smsSent: SmsSentView,
         verificationCode: VerificationCodeView,
     },
     prepare: (options, { config }) => ({

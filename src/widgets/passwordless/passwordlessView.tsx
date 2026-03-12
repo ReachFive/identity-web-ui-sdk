@@ -86,6 +86,11 @@ export interface PasswordlessViewProps {
         | SingleFactorPasswordlessParams['authType']
         | SingleFactorPasswordlessParams['authType'][];
     /**
+     * Enable the verification code view.
+     * If not defined, the verification code view will only be enabled if the authType is `sms`.
+     */
+    enableVerificationCode?: boolean;
+    /**
      * Show the introduction text.
      * @default true
      */
@@ -118,6 +123,7 @@ export interface PasswordlessViewProps {
 export const PasswordlessView = ({
     auth,
     authType = 'magic_link',
+    enableVerificationCode,
     recaptcha_enabled = false,
     recaptcha_site_key,
     captchaFoxEnabled = false,
@@ -142,13 +148,24 @@ export const PasswordlessView = ({
     const sendMagicLink = async (data: WithCaptchaToken<EmailFormData>) => {
         await coreClient.startPasswordless({ authType: 'magic_link', ...data }, auth);
         onSuccess({ name: 'otp_sent', authType: 'magic_link' });
-        goTo('emailSent');
+        if (enableVerificationCode) {
+            goTo<VerificationCodeViewState>('verificationCode', {
+                authType: 'magic_link',
+                ...data,
+            });
+        } else {
+            goTo('emailSent');
+        }
     };
 
     const sendSms = async (data: WithCaptchaToken<PhoneNumberFormData>) => {
         await coreClient.startPasswordless({ authType: 'sms', ...data }, auth);
         onSuccess({ name: 'otp_sent', authType: 'sms' });
-        goTo<VerificationCodeViewState>('verificationCode', { authType: 'sms', ...data });
+        if (typeof enableVerificationCode === 'undefined' || enableVerificationCode) {
+            goTo<VerificationCodeViewState>('verificationCode', { authType: 'sms', ...data });
+        } else {
+            goTo('smsSent');
+        }
     };
 
     const handleIdentity = async (data: WithCaptchaToken<IdentityFormData>) => {
