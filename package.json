@@ -133,7 +133,8 @@
         "typescript-eslint": "^8.50.0"
     },
     "optionalDependencies": {
-        "@rollup/rollup-linux-x64-gnu": "^4.12.0"
+        "@rollup/rollup-linux-x64-gnu": "^4.12.0",
+        "@tailwindcss/oxide-linux-x64-gnu": "^4.2.1"
     },
     "files": [
         "cjs",
