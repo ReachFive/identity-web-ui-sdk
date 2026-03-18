@@ -1,10 +1,10 @@
 const ResizeObserverMock = jest.fn().mockImplementation(() => ({
-  disconnect: jest.fn(),
-  observe: jest.fn(),
-  unobserve: jest.fn(),
+    disconnect: jest.fn(),
+    observe: jest.fn(),
+    unobserve: jest.fn(),
 }));
 
-Object.defineProperty(window, "ResizeObserver", { value: ResizeObserverMock });
+Object.defineProperty(window, 'ResizeObserver', { value: ResizeObserverMock });
 
 // Mock pointer capture APIs for Radix UI components in jsdom
 window.HTMLElement.prototype.hasPointerCapture = jest.fn();
