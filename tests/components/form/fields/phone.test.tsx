@@ -2,13 +2,13 @@
  * @jest-environment jsdom
  */
 import React from 'react';
-import { formatPhoneNumberIntl } from 'react-phone-number-input';
 
 import { describe, expect, jest, test } from '@jest/globals';
 import '@testing-library/jest-dom/jest-globals';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import 'jest-styled-components';
+import { format } from 'libphonenumber-js';
 
 import { PhoneNumberInput } from '../../../../src/components/form/fields/phone/PhoneNumberInput';
 import { type I18nMessages } from '../../../../src/contexts/i18n';
@@ -88,7 +88,7 @@ describe('DOM testing', () => {
 
         const input = screen.queryByLabelText('Phone number');
         expect(input).toBeInTheDocument();
-        expect(input).toHaveValue(formatPhoneNumberIntl(initialValue));
+        expect(input).toHaveValue(format(initialValue, 'FR', 'INTERNATIONAL'));
 
         // Country select button rendered (aria-label = i18n('address.country'))
         const countryBtn = screen.queryByRole('button', { name: 'Country' });
