@@ -4,7 +4,7 @@ import { CircleAlertIcon, CircleCheckIcon, EyeIcon, EyeOffIcon } from 'lucide-re
 
 import { PasswordStrength } from '@reachfive/identity-core';
 
-import { Required } from '@/components/form/field2/required';
+import { Required } from '@/components/form/fields/required';
 import { Field, FieldDescription, FieldError, FieldLabel } from '@/components/ui/field';
 import {
     InputGroup,

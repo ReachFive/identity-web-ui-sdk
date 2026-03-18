@@ -9,7 +9,7 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import 'jest-styled-components';
 
-import { RadioGroupField } from '../../../../src/components/form/field2/radio-group';
+import { RadioGroupField } from '../../../../src/components/form/fields/radio-group';
 import { type I18nMessages } from '../../../../src/contexts/i18n';
 import { WidgetContext } from '../WidgetContext';
 

@@ -2,7 +2,7 @@ import React from 'react';
 
 import * as CheckboxPrimitive from '@radix-ui/react-checkbox';
 
-import { Required } from '@/components/form/field2/required';
+import { Required } from '@/components/form/fields/required';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
     Field,

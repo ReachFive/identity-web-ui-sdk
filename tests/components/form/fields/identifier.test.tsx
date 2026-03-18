@@ -10,7 +10,7 @@ import userEvent from '@testing-library/user-event';
 import 'jest-styled-components';
 import { format } from 'libphonenumber-js';
 
-import { IdentifierField } from '../../../../src/components/form/field2/identifier';
+import { IdentifierField } from '../../../../src/components/form/fields/identifier';
 import { type I18nMessages } from '../../../../src/contexts/i18n';
 import { WidgetContext } from '../WidgetContext';
 

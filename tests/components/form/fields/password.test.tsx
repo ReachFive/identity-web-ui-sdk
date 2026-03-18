@@ -14,7 +14,7 @@ import { PasswordStrengthScore, type Client } from '@reachfive/identity-core';
 import {
     PasswordField,
     PasswordPolicyRules,
-} from '../../../../src/components/form/field2/password';
+} from '../../../../src/components/form/fields/password';
 import { type I18nMessages } from '../../../../src/contexts/i18n';
 import { WidgetContext } from '../WidgetContext';
 

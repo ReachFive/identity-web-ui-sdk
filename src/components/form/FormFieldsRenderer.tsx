@@ -12,14 +12,14 @@ import {
 
 import z from 'zod';
 
-import { CheckboxField } from '@/components/form/field2/checkbox';
-import { DateField } from '@/components/form/field2/date';
-import { IdentifierField } from '@/components/form/field2/identifier';
-import { InputField } from '@/components/form/field2/input';
-import { PasswordField, PasswordPolicyRules } from '@/components/form/field2/password';
-import { PhoneNumberField } from '@/components/form/field2/phone';
-import { RadioGroupField } from '@/components/form/field2/radio-group';
-import { SelectField } from '@/components/form/field2/select';
+import { CheckboxField } from '@/components/form/fields/checkbox';
+import { DateField } from '@/components/form/fields/date';
+import { IdentifierField } from '@/components/form/fields/identifier';
+import { InputField } from '@/components/form/fields/input';
+import { PasswordField, PasswordPolicyRules } from '@/components/form/fields/password';
+import { PhoneNumberField } from '@/components/form/fields/phone';
+import { RadioGroupField } from '@/components/form/fields/radio-group';
+import { SelectField } from '@/components/form/fields/select';
 import { useConfig } from '@/contexts/config';
 import { useI18n } from '@/contexts/i18n';
 import { useReachfive } from '@/contexts/reachfive';

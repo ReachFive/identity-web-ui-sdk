@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Required } from '@/components/form/field2/required';
+import { Required } from '@/components/form/fields/required';
 import { Field, FieldDescription, FieldError, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';

@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Required } from '@/components/form/field2/required';
+import { Required } from '@/components/form/fields/required';
 import {
     Field,
     FieldContent,

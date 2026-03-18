@@ -10,7 +10,7 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import 'jest-styled-components';
 
-import { PhoneNumberInput } from '../../../../src/components/form/field2/phone/PhoneNumberInput';
+import { PhoneNumberInput } from '../../../../src/components/form/fields/phone/PhoneNumberInput';
 import { type I18nMessages } from '../../../../src/contexts/i18n';
 import { WidgetContext } from '../WidgetContext';
 

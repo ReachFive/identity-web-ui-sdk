@@ -10,7 +10,7 @@ import userEvent from '@testing-library/user-event';
 import { formatISO, getDaysInMonth, getYear } from 'date-fns';
 import 'jest-styled-components';
 
-import { DateField } from '../../../../src/components/form/field2/date';
+import { DateField } from '../../../../src/components/form/fields/date';
 import { type I18nMessages } from '../../../../src/contexts/i18n';
 import { WidgetContext } from '../WidgetContext';
 

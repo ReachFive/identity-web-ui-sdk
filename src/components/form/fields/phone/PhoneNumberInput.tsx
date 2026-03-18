@@ -2,7 +2,7 @@ import React from 'react';
 
 import { CountryCode, isSupportedCountry } from 'libphonenumber-js/min';
 
-import { Required } from '@/components/form/field2/required';
+import { Required } from '@/components/form/fields/required';
 import { Field, FieldDescription, FieldError, FieldLabel } from '@/components/ui/field';
 import { useConfig } from '@/contexts/config';
 import { useI18n } from '@/contexts/i18n';

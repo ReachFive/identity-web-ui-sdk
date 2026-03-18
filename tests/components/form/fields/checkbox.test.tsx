@@ -9,7 +9,7 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import 'jest-styled-components';
 
-import { CheckboxField } from '../../../../src/components/form/field2/checkbox';
+import { CheckboxField } from '../../../../src/components/form/fields/checkbox';
 import { type I18nMessages } from '../../../../src/contexts/i18n';
 import { WidgetContext } from '../WidgetContext';
 

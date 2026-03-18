@@ -2,7 +2,7 @@ import React from 'react';
 
 import { formatISO, getDate, getDaysInMonth, getMonth, getYear, intlFormat } from 'date-fns';
 
-import { Required } from '@/components/form/field2/required';
+import { Required } from '@/components/form/fields/required';
 import { Field, FieldDescription, FieldError, FieldLabel } from '@/components/ui/field';
 import {
     Select,

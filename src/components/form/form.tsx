@@ -2,7 +2,7 @@ import React from 'react';
 import { DefaultValues, FieldPath, FieldValues, FormProvider, useForm } from 'react-hook-form';
 
 import { useCaptcha } from '@/components/captcha';
-import { Required } from '@/components/form/field2/required';
+import { Required } from '@/components/form/fields/required';
 import { FormFieldsRenderer } from '@/components/form/FormFieldsRenderer';
 import { Button } from '@/components/ui/button';
 import { useConfig } from '@/contexts/config';
