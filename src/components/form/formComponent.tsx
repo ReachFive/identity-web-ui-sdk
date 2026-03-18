@@ -306,9 +306,32 @@ export function createForm<Model extends Record<PropertyKey, unknown> = {}, P = 
             if (typeof err === 'string') {
                 return i18n(err);
             } else if (isAppError(err)) {
-                return err.errorMessageKey
-                    ? i18n(err.errorMessageKey, { defaultValue: err.errorUserMsg ?? err.error })
-                    : err.errorUserMsg;
+                if (err.errorDetails && err.errorDetails.length > 0) {
+                    setFieldValues(fieldValues => {
+                        err.errorDetails?.forEach(errorDetail => {
+                            if (!errorDetail.field) return fieldValues;
+                            fieldValues[errorDetail.field] = {
+                                ...fieldValues[errorDetail.field],
+                                validation: {
+                                    valid: false,
+                                    error:
+                                        errorDetail.code === 'missing'
+                                            ? i18n('validation.required')
+                                            : i18n(`validation.${errorDetail.field}`, {
+                                                  defaultValue: errorDetail.message,
+                                              }),
+                                },
+                            };
+                        });
+                        return fieldValues;
+                    });
+                }
+                return i18n(
+                    err.errorMessageKey ?? '',
+                    err.errorUserMsg ?? err.errorDescription ?? err.error
+                );
+            } else if (err instanceof Error) {
+                return i18n(err.message);
             }
         };
 
@@ -326,11 +349,11 @@ export function createForm<Model extends Record<PropertyKey, unknown> = {}, P = 
         const handleError = async (err: unknown) => {
             await onError?.(err);
 
-            if (isAppError(err) && !err.errorUserMsg) {
-                if (err.errorDescription) {
-                    logError(err.errorDescription);
+            if (isAppError(err)) {
+                if (err.errorDetails && err.errorDetails.length > 0) {
+                    logError(err.errorDetails[0].message);
                 } else {
-                    logError(err.error);
+                    logError(err.errorUserMsg ?? err.errorDescription ?? err.error);
                 }
             } else if (typeof err === 'string' || err instanceof Error) {
                 logError(err);

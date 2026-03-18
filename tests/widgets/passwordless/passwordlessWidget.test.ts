@@ -3,7 +3,7 @@
  */
 import { beforeEach, describe, expect, jest, test } from '@jest/globals';
 import '@testing-library/jest-dom/jest-globals';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import 'jest-styled-components';
 
@@ -58,10 +58,8 @@ describe('Snapshot', () => {
                 defaultI18n,
             });
 
-            await waitFor(async () => {
-                const { container } = await render(widget);
-                expect(container).toMatchSnapshot();
-            });
+            const { container } = render(widget);
+            expect(container).toMatchSnapshot();
         };
 
     describe('passwordless', () => {
@@ -102,7 +100,7 @@ describe('DOM testing', () => {
             { config: { ...defaultConfig, ...config }, apiClient, defaultI18n }
         );
 
-        return waitFor(async () => render(result));
+        return render(result);
     };
 
     describe('passwordless', () => {
@@ -116,10 +114,10 @@ describe('DOM testing', () => {
             await generateComponent();
 
             // Intro
-            expect(screen.queryByText('passwordless.intro')).toBeInTheDocument();
+            expect(screen.getByText('passwordless.intro')).toBeInTheDocument();
 
             // Label
-            expect(screen.queryByLabelText('email')).toBeInTheDocument();
+            expect(screen.getByLabelText('email')).toBeInTheDocument();
 
             // Input email
             const emailInput = screen.getByTestId('email');
@@ -140,7 +138,7 @@ describe('DOM testing', () => {
                 undefined // auth
             );
 
-            expect(screen.queryByText('passwordless.emailSent')).toBeInTheDocument();
+            expect(screen.getByText('passwordless.emailSent')).toBeInTheDocument();
 
             expect(onSuccess).toBeCalledWith(
                 expect.objectContaining({
@@ -160,8 +158,8 @@ describe('DOM testing', () => {
             expect(screen.queryByText('passwordless.sms.intro')).not.toBeInTheDocument();
         });
 
-        test('by phone number', async () => {
-            expect.assertions(10);
+        test('by email', async () => {
+            expect.assertions(8);
 
             const user = userEvent.setup();
 
@@ -169,17 +167,64 @@ describe('DOM testing', () => {
                 challengeId: 'azerty',
             });
 
-            verifyPasswordless.mockResolvedValue({
-                accessToken: 'abcd1234',
+            verifyPasswordless.mockResolvedValue();
+
+            await generateComponent({ authType: 'magic_link' });
+
+            // Intro
+            expect(screen.getByText('passwordless.intro')).toBeInTheDocument();
+
+            // Label
+            expect(screen.getByLabelText('email')).toBeInTheDocument();
+
+            // Input phone number
+            const emailInput = screen.getByTestId('email');
+            expect(emailInput).toBeInTheDocument();
+
+            // Form button
+            const submitBtn = screen.getByTestId('submit');
+            expect(submitBtn).toHaveTextContent('send');
+
+            await user.type(emailInput, 'alice@reach5.co');
+            await user.click(submitBtn);
+
+            expect(startPasswordless).toBeCalledWith(
+                expect.objectContaining({
+                    authType: 'magic_link',
+                    email: 'alice@reach5.co',
+                }),
+                undefined // auth
+            );
+
+            expect(screen.getByText('passwordless.emailSent')).toBeInTheDocument();
+
+            expect(onSuccess).toBeCalledWith(
+                expect.objectContaining({
+                    authType: 'magic_link',
+                    name: 'otp_sent',
+                })
+            );
+            expect(onError).not.toBeCalled();
+        });
+
+        test('by phone number', async () => {
+            expect.assertions(11);
+
+            const user = userEvent.setup();
+
+            startPasswordless.mockResolvedValue({
+                challengeId: 'azerty',
             });
+
+            verifyPasswordless.mockResolvedValue();
 
             await generateComponent({ authType: 'sms' });
 
             // Intro
-            expect(screen.queryByText('passwordless.sms.intro')).toBeInTheDocument();
+            expect(screen.getByText('passwordless.sms.intro')).toBeInTheDocument();
 
             // Label
-            expect(screen.queryByLabelText('phoneNumber')).toBeInTheDocument();
+            expect(screen.getByLabelText('phoneNumber')).toBeInTheDocument();
 
             // Input phone number
             const phoneNumberInput = screen.getByTestId('phone_number');
@@ -198,6 +243,13 @@ describe('DOM testing', () => {
                     phoneNumber: '+33612345678',
                 }),
                 undefined // auth
+            );
+
+            expect(onSuccess).toBeCalledWith(
+                expect.objectContaining({
+                    authType: 'sms',
+                    name: 'otp_sent',
+                })
             );
 
             const verificationCodeInput = screen.getByTestId('verification_code');
@@ -219,11 +271,267 @@ describe('DOM testing', () => {
 
             expect(onSuccess).toBeCalledWith(
                 expect.objectContaining({
-                    authResult: expect.objectContaining({ accessToken: 'abcd1234' }),
+                    authResult: expect.objectContaining({}),
                     name: 'login',
                 })
             );
             expect(onError).not.toBeCalled();
+        });
+
+        describe('with enableVerificationCode = false', () => {
+            test('by email', async () => {
+                expect.assertions(8);
+
+                const user = userEvent.setup();
+
+                startPasswordless.mockResolvedValue({
+                    challengeId: 'azerty',
+                });
+
+                verifyPasswordless.mockResolvedValue();
+
+                await generateComponent({
+                    authType: 'magic_link',
+                    enableVerificationCode: false,
+                });
+
+                // Intro
+                expect(screen.getByText('passwordless.intro')).toBeInTheDocument();
+
+                // Label
+                expect(screen.getByLabelText('email')).toBeInTheDocument();
+
+                // Input phone number
+                const emailInput = screen.getByTestId('email');
+                expect(emailInput).toBeInTheDocument();
+
+                // Form button
+                const submitBtn = screen.getByTestId('submit');
+                expect(submitBtn).toHaveTextContent('send');
+
+                await user.type(emailInput, 'alice@reach5.co');
+                await user.click(submitBtn);
+
+                expect(startPasswordless).toBeCalledWith(
+                    expect.objectContaining({
+                        authType: 'magic_link',
+                        email: 'alice@reach5.co',
+                    }),
+                    undefined // auth
+                );
+
+                expect(screen.getByText('passwordless.emailSent')).toBeInTheDocument();
+
+                expect(onSuccess).toBeCalledWith(
+                    expect.objectContaining({
+                        authType: 'magic_link',
+                        name: 'otp_sent',
+                    })
+                );
+                expect(onError).not.toBeCalled();
+            });
+
+            test('by phone number', async () => {
+                expect.assertions(8);
+
+                const user = userEvent.setup();
+
+                startPasswordless.mockResolvedValue({
+                    challengeId: 'azerty',
+                });
+
+                verifyPasswordless.mockResolvedValue();
+
+                await generateComponent({
+                    authType: 'sms',
+                    enableVerificationCode: false,
+                });
+
+                // Intro
+                expect(screen.getByText('passwordless.sms.intro')).toBeInTheDocument();
+
+                // Label
+                expect(screen.getByLabelText('phoneNumber')).toBeInTheDocument();
+
+                // Input phone number
+                const phoneNumberInput = screen.getByTestId('phone_number');
+                expect(phoneNumberInput).toBeInTheDocument();
+
+                // Form button
+                const submitBtn = screen.getByTestId('submit');
+                expect(submitBtn).toHaveTextContent('send');
+
+                await user.type(phoneNumberInput, '+33612345678');
+                await user.click(submitBtn);
+
+                expect(startPasswordless).toBeCalledWith(
+                    expect.objectContaining({
+                        authType: 'sms',
+                        phoneNumber: '+33612345678',
+                    }),
+                    undefined // auth
+                );
+
+                expect(screen.getByText('passwordless.smsSent')).toBeInTheDocument();
+
+                expect(onSuccess).toBeCalledWith(
+                    expect.objectContaining({
+                        authType: 'sms',
+                        name: 'otp_sent',
+                    })
+                );
+                expect(onError).not.toBeCalled();
+            });
+        });
+
+        describe('with enableVerificationCode = true', () => {
+            test('by email', async () => {
+                expect.assertions(11);
+
+                const user = userEvent.setup();
+
+                startPasswordless.mockResolvedValue({
+                    challengeId: 'azerty',
+                });
+
+                verifyPasswordless.mockResolvedValue();
+
+                await generateComponent({
+                    authType: 'magic_link',
+                    enableVerificationCode: true,
+                });
+
+                // Intro
+                expect(screen.getByText('passwordless.intro')).toBeInTheDocument();
+
+                // Label
+                expect(screen.getByLabelText('email')).toBeInTheDocument();
+
+                // Input phone number
+                const emailInput = screen.getByTestId('email');
+                expect(emailInput).toBeInTheDocument();
+
+                // Form button
+                const submitBtn = screen.getByTestId('submit');
+                expect(submitBtn).toHaveTextContent('send');
+
+                await user.type(emailInput, 'alice@reach5.co');
+                await user.click(submitBtn);
+
+                expect(startPasswordless).toBeCalledWith(
+                    expect.objectContaining({
+                        authType: 'magic_link',
+                        email: 'alice@reach5.co',
+                    }),
+                    undefined // auth
+                );
+
+                expect(onSuccess).toBeCalledWith(
+                    expect.objectContaining({
+                        authType: 'magic_link',
+                        name: 'otp_sent',
+                    })
+                );
+
+                const verificationCodeInput = screen.getByTestId('verification_code');
+                expect(verificationCodeInput).toBeInTheDocument();
+
+                const submitCodeBtn = screen.getByTestId('submit');
+                expect(submitCodeBtn).toHaveTextContent('send');
+
+                await user.type(verificationCodeInput, '123456');
+                await user.click(submitCodeBtn);
+
+                expect(verifyPasswordless).toBeCalledWith(
+                    expect.objectContaining({
+                        authType: 'magic_link',
+                        email: 'alice@reach5.co',
+                        verificationCode: '123456',
+                    })
+                );
+
+                expect(onSuccess).toBeCalledWith(
+                    expect.objectContaining({
+                        authResult: expect.objectContaining({}),
+                        name: 'login',
+                    })
+                );
+                expect(onError).not.toBeCalled();
+            });
+
+            test('by phone number', async () => {
+                expect.assertions(11);
+
+                const user = userEvent.setup();
+
+                startPasswordless.mockResolvedValue({
+                    challengeId: 'azerty',
+                });
+
+                verifyPasswordless.mockResolvedValue();
+
+                await generateComponent({
+                    authType: 'sms',
+                    enableVerificationCode: true,
+                });
+
+                // Intro
+                expect(screen.getByText('passwordless.sms.intro')).toBeInTheDocument();
+
+                // Label
+                expect(screen.getByLabelText('phoneNumber')).toBeInTheDocument();
+
+                // Input phone number
+                const phoneNumberInput = screen.getByTestId('phone_number');
+                expect(phoneNumberInput).toBeInTheDocument();
+
+                // Form button
+                const submitBtn = screen.getByTestId('submit');
+                expect(submitBtn).toHaveTextContent('send');
+
+                await user.type(phoneNumberInput, '+33612345678');
+                await user.click(submitBtn);
+
+                expect(startPasswordless).toBeCalledWith(
+                    expect.objectContaining({
+                        authType: 'sms',
+                        phoneNumber: '+33612345678',
+                    }),
+                    undefined // auth
+                );
+
+                expect(onSuccess).toBeCalledWith(
+                    expect.objectContaining({
+                        authType: 'sms',
+                        name: 'otp_sent',
+                    })
+                );
+
+                const verificationCodeInput = screen.getByTestId('verification_code');
+                expect(verificationCodeInput).toBeInTheDocument();
+
+                const submitCodeBtn = screen.getByTestId('submit');
+                expect(submitCodeBtn).toHaveTextContent('send');
+
+                await user.type(verificationCodeInput, '123456');
+                await user.click(submitCodeBtn);
+
+                expect(verifyPasswordless).toBeCalledWith(
+                    expect.objectContaining({
+                        authType: 'sms',
+                        phoneNumber: '+33612345678',
+                        verificationCode: '123456',
+                    })
+                );
+
+                expect(onSuccess).toBeCalledWith(
+                    expect.objectContaining({
+                        authResult: expect.objectContaining({}),
+                        name: 'login',
+                    })
+                );
+                expect(onError).not.toBeCalled();
+            });
         });
 
         test('api failure', async () => {
@@ -272,10 +580,8 @@ describe('DOM testing', () => {
 
             expect(verifyPasswordless).toBeCalled();
 
-            await waitFor(async () => {
-                expect(onSuccess).not.toBeCalledWith(expect.objectContaining({ name: 'login' }));
-                expect(onError).toBeCalledWith('Unexpected error');
-            });
+            expect(onSuccess).not.toBeCalledWith(expect.objectContaining({ name: 'login' }));
+            expect(onError).toBeCalledWith('Unexpected error');
         });
     });
 });
