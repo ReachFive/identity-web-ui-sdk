@@ -1,5 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
+  darkMode: "selector",
   important: ".r5-widget",
   corePlugins: {
     container: false,
@@ -12,42 +13,56 @@ module.exports = {
   theme: {
     extend: {
       colors: {
+        border: "hsl(var(--border))",
+        input: "hsl(var(--input))",
+        ring: "hsl(var(--ring))",
+        background: "hsl(var(--background))",
+        foreground: "hsl(var(--foreground))",
         primary: {
-          DEFAULT: "var(--color-primary)",
-          foreground: "var(--color-primary)",
+          DEFAULT: "hsl(var(--primary))",
+          foreground: "hsl(var(--primary-foreground))",
         },
         destructive: {
-          DEFAULT: "var(--color-destructive)",
-          foreground: "var(--color-destructive)",
+          DEFAULT: "hsl(var(--destructive))",
+          foreground: "hsl(var(--destructive-foreground))",
         },
-        background: "var(--color-background)",
-        border: "var(--color-border)",
-        theme: "var(--color-text)",
+        popover: {
+          DEFAULT: "hsl(var(--popover))",
+          foreground: "hsl(var(--popover-foreground))",
+        },
+        accent: {
+          DEFAULT: "hsl(var(--accent) / .5)",
+          foreground: "hsl(var(--accent-foreground))",
+        },
+        muted: {
+          DEFAULT: "hsl(var(--muted))",
+          foreground: "hsl(var(--muted-foreground))",
+        },
+        theme: "hsl(var(--text))",
       },
       spacing: {
-        DEFAULT: "calc(var(--spacing)*1px)",
+        DEFAULT: "var(--spacing)",
       },
       borderRadius: {
-        DEFAULT: "calc(var(--radius)*1px)",
+        DEFAULT: "var(--radius)",
       },
       fontSize: {
-        generic: ["calc(var(--generic)*1px)", { lineHeight: "1.5" }],
+        DEFAULT: "var(--font-size)",
+      },
+      lineHeight: {
+        DEFAULT: "var(--leading-generic)",
       },
       width: {
-        icon: `calc(var(--font-generic)*2px)`,
+        icon: "var(--leading-generic)",
       },
       height: {
-        icon: "calc(var(--font-generic)*2px)",
+        icon: "var(--leading-generic)",
       },
       padding: {
-        generic:
-          "calc(var(--spacing-padding-y)*1px) calc(var(--spacing-padding-x)*1px) calc(var(--spacing-padding-y)*1px) calc(var(--spacing-padding-x)*1px)", //"calc(var(--spacing-padding-y)*1px) calc(var(--spacing-padding-x)*1px) calc(var(--spacing-padding-y)*1px) calc(var(--spacing-padding-x)*1px)",
-      },
-      margin: {
-        innerBlock: "calc(var(--spacing-block-inner-height)*1px)",
+        DEFAULT: "var(--spacing-padding-y) var(--spacing-padding-x)",
       },
       borderWidth: {
-        DEFAULT: "calc(var(--border-width)*1px)",
+        DEFAULT: "var(--border-width)",
       },
     },
   },

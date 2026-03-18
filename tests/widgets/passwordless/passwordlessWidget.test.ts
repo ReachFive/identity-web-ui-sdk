@@ -3,7 +3,7 @@
  */
 import { beforeEach, describe, expect, jest, test } from '@jest/globals';
 import '@testing-library/jest-dom/jest-globals';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import 'jest-styled-components';
 
@@ -58,10 +58,8 @@ describe('Snapshot', () => {
                 defaultI18n,
             });
 
-            await waitFor(async () => {
-                const { container } = await render(widget);
-                expect(container).toMatchSnapshot();
-            });
+            const { container } = render(widget);
+            expect(container).toMatchSnapshot();
         };
 
     describe('passwordless', () => {
@@ -102,12 +100,12 @@ describe('DOM testing', () => {
             { config: { ...defaultConfig, ...config }, apiClient, defaultI18n }
         );
 
-        return waitFor(async () => render(result));
+        return render(result);
     };
 
     describe('passwordless', () => {
         test('default', async () => {
-            expect.assertions(8);
+            expect.assertions(7);
 
             const user = userEvent.setup();
 
@@ -116,17 +114,14 @@ describe('DOM testing', () => {
             await generateComponent();
 
             // Intro
-            expect(screen.queryByText('passwordless.intro')).toBeInTheDocument();
-
-            // Label
-            expect(screen.queryByLabelText('email')).toBeInTheDocument();
+            expect(screen.getByText('passwordless.intro')).toBeInTheDocument();
 
             // Input email
-            const emailInput = screen.getByTestId('email');
+            const emailInput = screen.getByRole('textbox', { name: 'email' });
             expect(emailInput).toBeInTheDocument();
 
             // Form button
-            const submitBtn = screen.getByTestId('submit');
+            const submitBtn = screen.getByRole('button', { name: 'send' });
             expect(submitBtn).toHaveTextContent('send');
 
             await user.type(emailInput, 'alice@reach5.co');
@@ -140,7 +135,7 @@ describe('DOM testing', () => {
                 undefined // auth
             );
 
-            expect(screen.queryByText('passwordless.emailSent')).toBeInTheDocument();
+            expect(screen.getByText('passwordless.emailSent')).toBeInTheDocument();
 
             expect(onSuccess).toBeCalledWith(
                 expect.objectContaining({
@@ -161,7 +156,7 @@ describe('DOM testing', () => {
         });
 
         test('by phone number', async () => {
-            expect.assertions(10);
+            expect.assertions(9);
 
             const user = userEvent.setup();
 
@@ -176,17 +171,14 @@ describe('DOM testing', () => {
             await generateComponent({ authType: 'sms' });
 
             // Intro
-            expect(screen.queryByText('passwordless.sms.intro')).toBeInTheDocument();
-
-            // Label
-            expect(screen.queryByLabelText('phoneNumber')).toBeInTheDocument();
+            expect(screen.getByText('passwordless.sms.intro')).toBeInTheDocument();
 
             // Input phone number
-            const phoneNumberInput = screen.getByTestId('phone_number');
+            const phoneNumberInput = screen.getByRole('textbox', { name: 'phoneNumber' });
             expect(phoneNumberInput).toBeInTheDocument();
 
             // Form button
-            const submitBtn = screen.getByTestId('submit');
+            const submitBtn = screen.getByRole('button', { name: 'send' });
             expect(submitBtn).toHaveTextContent('send');
 
             await user.type(phoneNumberInput, '+33612345678');
@@ -200,10 +192,10 @@ describe('DOM testing', () => {
                 undefined // auth
             );
 
-            const verificationCodeInput = screen.getByTestId('verification_code');
+            const verificationCodeInput = screen.getByRole('textbox', { name: 'verificationCode' });
             expect(verificationCodeInput).toBeInTheDocument();
 
-            const submitCodeBtn = screen.getByTestId('submit');
+            const submitCodeBtn = screen.getByRole('button', { name: 'send' });
             expect(submitCodeBtn).toHaveTextContent('send');
 
             await user.type(verificationCodeInput, '123456');
@@ -233,8 +225,8 @@ describe('DOM testing', () => {
 
             await generateComponent();
 
-            const emailInput = screen.getByTestId('email');
-            const submitBtn = screen.getByTestId('submit');
+            const emailInput = screen.getByRole('textbox', { name: 'email' });
+            const submitBtn = screen.getByRole('button', { name: 'send' });
 
             await user.type(emailInput, 'alice@reach5.co');
             await user.click(submitBtn);
@@ -256,26 +248,24 @@ describe('DOM testing', () => {
 
             await generateComponent({ authType: 'sms' });
 
-            const phoneNumberInput = screen.getByTestId('phone_number');
-            const submitBtn = screen.getByTestId('submit');
+            const phoneNumberInput = screen.getByRole('textbox', { name: 'phoneNumber' });
+            const submitBtn = screen.getByRole('button', { name: 'send' });
 
             await user.type(phoneNumberInput, '+33612345678');
             await user.click(submitBtn);
 
             expect(startPasswordless).toBeCalled();
 
-            const verificationCodeInput = screen.getByTestId('verification_code');
-            const submitCodeBtn = screen.getByTestId('submit');
+            const verificationCodeInput = screen.getByRole('textbox', { name: 'verificationCode' });
+            const submitCodeBtn = screen.getByRole('button', { name: 'send' });
 
             await user.type(verificationCodeInput, '123456');
             await user.click(submitCodeBtn);
 
             expect(verifyPasswordless).toBeCalled();
 
-            await waitFor(async () => {
-                expect(onSuccess).not.toBeCalledWith(expect.objectContaining({ name: 'login' }));
-                expect(onError).toBeCalledWith('Unexpected error');
-            });
+            expect(onSuccess).not.toBeCalledWith(expect.objectContaining({ name: 'login' }));
+            expect(onError).toBeCalledWith('Unexpected error');
         });
     });
 });

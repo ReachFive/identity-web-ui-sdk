@@ -144,7 +144,17 @@ export default [
         onwarn: onWarn,
     }),
     bundle({
-        plugins: [dts()],
+        plugins: [
+            alias({
+                entries: [
+                    {
+                        find: /^@\/(.*)/,
+                        replacement: path.resolve(__dirname, './src/$1'),
+                    },
+                ],
+            }),
+            dts(),
+        ],
         output: {
             banner,
             file: packageJson.types,

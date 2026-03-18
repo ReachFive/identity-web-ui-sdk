@@ -1,23 +1,18 @@
 import React, { useCallback, useLayoutEffect } from 'react';
 
+import { Form } from '@/components/form/form.tsx';
+
 import { InitialScreen } from '../../../../constants.ts';
 import { CaptchaProvider, WithCaptchaProps } from '../../../components/captcha.tsx';
 import { DefaultButton } from '../../../components/form/buttonComponent.tsx';
-import passwordField from '../../../components/form/fields/passwordField.tsx';
-import phoneNumberField, {
-    type PhoneNumberOptions,
-} from '../../../components/form/fields/phoneNumberField';
-import { simpleField } from '../../../components/form/fields/simpleField';
-import simplePasswordField from '../../../components/form/fields/simplePasswordField';
-import { FormContext, createForm } from '../../../components/form/formComponent';
 import { Alternative, Heading, Info, Intro, Link } from '../../../components/miscComponent';
 import { importGoogleRecaptchaScript } from '../../../components/reCaptcha';
 import { useConfig } from '../../../contexts/config.tsx';
 import { useI18n } from '../../../contexts/i18n';
 import { useReachfive } from '../../../contexts/reachfive';
 import { useRouting } from '../../../contexts/routing';
-import { email, Validator } from '../../../core/validation';
 import { isAppError } from '../../../helpers/errors';
+import { type PhoneNumberOptions } from '../../../lib/form';
 import { selectLogin } from '../authWidget.tsx';
 
 import type { OnError, OnSuccess } from '../../../types';
@@ -28,88 +23,11 @@ type PhoneNumberIdentifier = { phoneNumber: string };
 type ForgotPasswordEmailFormData = EmailIdentifier;
 type ForgotPasswordPhoneNumberFormData = PhoneNumberIdentifier;
 
-const ForgotPasswordEmailForm = createForm<ForgotPasswordEmailFormData>({
-    prefix: 'r5-forgot-password-',
-    fields() {
-        return [
-            simpleField({
-                key: 'email',
-                label: 'email',
-                required: true,
-                type: 'email',
-                validator: email,
-            }),
-        ];
-    },
-    submitLabel: 'forgotPassword.submitLabel',
-});
-
-const ForgotPasswordPhoneNumberForm = createForm<
-    ForgotPasswordPhoneNumberFormData,
-    { phoneNumberOptions?: PhoneNumberOptions }
->({
-    prefix: 'r5-forgot-password-',
-    fields({ config, phoneNumberOptions }) {
-        return [
-            phoneNumberField(
-                {
-                    key: 'phoneNumber',
-                    label: 'phoneNumber',
-                    required: true,
-                    withCountryCallingCode: false,
-                    ...phoneNumberOptions,
-                },
-                config
-            ),
-        ];
-    },
-    submitLabel: 'forgotPassword.submitLabel.code',
-});
-
 export type VerificationCodeFormData = {
     password: string;
     passwordConfirmation: string;
     verificationCode: string;
 };
-
-interface VerificationCodeFormProps {
-    /**
-     * Whether or not to provide the display password in clear text option.
-     * @default false
-     */
-    canShowPassword?: boolean;
-}
-
-const VerificationCodeForm = createForm<VerificationCodeFormData, VerificationCodeFormProps>({
-    prefix: 'r5-verification-code-',
-    fields({ canShowPassword = false, config }) {
-        return [
-            simpleField({
-                key: 'verification_code',
-                label: 'verificationCode',
-                type: 'text',
-            }),
-            passwordField(
-                {
-                    label: 'newPassword',
-                    autoComplete: 'new-password',
-                    canShowPassword,
-                },
-                config
-            ),
-            simplePasswordField({
-                key: 'password_confirmation',
-                label: 'passwordConfirmation',
-                autoComplete: 'new-password',
-                validator: new Validator<string, unknown>({
-                    rule: (value, ctx) =>
-                        value === (ctx as FormContext<VerificationCodeFormData>).fields.password,
-                    hint: 'passwordMatch',
-                }),
-            }),
-        ];
-    },
-});
 
 const skipError = (error: unknown) =>
     isAppError(error) ? error.error === 'resource_not_found' : false;
@@ -223,7 +141,16 @@ export const ForgotPasswordView = ({
                 captchaFoxMode={captchaFoxMode}
                 action="password_reset_requested"
             >
-                <ForgotPasswordEmailForm
+                <Form
+                    fields={[
+                        {
+                            key: 'email',
+                            label: 'email',
+                            required: true,
+                            type: 'email',
+                        },
+                    ]}
+                    submitLabel={'forgotPassword.submitLabel'}
                     showLabels={showLabels}
                     handler={callback}
                     onSuccess={() => {
@@ -301,13 +228,24 @@ export const ForgotPasswordPhoneNumberView = ({
                 captchaFoxMode={captchaFoxMode}
                 action="password_reset_requested"
             >
-                <ForgotPasswordPhoneNumberForm
+                <Form
+                    fields={[
+                        {
+                            key: 'phoneNumber',
+                            type: 'phone',
+                            label: 'phoneNumber',
+                            required: true,
+                            allowInternational: phoneNumberOptions?.allowInternational ?? false,
+                            defaultCountry: phoneNumberOptions?.defaultCountry,
+                            phoneNumberOptions,
+                        },
+                    ]}
+                    submitLabel={'forgotPassword.submitLabel.code'}
                     showLabels={showLabels}
                     handler={callback}
                     onSuccess={onSuccess}
                     onError={onError}
                     skipError={displaySafeErrorMessage && skipError}
-                    phoneNumberOptions={phoneNumberOptions}
                 />
             </CaptchaProvider>
             <Alternative>
@@ -354,7 +292,26 @@ export const ForgotPasswordCodeView = ({
         <div>
             <Heading>{i18n('forgotPassword.title')}</Heading>
             <Info>{i18n('forgotPassword.verificationCode')}</Info>
-            <VerificationCodeForm
+            <Form
+                fields={[
+                    {
+                        key: 'verification_code',
+                        label: 'verificationCode',
+                        type: 'string',
+                    },
+                    {
+                        key: 'password',
+                        type: 'password',
+                        label: 'newPassword',
+                        autoComplete: 'new-password',
+                    },
+                    {
+                        key: 'passwordConfirmation',
+                        type: 'password',
+                        label: 'passwordConfirmation',
+                        autoComplete: 'new-password',
+                    },
+                ]}
                 showLabels={showLabels}
                 handler={callback}
                 onSuccess={() => {

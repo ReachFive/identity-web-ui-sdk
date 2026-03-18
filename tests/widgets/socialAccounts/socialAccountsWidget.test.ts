@@ -67,15 +67,10 @@ describe('Snapshot', () => {
                 { apiClient, config: { ...defaultConfig, ...config }, defaultI18n }
             );
 
-            await waitFor(async () => {
-                const { container, rerender } = await render(widget);
-
-                await waitFor(() => expect(apiClient.getUser).toHaveBeenCalled());
-
-                rerender(widget);
-
-                expect(container).toMatchSnapshot();
-            });
+            const { container, rerender } = render(widget);
+            rerender(widget);
+            await waitFor(() => expect(apiClient.getUser).toHaveBeenCalled());
+            expect(container).toMatchSnapshot();
         };
 
     test(
@@ -123,13 +118,9 @@ describe('DOM testing', () => {
             { apiClient, config: { ...defaultConfig, ...config }, defaultI18n }
         );
 
-        await waitFor(async () => {
-            const { rerender } = await render(widget);
-
-            await waitFor(() => expect(apiClient.getUser).toHaveBeenCalled());
-
-            rerender(widget);
-        });
+        const { rerender } = render(widget);
+        rerender(widget);
+        await waitFor(() => expect(apiClient.getUser).toHaveBeenCalled());
     };
 
     describe('with default config', () => {
@@ -138,8 +129,8 @@ describe('DOM testing', () => {
 
             await generateComponent({});
 
-            expect(screen.queryByText('socialAccounts.noLinkedAccount')).toBeInTheDocument();
-            expect(screen.queryByText('socialAccounts.linkNewAccount')).toBeInTheDocument();
+            expect(screen.getByText('socialAccounts.noLinkedAccount')).toBeInTheDocument();
+            expect(screen.getByText('socialAccounts.linkNewAccount')).toBeInTheDocument();
         });
 
         test('with existing identity', async () => {
@@ -150,8 +141,8 @@ describe('DOM testing', () => {
             ]);
 
             expect(screen.queryByText('socialAccounts.noLinkedAccount')).not.toBeInTheDocument();
-            expect(screen.queryByTestId('identity-facebook')).toBeInTheDocument();
-            expect(screen.queryByText('socialAccounts.linkNewAccount')).toBeInTheDocument();
+            expect(screen.getByTestId('identity-facebook')).toBeInTheDocument();
+            expect(screen.getByText('socialAccounts.linkNewAccount')).toBeInTheDocument();
         });
 
         test('with all identities configured', async () => {
@@ -164,9 +155,9 @@ describe('DOM testing', () => {
             ]);
 
             expect(screen.queryByText('socialAccounts.noLinkedAccount')).not.toBeInTheDocument();
-            expect(screen.queryByTestId('identity-facebook')).toBeInTheDocument();
-            expect(screen.queryByTestId('identity-google')).toBeInTheDocument();
-            expect(screen.queryByTestId('identity-line')).toBeInTheDocument();
+            expect(screen.getByTestId('identity-facebook')).toBeInTheDocument();
+            expect(screen.getByTestId('identity-google')).toBeInTheDocument();
+            expect(screen.getByTestId('identity-line')).toBeInTheDocument();
             expect(screen.queryByText('socialAccounts.linkNewAccount')).not.toBeInTheDocument();
         });
 
@@ -181,9 +172,11 @@ describe('DOM testing', () => {
                 { id: '000000000', provider: 'line', username: 'John Doe' },
             ]);
 
-            expect(screen.queryByTestId('identity-google')).toBeInTheDocument();
+            expect(screen.getByTestId('identity-google')).toBeInTheDocument();
 
-            const unlinkBtn = screen.getByTestId('identity-google-unlink');
+            const unlinkBtn = screen.getByRole('button', {
+                name: 'remove Google',
+            });
             expect(unlinkBtn).toBeInTheDocument();
 
             await user.click(unlinkBtn);
@@ -217,7 +210,9 @@ describe('DOM testing', () => {
                 { id: '000000000', provider: 'line', username: 'John Doe' },
             ]);
 
-            const unlinkBtn = screen.getByTestId('identity-google-unlink');
+            const unlinkBtn = screen.getByRole('button', {
+                name: 'remove Google',
+            });
             await user.click(unlinkBtn);
 
             expect(unlink).toBeCalled();

@@ -271,22 +271,3 @@ export const RadioGroup = ({ options, onChange, value, inputId, ...props }: Radi
         </FormGroup>
     );
 };
-export const UserAgreementStyle = styled.div`
-    font-size: ${props => props.theme.fontSize * 0.8}px;
-    color: ${props => props.theme.mutedTextColor};
-    text-align: center;
-    margin-bottom: ${props => props.theme.spacing}px;
-
-    p {
-        margin: 0;
-    }
-
-    a {
-        color: ${props => props.theme.mutedTextColor};
-        text-decoration: underline;
-    }
-
-    a:hover {
-        color: ${props => props.theme.mutedTextColor};
-    }
-`;

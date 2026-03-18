@@ -4,9 +4,9 @@ import styled, { type CSSProperties } from 'styled-components';
 
 import { type DeviceCredential } from '@reachfive/identity-core';
 
+import { Form } from '@/components/form/form';
+
 import { Card, CloseIcon } from '../../components/form/cardComponent';
-import { createForm } from '../../components/form/formComponent';
-import { buildFormFields } from '../../components/form/formFieldFactory';
 import { Heading, Info, MutedText, Paragraph } from '../../components/miscComponent';
 import { createWidget } from '../../components/widget/widget';
 import { useConfig } from '../../contexts/config';
@@ -44,13 +44,6 @@ const DeviceName = styled.div`
 type DeviceInputFormData = {
     friendlyName: string;
 };
-
-const DeviceInputForm = createForm<DeviceInputFormData>({
-    prefix: 'r5-device-editor-',
-    submitLabel: 'add',
-    supportMultipleSubmits: true,
-    resetAfterSuccess: true,
-});
 
 const DevicesListWrapper = styled.div`
     margin-bottom: ${props => props.theme.spacing}px;
@@ -178,7 +171,6 @@ function WebAuthnDevices({
     onSuccess = (() => {}) as OnSuccess,
 }: WebAuthnDevicesProps) {
     const coreClient = useReachfive();
-    const config = useConfig();
     const i18n = useI18n();
 
     const [devices, setDevices] = useState<DeviceCredential[]>(initDevices || []);
@@ -205,8 +197,6 @@ function WebAuthnDevices({
         });
     };
 
-    const fields = buildFormFields(['friendly_name'], config);
-
     return (
         <div>
             {devices.length === 0 ? (
@@ -219,8 +209,11 @@ function WebAuthnDevices({
                 <MutedText>{i18n('webauthn.registredDevices.add')}</MutedText>
             </Paragraph>
 
-            <DeviceInputForm
-                fields={fields}
+            <Form
+                fields={['friendly_name']}
+                submitLabel="add"
+                supportMultipleSubmits
+                resetAfterSuccess
                 showLabels={showLabels}
                 handler={addNewWebAuthnDevice}
                 onError={onError}

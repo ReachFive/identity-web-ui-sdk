@@ -2,16 +2,15 @@ import React, { useLayoutEffect } from 'react';
 
 import { AuthOptions, LoginWithPasswordParams } from '@reachfive/identity-core';
 
+import { Form, FormProps } from '@/components/form/form';
+import { useConfig } from '@/contexts/config';
+import { Field } from '@/lib/form';
+
 import {
     CaptchaProvider,
     WithCaptchaProps,
     type WithCaptchaToken,
 } from '../../../components/captcha';
-import checkboxField from '../../../components/form/fields/checkboxField';
-import identifierField from '../../../components/form/fields/identifierField';
-import { simpleField } from '../../../components/form/fields/simpleField';
-import simplePasswordField from '../../../components/form/fields/simplePasswordField';
-import { createForm } from '../../../components/form/formComponent';
 import { SocialButtons } from '../../../components/form/socialButtonsComponent';
 import { Alternative, Heading, Link, Separator } from '../../../components/miscComponent';
 import { importGoogleRecaptchaScript } from '../../../components/reCaptcha';
@@ -46,74 +45,76 @@ export interface LoginFormOptions {
     showRememberMe?: boolean;
 }
 
-export const LoginForm = createForm<LoginFormData, LoginFormOptions>({
-    prefix: 'r5-login-',
-    fields({
-        allowCustomIdentifier,
-        allowAuthentMailPhone = true,
-        canShowPassword,
-        defaultIdentifier,
-        showIdentifier = true,
-        showRememberMe,
-        i18n,
-        config,
-    }) {
-        const hasIdentifierField =
-            allowAuthentMailPhone &&
-            (config.loginTypeAllowed.email || config.loginTypeAllowed.phoneNumber);
-        return [
-            ...(hasIdentifierField
-                ? [
-                      identifierField(
-                          {
-                              defaultValue: defaultIdentifier,
-                              withPhoneNumber:
-                                  showIdentifier && config.loginTypeAllowed.phoneNumber,
-                              required: !allowCustomIdentifier,
-                              autoComplete: 'username webauthn',
-                          },
-                          config
-                      ),
-                  ]
-                : []),
-            ...(allowCustomIdentifier && hasIdentifierField
-                ? [
-                      {
-                          staticContent: <Separator text={i18n('or')} />,
-                      },
-                  ]
-                : []),
-            ...(allowCustomIdentifier
-                ? [
-                      simpleField({
-                          key: 'customIdentifier',
-                          type: 'text',
-                          label: 'customIdentifier',
-                          placeholder: i18n('customIdentifier'),
-                          required: false,
-                      }),
-                  ]
-                : []),
-            simplePasswordField({
-                key: 'password',
-                label: 'password',
-                autoComplete: 'current-password',
-                canShowPassword,
-            }),
-            ...(showRememberMe
-                ? [
-                      checkboxField({
-                          key: 'auth.persistent',
-                          label: 'rememberMe',
-                          defaultValue: false,
-                          required: false,
-                      }),
-                  ]
-                : []),
-        ];
-    },
-    submitLabel: 'login.submitLabel',
-});
+export const LoginForm = <ResultType,>({
+    allowCustomIdentifier,
+    allowAuthentMailPhone = true,
+    canShowPassword,
+    defaultIdentifier,
+    showRememberMe,
+    ...props
+}: FormProps<WithCaptchaToken<LoginFormData>, ResultType> & LoginFormOptions) => {
+    const config = useConfig();
+    const i18n = useI18n();
+
+    const hasIdentifierField =
+        allowAuthentMailPhone &&
+        (config.loginTypeAllowed.email || config.loginTypeAllowed.phoneNumber);
+
+    const fields: Field[] = [
+        ...((hasIdentifierField
+            ? [
+                  {
+                      type: 'identifier',
+                      key: 'identifier',
+                      defaultValue: defaultIdentifier,
+                      withPhoneNumber: config.loginTypeAllowed.phoneNumber,
+                      required: !allowCustomIdentifier,
+                      autoComplete: 'username webauthn',
+                  },
+              ]
+            : []) satisfies Field[]),
+        ...(allowCustomIdentifier && hasIdentifierField
+            ? [
+                  {
+                      staticContent: <Separator text={i18n('or')} />,
+                  },
+              ]
+            : []),
+        ...((allowCustomIdentifier
+            ? [
+                  {
+                      key: 'customIdentifier',
+                      type: 'string',
+                      label: 'customIdentifier',
+                      placeholder: i18n('customIdentifier'),
+                      required: false,
+                  },
+              ]
+            : []) satisfies Field[]),
+        {
+            type: 'password',
+            key: 'password',
+            label: 'password',
+            autoComplete: 'current-password',
+            canShowPassword,
+            required: true,
+            withPolicyRules: false,
+        },
+        ...((showRememberMe
+            ? [
+                  {
+                      type: 'checkbox',
+                      key: 'auth.persistent',
+                      label: 'rememberMe',
+                      defaultChecked: false,
+                      required: false,
+                  },
+              ]
+            : []) satisfies Field[]),
+    ];
+
+    return <Form fields={fields} submitLabel={'login.submitLabel'} {...props} />;
+};
 
 export type LoginViewProps = {
     /**

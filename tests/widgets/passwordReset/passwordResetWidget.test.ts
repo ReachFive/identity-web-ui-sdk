@@ -4,7 +4,7 @@
  */
 import { beforeEach, describe, expect, jest, test } from '@jest/globals';
 import '@testing-library/jest-dom/jest-globals';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import 'jest-styled-components';
 
@@ -76,10 +76,8 @@ describe('Snapshot', () => {
                 defaultI18n,
             });
 
-            await waitFor(async () => {
-                const { container } = await render(widget);
-                expect(container).toMatchSnapshot();
-            });
+            const { container } = render(widget);
+            expect(container).toMatchSnapshot();
         };
 
     describe('password-reset', () => {
@@ -137,13 +135,13 @@ describe('DOM testing', () => {
 
             await generateComponent();
 
-            const password = screen.getByTestId('password');
+            const password = screen.getByLabelText('newPassword');
             expect(password).toBeInTheDocument();
 
-            const passwordConfirmation = screen.getByTestId('password_confirmation');
+            const passwordConfirmation = screen.getByLabelText('passwordConfirmation');
             expect(passwordConfirmation).toBeInTheDocument();
 
-            const submitBtn = screen.getByTestId('submit');
+            const submitBtn = screen.getByRole('button', { name: 'send' });
             expect(submitBtn).toHaveTextContent('send');
 
             await user.type(password, 'Wond3rFu11_Pa55w0rD*$');
@@ -167,9 +165,9 @@ describe('DOM testing', () => {
 
             await generateComponent();
 
-            const password = screen.getByTestId('password');
-            const passwordConfirmation = screen.getByTestId('password_confirmation');
-            const submitBtn = screen.getByTestId('submit');
+            const password = screen.getByLabelText('newPassword');
+            const passwordConfirmation = screen.getByLabelText('passwordConfirmation');
+            const submitBtn = screen.getByRole('button', { name: 'send' });
 
             await user.type(password, 'Wond3rFu11_Pa55w0rD*$');
             await user.type(passwordConfirmation, 'Wond3rFu11_Pa55w0rD*$');

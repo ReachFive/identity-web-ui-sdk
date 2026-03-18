@@ -1,47 +1,19 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 
-import phoneNumberField, {
-    type PhoneNumberOptions,
-} from '../../components/form/fields/phoneNumberField';
-import { simpleField } from '../../components/form/fields/simpleField';
-import { createForm } from '../../components/form/formComponent';
+import { Form } from '@/components/form/form';
+
 import { Info, Intro } from '../../components/miscComponent';
 import { createMultiViewWidget } from '../../components/widget/widget';
-import { useConfig } from '../../contexts/config';
 import { useI18n } from '../../contexts/i18n';
 import { useReachfive } from '../../contexts/reachfive';
 import { useRouting } from '../../contexts/routing';
+import { type PhoneNumberOptions } from '../../lib/form';
 
-import type { Config, Prettify, OnError, OnSuccess } from '../../types';
+import type { OnError, OnSuccess, Prettify } from '../../types';
 
 type PhoneNumberFormData = { phoneNumber: string };
 
-const phoneNumberInputForm = (config: Config) =>
-    createForm<PhoneNumberFormData, { phoneNumberOptions?: PhoneNumberOptions }>({
-        prefix: 'r5-phonenumber-editor-',
-        fields: ({ phoneNumberOptions }) => [
-            phoneNumberField(
-                {
-                    required: true,
-                    ...phoneNumberOptions,
-                },
-                config
-            ),
-        ],
-    });
-
 type VerificationCodeFormData = { verificationCode: string };
-
-const VerificationCodeInputForm = createForm<VerificationCodeFormData>({
-    prefix: 'r5-phonenumber-editor-',
-    fields: [
-        simpleField({
-            key: 'verification_code',
-            label: 'verificationCode',
-            type: 'text',
-        }),
-    ],
-});
 
 interface MainViewProps {
     /**
@@ -76,7 +48,6 @@ const MainView = ({
     onSuccess = (() => {}) as OnSuccess,
 }: MainViewProps) => {
     const coreClient = useReachfive();
-    const config = useConfig();
     const i18n = useI18n();
     const { goTo } = useRouting();
 
@@ -95,12 +66,20 @@ const MainView = ({
     const handleSuccess = (data: PhoneNumberFormData) =>
         goTo<VerificationCodeViewState>('verificationCode', data);
 
-    const PhoneNumberInputForm = useMemo(() => phoneNumberInputForm(config), [config]);
-
     return (
         <div>
             <Intro>{i18n('phoneNumberEditor.intro')}</Intro>
-            <PhoneNumberInputForm
+            <Form
+                fields={[
+                    {
+                        key: 'phoneNumber',
+                        type: 'phone',
+                        required: true,
+                        allowInternational: phoneNumberOptions?.allowInternational ?? false,
+                        defaultCountry: phoneNumberOptions?.defaultCountry,
+                        phoneNumberOptions,
+                    },
+                ]}
                 showLabels={showLabels}
                 handler={handleSubmit}
                 onSuccess={handleSuccess}
@@ -154,7 +133,15 @@ const VerificationCodeView = ({
     return (
         <div>
             <Info>{i18n('phoneNumberEditor.verification.intro')}</Info>
-            <VerificationCodeInputForm
+            <Form
+                fields={[
+                    {
+                        key: 'verification_code',
+                        label: 'verificationCode',
+                        type: 'string',
+                        required: true,
+                    },
+                ]}
                 handler={handleSubmit}
                 onSuccess={() => onSuccess({ name: 'phone_number_verified', phoneNumber })}
                 onError={onError}

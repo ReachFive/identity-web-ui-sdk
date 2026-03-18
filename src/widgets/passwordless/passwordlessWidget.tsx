@@ -2,66 +2,25 @@ import React, { ComponentProps, useLayoutEffect } from 'react';
 
 import { AuthOptions, AuthResult, SingleFactorPasswordlessParams } from '@reachfive/identity-core';
 
+import { Form } from '@/components/form/form';
+
 import { CaptchaProvider, WithCaptchaProps, type WithCaptchaToken } from '../../components/captcha';
-import phoneNumberField, {
-    type PhoneNumberOptions,
-} from '../../components/form/fields/phoneNumberField';
-import { simpleField } from '../../components/form/fields/simpleField';
-import { createForm } from '../../components/form/formComponent';
 import { SocialButtons } from '../../components/form/socialButtonsComponent';
 import { Info, Intro, Separator } from '../../components/miscComponent';
 import { importGoogleRecaptchaScript } from '../../components/reCaptcha';
 import { createMultiViewWidget } from '../../components/widget/widget';
-import { useConfig } from '../../contexts/config';
 import { useI18n } from '../../contexts/i18n';
 import { useReachfive } from '../../contexts/reachfive';
 import { useRouting } from '../../contexts/routing';
-import { email } from '../../core/validation';
+import { type PhoneNumberOptions } from '../../lib/form';
 
-import type { Config, OnError, OnSuccess, Prettify } from '../../types';
+import type { OnError, OnSuccess, Prettify } from '../../types';
 
 type EmailFormData = { email: string; captchaToken?: string };
 
-const EmailInputForm = createForm<EmailFormData>({
-    prefix: 'r5-passwordless-',
-    fields: [
-        simpleField({
-            key: 'email',
-            label: 'email',
-            type: 'email',
-            validator: email,
-        }),
-    ],
-});
-
 type PhoneNumberFormData = { phoneNumber: string; captchaToken?: string };
 
-const phoneNumberInputForm = (config: Config) =>
-    createForm<PhoneNumberFormData, { phoneNumberOptions?: PhoneNumberOptions }>({
-        prefix: 'r5-passwordless-sms-',
-        fields: ({ phoneNumberOptions }) => [
-            phoneNumberField(
-                {
-                    required: true,
-                    ...phoneNumberOptions,
-                },
-                config
-            ),
-        ],
-    });
-
 type VerificationCodeFormData = { verificationCode: string };
-
-const VerificationCodeInputForm = createForm<VerificationCodeFormData>({
-    prefix: 'r5-passwordless-sms-',
-    fields: [
-        simpleField({
-            key: 'verification_code',
-            label: 'verificationCode',
-            type: 'text',
-        }),
-    ],
-});
 
 interface MainViewProps {
     /**
@@ -119,7 +78,6 @@ const MainView = ({
     onSuccess = (() => {}) as OnSuccess,
 }: WithCaptchaProps<MainViewProps>) => {
     const coreClient = useReachfive();
-    const config = useConfig();
     const i18n = useI18n();
     const { goTo } = useRouting();
 
@@ -148,7 +106,6 @@ const MainView = ({
     };
 
     const isEmail = authType === 'magic_link';
-    const PhoneNumberInputForm = phoneNumberInputForm(config);
 
     return (
         <div>
@@ -173,7 +130,15 @@ const MainView = ({
                     captchaFoxMode={captchaFoxMode}
                     action="passwordless_email"
                 >
-                    <EmailInputForm
+                    <Form
+                        fields={[
+                            {
+                                key: 'email',
+                                type: 'email',
+                                label: 'email',
+                                required: true,
+                            },
+                        ]}
                         handler={callback}
                         onSuccess={handleSuccess}
                         onError={onError}
@@ -190,11 +155,20 @@ const MainView = ({
                     captchaFoxMode={captchaFoxMode}
                     action="passwordless_phone"
                 >
-                    <PhoneNumberInputForm
+                    <Form
+                        fields={[
+                            {
+                                type: 'phone',
+                                key: 'phoneNumber',
+                                label: 'phoneNumber',
+                                required: true,
+                                allowInternational: phoneNumberOptions?.allowInternational,
+                                phoneNumberOptions,
+                            },
+                        ]}
                         handler={callback}
                         onSuccess={handleSuccess}
                         onError={onError}
-                        phoneNumberOptions={phoneNumberOptions}
                     />
                 </CaptchaProvider>
             )}
@@ -270,7 +244,18 @@ const VerificationCodeView = ({
                 action="verify_passwordless_sms"
             >
                 <Info>{i18n('passwordless.sms.verification.intro')}</Info>
-                <VerificationCodeInputForm handler={handleSubmit} onError={onError} />
+                <Form
+                    fields={[
+                        {
+                            key: 'verification_code',
+                            label: 'verificationCode',
+                            type: 'string',
+                            required: true,
+                        },
+                    ]}
+                    handler={handleSubmit}
+                    onError={onError}
+                />
             </CaptchaProvider>
         </div>
     );

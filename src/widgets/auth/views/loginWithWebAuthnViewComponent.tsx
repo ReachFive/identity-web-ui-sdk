@@ -1,9 +1,11 @@
 import React, { useCallback } from 'react';
+import { useFormContext } from 'react-hook-form';
 
 import type { AuthOptions, LoginWithWebAuthnParams } from '@reachfive/identity-core';
 
-import identifierField from '../../../components/form/fields/identifierField';
-import { createForm } from '../../../components/form/formComponent';
+import { Form } from '@/components/form/form';
+import { useConfig } from '@/contexts/config';
+
 import { SocialButtons } from '../../../components/form/socialButtonsComponent';
 import { WebAuthnLoginViewButtons } from '../../../components/form/webAuthAndPasswordButtonsComponent';
 import { Alternative, Heading, Link, Separator } from '../../../components/miscComponent';
@@ -21,32 +23,6 @@ import { LoginWithPasswordViewState } from './loginWithPasswordViewComponent';
 import type { OnError, OnSuccess } from '../../../types';
 
 type LoginWithWebAuthnFormData = { identifier: string } | { email: string };
-
-type LoginWithWebAuthnFormProps = {
-    defaultIdentifier?: string;
-    showIdentifier?: boolean;
-};
-
-export const LoginWithWebAuthnForm = createForm<
-    LoginWithWebAuthnFormData,
-    LoginWithWebAuthnFormProps
->({
-    prefix: 'r5-login-',
-    fields({ showIdentifier = true, defaultIdentifier, config }) {
-        return [
-            identifierField(
-                {
-                    defaultValue: defaultIdentifier,
-                    withPhoneNumber: showIdentifier && config.loginTypeAllowed.phoneNumber,
-                    required: true,
-                    autoComplete: 'username webauthn',
-                    isWebAuthnLogin: true,
-                },
-                config
-            ),
-        ];
-    },
-});
 
 export interface LoginWithWebAuthnViewProps {
     /**
@@ -102,6 +78,7 @@ export const LoginWithWebAuthnView = ({
     onError = (() => {}) as OnError,
     onSuccess = (() => {}) as OnSuccess,
 }: LoginWithWebAuthnViewProps) => {
+    const config = useConfig();
     const coreClient = useReachfive();
     const { goTo } = useRouting();
     const i18n = useI18n();
@@ -173,19 +150,31 @@ export const LoginWithWebAuthnView = ({
                 />
             )}
             {socialProviders && socialProviders.length > 0 && <Separator text={i18n('or')} />}
-            <LoginWithWebAuthnForm
+            <Form
+                fields={[
+                    {
+                        type: 'identifier',
+                        key: 'identifier',
+                        defaultValue: defaultIdentifier,
+                        withPhoneNumber: config.loginTypeAllowed.phoneNumber,
+                        required: true,
+                        autoComplete: 'username webauthn',
+                    },
+                ]}
                 showLabels={showLabels}
-                defaultIdentifier={defaultIdentifier}
                 handler={handleWebAuthnLogin}
                 onSuccess={res => onSuccess({ name: 'login', ...res })}
                 onError={onError}
-                SubmitComponent={({ disabled, onClick }) => (
-                    <WebAuthnLoginViewButtons
-                        disabled={disabled}
-                        enablePasswordAuthentication={enablePasswordAuthentication}
-                        onPasswordClick={() => onClick(redirectToPasswordLoginView)}
-                    />
-                )}
+                SubmitComponent={({ disabled }) => {
+                    const { getValues } = useFormContext<LoginWithWebAuthnFormData>();
+                    return (
+                        <WebAuthnLoginViewButtons
+                            disabled={disabled}
+                            enablePasswordAuthentication={enablePasswordAuthentication}
+                            onPasswordClick={() => redirectToPasswordLoginView(getValues())}
+                        />
+                    );
+                }}
             />
             {allowAccountRecovery && (
                 <Alternative>
