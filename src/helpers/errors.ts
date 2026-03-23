@@ -7,10 +7,12 @@ export interface AppError {
     errorMessageKey?: string;
 }
 
-export interface FieldError {
+type FieldErrorCode = 'missing' | 'invalid';
+
+interface FieldError {
     field?: string;
     message: string;
-    code: string;
+    code: FieldErrorCode;
 }
 
 export function isAppError(err: unknown): err is AppError {
