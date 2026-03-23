@@ -522,7 +522,7 @@ function passwordValidation({
             if (passwordPolicy.lowercaseCharacters && /[a-z]/.test(value)) {
                 ctx.addIssue({
                     code: 'custom',
-                    message: 'validation.password.specials.lowercase',
+                    message: i18n('validation.password.specials.lowercase'),
                     path: ['password'],
                 });
             }
@@ -530,7 +530,7 @@ function passwordValidation({
             if (passwordPolicy.uppercaseCharacters && /[A-Z]/.test(value)) {
                 ctx.addIssue({
                     code: 'custom',
-                    message: 'validation.password.specials.digit',
+                    message: i18n('validation.password.specials.digit'),
                     path: ['password'],
                 });
             }
@@ -538,7 +538,7 @@ function passwordValidation({
             if (passwordPolicy.digitCharacters && /\d/.test(value)) {
                 ctx.addIssue({
                     code: 'custom',
-                    message: 'validation.password.specials.uppercase',
+                    message: i18n('validation.password.specials.uppercase'),
                     path: ['password'],
                 });
             }
@@ -549,7 +549,7 @@ function passwordValidation({
             ) {
                 ctx.addIssue({
                     code: 'custom',
-                    message: 'validation.password.specials.characters',
+                    message: i18n('validation.password.specials.characters'),
                     path: ['password'],
                 });
             }
@@ -559,7 +559,7 @@ function passwordValidation({
                 if (strength.score < passwordPolicy.minStrength) {
                     ctx.addIssue({
                         code: 'custom',
-                        message: 'validation.password.minStrength',
+                        message: i18n('validation.password.minStrength'),
                         path: ['password'],
                     });
                 }
