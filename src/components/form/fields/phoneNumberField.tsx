@@ -66,7 +66,7 @@ export type PhoneNumberOptions = {
     locale?: string;
     /**
      * If `withCountryCallingCode` property is explicitly set to true then the "country calling code" part (e.g. "+1" when country is "US") is included in the input field (but still isn't editable).
-     * @default true
+     * @default false
      */
     withCountryCallingCode?: boolean;
     /**
@@ -83,6 +83,7 @@ export interface PhoneNumberFieldProps extends FieldComponentProps<Value>, Phone
 
 const PhoneNumberField = (props: PhoneNumberFieldProps) => {
     const {
+        defaultCountry,
         country,
         inputId,
         label,
@@ -94,7 +95,7 @@ const PhoneNumberField = (props: PhoneNumberFieldProps) => {
         showLabel,
         validation,
         value,
-        withCountryCallingCode = true,
+        withCountryCallingCode = false,
         withCountrySelect = false,
     } = props;
 
@@ -148,15 +149,15 @@ const PhoneNumberField = (props: PhoneNumberFieldProps) => {
                 data-testid={path}
                 onChange={handlePhoneChange}
                 labels={labels}
-                international={true}
-                withCountryCallingCode={withCountryCallingCode}
-                {...(withCountrySelect
+                defaultCountry={defaultCountry}
+                {...(withCountryCallingCode
                     ? {
-                          defaultCountry: country,
+                          withCountryCallingCode: true,
+                          country: country ?? defaultCountry,
+                          international: true,
                       }
-                    : {
-                          country,
-                      })}
+                    : {})}
+                {...(withCountrySelect ? { international: true, country: undefined } : {})}
                 inputComponent={Input}
                 hasError={!!error}
             />
@@ -164,7 +165,7 @@ const PhoneNumberField = (props: PhoneNumberFieldProps) => {
     );
 };
 
-const phoneNumberField = (
+export const phoneNumberField = (
     {
         key = 'phone_number',
         label = 'phoneNumber',
@@ -205,10 +206,8 @@ const phoneNumberField = (
             hint: 'phone',
         }),
         extendedParams: {
-            defaultCountry,
-            country:
-                country ??
-                (isValidCountryCode(config.countryCode) ? config.countryCode : undefined),
+            defaultCountry: isValidCountryCode(config.countryCode) ? config.countryCode : undefined,
+            country,
             locale: locale ?? config.language,
             withCountryCallingCode,
             withCountrySelect,
