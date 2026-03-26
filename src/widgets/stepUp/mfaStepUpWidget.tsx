@@ -309,26 +309,24 @@ export const VerificationCodeView = ({
     const state = params as VerificationCodeViewState;
 
     const { auth, authType, challengeId, allowTrustDevice } = { ...props, ...state };
-    const isOrchestratedFlow = new URLSearchParams(window.location.search).has(
-        'r5_request_token'
-    );
+    const isOrchestratedFlow = new URLSearchParams(window.location.search).has('r5_request_token');
 
     const handleSubmit = (data: VerificationCodeInputFormData) => {
-            return coreClient
-                .verifyMfaPasswordless({
-                    challengeId,
-                    verificationCode: data.verificationCode,
-                    trustDevice: data.trustDevice,
-                })
-                .then(resp => {
-                    onSuccess({ name: 'login_2nd_step', authType, authResult: resp });
-                    if (data.trustDevice) {
-                        onSuccess({ name: 'mfa_trusted_device_added' });
-                    }
-                    // @ts-expect-error AuthResult is too complex and is not representative of the real response of this request
-                    if(!isOrchestratedFlow) window.location.replace((auth?.redirectUri ?? '') + '?' + toQueryString(resp));
-                });
-
+        return coreClient
+            .verifyMfaPasswordless({
+                challengeId,
+                verificationCode: data.verificationCode,
+                trustDevice: data.trustDevice,
+            })
+            .then(resp => {
+                onSuccess({ name: 'login_2nd_step', authType, authResult: resp });
+                if (data.trustDevice) {
+                    onSuccess({ name: 'mfa_trusted_device_added' });
+                }
+                // @ts-expect-error AuthResult is too complex and is not representative of the real response of this request
+                if (!isOrchestratedFlow)
+                    window.location.replace((auth?.redirectUri ?? '') + '?' + toQueryString(resp));
+            });
     };
 
     return (
