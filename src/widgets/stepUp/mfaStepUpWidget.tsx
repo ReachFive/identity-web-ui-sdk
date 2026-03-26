@@ -323,9 +323,10 @@ export const VerificationCodeView = ({
                 if (data.trustDevice) {
                     onSuccess({ name: 'mfa_trusted_device_added' });
                 }
-                // @ts-expect-error AuthResult is too complex and is not representative of the real response of this request
-                if (!isOrchestratedFlow)
+                if (!isOrchestratedFlow) {
+                    // @ts-expect-error AuthResult is too complex and is not representative of the real response of this request
                     window.location.replace((auth?.redirectUri ?? '') + '?' + toQueryString(resp));
+                }
             });
     };
 
