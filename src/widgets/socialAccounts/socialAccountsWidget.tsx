@@ -1,13 +1,24 @@
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
 
+import { AlertTriangleIcon, XIcon } from 'lucide-react';
 import styled from 'styled-components';
 
 import { AuthOptions, Identity, Profile } from '@reachfive/identity-core';
 
+import { Button } from '@/components/ui/button';
+import {
+    Item,
+    ItemActions,
+    ItemContent,
+    ItemDescription,
+    ItemGroup,
+    ItemMedia,
+    ItemTitle,
+} from '@/components/ui/item';
+
 import { DefaultButton } from '../../components/form/buttonComponent';
-import { Card, CloseIcon } from '../../components/form/cardComponent';
 import { SocialButtons } from '../../components/form/socialButtonsComponent';
-import { Alternative, ErrorText, Info, Link, MutedText } from '../../components/miscComponent';
+import { Alternative, Link } from '../../components/miscComponent';
 import { createMultiViewWidget } from '../../components/widget/widget';
 import { useI18n } from '../../contexts/i18n';
 import { useReachfive } from '../../contexts/reachfive';
@@ -102,19 +113,19 @@ const withIdentities = <T extends WithIdentitiesProps = WithIdentitiesProps>(
     return ComponentWithIdentities;
 };
 
-const SocialIcon = styled.span<{ icon: string }>`
-    position: absolute;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    width: ${props => props.theme._blockInnerHeight}px;
-    box-sizing: border-box;
-    background-image: url(${props => props.icon});
-    background-repeat: no-repeat;
-    background-size: ${props => props.theme._absoluteLineHeight}px
-        ${props => props.theme._absoluteLineHeight}px;
-    background-position: center center;
-`;
+// const SocialIcon = styled.span<{ icon: string }>`
+//     position: absolute;
+//     left: 0;
+//     top: 0;
+//     bottom: 0;
+//     width: ${props => props.theme._blockInnerHeight}px;
+//     box-sizing: border-box;
+//     background-image: url(${props => props.icon});
+//     background-repeat: no-repeat;
+//     background-size: ${props => props.theme._absoluteLineHeight}px
+//         ${props => props.theme._absoluteLineHeight}px;
+//     background-position: center center;
+// `;
 
 interface IdentityListProps {
     identities?: Identity[];
@@ -145,30 +156,55 @@ const IdentityList = ({
     };
 
     return (
-        <div>
-            {identities.length === 0 && <Info>{i18n('socialAccounts.noLinkedAccount')}</Info>}
+        <ItemGroup>
+            {identities.length === 0 && (
+                <Item>
+                    <ItemContent>
+                        <ItemTitle>{i18n('socialAccounts.noLinkedAccount')}</ItemTitle>
+                    </ItemContent>
+                </Item>
+            )}
             {error && (
-                <ErrorText style={{ marginBottom: '10px', textAlign: 'center' }}>
-                    {error.message}
-                </ErrorText>
+                <Item>
+                    <ItemMedia>
+                        <AlertTriangleIcon className="text-destructive-foreground" />
+                    </ItemMedia>
+                    <ItemContent>
+                        <ItemTitle className="text-destructive-foreground">
+                            {error.message}
+                        </ItemTitle>
+                    </ItemContent>
+                </Item>
             )}
             {identities.map(({ provider, id, username }) => {
                 const providerInfos = socialProviders[provider as ProviderId];
                 return (
-                    <Card key={id} data-testid={`identity-${provider}`}>
-                        <SocialIcon icon={providerInfos.icon} />
-                        <span>{providerInfos.name}</span>
-                        &nbsp;
-                        <MutedText>-&nbsp;{username}</MutedText>
-                        <CloseIcon
-                            title={i18n('remove')}
-                            onClick={() => onRemove(id!)}
-                            data-testid={`identity-${provider}-unlink`}
-                        />
-                    </Card>
+                    <Item variant="outline" key={id} data-testid={`identity-${provider}`}>
+                        <ItemMedia>
+                            <img src={providerInfos.icon} alt="" className="size-4 sm:size-10" />
+                        </ItemMedia>
+                        <ItemContent>
+                            <ItemTitle>{providerInfos.name}</ItemTitle>
+                            <ItemDescription>{username}</ItemDescription>
+                        </ItemContent>
+                        <ItemActions>
+                            <Button
+                                size="icon"
+                                variant="ghost"
+                                className="rounded-full hover:bg-destructive hover:text-destructive-foreground"
+                                onClick={() => onRemove(id!)}
+                                aria-label={`${i18n('remove')} ${providerInfos.name}`}
+                            >
+                                <XIcon />
+                                <span className="sr-only">
+                                    {i18n('remove')} {providerInfos.name}
+                                </span>
+                            </Button>
+                        </ItemActions>
+                    </Item>
                 );
             })}
-        </div>
+        </ItemGroup>
     );
 };
 

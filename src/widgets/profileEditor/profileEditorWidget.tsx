@@ -2,24 +2,24 @@ import React from 'react';
 
 import { ConsentVersions, Profile, UserConsent } from '@reachfive/identity-core';
 
-import { FieldCreator } from '../../components/form/fieldCreator';
-import { PhoneNumberOptions } from '../../components/form/fields/phoneNumberField';
-import { createForm } from '../../components/form/formComponent';
-import { Field, buildFormFields } from '../../components/form/formFieldFactory';
+import { Form } from '@/components/form/form';
+import {
+    Field,
+    FieldDefinition,
+    getFieldDefinitions,
+    StaticContent,
+    withoutStaticContent,
+} from '@/lib/form';
+
 import { createWidget } from '../../components/widget/widget';
 import { useReachfive } from '../../contexts/reachfive';
 import { UserError } from '../../helpers/errors';
 import { camelCaseProperties } from '../../helpers/transformObjectProperties';
+import { type PhoneNumberOptions } from '../../lib/form';
 
 import type { OnError, OnSuccess } from '../../types';
 
 type ProfileWithConsents = Profile & { consents?: Record<string, UserConsent> };
-
-const ProfileEditorForm = createForm<ProfileWithConsents>({
-    prefix: 'r5-profile-editor-',
-    supportMultipleSubmits: true,
-    submitLabel: 'save',
-});
 
 interface ProfileEditorProps {
     /**
@@ -47,8 +47,8 @@ interface ProfileEditorProps {
      * This URL must be whitelisted in the `Allowed Callback URLs` field of your ReachFive client settings.
      */
     redirectUrl?: string;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    resolvedFields: FieldCreator<any, any, any, any>[];
+
+    resolvedFields: (FieldDefinition | StaticContent)[];
     /**
      * Whether the form fields' labels are displayed on the form view.
      * @default false
@@ -76,13 +76,13 @@ const ProfileEditor = ({
         });
 
     return (
-        <ProfileEditorForm
+        <Form
+            supportMultipleSubmits
+            submitLabel="save"
             handler={handleSubmit}
             initialModel={profile}
             fields={resolvedFields}
-            sharedProps={{
-                ...phoneNumberOptions,
-            }}
+            phoneNumberOptions={phoneNumberOptions}
             showLabels={showLabels}
             onSuccess={() => onSuccess({ name: 'user_updated' })}
             onError={onError}
@@ -118,26 +118,29 @@ export default createWidget<ProfileEditorWidgetProps, ProfileEditorProps>({
         };
         const { accessToken, fields = [] } = opts;
 
-        const haveNotAllowedFields = fields.some(field => {
-            const fieldName = typeof field === 'string' ? field : field.key;
-            return fieldName === 'password' || fieldName === 'password_confirmation';
+        const fieldDefinitions = withoutStaticContent(
+            getFieldDefinitions(fields, config, {
+                errorArchivedConsents: false,
+            })
+        );
+
+        const haveNotAllowedFields = fieldDefinitions.some(field => {
+            return field.key === 'password' || field.key === 'password_confirmation';
         });
 
         if (haveNotAllowedFields) {
             throw new UserError('These fields are not allowed: password, password_confirmation.');
         }
 
-        // This step removes the version from the consents
-        const resolvedFields = buildFormFields(fields, {
-            ...config,
-            errorArchivedConsents: false,
-        });
-
         return (
             apiClient
                 .getUser({
                     accessToken,
-                    fields: resolvedFields.map(({ path }) => path).join(','),
+                    fields: fieldDefinitions
+                        .map(({ key, parent }) =>
+                            [...[parent].flat().filter(p => typeof p === 'string'), key].join('.')
+                        )
+                        .join(','),
                 })
                 /**
                  * @todo this can be removed when https://github.com/ReachFive/identity-web-core-sdk/pull/260 will be merged
@@ -163,7 +166,7 @@ export default createWidget<ProfileEditorWidgetProps, ProfileEditorProps>({
                     const filteredProfileConsents =
                         profile.consents && Object.keys(profile.consents).length > 0
                             ? filterProfileConsents(
-                                  fields,
+                                  fieldDefinitions,
                                   config.consentsVersions,
                                   profile.consents
                               )
@@ -175,10 +178,10 @@ export default createWidget<ProfileEditorWidgetProps, ProfileEditorProps>({
                     return {
                         ...opts,
                         profile: filteredOutConsentsProfile,
-                        resolvedFields: resolvedFields.filter(field => {
+                        resolvedFields: fieldDefinitions.filter(field => {
                             return (
-                                (field.path !== 'email' || !filteredOutConsentsProfile.email) &&
-                                (field.path !== 'phone_number' ||
+                                (field.key !== 'email' || !filteredOutConsentsProfile.email) &&
+                                (field.key !== 'phone_number' ||
                                     !config.sms ||
                                     !filteredOutConsentsProfile.phoneNumber)
                             );
@@ -196,18 +199,19 @@ export default createWidget<ProfileEditorWidgetProps, ProfileEditorProps>({
 
 // Filter out the profile consents with different version than the one the given consent field own
 const filterProfileConsents = (
-    fields: (string | Field)[],
+    fields: FieldDefinition[],
     consentsVersions: Record<string, ConsentVersions>,
     profileConsents: Record<string, UserConsent>
 ) => {
     return Object.keys(profileConsents)
         .filter(profileConsentKey => {
             const consentField = fields
-                .map(f => (typeof f === 'string' ? f : f.key))
+                .map(f => f.key)
                 .find(field => field.startsWith(`consents.${profileConsentKey}`));
             const consentFieldSplit = consentField ? consentField.split('.v') : [];
             // Find most recent consent version if not given
-            const highestConsentVersion = consentsVersions[profileConsentKey].versions[0].versionId;
+            const highestConsentVersion =
+                consentsVersions[profileConsentKey].versions[0]?.versionId;
             const consentFieldVersion = parseInt(consentFieldSplit[1]) || highestConsentVersion;
             const profileConsentVersion =
                 profileConsents[profileConsentKey].consentVersion?.versionId;

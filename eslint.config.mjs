@@ -44,6 +44,9 @@ export default defineConfig(
             }
         },
         rules: {
+            // TypeScript already handles import resolution; the import plugin's resolver
+            // doesn't support package.json `exports` fields on some packages (e.g. react-hook-form).
+            "import/no-unresolved": "off",
             "no-unused-vars": "off",
             "react/jsx-uses-vars": "error",
             "react/jsx-uses-react": "error",

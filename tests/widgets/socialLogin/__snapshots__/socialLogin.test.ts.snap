@@ -115,18 +115,47 @@ exports[`Snapshot social login basic 1`] = `
 }
 
 .c1 {
-  --color-primary: #229955;
-  --color-destructive: #dc4e41;
-  --color-background: #ffffff;
-  --color-text: #495057;
-  --color-border: #ced4da;
-  --spacing-padding-y: 9;
-  --spacing-padding-x: 12;
-  --spacing-block-inner-height: 38;
-  --spacing: 10;
-  --font-generic: 14;
+  --primary: 145.71 63.64% 36.67%;
+  --primary-foreground: 0 0% 100%;
+  --destructive: 5.03 68.89% 55.88%;
+  --destructive-foreground: 0 0% 100%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 210 8.75% 31.37%;
+  --background: 0 0% 100%;
+  --border: 210 13.95% 83.14%;
+  --text: 210 8.75% 31.37%;
+  --accent: 145.71 63.64% 36.67%;
+  --muted: 210 10.81% 70.98%;
+  --input: 210 13.95% 83.14%;
+  --ring: 145.65 63.27% 61.57%;
+  --spacing-padding-y: 9px;
+  --spacing-padding-x: 12px;
+  --spacing: 10px;
+  --font-size: 14px;
+  --leading: 1.428571429;
   --border-width: 1;
-  --radius: 3;
+  --radius: 3px;
+  --button-border: #ced4da;
+  --button-border-width: 1;
+  --button-height: 40px;
+  --button-leading: 1.428571429;
+  --button-padding-x: 12px;
+  --button-padding-y: 9px;
+  --button-radius: 3px;
+  --button-text-size: 14px;
+  --input-background: #fff;
+  --input-border: #ced4da;
+  --input-border-width: 1;
+  --input-disabled-background: #e9ecef;
+  --input-height: 40px;
+  --input-leading: 1.428571429;
+  --input-padding-x: 12px;
+  --input-padding-y: 9px;
+  --input-placeholder: #868e96;
+  --input-radius: 3px;
+  --input-shadow: none;
+  --input-text-color: #495057;
+  --input-text-size: 14px;
 }
 
 <div>

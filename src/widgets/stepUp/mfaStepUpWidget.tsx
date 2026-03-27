@@ -3,10 +3,9 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { AuthOptions, MFA, PasswordlessResponse } from '@reachfive/identity-core';
 import { StepUpPasswordlessParams } from '@reachfive/identity-core/es/main/oAuthClient';
 
-import checkboxField from '../../components/form/fields/checkboxField';
-import radioboxField from '../../components/form/fields/radioboxField';
-import { simpleField } from '../../components/form/fields/simpleField';
-import { createForm } from '../../components/form/formComponent';
+import { Form } from '@/components/form/form.tsx';
+import { Field } from '@/lib/form.tsx';
+
 import { Info, Intro } from '../../components/miscComponent';
 import { createMultiViewWidget } from '../../components/widget/widget';
 import { useConfig } from '../../contexts/config.tsx';
@@ -17,65 +16,14 @@ import { toQueryString } from '../../helpers/queryString';
 
 import type { OnError, OnSuccess, Prettify, RequiredProperty } from '../../types';
 
-const StartStepUpMfaButton = createForm({
-    prefix: 'r5-mfa-start-step-up-',
-    submitLabel: 'mfa.stepUp.start',
-});
-
 export type VerificationCodeInputFormData = {
     verificationCode: string;
     trustDevice?: boolean;
 };
 
-interface VerificationCodeFormOptions {
-    allowTrustDevice?: boolean;
-}
-
-const VerificationCodeInputForm = createForm<
-    VerificationCodeInputFormData,
-    VerificationCodeFormOptions
->({
-    prefix: 'r5-passwordless-sms-',
-    fields({ allowTrustDevice }) {
-        return [
-            simpleField({
-                key: 'verification_code',
-                label: 'verificationCode',
-                type: 'text',
-            }),
-            ...(allowTrustDevice
-                ? [
-                      checkboxField({
-                          key: 'trust_device',
-                          label: 'mfa.stepUp.trustDevice',
-                          defaultValue: false,
-                      }),
-                  ]
-                : []),
-        ];
-    },
-});
-
 type StepUpFormData = {
     authType: StepUpPasswordlessParams['authType'];
 };
-
-type StepUpFormProps = {
-    options: Parameters<typeof radioboxField>[0]['options'];
-};
-
-const StepUpForm = createForm<StepUpFormData, StepUpFormProps>({
-    prefix: 'r5-mfa-start-passwordless',
-    fields({ options }) {
-        return [
-            radioboxField({
-                key: 'authType',
-                label: 'authType',
-                options,
-            }),
-        ];
-    },
-});
 
 export interface MainViewProps {
     /**
@@ -160,7 +108,8 @@ export const MainView = ({
 
     if (showStepUpStart) {
         return (
-            <StartStepUpMfaButton
+            <Form
+                submitLabel="mfa.stepUp.start"
                 handler={onGetStepUpToken}
                 onSuccess={(data: MFA.StepUpResponse) =>
                     goTo<FaSelectionViewState>('fa-selection', { ...data, allowTrustDevice, auth })
@@ -260,8 +209,19 @@ export const FaSelectionView = ({
         return (
             <div>
                 {showIntro && <Intro>{i18n('mfa.select.factor')}</Intro>}
-                <StepUpForm
-                    options={amr.map(factor => ({ key: factor, value: factor, label: factor }))}
+                <Form
+                    fields={[
+                        {
+                            type: 'radio-group',
+                            key: 'authType',
+                            label: 'authType',
+                            values: amr.map(value => ({
+                                value: value,
+                                label: value,
+                            })),
+                            required: true,
+                        },
+                    ]}
                     handler={onChooseFa}
                     onError={onError}
                 />
@@ -334,8 +294,25 @@ export const VerificationCodeView = ({
         <div>
             {authType === 'sms' && <Info>{i18n('passwordless.sms.verification.intro')}</Info>}
             {authType === 'email' && <Info>{i18n('passwordless.email.verification.intro')}</Info>}
-            <VerificationCodeInputForm
-                allowTrustDevice={rbaEnabled && allowTrustDevice}
+            <Form
+                fields={[
+                    {
+                        key: 'verification_code',
+                        label: 'verificationCode',
+                        type: 'string',
+                        required: true,
+                    },
+                    ...((rbaEnabled && allowTrustDevice
+                        ? [
+                              {
+                                  type: 'checkbox',
+                                  key: 'trust_device',
+                                  label: 'mfa.stepUp.trustDevice',
+                                  defaultChecked: false,
+                              },
+                          ]
+                        : []) satisfies Field[]),
+                ]}
                 handler={handleSubmit}
                 onError={onError}
             />

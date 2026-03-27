@@ -1,11 +1,10 @@
 import React from 'react';
 
-import passwordField from '../../components/form/fields/passwordField';
-import simplePasswordField from '../../components/form/fields/simplePasswordField';
-import { createForm, FormContext } from '../../components/form/formComponent';
+import { Form, FormProps } from '@/components/form/form';
+import { Field } from '@/lib/form';
+
 import { createWidget } from '../../components/widget/widget';
 import { useReachfive } from '../../contexts/reachfive';
-import { Validator } from '../../core/validation';
 
 import type { OnError, OnSuccess } from '../../types';
 
@@ -28,44 +27,44 @@ interface PasswordEditorFormProps {
     canShowPassword?: boolean;
 }
 
-export const PasswordEditorForm = createForm<PasswordEditorFormData, PasswordEditorFormProps>({
-    prefix: 'r5-password-editor-',
-    fields({ promptOldPassword = false, canShowPassword = false, config }) {
-        return [
-            ...(promptOldPassword
-                ? [
-                      simplePasswordField({
-                          key: 'old_password',
-                          label: 'oldPassword',
-                      }),
-                  ]
-                : []),
-            passwordField(
+export const PasswordEditorForm = ({
+    canShowPassword = false,
+    promptOldPassword = false,
+    ...props
+}: PasswordEditorFormProps & FormProps<PasswordEditorFormData>) => {
+    return (
+        <Form
+            fields={[
+                ...((promptOldPassword
+                    ? [
+                          {
+                              type: 'password',
+                              key: 'old_password',
+                              label: 'oldPassword',
+                              withPolicyRules: false,
+                          },
+                      ]
+                    : []) satisfies Field[]),
                 {
+                    type: 'password',
+                    key: 'password',
                     label: 'newPassword',
                     autoComplete: 'new-password',
                     canShowPassword,
                 },
-                config
-            ),
-            simplePasswordField({
-                key: 'password_confirmation',
-                label: 'passwordConfirmation',
-                autoComplete: 'new-password',
-                validator: new Validator<string, unknown>({
-                    rule: (value, ctx) => {
-                        return (
-                            value === (ctx as FormContext<PasswordEditorFormData>).fields.password
-                        );
-                    },
-                    hint: 'passwordMatch',
-                }),
-            }),
-        ];
-    },
-    resetAfterSuccess: true,
-    resetAfterError: true,
-});
+                {
+                    type: 'password',
+                    key: 'password_confirmation',
+                    label: 'passwordConfirmation',
+                    autoComplete: 'new-password',
+                },
+            ]}
+            resetAfterSuccess
+            resetAfterError
+            {...props}
+        />
+    );
+};
 
 export interface PasswordEditorProps extends PasswordEditorFormProps {
     /**

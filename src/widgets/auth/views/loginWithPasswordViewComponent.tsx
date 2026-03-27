@@ -3,11 +3,11 @@ import React, { useLayoutEffect } from 'react';
 import { type AuthOptions } from '@reachfive/identity-core';
 import { LoginWithPasswordParams } from '@reachfive/identity-core/es/main/oAuthClient';
 
+import { Form } from '@/components/form/form';
+import { useConfig } from '@/contexts/config';
+import { Field } from '@/lib/form';
+
 import { CaptchaProvider, WithCaptchaProps, WithCaptchaToken } from '../../../components/captcha';
-import checkboxField from '../../../components/form/fields/checkboxField';
-import identifierField from '../../../components/form/fields/identifierField';
-import simplePasswordField from '../../../components/form/fields/simplePasswordField';
-import { createForm } from '../../../components/form/formComponent';
 import { Alternative, Heading, Link } from '../../../components/miscComponent';
 import { importGoogleRecaptchaScript } from '../../../components/reCaptcha';
 import { useI18n } from '../../../contexts/i18n';
@@ -22,49 +22,6 @@ type LoginWithPasswordFormData = {
     identifier: string;
     password: string;
 };
-
-interface LoginWithPasswordFormProps {
-    canShowPassword?: boolean;
-    showRememberMe?: boolean;
-    username?: string;
-}
-
-export const LoginWithPasswordForm = createForm<
-    LoginWithPasswordFormData,
-    LoginWithPasswordFormProps
->({
-    prefix: 'r5-login-',
-    fields({ username, showRememberMe, canShowPassword, config }) {
-        return [
-            identifierField(
-                {
-                    key: 'identifier',
-                    defaultValue: username,
-                    withPhoneNumber: config.loginTypeAllowed.phoneNumber,
-                    readOnly: true,
-                },
-                config
-            ),
-            simplePasswordField({
-                key: 'password',
-                label: 'password',
-                autoComplete: 'current-password',
-                canShowPassword,
-            }),
-            ...(showRememberMe
-                ? [
-                      checkboxField({
-                          key: 'auth.persistent',
-                          label: 'rememberMe',
-                          defaultValue: false,
-                          required: false,
-                      }),
-                  ]
-                : []),
-        ];
-    },
-    submitLabel: 'login.submitLabel',
-});
 
 export interface LoginWithPasswordViewProps {
     allowForgotPassword?: boolean;
@@ -109,6 +66,7 @@ export const LoginWithPasswordView = ({
     onError = (() => {}) as OnError,
     onSuccess = (() => {}) as OnSuccess,
 }: WithCaptchaProps<LoginWithPasswordViewProps>) => {
+    const config = useConfig();
     const i18n = useI18n();
     const coreClient = useReachfive();
     const { goTo, params } = useRouting();
@@ -154,11 +112,37 @@ export const LoginWithPasswordView = ({
             action="login"
         >
             <Heading>{i18n('login.title')}</Heading>
-            <LoginWithPasswordForm
-                username={username}
+            <Form
+                fields={[
+                    {
+                        key: 'identifier',
+                        type: 'identifier',
+                        defaultValue: username,
+                        withPhoneNumber: config.loginTypeAllowed.phoneNumber,
+                        // readOnly: true,
+                    },
+                    {
+                        key: 'password',
+                        type: 'password',
+                        label: 'password',
+                        autoComplete: 'current-password',
+                        canShowPassword,
+                        withPolicyRules: false,
+                    },
+                    ...((showRememberMe
+                        ? [
+                              {
+                                  type: 'checkbox',
+                                  key: 'auth.persistent',
+                                  label: 'rememberMe',
+                                  defaultChecked: false,
+                                  required: false,
+                              },
+                          ]
+                        : []) satisfies Field[]),
+                ]}
+                submitLabel={'login.submitLabel'}
                 showLabels={showLabels}
-                showRememberMe={showRememberMe}
-                canShowPassword={canShowPassword}
                 handler={callback}
                 onSuccess={res => onSuccess({ name: 'login', ...res })}
                 onError={onError}

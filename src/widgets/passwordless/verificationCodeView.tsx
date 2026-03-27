@@ -1,8 +1,7 @@
 import React from 'react';
 
 import { CaptchaProvider, WithCaptchaProps, type WithCaptchaToken } from '@/components/captcha';
-import { simpleField } from '@/components/form/fields/simpleField';
-import { createForm } from '@/components/form/formComponent';
+import { Form } from '@/components/form/form';
 import { Info } from '@/components/miscComponent';
 import { useI18n } from '@/contexts/i18n';
 import { useReachfive } from '@/contexts/reachfive';
@@ -31,17 +30,6 @@ export type VerificationCodeViewState =
       };
 
 export type VerificationCodeFormData = { verificationCode: string };
-
-const VerificationCodeInputForm = createForm<VerificationCodeFormData>({
-    prefix: 'r5-passwordless-sms-',
-    fields: [
-        simpleField({
-            key: 'verification_code',
-            label: 'verificationCode',
-            type: 'text',
-        }),
-    ],
-});
 
 export const VerificationCodeView = ({
     recaptcha_enabled = false,
@@ -85,7 +73,17 @@ export const VerificationCodeView = ({
                         ? i18n('passwordless.sms.verification.intro')
                         : i18n('passwordless.email.verification.intro')}
                 </Info>
-                <VerificationCodeInputForm handler={handleSubmit} onError={onError} />
+                <Form
+                    fields={[
+                        {
+                            key: 'verification_code',
+                            label: 'verificationCode',
+                            type: 'string',
+                        },
+                    ]}
+                    handler={handleSubmit}
+                    onError={onError}
+                />
             </CaptchaProvider>
         </div>
     );

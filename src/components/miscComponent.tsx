@@ -162,6 +162,8 @@ marked.use({
     ],
 });
 
+export { marked };
+
 interface MarkdownContentProps<T> extends HTMLAttributes<T> {
     root: ComponentType<HTMLAttributes<T>>;
     source: string;
