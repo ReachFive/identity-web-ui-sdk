@@ -7,6 +7,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.43.0] - 2026-03-26
+
+### Changed
+- mfaStepUpWidget redirects to GET passwordless/verify in orchestrated flow
+- mfaStepUpWidget does not redirect with an error when the verification code is invalid in orchestrated flow
+
 ## [1.42.0] - 2026-03-23
 
 ### Added
@@ -699,7 +705,8 @@ The eye icon is now correctly displayed in the Auth widget.
 
 First version of the SDK Web UI.
 
-[Unreleased]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.42.0...HEAD
+[Unreleased]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.43.0...HEAD
+[1.43.0]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.42.0...v1.43.0
 [1.42.0]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.41.0...v1.42.0
 [1.41.0]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.40.1...v1.41.0
 [1.40.1]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.40.0...v1.40.1

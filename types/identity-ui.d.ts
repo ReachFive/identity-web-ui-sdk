@@ -1,6 +1,14 @@
 /**
+<<<<<<< HEAD
  * @reachfive/identity-ui - v1.42.0
  * Compiled Mon, 23 Mar 2026 10:47:50 UTC
+||||||| dda98c5
+ * @reachfive/identity-ui - v1.40.1
+ * Compiled Thu, 12 Feb 2026 15:18:04 UTC
+=======
+ * @reachfive/identity-ui - v1.41.0
+ * Compiled Fri, 27 Feb 2026 09:09:07 UTC
+>>>>>>> master
  *
  * Copyright (c) ReachFive.
  *

@@ -265,41 +265,29 @@ export const VerificationCodeView = ({
     const coreClient = useReachfive();
     const i18n = useI18n();
     const { params } = useRouting();
-    const { rbaEnabled, domain } = useConfig();
+    const { rbaEnabled } = useConfig();
     const state = params as VerificationCodeViewState;
 
     const { auth, authType, challengeId, allowTrustDevice } = { ...props, ...state };
+    const isOrchestratedFlow = new URLSearchParams(window.location.search).has('r5_request_token');
 
     const handleSubmit = (data: VerificationCodeInputFormData) => {
-        const isOrchestratedFlow = new URLSearchParams(window.location.search).has(
-            'r5_request_token'
-        );
-        if (isOrchestratedFlow) {
-            window.location.replace(
-                `https://${domain}/identity/v1/passwordless/verify` +
-                    '?' +
-                    toQueryString({
-                        ...data,
-                        challengeId,
-                    })
-            );
-            return Promise.resolve();
-        } else {
-            return coreClient
-                .verifyMfaPasswordless({
-                    challengeId,
-                    verificationCode: data.verificationCode,
-                    trustDevice: data.trustDevice,
-                })
-                .then(resp => {
-                    onSuccess({ name: 'login_2nd_step', authType, authResult: resp });
-                    if (data.trustDevice) {
-                        onSuccess({ name: 'mfa_trusted_device_added' });
-                    }
+        return coreClient
+            .verifyMfaPasswordless({
+                challengeId,
+                verificationCode: data.verificationCode,
+                trustDevice: data.trustDevice,
+            })
+            .then(resp => {
+                onSuccess({ name: 'login_2nd_step', authType, authResult: resp });
+                if (data.trustDevice) {
+                    onSuccess({ name: 'mfa_trusted_device_added' });
+                }
+                if (!isOrchestratedFlow) {
                     // @ts-expect-error AuthResult is too complex and is not representative of the real response of this request
                     window.location.replace((auth?.redirectUri ?? '') + '?' + toQueryString(resp));
-                });
-        }
+                }
+            });
     };
 
     return (
