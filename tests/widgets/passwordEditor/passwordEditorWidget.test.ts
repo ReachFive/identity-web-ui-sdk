@@ -74,10 +74,8 @@ describe('Snapshot', () => {
                 { apiClient, config: { ...defaultConfig, ...config }, defaultI18n }
             );
 
-            await waitFor(async () => {
-                const { container } = await render(widget);
-                expect(container).toMatchSnapshot();
-            });
+            const { container } = render(widget);
+            expect(container).toMatchSnapshot();
         };
 
     describe('password editor', () => {
@@ -116,7 +114,7 @@ describe('DOM testing', () => {
             { config: { ...defaultConfig, ...config }, apiClient, defaultI18n }
         );
 
-        return waitFor(async () => {
+        return waitFor(() => {
             return render(result);
         });
     };
@@ -190,9 +188,7 @@ describe('DOM testing', () => {
             await user.click(submitBtn);
 
             // password confirm don't match
-            const formError = screen.queryByTestId('form-error');
-            expect(formError).toBeInTheDocument();
-            expect(formError).toHaveTextContent('validation.passwordMatch');
+            expect(screen.getByText('validation.passwordMatch')).toBeInTheDocument();
 
             await userEvent.clear(passwordConfirmationInput);
             await userEvent.type(passwordConfirmationInput, 'Wond3rFu11_Pa55w0rD*$'); // match newPasswordInput

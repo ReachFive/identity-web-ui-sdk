@@ -82,8 +82,8 @@ export const WebAuthnLoginViewButtons = styled(
             <div className={classes(['r5-webauthn-login-buttons'], className)}>
                 <PrimaryButtonWithIcon
                     type="submit"
-                    data-testid="webauthn-button"
                     title={i18n('login.withBiometrics')}
+                    aria-label={i18n('login.withBiometrics')}
                     disabled={disabled}
                     {...props}
                 >
@@ -95,8 +95,8 @@ export const WebAuthnLoginViewButtons = styled(
                         <ButtonsSeparator>{i18n('or')}</ButtonsSeparator>
 
                         <PrimaryButtonWithIcon
-                            data-testid="password-button"
                             title={i18n('login.withPassword')}
+                            aria-label={i18n('login.withPassword')}
                             disabled={disabled}
                             onClick={onPasswordClick}
                         >
@@ -134,9 +134,9 @@ export const WebAuthnSignupViewButtons = styled(
         return (
             <div className={classes(['r5-webauthn-signup-buttons'], className)}>
                 <PrimaryButtonWithIcon
-                    data-testid="webauthn-button"
                     onClick={onBiometricClick}
                     title={i18n('signup.withBiometrics')}
+                    aria-label={i18n('signup.withBiometrics')}
                     text={i18n('biometrics')}
                 >
                     <FingerPrintIcon />
@@ -150,6 +150,7 @@ export const WebAuthnSignupViewButtons = styled(
                             data-testid="password-button"
                             onClick={onPasswordClick}
                             title={i18n('signup.withPassword')}
+                            aria-label={i18n('signup.withPassword')}
                             text={i18n('password')}
                         >
                             <KeyboardIcon />

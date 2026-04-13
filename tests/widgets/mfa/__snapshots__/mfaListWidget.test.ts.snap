@@ -16,18 +16,47 @@ exports[`Snapshot basic 1`] = `
 }
 
 .c1 {
-  --color-primary: #229955;
-  --color-destructive: #dc4e41;
-  --color-background: #ffffff;
-  --color-text: #495057;
-  --color-border: #ced4da;
-  --spacing-padding-y: 9;
-  --spacing-padding-x: 12;
-  --spacing-block-inner-height: 38;
-  --spacing: 10;
-  --font-generic: 14;
+  --primary: 145.71 63.64% 36.67%;
+  --primary-foreground: 0 0% 100%;
+  --destructive: 5.03 68.89% 55.88%;
+  --destructive-foreground: 0 0% 100%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 210 8.75% 31.37%;
+  --background: 0 0% 100%;
+  --border: 210 13.95% 83.14%;
+  --text: 210 8.75% 31.37%;
+  --accent: 145.71 63.64% 36.67%;
+  --muted: 210 10.81% 70.98%;
+  --input: 210 13.95% 83.14%;
+  --ring: 145.65 63.27% 61.57%;
+  --spacing-padding-y: 9px;
+  --spacing-padding-x: 12px;
+  --spacing: 10px;
+  --font-size: 14px;
+  --leading: 1.428571429;
   --border-width: 1;
-  --radius: 3;
+  --radius: 3px;
+  --button-border: #ced4da;
+  --button-border-width: 1;
+  --button-height: 40px;
+  --button-leading: 1.428571429;
+  --button-padding-x: 12px;
+  --button-padding-y: 9px;
+  --button-radius: 3px;
+  --button-text-size: 14px;
+  --input-background: #fff;
+  --input-border: #ced4da;
+  --input-border-width: 1;
+  --input-disabled-background: #e9ecef;
+  --input-height: 40px;
+  --input-leading: 1.428571429;
+  --input-padding-x: 12px;
+  --input-padding-y: 9px;
+  --input-placeholder: #868e96;
+  --input-radius: 3px;
+  --input-shadow: none;
+  --input-text-color: #495057;
+  --input-text-size: 14px;
 }
 
 <div>
@@ -35,127 +64,149 @@ exports[`Snapshot basic 1`] = `
     class="c0 c1 r5-widget"
     transition="entering"
   >
-    <div>
+    <div
+      class="group/item-group flex flex-col"
+      data-slot="item-group"
+      role="list"
+    >
       <div
-        class="flex flex-col "
+        class="group/item [a]:hover:bg-accent/50 focus-visible:border-ring focus-visible:ring-ring/50 [a]:transition-colors flex flex-wrap items-center rounded-md border text-sm outline-none transition-colors duration-100 focus-visible:ring-[3px] border-border gap-4 p-4"
+        data-size="default"
+        data-slot="item"
         data-testid="credential"
+        data-variant="outline"
         id="credential-33612345678"
       >
         <div
-          class="flex flex-row items-center rounded"
+          class="flex shrink-0 items-center justify-center gap-2 group-has-[[data-slot=item-description]]/item:translate-y-0.5 group-has-[[data-slot=item-description]]/item:self-start [&_svg]:pointer-events-none size-10 overflow-hidden rounded-sm [&_img]:size-full [&_img]:object-cover !self-center"
+          data-slot="item-media"
+          data-variant="image"
+        >
+          <svg
+            class="lucide lucide-message-square-more bg-background w-icon h-icon stroke-textColor"
+            fill="none"
+            height="24"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            width="24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"
+            />
+            <path
+              d="M8 10h.01"
+            />
+            <path
+              d="M12 10h.01"
+            />
+            <path
+              d="M16 10h.01"
+            />
+          </svg>
+        </div>
+        <div
+          class="flex flex-1 flex-col gap-1 [&+[data-slot=item-content]]:flex-none"
+          data-slot="item-content"
         >
           <div
-            class="box-border flex flex-row items-center align-middle border border-solid rounded basis-full whitespace-nowrap p-generic"
+            class="flex w-fit items-center gap-2 text-sm font-medium leading-snug"
+            data-slot="item-title"
           >
-            <svg
-              class="lucide lucide-message-square-more bg-background w-icon h-icon stroke-textColor"
-              fill="none"
-              height="24"
-              stroke="currentColor"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              viewBox="0 0 24 24"
-              width="24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"
-              />
-              <path
-                d="M8 10h.01"
-              />
-              <path
-                d="M12 10h.01"
-              />
-              <path
-                d="M16 10h.01"
-              />
-            </svg>
-            <div
-              class="ml-innerBlock w-max justify-items-stretch text-textColor"
-            >
-              <div
-                class="font-bold"
-              >
-                33612345678
-              </div>
-              <div>
-                33612345678
-              </div>
-              <div>
-                <span>
-                  mfaList.createdAt
-                   : 
-                </span>
-                <time
-                  datetime="2022-09-21"
-                >
-                  21/09/2022
-                </time>
-              </div>
-            </div>
+            33612345678
           </div>
+          <p
+            class="text-muted-foreground line-clamp-2 text-balance text-sm font-normal leading-normal [&>a:hover]:text-primary [&>a]:underline [&>a]:underline-offset-4"
+            data-slot="item-description"
+          >
+            33612345678
+          </p>
+          <p
+            class="text-muted-foreground line-clamp-2 text-balance text-sm font-normal leading-normal [&>a:hover]:text-primary [&>a]:underline [&>a]:underline-offset-4"
+            data-slot="item-description"
+          >
+            <span>
+              mfaList.createdAt
+               : 
+            </span>
+            <time
+              datetime="2022-09-21"
+            >
+              21/09/2022
+            </time>
+          </p>
         </div>
       </div>
       <div
-        class="flex flex-col "
+        class="group/item [a]:hover:bg-accent/50 focus-visible:border-ring focus-visible:ring-ring/50 [a]:transition-colors flex flex-wrap items-center rounded-md border text-sm outline-none transition-colors duration-100 focus-visible:ring-[3px] border-border gap-4 p-4"
+        data-size="default"
+        data-slot="item"
         data-testid="credential"
+        data-variant="outline"
         id="credential-identifier"
       >
         <div
-          class="flex flex-row items-center rounded"
+          class="flex shrink-0 items-center justify-center gap-2 group-has-[[data-slot=item-description]]/item:translate-y-0.5 group-has-[[data-slot=item-description]]/item:self-start [&_svg]:pointer-events-none size-10 overflow-hidden rounded-sm [&_img]:size-full [&_img]:object-cover !self-center"
+          data-slot="item-media"
+          data-variant="image"
+        >
+          <svg
+            class="lucide lucide-mail bg-background w-icon h-icon stroke-textColor"
+            fill="none"
+            height="24"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            width="24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <rect
+              height="16"
+              rx="2"
+              width="20"
+              x="2"
+              y="4"
+            />
+            <path
+              d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"
+            />
+          </svg>
+        </div>
+        <div
+          class="flex flex-1 flex-col gap-1 [&+[data-slot=item-content]]:flex-none"
+          data-slot="item-content"
         >
           <div
-            class="box-border flex flex-row items-center align-middle border border-solid rounded basis-full whitespace-nowrap p-generic"
+            class="flex w-fit items-center gap-2 text-sm font-medium leading-snug"
+            data-slot="item-title"
           >
-            <svg
-              class="lucide lucide-mail bg-background w-icon h-icon stroke-textColor"
-              fill="none"
-              height="24"
-              stroke="currentColor"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              viewBox="0 0 24 24"
-              width="24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <rect
-                height="16"
-                rx="2"
-                width="20"
-                x="2"
-                y="4"
-              />
-              <path
-                d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"
-              />
-            </svg>
-            <div
-              class="ml-innerBlock w-max justify-items-stretch text-textColor"
-            >
-              <div
-                class="font-bold"
-              >
-                identifier
-              </div>
-              <div>
-                root@reach5.co
-              </div>
-              <div>
-                <span>
-                  mfaList.createdAt
-                   : 
-                </span>
-                <time
-                  datetime="2022-09-21"
-                >
-                  21/09/2022
-                </time>
-              </div>
-            </div>
+            identifier
           </div>
+          <p
+            class="text-muted-foreground line-clamp-2 text-balance text-sm font-normal leading-normal [&>a:hover]:text-primary [&>a]:underline [&>a]:underline-offset-4"
+            data-slot="item-description"
+          >
+            root@reach5.co
+          </p>
+          <p
+            class="text-muted-foreground line-clamp-2 text-balance text-sm font-normal leading-normal [&>a:hover]:text-primary [&>a]:underline [&>a]:underline-offset-4"
+            data-slot="item-description"
+          >
+            <span>
+              mfaList.createdAt
+               : 
+            </span>
+            <time
+              datetime="2022-09-21"
+            >
+              21/09/2022
+            </time>
+          </p>
         </div>
       </div>
     </div>
@@ -179,18 +230,47 @@ exports[`Snapshot empty 1`] = `
 }
 
 .c1 {
-  --color-primary: #229955;
-  --color-destructive: #dc4e41;
-  --color-background: #ffffff;
-  --color-text: #495057;
-  --color-border: #ced4da;
-  --spacing-padding-y: 9;
-  --spacing-padding-x: 12;
-  --spacing-block-inner-height: 38;
-  --spacing: 10;
-  --font-generic: 14;
+  --primary: 145.71 63.64% 36.67%;
+  --primary-foreground: 0 0% 100%;
+  --destructive: 5.03 68.89% 55.88%;
+  --destructive-foreground: 0 0% 100%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 210 8.75% 31.37%;
+  --background: 0 0% 100%;
+  --border: 210 13.95% 83.14%;
+  --text: 210 8.75% 31.37%;
+  --accent: 145.71 63.64% 36.67%;
+  --muted: 210 10.81% 70.98%;
+  --input: 210 13.95% 83.14%;
+  --ring: 145.65 63.27% 61.57%;
+  --spacing-padding-y: 9px;
+  --spacing-padding-x: 12px;
+  --spacing: 10px;
+  --font-size: 14px;
+  --leading: 1.428571429;
   --border-width: 1;
-  --radius: 3;
+  --radius: 3px;
+  --button-border: #ced4da;
+  --button-border-width: 1;
+  --button-height: 40px;
+  --button-leading: 1.428571429;
+  --button-padding-x: 12px;
+  --button-padding-y: 9px;
+  --button-radius: 3px;
+  --button-text-size: 14px;
+  --input-background: #fff;
+  --input-border: #ced4da;
+  --input-border-width: 1;
+  --input-disabled-background: #e9ecef;
+  --input-height: 40px;
+  --input-leading: 1.428571429;
+  --input-padding-x: 12px;
+  --input-padding-y: 9px;
+  --input-placeholder: #868e96;
+  --input-radius: 3px;
+  --input-shadow: none;
+  --input-text-color: #495057;
+  --input-text-size: 14px;
 }
 
 <div>
@@ -198,11 +278,28 @@ exports[`Snapshot empty 1`] = `
     class="c0 c1 r5-widget"
     transition="entering"
   >
-    <div>
+    <div
+      class="group/item-group flex flex-col"
+      data-slot="item-group"
+      role="list"
+    >
       <div
-        class="mb-1 text-center text-textColor"
+        class="group/item [a]:hover:bg-accent/50 focus-visible:border-ring focus-visible:ring-ring/50 [a]:transition-colors flex flex-wrap items-center rounded-md border border-transparent text-sm outline-none transition-colors duration-100 focus-visible:ring-[3px] bg-transparent gap-4 p-4"
+        data-size="default"
+        data-slot="item"
+        data-variant="default"
       >
-        mfaList.noCredentials
+        <div
+          class="flex flex-1 flex-col gap-1 [&+[data-slot=item-content]]:flex-none"
+          data-slot="item-content"
+        >
+          <div
+            class="flex w-fit items-center gap-2 text-sm font-medium leading-snug"
+            data-slot="item-title"
+          >
+            mfaList.noCredentials
+          </div>
+        </div>
       </div>
     </div>
   </div>
