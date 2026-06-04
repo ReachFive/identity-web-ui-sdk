@@ -107,8 +107,8 @@ export const LoginWithWebAuthnView = ({
     const i18n = useI18n();
     const session = useSession();
 
-    const controller = new AbortController();
-    const signal = controller.signal;
+    const controller = React.useMemo(() => new AbortController(), [auth]);
+
     React.useEffect(() => {
         coreClient
             .loginWithWebAuthn({
@@ -116,13 +116,18 @@ export const LoginWithWebAuthnView = ({
                 auth: {
                     ...auth,
                 },
-                signal: signal,
+                signal: controller.signal,
             })
-            .catch(onError);
-    }, [coreClient, auth, signal]);
+            .catch(err => {
+                if (err.name !== 'AbortError') onError(err);
+            });
+        return () => controller.abort();
+    }, [coreClient, auth, controller, onError]);
 
     const handleWebAuthnLogin = React.useCallback(
         (data: LoginWithWebAuthnFormData) => {
+            controller.abort();
+
             const specializedIdentifierData =
                 specializeIdentifierData<LoginWithWebAuthnParams>(data);
             const { auth: dataAuth, ...identifier } = specializedIdentifierData;

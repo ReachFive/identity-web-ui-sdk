@@ -242,8 +242,7 @@ export const LoginView = ({
         importGoogleRecaptchaScript(recaptcha_site_key);
     }, [recaptcha_site_key]);
 
-    const controller = new AbortController();
-    const signal = controller.signal;
+    const controller = React.useMemo(() => new AbortController(), [auth]);
 
     React.useEffect(() => {
         if (allowWebAuthnLogin) {
@@ -253,13 +252,17 @@ export const LoginView = ({
                     auth: {
                         ...auth,
                     },
-                    signal: signal,
+                    signal: controller.signal,
                 })
-                .catch(onError);
+                .catch(err => {
+                    if (err.name !== 'AbortError') onError(err);
+                });
         }
-    }, [coreClient, auth, allowWebAuthnLogin, signal]);
+        return () => controller.abort();
+    }, [coreClient, auth, allowWebAuthnLogin, controller, onError]);
 
     const callback = (data: WithCaptchaToken<LoginFormData>) => {
+        controller.abort();
         const specializedIdentifierData = specializeIdentifierData<LoginWithPasswordParams>(data);
         const { auth: dataAuth, ...specializedData } = specializedIdentifierData;
         return coreClient
