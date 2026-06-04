@@ -107,9 +107,14 @@ export const LoginWithWebAuthnView = ({
     const i18n = useI18n();
     const session = useSession();
 
-    const controller = React.useMemo(() => new AbortController(), [auth]);
+    // Un seul AbortController pour la requête conditionnelle (autofill), créé DANS l'effect
+    // (donc neuf à chaque exécution) et exposé via un ref pour pouvoir l'annuler depuis les handlers.
+    const conditionalAbort = React.useRef<AbortController | null>(null);
 
     React.useEffect(() => {
+        const controller = new AbortController();
+        conditionalAbort.current = controller;
+
         coreClient
             .loginWithWebAuthn({
                 conditionalMediation: 'preferred',
@@ -119,14 +124,23 @@ export const LoginWithWebAuthnView = ({
                 signal: controller.signal,
             })
             .catch(err => {
-                if (err.name !== 'AbortError') onError(err);
+                // L'annulation (clic empreinte, navigation, démontage) n'est pas une vraie erreur.
+                if (err?.name !== 'AbortError') onError(err);
             });
+
+        // Annule l'autofill au démontage (ex: navigation vers signup) pour ne pas laisser
+        // une requête WebAuthn pendante — c'est ce que Chrome refuse ("A request is already pending.").
         return () => controller.abort();
-    }, [coreClient, auth, controller, onError]);
+        // onError est volontairement exclu : c'est une callback recréée à chaque render qui,
+        // dans les deps, relancerait l'effect en boucle et casserait l'autofill.
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [coreClient, auth]);
 
     const handleWebAuthnLogin = React.useCallback(
         (data: LoginWithWebAuthnFormData) => {
-            controller.abort();
+            // Annule la requête conditionnelle (autofill) avant de lancer la requête modale,
+            // sinon Chrome rejette le second navigator.credentials.get() ("A request is already pending.").
+            conditionalAbort.current?.abort();
 
             const specializedIdentifierData =
                 specializeIdentifierData<LoginWithWebAuthnParams>(data);
@@ -201,9 +215,7 @@ export const LoginWithWebAuthnView = ({
                 <Alternative>
                     <span>{i18n('login.signupLinkPrefix')}</span>
                     &nbsp;
-                    <Link controller={controller} target="signup">
-                        {i18n('login.signupLink')}
-                    </Link>
+                    <Link target="signup">{i18n('login.signupLink')}</Link>
                 </Alternative>
             )}
         </div>
