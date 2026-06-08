@@ -242,27 +242,40 @@ export const LoginView = ({
         importGoogleRecaptchaScript(recaptcha_site_key);
     }, [recaptcha_site_key]);
 
-    const controller = React.useMemo(() => new AbortController(), [auth]);
+    // Single AbortController for the conditional (autofill) request. Created inside the effect so
+    // each run gets a fresh one, and kept in a ref so the submit handler can cancel it.
+    const conditionalAbort = React.useRef<AbortController | null>(null);
 
     React.useEffect(() => {
-        if (allowWebAuthnLogin) {
-            coreClient
-                .loginWithWebAuthn({
-                    conditionalMediation: 'preferred',
-                    auth: {
-                        ...auth,
-                    },
-                    signal: controller.signal,
-                })
-                .catch(err => {
-                    if (err.name !== 'AbortError') onError(err);
-                });
-        }
+        if (!allowWebAuthnLogin) return;
+
+        const controller = new AbortController();
+        conditionalAbort.current = controller;
+
+        coreClient
+            .loginWithWebAuthn({
+                conditionalMediation: 'preferred',
+                auth: {
+                    ...auth,
+                },
+                signal: controller.signal,
+            })
+            .catch(err => {
+                // Aborting the autofill request (submit, navigation, unmount) is expected.
+                if (err?.name !== 'AbortError') onError(err);
+            });
+
+        // Cancel the autofill request when the view unmounts (e.g. navigating to signup) so it
+        // does not stay pending in the background.
         return () => controller.abort();
-    }, [coreClient, auth, allowWebAuthnLogin, controller, onError]);
+        // onError is intentionally left out of the deps: it is re-created on every render, so
+        // including it would re-run the effect on each render and tear down the autofill request.
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [coreClient, auth, allowWebAuthnLogin]);
 
     const callback = (data: WithCaptchaToken<LoginFormData>) => {
-        controller.abort();
+        // Cancel the pending conditional (autofill) request before starting the password one.
+        conditionalAbort.current?.abort();
         const specializedIdentifierData = specializeIdentifierData<LoginWithPasswordParams>(data);
         const { auth: dataAuth, ...specializedData } = specializedIdentifierData;
         return coreClient
@@ -339,9 +352,7 @@ export const LoginView = ({
                 <Alternative>
                     <span>{i18n('login.signupLinkPrefix')}</span>
                     &nbsp;
-                    <Link target="signup" controller={controller}>
-                        {i18n('login.signupLink')}
-                    </Link>
+                    <Link target="signup">{i18n('login.signupLink')}</Link>
                 </Alternative>
             )}
         </div>
