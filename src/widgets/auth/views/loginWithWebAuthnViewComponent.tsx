@@ -123,9 +123,9 @@ export const LoginWithWebAuthnView = ({
                 },
                 signal: controller.signal,
             })
-            .catch(err => {
+            .catch((err: unknown) => {
                 // Aborting the autofill request (submit, navigation, unmount) is expected.
-                if (err?.name !== 'AbortError') onError(err);
+                if ((err as { name?: string })?.name !== 'AbortError') onError(err);
             });
 
         // Cancel the autofill request when the view unmounts (e.g. navigating to signup) so it
