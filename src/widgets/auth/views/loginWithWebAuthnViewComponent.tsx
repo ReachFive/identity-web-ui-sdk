@@ -16,6 +16,7 @@ import {
     isCustomIdentifier,
     specializeIdentifierData,
 } from '../../../helpers/utils';
+import { useConditionalWebAuthn } from '../hooks/useConditionalWebAuthn';
 import { LoginWithPasswordViewState } from './loginWithPasswordViewComponent';
 
 import type { OnError, OnSuccess } from '../../../types';
@@ -107,40 +108,16 @@ export const LoginWithWebAuthnView = ({
     const i18n = useI18n();
     const session = useSession();
 
-    // Single AbortController for the conditional (autofill) request. Created inside the effect so
-    // each run gets a fresh one, and kept in a ref so the submit handler can cancel it.
-    const conditionalAbort = React.useRef<AbortController | null>(null);
-
-    React.useEffect(() => {
-        const controller = new AbortController();
-        conditionalAbort.current = controller;
-
-        coreClient
-            .loginWithWebAuthn({
-                conditionalMediation: 'preferred',
-                auth: {
-                    ...auth,
-                },
-                signal: controller.signal,
-            })
-            .catch((err: unknown) => {
-                // Aborting the autofill request (submit, navigation, unmount) is expected.
-                if ((err as { name?: string })?.name !== 'AbortError') onError(err);
-            });
-
-        // Cancel the autofill request when the view unmounts (e.g. navigating to signup) so it
-        // does not stay pending in the background.
-        return () => controller.abort();
-        // onError is intentionally left out of the deps: it is re-created on every render, so
-        // including it would re-run the effect on each render and tear down the autofill request.
-    }, [coreClient, auth]);
+    const { abort: abortConditionalWebAuthn } = useConditionalWebAuthn({
+        coreClient,
+        auth,
+        onError,
+    });
 
     const handleWebAuthnLogin = React.useCallback(
         (data: LoginWithWebAuthnFormData) => {
-            // Cancel the pending conditional (autofill) request before starting the modal one.
-            // Chrome only allows one navigator.credentials.get() at a time and otherwise rejects
-            // the modal request with "A request is already pending.".
-            conditionalAbort.current?.abort();
+            // Cancel the pending autofill request before starting the modal one (see hook).
+            abortConditionalWebAuthn();
 
             const specializedIdentifierData =
                 specializeIdentifierData<LoginWithWebAuthnParams>(data);
