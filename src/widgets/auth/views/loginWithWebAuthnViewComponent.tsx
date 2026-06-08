@@ -107,18 +107,15 @@ export const LoginWithWebAuthnView = ({
     const i18n = useI18n();
     const session = useSession();
 
-    // Un seul AbortController pour la requête conditionnelle (autofill), créé DANS l'effect
-    // (donc neuf à chaque exécution) et exposé via un ref pour pouvoir l'annuler depuis les handlers.
+    // Single AbortController for the conditional (autofill) request. Created inside the effect so
+    // each run gets a fresh one, and kept in a ref so the submit handler can cancel it.
     const conditionalAbort = React.useRef<AbortController | null>(null);
-    // Référence vers la promesse de la requête conditionnelle, pour pouvoir ATTENDRE qu'elle
-    // soit réellement réglée (donc que Chrome ait libéré le "slot" WebAuthn) avant d'en lancer une autre.
-    const conditionalRequest = React.useRef<Promise<unknown> | null>(null);
 
     React.useEffect(() => {
         const controller = new AbortController();
         conditionalAbort.current = controller;
 
-        conditionalRequest.current = coreClient
+        coreClient
             .loginWithWebAuthn({
                 conditionalMediation: 'preferred',
                 auth: {
@@ -127,28 +124,24 @@ export const LoginWithWebAuthnView = ({
                 signal: controller.signal,
             })
             .catch(err => {
-                // L'annulation (clic empreinte, navigation, démontage) n'est pas une vraie erreur.
+                // Aborting the autofill request (submit, navigation, unmount) is expected.
                 if (err?.name !== 'AbortError') onError(err);
             });
 
-        // Annule l'autofill au démontage (ex: navigation vers signup) pour ne pas laisser
-        // une requête WebAuthn pendante — c'est ce que Chrome refuse ("A request is already pending.").
+        // Cancel the autofill request when the view unmounts (e.g. navigating to signup) so it
+        // does not stay pending in the background.
         return () => controller.abort();
-        // onError est volontairement exclu : c'est une callback recréée à chaque render qui,
-        // dans les deps, relancerait l'effect en boucle et casserait l'autofill.
+        // onError is intentionally left out of the deps: it is re-created on every render, so
+        // including it would re-run the effect on each render and tear down the autofill request.
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [coreClient, auth]);
 
     const handleWebAuthnLogin = React.useCallback(
-        async (data: LoginWithWebAuthnFormData) => {
-            // Annule la requête conditionnelle (autofill)...
+        (data: LoginWithWebAuthnFormData) => {
+            // Cancel the pending conditional (autofill) request before starting the modal one.
+            // Chrome only allows one navigator.credentials.get() at a time and otherwise rejects
+            // the modal request with "A request is already pending.".
             conditionalAbort.current?.abort();
-            // ... puis ATTEND qu'elle soit effectivement terminée. Sur un backend local, le POST
-            // d'options de la requête modale répond plus vite que l'IPC d'annulation de Chrome :
-            // sans cette attente, le get() modal part pendant que l'autofill est encore "pending"
-            // côté process navigateur → "A request is already pending.". On synchronise donc le
-            // lancement de la requête modale sur le règlement réel de la requête conditionnelle.
-            await conditionalRequest.current?.catch(() => {});
 
             const specializedIdentifierData =
                 specializeIdentifierData<LoginWithWebAuthnParams>(data);
