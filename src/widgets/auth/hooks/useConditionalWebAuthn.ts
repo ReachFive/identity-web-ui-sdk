@@ -23,6 +23,11 @@ interface UseConditionalWebAuthnResult {
     abort: () => void;
 }
 
+/** Whether a rejected WebAuthn request failed because its AbortSignal fired (expected on cancel/unmount). */
+function isAbortError(err: unknown): boolean {
+    return (err as { name?: string } | null)?.name === 'AbortError';
+}
+
 /**
  * Starts a WebAuthn conditional-mediation ("autofill") request once on mount and exposes an
  * `abort` callback to cancel it.
@@ -67,7 +72,7 @@ export function useConditionalWebAuthn({
             })
             .catch((err: unknown) => {
                 // Aborting the autofill request (submit, navigation, unmount) is expected.
-                if ((err as { name?: string })?.name !== 'AbortError') onErrorRef.current(err);
+                if (!isAbortError(err)) onErrorRef.current(err);
             });
 
         return () => controller.abort();
