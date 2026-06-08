@@ -133,7 +133,6 @@ export const LoginWithWebAuthnView = ({
         return () => controller.abort();
         // onError is intentionally left out of the deps: it is re-created on every render, so
         // including it would re-run the effect on each render and tear down the autofill request.
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [coreClient, auth]);
 
     const handleWebAuthnLogin = React.useCallback(
