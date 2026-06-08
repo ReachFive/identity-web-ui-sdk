@@ -20,9 +20,6 @@ import { LoginWithPasswordViewState } from './loginWithPasswordViewComponent';
 
 import type { OnError, OnSuccess } from '../../../types';
 
-// [R5WA-DEBUG] compteur d'exécutions de l'effect (à retirer après diagnostic)
-let __r5waRun = 0;
-
 type LoginWithWebAuthnFormData = { identifier: string } | { email: string };
 
 type LoginWithWebAuthnFormProps = {
@@ -121,9 +118,6 @@ export const LoginWithWebAuthnView = ({
         const controller = new AbortController();
         conditionalAbort.current = controller;
 
-        const runId = ++__r5waRun;
-        console.log(`[R5WA] effect#${runId} START conditional (autofill)`);
-
         conditionalRequest.current = coreClient
             .loginWithWebAuthn({
                 conditionalMediation: 'preferred',
@@ -132,21 +126,14 @@ export const LoginWithWebAuthnView = ({
                 },
                 signal: controller.signal,
             })
-            .then(() => console.log(`[R5WA] effect#${runId} conditional RESOLVED (autofill used)`))
             .catch(err => {
-                console.log(
-                    `[R5WA] effect#${runId} conditional REJECTED name=${err?.name} msg=${err?.message}`
-                );
                 // L'annulation (clic empreinte, navigation, démontage) n'est pas une vraie erreur.
                 if (err?.name !== 'AbortError') onError(err);
             });
 
         // Annule l'autofill au démontage (ex: navigation vers signup) pour ne pas laisser
         // une requête WebAuthn pendante — c'est ce que Chrome refuse ("A request is already pending.").
-        return () => {
-            console.log(`[R5WA] effect#${runId} CLEANUP abort()`);
-            controller.abort();
-        };
+        return () => controller.abort();
         // onError est volontairement exclu : c'est une callback recréée à chaque render qui,
         // dans les deps, relancerait l'effect en boucle et casserait l'autofill.
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -154,9 +141,6 @@ export const LoginWithWebAuthnView = ({
 
     const handleWebAuthnLogin = React.useCallback(
         async (data: LoginWithWebAuthnFormData) => {
-            console.log(
-                `[R5WA] CLICK abort conditional (hasController=${!!conditionalAbort.current})`
-            );
             // Annule la requête conditionnelle (autofill)...
             conditionalAbort.current?.abort();
             // ... puis ATTEND qu'elle soit effectivement terminée. Sur un backend local, le POST
@@ -165,7 +149,6 @@ export const LoginWithWebAuthnView = ({
             // côté process navigateur → "A request is already pending.". On synchronise donc le
             // lancement de la requête modale sur le règlement réel de la requête conditionnelle.
             await conditionalRequest.current?.catch(() => {});
-            console.log('[R5WA] CLICK conditional released, starting MODAL get');
 
             const specializedIdentifierData =
                 specializeIdentifierData<LoginWithWebAuthnParams>(data);
@@ -188,12 +171,6 @@ export const LoginWithWebAuthnView = ({
                 })
                 .then(res => {
                     return enrichLoginEvent(res, 'webauthn', specializedIdentifierData);
-                })
-                .catch(err => {
-                    console.log(
-                        `[R5WA] CLICK MODAL REJECTED name=${err?.name} msg=${err?.message}`
-                    );
-                    return Promise.reject(err);
                 });
         },
         [coreClient, auth]
