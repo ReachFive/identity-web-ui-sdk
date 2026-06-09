@@ -108,11 +108,7 @@ export const LoginWithWebAuthnView = ({
     const i18n = useI18n();
     const session = useSession();
 
-    const { abort: abortConditionalWebAuthn } = useConditionalWebAuthn({
-        coreClient,
-        auth,
-        onError,
-    });
+    const { abort: abortConditionalWebAuthn } = useConditionalWebAuthn({ auth, onError });
 
     const handleWebAuthnLogin = React.useCallback(
         (data: LoginWithWebAuthnFormData) => {

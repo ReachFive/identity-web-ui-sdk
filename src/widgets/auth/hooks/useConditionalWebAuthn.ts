@@ -1,11 +1,12 @@
 import React from 'react';
 
-import type { AuthOptions, Client } from '@reachfive/identity-core';
+import type { AuthOptions } from '@reachfive/identity-core';
+
+import { useReachfive } from '../../../contexts/reachfive';
 
 import type { OnError } from '../../../types';
 
 interface UseConditionalWebAuthnParams {
-    coreClient: Client;
     auth?: AuthOptions;
     /**
      * Whether the autofill request should be started.
@@ -44,11 +45,12 @@ function isAbortError(err: unknown): boolean {
  * suggestions.
  */
 export function useConditionalWebAuthn({
-    coreClient,
     auth,
     enabled = true,
     onError,
 }: UseConditionalWebAuthnParams): UseConditionalWebAuthnResult {
+    const coreClient = useReachfive();
+
     const abortRef = React.useRef<AbortController | null>(null);
 
     const authRef = React.useRef(auth);

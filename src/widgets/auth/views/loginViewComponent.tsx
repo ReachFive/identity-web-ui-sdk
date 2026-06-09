@@ -244,7 +244,6 @@ export const LoginView = ({
     }, [recaptcha_site_key]);
 
     const { abort: abortConditionalWebAuthn } = useConditionalWebAuthn({
-        coreClient,
         auth,
         enabled: allowWebAuthnLogin ?? false,
         onError,
