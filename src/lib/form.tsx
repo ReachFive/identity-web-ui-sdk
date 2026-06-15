@@ -9,6 +9,7 @@ import { Client, UserConsent } from '@reachfive/identity-core';
 
 import { MarkdownContent } from '@/components/miscComponent';
 import { camelCasePath, snakeCasePath } from '@/helpers/transformObjectProperties';
+import { passwordValidation } from '@/lib/validation';
 import { Optional, type Config } from '@/types';
 
 type FieldType =
@@ -37,7 +38,10 @@ type Transformer = {
 
 // Bivariance hack: using a method signature instead of a function property makes TypeScript
 // treat the parameter types bivariantly, so Validation<'password'> is assignable to Validation<FieldType>.
-type Validation<TFieldType extends FieldType, TFieldValues extends FieldValues = FieldValues> = {
+export type Validation<
+    TFieldType extends FieldType,
+    TFieldValues extends FieldValues = FieldValues,
+> = {
     bivarianceHack(args: {
         client: Client;
         config: Config;
@@ -360,6 +364,35 @@ export function withoutStaticContent(fields: Exclude<Field, string>[]) {
     return fields.filter((field): field is FieldDefinition => !('staticContent' in field));
 }
 
+function setNestedValue(obj: Record<string, unknown>, path: string, value: unknown): void {
+    const segments = path.split('.');
+    let current = obj;
+    for (let i = 0; i < segments.length - 1; i++) {
+        const segment = segments[i];
+        if (typeof current[segment] !== 'object' || current[segment] === null) {
+            current[segment] = {};
+        }
+        current = current[segment] as Record<string, unknown>;
+    }
+    current[segments[segments.length - 1]] = value;
+}
+
+export function getDefaultFieldValues(
+    fieldDefinitions: (FieldDefinition | StaticContent)[]
+): Record<string, unknown> {
+    const defaults: Record<string, unknown> = {};
+    for (const fd of fieldDefinitions) {
+        if ('staticContent' in fd) continue;
+        if (fd.type === 'checkbox' && 'defaultChecked' in fd && fd.defaultChecked === true) {
+            const path = fd.parent
+                ? `${typeof fd.parent === 'string' ? fd.parent : fd.parent.join('.')}.${fd.key}`
+                : fd.key;
+            setNestedValue(defaults, path, fd.transform?.output(true) ?? true);
+        }
+    }
+    return defaults;
+}
+
 export function getFieldDefinitions(
     fields: Field[],
     config: Config,
@@ -480,6 +513,7 @@ function resolveConsentFieldDefinition(
         type: 'checkbox',
         key: `consents.${consent.key}`, // Consent key should be snake_case
         label: consent.title,
+        required: consent.consentType !== 'opt-out',
         defaultChecked: consent.consentType === 'opt-out',
         description: consent.description ? (
             <MarkdownContent
@@ -498,73 +532,22 @@ function resolveConsentFieldDefinition(
                     consentVersion,
                 }) satisfies Omit<UserConsent, 'date'>,
         },
+        // opt-in and double-opt-in require the user to actively check the box; the
+        // transform.output always produces a non-null object so required:true alone can't
+        // catch the unchecked state (granted:false is truthy as an object)
+        validation:
+            (consent.consentType === 'opt-in' || consent.consentType === 'double-opt-in') &&
+            !consentCannotBeGranted
+                ? ({ i18n }) =>
+                      z
+                          .any()
+                          .refine(
+                              v =>
+                                  typeof v === 'object' &&
+                                  v !== null &&
+                                  (v as UserConsent).granted === true,
+                              { error: i18n('validation.required') }
+                          )
+                : undefined,
     };
-}
-
-function passwordValidation({
-    client,
-    config: { passwordPolicy },
-    definition,
-    i18n,
-}: Parameters<Validation<'password'>>[0]) {
-    return z
-        .string(i18n('validation.required'))
-        .min(passwordPolicy.minLength, {
-            error: i18n('validation.password.minLength', { min: passwordPolicy.minLength }),
-        })
-        .max(255, {
-            error: i18n('validation.password.maxLength', { max: 255 }),
-        })
-        .superRefine(async (value, ctx) => {
-            if (String(value).length === 0) return;
-            if (!definition.withPolicyRules) return;
-
-            if (passwordPolicy.lowercaseCharacters && /[a-z]/.test(value)) {
-                ctx.addIssue({
-                    code: 'custom',
-                    message: i18n('validation.password.specials.lowercase'),
-                    path: ['password'],
-                });
-            }
-
-            if (passwordPolicy.uppercaseCharacters && /[A-Z]/.test(value)) {
-                ctx.addIssue({
-                    code: 'custom',
-                    message: i18n('validation.password.specials.digit'),
-                    path: ['password'],
-                });
-            }
-
-            if (passwordPolicy.digitCharacters && /\d/.test(value)) {
-                ctx.addIssue({
-                    code: 'custom',
-                    message: i18n('validation.password.specials.uppercase'),
-                    path: ['password'],
-                });
-            }
-
-            if (
-                passwordPolicy.specialCharacters &&
-                new RegExp('[ !"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~]').test(value)
-            ) {
-                ctx.addIssue({
-                    code: 'custom',
-                    message: i18n('validation.password.specials.characters'),
-                    path: ['password'],
-                });
-            }
-
-            try {
-                const strength = await client.getPasswordStrength(value);
-                if (strength.score < passwordPolicy.minStrength) {
-                    ctx.addIssue({
-                        code: 'custom',
-                        message: i18n('validation.password.minStrength'),
-                        path: ['password'],
-                    });
-                }
-            } catch (_e) {
-                // ignore error
-            }
-        });
 }

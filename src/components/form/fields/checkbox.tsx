@@ -46,7 +46,11 @@ const CheckboxField = React.forwardRef<
     const errorId = `${resolvedId}-error`;
     return (
         <FieldGroup>
-            <Field orientation="horizontal" data-invalid={hasError}>
+            <Field
+                orientation="horizontal"
+                className="gap-2 has-[>[data-slot=field-content]]:[&>[role=checkbox]]:mt-px"
+                data-invalid={hasError}
+            >
                 <Checkbox
                     ref={ref}
                     id={resolvedId}
@@ -59,7 +63,7 @@ const CheckboxField = React.forwardRef<
                     {...props}
                 />
                 <FieldContent className="gap-0.5">
-                    <FieldLabel htmlFor={resolvedId}>
+                    <FieldLabel htmlFor={resolvedId} className="items-center gap-0.5">
                         {i18n(label)}
                         {required && <Required />}
                     </FieldLabel>

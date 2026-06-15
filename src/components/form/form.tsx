@@ -11,6 +11,7 @@ import { isAppError } from '@/helpers/errors';
 import { logError } from '@/helpers/logger';
 import {
     type Field,
+    getDefaultFieldValues,
     getFieldDefinitions,
     PhoneNumberOptions,
     withoutStaticContent,
@@ -80,9 +81,18 @@ function Form<TFieldValues extends FieldValues = FieldValues, R = void>({
         [fieldDefinitions]
     );
 
+    const defaultValues = React.useMemo(
+        () =>
+            ({
+                ...getDefaultFieldValues(fieldDefinitions),
+                ...initialModel,
+            }) as DefaultValues<TFieldValues>,
+        // fieldDefinitions is derived from fields+config — re-running when those change is correct
+        [fields, config, errorArchivedConsents, phoneNumberOptions, initialModel]
+    );
+
     const form = useForm<TFieldValues>({
-        defaultValues: initialModel,
-        // resolver: zodResolver(schema),
+        defaultValues,
     });
     const { control, formState, handleSubmit, reset, setError, subscribe, trigger } = form;
 

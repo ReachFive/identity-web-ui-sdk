@@ -10,8 +10,6 @@ import {
     useFormContext,
 } from 'react-hook-form';
 
-import z from 'zod';
-
 import { CheckboxField } from '@/components/form/fields/checkbox';
 import { DateField } from '@/components/form/fields/date';
 import { IdentifierField } from '@/components/form/fields/identifier';
@@ -77,18 +75,18 @@ const FormFieldsRenderer = <
                         : undefined,
                     validate: async (value: FieldValue<TFieldValues>) => {
                         if (fieldDefinition.validation) {
-                            const validate = z.nullish(
-                                fieldDefinition.validation({
+                            const validate = fieldDefinition
+                                .validation({
                                     client,
                                     config,
                                     definition: fieldDefinition,
                                     i18n,
                                     watch,
                                 })
-                            );
+                                .nullish();
                             const result = await validate.safeParseAsync(value);
                             if (result.success) return;
-                            return z.treeifyError(result.error).errors[0];
+                            return result.error.issues[0]?.message;
                         }
                     },
                 }}
