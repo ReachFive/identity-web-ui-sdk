@@ -2525,7 +2525,7 @@ exports[`Snapshot login view with remember me 1`] = `
             data-slot="field-group"
           >
             <div
-              class="group/field data-[invalid=true]:text-destructive flex w-full gap-3 flex-row items-center [&>[data-slot=field-label]]:flex-auto has-[>[data-slot=field-content]]:[&>[role=checkbox],[role=radio]]:mt-px has-[>[data-slot=field-content]]:items-start"
+              class="group/field data-[invalid=true]:text-destructive flex w-full flex-row items-center [&>[data-slot=field-label]]:flex-auto has-[>[data-slot=field-content]]:[&>[role=checkbox],[role=radio]]:mt-px has-[>[data-slot=field-content]]:items-start gap-2 has-[>[data-slot=field-content]]:[&>[role=checkbox]]:mt-px"
               data-invalid="false"
               data-orientation="horizontal"
               data-slot="field"
@@ -2554,7 +2554,7 @@ exports[`Snapshot login view with remember me 1`] = `
                 data-slot="field-content"
               >
                 <label
-                  class="text-sm font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70 group/field-label peer/field-label flex w-fit gap-2 leading-snug group-data-[disabled=true]/field:opacity-50 has-[>[data-slot=field]]:w-full has-[>[data-slot=field]]:flex-col has-[>[data-slot=field]]:rounded-md has-[>[data-slot=field]]:border [&>[data-slot=field]]:p-4 has-data-[state=checked]:bg-primary/5 has-data-[state=checked]:border-primary dark:has-data-[state=checked]:bg-primary/10"
+                  class="text-sm font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70 group/field-label peer/field-label flex w-fit leading-snug group-data-[disabled=true]/field:opacity-50 has-[>[data-slot=field]]:w-full has-[>[data-slot=field]]:flex-col has-[>[data-slot=field]]:rounded-md has-[>[data-slot=field]]:border [&>[data-slot=field]]:p-4 has-data-[state=checked]:bg-primary/5 has-data-[state=checked]:border-primary dark:has-data-[state=checked]:bg-primary/10 items-center gap-0.5"
                   data-slot="field-label"
                   for=":r6:"
                 >
@@ -4920,7 +4920,7 @@ exports[`Snapshot signup view with consents 1`] = `
             data-slot="field-group"
           >
             <div
-              class="group/field data-[invalid=true]:text-destructive flex w-full gap-3 flex-row items-center [&>[data-slot=field-label]]:flex-auto has-[>[data-slot=field-content]]:[&>[role=checkbox],[role=radio]]:mt-px has-[>[data-slot=field-content]]:items-start"
+              class="group/field data-[invalid=true]:text-destructive flex w-full flex-row items-center [&>[data-slot=field-label]]:flex-auto has-[>[data-slot=field-content]]:[&>[role=checkbox],[role=radio]]:mt-px has-[>[data-slot=field-content]]:items-start gap-2 has-[>[data-slot=field-content]]:[&>[role=checkbox]]:mt-px"
               data-invalid="false"
               data-orientation="horizontal"
               data-slot="field"
@@ -4950,7 +4950,7 @@ exports[`Snapshot signup view with consents 1`] = `
                 data-slot="field-content"
               >
                 <label
-                  class="text-sm font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70 group/field-label peer/field-label flex w-fit gap-2 leading-snug group-data-[disabled=true]/field:opacity-50 has-[>[data-slot=field]]:w-full has-[>[data-slot=field]]:flex-col has-[>[data-slot=field]]:rounded-md has-[>[data-slot=field]]:border [&>[data-slot=field]]:p-4 has-data-[state=checked]:bg-primary/5 has-data-[state=checked]:border-primary dark:has-data-[state=checked]:bg-primary/10"
+                  class="text-sm font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70 group/field-label peer/field-label flex w-fit leading-snug group-data-[disabled=true]/field:opacity-50 has-[>[data-slot=field]]:w-full has-[>[data-slot=field]]:flex-col has-[>[data-slot=field]]:rounded-md has-[>[data-slot=field]]:border [&>[data-slot=field]]:p-4 has-data-[state=checked]:bg-primary/5 has-data-[state=checked]:border-primary dark:has-data-[state=checked]:bg-primary/10 items-center gap-0.5"
                   data-slot="field-label"
                   for=":r18:"
                 >
@@ -5372,7 +5372,7 @@ exports[`Snapshot signup view with custom fields 1`] = `
             data-slot="field-group"
           >
             <div
-              class="group/field data-[invalid=true]:text-destructive flex w-full gap-3 flex-row items-center [&>[data-slot=field-label]]:flex-auto has-[>[data-slot=field-content]]:[&>[role=checkbox],[role=radio]]:mt-px has-[>[data-slot=field-content]]:items-start"
+              class="group/field data-[invalid=true]:text-destructive flex w-full flex-row items-center [&>[data-slot=field-label]]:flex-auto has-[>[data-slot=field-content]]:[&>[role=checkbox],[role=radio]]:mt-px has-[>[data-slot=field-content]]:items-start gap-2 has-[>[data-slot=field-content]]:[&>[role=checkbox]]:mt-px"
               data-invalid="false"
               data-orientation="horizontal"
               data-slot="field"
@@ -5402,7 +5402,7 @@ exports[`Snapshot signup view with custom fields 1`] = `
                 data-slot="field-content"
               >
                 <label
-                  class="text-sm font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70 group/field-label peer/field-label flex w-fit gap-2 leading-snug group-data-[disabled=true]/field:opacity-50 has-[>[data-slot=field]]:w-full has-[>[data-slot=field]]:flex-col has-[>[data-slot=field]]:rounded-md has-[>[data-slot=field]]:border [&>[data-slot=field]]:p-4 has-data-[state=checked]:bg-primary/5 has-data-[state=checked]:border-primary dark:has-data-[state=checked]:bg-primary/10"
+                  class="text-sm font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70 group/field-label peer/field-label flex w-fit leading-snug group-data-[disabled=true]/field:opacity-50 has-[>[data-slot=field]]:w-full has-[>[data-slot=field]]:flex-col has-[>[data-slot=field]]:rounded-md has-[>[data-slot=field]]:border [&>[data-slot=field]]:p-4 has-data-[state=checked]:bg-primary/5 has-data-[state=checked]:border-primary dark:has-data-[state=checked]:bg-primary/10 items-center gap-0.5"
                   data-slot="field-label"
                   for=":r1e:"
                 >
@@ -5810,7 +5810,7 @@ exports[`Snapshot signup view with mandatory consents 1`] = `
             data-slot="field-group"
           >
             <div
-              class="group/field data-[invalid=true]:text-destructive flex w-full gap-3 flex-row items-center [&>[data-slot=field-label]]:flex-auto has-[>[data-slot=field-content]]:[&>[role=checkbox],[role=radio]]:mt-px has-[>[data-slot=field-content]]:items-start"
+              class="group/field data-[invalid=true]:text-destructive flex w-full flex-row items-center [&>[data-slot=field-label]]:flex-auto has-[>[data-slot=field-content]]:[&>[role=checkbox],[role=radio]]:mt-px has-[>[data-slot=field-content]]:items-start gap-2 has-[>[data-slot=field-content]]:[&>[role=checkbox]]:mt-px"
               data-invalid="false"
               data-orientation="horizontal"
               data-slot="field"
@@ -5840,7 +5840,7 @@ exports[`Snapshot signup view with mandatory consents 1`] = `
                 data-slot="field-content"
               >
                 <label
-                  class="text-sm font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70 group/field-label peer/field-label flex w-fit gap-2 leading-snug group-data-[disabled=true]/field:opacity-50 has-[>[data-slot=field]]:w-full has-[>[data-slot=field]]:flex-col has-[>[data-slot=field]]:rounded-md has-[>[data-slot=field]]:border [&>[data-slot=field]]:p-4 has-data-[state=checked]:bg-primary/5 has-data-[state=checked]:border-primary dark:has-data-[state=checked]:bg-primary/10"
+                  class="text-sm font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70 group/field-label peer/field-label flex w-fit leading-snug group-data-[disabled=true]/field:opacity-50 has-[>[data-slot=field]]:w-full has-[>[data-slot=field]]:flex-col has-[>[data-slot=field]]:rounded-md has-[>[data-slot=field]]:border [&>[data-slot=field]]:p-4 has-data-[state=checked]:bg-primary/5 has-data-[state=checked]:border-primary dark:has-data-[state=checked]:bg-primary/10 items-center gap-0.5"
                   data-slot="field-label"
                   for=":r1b:"
                 >
