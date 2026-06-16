@@ -21,6 +21,7 @@ import { useRouting } from '../../../contexts/routing';
 import { useSession } from '../../../contexts/session';
 import { enrichLoginEvent, specializeIdentifierData } from '../../../helpers/utils';
 import { FaSelectionViewState } from '../../stepUp/mfaStepUpWidget';
+import { useConditionalWebAuthn } from '../hooks/useConditionalWebAuthn';
 
 import type { OnError, OnSuccess } from '../../../types';
 
@@ -242,24 +243,15 @@ export const LoginView = ({
         importGoogleRecaptchaScript(recaptcha_site_key);
     }, [recaptcha_site_key]);
 
-    const controller = new AbortController();
-    const signal = controller.signal;
-
-    React.useEffect(() => {
-        if (allowWebAuthnLogin) {
-            coreClient
-                .loginWithWebAuthn({
-                    conditionalMediation: 'preferred',
-                    auth: {
-                        ...auth,
-                    },
-                    signal: signal,
-                })
-                .catch(onError);
-        }
-    }, [coreClient, auth, allowWebAuthnLogin, signal]);
+    const { abort: abortConditionalWebAuthn } = useConditionalWebAuthn({
+        auth,
+        enabled: allowWebAuthnLogin ?? false,
+        onError,
+    });
 
     const callback = (data: WithCaptchaToken<LoginFormData>) => {
+        // Cancel the pending autofill request before starting the password login (see hook).
+        abortConditionalWebAuthn();
         const specializedIdentifierData = specializeIdentifierData<LoginWithPasswordParams>(data);
         const { auth: dataAuth, ...specializedData } = specializedIdentifierData;
         return coreClient
@@ -336,9 +328,7 @@ export const LoginView = ({
                 <Alternative>
                     <span>{i18n('login.signupLinkPrefix')}</span>
                     &nbsp;
-                    <Link target="signup" controller={controller}>
-                        {i18n('login.signupLink')}
-                    </Link>
+                    <Link target="signup">{i18n('login.signupLink')}</Link>
                 </Alternative>
             )}
         </div>
