@@ -161,6 +161,66 @@ describe('DOM testing', () => {
         expect(screen.queryByTestId('error')).not.toBeInTheDocument();
     });
 
+    test('recomputes strength when the new score is 0', async () => {
+        const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTimeAsync });
+
+        // controllable strength: a "strong" password scores 4, anything else scores 0
+        getPasswordStrength.mockImplementation((password: string) =>
+            Promise.resolve({
+                score: (password === 'Wond3rFu11_Pa55w0rD*$' ? 4 : 0) as PasswordStrengthScore,
+            })
+        );
+
+        const key = 'password';
+        const label = 'password';
+
+        const onFieldChange = jest.fn();
+        const onSubmit = jest.fn<(data: Model) => Promise<Model>>(data => Promise.resolve(data));
+
+        const Form = createForm<Model>({
+            fields: [passwordField({ key, label }, defaultConfig)],
+        });
+
+        await waitFor(async () => {
+            return render(
+                <WidgetContext
+                    client={apiClient}
+                    config={defaultConfig}
+                    defaultMessages={defaultI18n}
+                >
+                    <Form
+                        fieldValidationDebounce={0} // trigger validation instantly
+                        handler={onSubmit}
+                        onFieldChange={onFieldChange}
+                    />
+                </WidgetContext>
+            );
+        });
+
+        const input = screen.getByLabelText('Password');
+
+        // first set a strong password so the gauge shows a non-zero score
+        const strongPassword = 'Wond3rFu11_Pa55w0rD*$';
+        await user.type(input, strongPassword);
+
+        await waitFor(() =>
+            expect(screen.getByTestId('password-strength')).toHaveTextContent(
+                'passwordStrength.score4'
+            )
+        );
+
+        // now change to a weak password whose score is 0 — the gauge must recompute
+        const weakPassword = 'weak';
+        await user.clear(input);
+        await user.type(input, weakPassword);
+
+        await waitFor(() =>
+            expect(screen.getByTestId('password-strength')).toHaveTextContent(
+                'passwordStrength.score0'
+            )
+        );
+    });
+
     test('with canShowPassword enabled', async () => {
         const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTimeAsync });
 

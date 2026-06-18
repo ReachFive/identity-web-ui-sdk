@@ -113,7 +113,8 @@ function PasswordField({
 
     useEffect(() => {
         // only update strength if defined in validation to avoid strength to be reset on field change event
-        if (validation?.strength) {
+        // note: a score of 0 is a valid (falsy) value, so check for presence rather than truthiness
+        if (validation?.strength !== undefined) {
             setStrength(validation.strength);
         }
     }, [validation]);
