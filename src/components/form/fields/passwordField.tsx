@@ -112,12 +112,16 @@ function PasswordField({
     const currentValue = isRichFormValue(value, 'raw') ? value.raw : value;
 
     useEffect(() => {
-        // only update strength if defined in validation to avoid strength to be reset on field change event
-        // note: a score of 0 is a valid (falsy) value, so check for presence rather than truthiness
-        if (validation?.strength !== undefined) {
+        if (currentValue.length === 0) {
+            // reset to the weakest score when the field is emptied, since the validator
+            // short-circuits on empty values and never reports a strength
+            setStrength(0);
+        } else if (validation?.strength !== undefined) {
+            // only update strength if defined in validation to avoid strength to be reset on field change event
+            // note: a score of 0 is a valid (falsy) value, so check for presence rather than truthiness
             setStrength(validation.strength);
         }
-    }, [validation]);
+    }, [validation, currentValue]);
 
     const toggleShowPassword = () => {
         setShowPassword(showPassword => !showPassword);

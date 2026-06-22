@@ -221,6 +221,60 @@ describe('DOM testing', () => {
         );
     });
 
+    test('resets strength to the weakest score when the field is emptied', async () => {
+        const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTimeAsync });
+
+        // a non-empty password scores 4, the validator short-circuits on empty values
+        getPasswordStrength.mockImplementation(() =>
+            Promise.resolve({ score: 4 as PasswordStrengthScore })
+        );
+
+        const key = 'password';
+        const label = 'password';
+
+        const onFieldChange = jest.fn();
+        const onSubmit = jest.fn<(data: Model) => Promise<Model>>(data => Promise.resolve(data));
+
+        const Form = createForm<Model>({
+            fields: [passwordField({ key, label }, defaultConfig)],
+        });
+
+        await waitFor(async () => {
+            return render(
+                <WidgetContext
+                    client={apiClient}
+                    config={defaultConfig}
+                    defaultMessages={defaultI18n}
+                >
+                    <Form
+                        fieldValidationDebounce={0} // trigger validation instantly
+                        handler={onSubmit}
+                        onFieldChange={onFieldChange}
+                    />
+                </WidgetContext>
+            );
+        });
+
+        const input = screen.getByLabelText('Password');
+
+        await user.type(input, 'Wond3rFu11_Pa55w0rD*$');
+
+        await waitFor(() =>
+            expect(screen.getByTestId('password-strength')).toHaveTextContent(
+                'passwordStrength.score4'
+            )
+        );
+
+        // deleting the password entirely must reset the gauge back to the weakest score
+        await user.clear(input);
+
+        await waitFor(() =>
+            expect(screen.getByTestId('password-strength')).toHaveTextContent(
+                'passwordStrength.score0'
+            )
+        );
+    });
+
     test('with canShowPassword enabled', async () => {
         const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTimeAsync });
 
