@@ -38,28 +38,28 @@ const VerificationCodeForm = ({
     displayTrustDevice,
     ...props
 }: DisplayTrustDeviceFormOptions & FormProps<VerificationCodeFormData>) => {
-    return (
-        <Form
-            fields={[
-                {
-                    key: 'verification_code',
-                    label: 'verificationCode',
-                    type: 'string',
-                },
-                ...((displayTrustDevice
-                    ? [
-                          {
-                              type: 'checkbox',
-                              key: 'trust_device',
-                              label: 'mfa.stepUp.trustDevice',
-                              defaultChecked: false,
-                          },
-                      ]
-                    : []) satisfies Field[]),
-            ]}
-            {...props}
-        />
-    );
+    let fields: Field[] = [
+        {
+            key: 'verification_code',
+            label: 'verificationCode',
+            type: 'string',
+        },
+    ];
+
+    if (displayTrustDevice) {
+        fields = [
+            ...fields,
+            {
+                type: 'checkbox',
+                key: 'trust_device',
+                label: 'mfa.stepUp.trustDevice',
+                defaultChecked: false,
+                required: false,
+            },
+        ];
+    }
+
+    return <Form fields={fields} {...props} />;
 };
 
 type PhoneNumberRegisteringCredentialFormData = { phoneNumber: string; trustDevice: boolean };
@@ -73,26 +73,22 @@ const PhoneNumberRegisteringCredentialForm = ({
         PhoneNumberRegisteringCredentialFormData,
         StartMfaPhoneNumberRegistrationResponse
     >) => {
-    return (
-        <Form
-            fields={[
-                { key: 'phoneNumber', type: 'phone', ...phoneNumberOptions },
-                ...((displayTrustDevice
-                    ? [
-                          {
-                              key: 'trust_device',
-                              type: 'checkbox',
-                              label: 'mfa.stepUp.trustDevice',
-                              required: true,
-                              defaultChecked: false,
-                          },
-                      ]
-                    : []) satisfies Field[]),
-            ]}
-            submitLabel={'mfa.register.phoneNumber'}
-            {...props}
-        />
-    );
+    let fields: Field[] = [{ key: 'phoneNumber', type: 'phone', ...phoneNumberOptions }];
+
+    if (displayTrustDevice) {
+        fields = [
+            ...fields,
+            {
+                key: 'trust_device',
+                type: 'checkbox',
+                label: 'mfa.stepUp.trustDevice',
+                required: false,
+                defaultChecked: false,
+            },
+        ];
+    }
+
+    return <Form fields={fields} submitLabel={'mfa.register.phoneNumber'} {...props} />;
 };
 
 interface MainViewProps {
@@ -247,6 +243,18 @@ const MainView = withCredentials(
             allowTrustDevice &&
             config.rbaEnabled;
 
+        const fields: Field[] = displayTrustDevice
+            ? [
+                  {
+                      key: 'trust_device',
+                      type: 'checkbox',
+                      label: 'mfa.stepUp.trustDevice',
+                      defaultChecked: false,
+                      required: false,
+                  },
+              ]
+            : [];
+
         return (
             <div className="flex flex-col gap-4">
                 {config.mfaEmailEnabled && !isEmailCredentialRegistered && (
@@ -259,18 +267,7 @@ const MainView = withCredentials(
                             </Intro>
                         )}
                         <Form
-                            fields={[
-                                ...((displayTrustDevice
-                                    ? [
-                                          {
-                                              key: 'trust_device',
-                                              type: 'checkbox',
-                                              label: 'mfa.stepUp.trustDevice',
-                                              defaultChecked: false,
-                                          },
-                                      ]
-                                    : []) satisfies Field[]),
-                            ]}
+                            fields={fields}
                             submitLabel={'mfa.register.email'}
                             handler={onEmailRegistering}
                             onSuccess={(data: StartMfaEmailRegistrationResponse) =>

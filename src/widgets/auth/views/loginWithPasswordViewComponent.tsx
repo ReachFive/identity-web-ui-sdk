@@ -102,6 +102,37 @@ export const LoginWithPasswordView = ({
             });
     };
 
+    let fields: Field[] = [
+        {
+            key: 'identifier',
+            type: 'identifier',
+            defaultValue: username,
+            withPhoneNumber: config.loginTypeAllowed.phoneNumber,
+            // readOnly: true,
+        },
+        {
+            key: 'password',
+            type: 'password',
+            label: 'password',
+            autoComplete: 'current-password',
+            canShowPassword,
+            withPolicyRules: false,
+        },
+    ];
+
+    if (showRememberMe) {
+        fields = [
+            ...fields,
+            {
+                type: 'checkbox',
+                key: 'auth.persistent',
+                label: 'rememberMe',
+                defaultChecked: false,
+                required: false,
+            },
+        ];
+    }
+
     return (
         <CaptchaProvider
             recaptcha_enabled={recaptcha_enabled}
@@ -113,34 +144,7 @@ export const LoginWithPasswordView = ({
         >
             <Heading>{i18n('login.title')}</Heading>
             <Form
-                fields={[
-                    {
-                        key: 'identifier',
-                        type: 'identifier',
-                        defaultValue: username,
-                        withPhoneNumber: config.loginTypeAllowed.phoneNumber,
-                        // readOnly: true,
-                    },
-                    {
-                        key: 'password',
-                        type: 'password',
-                        label: 'password',
-                        autoComplete: 'current-password',
-                        canShowPassword,
-                        withPolicyRules: false,
-                    },
-                    ...((showRememberMe
-                        ? [
-                              {
-                                  type: 'checkbox',
-                                  key: 'auth.persistent',
-                                  label: 'rememberMe',
-                                  defaultChecked: false,
-                                  required: false,
-                              },
-                          ]
-                        : []) satisfies Field[]),
-                ]}
+                fields={fields}
                 submitLabel={'login.submitLabel'}
                 showLabels={showLabels}
                 handler={callback}

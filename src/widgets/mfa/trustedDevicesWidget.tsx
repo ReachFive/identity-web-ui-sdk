@@ -1,8 +1,17 @@
 import React, { useEffect } from 'react';
 
-import { LoaderCircle, X } from 'lucide-react';
+import { format } from 'date-fns';
+import {
+    CircleHelpIcon,
+    LoaderCircle,
+    Gamepad2Icon,
+    MonitorIcon,
+    SmartphoneIcon,
+    WatchIcon,
+    X,
+} from 'lucide-react';
 
-import { TrustedDevice } from '@reachfive/identity-core';
+import { TrustedDevice, TrustedDeviceMetadata } from '@reachfive/identity-core';
 
 import {
     AlertDialog,
@@ -16,11 +25,17 @@ import {
     AlertDialogTrigger,
 } from '../../components/ui/alert-dialog';
 import { Button } from '../../components/ui/button';
+import {
+    Item,
+    ItemActions,
+    ItemContent,
+    ItemDescription,
+    ItemMedia,
+    ItemTitle,
+} from '../../components/ui/item';
 import { createWidget } from '../../components/widget/widget.tsx';
-import { useConfig } from '../../contexts/config.tsx';
 import { useI18n } from '../../contexts/i18n.tsx';
 import { useReachfive } from '../../contexts/reachfive.tsx';
-import { dateFormat } from '../../helpers/utils.ts';
 import { OnError, OnSuccess } from '../../types';
 
 export type TrustedDeviceWidgetProps = {
@@ -62,16 +77,18 @@ interface DeleteButtonProps {
     onDeleteCallback: (device: TrustedDevice) => void;
 }
 
-const DeleteButton = ({ device, isOpen, setIsOpen, onDeleteCallback }: DeleteButtonProps) => {
+const DeleteDialog = ({
+    children,
+    device,
+    isOpen,
+    setIsOpen,
+    onDeleteCallback,
+}: React.PropsWithChildren<DeleteButtonProps>) => {
     const i18n = useI18n();
 
     return (
         <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
-            <AlertDialogTrigger asChild>
-                <Button variant="destructive" size="icon" className="ml-1">
-                    <X />
-                </Button>
-            </AlertDialogTrigger>
+            <AlertDialogTrigger asChild>{children}</AlertDialogTrigger>
             <AlertDialogContent>
                 <AlertDialogHeader>
                     <AlertDialogTitle>{i18n('trustDevice.delete.confirmation')}</AlertDialogTitle>
@@ -91,6 +108,24 @@ const DeleteButton = ({ device, isOpen, setIsOpen, onDeleteCallback }: DeleteBut
     );
 };
 
+/**
+ * @see https://github.com/nielsbasjes/yauaa/blob/main/analyzer/src/main/java/nl/basjes/parse/useragent/classify/DeviceClass.java
+ */
+function DeviceClassIcon({ deviceClass }: { deviceClass: TrustedDeviceMetadata['deviceClass'] }) {
+    const normalizedDeviceClass = deviceClass?.toLocaleLowerCase();
+    if (!normalizedDeviceClass) {
+        return <CircleHelpIcon />;
+    } else if (normalizedDeviceClass === 'desktop') {
+        return <MonitorIcon />;
+    } else if (['mobile', 'tablet', 'phone'].includes(normalizedDeviceClass)) {
+        return <SmartphoneIcon />;
+    } else if (normalizedDeviceClass === 'watch') {
+        return <WatchIcon />;
+    } else if (['game console', 'handheld game console'].includes(normalizedDeviceClass)) {
+        return <Gamepad2Icon />;
+    } else return <CircleHelpIcon />;
+}
+
 export const TrustedDeviceList = ({
     accessToken,
     showRemoveTrustedDevice,
@@ -102,7 +137,6 @@ export const TrustedDeviceList = ({
     const [loading, setLoading] = React.useState(true);
 
     const i18n = useI18n();
-    const config = useConfig();
     const client = useReachfive();
 
     const fetchTrustedDevices = () => {
@@ -143,36 +177,51 @@ export const TrustedDeviceList = ({
             {trustedDevices.length === 0 && (
                 <div className="mb-1 text-center text-theme">{i18n('trustedDevices.empty')}</div>
             )}
-            {trustedDevices.map((trustedDevice, _) => (
-                <div
-                    id={`trusted-device-${trustedDevice.id}`}
-                    key={`trusted-device-${trustedDevice.id}`}
-                    className={`flex items-center ${isOpen ? 'opacity-15' : ''}`}
-                    data-testid="trustedDevice"
-                >
-                    <div className="flex text-theme flex-col items-center basis-full line-height-1 align-middle whitespace-nowrap box-border p-[calc(var(--padding-y)*1px)] border-solid border-[calc(var(--border-width)*1px)] rounded-[calc(var(--border-radius)*1px)]">
-                        <div className="font-bold ">{trustedDevice.metadata.deviceName}</div>
-                        <div className="font-bold">{trustedDevice.metadata.ip}</div>
-                        <div className="font-bold">{trustedDevice.metadata.deviceClass}</div>
-                        <div className="font-bold">{trustedDevice.metadata.operatingSystem}</div>
-                        <div className="font-bold">{trustedDevice.metadata.userAgent}</div>
-                        <div>
-                            <span>{i18n('mfaList.createdAt')}&nbsp;: </span>
-                            <time dateTime={trustedDevice.createdAt}>
-                                {dateFormat(trustedDevice.createdAt, config.language)}
-                            </time>
-                        </div>
-                    </div>
-                    {showRemoveTrustedDevice && (
-                        <DeleteButton
-                            device={trustedDevice}
-                            isOpen={isOpen}
-                            setIsOpen={setIsOpen}
-                            onDeleteCallback={onDelete}
-                        />
-                    )}
-                </div>
-            ))}
+            <div className="flex w-full max-w-md flex-col gap-4">
+                {trustedDevices.map((trustedDevice, _) => (
+                    <Item
+                        key={trustedDevice.id}
+                        role="listitem"
+                        variant="outline"
+                        className={isOpen ? 'opacity-15' : ''}
+                    >
+                        <ItemMedia>
+                            <DeviceClassIcon deviceClass={trustedDevice.metadata.deviceClass} />
+                        </ItemMedia>
+                        <ItemContent className="gap-1">
+                            <ItemTitle>
+                                {trustedDevice.metadata.operatingSystem} -{' '}
+                                {trustedDevice.metadata.userAgent}
+                            </ItemTitle>
+                            <ItemTitle>{trustedDevice.metadata.ip}</ItemTitle>
+                            <ItemDescription>
+                                <span>{i18n('mfaList.createdAt')}&nbsp;: </span>
+                                <time dateTime={trustedDevice.createdAt}>
+                                    {format(trustedDevice.createdAt, 'PP')}
+                                </time>
+                            </ItemDescription>
+                        </ItemContent>
+                        {showRemoveTrustedDevice && (
+                            <ItemActions>
+                                <DeleteDialog
+                                    device={trustedDevice}
+                                    isOpen={isOpen}
+                                    setIsOpen={setIsOpen}
+                                    onDeleteCallback={onDelete}
+                                >
+                                    <Button
+                                        variant="destructive"
+                                        size="icon"
+                                        className="rounded-full"
+                                    >
+                                        <X />
+                                    </Button>
+                                </DeleteDialog>
+                            </ItemActions>
+                        )}
+                    </Item>
+                ))}
+            </div>
         </div>
     );
 };

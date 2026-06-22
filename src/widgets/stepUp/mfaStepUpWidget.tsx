@@ -290,32 +290,33 @@ export const VerificationCodeView = ({
             });
     };
 
+    let fields: Field[] = [
+        {
+            key: 'verification_code',
+            label: 'verificationCode',
+            type: 'string',
+            required: true,
+        },
+    ];
+
+    if (rbaEnabled && allowTrustDevice) {
+        fields = [
+            ...fields,
+            {
+                type: 'checkbox',
+                key: 'trust_device',
+                label: 'mfa.stepUp.trustDevice',
+                defaultChecked: false,
+                required: false,
+            },
+        ];
+    }
+
     return (
         <div>
             {authType === 'sms' && <Info>{i18n('passwordless.sms.verification.intro')}</Info>}
             {authType === 'email' && <Info>{i18n('passwordless.email.verification.intro')}</Info>}
-            <Form
-                fields={[
-                    {
-                        key: 'verification_code',
-                        label: 'verificationCode',
-                        type: 'string',
-                        required: true,
-                    },
-                    ...((rbaEnabled && allowTrustDevice
-                        ? [
-                              {
-                                  type: 'checkbox',
-                                  key: 'trust_device',
-                                  label: 'mfa.stepUp.trustDevice',
-                                  defaultChecked: false,
-                              },
-                          ]
-                        : []) satisfies Field[]),
-                ]}
-                handler={handleSubmit}
-                onError={onError}
-            />
+            <Form fields={fields} handler={handleSubmit} onError={onError} />
         </div>
     );
 };

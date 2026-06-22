@@ -32,38 +32,35 @@ export const PasswordEditorForm = ({
     promptOldPassword = false,
     ...props
 }: PasswordEditorFormProps & FormProps<PasswordEditorFormData>) => {
-    return (
-        <Form
-            fields={[
-                ...((promptOldPassword
-                    ? [
-                          {
-                              type: 'password',
-                              key: 'old_password',
-                              label: 'oldPassword',
-                              withPolicyRules: false,
-                          },
-                      ]
-                    : []) satisfies Field[]),
-                {
-                    type: 'password',
-                    key: 'password',
-                    label: 'newPassword',
-                    autoComplete: 'new-password',
-                    canShowPassword,
-                },
-                {
-                    type: 'password',
-                    key: 'password_confirmation',
-                    label: 'passwordConfirmation',
-                    autoComplete: 'new-password',
-                },
-            ]}
-            resetAfterSuccess
-            resetAfterError
-            {...props}
-        />
-    );
+    let fields: Field[] = [
+        {
+            type: 'password',
+            key: 'password',
+            label: 'newPassword',
+            autoComplete: 'new-password',
+            canShowPassword,
+        },
+        {
+            type: 'password',
+            key: 'password_confirmation',
+            label: 'passwordConfirmation',
+            autoComplete: 'new-password',
+        },
+    ];
+
+    if (promptOldPassword) {
+        fields = [
+            {
+                type: 'password',
+                key: 'old_password',
+                label: 'oldPassword',
+                withPolicyRules: false,
+            },
+            ...fields,
+        ];
+    }
+
+    return <Form fields={fields} resetAfterSuccess resetAfterError {...props} />;
 };
 
 export interface PasswordEditorProps extends PasswordEditorFormProps {
