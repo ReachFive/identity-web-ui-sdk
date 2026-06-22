@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import styled, { type CSSProperties } from 'styled-components';
+import styled from 'styled-components';
 
 import { type DeviceCredential } from '@reachfive/identity-core';
 
@@ -64,10 +64,6 @@ const dateFormat = (dateString: string, locales?: Intl.LocalesArgument) =>
         minute: '2-digit',
     });
 
-const iconStyle: CSSProperties = {
-    width: '40px',
-    height: '40px',
-};
 const CardContent = styled.div`
     display: flex;
     align-items: center;
@@ -98,7 +94,7 @@ const DevicesList = ({ devices, removeWebAuthnDevice }: DevicesListProps) => {
                         <Card key={id} data-testid="device">
                             <CardContent>
                                 <CardIcon>
-                                    <Icon style={iconStyle} />
+                                    <Icon className="w-10 h-10" />
                                 </CardIcon>
                                 <CardText>
                                     <DeviceName data-testid="device-name">
