@@ -219,6 +219,78 @@ describe('DOM testing', () => {
                 'passwordStrength.score0'
             )
         );
+
+        // re-entering the strong password must recompute the strength back to its score
+        await user.clear(input);
+        await user.type(input, strongPassword);
+
+        await waitFor(() =>
+            expect(screen.getByTestId('password-strength')).toHaveTextContent(
+                'passwordStrength.score4'
+            )
+        );
+    });
+
+    test('recomputes strength on a partial delete', async () => {
+        const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTimeAsync });
+
+        const complexPassword = 'aaaWond3rFu11_Pa55w0rD*$';
+
+        // the full complex password scores 4, the leftover "aaa" prefix scores 0
+        getPasswordStrength.mockImplementation((password: string) =>
+            Promise.resolve({
+                score: (password === complexPassword ? 4 : 0) as PasswordStrengthScore,
+            })
+        );
+
+        const key = 'password';
+        const label = 'password';
+
+        const onFieldChange = jest.fn();
+        const onSubmit = jest.fn<(data: Model) => Promise<Model>>(data => Promise.resolve(data));
+
+        const Form = createForm<Model>({
+            fields: [passwordField({ key, label }, defaultConfig)],
+        });
+
+        await waitFor(async () => {
+            return render(
+                <WidgetContext
+                    client={apiClient}
+                    config={defaultConfig}
+                    defaultMessages={defaultI18n}
+                >
+                    <Form
+                        fieldValidationDebounce={0} // trigger validation instantly
+                        handler={onSubmit}
+                        onFieldChange={onFieldChange}
+                    />
+                </WidgetContext>
+            );
+        });
+
+        const input = screen.getByLabelText('Password');
+
+        // type the full complex password — the gauge must show the strongest score
+        await user.type(input, complexPassword);
+
+        await waitFor(() =>
+            expect(screen.getByTestId('password-strength')).toHaveTextContent(
+                'passwordStrength.score4'
+            )
+        );
+
+        // delete everything but the "aaa" prefix — the gauge must recompute to the weakest score
+        const suffixLength = complexPassword.length - 'aaa'.length;
+        await user.type(input, `{Backspace>${suffixLength}/}`);
+
+        expect(input).toHaveValue('aaa');
+
+        await waitFor(() =>
+            expect(screen.getByTestId('password-strength')).toHaveTextContent(
+                'passwordStrength.score0'
+            )
+        );
     });
 
     test('resets strength to the weakest score when the field is emptied', async () => {
