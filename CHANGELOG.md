@@ -7,6 +7,13 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.43.1] - 2026-06-29
+
+### Fixed
+
+- Password entropy not recomputed when typing ([CA-6174](https://reachfive.atlassian.net/browse/CA-6174))
+- "A request is already pending" error on Chrome ([CA-5997](https://reachfive.atlassian.net/browse/CA-5997))
+
 ## [1.43.0] - 2026-03-26
 
 ### Changed
@@ -705,7 +712,8 @@ The eye icon is now correctly displayed in the Auth widget.
 
 First version of the SDK Web UI.
 
-[Unreleased]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.43.0...HEAD
+[Unreleased]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.43.1...HEAD
+[1.43.1]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.43.0...v1.43.1
 [1.43.0]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.42.0...v1.43.0
 [1.42.0]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.41.0...v1.42.0
 [1.41.0]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.40.1...v1.41.0
