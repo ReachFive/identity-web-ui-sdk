@@ -12,7 +12,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Fixed
 
 - Password entropy not recomputed when typing ([CA-6174](https://reachfive.atlassian.net/browse/CA-6174))
-- Fix "A request is already pending" error on Chrome ([CA-5997](https://reachfive.atlassian.net/browse/CA-5997))
+- "A request is already pending" error on Chrome ([CA-5997](https://reachfive.atlassian.net/browse/CA-5997))
 
 ## [1.43.0] - 2026-03-26
 
