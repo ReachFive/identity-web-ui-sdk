@@ -309,6 +309,83 @@ describe('DOM testing', () => {
         expect(meter).toHaveAttribute('aria-valuetext', 'passwordStrength.score4');
     });
 
+    test('with PasswordPolicyRules — minStrength 0 hides the strength requirement item', async () => {
+        const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTimeAsync.bind(this) });
+        const onChange = jest.fn();
+
+        const configNoMinStrength: Config = {
+            ...defaultConfig,
+            passwordPolicy: {
+                ...defaultConfig.passwordPolicy,
+                minStrength: 0,
+            },
+        };
+
+        render(
+            <WidgetContext
+                client={apiClient}
+                config={configNoMinStrength}
+                defaultMessages={defaultI18n}
+            >
+                <ControlledPasswordField
+                    label="Password"
+                    initialValue=""
+                    onChange={onChange}
+                    showLabels={true}
+                >
+                    <PasswordPolicyRules />
+                </ControlledPasswordField>
+            </WidgetContext>
+        );
+
+        const input = screen.getByLabelText('Password');
+        await user.type(input, 'somePassword1');
+
+        await waitFor(() => expect(onChange).toHaveBeenCalled());
+
+        expect(screen.getByRole('meter')).toBeInTheDocument();
+        expect(screen.queryByRole('status')).not.toBeInTheDocument();
+    });
+
+    test('with PasswordPolicyRules — minStrength > 0 shows the strength requirement item with correct sentences', async () => {
+        const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTimeAsync.bind(this) });
+        const onChange = jest.fn();
+
+        const i18nWithStrength: I18nMessages = {
+            ...defaultI18n,
+            'passwordStrength.minimum.required': 'Minimum strength required:',
+            'passwordStrength.score2': 'Fair',
+        };
+
+        render(
+            <WidgetContext
+                client={apiClient}
+                config={defaultConfig}
+                defaultMessages={i18nWithStrength}
+            >
+                <ControlledPasswordField
+                    label="Password"
+                    initialValue=""
+                    onChange={onChange}
+                    showLabels={true}
+                >
+                    <PasswordPolicyRules />
+                </ControlledPasswordField>
+            </WidgetContext>
+        );
+
+        const input = screen.getByLabelText('Password');
+        await user.type(input, 'somePassword1');
+
+        await waitFor(() => expect(onChange).toHaveBeenCalled());
+
+        expect(screen.getByRole('meter')).toBeInTheDocument();
+        const statusItem = screen.getByRole('status');
+        expect(statusItem).toBeInTheDocument();
+        expect(statusItem).toHaveTextContent('Minimum strength required:');
+        expect(statusItem).toHaveTextContent('Fair');
+    });
+
     test('with PasswordPolicyRules — onChange called with typed value (custom validator)', async () => {
         const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTimeAsync.bind(this) });
         const onChange = jest.fn();

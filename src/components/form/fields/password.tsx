@@ -163,7 +163,7 @@ const PasswordPolicyRules = function PasswordPolicyRules(_props: PasswordPolicyR
                 id="password-rules"
                 className="flex flex-col gap-2 p-3 border border-input rounded-lg bg-input/20"
             >
-                {passwordPolicy.minStrength && (
+                {passwordPolicy.minStrength > 0 && (
                     <RuleCheckedItem
                         role="status"
                         checked={strength.score >= passwordPolicy.minStrength}
@@ -221,7 +221,7 @@ const PasswordPolicyRules = function PasswordPolicyRules(_props: PasswordPolicyR
                         <RuleCheckedItem
                             role="listitem"
                             checked={/[0-9]/.test(password)}
-                            title={i18n('validation.password.specials.digi')}
+                            title={i18n('validation.password.specials.digit')}
                         />
                     )}
                 </div>
