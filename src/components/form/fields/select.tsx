@@ -85,11 +85,13 @@ const SelectField = React.forwardRef<React.ElementRef<typeof SelectTrigger>, Sel
                     </SelectTrigger>
                     <SelectContent>
                         <SelectGroup>
-                            {values.map(({ value, label }) => (
-                                <SelectItem key={`${resolvedId}-${value}`} value={value}>
-                                    {i18n(label ?? value)}
-                                </SelectItem>
-                            ))}
+                            {values
+                                .filter(({ value }) => value !== '')
+                                .map(({ value, label }) => (
+                                    <SelectItem key={`${resolvedId}-${value}`} value={value}>
+                                        {i18n(label ?? value)}
+                                    </SelectItem>
+                                ))}
                         </SelectGroup>
                     </SelectContent>
                 </Select>
