@@ -48,11 +48,11 @@ export const themeVariables = css`
     --font-size: ${props => props.theme.fontSize}px;
     --leading: ${props => props.theme.lineHeight};
 
-    --border-width: ${props => props.theme.borderWidth};
+    --border-width: ${props => props.theme.borderWidth}px;
     --radius: ${props => props.theme.borderRadius}px;
 
     --button-border: ${props => props.theme.button.borderColor};
-    --button-border-width: ${props => props.theme.button.borderWidth};
+    --button-border-width: ${props => props.theme.button.borderWidth}px;
     --button-height: ${props => props.theme.button.height}px;
     --button-leading: ${props => props.theme.button.lineHeight};
     --button-padding-x: ${props => props.theme.button.paddingX}px;
@@ -62,7 +62,7 @@ export const themeVariables = css`
 
     --input-background: ${props => props.theme.input.background};
     --input-border: ${props => props.theme.input.borderColor};
-    --input-border-width: ${props => props.theme.input.borderWidth};
+    --input-border-width: ${props => props.theme.input.borderWidth}px;
     --input-disabled-background: ${props => props.theme.input.disabledBackground};
     --input-height: ${props => props.theme.input.height}px;
     --input-leading: ${props => props.theme.input.lineHeight};
