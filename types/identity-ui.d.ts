@@ -1,6 +1,6 @@
 /**
- * @reachfive/identity-ui - v1.43.1
- * Compiled Tue, 30 Jun 2026 08:09:30 UTC
+ * @reachfive/identity-ui - v2.0.1
+ * Compiled Tue, 30 Jun 2026 12:00:34 UTC
  *
  * Copyright (c) ReachFive.
  *

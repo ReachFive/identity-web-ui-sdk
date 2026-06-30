@@ -175,6 +175,77 @@ describe('DOM testing', () => {
             expect(onSubmit).toBeCalledWith(expectedData);
         });
 
+        test('custom field input name uses snake_case path from config', async () => {
+            const user = userEvent.setup();
+            const onSubmit = jest.fn<() => Promise<void>>().mockResolvedValue();
+
+            const configWithSnakeCaseField: Config = {
+                ...defaultConfig,
+                customFields: [
+                    ...defaultConfig.customFields!,
+                    {
+                        name: 'Display Name',
+                        path: 'display_name',
+                        dataType: 'string',
+                    },
+                ],
+            };
+
+            render(
+                <WidgetContext
+                    client={apiClient}
+                    config={configWithSnakeCaseField}
+                    defaultMessages={defaultI18n}
+                >
+                    <Form fields={['custom_fields.display_name']} handler={onSubmit} />
+                </WidgetContext>
+            );
+
+            const input = screen.getByRole('textbox', { name: 'Display Name' });
+            expect(input).toBeInTheDocument();
+            expect(input).toHaveAttribute('name', 'custom_fields.display_name');
+
+            await user.type(input, 'Alice');
+            await user.click(screen.getByRole('button', { name: 'Submit' }));
+
+            expect(onSubmit).toBeCalledWith({ custom_fields: { display_name: 'Alice' } });
+        });
+
+        test.each([
+            ['snake_case name without prefix', 'display_name'],
+            ['camelCase name without prefix', 'displayName'],
+            ['snake_case name with custom_fields prefix', 'custom_fields.display_name'],
+            ['camelCase name with customFields prefix', 'customFields.displayName'],
+        ])('custom field resolved by %s', async (_, fieldRef) => {
+            const user = userEvent.setup();
+            const onSubmit = jest.fn<() => Promise<void>>().mockResolvedValue();
+
+            const config: Config = {
+                ...defaultConfig,
+                customFields: [
+                    {
+                        name: 'Display Name',
+                        path: 'display_name',
+                        dataType: 'string',
+                    },
+                ],
+            };
+
+            render(
+                <WidgetContext client={apiClient} config={config} defaultMessages={defaultI18n}>
+                    <Form fields={[fieldRef]} handler={onSubmit} />
+                </WidgetContext>
+            );
+
+            const input = screen.getByRole('textbox', { name: 'Display Name' });
+            expect(input).toHaveAttribute('name', 'custom_fields.display_name');
+
+            await user.type(input, 'Alice');
+            await user.click(screen.getByRole('button', { name: 'Submit' }));
+
+            expect(onSubmit).toBeCalledWith({ custom_fields: { display_name: 'Alice' } });
+        });
+
         test('renders raw field definition object (non-predefined, explicit type)', () => {
             render(
                 <WidgetContext
