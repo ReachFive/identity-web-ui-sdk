@@ -442,15 +442,14 @@ export function getFieldDefinition(
 
 function resolveCustomFieldDefinition(field: string, config: Config): FieldDefinition | undefined {
     const matches = /^(?:customFields|custom_fields)\.(.+?)$/.exec(field);
-    if (!matches) return undefined;
-    const [, customFieldKey] = matches;
+    const customFieldKey = matches ? matches[1] : field;
 
     const customField = config.customFields?.find(c => camelCasePath(c.path) === customFieldKey);
     if (!customField) return undefined;
 
     if (customField?.dataType === 'select') {
         return {
-            key: `custom_fields.${customFieldKey}`,
+            key: `custom_fields.${customField.path}`,
             type: 'select',
             values: (customField.selectableValues ?? []).map(({ value, label, translations }) => ({
                 label: translations.find(l => l.langCode === config.language)?.label ?? label,
@@ -463,7 +462,7 @@ function resolveCustomFieldDefinition(field: string, config: Config): FieldDefin
     }
 
     return {
-        key: `custom_fields.${customFieldKey}`,
+        key: `custom_fields.${customField.path}`,
         type: customField?.dataType ?? 'string',
         label:
             customField.nameTranslations?.find(l => l.langCode === config.language)?.label ??
