@@ -1092,7 +1092,32 @@ describe('DOM testing', () => {
             );
         });
 
-        test('opt-in consent: unchecking a pre-checked consent shows required error and blocks submission', async () => {
+        test('opt-in consent: not required by default, submits with granted: false when unchecked', async () => {
+            const user = userEvent.setup();
+            const onSubmit = jest.fn<() => Promise<void>>().mockResolvedValue();
+
+            render(
+                <WidgetContext
+                    client={apiClient}
+                    config={defaultConfig}
+                    defaultMessages={defaultI18n}
+                >
+                    <Form fields={['consents.optin_testing']} handler={onSubmit} />
+                </WidgetContext>
+            );
+
+            await user.click(screen.getByRole('button', { name: 'Submit' }));
+
+            await waitFor(() =>
+                expect(onSubmit).toBeCalledWith({
+                    consents: {
+                        optin_testing: expect.objectContaining({ granted: false }),
+                    },
+                })
+            );
+        });
+
+        test('opt-in consent with required: true — unchecking a pre-checked consent shows required error and blocks submission', async () => {
             const user = userEvent.setup();
             const onSubmit = jest.fn<() => Promise<void>>().mockResolvedValue();
 
@@ -1103,7 +1128,7 @@ describe('DOM testing', () => {
                     defaultMessages={defaultI18n}
                 >
                     <Form
-                        fields={['consents.optin_testing']}
+                        fields={[{ key: 'consents.optin_testing', required: true }]}
                         initialModel={{ consents: { optin_testing: { granted: true } } }}
                         handler={onSubmit}
                     />
@@ -1124,7 +1149,7 @@ describe('DOM testing', () => {
             expect(onSubmit).not.toBeCalled();
         });
 
-        test('opt-in consent: submitting without checking shows required error and blocks submission', async () => {
+        test('opt-in consent with required: true — submitting without checking shows required error and blocks submission', async () => {
             const user = userEvent.setup();
             const onSubmit = jest.fn<() => Promise<void>>().mockResolvedValue();
 
@@ -1134,7 +1159,7 @@ describe('DOM testing', () => {
                     config={defaultConfig}
                     defaultMessages={defaultI18n}
                 >
-                    <Form fields={['consents.optin_testing']} handler={onSubmit} />
+                    <Form fields={[{ key: 'consents.optin_testing', required: true }]} handler={onSubmit} />
                 </WidgetContext>
             );
 
@@ -1147,7 +1172,7 @@ describe('DOM testing', () => {
             expect(onSubmit).not.toBeCalled();
         });
 
-        test('opt-in consent: checking then unchecking shows required error and blocks submission', async () => {
+        test('opt-in consent with required: true — checking then unchecking shows required error and blocks submission', async () => {
             const user = userEvent.setup();
             const onSubmit = jest.fn<() => Promise<void>>().mockResolvedValue();
 
@@ -1157,7 +1182,7 @@ describe('DOM testing', () => {
                     config={defaultConfig}
                     defaultMessages={defaultI18n}
                 >
-                    <Form fields={['consents.optin_testing']} handler={onSubmit} />
+                    <Form fields={[{ key: 'consents.optin_testing', required: true }]} handler={onSubmit} />
                 </WidgetContext>
             );
 
@@ -1248,7 +1273,7 @@ describe('DOM testing', () => {
             );
         });
 
-        test('double-opt-in consent: submitting without checking shows required error and blocks submission', async () => {
+        test('double-opt-in consent: not required by default, submits with granted: false when unchecked', async () => {
             const user = userEvent.setup();
             const onSubmit = jest.fn<() => Promise<void>>().mockResolvedValue();
 
@@ -1259,6 +1284,31 @@ describe('DOM testing', () => {
                     defaultMessages={defaultI18n}
                 >
                     <Form fields={['consents.double_optin_testing']} handler={onSubmit} />
+                </WidgetContext>
+            );
+
+            await user.click(screen.getByRole('button', { name: 'Submit' }));
+
+            await waitFor(() =>
+                expect(onSubmit).toBeCalledWith({
+                    consents: {
+                        double_optin_testing: expect.objectContaining({ granted: false }),
+                    },
+                })
+            );
+        });
+
+        test('double-opt-in consent with required: true — submitting without checking shows required error and blocks submission', async () => {
+            const user = userEvent.setup();
+            const onSubmit = jest.fn<() => Promise<void>>().mockResolvedValue();
+
+            render(
+                <WidgetContext
+                    client={apiClient}
+                    config={defaultConfig}
+                    defaultMessages={defaultI18n}
+                >
+                    <Form fields={[{ key: 'consents.double_optin_testing', required: true }]} handler={onSubmit} />
                 </WidgetContext>
             );
 

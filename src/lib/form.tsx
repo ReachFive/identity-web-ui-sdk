@@ -386,8 +386,9 @@ export function getDefaultFieldValues(
         const path = fd.parent
             ? `${typeof fd.parent === 'string' ? fd.parent : fd.parent.join('.')}.${fd.key}`
             : fd.key;
-        if (fd.type === 'checkbox' && 'defaultChecked' in fd && fd.defaultChecked === true) {
-            setNestedValue(defaults, path, fd.transform?.output(true) ?? true);
+        if (fd.type === 'checkbox' && 'defaultChecked' in fd) {
+            const defaultVal = fd.defaultChecked === true;
+            setNestedValue(defaults, path, fd.transform?.output(defaultVal) ?? defaultVal);
         } else if (fd.defaultValue !== undefined) {
             setNestedValue(defaults, path, fd.transform?.output(fd.defaultValue) ?? fd.defaultValue);
         }
@@ -423,7 +424,7 @@ export function getFieldDefinition(
     const predefinedField =
         predefinedFields[key]?.({ config, definition: userDefinition }) ??
         resolveCustomFieldDefinition(key, config) ??
-        resolveConsentFieldDefinition(key, config, options);
+        resolveConsentFieldDefinition(key, config, options, userDefinition.required);
 
     if (predefinedField) {
         return {
@@ -475,7 +476,8 @@ function resolveCustomFieldDefinition(field: string, config: Config): FieldDefin
 function resolveConsentFieldDefinition(
     field: string,
     config: Config,
-    options: { errorArchivedConsents?: boolean; phoneNumberOptions?: PhoneNumberOptions }
+    options: { errorArchivedConsents?: boolean; phoneNumberOptions?: PhoneNumberOptions },
+    requiredOverride?: boolean
 ): FieldDefinition | undefined {
     const matches = /^consents\.(.+?)(?:\.v(\d+))?$/.exec(field);
     if (!matches) return undefined;
@@ -509,12 +511,13 @@ function resolveConsentFieldDefinition(
     //       : 1;
 
     const consentCannotBeGranted = !options.errorArchivedConsents && consent.status === 'archived';
+    const isRequired = requiredOverride === true;
 
     return {
         type: 'checkbox',
         key: `consents.${consent.key}`, // Consent key should be snake_case
         label: consent.title,
-        required: consent.consentType !== 'opt-out',
+        required: isRequired,
         defaultChecked: consent.consentType === 'opt-out',
         description: consent.description ? (
             <MarkdownContent
@@ -537,6 +540,7 @@ function resolveConsentFieldDefinition(
         // transform.output always produces a non-null object so required:true alone can't
         // catch the unchecked state (granted:false is truthy as an object)
         validation:
+            isRequired &&
             (consent.consentType === 'opt-in' || consent.consentType === 'double-opt-in') &&
             !consentCannotBeGranted
                 ? ({ i18n }) =>
