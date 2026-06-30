@@ -459,10 +459,12 @@ function resolveCustomFieldDefinition(field: string, config: Config): FieldDefin
         return {
             key: `custom_fields.${customField.path}`,
             type: 'select',
-            values: (customField.selectableValues ?? []).map(({ value, label, translations }) => ({
-                label: translations.find(l => l.langCode === config.language)?.label ?? label,
-                value,
-            })),
+            values: (customField.selectableValues ?? [])
+                .filter(({ value }) => value !== '')
+                .map(({ value, label, translations }) => ({
+                    label: translations.find(l => l.langCode === config.language)?.label ?? label,
+                    value,
+                })),
             label:
                 customField.nameTranslations?.find(l => l.langCode === config.language)?.label ??
                 customField.name,
