@@ -5390,7 +5390,7 @@ exports[`Snapshot signup view with custom fields 1`] = `
               />
               <input
                 aria-hidden="true"
-                name="custom_fields.newsletterOptin"
+                name="custom_fields.newsletter_optin"
                 required=""
                 style="position: absolute; pointer-events: none; opacity: 0; margin: 0px; transform: translateX(-100%); width: 0px; height: 0px;"
                 tabindex="-1"
