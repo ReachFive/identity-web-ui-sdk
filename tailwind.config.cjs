@@ -4,7 +4,7 @@ module.exports = {
   important: ".r5-widget",
   corePlugins: {
     container: false,
-    preflight: false,
+    preflight: true,
   },
   content: {
     relative: true,
