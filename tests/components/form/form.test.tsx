@@ -494,6 +494,76 @@ describe('DOM testing', () => {
             );
         });
 
+        describe('hidden field', () => {
+            test('renders as input[type="hidden"] with defaultValue pre-filled', async () => {
+                const user = userEvent.setup();
+                const onSubmit = jest.fn<() => Promise<void>>().mockResolvedValue();
+
+                render(
+                    <WidgetContext
+                        client={apiClient}
+                        config={defaultConfig}
+                        defaultMessages={defaultI18n}
+                    >
+                        <Form
+                            fields={[
+                                { key: 'party_type', defaultValue: 'PERSON', type: 'hidden' },
+                            ]}
+                            handler={onSubmit}
+                        />
+                    </WidgetContext>
+                );
+
+                const hiddenInput = document.querySelector('input[type="hidden"]');
+                expect(hiddenInput).toBeInTheDocument();
+                expect(hiddenInput).toHaveValue('PERSON');
+
+                await user.click(screen.getByRole('button', { name: 'Submit' }));
+
+                await waitFor(() =>
+                    expect(onSubmit).toBeCalledWith({ partyType: 'PERSON' })
+                );
+            });
+
+            test('hidden custom field (in config) renders as input[type="hidden"] with defaultValue pre-filled', async () => {
+                const user = userEvent.setup();
+                const onSubmit = jest.fn<() => Promise<void>>().mockResolvedValue();
+
+                const configWithPartyType = {
+                    ...defaultConfig,
+                    customFields: [
+                        ...(defaultConfig.customFields ?? []),
+                        { name: 'Party Type', path: 'party_type', dataType: 'string' as const },
+                    ],
+                };
+
+                render(
+                    <WidgetContext
+                        client={apiClient}
+                        config={configWithPartyType}
+                        defaultMessages={defaultI18n}
+                    >
+                        <Form
+                            fields={[
+                                { key: 'party_type', defaultValue: 'PERSON', type: 'hidden' },
+                            ]}
+                            handler={onSubmit}
+                        />
+                    </WidgetContext>
+                );
+
+                const hiddenInput = document.querySelector('input[type="hidden"]');
+                expect(hiddenInput).toBeInTheDocument();
+                expect(hiddenInput).toHaveValue('PERSON');
+
+                await user.click(screen.getByRole('button', { name: 'Submit' }));
+
+                await waitFor(() =>
+                    expect(onSubmit).toBeCalledWith({ custom_fields: { party_type: 'PERSON' } })
+                );
+            });
+        });
+
         test('initialModel pre-fills form fields', async () => {
             const user = userEvent.setup();
             const onSubmit = jest.fn<() => Promise<void>>().mockResolvedValue();

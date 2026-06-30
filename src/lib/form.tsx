@@ -390,7 +390,11 @@ export function getDefaultFieldValues(
             const defaultVal = fd.defaultChecked === true;
             setNestedValue(defaults, path, fd.transform?.output(defaultVal) ?? defaultVal);
         } else if (fd.defaultValue !== undefined) {
-            setNestedValue(defaults, path, fd.transform?.output(fd.defaultValue) ?? fd.defaultValue);
+            setNestedValue(
+                defaults,
+                path,
+                fd.transform?.output(fd.defaultValue) ?? fd.defaultValue
+            );
         }
     }
     return defaults;
@@ -431,7 +435,8 @@ export function getFieldDefinition(
             required: true,
             ...predefinedField,
             ...userDefinition,
-        } as FieldDefinition<(typeof predefinedField)['type']>;
+            ...(type !== undefined ? { type } : {}),
+        } as FieldDefinition;
     }
 
     if (typeof field === 'string') {
