@@ -103,7 +103,7 @@ describe('DOM testing', () => {
         jest.useRealTimers();
     });
 
-    test('simple password — no show/hide toggle without canShowPassword', async () => {
+    test('simple password — no show/hide toggle without canShowPassword', () => {
         const onChange = jest.fn();
 
         render(
@@ -126,7 +126,7 @@ describe('DOM testing', () => {
         expect(screen.queryByTestId('hide-password-btn')).not.toBeInTheDocument();
     });
 
-    test('simple password — custom placeholder', async () => {
+    test('simple password — custom placeholder', () => {
         const onChange = jest.fn();
 
         render(
@@ -147,7 +147,7 @@ describe('DOM testing', () => {
     });
 
     test('simple password — canShowPassword toggle', async () => {
-        const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTimeAsync });
+        const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTimeAsync.bind(this) });
         const onChange = jest.fn();
 
         render(
@@ -181,7 +181,7 @@ describe('DOM testing', () => {
     });
 
     test('with PasswordPolicyRules — no rules shown when empty', async () => {
-        const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTimeAsync });
+        const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTimeAsync.bind(this) });
         const onChange = jest.fn();
 
         render(
@@ -215,7 +215,7 @@ describe('DOM testing', () => {
     });
 
     test('with PasswordPolicyRules — rules still shown after typing valid password', async () => {
-        const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTimeAsync });
+        const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTimeAsync.bind(this) });
         const onChange = jest.fn();
 
         render(
@@ -244,8 +244,73 @@ describe('DOM testing', () => {
         expect(screen.getByRole('list')).toBeInTheDocument();
     });
 
+    test('with PasswordPolicyRules — recomputes strength when the new score is 0', async () => {
+        const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTimeAsync.bind(this) });
+        const onChange = jest.fn();
+
+        render(
+            <WidgetContext client={apiClient} config={defaultConfig} defaultMessages={defaultI18n}>
+                <ControlledPasswordField
+                    label="Password"
+                    initialValue=""
+                    onChange={onChange}
+                    showLabels={true}
+                >
+                    <PasswordPolicyRules />
+                </ControlledPasswordField>
+            </WidgetContext>
+        );
+
+        const input = screen.getByLabelText('Password');
+
+        // first set a strong password so the gauge shows a non-zero score
+        const strongPassword = 'Wond3rFu11_Pa55w0rD*$';
+        await user.type(input, strongPassword);
+
+        await waitFor(() => expect(onChange).toHaveBeenCalled());
+        expect(input).toHaveValue(strongPassword);
+
+        expect(getPasswordStrength).toBeCalledWith(strongPassword);
+
+        let meter = screen.getByRole('meter');
+        expect(meter).toBeInTheDocument();
+        expect(meter).toHaveAttribute('aria-valuenow', '4');
+        expect(meter).toHaveAttribute('aria-valuetext', 'passwordStrength.score4');
+
+        // now change to a weak password whose score is 1 — the gauge must recompute
+        const weakPassword = 'weak';
+        await user.clear(input);
+        await user.type(input, weakPassword);
+
+        expect(getPasswordStrength).toBeCalledWith(weakPassword);
+
+        meter = screen.getByRole('meter');
+        expect(meter).toBeInTheDocument();
+        expect(meter).toHaveAttribute('aria-valuenow', '1');
+        expect(meter).toHaveAttribute('aria-valuetext', 'passwordStrength.score1');
+
+        // now change to an empty password whose score is 0 — the gauge must recompute
+        await user.clear(input);
+
+        expect(getPasswordStrength).not.toBeCalledWith('');
+
+        const maybeMeter = screen.queryByRole('meter');
+        expect(maybeMeter).not.toBeInTheDocument();
+
+        // re-entering the strong password must recompute the strength back to its score
+        await user.clear(input);
+        await user.type(input, strongPassword);
+
+        expect(getPasswordStrength).toBeCalledWith(strongPassword);
+
+        meter = screen.getByRole('meter');
+        expect(meter).toBeInTheDocument();
+        expect(meter).toHaveAttribute('aria-valuenow', '4');
+        expect(meter).toHaveAttribute('aria-valuetext', 'passwordStrength.score4');
+    });
+
     test('with PasswordPolicyRules — onChange called with typed value (custom validator)', async () => {
-        const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTimeAsync });
+        const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTimeAsync.bind(this) });
         const onChange = jest.fn();
 
         render(

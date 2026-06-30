@@ -18,6 +18,7 @@ import {
     isCustomIdentifier,
     specializeIdentifierData,
 } from '../../../helpers/utils';
+import { useConditionalWebAuthn } from '../hooks/useConditionalWebAuthn';
 import { LoginWithPasswordViewState } from './loginWithPasswordViewComponent';
 
 import type { OnError, OnSuccess } from '../../../types';
@@ -84,22 +85,13 @@ export const LoginWithWebAuthnView = ({
     const i18n = useI18n();
     const session = useSession();
 
-    const controller = new AbortController();
-    const signal = controller.signal;
-    React.useEffect(() => {
-        coreClient
-            .loginWithWebAuthn({
-                conditionalMediation: 'preferred',
-                auth: {
-                    ...auth,
-                },
-                signal: signal,
-            })
-            .catch(onError);
-    }, [coreClient, auth, signal]);
+    const { abort: abortConditionalWebAuthn } = useConditionalWebAuthn({ auth, onError });
 
     const handleWebAuthnLogin = React.useCallback(
         (data: LoginWithWebAuthnFormData) => {
+            // Cancel the pending autofill request before starting the modal one (see hook).
+            abortConditionalWebAuthn();
+
             const specializedIdentifierData =
                 specializeIdentifierData<LoginWithWebAuthnParams>(data);
             const { auth: dataAuth, ...identifier } = specializedIdentifierData;
@@ -185,9 +177,7 @@ export const LoginWithWebAuthnView = ({
                 <Alternative>
                     <span>{i18n('login.signupLinkPrefix')}</span>
                     &nbsp;
-                    <Link controller={controller} target="signup">
-                        {i18n('login.signupLink')}
-                    </Link>
+                    <Link target="signup">{i18n('login.signupLink')}</Link>
                 </Alternative>
             )}
         </div>
