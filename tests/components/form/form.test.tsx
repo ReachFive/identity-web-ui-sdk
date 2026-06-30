@@ -38,6 +38,15 @@ describe('DOM testing', () => {
                 path: 'username',
                 dataType: 'string',
             },
+            {
+                name: 'country',
+                path: 'country',
+                dataType: 'select',
+                selectableValues: [
+                    { value: 'FRA', label: 'France', translations: [] },
+                    { value: 'USA', label: 'United States', translations: [] },
+                ],
+            },
         ],
         resourceBaseUrl: 'http://localhost',
         mfaSmsEnabled: false,
@@ -451,6 +460,38 @@ describe('DOM testing', () => {
             await user.click(screen.getByRole('button', { name: 'Submit' }));
 
             expect(onSubmit).toBeCalledWith({ givenName: 'ALICE' });
+        });
+
+        test('select field with defaultValue submits the default when user does not interact', async () => {
+            const user = userEvent.setup();
+            const onSubmit = jest.fn<() => Promise<void>>().mockResolvedValue();
+
+            render(
+                <WidgetContext
+                    client={apiClient}
+                    config={defaultConfig}
+                    defaultMessages={defaultI18n}
+                >
+                    <Form
+                        fields={[
+                            {
+                                key: 'custom_fields.country',
+                                defaultValue: 'FRA',
+                                required: true,
+                            },
+                        ]}
+                        handler={onSubmit}
+                    />
+                </WidgetContext>
+            );
+
+            await user.click(screen.getByRole('button', { name: 'Submit' }));
+
+            await waitFor(() =>
+                expect(onSubmit).toBeCalledWith({
+                    custom_fields: { country: 'FRA' },
+                })
+            );
         });
 
         test('initialModel pre-fills form fields', async () => {

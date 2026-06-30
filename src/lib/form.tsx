@@ -383,11 +383,13 @@ export function getDefaultFieldValues(
     const defaults: Record<string, unknown> = {};
     for (const fd of fieldDefinitions) {
         if ('staticContent' in fd) continue;
+        const path = fd.parent
+            ? `${typeof fd.parent === 'string' ? fd.parent : fd.parent.join('.')}.${fd.key}`
+            : fd.key;
         if (fd.type === 'checkbox' && 'defaultChecked' in fd && fd.defaultChecked === true) {
-            const path = fd.parent
-                ? `${typeof fd.parent === 'string' ? fd.parent : fd.parent.join('.')}.${fd.key}`
-                : fd.key;
             setNestedValue(defaults, path, fd.transform?.output(true) ?? true);
+        } else if (fd.defaultValue !== undefined) {
+            setNestedValue(defaults, path, fd.transform?.output(fd.defaultValue) ?? fd.defaultValue);
         }
     }
     return defaults;
