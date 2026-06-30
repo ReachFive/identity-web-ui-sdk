@@ -7,6 +7,20 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [2.0.0] - 2026-06-30
+
+### Changed
+
+- Replace custom form engine with `react-hook-form` + Shadcn UI components across all widgets
+- All field components (checkbox, date, identifier, password, phone, radiobox, select) rewritten with Shadcn UI primitives
+- Phone number field split into country-variant and non-country-variant sub-components
+- Form validation migrated from custom validator to Zod schemas
+
+### Removed
+
+- Legacy `formComponent.tsx`, `formControlsComponent.tsx`, `formFieldFactory.ts`, and `fieldCreator.tsx`
+- Custom `src/core/validation.ts` validator
+
 ## [1.43.1] - 2026-06-29
 
 ### Fixed
@@ -712,7 +726,8 @@ The eye icon is now correctly displayed in the Auth widget.
 
 First version of the SDK Web UI.
 
-[Unreleased]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.43.1...HEAD
+[Unreleased]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v2.0.0...HEAD
+[2.0.0]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.43.1...v2.0.0
 [1.43.1]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.43.0...v1.43.1
 [1.43.0]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.42.0...v1.43.0
 [1.42.0]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.41.0...v1.42.0
