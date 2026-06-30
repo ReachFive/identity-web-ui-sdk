@@ -506,9 +506,7 @@ describe('DOM testing', () => {
                         defaultMessages={defaultI18n}
                     >
                         <Form
-                            fields={[
-                                { key: 'party_type', defaultValue: 'PERSON', type: 'hidden' },
-                            ]}
+                            fields={[{ key: 'party_type', defaultValue: 'PERSON', type: 'hidden' }]}
                             handler={onSubmit}
                         />
                     </WidgetContext>
@@ -520,9 +518,7 @@ describe('DOM testing', () => {
 
                 await user.click(screen.getByRole('button', { name: 'Submit' }));
 
-                await waitFor(() =>
-                    expect(onSubmit).toBeCalledWith({ partyType: 'PERSON' })
-                );
+                await waitFor(() => expect(onSubmit).toBeCalledWith({ partyType: 'PERSON' }));
             });
 
             test('hidden custom field (in config) renders as input[type="hidden"] with defaultValue pre-filled', async () => {
@@ -544,9 +540,7 @@ describe('DOM testing', () => {
                         defaultMessages={defaultI18n}
                     >
                         <Form
-                            fields={[
-                                { key: 'party_type', defaultValue: 'PERSON', type: 'hidden' },
-                            ]}
+                            fields={[{ key: 'party_type', defaultValue: 'PERSON', type: 'hidden' }]}
                             handler={onSubmit}
                         />
                     </WidgetContext>
@@ -554,6 +548,7 @@ describe('DOM testing', () => {
 
                 const hiddenInput = document.querySelector('input[type="hidden"]');
                 expect(hiddenInput).toBeInTheDocument();
+                expect(hiddenInput).toHaveAttribute('name', 'custom_fields.party_type');
                 expect(hiddenInput).toHaveValue('PERSON');
 
                 await user.click(screen.getByRole('button', { name: 'Submit' }));
@@ -1229,7 +1224,10 @@ describe('DOM testing', () => {
                     config={defaultConfig}
                     defaultMessages={defaultI18n}
                 >
-                    <Form fields={[{ key: 'consents.optin_testing', required: true }]} handler={onSubmit} />
+                    <Form
+                        fields={[{ key: 'consents.optin_testing', required: true }]}
+                        handler={onSubmit}
+                    />
                 </WidgetContext>
             );
 
@@ -1252,7 +1250,10 @@ describe('DOM testing', () => {
                     config={defaultConfig}
                     defaultMessages={defaultI18n}
                 >
-                    <Form fields={[{ key: 'consents.optin_testing', required: true }]} handler={onSubmit} />
+                    <Form
+                        fields={[{ key: 'consents.optin_testing', required: true }]}
+                        handler={onSubmit}
+                    />
                 </WidgetContext>
             );
 
@@ -1378,7 +1379,10 @@ describe('DOM testing', () => {
                     config={defaultConfig}
                     defaultMessages={defaultI18n}
                 >
-                    <Form fields={[{ key: 'consents.double_optin_testing', required: true }]} handler={onSubmit} />
+                    <Form
+                        fields={[{ key: 'consents.double_optin_testing', required: true }]}
+                        handler={onSubmit}
+                    />
                 </WidgetContext>
             );
 
