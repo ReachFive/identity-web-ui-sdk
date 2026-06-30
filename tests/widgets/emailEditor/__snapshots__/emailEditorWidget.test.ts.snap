@@ -43,10 +43,10 @@ exports[`Snapshot email editor basic 1`] = `
   --spacing: 10px;
   --font-size: 14px;
   --leading: 1.428571429;
-  --border-width: 1;
+  --border-width: 1px;
   --radius: 3px;
   --button-border: #ced4da;
-  --button-border-width: 1;
+  --button-border-width: 1px;
   --button-height: 40px;
   --button-leading: 1.428571429;
   --button-padding-x: 12px;
@@ -55,7 +55,7 @@ exports[`Snapshot email editor basic 1`] = `
   --button-text-size: 14px;
   --input-background: #fff;
   --input-border: #ced4da;
-  --input-border-width: 1;
+  --input-border-width: 1px;
   --input-disabled-background: #e9ecef;
   --input-height: 40px;
   --input-leading: 1.428571429;

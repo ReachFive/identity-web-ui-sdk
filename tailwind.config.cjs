@@ -1,10 +1,12 @@
+import { borderWidth } from "polished";
+
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   darkMode: "selector",
   important: ".r5-widget",
   corePlugins: {
     container: false,
-    preflight: true,
+    preflight: false,
   },
   content: {
     relative: true,
@@ -66,4 +68,15 @@ module.exports = {
       },
     },
   },
+  plugins: [
+    ({ addBase }) => {
+      addBase({
+        ".r5-widget *, .r5-widget ::before, .r5-widget ::after": {
+          boxSizing: "border-box",
+          borderStyle: "solid",
+          borderWidth: 0,
+        },
+      });
+    },
+  ],
 };
