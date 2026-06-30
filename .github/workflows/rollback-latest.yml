@@ -24,8 +24,13 @@ jobs:
       - name: Show current dist-tags
         run: npm dist-tag ls @reachfive/identity-ui
 
-      - name: Verify target version exists
-        run: npm view "@reachfive/identity-ui@${{ inputs.version }}" version
+      - name: Verify target version exists (exact match)
+        run: |
+          resolved=$(npm view "@reachfive/identity-ui@${{ inputs.version }}" version)
+          if [ "$resolved" != "${{ inputs.version }}" ]; then
+            echo "::error::Input '${{ inputs.version }}' did not resolve to an exact published version (got '$resolved')"
+            exit 1
+          fi
 
       - name: Point latest at ${{ inputs.version }}
         run: npm dist-tag add "@reachfive/identity-ui@${{ inputs.version }}" latest
