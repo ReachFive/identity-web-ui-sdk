@@ -111,10 +111,10 @@ describe('DOM testing', () => {
         if (amr.length > 1) {
             expect(await screen.findByText('mfa.select.factor')).toBeInTheDocument();
             amr.forEach(value => {
-                expect(screen.getByLabelText(value)).toBeInTheDocument();
+                expect(screen.getByRole('radio', { name: value })).toBeInTheDocument();
             });
-            await user.click(screen.getByLabelText('sms'));
-            await user.click(screen.getByTestId('submit'));
+            await user.click(screen.getByRole('radio', { name: 'sms' }));
+            await user.click(screen.getByRole('button', { name: 'send' }));
         }
 
         await waitFor(() => {
@@ -130,10 +130,10 @@ describe('DOM testing', () => {
         // wait for view redirect to code verification view
         expect(await screen.findByText('passwordless.sms.verification.intro')).toBeInTheDocument();
 
-        expect(screen.getByLabelText('verificationCode')).toBeInTheDocument();
+        expect(screen.getByRole('textbox', { name: 'verificationCode' })).toBeInTheDocument();
         const input = screen.getByPlaceholderText('verificationCode');
         expect(input).toBeInTheDocument();
-        const submitBtn = screen.getByTestId('submit');
+        const submitBtn = screen.getByRole('button', { name: 'send' });
         expect(submitBtn).toBeInTheDocument();
 
         await user.type(input, myVerificationCode);

@@ -2,26 +2,20 @@ import React, { useState } from 'react';
 
 import type { AuthOptions, Client as CoreClient } from '@reachfive/identity-core';
 
-import { createForm } from '../../../components/form/formComponent';
-import { UserAgreementStyle } from '../../../components/form/formControlsComponent';
-import { buildFormFields, type Field } from '../../../components/form/formFieldFactory';
-import { Alternative, Heading, Link, MarkdownContent } from '../../../components/miscComponent';
-import { useConfig } from '../../../contexts/config';
+import { Form } from '../../../components/form/form';
+import { UserAgreement } from '../../../components/form/UserAgreement';
+// import { buildFormFields, type Field } from '../../../components/form/formFieldFactory';
+import { Alternative, Heading, Link } from '../../../components/miscComponent';
 import { useI18n } from '../../../contexts/i18n';
 import { useReachfive } from '../../../contexts/reachfive';
 import { snakeCaseProperties } from '../../../helpers/transformObjectProperties';
+import { type Field } from '../../../lib/form';
 
 import type { OnError, OnSuccess } from '../../../types';
 
 type SignupFormData = Parameters<CoreClient['signupWithWebAuthn']>[0]['profile'] & {
     friendlyName?: string;
 };
-
-const SignupForm = createForm({
-    prefix: 'r5-webauthn-signup-',
-    submitLabel: 'signup.submitLabel',
-});
-
 export interface SignupWithWebAuthnViewProps {
     /**
      * List of authentication options
@@ -62,7 +56,7 @@ export interface SignupWithWebAuthnViewProps {
      *   }
      * ]
      */
-    signupFields?: (string | Field)[];
+    signupFields?: Field[];
     /**  */
     userAgreement?: string;
     /**
@@ -87,7 +81,7 @@ export const SignupWithWebAuthnView = ({
     onSuccess = (() => {}) as OnSuccess,
 }: SignupWithWebAuthnViewProps) => {
     const coreClient = useReachfive();
-    const config = useConfig();
+    // const config = useConfig();
     const i18n = useI18n();
     const [isAwaitingIdentifierVerification, setIsAwaitingIdentifierVerification] =
         useState<boolean>(false);
@@ -107,22 +101,16 @@ export const SignupWithWebAuthnView = ({
         field => field !== 'password' && field !== 'password_confirmation'
     );
 
-    const fields = buildFormFields(webAuthnSignupFields, config);
+    // const fields = buildFormFields(webAuthnSignupFields, config);
 
     const allFields = userAgreement
         ? [
-              ...fields,
+              ...webAuthnSignupFields,
               {
-                  staticContent: (
-                      <MarkdownContent
-                          key="user-agreement"
-                          root={UserAgreementStyle}
-                          source={userAgreement}
-                      />
-                  ),
+                  staticContent: <UserAgreement content={userAgreement} />,
               },
           ]
-        : fields;
+        : webAuthnSignupFields;
 
     return (
         <div>
@@ -131,9 +119,10 @@ export const SignupWithWebAuthnView = ({
             ) : (
                 <div>
                     <Heading>{i18n('signup.withBiometrics')}</Heading>
-                    <SignupForm
+                    <Form
                         fields={allFields}
                         showLabels={showLabels}
+                        submitLabel="signup.submitLabel"
                         beforeSubmit={beforeSignup}
                         handler={handleSignup}
                         onSuccess={authResult => {

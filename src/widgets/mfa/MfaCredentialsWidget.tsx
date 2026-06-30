@@ -6,13 +6,10 @@ import type {
     StartMfaPhoneNumberRegistrationResponse,
 } from '@reachfive/identity-core/es/main/mfaClient';
 
+import { Form, FormProps } from '@/components/form/form.tsx';
+import { Field } from '@/lib/form.tsx';
+
 import { DestructiveButton } from '../../components/form/buttonComponent';
-import checkboxField from '../../components/form/fields/checkboxField.tsx';
-import phoneNumberField, {
-    type PhoneNumberOptions,
-} from '../../components/form/fields/phoneNumberField';
-import { simpleField } from '../../components/form/fields/simpleField';
-import { createForm } from '../../components/form/formComponent';
 import { Intro, Separator } from '../../components/miscComponent';
 import { createMultiViewWidget } from '../../components/widget/widget';
 import { useConfig } from '../../contexts/config';
@@ -20,6 +17,7 @@ import { useI18n } from '../../contexts/i18n';
 import { useReachfive } from '../../contexts/reachfive';
 import { useRouting } from '../../contexts/routing';
 import { isAppError, UserError } from '../../helpers/errors';
+import { type PhoneNumberOptions } from '../../lib/form';
 import {
     useCredentials,
     withCredentials,
@@ -30,99 +28,68 @@ import type { OnError, OnSuccess, Prettify } from '../../types';
 
 type EmailRegisteringCredentialFormData = { trustDevice: boolean };
 
-const EmailRegisteringCredentialForm = createForm<
-    EmailRegisteringCredentialFormData,
-    DisplayTrustDeviceFormOptions
->({
-    prefix: 'r5-mfa-credentials-email-',
-    fields({ displayTrustDevice }) {
-        return displayTrustDevice
-            ? [
-                  checkboxField({
-                      key: 'trust_device',
-                      label: 'mfa.stepUp.trustDevice',
-                      defaultValue: false,
-                  }),
-              ]
-            : [];
-    },
-    submitLabel: 'mfa.register.email',
-});
-
-const EmailCredentialRemovalForm = createForm({
-    prefix: 'r5-mfa-credentials-email-removal-',
-    submitLabel: 'mfa.remove.email',
-    SubmitComponent: ({ disabled, label }) => (
-        <DestructiveButton disabled={disabled}>{label}</DestructiveButton>
-    ),
-});
-
-const PhoneNumberCredentialRemovalForm = createForm({
-    prefix: 'r5-mfa-credentials-phone-number-removal-',
-    submitLabel: 'mfa.remove.phoneNumber',
-    SubmitComponent: ({ disabled, label }) => (
-        <DestructiveButton disabled={disabled}>{label}</DestructiveButton>
-    ),
-});
-
 type VerificationCodeFormData = { verificationCode: string; trustDevice: boolean };
 
 type DisplayTrustDeviceFormOptions = {
     displayTrustDevice: boolean;
 };
 
-const VerificationCodeForm = createForm<VerificationCodeFormData, DisplayTrustDeviceFormOptions>({
-    prefix: 'r5-mfa-credentials-verification-code-',
-    fields({ displayTrustDevice }) {
-        return [
-            simpleField({
-                key: 'verification_code',
-                label: 'verificationCode',
-                type: 'text',
-            }),
-            ...(displayTrustDevice
-                ? [
-                      checkboxField({
-                          key: 'trust_device',
-                          label: 'mfa.stepUp.trustDevice',
-                          defaultValue: false,
-                      }),
-                  ]
-                : []),
+const VerificationCodeForm = ({
+    displayTrustDevice,
+    ...props
+}: DisplayTrustDeviceFormOptions & FormProps<VerificationCodeFormData>) => {
+    let fields: Field[] = [
+        {
+            key: 'verification_code',
+            label: 'verificationCode',
+            type: 'string',
+        },
+    ];
+
+    if (displayTrustDevice) {
+        fields = [
+            ...fields,
+            {
+                type: 'checkbox',
+                key: 'trust_device',
+                label: 'mfa.stepUp.trustDevice',
+                defaultChecked: false,
+                required: false,
+            },
         ];
-    },
-});
+    }
+
+    return <Form fields={fields} {...props} />;
+};
 
 type PhoneNumberRegisteringCredentialFormData = { phoneNumber: string; trustDevice: boolean };
 
-const PhoneNumberRegisteringCredentialForm = createForm<
-    PhoneNumberRegisteringCredentialFormData,
-    { phoneNumberOptions?: PhoneNumberOptions } & DisplayTrustDeviceFormOptions
->({
-    prefix: 'r5-mfa-credentials-phone-number-',
-    fields: ({ config, phoneNumberOptions, displayTrustDevice }) => {
-        return [
-            phoneNumberField(
-                {
-                    required: true,
-                    ...phoneNumberOptions,
-                },
-                config
-            ),
-            ...(displayTrustDevice
-                ? [
-                      checkboxField({
-                          key: 'trust_device',
-                          label: 'mfa.stepUp.trustDevice',
-                          required: true,
-                          defaultValue: false,
-                      }),
-                  ]
-                : []),
+const PhoneNumberRegisteringCredentialForm = ({
+    displayTrustDevice,
+    phoneNumberOptions,
+    ...props
+}: DisplayTrustDeviceFormOptions &
+    FormProps<
+        PhoneNumberRegisteringCredentialFormData,
+        StartMfaPhoneNumberRegistrationResponse
+    >) => {
+    let fields: Field[] = [{ key: 'phoneNumber', type: 'phone', ...phoneNumberOptions }];
+
+    if (displayTrustDevice) {
+        fields = [
+            ...fields,
+            {
+                key: 'trust_device',
+                type: 'checkbox',
+                label: 'mfa.stepUp.trustDevice',
+                required: false,
+                defaultChecked: false,
+            },
         ];
-    },
-    submitLabel: 'mfa.register.phoneNumber',
-});
+    }
+
+    return <Form fields={fields} submitLabel={'mfa.register.phoneNumber'} {...props} />;
+};
 
 interface MainViewProps {
     /**
@@ -270,6 +237,24 @@ const MainView = withCredentials(
             MFA.isPhoneCredential(credential)
         );
 
+        const displayTrustDevice =
+            profileIdentifiers.emailVerified != undefined &&
+            profileIdentifiers.emailVerified &&
+            allowTrustDevice &&
+            config.rbaEnabled;
+
+        const fields: Field[] = displayTrustDevice
+            ? [
+                  {
+                      key: 'trust_device',
+                      type: 'checkbox',
+                      label: 'mfa.stepUp.trustDevice',
+                      defaultChecked: false,
+                      required: false,
+                  },
+              ]
+            : [];
+
         return (
             <div className="flex flex-col gap-4">
                 {config.mfaEmailEnabled && !isEmailCredentialRegistered && (
@@ -281,13 +266,9 @@ const MainView = withCredentials(
                                     : i18n('mfa.email.explain')}
                             </Intro>
                         )}
-                        <EmailRegisteringCredentialForm
-                            displayTrustDevice={
-                                profileIdentifiers.emailVerified != undefined &&
-                                profileIdentifiers.emailVerified &&
-                                allowTrustDevice &&
-                                config.rbaEnabled
-                            }
+                        <Form
+                            fields={fields}
+                            submitLabel={'mfa.register.email'}
                             handler={onEmailRegistering}
                             onSuccess={(data: StartMfaEmailRegistrationResponse) =>
                                 goTo<VerificationCodeViewState>('verification-code', {
@@ -331,7 +312,13 @@ const MainView = withCredentials(
                     isEmailCredentialRegistered && (
                         <div>
                             {showIntro && <Intro>{i18n('mfa.email.remove.explain')}</Intro>}
-                            <EmailCredentialRemovalForm
+                            <Form
+                                submitLabel={'mfa.remove.email'}
+                                SubmitComponent={({ disabled, label }) => (
+                                    <DestructiveButton disabled={disabled}>
+                                        {label}
+                                    </DestructiveButton>
+                                )}
                                 handler={onEmailRemoval}
                                 onSuccess={async () => {
                                     onSuccess({ name: 'mfa_email_deleted' });
@@ -351,7 +338,11 @@ const MainView = withCredentials(
                     phoneNumberCredentialRegistered && (
                         <div>
                             {showIntro && <Intro>{i18n('mfa.phoneNumber.remove.explain')}</Intro>}
-                            <PhoneNumberCredentialRemovalForm
+                            <Form
+                                submitLabel="mfa.remove.phoneNumber"
+                                SubmitComponent={({ label, ...props }) => (
+                                    <DestructiveButton {...props}>{label}</DestructiveButton>
+                                )}
                                 handler={() =>
                                     onPhoneNumberRemoval({ ...phoneNumberCredentialRegistered })
                                 }

@@ -62,10 +62,8 @@ describe('Snapshot', () => {
                 { apiClient, config: { ...defaultConfig, ...config }, defaultI18n }
             );
 
-            await waitFor(async () => {
-                const { container } = await render(widget);
-                expect(container).toMatchSnapshot();
-            });
+            const { container } = render(widget);
+            expect(container).toMatchSnapshot();
         };
 
     describe('phone number editor', () => {
@@ -101,7 +99,7 @@ describe('DOM testing', () => {
             { config: { ...defaultConfig, ...config }, apiClient, defaultI18n }
         );
 
-        return waitFor(async () => {
+        return waitFor(() => {
             return render(result);
         });
     };
@@ -115,7 +113,7 @@ describe('DOM testing', () => {
 
             await generateComponent({});
 
-            const phoneNumberInput = screen.getByLabelText('phoneNumber');
+            const phoneNumberInput = screen.getByRole('textbox', { name: 'phoneNumber' });
             expect(phoneNumberInput).toBeInTheDocument();
 
             await userEvent.clear(phoneNumberInput);
@@ -133,7 +131,7 @@ describe('DOM testing', () => {
                 })
             );
 
-            const verificationCodeInput = screen.getByLabelText('verificationCode');
+            const verificationCodeInput = screen.getByRole('textbox', { name: 'verificationCode' });
             expect(verificationCodeInput).toBeInTheDocument();
 
             await userEvent.clear(verificationCodeInput);
@@ -168,7 +166,7 @@ describe('DOM testing', () => {
 
             await generateComponent({});
 
-            const phoneNumberInput = screen.getByLabelText('phoneNumber');
+            const phoneNumberInput = screen.getByRole('textbox', { name: 'phoneNumber' });
             expect(phoneNumberInput).toBeInTheDocument();
 
             await userEvent.clear(phoneNumberInput);
@@ -190,7 +188,7 @@ describe('DOM testing', () => {
 
             await generateComponent({});
 
-            const phoneNumberInput = screen.getByLabelText('phoneNumber');
+            const phoneNumberInput = screen.getByRole('textbox', { name: 'phoneNumber' });
             expect(phoneNumberInput).toBeInTheDocument();
 
             await userEvent.clear(phoneNumberInput);
@@ -203,7 +201,7 @@ describe('DOM testing', () => {
 
             expect(updatePhoneNumber).toBeCalled();
 
-            const verificationCodeInput = screen.getByLabelText('verificationCode');
+            const verificationCodeInput = screen.getByRole('textbox', { name: 'verificationCode' });
             expect(verificationCodeInput).toBeInTheDocument();
 
             await userEvent.clear(verificationCodeInput);
@@ -215,7 +213,7 @@ describe('DOM testing', () => {
 
             expect(verifyPhoneNumber).toBeCalled();
 
-            await waitFor(async () => {
+            await waitFor(() => {
                 expect(onSuccess).toBeCalledWith(
                     expect.objectContaining({ name: 'phone_number_updated' })
                 );

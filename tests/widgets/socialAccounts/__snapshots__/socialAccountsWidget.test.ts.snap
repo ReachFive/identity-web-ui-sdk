@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Snapshot basic 1`] = `
-.c5 {
+.c3 {
   display: block;
   width: 100%;
   box-sizing: border-box;
@@ -25,29 +25,20 @@ exports[`Snapshot basic 1`] = `
   transition: all 0.15s ease-in-out;
 }
 
-.c5:focus {
+.c3:focus {
   outline: 0;
   box-shadow: 0 0 0 3px rgba(34,153,85,0.5);
 }
 
-.c5:hover,
-.c5:active {
+.c3:hover,
+.c3:active {
   color: #229955;
   background-color: #ebebeb;
   border-color: #1b7842;
 }
 
-.c5[disabled] {
+.c3[disabled] {
   opacity: 0.65;
-}
-
-.c2 {
-  text-align: center;
-  margin-bottom: 10px;
-}
-
-.c3 {
-  color: #495057;
 }
 
 .c0 {
@@ -65,21 +56,50 @@ exports[`Snapshot basic 1`] = `
 }
 
 .c1 {
-  --color-primary: #229955;
-  --color-destructive: #dc4e41;
-  --color-background: #ffffff;
-  --color-text: #495057;
-  --color-border: #ced4da;
-  --spacing-padding-y: 9;
-  --spacing-padding-x: 12;
-  --spacing-block-inner-height: 38;
-  --spacing: 10;
-  --font-generic: 14;
+  --primary: 145.71 63.64% 36.67%;
+  --primary-foreground: 0 0% 100%;
+  --destructive: 5.03 68.89% 55.88%;
+  --destructive-foreground: 0 0% 100%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 210 8.75% 31.37%;
+  --background: 0 0% 100%;
+  --border: 210 13.95% 83.14%;
+  --text: 210 8.75% 31.37%;
+  --accent: 145.71 63.64% 36.67%;
+  --muted: 210 10.81% 70.98%;
+  --input: 210 13.95% 83.14%;
+  --ring: 145.65 63.27% 61.57%;
+  --spacing-padding-y: 9px;
+  --spacing-padding-x: 12px;
+  --spacing: 10px;
+  --font-size: 14px;
+  --leading: 1.428571429;
   --border-width: 1;
-  --radius: 3;
+  --radius: 3px;
+  --button-border: #ced4da;
+  --button-border-width: 1;
+  --button-height: 40px;
+  --button-leading: 1.428571429;
+  --button-padding-x: 12px;
+  --button-padding-y: 9px;
+  --button-radius: 3px;
+  --button-text-size: 14px;
+  --input-background: #fff;
+  --input-border: #ced4da;
+  --input-border-width: 1;
+  --input-disabled-background: #e9ecef;
+  --input-height: 40px;
+  --input-leading: 1.428571429;
+  --input-padding-x: 12px;
+  --input-padding-y: 9px;
+  --input-placeholder: #868e96;
+  --input-radius: 3px;
+  --input-shadow: none;
+  --input-text-color: #495057;
+  --input-text-size: 14px;
 }
 
-.c4 {
+.c2 {
   margin-top: 10px;
 }
 
@@ -88,18 +108,35 @@ exports[`Snapshot basic 1`] = `
     class="c0 c1 r5-widget"
     transition="entering"
   >
-    <div>
+    <div
+      class="group/item-group flex flex-col"
+      data-slot="item-group"
+      role="list"
+    >
       <div
-        class="c2 c3"
+        class="group/item [a]:hover:bg-accent/50 focus-visible:border-ring focus-visible:ring-ring/50 [a]:transition-colors flex flex-wrap items-center rounded-md border border-transparent text-sm outline-none transition-colors duration-100 focus-visible:ring-[3px] bg-transparent gap-4 p-4"
+        data-size="default"
+        data-slot="item"
+        data-variant="default"
       >
-        socialAccounts.noLinkedAccount
+        <div
+          class="flex flex-1 flex-col gap-1 [&+[data-slot=item-content]]:flex-none"
+          data-slot="item-content"
+        >
+          <div
+            class="flex w-fit items-center gap-2 text-sm font-medium leading-snug"
+            data-slot="item-title"
+          >
+            socialAccounts.noLinkedAccount
+          </div>
+        </div>
       </div>
     </div>
     <div
-      class="c4"
+      class="c2"
     >
       <button
-        class="c5"
+        class="c3"
       >
         socialAccounts.linkNewAccount
       </button>

@@ -1,70 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Snapshot email editor basic 1`] = `
-.c6 {
-  color: #495057;
-  margin-bottom: 5px;
-  display: none;
-}
-
-.c5 {
-  margin-bottom: 10px;
-}
-
-.c5 > label::after {
-  content: "\\A0*";
-  color: #dc4e41;
-}
-
-.c7 {
-  display: block;
-  width: 100%;
-  box-sizing: border-box;
-  font-size: 14px;
-  line-height: 1.428571429;
-  color: #495057;
-  border-radius: 3px;
-  border-width: 1px;
-  border-style: solid;
-  border-color: #ced4da;
-  background-color: #fff;
-  background-image: none;
-  padding: 9px 12px;
-  -webkit-transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
-  transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
-  box-shadow: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-}
-
-.c7:focus {
-  border-color: #5fdb94;
-  box-shadow: 0 0 0 3px rgba(95,219,148,0.5);
-  outline: 0;
-}
-
-.c7:disabled,
-.c7[readonly] {
-  background-color: #e9ecef;
-}
-
-.c7::-webkit-input-placeholder {
-  color: #868e96;
-}
-
-.c7::-moz-placeholder {
-  color: #868e96;
-}
-
-.c7:-ms-input-placeholder {
-  color: #868e96;
-}
-
-.c7::placeholder {
-  color: #868e96;
-}
-
 .c2 {
   text-align: center;
   margin-bottom: 10px;
@@ -72,49 +8,6 @@ exports[`Snapshot email editor basic 1`] = `
 
 .c3 {
   color: #495057;
-}
-
-.c8 {
-  display: block;
-  width: 100%;
-  box-sizing: border-box;
-  text-align: center;
-  font-weight: bold;
-  vertical-align: middle;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-  touch-action: manipulation;
-  cursor: pointer;
-  color: #ffffff;
-  background-color: #229955;
-  border: 1px solid #229955;
-  padding: 9px 12px;
-  font-size: 14px;
-  line-height: 1.428571429;
-  border-radius: 3px;
-  -webkit-transition: all 0.15s ease-in-out;
-  transition: all 0.15s ease-in-out;
-}
-
-.c8:focus {
-  outline: 0;
-  box-shadow: 0 0 0 3px rgba(34,153,85,0.5);
-}
-
-.c8:hover,
-.c8:active {
-  background-color: #1b7842;
-  border-color: #1b7842;
-}
-
-.c8[disabled] {
-  opacity: 0.65;
-}
-
-.c4 {
-  position: relative;
 }
 
 .c0 {
@@ -132,18 +25,47 @@ exports[`Snapshot email editor basic 1`] = `
 }
 
 .c1 {
-  --color-primary: #229955;
-  --color-destructive: #dc4e41;
-  --color-background: #ffffff;
-  --color-text: #495057;
-  --color-border: #ced4da;
-  --spacing-padding-y: 9;
-  --spacing-padding-x: 12;
-  --spacing-block-inner-height: 38;
-  --spacing: 10;
-  --font-generic: 14;
+  --primary: 145.71 63.64% 36.67%;
+  --primary-foreground: 0 0% 100%;
+  --destructive: 5.03 68.89% 55.88%;
+  --destructive-foreground: 0 0% 100%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 210 8.75% 31.37%;
+  --background: 0 0% 100%;
+  --border: 210 13.95% 83.14%;
+  --text: 210 8.75% 31.37%;
+  --accent: 145.71 63.64% 36.67%;
+  --muted: 210 10.81% 70.98%;
+  --input: 210 13.95% 83.14%;
+  --ring: 145.65 63.27% 61.57%;
+  --spacing-padding-y: 9px;
+  --spacing-padding-x: 12px;
+  --spacing: 10px;
+  --font-size: 14px;
+  --leading: 1.428571429;
   --border-width: 1;
-  --radius: 3;
+  --radius: 3px;
+  --button-border: #ced4da;
+  --button-border-width: 1;
+  --button-height: 40px;
+  --button-leading: 1.428571429;
+  --button-padding-x: 12px;
+  --button-padding-y: 9px;
+  --button-radius: 3px;
+  --button-text-size: 14px;
+  --input-background: #fff;
+  --input-border: #ced4da;
+  --input-border-width: 1;
+  --input-disabled-background: #e9ecef;
+  --input-height: 40px;
+  --input-leading: 1.428571429;
+  --input-padding-x: 12px;
+  --input-padding-y: 9px;
+  --input-placeholder: #868e96;
+  --input-radius: 3px;
+  --input-shadow: none;
+  --input-text-color: #495057;
+  --input-text-size: 14px;
 }
 
 <div>
@@ -158,38 +80,54 @@ exports[`Snapshot email editor basic 1`] = `
         emailEditor.intro
       </div>
       <form
-        class="c4"
+        aria-busy="false"
         novalidate=""
       >
         <div
-          class="c5"
-          required=""
+          class="space-y-4"
         >
-          <label
-            class="c6"
-            for="email"
+          <div
+            class="group/field data-[invalid=true]:text-destructive flex w-full gap-3 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
+            data-invalid="false"
+            data-orientation="vertical"
+            data-slot="field"
+            role="group"
           >
-            email
-          </label>
-          <input
-            class="c7"
-            data-testid="email"
-            id="email"
-            name="email"
-            placeholder="email"
-            required=""
-            title="email"
-            type="email"
-            value=""
-          />
+            <label
+              class="text-sm font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70 group/field-label peer/field-label flex w-fit gap-2 leading-snug group-data-[disabled=true]/field:opacity-50 has-[>[data-slot=field]]:w-full has-[>[data-slot=field]]:flex-col has-[>[data-slot=field]]:rounded-md has-[>[data-slot=field]]:border [&>[data-slot=field]]:p-4 has-data-[state=checked]:bg-primary/5 has-data-[state=checked]:border-primary dark:has-data-[state=checked]:bg-primary/10 sr-only"
+              data-slot="field-label"
+              for=":r0:"
+            >
+              email
+              <svg
+                class="inline-block size-2 leading-4 fill-destructive"
+                focusable="false"
+                viewBox="0 0 128 128"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M110.1,16.4L75.8,56.8l0.3,1l50.6-10.2v32.2l-50.9-8.9l-0.3,1l34.7,39.1l-28.3,16.5L63.7,78.2L63,78.5l-18.5,49L17.2,111l34.1-39.8v-0.6l-50,9.2V47.6l49.3,9.9l0.3-0.6L17.2,16.7L45.5,0.5l17.8,48.7H64L82.1,0.5L110.1,16.4z"
+                />
+              </svg>
+            </label>
+            <input
+              aria-label="email"
+              class="flex w-full dark:bg-input/30 shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm h-[var(--input-height)] px-[var(--input-padding-x)] py-[var(--input-padding-y)] text-[var(--input-text-color)] text-[length:var(--input-text-size)] leading-[var(--input-leading)] rounded-[var(--input-radius)] bg-[var(--input-background)] border-[var(--input-border)] border-[length:var(--input-border-width)] placeholder:text-[var(--input-placeholder)] disabled:bg-[var(--input-disabled-background)]"
+              id=":r0:"
+              name="email"
+              placeholder="email"
+              required=""
+              type="email"
+              value=""
+            />
+          </div>
+          <button
+            class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[var(--button-radius)] text-[length:var(--button-text-size)] leading-[var(--button-leading)] font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary text-primary-foreground shadow hover:bg-primary/90 h-[var(--button-height)] px-[var(--button-padding-x)] py-[var(--button-padding-y)] w-full"
+            type="submit"
+          >
+            send
+          </button>
         </div>
-        <button
-          class="c8"
-          data-testid="submit"
-          type="submit"
-        >
-          send
-        </button>
       </form>
     </div>
   </div>

@@ -2,7 +2,6 @@ import { beforeEach, describe, expect, jest, test } from '@jest/globals';
 
 import { LoginWithPasswordParams, LoginWithWebAuthnParams } from '@reachfive/identity-core';
 
-import { specializeIdentifierData } from '../../src/helpers/utils';
 import {
     camelCase,
     debounce,
@@ -11,6 +10,7 @@ import {
     intersection,
     isEmpty,
     isEqual,
+    specializeIdentifierData,
     snakeCase,
 } from '../../src/helpers/utils';
 

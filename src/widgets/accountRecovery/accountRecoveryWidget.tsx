@@ -2,8 +2,9 @@ import React from 'react';
 
 import styled from 'styled-components';
 
-import { createForm } from '../../components/form/formComponent';
-import { Alternative, Heading, Info, Intro, Link, Separator } from '../../components/miscComponent';
+import { Form } from '@/components/form/form.tsx';
+
+import { Alternative, Heading, Info, Link, Separator } from '../../components/miscComponent';
 import { createMultiViewWidget } from '../../components/widget/widget';
 import { useI18n } from '../../contexts/i18n';
 import { useReachfive } from '../../contexts/reachfive';
@@ -38,14 +39,6 @@ interface MainViewProps {
     showLabels?: boolean;
 }
 
-const DeviceInputForm = createForm<{}, MainViewProps>({
-    prefix: 'r5-credentials-reset',
-    fields: [],
-    submitLabel: 'accountRecovery.passkeyReset.button',
-    supportMultipleSubmits: true,
-    resetAfterSuccess: true,
-});
-
 const iconStyle = `
         width: 60px;
         height: 60px;
@@ -58,25 +51,17 @@ const PasskeysIcon = styled(Passkeys)`
     ${iconStyle}
 `;
 
-const PasskeysExplanation = styled(() => {
+const PasskeysExplanation = () => {
     const i18n = useI18n();
     return (
-        <ul>
-            <li>
-                <b>{i18n('accountRecovery.passkeyReset.subtitle1')}</b>
-            </li>
-            <ul>
-                <li>{i18n('accountRecovery.passkeyReset.legend1')}</li>
-            </ul>
-            <li>
-                <b>{i18n('accountRecovery.passkeyReset.subtitle2')}</b>
-            </li>
-            <ul>
-                <li>{i18n('accountRecovery.passkeyReset.legend2')}</li>
-            </ul>
-        </ul>
+        <dl>
+            <dt className="font-bold">{i18n('accountRecovery.passkeyReset.subtitle1')}</dt>
+            <dd>{i18n('accountRecovery.passkeyReset.legend1')}</dd>
+            <dt className="font-bold">{i18n('accountRecovery.passkeyReset.subtitle2')}</dt>
+            <dd>{i18n('accountRecovery.passkeyReset.legend2')}</dd>
+        </dl>
     );
-})``;
+};
 
 const NewPasskey = ({
     authentication,
@@ -102,21 +87,29 @@ const NewPasskey = ({
     };
 
     return (
-        <div>
+        <div className="space-y-4">
             <Heading>{i18n('accountRecovery.passkeyReset.title')}</Heading>
             <PasskeysIcon />
-            <Intro>
-                <b>{i18n('accountRecovery.passkeyReset.intro')}</b>
-            </Intro>
+            <div className="font-bold text-center text-balance">
+                {i18n('accountRecovery.passkeyReset.intro')}
+            </div>
             <PasskeysExplanation />
-            <DeviceInputForm handler={handleSubmit} onSuccess={handleSuccess} onError={onError} />
+            <Form
+                fields={[]}
+                submitLabel={'accountRecovery.passkeyReset.button'}
+                supportMultipleSubmits
+                resetAfterSuccess
+                handler={handleSubmit}
+                onSuccess={handleSuccess}
+                onError={onError}
+            />
             {allowCreatePassword && (
-                <Alternative>
+                <>
                     <Separator text={i18n('or')} />
-                    <Intro>
+                    <div className="text-center">
                         <Link target="new-password">{i18n('accountRecovery.password.title')}</Link>
-                    </Intro>
-                </Alternative>
+                    </div>
+                </>
             )}
         </div>
     );

@@ -1,32 +1,18 @@
 import React, { ComponentProps, useLayoutEffect } from 'react';
 
+import { Form } from '@/components/form/form';
+
 import { CaptchaProvider, WithCaptchaProps, type WithCaptchaToken } from '../../components/captcha';
-import { simpleField } from '../../components/form/fields/simpleField';
-import { createForm } from '../../components/form/formComponent';
 import { Info, Intro } from '../../components/miscComponent';
 import { importGoogleRecaptchaScript } from '../../components/reCaptcha';
 import { createMultiViewWidget } from '../../components/widget/widget';
 import { useI18n } from '../../contexts/i18n';
 import { useReachfive } from '../../contexts/reachfive';
 import { useRouting } from '../../contexts/routing';
-import { email } from '../../core/validation';
 
 import type { OnError, OnSuccess } from '../../types';
 
 type EmailFormData = { email: string };
-
-const EmailEditorForm = createForm<EmailFormData>({
-    prefix: 'r5-email-editor-',
-    supportMultipleSubmits: true,
-    fields: [
-        simpleField({
-            key: 'email',
-            label: 'email',
-            type: 'email',
-            validator: email,
-        }),
-    ],
-});
 
 interface MainViewProps {
     /**
@@ -93,7 +79,9 @@ const MainView = ({
                 action="update_email"
             >
                 <Intro>{i18n('emailEditor.intro')}</Intro>
-                <EmailEditorForm
+                <Form
+                    fields={['email']}
+                    supportMultipleSubmits
                     showLabels={showLabels}
                     handler={callback}
                     onSuccess={handleSuccess}

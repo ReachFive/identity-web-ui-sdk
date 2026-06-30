@@ -81,7 +81,7 @@ describe('DOM testing', () => {
             listTrustedDevices.mockResolvedValue({ trustedDevices: [] });
             await generateComponent({ showRemoveTrustedDevice: true }, defaultConfig);
 
-            expect(screen.queryByText('trustedDevices.empty')).toBeInTheDocument();
+            expect(screen.getByText('trustedDevices.empty')).toBeInTheDocument();
         });
 
         test('has trusted devices', async () => {
@@ -94,7 +94,7 @@ describe('DOM testing', () => {
             });
             await generateComponent({ showRemoveTrustedDevice: true }, defaultConfig);
 
-            const trustedDevices = screen.queryAllByTestId('trustedDevice');
+            const trustedDevices = screen.queryAllByRole('listitem');
             expect(trustedDevices).toHaveLength(3);
 
             expect(onSuccess).toBeCalledWith(

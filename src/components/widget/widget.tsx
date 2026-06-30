@@ -1,6 +1,7 @@
 import React, { ComponentType } from 'react';
 
-import styled, { StyleSheetManager, ThemeProvider, css } from 'styled-components';
+import { convert } from 'colorizr';
+import styled, { css, StyleSheetManager, ThemeProvider } from 'styled-components';
 
 import type { Client as CoreClient, SessionInfo } from '@reachfive/identity-core';
 
@@ -21,22 +22,57 @@ export type ThemeProps = { theme?: ThemeOptions };
 export type PropsWithI18n<P> = Prettify<P & I18nProps>;
 export type PropsWithTheme<P> = Prettify<P & ThemeProps>;
 
+function colorToHSL(color: string) {
+    return convert(color, 'hsl').replace('hsl(', '').replace(')', '');
+}
+
 export const themeVariables = css`
-    --color-primary: ${props => props.theme.primaryColor};
-    --color-destructive: ${props => props.theme.dangerColor};
-    --color-background: ${props => props.theme.backgroundColor};
-    --color-text: ${props => props.theme.textColor};
-    --color-border: ${props => props.theme.borderColor};
+    --primary: ${props => colorToHSL(props.theme.primaryColor)};
+    --primary-foreground: ${_ => colorToHSL('#ffffff')};
+    --destructive: ${props => colorToHSL(props.theme.dangerColor)};
+    --destructive-foreground: ${_ => colorToHSL('#ffffff')};
+    --popover: ${props => colorToHSL(props.theme.backgroundColor)};
+    --popover-foreground: ${props => colorToHSL(props.theme.textColor)};
+    --background: ${props => colorToHSL(props.theme.backgroundColor)};
+    --border: ${props => colorToHSL(props.theme.borderColor)};
+    --text: ${props => colorToHSL(props.theme.textColor)};
+    --accent: ${props => colorToHSL(props.theme.primaryColor)};
+    --muted: ${props => colorToHSL(props.theme.mutedTextColor)};
+    --input: ${props => colorToHSL(props.theme.input.borderColor)};
+    --ring: ${props => colorToHSL(props.theme.input.focusBorderColor)};
 
-    --spacing-padding-y: ${props => props.theme.paddingY};
-    --spacing-padding-x: ${props => props.theme.paddingX};
-    --spacing-block-inner-height: ${props => props.theme._blockInnerHeight};
-    --spacing: ${props => props.theme.spacing};
+    --spacing-padding-y: ${props => props.theme.paddingY}px;
+    --spacing-padding-x: ${props => props.theme.paddingX}px;
+    --spacing: ${props => props.theme.spacing}px;
 
-    --font-generic: ${props => props.theme.fontSize};
+    --font-size: ${props => props.theme.fontSize}px;
+    --leading: ${props => props.theme.lineHeight};
 
     --border-width: ${props => props.theme.borderWidth};
-    --radius: ${props => props.theme.borderRadius};
+    --radius: ${props => props.theme.borderRadius}px;
+
+    --button-border: ${props => props.theme.button.borderColor};
+    --button-border-width: ${props => props.theme.button.borderWidth};
+    --button-height: ${props => props.theme.button.height}px;
+    --button-leading: ${props => props.theme.button.lineHeight};
+    --button-padding-x: ${props => props.theme.button.paddingX}px;
+    --button-padding-y: ${props => props.theme.button.paddingY}px;
+    --button-radius: ${props => props.theme.button.borderRadius}px;
+    --button-text-size: ${props => props.theme.button.fontSize}px;
+
+    --input-background: ${props => props.theme.input.background};
+    --input-border: ${props => props.theme.input.borderColor};
+    --input-border-width: ${props => props.theme.input.borderWidth};
+    --input-disabled-background: ${props => props.theme.input.disabledBackground};
+    --input-height: ${props => props.theme.input.height}px;
+    --input-leading: ${props => props.theme.input.lineHeight};
+    --input-padding-x: ${props => props.theme.input.paddingX}px;
+    --input-padding-y: ${props => props.theme.input.paddingY}px;
+    --input-placeholder: ${props => props.theme.input.placeholderColor};
+    --input-radius: ${props => props.theme.input.borderRadius}px;
+    --input-shadow: ${props => props.theme.input.boxShadow};
+    --input-text-color: ${props => props.theme.input.color};
+    --input-text-size: ${props => props.theme.input.fontSize}px;
 `;
 
 export const ThemeVariablesContainer = styled.div`

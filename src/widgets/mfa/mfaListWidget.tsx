@@ -5,6 +5,16 @@ import { LoaderCircle, Mail, MessageSquareMore, X } from 'lucide-react';
 import { MFA } from '@reachfive/identity-core';
 
 import {
+    Item,
+    ItemActions,
+    ItemContent,
+    ItemDescription,
+    ItemGroup,
+    ItemMedia,
+    ItemTitle,
+} from '@/components/ui/item.tsx';
+
+import {
     AlertDialog,
     AlertDialogAction,
     AlertDialogCancel,
@@ -28,7 +38,11 @@ import {
     withCredentials,
 } from './contexts/credentials.tsx';
 
-const credentialIconByType = (type: MFA.CredentialsResponse['credentials'][number]['type']) => {
+type CredentialIconProps = {
+    type: MFA.CredentialsResponse['credentials'][number]['type'];
+};
+
+const CredentialIcon = ({ type }: CredentialIconProps) => {
     switch (type) {
         case 'email':
             return <Mail className="bg-background w-icon h-icon stroke-textColor" />;
@@ -88,6 +102,9 @@ const DeleteButton = ({
                                 ? 'mfa.remove.email'
                                 : 'mfa.remove.phoneNumber'
                         )
+                    }
+                    aria-label={
+                        credential.type === 'email' ? 'mfa.remove.email' : 'mfa.remove.phoneNumber'
                     }
                 >
                     <X />
@@ -169,40 +186,43 @@ export const MfaList = withCredentials(
         }
 
         return (
-            <div>
+            <ItemGroup>
                 {credentials.length === 0 && (
-                    <div className="mb-1 text-center text-textColor">
-                        {i18n('mfaList.noCredentials')}
-                    </div>
+                    <Item>
+                        <ItemContent>
+                            <ItemTitle>{i18n('mfaList.noCredentials')}</ItemTitle>
+                        </ItemContent>
+                    </Item>
                 )}
                 {credentials.map((credential, _) => (
-                    <div
+                    <Item
+                        variant="outline"
                         id={`credential-${credential.friendlyName}`}
                         data-testid="credential"
                         key={`credential-${credential.friendlyName}`}
-                        className={`flex flex-col ${isOpen ? 'opacity-15' : ''}`}
+                        className={`${isOpen ? 'opacity-15' : ''}`}
                     >
-                        <div className="flex flex-row items-center rounded">
-                            <div className="box-border flex flex-row items-center align-middle border border-solid rounded basis-full whitespace-nowrap p-generic">
-                                {credentialIconByType(credential.type)}
-                                <div className="ml-innerBlock w-max justify-items-stretch text-textColor">
-                                    <div className="font-bold">{credential.friendlyName}</div>
-                                    <div>
-                                        {MFA.isEmailCredential(credential)
-                                            ? credential.email
-                                            : MFA.isPhoneCredential(credential)
-                                              ? credential.phoneNumber
-                                              : 'N/A'}
-                                    </div>
-                                    <div>
-                                        <span>{i18n('mfaList.createdAt')}&nbsp;: </span>
-                                        <time dateTime={credential.createdAt}>
-                                            {dateFormat(credential.createdAt, config.language)}
-                                        </time>
-                                    </div>
-                                </div>
-                            </div>
-                            {showRemoveMfaCredential && (
+                        <ItemMedia className="!self-center" variant="image">
+                            <CredentialIcon type={credential.type} />
+                        </ItemMedia>
+                        <ItemContent>
+                            <ItemTitle>{credential.friendlyName}</ItemTitle>
+                            <ItemDescription>
+                                {MFA.isEmailCredential(credential)
+                                    ? credential.email
+                                    : MFA.isPhoneCredential(credential)
+                                      ? credential.phoneNumber
+                                      : 'N/A'}
+                            </ItemDescription>
+                            <ItemDescription>
+                                <span>{i18n('mfaList.createdAt')}&nbsp;: </span>
+                                <time dateTime={credential.createdAt}>
+                                    {dateFormat(credential.createdAt, config.language)}
+                                </time>
+                            </ItemDescription>
+                        </ItemContent>
+                        {showRemoveMfaCredential && (
+                            <ItemActions>
                                 <DeleteButton
                                     isOpen={isOpen}
                                     setIsOpen={setIsOpen}
@@ -211,11 +231,11 @@ export const MfaList = withCredentials(
                                     setDeleteConfirmationTitle={setDeleteConfirmationTitle}
                                     credential={credential}
                                 />
-                            )}
-                        </div>
-                    </div>
+                            </ItemActions>
+                        )}
+                    </Item>
                 ))}
-            </div>
+            </ItemGroup>
         );
     }
 );

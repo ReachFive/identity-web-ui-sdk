@@ -1,26 +1,23 @@
 /**
- * @reachfive/identity-ui - v1.43.0
- * Compiled Mon, 22 Jun 2026 13:29:40 UTC
+ * @reachfive/identity-ui - v1.43.1
+ * Compiled Tue, 30 Jun 2026 08:09:30 UTC
  *
  * Copyright (c) ReachFive.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  **/
-import * as _reachfive_identity_core from '@reachfive/identity-core';
-import { AuthResult, SingleFactorPasswordlessParams, StepUpPasswordlessParams, MFA, TrustedDevice, Config as Config$1, RemoteSettings, ConsentVersions, CustomField, Client as Client$1, SessionInfo, ConsentType, PasswordPolicy, PasswordStrengthScore, CustomFieldType, AuthOptions, PasswordlessResponse, Profile, UserConsent, DeviceCredential } from '@reachfive/identity-core';
+import { AuthResult, SingleFactorPasswordlessParams, StepUpPasswordlessParams, MFA, TrustedDevice, Config as Config$1, RemoteSettings, ConsentVersions, CustomField, Client as Client$1, SessionInfo, AuthOptions, PasswordlessResponse, Profile, UserConsent, DeviceCredential } from '@reachfive/identity-core';
 export { Config } from '@reachfive/identity-core';
-import React$1, { CSSProperties, ComponentType, ComponentProps } from 'react';
+import React, { CSSProperties, ComponentProps } from 'react';
 import { ResourceKey, TFunction } from 'i18next';
 import { StepUpPasswordlessParams as StepUpPasswordlessParams$1 } from '@reachfive/identity-core/es/main/oAuthClient';
 import { WidgetDisplayMode } from '@captchafox/types';
-import * as react_phone_number_input from 'react-phone-number-input';
-import { Country, Value as Value$2 } from 'react-phone-number-input';
+import { FieldValues, UseFormWatch } from 'react-hook-form';
+import { CountryCode } from 'libphonenumber-js';
+import z from 'zod';
 
 type I18nMessages = Record<string, ResourceKey>;
-type WithI18n<T> = T & {
-    i18n: TFunction;
-};
 
 type IdentifierType = 'email' | 'phone_number' | 'custom_identifier'
 
@@ -459,348 +456,89 @@ interface SuccessViewProps$1 {
 interface AccountRecoveryWidgetProps extends MainViewProps$5, SuccessViewProps$1 {
 }
 
-interface PathMapping {
-    bind<T extends Record<string, unknown>>(model: T): unknown;
-    unbind<T extends Record<string, unknown>, V>(model: T, value: V): T | V;
-}
-
-declare class CompoundValidator<T, C = unknown> {
-    current: Validator<T, C> | CompoundValidator<T, C>;
-    next: Validator<T, C> | CompoundValidator<T, C>;
-    constructor(current: Validator<T, C> | CompoundValidator<T, C>, next: Validator<T, C> | CompoundValidator<T, C>);
-    create(i18n: TFunction): ValidatorInstance<T, C>;
-    and(validator: Validator<T, C> | CompoundValidator<T, C>): CompoundValidator<T, C>;
-}
-type ValidatorError<Extra = {}> = {
-    valid: false;
-    error?: string;
-} & Extra;
-type ValidatorSuccess<Extra = {}> = {
-    valid: true;
-} & Extra;
-type ValidatorResult<Extra = {}> = ValidatorError<Extra> | ValidatorSuccess<Extra>;
-type ValidatorInstance<T, C, Extra = {}> = (value: T, ctx: C) => Promise<ValidatorResult<Extra>>;
-type RuleResult<E = {}> = boolean | ValidatorSuccess<E> | ValidatorError<E>;
-type Rule<T, C, E = {}> = (value: T, ctx: C) => RuleResult<E> | Promise<RuleResult<E>>;
-type Hint<T> = (value: T) => string | undefined;
-interface ValidatorOptions<T, C, E = {}> {
-    rule: Rule<T, C, E>;
-    hint?: Hint<T> | string;
-    parameters?: Record<string, unknown>;
-}
-declare class Validator<T, C = unknown, E = {}> {
-    rule: Rule<T, C, E>;
-    hint: Hint<T>;
-    parameters: Record<string, unknown>;
-    constructor({ rule, hint, parameters }: ValidatorOptions<T, C, E>);
-    create(i18n: TFunction): ValidatorInstance<T, C, E>;
-    and(validator: Validator<T, C> | CompoundValidator<T, C>): CompoundValidator<T, C>;
-}
-
-type FormValue<T, K extends string = 'raw'> = T | RichFormValue<T, K>;
-type RichFormValue<T, K extends string = 'raw'> = Record<K, T>;
-
-/** @todo to refine */
-type FormContext<Model> = {
-    client: Client$1;
-    config: Config;
-    errorMessage?: string;
-    fields: Model;
-    hasErrors?: boolean;
-    isLoading?: boolean;
-    isSubmitted: boolean;
+type FieldType = 'checkbox' | 'date' | 'decimal' | 'email' | 'hidden' | 'identifier' | 'integer' | 'number' | 'object' | 'password' | 'phone' | 'radio-group' | 'select' | 'string' | 'tags';
+type Transformer = {
+    input: (value?: any) => Record<string, any>;
+    output: (...event: any[]) => unknown;
 };
-
-interface FieldCreateProps {
-    showLabel: boolean;
-}
-interface FieldCreator<T, P = {}, E extends Record<string, unknown> = {}, K extends string = 'raw', C = unknown> {
+type Validation<TFieldType extends FieldType, TFieldValues extends FieldValues = FieldValues> = {
+    bivarianceHack(args: {
+        client: Client$1;
+        config: Config;
+        definition: FieldDefinition<TFieldType>;
+        i18n: TFunction;
+        watch: UseFormWatch<TFieldValues>;
+    }): z.ZodType;
+}['bivarianceHack'];
+type BaseFieldDefinition<TFieldType extends FieldType, TFieldValues extends FieldValues = FieldValues> = {
+    type: TFieldType;
     key: string;
-    path: string;
-    create: (options: WithI18n<FieldCreateProps>) => Field$1<T, P, E, K, C>;
-}
-interface Field$1<T, P = {}, E extends Record<string, unknown> = {}, K extends string = 'raw', C = unknown> {
-    key: string;
-    render: (props: Partial<P> & Partial<FieldComponentProps<T, {}, E, K>> & {
-        state: FieldValue<T, K, E>;
-    }) => React$1.ReactNode;
-    initialize: <M extends Record<PropertyKey, unknown>>(model: Partial<M>) => FieldValue<T, K>;
-    unbind: <M extends Record<PropertyKey, unknown>>(model: M, state: FieldValue<T, K, E>) => M;
-    validate: (data: FieldValue<T, K, E>, ctx: FormContext<C>) => Promise<ValidatorResult>;
-}
-type FieldValue<T, K extends string = 'raw', E extends Record<string, unknown> = {}> = E & {
-    value?: FormValue<T, K>;
-    isDirty?: boolean;
-    validation?: ValidatorResult;
-};
-type FieldComponentProps<T, P = {}, E extends Record<string, unknown> = {}, K extends string = 'raw'> = P & {
-    inputId: string;
-    key: string;
-    path: string;
-    label: string;
-    onChange: (value: FieldValue<T, K, E>) => void;
+    parent?: string | (string | number)[];
+    autoComplete?: AutoFill;
+    defaultValue?: string;
+    description?: React.ReactNode;
+    label?: string;
     placeholder?: string;
-    autoComplete?: AutoFill;
-    rawProperty?: K;
     required?: boolean;
-    readOnly?: boolean;
-    i18n: TFunction;
-    showLabel?: boolean;
-    value?: FormValue<T, K>;
-    validation?: ValidatorResult<E>;
+    transform?: Transformer;
+    validation?: Validation<TFieldType, TFieldValues>;
 };
-interface Formatter<T, F, K extends string> {
-    bind: (value?: T) => FormValue<F, K> | undefined;
-    unbind: (value?: FormValue<F, K>) => T | null | undefined;
-}
-type FieldDefinition<T, F = T, K extends string = 'raw', C = unknown> = {
-    key: string;
-    path?: string;
-    label: string;
-    required?: boolean;
-    readOnly?: boolean;
-    autoComplete?: AutoFill;
-    defaultValue?: T;
-    format?: Formatter<T, F, K>;
-    validator?: Validator<F, FormContext<C>> | CompoundValidator<F, FormContext<C>>;
-    mapping?: PathMapping;
-};
-interface FieldProps<T, F, P extends FieldComponentProps<F, ExtraParams, E, K>, ExtraParams extends Record<string, unknown> = {}, K extends string = 'raw', E extends Record<string, unknown> = {}, C = unknown> extends FieldDefinition<T, F, K, C> {
-    label: string;
-    mapping?: PathMapping;
-    format?: Formatter<T, F, K>;
-    rawProperty?: K;
-    component: ComponentType<P>;
-    extendedParams?: ExtraParams | ((i18n: TFunction) => ExtraParams);
-}
-
-type ConsentFieldOptions$1 = {
-    type: ConsentType;
-    consentCannotBeGranted?: boolean;
-    description: string;
-    version: {
-        language: string;
-        versionId: number;
-    };
-};
-interface ConsentFieldProps extends FieldComponentProps<boolean, ConsentFieldOptions$1, {}, 'granted'> {
-}
-type Value$1 = {
-    consentType?: ConsentType;
-    consentVersion?: {
-        language: string;
-        versionId: number;
-    };
-    granted: boolean;
-};
-declare function consentField({ type, required, consentCannotBeGranted, description, version, ...props }: Omit<FieldDefinition<Value$1, boolean>, 'defaultValue'> & {
-    defaultValue?: boolean;
-} & ConsentFieldOptions$1): FieldCreator<boolean, ConsentFieldProps, {}, "granted", unknown>;
-
-interface CheckboxFieldProps extends FieldComponentProps<boolean> {
-}
-declare function checkboxField(props: Omit<FieldProps<boolean | string, boolean, CheckboxFieldProps>, 'format' | 'component'>): FieldCreator<boolean, CheckboxFieldProps, {}, "raw", unknown>;
-
-type ExtraParams$2 = {
-    locale: string;
+type FieldDefinition<TFieldType extends FieldType = FieldType, TFieldValues extends FieldValues = FieldValues> = BaseFieldDefinition<TFieldType, TFieldValues> & ({
+    type: 'radio-group' | 'select';
+    values: {
+        value: string;
+        label: string;
+    }[];
+} | {
+    type: 'checkbox';
+    defaultChecked?: boolean;
+} | {
+    type: 'password';
+    canShowPassword?: boolean; /** TODO: implement this option in PasswordField */
+    withPolicyRules?: boolean;
+} | {
+    type: 'phone';
+    allowInternational?: boolean;
+    defaultCountry?: CountryCode;
+    /** @deprecated Use `allowInternational` instead. */
+    phoneNumberOptions?: PhoneNumberOptions;
+} | {
+    type: 'date';
+    max?: number;
+    min?: number;
     yearRange?: number;
+} | {
+    type: 'identifier';
+    isWebAuthnLogin?: boolean;
+    withPhoneNumber?: boolean;
+} | {
+    type: 'hidden';
+} | {
+    type: Exclude<FieldType, 'checkbox' | 'date' | 'hidden' | 'identifier' | 'password' | 'phone' | 'radio-group' | 'select'>;
+});
+declare const predefinedFields: Record<string, (args: {
+    config: Config;
+    definition: Omit<FieldDefinition<FieldType, FieldValues>, 'key' | 'type'>;
+}) => FieldDefinition<FieldType, FieldValues>>;
+type PredefinedFields = keyof typeof predefinedFields;
+type StaticContent = {
+    staticContent: React.ReactNode;
 };
-interface DateFieldProps extends FieldComponentProps<Date, ExtraParams$2> {
-}
-declare function dateField({ format, key, label, locale, validator, yearRange, ...props }: Optional<FieldDefinition<string, Date>, 'key' | 'label'> & Optional<ExtraParams$2, 'locale'>, config: Config): FieldCreator<Date, DateFieldProps, ExtraParams$2>;
-
-interface Option {
-    label: string;
-    value: string;
-}
-interface SelectProps extends React$1.SelectHTMLAttributes<HTMLSelectElement> {
-    hasError?: boolean;
-    options: Option[];
-    placeholder?: string;
-}
-
-type Value = SelectProps['value'];
-type SelectOptions = {
-    values: SelectProps['options'];
-};
-interface SelectFieldProps extends FieldComponentProps<Value, SelectOptions> {
-}
-declare function selectField({ values, ...config }: FieldDefinition<string, Value> & SelectOptions): FieldCreator<string | number | readonly string[] | undefined, SelectFieldProps, {}, "raw", unknown>;
-
-type SimplePasswordFieldOptions = {
-    canShowPassword?: boolean;
-    placeholder?: React$1.InputHTMLAttributes<HTMLInputElement>['placeholder'];
-};
-interface SimplePasswordFieldProps extends FieldComponentProps<string, SimplePasswordFieldOptions> {
-}
-declare const simplePasswordField: ({ canShowPassword, placeholder, ...props }: FieldDefinition<string> & SimplePasswordFieldOptions) => FieldCreator<string, SimplePasswordFieldProps, {}, "raw", unknown>;
-
-interface PasswordRule {
-    label: string;
-    verify: (value: string) => boolean;
-}
-
-type ExtraValues = {
-    strength?: PasswordStrengthScore;
-};
-type ExtraParams$1 = {
-    blacklist?: string[];
-    canShowPassword?: boolean;
-    enabledRules: Record<RuleKeys, PasswordRule>;
-    minStrength: PasswordStrengthScore;
-};
-interface PasswordFieldProps extends FieldComponentProps<string, ExtraParams$1, ExtraValues> {
-}
-type RuleKeys = Exclude<keyof PasswordPolicy, 'minStrength' | 'allowUpdateWithAccessTokenOnly'>;
-declare const passwordField: ({ key, label, blacklist, canShowPassword, enabledRules, minStrength, required, validator, ...props }: Optional<FieldDefinition<string, string>, "key" | "label"> & Partial<ExtraParams$1>, { passwordPolicy }: Config) => FieldCreator<string, PasswordFieldProps, ExtraParams$1>;
-
+type Field = PredefinedFields | Optional<FieldDefinition, 'type'> | FieldDefinition | StaticContent;
 type PhoneNumberOptions = {
-    /**
-     * If defaultCountry is specified then the phone number can be input both in "international" format and "national" format.
-     * A phone number that's being input in "national" format will be parsed as a phone number belonging to the defaultCountry.
-     */
-    defaultCountry?: Country;
-    /**
-     * If country is specified then the phone number can only be input in "national" (not "international") format,
-     * and will be parsed as a phone number belonging to the country.
-     */
-    country?: Country;
-    /**
-     * If locale is specified then translate component using the given language.
-     * @see https://gitlab.com/catamphetamine/react-phone-number-input/tree/master/locale
-     */
-    locale?: string;
+    allowInternational?: boolean;
+    defaultCountry?: CountryCode;
     /**
      * If `withCountryCallingCode` property is explicitly set to true then the "country calling code" part (e.g. "+1" when country is "US") is included in the input field (but still isn't editable).
-     * @default false
+     * @deprecated Use `allowInternational` instead.
      */
     withCountryCallingCode?: boolean;
     /**
      * If `withCountrySelect` property is `true` then the user can select the country for the phone number. Must be a supported {@link https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2#Officially_assigned_code_elements country code}.
-     * @default false
+     * @deprecated Use `allowInternational` instead.
      */
     withCountrySelect?: boolean;
 };
-/**
- * If neither country nor defaultCountry are specified then the phone number can only be input in "international" format.
- */
-interface PhoneNumberFieldProps extends FieldComponentProps<Value$2>, PhoneNumberOptions {
-}
-declare const phoneNumberField: ({ key, label, defaultCountry, country, locale, withCountryCallingCode, withCountrySelect, ...props }: Optional<FieldDefinition<string, Value$2>, "key" | "label"> & PhoneNumberOptions, config: Config) => FieldCreator<Value$2, PhoneNumberFieldProps>;
-
-type SimpleFieldOptions = {
-    placeholder?: React$1.InputHTMLAttributes<HTMLInputElement>['placeholder'];
-    type?: React$1.HTMLInputTypeAttribute;
-};
-interface SimpleFieldProps extends FieldComponentProps<string, SimpleFieldOptions> {
-}
-declare const simpleField: ({ placeholder, type, ...props }: FieldDefinition<string | number, string> & SimpleFieldOptions) => FieldCreator<string, SimpleFieldProps, {}, "raw", unknown>;
-
-declare function birthdateField({ min, max, label, ...props }: Parameters<typeof dateField>[0] & {
-    min?: number;
-    max?: number;
-}, config: Config): FieldCreator<Date, DateFieldProps, {
-    locale: string;
-    yearRange?: number;
-}, "raw", unknown>;
-
-type FieldBuilder = typeof simpleField | typeof checkboxField | typeof selectField | typeof dateField | typeof birthdateField | typeof phoneNumberField | typeof passwordField | typeof simplePasswordField | typeof consentField;
-type FieldConfig<T extends FieldBuilder> = Parameters<T>[0];
-type PredefinedFieldConfig<T extends FieldBuilder> = Prettify<Omit<FieldConfig<T>, 'label'>>;
-type PredefinedFieldOptions = {
-    [K in keyof typeof predefinedFields]: Prettify<{
-        key: K;
-    } & Parameters<(typeof predefinedFields)[K]>[0]>;
-}[keyof typeof predefinedFields];
-type CustomFieldOptions = Prettify<{
-    key: string;
-} & FieldOptions>;
-type ConsentFieldOptions = {
-    key: string;
-    errorArchivedConsents?: boolean;
-};
-type DataType<T extends CustomFieldType> = {
-    dataType: T;
-};
-type FieldOptions = Prettify<DataType<'number'> & FieldConfig<typeof simpleField>> | Prettify<DataType<'integer'> & FieldConfig<typeof simpleField>> | Prettify<DataType<'decimal'> & FieldConfig<typeof simpleField>> | Prettify<DataType<'string'> & FieldConfig<typeof simpleField>> | Prettify<DataType<'date'> & FieldConfig<typeof dateField>> | Prettify<DataType<'checkbox'> & FieldConfig<typeof checkboxField>> | Prettify<DataType<'select'> & FieldConfig<typeof selectField>> | Prettify<DataType<'phone'> & FieldConfig<typeof phoneNumberField>> | Prettify<DataType<'email'> & FieldConfig<typeof simpleField>>;
-type PredefinedFieldBuilder<T extends FieldBuilder> = (props: PredefinedFieldConfig<T>, config: Config) => ReturnType<T>;
-declare const predefinedFields: {
-    customIdentifier: PredefinedFieldBuilder<({ placeholder, type, ...props }: FieldDefinition<string | number, string> & {
-        placeholder?: React.InputHTMLAttributes<HTMLInputElement>["placeholder"];
-        type?: React.HTMLInputTypeAttribute;
-    }) => FieldCreator<string, SimpleFieldProps, {}, "raw", unknown>>;
-    givenName: PredefinedFieldBuilder<({ placeholder, type, ...props }: FieldDefinition<string | number, string> & {
-        placeholder?: React.InputHTMLAttributes<HTMLInputElement>["placeholder"];
-        type?: React.HTMLInputTypeAttribute;
-    }) => FieldCreator<string, SimpleFieldProps, {}, "raw", unknown>>;
-    familyName: PredefinedFieldBuilder<({ placeholder, type, ...props }: FieldDefinition<string | number, string> & {
-        placeholder?: React.InputHTMLAttributes<HTMLInputElement>["placeholder"];
-        type?: React.HTMLInputTypeAttribute;
-    }) => FieldCreator<string, SimpleFieldProps, {}, "raw", unknown>>;
-    email: PredefinedFieldBuilder<({ placeholder, type, ...props }: FieldDefinition<string | number, string> & {
-        placeholder?: React.InputHTMLAttributes<HTMLInputElement>["placeholder"];
-        type?: React.HTMLInputTypeAttribute;
-    }) => FieldCreator<string, SimpleFieldProps, {}, "raw", unknown>>;
-    phoneNumber: PredefinedFieldBuilder<({ key, label, defaultCountry, country, locale, withCountryCallingCode, withCountrySelect, ...props }: Optional<FieldDefinition<string, react_phone_number_input.Value>, "key" | "label"> & PhoneNumberOptions, config: Config) => FieldCreator<react_phone_number_input.Value, PhoneNumberFieldProps>>;
-    password: PredefinedFieldBuilder<({ key, label, blacklist, canShowPassword, enabledRules, minStrength, required, validator, ...props }: Optional<FieldDefinition<string, string>, "key" | "label"> & Partial<{
-        blacklist?: string[];
-        canShowPassword?: boolean;
-        enabledRules: Record<"minLength" | "uppercaseCharacters" | "specialCharacters" | "lowercaseCharacters" | "digitCharacters", PasswordRule>;
-        minStrength: _reachfive_identity_core.PasswordStrengthScore;
-    }>, { passwordPolicy }: Config) => FieldCreator<string, PasswordFieldProps, {
-        blacklist?: string[];
-        canShowPassword?: boolean;
-        enabledRules: Record<"minLength" | "uppercaseCharacters" | "specialCharacters" | "lowercaseCharacters" | "digitCharacters", PasswordRule>;
-        minStrength: _reachfive_identity_core.PasswordStrengthScore;
-    }>>;
-    passwordConfirmation: PredefinedFieldBuilder<({ canShowPassword, placeholder, ...props }: FieldDefinition<string> & {
-        canShowPassword?: boolean;
-        placeholder?: React.InputHTMLAttributes<HTMLInputElement>["placeholder"];
-    }) => FieldCreator<string, SimplePasswordFieldProps, {}, "raw", unknown>>;
-    gender: PredefinedFieldBuilder<typeof selectField>;
-    birthdate: PredefinedFieldBuilder<typeof birthdateField>;
-    'address.title': PredefinedFieldBuilder<({ placeholder, type, ...props }: FieldDefinition<string | number, string> & {
-        placeholder?: React.InputHTMLAttributes<HTMLInputElement>["placeholder"];
-        type?: React.HTMLInputTypeAttribute;
-    }) => FieldCreator<string, SimpleFieldProps, {}, "raw", unknown>>;
-    'address.addressType': PredefinedFieldBuilder<typeof selectField>;
-    'address.streetAddress': PredefinedFieldBuilder<({ placeholder, type, ...props }: FieldDefinition<string | number, string> & {
-        placeholder?: React.InputHTMLAttributes<HTMLInputElement>["placeholder"];
-        type?: React.HTMLInputTypeAttribute;
-    }) => FieldCreator<string, SimpleFieldProps, {}, "raw", unknown>>;
-    'address.addressComplement': PredefinedFieldBuilder<({ placeholder, type, ...props }: FieldDefinition<string | number, string> & {
-        placeholder?: React.InputHTMLAttributes<HTMLInputElement>["placeholder"];
-        type?: React.HTMLInputTypeAttribute;
-    }) => FieldCreator<string, SimpleFieldProps, {}, "raw", unknown>>;
-    'address.locality': PredefinedFieldBuilder<({ placeholder, type, ...props }: FieldDefinition<string | number, string> & {
-        placeholder?: React.InputHTMLAttributes<HTMLInputElement>["placeholder"];
-        type?: React.HTMLInputTypeAttribute;
-    }) => FieldCreator<string, SimpleFieldProps, {}, "raw", unknown>>;
-    'address.region': PredefinedFieldBuilder<({ placeholder, type, ...props }: FieldDefinition<string | number, string> & {
-        placeholder?: React.InputHTMLAttributes<HTMLInputElement>["placeholder"];
-        type?: React.HTMLInputTypeAttribute;
-    }) => FieldCreator<string, SimpleFieldProps, {}, "raw", unknown>>;
-    'address.postalCode': PredefinedFieldBuilder<({ placeholder, type, ...props }: FieldDefinition<string | number, string> & {
-        placeholder?: React.InputHTMLAttributes<HTMLInputElement>["placeholder"];
-        type?: React.HTMLInputTypeAttribute;
-    }) => FieldCreator<string, SimpleFieldProps, {}, "raw", unknown>>;
-    'address.country': PredefinedFieldBuilder<({ placeholder, type, ...props }: FieldDefinition<string | number, string> & {
-        placeholder?: React.InputHTMLAttributes<HTMLInputElement>["placeholder"];
-        type?: React.HTMLInputTypeAttribute;
-    }) => FieldCreator<string, SimpleFieldProps, {}, "raw", unknown>>;
-    friendlyName: PredefinedFieldBuilder<({ placeholder, type, ...props }: FieldDefinition<string | number, string> & {
-        placeholder?: React.InputHTMLAttributes<HTMLInputElement>["placeholder"];
-        type?: React.HTMLInputTypeAttribute;
-    }) => FieldCreator<string, SimpleFieldProps, {}, "raw", unknown>>;
-};
-/**
- * @example { key: "email" }
- * @example { key: "family_name", defaultValue: "Moreau", required": true }
- * @example { key: "given_name", defaultValue: "Kylian", type: "hidden" }
- * @example { key: "customFields.date", path: "date", dataType: "date" }
- * @example { key: "consents.foo" }
- */
-type Field = PredefinedFieldOptions | CustomFieldOptions | ConsentFieldOptions;
 
 /**
  * The widget’s initial screen.
@@ -874,7 +612,7 @@ type FaSelectionViewProps = Prettify<Partial<MFA.StepUpResponse> & {
 }>;
 type StepUpResponse = RequiredProperty<PasswordlessResponse, 'challengeId'>;
 type StepUpHandlerResponse = StepUpResponse & StepUpFormData;
-declare const FaSelectionView: ({ onError, onSuccess, ...props }: FaSelectionViewProps) => React$1.JSX.Element | null;
+declare const FaSelectionView: ({ onError, onSuccess, ...props }: FaSelectionViewProps) => React.JSX.Element | null;
 type VerificationCodeViewState = Prettify<StepUpHandlerResponse>;
 type VerificationCodeViewProps$3 = Prettify<Partial<StepUpHandlerResponse> & {
     /**
@@ -896,7 +634,7 @@ type VerificationCodeViewProps$3 = Prettify<Partial<StepUpHandlerResponse> & {
      */
     onError?: OnError;
 }>;
-declare const VerificationCodeView$1: ({ onError, onSuccess, ...props }: VerificationCodeViewProps$3) => React$1.JSX.Element;
+declare const VerificationCodeView$1: ({ onError, onSuccess, ...props }: VerificationCodeViewProps$3) => React.JSX.Element;
 type MfaStepUpProps = MainViewProps$4 & FaSelectionViewProps & VerificationCodeViewProps$3;
 type MfaStepUpWidgetProps = MfaStepUpProps;
 
@@ -999,7 +737,7 @@ interface ForgotPasswordViewProps {
      */
     onError?: OnError;
 }
-declare const ForgotPasswordView: ({ allowLogin, allowPhoneNumberResetPassword, displaySafeErrorMessage, showLabels, allowWebAuthnLogin, initialScreen, recaptcha_enabled, recaptcha_site_key, captchaFoxEnabled, captchaFoxMode, captchaFoxSiteKey, origin, redirectUrl, returnToAfterPasswordReset, onError, onSuccess, }: WithCaptchaProps<ForgotPasswordViewProps>) => React$1.JSX.Element;
+declare const ForgotPasswordView: ({ allowLogin, allowPhoneNumberResetPassword, displaySafeErrorMessage, showLabels, allowWebAuthnLogin, initialScreen, recaptcha_enabled, recaptcha_site_key, captchaFoxEnabled, captchaFoxMode, captchaFoxSiteKey, origin, redirectUrl, returnToAfterPasswordReset, onError, onSuccess, }: WithCaptchaProps<ForgotPasswordViewProps>) => React.JSX.Element;
 
 type LoginViewProps = {
     /**
@@ -1095,7 +833,7 @@ type LoginViewProps = {
      */
     action?: string;
 };
-declare const LoginView: ({ acceptTos, allowForgotPassword, allowSignup, allowWebAuthnLogin, allowAccountRecovery, auth, canShowPassword, socialProviders, allowCustomIdentifier, showLabels, showRememberMe, recaptcha_enabled, recaptcha_site_key, captchaFoxEnabled, captchaFoxSiteKey, captchaFoxMode, allowAuthentMailPhone, allowTrustDevice, action, onError, onSuccess, }: WithCaptchaProps<LoginViewProps>) => React$1.JSX.Element;
+declare const LoginView: ({ acceptTos, allowForgotPassword, allowSignup, allowWebAuthnLogin, allowAccountRecovery, auth, canShowPassword, socialProviders, allowCustomIdentifier, showLabels, showRememberMe, recaptcha_enabled, recaptcha_site_key, captchaFoxEnabled, captchaFoxSiteKey, captchaFoxMode, allowAuthentMailPhone, allowTrustDevice, action, onError, onSuccess, }: WithCaptchaProps<LoginViewProps>) => React.JSX.Element;
 
 interface LoginWithPasswordViewProps {
     allowForgotPassword?: boolean;
@@ -1118,7 +856,7 @@ interface LoginWithPasswordViewProps {
      */
     action?: string;
 }
-declare const LoginWithPasswordView: ({ allowForgotPassword, allowAccountRecovery, auth, canShowPassword, recaptcha_enabled, recaptcha_site_key, captchaFoxEnabled, captchaFoxSiteKey, captchaFoxMode, showLabels, showRememberMe, allowTrustDevice, action, onError, onSuccess, }: WithCaptchaProps<LoginWithPasswordViewProps>) => React$1.JSX.Element;
+declare const LoginWithPasswordView: ({ allowForgotPassword, allowAccountRecovery, auth, canShowPassword, recaptcha_enabled, recaptcha_site_key, captchaFoxEnabled, captchaFoxSiteKey, captchaFoxMode, showLabels, showRememberMe, allowTrustDevice, action, onError, onSuccess, }: WithCaptchaProps<LoginWithPasswordViewProps>) => React.JSX.Element;
 
 interface LoginWithWebAuthnViewProps {
     /**
@@ -1160,7 +898,7 @@ interface LoginWithWebAuthnViewProps {
      */
     onError?: OnError;
 }
-declare const LoginWithWebAuthnView: ({ acceptTos, allowSignup, auth, enablePasswordAuthentication, showLabels, socialProviders, allowAccountRecovery, onError, onSuccess, }: LoginWithWebAuthnViewProps) => React$1.JSX.Element;
+declare const LoginWithWebAuthnView: ({ acceptTos, allowSignup, auth, enablePasswordAuthentication, showLabels, socialProviders, allowAccountRecovery, onError, onSuccess, }: LoginWithWebAuthnViewProps) => React.JSX.Element;
 
 type PropsWithSession<P> = P & {
     session?: SessionInfo;
@@ -1187,7 +925,7 @@ interface QuickLoginViewProps {
      */
     onError?: OnError;
 }
-declare const QuickLoginView: ({ initialScreen, allowWebAuthnLogin, auth, session, onError, onSuccess, }: PropsWithSession<QuickLoginViewProps>) => React$1.JSX.Element | null;
+declare const QuickLoginView: ({ initialScreen, allowWebAuthnLogin, auth, session, onError, onSuccess, }: PropsWithSession<QuickLoginViewProps>) => React.JSX.Element | null;
 
 interface ReauthViewProps {
     /**
@@ -1226,7 +964,7 @@ interface ReauthViewProps {
      */
     action?: string;
 }
-declare const ReauthView: ({ allowForgotPassword, auth, session, showLabels, socialProviders, action, onError, onSuccess, }: PropsWithSession<ReauthViewProps>) => React$1.JSX.Element | null;
+declare const ReauthView: ({ allowForgotPassword, auth, session, showLabels, socialProviders, action, onError, onSuccess, }: PropsWithSession<ReauthViewProps>) => React.JSX.Element | null;
 
 interface PasswordSignupFormProps {
     /**
@@ -1284,7 +1022,7 @@ interface PasswordSignupFormProps {
 
 interface SignupWithPasswordViewProps extends PasswordSignupFormProps {
 }
-declare const SignupWithPasswordView: ({ onSuccess, ...props }: SignupWithPasswordViewProps) => React$1.JSX.Element;
+declare const SignupWithPasswordView: ({ onSuccess, ...props }: SignupWithPasswordViewProps) => React.JSX.Element;
 
 interface SignupWithWebAuthnViewProps {
     /**
@@ -1326,7 +1064,7 @@ interface SignupWithWebAuthnViewProps {
      *   }
      * ]
      */
-    signupFields?: (string | Field)[];
+    signupFields?: Field[];
     /**  */
     userAgreement?: string;
     /**
@@ -1338,7 +1076,7 @@ interface SignupWithWebAuthnViewProps {
      */
     onError?: OnError;
 }
-declare const SignupWithWebAuthnView: ({ auth, beforeSignup, redirectUrl, returnToAfterEmailConfirmation, signupFields, showLabels, userAgreement, onError, onSuccess, }: SignupWithWebAuthnViewProps) => React$1.JSX.Element;
+declare const SignupWithWebAuthnView: ({ auth, beforeSignup, redirectUrl, returnToAfterEmailConfirmation, signupFields, showLabels, userAgreement, onError, onSuccess, }: SignupWithWebAuthnViewProps) => React.JSX.Element;
 
 interface SignupViewProps extends SignupWithPasswordViewProps, SignupWithWebAuthnViewProps {
     /**
@@ -1382,7 +1120,7 @@ interface SignupViewProps extends SignupWithPasswordViewProps, SignupWithWebAuth
      */
     onError?: OnError;
 }
-declare const SignupView: ({ allowLogin, initialScreen, allowWebAuthnLogin, allowWebAuthnSignup, enablePasswordAuthentication, socialProviders, ...props }: SignupViewProps) => React$1.JSX.Element;
+declare const SignupView: ({ allowLogin, initialScreen, allowWebAuthnLogin, allowWebAuthnSignup, enablePasswordAuthentication, socialProviders, ...props }: SignupViewProps) => React.JSX.Element;
 
 interface AuthWidgetProps extends ComponentProps<typeof LoginView>, ComponentProps<typeof LoginWithWebAuthnView>, ComponentProps<typeof LoginWithPasswordView>, ComponentProps<typeof SignupView>, ComponentProps<typeof SignupWithPasswordView>, ComponentProps<typeof SignupWithWebAuthnView>, ComponentProps<typeof ForgotPasswordView>, ComponentProps<typeof QuickLoginView>, ComponentProps<typeof ReauthView>, Omit<ComponentProps<typeof FaSelectionView>, keyof FaSelectionViewState>, Omit<ComponentProps<typeof VerificationCodeView$1>, keyof VerificationCodeViewState> {
     /**
@@ -1427,7 +1165,7 @@ interface MainViewProps$3 {
      */
     onError?: OnError;
 }
-declare const MainView: ({ accessToken, recaptcha_enabled, recaptcha_site_key, captchaFoxEnabled, captchaFoxMode, captchaFoxSiteKey, redirectUrl, showLabels, onError, onSuccess, }: WithCaptchaProps<MainViewProps$3>) => React$1.JSX.Element;
+declare const MainView: ({ accessToken, recaptcha_enabled, recaptcha_site_key, captchaFoxEnabled, captchaFoxMode, captchaFoxSiteKey, redirectUrl, showLabels, onError, onSuccess, }: WithCaptchaProps<MainViewProps$3>) => React.JSX.Element;
 interface EmailEditorWidgetProps extends ComponentProps<typeof MainView> {
 }
 
@@ -1628,7 +1366,7 @@ interface PasswordlessViewProps {
      */
     onError?: OnError;
 }
-declare const PasswordlessView: ({ auth, authType, enableVerificationCode, recaptcha_enabled, recaptcha_site_key, captchaFoxEnabled, captchaFoxMode, captchaFoxSiteKey, showIntro, showSocialLogins, socialProviders, phoneNumberOptions, onError, onSuccess, }: WithCaptchaProps<PasswordlessViewProps>) => React$1.JSX.Element;
+declare const PasswordlessView: ({ auth, authType, enableVerificationCode, recaptcha_enabled, recaptcha_site_key, captchaFoxEnabled, captchaFoxMode, captchaFoxSiteKey, showIntro, showSocialLogins, socialProviders, phoneNumberOptions, onError, onSuccess, }: WithCaptchaProps<PasswordlessViewProps>) => React.JSX.Element;
 
 interface VerificationCodeViewProps$1 {
     /**
@@ -1640,7 +1378,7 @@ interface VerificationCodeViewProps$1 {
      */
     onError?: OnError;
 }
-declare const VerificationCodeView: ({ recaptcha_enabled, recaptcha_site_key, captchaFoxEnabled, captchaFoxMode, captchaFoxSiteKey, onSuccess, onError, }: WithCaptchaProps<VerificationCodeViewProps$1>) => React$1.JSX.Element;
+declare const VerificationCodeView: ({ recaptcha_enabled, recaptcha_site_key, captchaFoxEnabled, captchaFoxMode, captchaFoxSiteKey, onSuccess, onError, }: WithCaptchaProps<VerificationCodeViewProps$1>) => React.JSX.Element;
 
 type PasswordlessWidgetProps = Prettify<ComponentProps<typeof PasswordlessView> & ComponentProps<typeof VerificationCodeView>>;
 
@@ -1739,7 +1477,7 @@ interface ProfileEditorProps {
      * This URL must be whitelisted in the `Allowed Callback URLs` field of your ReachFive client settings.
      */
     redirectUrl?: string;
-    resolvedFields: FieldCreator<any, any, any, any>[];
+    resolvedFields: (FieldDefinition | StaticContent)[];
     /**
      * Whether the form fields' labels are displayed on the form view.
      * @default false
@@ -1864,7 +1602,7 @@ interface WidgetProps {
     onReady?: (instance: WidgetInstance) => void;
 }
 type WidgetOptions<P> = Prettify<P & WidgetProps & I18nProps & ThemeProps>;
-type Widget<P> = (props: P, ctx: Context) => Promise<React$1.JSX.Element>;
+type Widget<P> = (props: P, ctx: Context) => Promise<React.JSX.Element>;
 declare class UiClient {
     config: Config;
     core: Client$1;
@@ -1913,5 +1651,4 @@ type Client = {
 };
 declare function createClient(creationConfig: Config$1): Client;
 
-export { createClient };
-export type { Client, ThemeOptions };
+export { type Client, type ThemeOptions, createClient };

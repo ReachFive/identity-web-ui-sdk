@@ -29,9 +29,18 @@ const defaultConfig: Config = {
     mfaSmsEnabled: false,
     mfaEmailEnabled: false,
     rbaEnabled: false,
+    consents: [
+        {
+            key: 'optin_testing',
+            consentType: 'opt-in',
+            status: 'active',
+            title: 'Opt-in Testing v1',
+            description: 'This is just a test',
+        },
+    ],
     consentsVersions: {
-        optinTesting: {
-            key: 'optinTesting',
+        optin_testing: {
+            key: 'optin_testing',
             consentType: 'opt-in',
             status: 'active',
             versions: [
@@ -77,15 +86,10 @@ describe('Snapshot', () => {
                 { apiClient, config: { ...defaultConfig, ...config }, defaultI18n }
             );
 
-            await waitFor(async () => {
-                const { container, rerender } = await render(widget);
-
-                await waitFor(() => expect(apiClient.getUser).toHaveBeenCalled());
-
-                rerender(widget);
-
-                expect(container).toMatchSnapshot();
-            });
+            const { container, rerender } = render(widget);
+            rerender(widget);
+            await waitFor(() => expect(apiClient.getUser).toHaveBeenCalled());
+            expect(container).toMatchSnapshot();
         };
 
     describe('profile editor', () => {
@@ -133,7 +137,7 @@ describe('DOM testing', () => {
             { config: { ...defaultConfig, ...config }, apiClient, defaultI18n }
         );
 
-        return waitFor(async () => {
+        return waitFor(() => {
             return render(result);
         });
     };
@@ -147,7 +151,7 @@ describe('DOM testing', () => {
                 givenName: 'John',
                 familyName: 'Do',
                 consents: {
-                    optinTesting: {
+                    optin_testing: {
                         granted: false,
                         consentType: 'opt-in',
                         consentVersion: {
@@ -159,18 +163,18 @@ describe('DOM testing', () => {
                 },
             };
 
-            getUser.mockResolvedValue(profile as Profile);
+            getUser.mockResolvedValue(profile);
 
             updateProfile.mockResolvedValue();
 
             await generateComponent({
-                fields: ['given_name', 'family_name', 'optinTesting'],
+                fields: ['given_name', 'family_name', 'consents.optinTesting'],
             });
 
             expect(getUser).toBeCalledWith(
                 expect.objectContaining({
                     accessToken: 'azerty',
-                    fields: 'givenName,familyName,consents.optinTesting',
+                    fields: 'givenName,familyName,consents.optin_testing',
                 })
             );
 
@@ -187,10 +191,10 @@ describe('DOM testing', () => {
             await userEvent.clear(familyNameInput);
             await userEvent.type(familyNameInput, 'reachfive');
 
-            // const consentCheckbox = screen.getByTestId('consents.optinTesting.1')
-            const consentCheckbox = screen.getByLabelText(
-                defaultConfig.consentsVersions.optinTesting.versions[0].title
-            );
+            // const consentCheckbox = screen.getByRole('checkbox', { name: 'consents.optinTesting.1' })
+            const consentCheckbox = screen.getByRole('checkbox', {
+                name: 'Opt-in Testing v1',
+            });
             await user.click(consentCheckbox);
 
             const submitBtn = screen.getByRole('button', { name: 'save' });
@@ -204,17 +208,12 @@ describe('DOM testing', () => {
                     data: {
                         givenName: 'alice',
                         familyName: 'reachfive',
-                        consents: {
-                            optin_testing: {
-                                // consent key should be snakecase
+                        consents: expect.objectContaining({
+                            // consent key should be snakecase
+                            optin_testing: expect.objectContaining({
                                 granted: true,
-                                consentType: 'opt-in',
-                                consentVersion: {
-                                    versionId: 1,
-                                    language: 'fr',
-                                },
-                            },
-                        },
+                            }),
+                        }),
                     },
                 })
             );

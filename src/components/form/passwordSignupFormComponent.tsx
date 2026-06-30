@@ -4,23 +4,15 @@ import { AuthOptions } from '@reachfive/identity-core';
 import { SignupParams } from '@reachfive/identity-core/es/main/oAuthClient';
 
 import { CaptchaProvider, WithCaptchaProps, type WithCaptchaToken } from '../../components/captcha';
-import { useConfig } from '../../contexts/config';
 import { useReachfive } from '../../contexts/reachfive';
 import { snakeCaseProperties } from '../../helpers/transformObjectProperties';
-import { isValued, isEqual } from '../../helpers/utils';
-import { MarkdownContent } from '../miscComponent';
+import { isEqual, isValued } from '../../helpers/utils';
+import { type Field, type PhoneNumberOptions } from '../../lib/form';
 import { extractCaptchaTokenFromData, importGoogleRecaptchaScript } from '../reCaptcha';
-import { type PhoneNumberOptions } from './fields/phoneNumberField';
-import { createForm } from './formComponent';
-import { UserAgreementStyle } from './formControlsComponent';
-import { buildFormFields, type Field } from './formFieldFactory';
+import { Form } from './form';
+import { UserAgreement } from './UserAgreement';
 
 import type { OnError, OnSuccess } from '../../types';
-
-const SignupForm = createForm<SignupParams['data']>({
-    prefix: 'r5-signup-',
-    submitLabel: 'signup.submitLabel',
-});
 
 export interface PasswordSignupFormProps {
     /**
@@ -79,7 +71,7 @@ export interface PasswordSignupFormProps {
 export const PasswordSignupForm = ({
     auth,
     beforeSignup = x => x,
-    canShowPassword,
+    // canShowPassword,
     phoneNumberOptions,
     recaptcha_enabled = false,
     recaptcha_site_key,
@@ -95,7 +87,6 @@ export const PasswordSignupForm = ({
     onSuccess = (() => {}) satisfies OnSuccess,
 }: WithCaptchaProps<PasswordSignupFormProps>) => {
     const coreClient = useReachfive();
-    const config = useConfig();
     const [blacklist, setBlacklist] = useState<string[]>([]);
 
     useLayoutEffect(() => {
@@ -134,27 +125,14 @@ export const PasswordSignupForm = ({
         [blacklist]
     );
 
-    const fields = buildFormFields(signupFields, {
-        ...config,
-        canShowPassword,
-        errorArchivedConsents: true,
-    });
-
     const allFields = userAgreement
         ? [
-              ...fields,
+              ...signupFields,
               {
-                  staticContent: (
-                      <MarkdownContent
-                          key="user-agreement"
-                          data-testid="user-agreement"
-                          root={UserAgreementStyle}
-                          source={userAgreement}
-                      />
-                  ),
+                  staticContent: <UserAgreement content={userAgreement} />,
               },
           ]
-        : fields;
+        : signupFields;
 
     return (
         <CaptchaProvider
@@ -165,15 +143,13 @@ export const PasswordSignupForm = ({
             captchaFoxMode={captchaFoxMode}
             action="signup"
         >
-            <SignupForm
+            <Form
                 fields={allFields}
                 showLabels={showLabels}
+                submitLabel="signup.submitLabel"
                 beforeSubmit={beforeSignup}
                 onFieldChange={refreshBlacklist}
-                sharedProps={{
-                    blacklist,
-                    ...phoneNumberOptions,
-                }}
+                phoneNumberOptions={phoneNumberOptions}
                 handler={callback}
                 onSuccess={authResult => {
                     const isIdentifierVerificationRequired =
