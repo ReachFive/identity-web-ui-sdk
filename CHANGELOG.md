@@ -7,6 +7,15 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [2.0.1] - 2026-06-30
+
+### Fixed
+
+- Define default `border-style` inside `.r5-widget` to restore borders on inputs
+- Fix border width value from theme settings
+- Fix password policy rules check for minimum strength rendering
+- Allow custom fields without prefix in `signupFields`
+
 ## [2.0.0] - 2026-06-30
 
 ### Changed
@@ -726,7 +735,8 @@ The eye icon is now correctly displayed in the Auth widget.
 
 First version of the SDK Web UI.
 
-[Unreleased]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v2.0.0...HEAD
+[Unreleased]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v2.0.1...HEAD
+[2.0.1]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v2.0.0...v2.0.1
 [2.0.0]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.43.1...v2.0.0
 [1.43.1]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.43.0...v1.43.1
 [1.43.0]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.42.0...v1.43.0
