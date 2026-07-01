@@ -7,6 +7,22 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [2.0.2] - 2026-06-30
+
+### Fixed
+
+- Filter empty values from select custom fields
+- Preserve type override for custom fields
+- Opt-in consent not required by default
+- Select `defaultValue` ignored on form submit
+- Filter empty values from select items rendering
+- Restore custom address fields support and numeric coercion for custom fields
+- Allow consent fields without the `consents.` prefix in `signupFields`
+- Ignore unknown `signupFields` entries instead of throwing
+- Strip `defaultValue` from field props to avoid controlled/uncontrolled input warning
+- Restore Tailwind reset styles for `hr`, links, and text elements
+- Fix inverted password policy character checks blocking valid passwords on submit
+
 ## [2.0.1] - 2026-06-30
 
 ### Fixed
@@ -735,7 +751,8 @@ The eye icon is now correctly displayed in the Auth widget.
 
 First version of the SDK Web UI.
 
-[Unreleased]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v2.0.1...HEAD
+[Unreleased]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v2.0.2...HEAD
+[2.0.2]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v2.0.1...v2.0.2
 [2.0.1]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v2.0.0...v2.0.1
 [2.0.0]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.43.1...v2.0.0
 [1.43.1]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.43.0...v1.43.1

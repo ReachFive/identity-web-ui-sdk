@@ -38,6 +38,46 @@ describe('DOM testing', () => {
                 path: 'username',
                 dataType: 'string',
             },
+            {
+                name: 'country',
+                path: 'country',
+                dataType: 'select',
+                selectableValues: [
+                    { value: 'FRA', label: 'France', translations: [] },
+                    { value: 'USA', label: 'United States', translations: [] },
+                ],
+            },
+        ],
+        addressFields: [
+            {
+                name: 'Building',
+                path: 'cf_address_string',
+                dataType: 'string',
+            },
+            {
+                name: 'Floor',
+                path: 'cf_address_integer',
+                dataType: 'integer',
+            },
+            {
+                name: 'Latitude',
+                path: 'cf_address_decimal',
+                dataType: 'decimal',
+            },
+            {
+                name: 'Has intercom',
+                path: 'cf_address_checkbox',
+                dataType: 'checkbox',
+            },
+            {
+                name: 'Delivery instructions',
+                path: 'cf_address_select',
+                dataType: 'select',
+                selectableValues: [
+                    { value: 'leave_at_door', label: 'Leave at door', translations: [] },
+                    { value: 'signature_required', label: 'Signature required', translations: [] },
+                ],
+            },
         ],
         resourceBaseUrl: 'http://localhost',
         mfaSmsEnabled: false,
@@ -182,7 +222,7 @@ describe('DOM testing', () => {
             const configWithSnakeCaseField: Config = {
                 ...defaultConfig,
                 customFields: [
-                    ...defaultConfig.customFields!,
+                    ...defaultConfig.customFields,
                     {
                         name: 'Display Name',
                         path: 'display_name',
@@ -279,6 +319,151 @@ describe('DOM testing', () => {
 
             expect(screen.getByRole('textbox', { name: 'Your Email' })).toBeInTheDocument();
             expect(screen.queryByRole('textbox', { name: 'email' })).not.toBeInTheDocument();
+        });
+    });
+
+    describe('Address custom fields', () => {
+        test('renders address custom fields alongside predefined address fields and submits them nested under addresses[0].custom_fields', async () => {
+            const user = userEvent.setup();
+            const onSubmit = jest.fn<() => Promise<void>>().mockResolvedValue();
+
+            render(
+                <WidgetContext
+                    client={apiClient}
+                    config={defaultConfig}
+                    defaultMessages={defaultI18n}
+                >
+                    <Form
+                        fields={[
+                            'address.streetAddress',
+                            'address.custom_fields.cf_address_string',
+                            'address.custom_fields.cf_address_integer',
+                            'address.custom_fields.cf_address_decimal',
+                            'address.custom_fields.cf_address_checkbox',
+                        ]}
+                        handler={onSubmit}
+                    />
+                </WidgetContext>
+            );
+
+            await user.type(
+                screen.getByRole('textbox', { name: 'address.streetAddress' }),
+                '10 rue Chaptal'
+            );
+            await user.type(
+                screen.getByRole('textbox', { name: 'Building' }),
+                'Résidence le diamant'
+            );
+            await user.type(screen.getByRole('spinbutton', { name: 'Floor' }), '50');
+            await user.type(screen.getByRole('spinbutton', { name: 'Latitude' }), '48.87');
+            await user.click(screen.getByRole('checkbox', { name: 'Has intercom' }));
+
+            await user.click(screen.getByRole('button', { name: 'Submit' }));
+
+            await waitFor(() =>
+                expect(onSubmit).toBeCalledWith({
+                    addresses: [
+                        {
+                            streetAddress: '10 rue Chaptal',
+                            custom_fields: {
+                                cf_address_string: 'Résidence le diamant',
+                                cf_address_integer: 50,
+                                cf_address_decimal: 48.87,
+                                cf_address_checkbox: true,
+                            },
+                        },
+                    ],
+                })
+            );
+        });
+
+        test.each([
+            [
+                'snake_case name with address.custom_fields prefix',
+                'address.custom_fields.cf_address_string',
+            ],
+            [
+                'camelCase name with address.customFields prefix',
+                'address.customFields.cfAddressString',
+            ],
+        ])('address custom field resolved by %s', async (_, fieldRef) => {
+            const user = userEvent.setup();
+            const onSubmit = jest.fn<() => Promise<void>>().mockResolvedValue();
+
+            render(
+                <WidgetContext
+                    client={apiClient}
+                    config={defaultConfig}
+                    defaultMessages={defaultI18n}
+                >
+                    <Form fields={[fieldRef]} handler={onSubmit} />
+                </WidgetContext>
+            );
+
+            const input = screen.getByRole('textbox', { name: 'Building' });
+            expect(input).toHaveAttribute('name', 'addresses.0.custom_fields.cf_address_string');
+
+            await user.type(input, 'Résidence le diamant');
+            await user.click(screen.getByRole('button', { name: 'Submit' }));
+
+            await waitFor(() =>
+                expect(onSubmit).toBeCalledWith({
+                    addresses: [{ custom_fields: { cf_address_string: 'Résidence le diamant' } }],
+                })
+            );
+        });
+
+        test('select-type address custom field renders options and submits the selected value', async () => {
+            const user = userEvent.setup();
+            const onSubmit = jest.fn<() => Promise<void>>().mockResolvedValue();
+
+            render(
+                <WidgetContext
+                    client={apiClient}
+                    config={defaultConfig}
+                    defaultMessages={defaultI18n}
+                >
+                    <Form fields={['address.custom_fields.cf_address_select']} handler={onSubmit} />
+                </WidgetContext>
+            );
+
+            const trigger = screen.getByRole('combobox', { name: 'Delivery instructions' });
+            await user.click(trigger);
+            await user.click(screen.getByRole('option', { name: 'Signature required' }));
+
+            await user.click(screen.getByRole('button', { name: 'Submit' }));
+
+            await waitFor(() =>
+                expect(onSubmit).toBeCalledWith({
+                    addresses: [{ custom_fields: { cf_address_select: 'signature_required' } }],
+                })
+            );
+        });
+
+        test('address custom field not found in config is ignored and logged instead of throwing', () => {
+            const consoleError = jest.spyOn(console, 'error').mockImplementation(() => {});
+
+            render(
+                <WidgetContext
+                    client={apiClient}
+                    config={defaultConfig}
+                    defaultMessages={defaultI18n}
+                >
+                    <Form
+                        fields={['address.streetAddress', 'address.custom_fields.unknown_field']}
+                        handler={jest.fn<() => Promise<void>>().mockResolvedValue()}
+                    />
+                </WidgetContext>
+            );
+
+            expect(
+                screen.getByRole('textbox', { name: 'address.streetAddress' })
+            ).toBeInTheDocument();
+            expect(consoleError).toHaveBeenCalledWith(
+                'Unknown field: address.custom_fields.unknown_field'
+            );
+
+            consoleError.mockRestore();
         });
     });
 
@@ -451,6 +636,127 @@ describe('DOM testing', () => {
             await user.click(screen.getByRole('button', { name: 'Submit' }));
 
             expect(onSubmit).toBeCalledWith({ givenName: 'ALICE' });
+        });
+
+        test('select field with defaultValue submits the default when user does not interact', async () => {
+            const user = userEvent.setup();
+            const onSubmit = jest.fn<() => Promise<void>>().mockResolvedValue();
+
+            render(
+                <WidgetContext
+                    client={apiClient}
+                    config={defaultConfig}
+                    defaultMessages={defaultI18n}
+                >
+                    <Form
+                        fields={[
+                            {
+                                key: 'custom_fields.country',
+                                defaultValue: 'FRA',
+                                required: true,
+                            },
+                        ]}
+                        handler={onSubmit}
+                    />
+                </WidgetContext>
+            );
+
+            await user.click(screen.getByRole('button', { name: 'Submit' }));
+
+            await waitFor(() =>
+                expect(onSubmit).toBeCalledWith({
+                    custom_fields: { country: 'FRA' },
+                })
+            );
+        });
+
+        describe('hidden field', () => {
+            test('renders as input[type="hidden"] with defaultValue pre-filled', async () => {
+                const user = userEvent.setup();
+                const onSubmit = jest.fn<() => Promise<void>>().mockResolvedValue();
+
+                render(
+                    <WidgetContext
+                        client={apiClient}
+                        config={defaultConfig}
+                        defaultMessages={defaultI18n}
+                    >
+                        <Form
+                            fields={[{ key: 'party_type', defaultValue: 'PERSON', type: 'hidden' }]}
+                            handler={onSubmit}
+                        />
+                    </WidgetContext>
+                );
+
+                const hiddenInput = screen.getByDisplayValue('PERSON');
+                expect(hiddenInput).toHaveAttribute('type', 'hidden');
+
+                await user.click(screen.getByRole('button', { name: 'Submit' }));
+
+                await waitFor(() => expect(onSubmit).toBeCalledWith({ partyType: 'PERSON' }));
+            });
+
+            test('hidden custom field (in config) renders as input[type="hidden"] with defaultValue pre-filled', async () => {
+                const user = userEvent.setup();
+                const onSubmit = jest.fn<() => Promise<void>>().mockResolvedValue();
+
+                const configWithPartyType = {
+                    ...defaultConfig,
+                    customFields: [
+                        ...(defaultConfig.customFields ?? []),
+                        { name: 'Party Type', path: 'party_type', dataType: 'string' as const },
+                    ],
+                };
+
+                render(
+                    <WidgetContext
+                        client={apiClient}
+                        config={configWithPartyType}
+                        defaultMessages={defaultI18n}
+                    >
+                        <Form
+                            fields={[{ key: 'party_type', defaultValue: 'PERSON', type: 'hidden' }]}
+                            handler={onSubmit}
+                        />
+                    </WidgetContext>
+                );
+
+                const hiddenInput = screen.getByDisplayValue('PERSON');
+                expect(hiddenInput).toHaveAttribute('type', 'hidden');
+                expect(hiddenInput).toHaveAttribute('name', 'custom_fields.party_type');
+
+                await user.click(screen.getByRole('button', { name: 'Submit' }));
+
+                await waitFor(() =>
+                    expect(onSubmit).toBeCalledWith({ custom_fields: { party_type: 'PERSON' } })
+                );
+            });
+
+            test('does not log a controlled/uncontrolled input warning when defaultValue is set', () => {
+                const consoleError = jest.spyOn(console, 'error').mockImplementation(() => {});
+
+                render(
+                    <WidgetContext
+                        client={apiClient}
+                        config={defaultConfig}
+                        defaultMessages={defaultI18n}
+                    >
+                        <Form
+                            fields={[{ key: 'party_type', defaultValue: 'PERSON', type: 'hidden' }]}
+                            handler={jest.fn<() => Promise<void>>().mockResolvedValue()}
+                        />
+                    </WidgetContext>
+                );
+
+                const hasValueDefaultValueWarning = consoleError.mock.calls.some(
+                    call =>
+                        typeof call[0] === 'string' &&
+                        call[0].includes('both value and defaultValue props')
+                );
+                expect(hasValueDefaultValueWarning).toBe(false);
+
+                consoleError.mockRestore();
+            });
         });
 
         test('initialModel pre-fills form fields', async () => {
@@ -1051,7 +1357,32 @@ describe('DOM testing', () => {
             );
         });
 
-        test('opt-in consent: unchecking a pre-checked consent shows required error and blocks submission', async () => {
+        test('opt-in consent: not required by default, submits with granted: false when unchecked', async () => {
+            const user = userEvent.setup();
+            const onSubmit = jest.fn<() => Promise<void>>().mockResolvedValue();
+
+            render(
+                <WidgetContext
+                    client={apiClient}
+                    config={defaultConfig}
+                    defaultMessages={defaultI18n}
+                >
+                    <Form fields={['consents.optin_testing']} handler={onSubmit} />
+                </WidgetContext>
+            );
+
+            await user.click(screen.getByRole('button', { name: 'Submit' }));
+
+            await waitFor(() =>
+                expect(onSubmit).toBeCalledWith({
+                    consents: {
+                        optin_testing: expect.objectContaining({ granted: false }),
+                    },
+                })
+            );
+        });
+
+        test('opt-in consent with required: true — unchecking a pre-checked consent shows required error and blocks submission', async () => {
             const user = userEvent.setup();
             const onSubmit = jest.fn<() => Promise<void>>().mockResolvedValue();
 
@@ -1062,7 +1393,7 @@ describe('DOM testing', () => {
                     defaultMessages={defaultI18n}
                 >
                     <Form
-                        fields={['consents.optin_testing']}
+                        fields={[{ key: 'consents.optin_testing', required: true }]}
                         initialModel={{ consents: { optin_testing: { granted: true } } }}
                         handler={onSubmit}
                     />
@@ -1083,7 +1414,7 @@ describe('DOM testing', () => {
             expect(onSubmit).not.toBeCalled();
         });
 
-        test('opt-in consent: submitting without checking shows required error and blocks submission', async () => {
+        test('opt-in consent with required: true — submitting without checking shows required error and blocks submission', async () => {
             const user = userEvent.setup();
             const onSubmit = jest.fn<() => Promise<void>>().mockResolvedValue();
 
@@ -1093,7 +1424,10 @@ describe('DOM testing', () => {
                     config={defaultConfig}
                     defaultMessages={defaultI18n}
                 >
-                    <Form fields={['consents.optin_testing']} handler={onSubmit} />
+                    <Form
+                        fields={[{ key: 'consents.optin_testing', required: true }]}
+                        handler={onSubmit}
+                    />
                 </WidgetContext>
             );
 
@@ -1106,7 +1440,7 @@ describe('DOM testing', () => {
             expect(onSubmit).not.toBeCalled();
         });
 
-        test('opt-in consent: checking then unchecking shows required error and blocks submission', async () => {
+        test('opt-in consent with required: true — checking then unchecking shows required error and blocks submission', async () => {
             const user = userEvent.setup();
             const onSubmit = jest.fn<() => Promise<void>>().mockResolvedValue();
 
@@ -1116,7 +1450,10 @@ describe('DOM testing', () => {
                     config={defaultConfig}
                     defaultMessages={defaultI18n}
                 >
-                    <Form fields={['consents.optin_testing']} handler={onSubmit} />
+                    <Form
+                        fields={[{ key: 'consents.optin_testing', required: true }]}
+                        handler={onSubmit}
+                    />
                 </WidgetContext>
             );
 
@@ -1207,7 +1544,7 @@ describe('DOM testing', () => {
             );
         });
 
-        test('double-opt-in consent: submitting without checking shows required error and blocks submission', async () => {
+        test('double-opt-in consent: not required by default, submits with granted: false when unchecked', async () => {
             const user = userEvent.setup();
             const onSubmit = jest.fn<() => Promise<void>>().mockResolvedValue();
 
@@ -1218,6 +1555,34 @@ describe('DOM testing', () => {
                     defaultMessages={defaultI18n}
                 >
                     <Form fields={['consents.double_optin_testing']} handler={onSubmit} />
+                </WidgetContext>
+            );
+
+            await user.click(screen.getByRole('button', { name: 'Submit' }));
+
+            await waitFor(() =>
+                expect(onSubmit).toBeCalledWith({
+                    consents: {
+                        double_optin_testing: expect.objectContaining({ granted: false }),
+                    },
+                })
+            );
+        });
+
+        test('double-opt-in consent with required: true — submitting without checking shows required error and blocks submission', async () => {
+            const user = userEvent.setup();
+            const onSubmit = jest.fn<() => Promise<void>>().mockResolvedValue();
+
+            render(
+                <WidgetContext
+                    client={apiClient}
+                    config={defaultConfig}
+                    defaultMessages={defaultI18n}
+                >
+                    <Form
+                        fields={[{ key: 'consents.double_optin_testing', required: true }]}
+                        handler={onSubmit}
+                    />
                 </WidgetContext>
             );
 
@@ -1257,6 +1622,100 @@ describe('DOM testing', () => {
                     },
                 })
             );
+        });
+
+        test('consent field key without the "consents." prefix resolves the same consent', () => {
+            render(
+                <WidgetContext
+                    client={apiClient}
+                    config={defaultConfig}
+                    defaultMessages={defaultI18n}
+                >
+                    <Form
+                        fields={['optin_testing']}
+                        handler={jest.fn<() => Promise<void>>().mockResolvedValue()}
+                    />
+                </WidgetContext>
+            );
+
+            expect(screen.getByRole('checkbox', { name: 'Opt-in Testing v1' })).toBeInTheDocument();
+            expect(screen.getByText('This is just a test')).toBeInTheDocument();
+        });
+
+        test('checking a consent declared without the "consents." prefix submits under the `consents` key', async () => {
+            const user = userEvent.setup();
+            const onSubmit = jest.fn<() => Promise<void>>().mockResolvedValue();
+
+            render(
+                <WidgetContext
+                    client={apiClient}
+                    config={defaultConfig}
+                    defaultMessages={defaultI18n}
+                >
+                    <Form fields={['optin_testing']} handler={onSubmit} />
+                </WidgetContext>
+            );
+
+            await user.click(screen.getByRole('checkbox', { name: 'Opt-in Testing v1' }));
+            await user.click(screen.getByRole('button', { name: 'Submit' }));
+
+            await waitFor(() =>
+                expect(onSubmit).toBeCalledWith({
+                    consents: {
+                        optin_testing: expect.objectContaining({
+                            consentType: 'opt-in',
+                            granted: true,
+                        }),
+                    },
+                })
+            );
+        });
+
+        test('consent field declared as an object without the "consents." prefix keeps its `required` option', async () => {
+            const user = userEvent.setup();
+            const onSubmit = jest.fn<() => Promise<void>>().mockResolvedValue();
+
+            render(
+                <WidgetContext
+                    client={apiClient}
+                    config={defaultConfig}
+                    defaultMessages={defaultI18n}
+                >
+                    <Form fields={[{ key: 'optin_testing', required: true }]} handler={onSubmit} />
+                </WidgetContext>
+            );
+
+            const checkbox = screen.getByRole('checkbox', { name: 'Opt-in Testing v1' });
+            await user.click(checkbox);
+            await user.click(checkbox);
+            await user.click(screen.getByRole('button', { name: 'Submit' }));
+
+            await waitFor(() =>
+                expect(checkbox).toHaveAccessibleErrorMessage('validation.required')
+            );
+            expect(onSubmit).not.toBeCalled();
+        });
+
+        test('unknown bare field key is ignored and logged instead of throwing', () => {
+            const consoleError = jest.spyOn(console, 'error').mockImplementation(() => {});
+
+            render(
+                <WidgetContext
+                    client={apiClient}
+                    config={defaultConfig}
+                    defaultMessages={defaultI18n}
+                >
+                    <Form
+                        fields={['email', 'unknown_field']}
+                        handler={jest.fn<() => Promise<void>>().mockResolvedValue()}
+                    />
+                </WidgetContext>
+            );
+
+            expect(screen.getByRole('textbox', { name: 'email' })).toBeInTheDocument();
+            expect(consoleError).toHaveBeenCalledWith('Unknown field: unknown_field');
+
+            consoleError.mockRestore();
         });
     });
 });

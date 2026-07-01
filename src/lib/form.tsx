@@ -8,6 +8,7 @@ import z from 'zod';
 import { Client, UserConsent } from '@reachfive/identity-core';
 
 import { MarkdownContent } from '@/components/miscComponent';
+import { logError } from '@/helpers/logger';
 import { camelCasePath, snakeCasePath } from '@/helpers/transformObjectProperties';
 import { passwordValidation } from '@/lib/validation';
 import { Optional, type Config } from '@/types';
@@ -383,11 +384,18 @@ export function getDefaultFieldValues(
     const defaults: Record<string, unknown> = {};
     for (const fd of fieldDefinitions) {
         if ('staticContent' in fd) continue;
-        if (fd.type === 'checkbox' && 'defaultChecked' in fd && fd.defaultChecked === true) {
-            const path = fd.parent
-                ? `${typeof fd.parent === 'string' ? fd.parent : fd.parent.join('.')}.${fd.key}`
-                : fd.key;
-            setNestedValue(defaults, path, fd.transform?.output(true) ?? true);
+        const path = fd.parent
+            ? `${typeof fd.parent === 'string' ? fd.parent : fd.parent.join('.')}.${fd.key}`
+            : fd.key;
+        if (fd.type === 'checkbox' && 'defaultChecked' in fd) {
+            const defaultVal = fd.defaultChecked === true;
+            setNestedValue(defaults, path, fd.transform?.output(defaultVal) ?? defaultVal);
+        } else if (fd.defaultValue !== undefined) {
+            setNestedValue(
+                defaults,
+                path,
+                fd.transform?.output(fd.defaultValue) ?? fd.defaultValue
+            );
         }
     }
     return defaults;
@@ -398,20 +406,22 @@ export function getFieldDefinitions(
     config: Config,
     options: { errorArchivedConsents?: boolean; phoneNumberOptions?: PhoneNumberOptions }
 ): (FieldDefinition | StaticContent)[] {
-    return fields.map(field => {
-        if (typeof field === 'object' && 'staticContent' in field) {
-            return field;
-        }
+    return fields
+        .map(field => {
+            if (typeof field === 'object' && 'staticContent' in field) {
+                return field;
+            }
 
-        return getFieldDefinition(field, config, options);
-    });
+            return getFieldDefinition(field, config, options);
+        })
+        .filter((field): field is FieldDefinition | StaticContent => field !== undefined);
 }
 
 export function getFieldDefinition(
     field: string | Optional<FieldDefinition, 'type'>,
     config: Config,
     options: { errorArchivedConsents?: boolean; phoneNumberOptions?: PhoneNumberOptions }
-): FieldDefinition {
+): FieldDefinition | undefined {
     const { key, type, ...userDefinition } =
         typeof field === 'string'
             ? ({ key: camelCasePath(field) } as Partial<Omit<FieldDefinition, 'key'>> &
@@ -421,18 +431,21 @@ export function getFieldDefinition(
     const predefinedField =
         predefinedFields[key]?.({ config, definition: userDefinition }) ??
         resolveCustomFieldDefinition(key, config) ??
-        resolveConsentFieldDefinition(key, config, options);
+        resolveAddressFieldDefinition(key, config) ??
+        resolveConsentFieldDefinition(key, config, options, userDefinition.required);
 
     if (predefinedField) {
         return {
             required: true,
             ...predefinedField,
             ...userDefinition,
-        } as FieldDefinition<(typeof predefinedField)['type']>;
+            ...(type !== undefined ? { type } : {}),
+        } as FieldDefinition;
     }
 
     if (typeof field === 'string') {
-        throw new Error(`Unknown field: ${field}`);
+        logError(`Unknown field: ${field}`);
+        return undefined;
     }
 
     return { key, required: true, ...userDefinition, type: type ?? 'string' } as FieldDefinition<
@@ -451,10 +464,12 @@ function resolveCustomFieldDefinition(field: string, config: Config): FieldDefin
         return {
             key: `custom_fields.${customField.path}`,
             type: 'select',
-            values: (customField.selectableValues ?? []).map(({ value, label, translations }) => ({
-                label: translations.find(l => l.langCode === config.language)?.label ?? label,
-                value,
-            })),
+            values: (customField.selectableValues ?? [])
+                .filter(({ value }) => value !== '')
+                .map(({ value, label, translations }) => ({
+                    label: translations.find(l => l.langCode === config.language)?.label ?? label,
+                    value,
+                })),
             label:
                 customField.nameTranslations?.find(l => l.langCode === config.language)?.label ??
                 customField.name,
@@ -470,12 +485,51 @@ function resolveCustomFieldDefinition(field: string, config: Config): FieldDefin
     } satisfies FieldDefinition;
 }
 
+function resolveAddressFieldDefinition(field: string, config: Config): FieldDefinition | undefined {
+    const matches = /^address\.(?:customFields|custom_fields)\.(.+?)$/.exec(field);
+    if (!matches) return undefined;
+    const customFieldKey = matches[1];
+
+    const customField = config.addressFields?.find(c => camelCasePath(c.path) === customFieldKey);
+    if (!customField) return undefined;
+
+    const parent = ['addresses', 0];
+
+    if (customField.dataType === 'select') {
+        return {
+            key: `custom_fields.${customField.path}`,
+            parent,
+            type: 'select',
+            values: (customField.selectableValues ?? [])
+                .filter(({ value }) => value !== '')
+                .map(({ value, label, translations }) => ({
+                    label: translations.find(l => l.langCode === config.language)?.label ?? label,
+                    value,
+                })),
+            label:
+                customField.nameTranslations?.find(l => l.langCode === config.language)?.label ??
+                customField.name,
+        } satisfies FieldDefinition;
+    }
+
+    return {
+        key: `custom_fields.${customField.path}`,
+        parent,
+        type: customField.dataType ?? 'string',
+        label:
+            customField.nameTranslations?.find(l => l.langCode === config.language)?.label ??
+            customField.name,
+    } satisfies FieldDefinition;
+}
+
 function resolveConsentFieldDefinition(
     field: string,
     config: Config,
-    options: { errorArchivedConsents?: boolean; phoneNumberOptions?: PhoneNumberOptions }
+    options: { errorArchivedConsents?: boolean; phoneNumberOptions?: PhoneNumberOptions },
+    requiredOverride?: boolean
 ): FieldDefinition | undefined {
-    const matches = /^consents\.(.+?)(?:\.v(\d+))?$/.exec(field);
+    // the `consents.` prefix is optional: a bare key is accepted as long as it matches an existing consent below
+    const matches = /^(?:consents\.)?(.+?)(?:\.v(\d+))?$/.exec(field);
     if (!matches) return undefined;
     const [, consentKey, providedVersionId] = matches;
 
@@ -507,12 +561,13 @@ function resolveConsentFieldDefinition(
     //       : 1;
 
     const consentCannotBeGranted = !options.errorArchivedConsents && consent.status === 'archived';
+    const isRequired = requiredOverride === true;
 
     return {
         type: 'checkbox',
         key: `consents.${consent.key}`, // Consent key should be snake_case
         label: consent.title,
-        required: consent.consentType !== 'opt-out',
+        required: isRequired,
         defaultChecked: consent.consentType === 'opt-out',
         description: consent.description ? (
             <MarkdownContent
@@ -535,6 +590,7 @@ function resolveConsentFieldDefinition(
         // transform.output always produces a non-null object so required:true alone can't
         // catch the unchecked state (granted:false is truthy as an object)
         validation:
+            isRequired &&
             (consent.consentType === 'opt-in' || consent.consentType === 'double-opt-in') &&
             !consentCannotBeGranted
                 ? ({ i18n }) =>

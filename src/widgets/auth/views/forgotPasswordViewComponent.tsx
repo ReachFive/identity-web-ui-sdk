@@ -46,6 +46,11 @@ export interface ForgotPasswordViewProps {
      */
     allowPhoneNumberResetPassword?: boolean;
     /**
+     * Whether or not to provide the display password in clear text option.
+     * @default false
+     */
+    canShowPassword?: boolean;
+    /**
      * Whether or not to display a safe error message on password reset, given an invalid email address.
      * This mode ensures not to leak email addresses registered to the platform.
      *
@@ -269,6 +274,7 @@ export const ForgotPasswordCodeView = ({
     displaySafeErrorMessage = false,
     initialScreen,
     allowWebAuthnLogin = false,
+    canShowPassword = false,
     showLabels = false,
     onError = (() => {}) as OnError,
     onSuccess = (() => {}) as OnSuccess,
@@ -304,12 +310,14 @@ export const ForgotPasswordCodeView = ({
                         type: 'password',
                         label: 'newPassword',
                         autoComplete: 'new-password',
+                        canShowPassword,
                     },
                     {
                         key: 'passwordConfirmation',
                         type: 'password',
                         label: 'passwordConfirmation',
                         autoComplete: 'new-password',
+                        canShowPassword,
                     },
                 ]}
                 showLabels={showLabels}
