@@ -18,6 +18,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Filter empty values from select items rendering
 - Restore custom address fields support and numeric coercion for custom fields
 - Allow consent fields without the `consents.` prefix in `signupFields`
+- Ignore unknown `signupFields` entries instead of throwing
+- Strip `defaultValue` from field props to avoid controlled/uncontrolled input warning
+- Restore Tailwind reset styles for `hr`, links, and text elements
 
 ## [2.0.1] - 2026-06-30
 
