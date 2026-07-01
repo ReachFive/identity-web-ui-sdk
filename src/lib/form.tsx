@@ -428,6 +428,7 @@ export function getFieldDefinition(
     const predefinedField =
         predefinedFields[key]?.({ config, definition: userDefinition }) ??
         resolveCustomFieldDefinition(key, config) ??
+        resolveAddressFieldDefinition(key, config) ??
         resolveConsentFieldDefinition(key, config, options, userDefinition.required);
 
     if (predefinedField) {
@@ -474,6 +475,43 @@ function resolveCustomFieldDefinition(field: string, config: Config): FieldDefin
     return {
         key: `custom_fields.${customField.path}`,
         type: customField?.dataType ?? 'string',
+        label:
+            customField.nameTranslations?.find(l => l.langCode === config.language)?.label ??
+            customField.name,
+    } satisfies FieldDefinition;
+}
+
+function resolveAddressFieldDefinition(field: string, config: Config): FieldDefinition | undefined {
+    const matches = /^address\.(?:customFields|custom_fields)\.(.+?)$/.exec(field);
+    if (!matches) return undefined;
+    const customFieldKey = matches[1];
+
+    const customField = config.addressFields?.find(c => camelCasePath(c.path) === customFieldKey);
+    if (!customField) return undefined;
+
+    const parent = ['addresses', 0];
+
+    if (customField.dataType === 'select') {
+        return {
+            key: `custom_fields.${customField.path}`,
+            parent,
+            type: 'select',
+            values: (customField.selectableValues ?? [])
+                .filter(({ value }) => value !== '')
+                .map(({ value, label, translations }) => ({
+                    label: translations.find(l => l.langCode === config.language)?.label ?? label,
+                    value,
+                })),
+            label:
+                customField.nameTranslations?.find(l => l.langCode === config.language)?.label ??
+                customField.name,
+        } satisfies FieldDefinition;
+    }
+
+    return {
+        key: `custom_fields.${customField.path}`,
+        parent,
+        type: customField.dataType ?? 'string',
         label:
             customField.nameTranslations?.find(l => l.langCode === config.language)?.label ??
             customField.name,

@@ -146,29 +146,23 @@ function renderField<
                 />
             );
         }
-        case 'integer': {
-            const { type, transform, validation, ...props } = fieldDefinition;
-            return (
-                <InputField
-                    type="number"
-                    pattern="\d*"
-                    {...props}
-                    showLabels={showLabels}
-                    onChange={e => onChange(transform?.output(e) ?? e)}
-                    {...(transform?.input(value) ?? { value })}
-                    {...field}
-                    errors={fieldState.invalid && fieldState.error ? [fieldState.error] : undefined}
-                />
-            );
-        }
+        case 'integer':
         case 'decimal': {
             const { type, transform, validation, ...props } = fieldDefinition;
             return (
                 <InputField
                     type="number"
+                    pattern={type === 'integer' ? '\\d*' : undefined}
                     {...props}
                     showLabels={showLabels}
-                    onChange={e => onChange(transform?.output(e) ?? e)}
+                    onChange={e =>
+                        onChange(
+                            transform?.output(e) ??
+                                (Number.isNaN(e.target.valueAsNumber)
+                                    ? undefined
+                                    : e.target.valueAsNumber)
+                        )
+                    }
                     {...(transform?.input(value) ?? { value })}
                     {...field}
                     errors={fieldState.invalid && fieldState.error ? [fieldState.error] : undefined}

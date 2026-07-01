@@ -48,6 +48,37 @@ describe('DOM testing', () => {
                 ],
             },
         ],
+        addressFields: [
+            {
+                name: 'Building',
+                path: 'cf_address_string',
+                dataType: 'string',
+            },
+            {
+                name: 'Floor',
+                path: 'cf_address_integer',
+                dataType: 'integer',
+            },
+            {
+                name: 'Latitude',
+                path: 'cf_address_decimal',
+                dataType: 'decimal',
+            },
+            {
+                name: 'Has intercom',
+                path: 'cf_address_checkbox',
+                dataType: 'checkbox',
+            },
+            {
+                name: 'Delivery instructions',
+                path: 'cf_address_select',
+                dataType: 'select',
+                selectableValues: [
+                    { value: 'leave_at_door', label: 'Leave at door', translations: [] },
+                    { value: 'signature_required', label: 'Signature required', translations: [] },
+                ],
+            },
+        ],
         resourceBaseUrl: 'http://localhost',
         mfaSmsEnabled: false,
         mfaEmailEnabled: false,
@@ -191,7 +222,7 @@ describe('DOM testing', () => {
             const configWithSnakeCaseField: Config = {
                 ...defaultConfig,
                 customFields: [
-                    ...defaultConfig.customFields!,
+                    ...defaultConfig.customFields,
                     {
                         name: 'Display Name',
                         path: 'display_name',
@@ -288,6 +319,142 @@ describe('DOM testing', () => {
 
             expect(screen.getByRole('textbox', { name: 'Your Email' })).toBeInTheDocument();
             expect(screen.queryByRole('textbox', { name: 'email' })).not.toBeInTheDocument();
+        });
+    });
+
+    describe('Address custom fields', () => {
+        test('renders address custom fields alongside predefined address fields and submits them nested under addresses[0].custom_fields', async () => {
+            const user = userEvent.setup();
+            const onSubmit = jest.fn<() => Promise<void>>().mockResolvedValue();
+
+            render(
+                <WidgetContext
+                    client={apiClient}
+                    config={defaultConfig}
+                    defaultMessages={defaultI18n}
+                >
+                    <Form
+                        fields={[
+                            'address.streetAddress',
+                            'address.custom_fields.cf_address_string',
+                            'address.custom_fields.cf_address_integer',
+                            'address.custom_fields.cf_address_decimal',
+                            'address.custom_fields.cf_address_checkbox',
+                        ]}
+                        handler={onSubmit}
+                    />
+                </WidgetContext>
+            );
+
+            await user.type(
+                screen.getByRole('textbox', { name: 'address.streetAddress' }),
+                '10 rue Chaptal'
+            );
+            await user.type(
+                screen.getByRole('textbox', { name: 'Building' }),
+                'Résidence le diamant'
+            );
+            await user.type(screen.getByRole('spinbutton', { name: 'Floor' }), '50');
+            await user.type(screen.getByRole('spinbutton', { name: 'Latitude' }), '48.87');
+            await user.click(screen.getByRole('checkbox', { name: 'Has intercom' }));
+
+            await user.click(screen.getByRole('button', { name: 'Submit' }));
+
+            await waitFor(() =>
+                expect(onSubmit).toBeCalledWith({
+                    addresses: [
+                        {
+                            streetAddress: '10 rue Chaptal',
+                            custom_fields: {
+                                cf_address_string: 'Résidence le diamant',
+                                cf_address_integer: 50,
+                                cf_address_decimal: 48.87,
+                                cf_address_checkbox: true,
+                            },
+                        },
+                    ],
+                })
+            );
+        });
+
+        test.each([
+            [
+                'snake_case name with address.custom_fields prefix',
+                'address.custom_fields.cf_address_string',
+            ],
+            [
+                'camelCase name with address.customFields prefix',
+                'address.customFields.cfAddressString',
+            ],
+        ])('address custom field resolved by %s', async (_, fieldRef) => {
+            const user = userEvent.setup();
+            const onSubmit = jest.fn<() => Promise<void>>().mockResolvedValue();
+
+            render(
+                <WidgetContext
+                    client={apiClient}
+                    config={defaultConfig}
+                    defaultMessages={defaultI18n}
+                >
+                    <Form fields={[fieldRef]} handler={onSubmit} />
+                </WidgetContext>
+            );
+
+            const input = screen.getByRole('textbox', { name: 'Building' });
+            expect(input).toHaveAttribute('name', 'addresses.0.custom_fields.cf_address_string');
+
+            await user.type(input, 'Résidence le diamant');
+            await user.click(screen.getByRole('button', { name: 'Submit' }));
+
+            await waitFor(() =>
+                expect(onSubmit).toBeCalledWith({
+                    addresses: [{ custom_fields: { cf_address_string: 'Résidence le diamant' } }],
+                })
+            );
+        });
+
+        test('select-type address custom field renders options and submits the selected value', async () => {
+            const user = userEvent.setup();
+            const onSubmit = jest.fn<() => Promise<void>>().mockResolvedValue();
+
+            render(
+                <WidgetContext
+                    client={apiClient}
+                    config={defaultConfig}
+                    defaultMessages={defaultI18n}
+                >
+                    <Form fields={['address.custom_fields.cf_address_select']} handler={onSubmit} />
+                </WidgetContext>
+            );
+
+            const trigger = screen.getByRole('combobox', { name: 'Delivery instructions' });
+            await user.click(trigger);
+            await user.click(screen.getByRole('option', { name: 'Signature required' }));
+
+            await user.click(screen.getByRole('button', { name: 'Submit' }));
+
+            await waitFor(() =>
+                expect(onSubmit).toBeCalledWith({
+                    addresses: [{ custom_fields: { cf_address_select: 'signature_required' } }],
+                })
+            );
+        });
+
+        test('address custom field not found in config throws an unknown field error', () => {
+            expect(() =>
+                render(
+                    <WidgetContext
+                        client={apiClient}
+                        config={defaultConfig}
+                        defaultMessages={defaultI18n}
+                    >
+                        <Form
+                            fields={['address.custom_fields.unknown_field']}
+                            handler={jest.fn<() => Promise<void>>().mockResolvedValue()}
+                        />
+                    </WidgetContext>
+                )
+            ).toThrow('Unknown field: address.custom_fields.unknown_field');
         });
     });
 
