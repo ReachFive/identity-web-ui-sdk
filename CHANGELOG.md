@@ -21,6 +21,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Ignore unknown `signupFields` entries instead of throwing
 - Strip `defaultValue` from field props to avoid controlled/uncontrolled input warning
 - Restore Tailwind reset styles for `hr`, links, and text elements
+- Fix inverted password policy character checks blocking valid passwords on submit
 
 ## [2.0.1] - 2026-06-30
 
