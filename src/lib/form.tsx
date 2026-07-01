@@ -524,7 +524,8 @@ function resolveConsentFieldDefinition(
     options: { errorArchivedConsents?: boolean; phoneNumberOptions?: PhoneNumberOptions },
     requiredOverride?: boolean
 ): FieldDefinition | undefined {
-    const matches = /^consents\.(.+?)(?:\.v(\d+))?$/.exec(field);
+    // the `consents.` prefix is optional: a bare key is accepted as long as it matches an existing consent below
+    const matches = /^(?:consents\.)?(.+?)(?:\.v(\d+))?$/.exec(field);
     if (!matches) return undefined;
     const [, consentKey, providedVersionId] = matches;
 

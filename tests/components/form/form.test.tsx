@@ -1590,5 +1590,94 @@ describe('DOM testing', () => {
                 })
             );
         });
+
+        test('consent field key without the "consents." prefix resolves the same consent', () => {
+            render(
+                <WidgetContext
+                    client={apiClient}
+                    config={defaultConfig}
+                    defaultMessages={defaultI18n}
+                >
+                    <Form
+                        fields={['optin_testing']}
+                        handler={jest.fn<() => Promise<void>>().mockResolvedValue()}
+                    />
+                </WidgetContext>
+            );
+
+            expect(screen.getByRole('checkbox', { name: 'Opt-in Testing v1' })).toBeInTheDocument();
+            expect(screen.getByText('This is just a test')).toBeInTheDocument();
+        });
+
+        test('checking a consent declared without the "consents." prefix submits under the `consents` key', async () => {
+            const user = userEvent.setup();
+            const onSubmit = jest.fn<() => Promise<void>>().mockResolvedValue();
+
+            render(
+                <WidgetContext
+                    client={apiClient}
+                    config={defaultConfig}
+                    defaultMessages={defaultI18n}
+                >
+                    <Form fields={['optin_testing']} handler={onSubmit} />
+                </WidgetContext>
+            );
+
+            await user.click(screen.getByRole('checkbox', { name: 'Opt-in Testing v1' }));
+            await user.click(screen.getByRole('button', { name: 'Submit' }));
+
+            await waitFor(() =>
+                expect(onSubmit).toBeCalledWith({
+                    consents: {
+                        optin_testing: expect.objectContaining({
+                            consentType: 'opt-in',
+                            granted: true,
+                        }),
+                    },
+                })
+            );
+        });
+
+        test('consent field declared as an object without the "consents." prefix keeps its `required` option', async () => {
+            const user = userEvent.setup();
+            const onSubmit = jest.fn<() => Promise<void>>().mockResolvedValue();
+
+            render(
+                <WidgetContext
+                    client={apiClient}
+                    config={defaultConfig}
+                    defaultMessages={defaultI18n}
+                >
+                    <Form fields={[{ key: 'optin_testing', required: true }]} handler={onSubmit} />
+                </WidgetContext>
+            );
+
+            const checkbox = screen.getByRole('checkbox', { name: 'Opt-in Testing v1' });
+            await user.click(checkbox);
+            await user.click(checkbox);
+            await user.click(screen.getByRole('button', { name: 'Submit' }));
+
+            await waitFor(() =>
+                expect(checkbox).toHaveAccessibleErrorMessage('validation.required')
+            );
+            expect(onSubmit).not.toBeCalled();
+        });
+
+        test('unknown bare field key still throws an unknown field error', () => {
+            expect(() =>
+                render(
+                    <WidgetContext
+                        client={apiClient}
+                        config={defaultConfig}
+                        defaultMessages={defaultI18n}
+                    >
+                        <Form
+                            fields={['unknown_field']}
+                            handler={jest.fn<() => Promise<void>>().mockResolvedValue()}
+                        />
+                    </WidgetContext>
+                )
+            ).toThrow('Unknown field: unknown_field');
+        });
     });
 });
