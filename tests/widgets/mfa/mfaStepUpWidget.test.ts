@@ -165,9 +165,7 @@ describe('DOM testing', () => {
         expect(onError).not.toBeCalled();
 
         await waitFor(() =>
-            expect(window.location.replace).toHaveBeenCalledWith(
-                expect.stringContaining(auth.redirectUri)
-            )
+            expect(replaceMock).toHaveBeenCalledWith(expect.stringContaining(auth.redirectUri))
         );
     };
 
