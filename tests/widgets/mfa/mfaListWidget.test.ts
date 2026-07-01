@@ -65,15 +65,13 @@ describe('Snapshot', () => {
                 { apiClient, config: { ...defaultConfig, ...config }, defaultI18n }
             );
 
-            await waitFor(async () => {
-                const { container, rerender } = await render(widget);
+            const { container, rerender } = render(widget);
 
-                await waitFor(() => expect(apiClient.listMfaCredentials).toHaveBeenCalled());
+            await waitFor(() => expect(apiClient.listMfaCredentials).toHaveBeenCalled());
 
-                rerender(widget);
+            rerender(widget);
 
-                expect(container).toMatchSnapshot();
-            });
+            expect(container).toMatchSnapshot();
         };
 
     test('empty', generateSnapshot({}, undefined, []));
@@ -121,9 +119,12 @@ describe('DOM testing', () => {
             { accessToken: 'azerty', onError, onSuccess, ...options },
             { apiClient, config: { ...defaultConfig, ...config }, defaultI18n }
         );
-        return await waitFor(async () => {
-            return render(result);
-        });
+        const view = render(result);
+        // Flush any state update triggered by a useEffect-initiated async call on
+        // mount (e.g. listMfaCredentials), so it lands inside this act() boundary
+        // instead of racing with the test's first await on this function.
+        await waitFor(() => {});
+        return view;
     };
 
     describe('mfaCredentials', () => {
