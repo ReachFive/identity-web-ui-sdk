@@ -15,6 +15,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Preserve type override for custom fields
 - Opt-in consent not required by default
 - Select `defaultValue` ignored on form submit
+- Filter empty values from select items rendering
+- Restore custom address fields support and numeric coercion for custom fields
+- Allow consent fields without the `consents.` prefix in `signupFields`
 
 ## [2.0.1] - 2026-06-30
 
