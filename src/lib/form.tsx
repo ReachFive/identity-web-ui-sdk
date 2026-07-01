@@ -8,6 +8,7 @@ import z from 'zod';
 import { Client, UserConsent } from '@reachfive/identity-core';
 
 import { MarkdownContent } from '@/components/miscComponent';
+import { logError } from '@/helpers/logger';
 import { camelCasePath, snakeCasePath } from '@/helpers/transformObjectProperties';
 import { passwordValidation } from '@/lib/validation';
 import { Optional, type Config } from '@/types';
@@ -405,20 +406,22 @@ export function getFieldDefinitions(
     config: Config,
     options: { errorArchivedConsents?: boolean; phoneNumberOptions?: PhoneNumberOptions }
 ): (FieldDefinition | StaticContent)[] {
-    return fields.map(field => {
-        if (typeof field === 'object' && 'staticContent' in field) {
-            return field;
-        }
+    return fields
+        .map(field => {
+            if (typeof field === 'object' && 'staticContent' in field) {
+                return field;
+            }
 
-        return getFieldDefinition(field, config, options);
-    });
+            return getFieldDefinition(field, config, options);
+        })
+        .filter((field): field is FieldDefinition | StaticContent => field !== undefined);
 }
 
 export function getFieldDefinition(
     field: string | Optional<FieldDefinition, 'type'>,
     config: Config,
     options: { errorArchivedConsents?: boolean; phoneNumberOptions?: PhoneNumberOptions }
-): FieldDefinition {
+): FieldDefinition | undefined {
     const { key, type, ...userDefinition } =
         typeof field === 'string'
             ? ({ key: camelCasePath(field) } as Partial<Omit<FieldDefinition, 'key'>> &
@@ -441,7 +444,8 @@ export function getFieldDefinition(
     }
 
     if (typeof field === 'string') {
-        throw new Error(`Unknown field: ${field}`);
+        logError(`Unknown field: ${field}`);
+        return undefined;
     }
 
     return { key, required: true, ...userDefinition, type: type ?? 'string' } as FieldDefinition<

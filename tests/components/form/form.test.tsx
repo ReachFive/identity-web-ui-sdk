@@ -440,21 +440,30 @@ describe('DOM testing', () => {
             );
         });
 
-        test('address custom field not found in config throws an unknown field error', () => {
-            expect(() =>
-                render(
-                    <WidgetContext
-                        client={apiClient}
-                        config={defaultConfig}
-                        defaultMessages={defaultI18n}
-                    >
-                        <Form
-                            fields={['address.custom_fields.unknown_field']}
-                            handler={jest.fn<() => Promise<void>>().mockResolvedValue()}
-                        />
-                    </WidgetContext>
-                )
-            ).toThrow('Unknown field: address.custom_fields.unknown_field');
+        test('address custom field not found in config is ignored and logged instead of throwing', () => {
+            const consoleError = jest.spyOn(console, 'error').mockImplementation(() => {});
+
+            render(
+                <WidgetContext
+                    client={apiClient}
+                    config={defaultConfig}
+                    defaultMessages={defaultI18n}
+                >
+                    <Form
+                        fields={['address.streetAddress', 'address.custom_fields.unknown_field']}
+                        handler={jest.fn<() => Promise<void>>().mockResolvedValue()}
+                    />
+                </WidgetContext>
+            );
+
+            expect(
+                screen.getByRole('textbox', { name: 'address.streetAddress' })
+            ).toBeInTheDocument();
+            expect(consoleError).toHaveBeenCalledWith(
+                'Unknown field: address.custom_fields.unknown_field'
+            );
+
+            consoleError.mockRestore();
         });
     });
 
@@ -1663,21 +1672,26 @@ describe('DOM testing', () => {
             expect(onSubmit).not.toBeCalled();
         });
 
-        test('unknown bare field key still throws an unknown field error', () => {
-            expect(() =>
-                render(
-                    <WidgetContext
-                        client={apiClient}
-                        config={defaultConfig}
-                        defaultMessages={defaultI18n}
-                    >
-                        <Form
-                            fields={['unknown_field']}
-                            handler={jest.fn<() => Promise<void>>().mockResolvedValue()}
-                        />
-                    </WidgetContext>
-                )
-            ).toThrow('Unknown field: unknown_field');
+        test('unknown bare field key is ignored and logged instead of throwing', () => {
+            const consoleError = jest.spyOn(console, 'error').mockImplementation(() => {});
+
+            render(
+                <WidgetContext
+                    client={apiClient}
+                    config={defaultConfig}
+                    defaultMessages={defaultI18n}
+                >
+                    <Form
+                        fields={['email', 'unknown_field']}
+                        handler={jest.fn<() => Promise<void>>().mockResolvedValue()}
+                    />
+                </WidgetContext>
+            );
+
+            expect(screen.getByRole('textbox', { name: 'email' })).toBeInTheDocument();
+            expect(consoleError).toHaveBeenCalledWith('Unknown field: unknown_field');
+
+            consoleError.mockRestore();
         });
     });
 });
