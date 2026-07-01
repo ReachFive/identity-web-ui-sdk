@@ -121,7 +121,7 @@ function renderField<
         case 'object':
         case 'tags':
         case undefined: {
-            const { type, transform, validation, ...props } = fieldDefinition;
+            const { type, transform, validation, defaultValue, ...props } = fieldDefinition;
             return (
                 <InputField
                     type="text"
@@ -135,7 +135,7 @@ function renderField<
             );
         }
         case 'number': {
-            const { type, transform, validation, ...props } = fieldDefinition;
+            const { type, transform, validation, defaultValue, ...props } = fieldDefinition;
             return (
                 <InputField
                     type="number"
@@ -148,7 +148,7 @@ function renderField<
         }
         case 'integer':
         case 'decimal': {
-            const { type, transform, validation, ...props } = fieldDefinition;
+            const { type, transform, validation, defaultValue, ...props } = fieldDefinition;
             return (
                 <InputField
                     type="number"
@@ -170,7 +170,7 @@ function renderField<
             );
         }
         case 'email': {
-            const { type, transform, validation, ...props } = fieldDefinition;
+            const { type, transform, validation, defaultValue, ...props } = fieldDefinition;
             return (
                 <InputField
                     type="email"
@@ -184,7 +184,8 @@ function renderField<
             );
         }
         case 'password': {
-            const { type, transform, validation, withPolicyRules, ...props } = fieldDefinition;
+            const { type, transform, validation, defaultValue, withPolicyRules, ...props } =
+                fieldDefinition;
             return (
                 <PasswordField
                     {...props}
@@ -199,7 +200,7 @@ function renderField<
             );
         }
         case 'date': {
-            const { type, transform, validation, ...props } = fieldDefinition;
+            const { type, transform, validation, defaultValue, ...props } = fieldDefinition;
             return (
                 <DateField
                     {...props}
@@ -212,7 +213,7 @@ function renderField<
             );
         }
         case 'checkbox': {
-            const { type, transform, validation, ...props } = fieldDefinition;
+            const { type, transform, validation, defaultValue, ...props } = fieldDefinition;
             return (
                 <CheckboxField
                     {...props}
@@ -225,7 +226,7 @@ function renderField<
             );
         }
         case 'radio-group': {
-            const { type, transform, validation, ...props } = fieldDefinition;
+            const { type, transform, validation, defaultValue, ...props } = fieldDefinition;
             return (
                 <RadioGroupField
                     {...props}
@@ -238,7 +239,7 @@ function renderField<
             );
         }
         case 'select': {
-            const { type, transform, validation, ...props } = fieldDefinition;
+            const { type, transform, validation, defaultValue, ...props } = fieldDefinition;
             return (
                 <SelectField
                     {...props}
@@ -251,7 +252,8 @@ function renderField<
             );
         }
         case 'phone': {
-            const { type, transform, validation, phoneNumberOptions, ...props } = fieldDefinition;
+            const { type, transform, validation, defaultValue, phoneNumberOptions, ...props } =
+                fieldDefinition;
             return (
                 <PhoneNumberField
                     {...props}
@@ -271,7 +273,7 @@ function renderField<
             );
         }
         case 'hidden': {
-            const { type, transform, validation, ...props } = fieldDefinition;
+            const { type, transform, validation, defaultValue, ...props } = fieldDefinition;
             return (
                 <input
                     type="hidden"
@@ -283,7 +285,7 @@ function renderField<
             );
         }
         case 'identifier': {
-            const { type, transform, validation, ...props } = fieldDefinition;
+            const { type, transform, validation, defaultValue, ...props } = fieldDefinition;
             return (
                 <IdentifierField
                     {...props}

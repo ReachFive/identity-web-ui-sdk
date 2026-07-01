@@ -731,6 +731,32 @@ describe('DOM testing', () => {
                     expect(onSubmit).toBeCalledWith({ custom_fields: { party_type: 'PERSON' } })
                 );
             });
+
+            test('does not log a controlled/uncontrolled input warning when defaultValue is set', () => {
+                const consoleError = jest.spyOn(console, 'error').mockImplementation(() => {});
+
+                render(
+                    <WidgetContext
+                        client={apiClient}
+                        config={defaultConfig}
+                        defaultMessages={defaultI18n}
+                    >
+                        <Form
+                            fields={[{ key: 'party_type', defaultValue: 'PERSON', type: 'hidden' }]}
+                            handler={jest.fn<() => Promise<void>>().mockResolvedValue()}
+                        />
+                    </WidgetContext>
+                );
+
+                const hasValueDefaultValueWarning = consoleError.mock.calls.some(
+                    call =>
+                        typeof call[0] === 'string' &&
+                        call[0].includes('both value and defaultValue props')
+                );
+                expect(hasValueDefaultValueWarning).toBe(false);
+
+                consoleError.mockRestore();
+            });
         });
 
         test('initialModel pre-fills form fields', async () => {
