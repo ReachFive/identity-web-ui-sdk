@@ -103,8 +103,9 @@ describe('DOM testing', () => {
         );
         const view = render(result);
         // Flush any state update triggered by a useEffect-initiated async call on
-        // mount (e.g. showStepUpStart: false), so it lands inside this act()
-        // boundary instead of racing with the test's first await on this function.
+        // mount (e.g. showStepUpStart: false): waitFor() wraps its polling in
+        // act(), so the update resolves here instead of racing with the test's
+        // first await on this function.
         await waitFor(() => {});
         return view;
     };
