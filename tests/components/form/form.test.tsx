@@ -688,9 +688,8 @@ describe('DOM testing', () => {
                     </WidgetContext>
                 );
 
-                const hiddenInput = document.querySelector('input[type="hidden"]');
-                expect(hiddenInput).toBeInTheDocument();
-                expect(hiddenInput).toHaveValue('PERSON');
+                const hiddenInput = screen.getByDisplayValue('PERSON');
+                expect(hiddenInput).toHaveAttribute('type', 'hidden');
 
                 await user.click(screen.getByRole('button', { name: 'Submit' }));
 
@@ -722,10 +721,9 @@ describe('DOM testing', () => {
                     </WidgetContext>
                 );
 
-                const hiddenInput = document.querySelector('input[type="hidden"]');
-                expect(hiddenInput).toBeInTheDocument();
+                const hiddenInput = screen.getByDisplayValue('PERSON');
+                expect(hiddenInput).toHaveAttribute('type', 'hidden');
                 expect(hiddenInput).toHaveAttribute('name', 'custom_fields.party_type');
-                expect(hiddenInput).toHaveValue('PERSON');
 
                 await user.click(screen.getByRole('button', { name: 'Submit' }));
 
