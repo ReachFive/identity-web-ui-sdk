@@ -101,7 +101,12 @@ describe('DOM testing', () => {
             { onError, onSuccess, ...options },
             { apiClient, config: { ...defaultConfig, ...config }, defaultI18n }
         );
-        return render(result);
+        const view = render(result);
+        // Flush any state update triggered by a useEffect-initiated async call on
+        // mount (e.g. showStepUpStart: false), so it lands inside this act()
+        // boundary instead of racing with the test's first await on this function.
+        await waitFor(() => {});
+        return view;
     };
 
     const assertStepUpWorkflow = async (user: UserEvent, amr: string[]) => {
@@ -197,7 +202,10 @@ describe('DOM testing', () => {
         });
 
         test('showStepUpStart: false', async () => {
-            expect.assertions(12);
+            // 11, not 12: generateComponent now settles the mount-triggered
+            // getMfaStepUpToken call before returning, so the startPasswordless
+            // waitFor below succeeds on its first check instead of needing a retry.
+            expect.assertions(11);
 
             const user = userEvent.setup();
 
