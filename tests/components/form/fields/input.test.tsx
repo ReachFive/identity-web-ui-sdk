@@ -94,7 +94,7 @@ describe('DOM testing', () => {
         expect(input).toHaveValue(newValue);
     });
 
-    test('custom type, placeholder and default value', async () => {
+    test('custom type, placeholder and default value', () => {
         const onChange = jest.fn();
 
         render(

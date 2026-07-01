@@ -3,7 +3,7 @@
  */
 import { afterAll, beforeEach, describe, expect, jest, test } from '@jest/globals';
 import '@testing-library/jest-dom/jest-globals';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import 'jest-styled-components';
 
@@ -87,7 +87,7 @@ describe('DOM testing', () => {
             { config: { ...defaultConfig, ...config }, apiClient, defaultI18n }
         );
 
-        return waitFor(async () => {
+        return waitFor(() => {
             return render(result);
         });
     };
@@ -169,11 +169,13 @@ describe('DOM testing', () => {
             const deviceNames = screen.queryAllByTestId('device-name').map(el => el.textContent);
             expect(deviceNames).toEqual(['myOldDevice', 'myNewDevice']);
 
-            const oldDevice = devicesAfterAdd.find(el => el.textContent === 'myOldDevice');
-            const removeOldDevice = oldDevice?.querySelector('[data-testid="device-remove"]');
+            const oldDevice = devicesAfterAdd.find(
+                el => within(el).getByTestId('device-name').textContent === 'myOldDevice'
+            );
+            const removeOldDevice = within(oldDevice!).getByTestId('device-remove');
             expect(removeOldDevice).toBeInTheDocument();
 
-            await user.click(removeOldDevice!);
+            await user.click(removeOldDevice);
 
             expect(confirmMock).toBeCalled();
 
@@ -236,11 +238,13 @@ describe('DOM testing', () => {
             await generateComponent({});
 
             const devices = screen.queryAllByTestId('device');
-            const oldDevice = devices.find(el => el.textContent === 'myOldDevice');
-            const removeOldDevice = oldDevice?.querySelector('[data-testid="device-remove"]');
+            const oldDevice = devices.find(
+                el => within(el).getByTestId('device-name').textContent === 'myOldDevice'
+            );
+            const removeOldDevice = within(oldDevice!).getByTestId('device-remove');
             expect(removeOldDevice).toBeInTheDocument();
 
-            await user.click(removeOldDevice!);
+            await user.click(removeOldDevice);
 
             expect(confirmMock).toBeCalled();
 

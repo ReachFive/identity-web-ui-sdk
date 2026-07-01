@@ -182,7 +182,7 @@ describe('DOM testing', () => {
             const configWithSnakeCaseField: Config = {
                 ...defaultConfig,
                 customFields: [
-                    ...defaultConfig.customFields!,
+                    ...defaultConfig.customFields,
                     {
                         name: 'Display Name',
                         path: 'display_name',
