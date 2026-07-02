@@ -29,6 +29,15 @@
 
 4. Create a pull request named `Release vx.y.z` (add the Github tag `release`) and submit it.
 
+   > **Automatic prereleases.** As soon as the PR carries the `release` label,
+   > every push publishes a release-candidate build to npm — `vx.y.z-rc.1`,
+   > `vx.y.z-rc.2`, … — under the `next` dist-tag. Install a candidate with
+   > `npm install @reachfive/identity-ui@<version>` (the exact version is posted
+   > as a comment on the PR). Prereleases are **never** tagged `latest`, so they
+   > cannot reach production consumers who track `latest`. The base version in
+   > `package.json` must already be bumped (step 3) or the CI job fails: an
+   > `x.y.z-rc.N` prerelease has lower precedence than an existing `x.y.z`.
+
 5. Once the branch is merged into `master`, create the new tag.
 
     ```sh
@@ -62,3 +71,10 @@
 
 7. Draft a new release in the [Github releases tab](https://github.com/ReachFive/identity-web-ui-sdk/releases) (
    copy/paste the changelog in the release's description).
+
+## Dist-tags
+
+- `latest` — the current official release (what `npm install @reachfive/identity-ui` resolves to). Only ever moved by an official release.
+- `next` — the most recently published version, whether an official release or a prerelease. Use it to try the newest candidate: `npm install @reachfive/identity-ui@next`.
+
+Publishing an official release (tag push) moves **both** `latest` and `next` to it.
