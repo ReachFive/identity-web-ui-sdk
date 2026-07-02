@@ -27,6 +27,7 @@
         "watch": "npm run build -- --watch",
         "test": "npx jest --force-exit",
         "test:update": "npm run test -- --update-snapshot",
+        "test:scripts": "node --test scripts/prerelease-version.test.mjs",
         "typecheck": "tsc --noEmit",
         "lint": "eslint -c eslint.config.mjs src/",
         "format": "prettier --write .",
