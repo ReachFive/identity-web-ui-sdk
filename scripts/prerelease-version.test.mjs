@@ -5,7 +5,7 @@ import { fileURLToPath } from 'node:url';
 
 import {
     parseVersionsJson,
-    assertBaseNotPublished,
+    assertBaseVersionPublishable,
     computeNextRcVersion,
 } from './prerelease-version.mjs';
 
@@ -42,12 +42,34 @@ test('computeNextRcVersion ignores malformed rc suffixes', () => {
     assert.equal(computeNextRcVersion('2.0.2', ['2.0.2-rc.abc', '2.0.2-rc.']), '2.0.2-rc.1');
 });
 
-test('assertBaseNotPublished throws when the base version is already published', () => {
-    assert.throws(() => assertBaseNotPublished('2.0.1', ['2.0.0', '2.0.1']), /already published/);
+test('assertBaseVersionPublishable throws when the base version is already published', () => {
+    assert.throws(
+        () => assertBaseVersionPublishable('2.0.1', ['2.0.0', '2.0.1']),
+        /not greater than/
+    );
 });
 
-test('assertBaseNotPublished passes when the base version is unpublished', () => {
-    assert.doesNotThrow(() => assertBaseNotPublished('2.0.2', ['2.0.0', '2.0.1']));
+test('assertBaseVersionPublishable passes when the base version is unpublished and greater', () => {
+    assert.doesNotThrow(() => assertBaseVersionPublishable('2.0.2', ['2.0.0', '2.0.1']));
+});
+
+test('assertBaseVersionPublishable throws when the base version is lower than the latest published release', () => {
+    assert.throws(
+        () => assertBaseVersionPublishable('2.0.0', ['2.0.0', '2.0.1']),
+        /not greater than/
+    );
+});
+
+test('assertBaseVersionPublishable ignores prereleases when finding the latest published release', () => {
+    assert.doesNotThrow(() => assertBaseVersionPublishable('2.0.2', ['2.0.1', '2.0.2-rc.1']));
+});
+
+test('assertBaseVersionPublishable compares numerically, not lexically (2.0.10 > 2.0.9)', () => {
+    assert.doesNotThrow(() => assertBaseVersionPublishable('2.0.10', ['2.0.9']));
+});
+
+test('assertBaseVersionPublishable passes when there are no published versions', () => {
+    assert.doesNotThrow(() => assertBaseVersionPublishable('2.0.0', []));
 });
 
 const SCRIPT = fileURLToPath(new URL('./prerelease-version.mjs', import.meta.url));
@@ -75,7 +97,7 @@ test('CLI treats empty stdin as no published versions -> rc.1', () => {
 test('CLI exits 1 with a message when the base version is already published', () => {
     const result = runCli('2.0.1', '["2.0.0","2.0.1"]');
     assert.equal(result.status, 1);
-    assert.match(result.stderr, /already published/);
+    assert.match(result.stderr, /not greater than|Bump the version/);
 });
 
 test('CLI exits 1 when no base version argument is given', () => {

@@ -19,16 +19,41 @@ export function parseVersionsJson(jsonText) {
 }
 
 /**
- * Guard: a `<base>-rc.N` prerelease has LOWER semver precedence than `<base>`,
- * so publishing one only makes sense while `<base>` itself is unreleased.
- * Throws when the base version already exists on the registry (i.e. someone
- * opened a release PR without bumping the version first).
+ * Compare two plain `x.y.z` release versions numerically, per component.
+ * Returns a negative number if `a` < `b`, positive if `a` > `b`, 0 if equal.
  */
-export function assertBaseNotPublished(baseVersion, publishedVersions) {
-    if (publishedVersions.includes(baseVersion)) {
+function compareReleaseVersions(a, b) {
+    const pa = a.split('.').map(Number);
+    const pb = b.split('.').map(Number);
+    for (let i = 0; i < Math.max(pa.length, pb.length); i++) {
+        const diff = (pa[i] || 0) - (pb[i] || 0);
+        if (diff !== 0) return diff < 0 ? -1 : 1;
+    }
+    return 0;
+}
+
+/**
+ * Guard: a `<base>-rc.N` prerelease has LOWER semver precedence than `<base>`,
+ * so publishing one only makes sense while `<base>` itself is unreleased AND
+ * greater than every release already published. Otherwise the `next` dist-tag
+ * would move backward to a version with lower semver precedence than the
+ * current releases.
+ * Throws when the base version is not strictly greater than the highest
+ * published release version (i.e. someone opened a release PR without
+ * bumping the version far enough).
+ */
+export function assertBaseVersionPublishable(baseVersion, publishedVersions) {
+    const publishedReleases = publishedVersions.filter(version => /^\d+\.\d+\.\d+$/.test(version));
+    if (publishedReleases.length === 0) return;
+
+    const maxRelease = publishedReleases.reduce((max, version) =>
+        compareReleaseVersions(version, max) > 0 ? version : max
+    );
+
+    if (compareReleaseVersions(baseVersion, maxRelease) <= 0) {
         throw new Error(
-            `Version ${baseVersion} is already published to npm. Bump the version ` +
-                `in package.json before opening/updating a release PR (see RELEASE.md).`
+            `Version ${baseVersion} is not greater than the latest published release ${maxRelease}. ` +
+                `Bump the version in package.json before opening/updating a release PR (see RELEASE.md).`
         );
     }
 }
@@ -65,7 +90,7 @@ if (isMain) {
     const stdin = process.stdin.isTTY ? '' : readFileSync(0, 'utf8');
     const versions = parseVersionsJson(stdin);
     try {
-        assertBaseNotPublished(baseVersion, versions);
+        assertBaseVersionPublishable(baseVersion, versions);
     } catch (error) {
         console.error(error.message);
         process.exit(1);
