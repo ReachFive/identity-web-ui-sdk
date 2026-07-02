@@ -1,3 +1,10 @@
+// --- CLI -------------------------------------------------------------------
+// Usage: npm view <pkg> versions --json | node scripts/prerelease-version.mjs <baseVersion>
+// Prints "<baseVersion>-rc.<N>" to stdout. Exits 1 (message on stderr) when the
+// base version is already published or when no base version is supplied.
+import { readFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
+
 /**
  * Normalise the output of `npm view <pkg> versions --json`.
  * npm prints a JSON array when multiple versions exist, a bare JSON string
@@ -43,4 +50,25 @@ export function computeNextRcVersion(baseVersion, publishedVersions) {
         }
     }
     return `${baseVersion}-rc.${maxN + 1}`;
+}
+
+const isMain = process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1];
+
+if (isMain) {
+    const baseVersion = process.argv[2];
+    if (!baseVersion) {
+        console.error(
+            'Usage: <versions-json-on-stdin> | node scripts/prerelease-version.mjs <baseVersion>'
+        );
+        process.exit(1);
+    }
+    const stdin = process.stdin.isTTY ? '' : readFileSync(0, 'utf8');
+    const versions = parseVersionsJson(stdin);
+    try {
+        assertBaseNotPublished(baseVersion, versions);
+    } catch (error) {
+        console.error(error.message);
+        process.exit(1);
+    }
+    process.stdout.write(computeNextRcVersion(baseVersion, versions));
 }

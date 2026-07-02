@@ -1,5 +1,7 @@
 import assert from 'node:assert/strict';
+import { spawnSync } from 'node:child_process';
 import { test } from 'node:test';
+import { fileURLToPath } from 'node:url';
 
 import {
     parseVersionsJson,
@@ -46,4 +48,38 @@ test('assertBaseNotPublished throws when the base version is already published',
 
 test('assertBaseNotPublished passes when the base version is unpublished', () => {
     assert.doesNotThrow(() => assertBaseNotPublished('2.0.2', ['2.0.0', '2.0.1']));
+});
+
+const SCRIPT = fileURLToPath(new URL('./prerelease-version.mjs', import.meta.url));
+
+function runCli(baseVersion, stdin) {
+    const args = baseVersion === undefined ? [SCRIPT] : [SCRIPT, baseVersion];
+    return spawnSync(process.execPath, args, {
+        input: stdin,
+        encoding: 'utf8',
+    });
+}
+
+test('CLI prints the next rc version from a piped version list', () => {
+    const result = runCli('2.0.2', '["2.0.2-rc.1"]');
+    assert.equal(result.status, 0);
+    assert.equal(result.stdout.trim(), '2.0.2-rc.2');
+});
+
+test('CLI treats empty stdin as no published versions -> rc.1', () => {
+    const result = runCli('2.0.2', '');
+    assert.equal(result.status, 0);
+    assert.equal(result.stdout.trim(), '2.0.2-rc.1');
+});
+
+test('CLI exits 1 with a message when the base version is already published', () => {
+    const result = runCli('2.0.1', '["2.0.0","2.0.1"]');
+    assert.equal(result.status, 1);
+    assert.match(result.stderr, /already published/);
+});
+
+test('CLI exits 1 when no base version argument is given', () => {
+    const result = runCli(undefined, '[]');
+    assert.equal(result.status, 1);
+    assert.match(result.stderr, /Usage/);
 });
