@@ -31,3 +31,8 @@ jobs:
         run: npm publish --provenance --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
+
+      - name: Point next tag at the release
+        run: npm dist-tag add "@reachfive/identity-ui@$(node -p "require('./package.json').version")" next
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
