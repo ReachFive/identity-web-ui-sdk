@@ -130,7 +130,7 @@ jobs:
           npm install @reachfive/identity-ui@$VERSION
           \`\`\`
           This prerelease is **not** tagged \`latest\` and will not affect production consumers."
-          COMMENT_ID=$(gh api "repos/$REPO/issues/$PR_NUMBER/comments" \
+          COMMENT_ID=$(gh api --paginate "repos/$REPO/issues/$PR_NUMBER/comments" \
             --jq ".[] | select(.body | startswith(\"$MARKER\")) | .id" | head -n1)
           if [ -n "$COMMENT_ID" ]; then
             gh api --method PATCH "repos/$REPO/issues/comments/$COMMENT_ID" -f body="$BODY"
