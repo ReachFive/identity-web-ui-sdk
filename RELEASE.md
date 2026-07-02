@@ -45,12 +45,10 @@
     git push origin <tag_name>
     ```
 
-    [circleci](https://circleci.com) will automatically trigger a build, run the tests and publish the new version of the
-    SDK on [npm](https://www.npmjs.com/package/@reachfive/identity-ui).
+    The [Deploy Release](.github/workflows/deploy-release.yml) GitHub Actions workflow automatically triggers on the
+    pushed tag, builds the SDK, and publishes the new version on [npm](https://www.npmjs.com/package/@reachfive/identity-ui).
 
-    > It's important to push the tag separately otherwise the [deployement job is not triggered](https://support.circleci.com/hc/en-us/articles/115013854347-Jobs-builds-not-triggered-when-pushing-tag).
-
-    Refer to the [.circleci/config.yml](.circleci/config.yml) file to set up the integration.
+    Refer to the [.github/workflows/deploy-release.yml](.github/workflows/deploy-release.yml) file to set up the integration.
 
 6. Purge the cache of a @latest or version aliased URL to force users to get the new updated version. Otherwise they might wait up to 7 days.
 
