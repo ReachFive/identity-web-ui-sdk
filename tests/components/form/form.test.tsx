@@ -3,7 +3,7 @@
  */
 import React from 'react';
 
-import { describe, expect, jest, test } from '@jest/globals';
+import { afterEach, beforeEach, describe, expect, jest, test } from '@jest/globals';
 import '@testing-library/jest-dom/jest-globals';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -567,6 +567,19 @@ describe('DOM testing', () => {
     });
 
     describe('Error Handling', () => {
+        // AppError submissions make the Form call logError(), which logs to
+        // console.error by design (src/helpers/logger.ts). Silence it here so
+        // the expected error path doesn't pollute test output.
+        let consoleErrorSpy: jest.SpiedFunction<typeof console.error>;
+
+        beforeEach(() => {
+            consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+        });
+
+        afterEach(() => {
+            consoleErrorSpy.mockRestore();
+        });
+
         test('onError called when handler throws a generic error', async () => {
             const user = userEvent.setup();
             const onError = jest.fn<(err: unknown) => void>();
