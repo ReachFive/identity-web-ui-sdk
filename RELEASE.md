@@ -29,6 +29,15 @@
 
 4. Create a pull request named `Release vx.y.z` (add the Github tag `release`) and submit it.
 
+   > **Automatic prereleases.** As soon as the PR carries the `release` label,
+   > every push publishes a release-candidate build to npm — `vx.y.z-rc.1`,
+   > `vx.y.z-rc.2`, … — under the `next` dist-tag. Install a candidate with
+   > `npm install @reachfive/identity-ui@<version>` (the exact version is posted
+   > as a comment on the PR). Prereleases are **never** tagged `latest`, so they
+   > cannot reach production consumers who track `latest`. The base version in
+   > `package.json` must already be bumped (step 3) or the CI job fails: an
+   > `x.y.z-rc.N` prerelease has lower precedence than an existing `x.y.z`.
+
 5. Once the branch is merged into `master`, create the new tag.
 
     ```sh
@@ -36,12 +45,10 @@
     git push origin <tag_name>
     ```
 
-    [circleci](https://circleci.com) will automatically trigger a build, run the tests and publish the new version of the
-    SDK on [npm](https://www.npmjs.com/package/@reachfive/identity-ui).
+    The [Deploy Release](.github/workflows/deploy-release.yml) GitHub Actions workflow automatically triggers on the
+    pushed tag, builds the SDK, and publishes the new version on [npm](https://www.npmjs.com/package/@reachfive/identity-ui).
 
-    > It's important to push the tag separately otherwise the [deployement job is not triggered](https://support.circleci.com/hc/en-us/articles/115013854347-Jobs-builds-not-triggered-when-pushing-tag).
-
-    Refer to the [.circleci/config.yml](.circleci/config.yml) file to set up the integration.
+    Refer to the [.github/workflows/deploy-release.yml](.github/workflows/deploy-release.yml) file to set up the integration.
 
 6. Purge the cache of a @latest or version aliased URL to force users to get the new updated version. Otherwise they might wait up to 7 days.
 
@@ -62,3 +69,10 @@
 
 7. Draft a new release in the [Github releases tab](https://github.com/ReachFive/identity-web-ui-sdk/releases) (
    copy/paste the changelog in the release's description).
+
+## Dist-tags
+
+- `latest` — the current official release (what `npm install @reachfive/identity-ui` resolves to). Only ever moved by an official release.
+- `next` — the most recently published version, whether an official release or a prerelease. Use it to try the newest candidate: `npm install @reachfive/identity-ui@next`.
+
+Publishing an official release (tag push) moves **both** `latest` and `next` to it.
