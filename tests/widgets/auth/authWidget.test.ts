@@ -656,6 +656,31 @@ describe('DOM testing', () => {
             expect(screen.getByRole('button', { name: 'address.country' })).toBeInTheDocument();
         });
 
+        test('hides country select by default', async () => {
+            expect.assertions(1);
+            await generateComponent({
+                initialScreen: 'signup',
+                signupFields: ['email', 'phone_number', 'password', 'passwordConfirmation'],
+            });
+
+            expect(
+                screen.queryByRole('button', { name: 'address.country' })
+            ).not.toBeInTheDocument();
+        });
+
+        test('hides country select with phoneNumberOptions.withCountrySelect: false', async () => {
+            expect.assertions(1);
+            await generateComponent({
+                initialScreen: 'signup',
+                signupFields: ['email', 'phone_number', 'password', 'passwordConfirmation'],
+                phoneNumberOptions: { withCountrySelect: false },
+            });
+
+            expect(
+                screen.queryByRole('button', { name: 'address.country' })
+            ).not.toBeInTheDocument();
+        });
+
         test('signup fields selection', async () => {
             expect.assertions(3);
             const signupFields = ['email', 'password', 'passwordConfirmation'];
