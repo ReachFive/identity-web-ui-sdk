@@ -252,8 +252,16 @@ function renderField<
             );
         }
         case 'phone': {
-            const { type, transform, validation, defaultValue, phoneNumberOptions, ...props } =
-                fieldDefinition;
+            const {
+                type,
+                transform,
+                validation,
+                defaultValue,
+                phoneNumberOptions,
+                allowInternational,
+                defaultCountry,
+                ...props
+            } = fieldDefinition;
             return (
                 <PhoneNumberField
                     {...props}
@@ -265,9 +273,10 @@ function renderField<
                     allowInternational={
                         phoneNumberOptions?.allowInternational ??
                         phoneNumberOptions?.withCountrySelect ??
-                        phoneNumberOptions?.withCountryCallingCode
+                        phoneNumberOptions?.withCountryCallingCode ??
+                        allowInternational
                     }
-                    defaultCountry={phoneNumberOptions?.defaultCountry}
+                    defaultCountry={phoneNumberOptions?.defaultCountry ?? defaultCountry}
                     errors={fieldState.invalid && fieldState.error ? [fieldState.error] : undefined}
                 />
             );

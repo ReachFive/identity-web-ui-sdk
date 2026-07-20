@@ -23,7 +23,7 @@ export interface PhoneNumberInputProps extends BasePhoneNumberInputProps {
     onChange: (val: string | undefined) => void;
     value: string | undefined;
     /**
-     * Whether international phone numbers are allowed. Defaults to `true`.
+     * Whether international phone numbers are allowed. Defaults to `false`.
      * If allowed, the phone number input will be prefixed with the country code,
      * and the selected country will be displayed in the input's left add-on, and
      * autoformatting will be enabled.
@@ -38,7 +38,7 @@ export interface PhoneNumberInputProps extends BasePhoneNumberInputProps {
 export const PhoneNumberInput = React.forwardRef<HTMLInputElement, PhoneNumberInputProps>(
     function PhoneNumberInput(
         {
-            allowInternational = true,
+            allowInternational = false,
             defaultCountry,
             description,
             errors,

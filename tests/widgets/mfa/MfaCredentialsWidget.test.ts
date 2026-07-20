@@ -291,6 +291,18 @@ describe('DOM testing', () => {
             });
         });
 
+        test('phone number field hides country select by default', async () => {
+            await generateComponent(
+                { showIntro: true, showRemoveMfaCredentials: true },
+                defaultConfig,
+                []
+            );
+
+            expect(
+                screen.queryByRole('button', { name: 'address.country' })
+            ).not.toBeInTheDocument();
+        });
+
         test('requireMfaRegistration', async () => {
             await generateComponent(
                 { showIntro: true, showRemoveMfaCredentials: true, requireMfaRegistration: true },

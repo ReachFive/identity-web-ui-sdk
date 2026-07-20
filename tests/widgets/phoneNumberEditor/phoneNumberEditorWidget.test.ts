@@ -159,6 +159,32 @@ describe('DOM testing', () => {
             expect(onError).not.toBeCalled();
         });
 
+        test('country select hidden by default', async () => {
+            await generateComponent({});
+
+            expect(
+                screen.queryByRole('button', { name: 'address.country' })
+            ).not.toBeInTheDocument();
+        });
+
+        test('country select hidden with withCountrySelect: false', async () => {
+            await generateComponent({
+                phoneNumberOptions: { withCountrySelect: false },
+            });
+
+            expect(
+                screen.queryByRole('button', { name: 'address.country' })
+            ).not.toBeInTheDocument();
+        });
+
+        test('country select shown with withCountrySelect: true', async () => {
+            await generateComponent({
+                phoneNumberOptions: { withCountrySelect: true },
+            });
+
+            expect(screen.getByRole('button', { name: 'address.country' })).toBeInTheDocument();
+        });
+
         test('api update phoneNumber failed', async () => {
             const user = userEvent.setup();
 

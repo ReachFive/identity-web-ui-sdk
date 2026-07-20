@@ -284,6 +284,16 @@ describe('DOM testing', () => {
             expect(screen.getByRole('button', { name: 'address.country' })).toBeInTheDocument();
         });
 
+        test('by phone number hides country select by default', async () => {
+            expect.assertions(1);
+
+            await generateComponent({ authType: 'sms' });
+
+            expect(
+                screen.queryByRole('button', { name: 'address.country' })
+            ).not.toBeInTheDocument();
+        });
+
         describe('with enableVerificationCode = false', () => {
             test('by email', async () => {
                 expect.assertions(8);

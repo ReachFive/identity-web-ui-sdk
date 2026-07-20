@@ -254,6 +254,23 @@ describe('DOM testing', () => {
             expect(screen.getByRole('button', { name: 'address.country' })).toBeInTheDocument();
         });
 
+        test('hides country select by default', async () => {
+            // @ts-expect-error partial Profile
+            const profile: Profile = {
+                phoneNumber: '+33612345678',
+            };
+
+            getUser.mockResolvedValue(profile);
+
+            await generateComponent({
+                fields: ['phone_number'],
+            });
+
+            expect(
+                screen.queryByRole('button', { name: 'address.country' })
+            ).not.toBeInTheDocument();
+        });
+
         test('api update user failed', async () => {
             const user = userEvent.setup();
 
