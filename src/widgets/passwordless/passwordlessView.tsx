@@ -165,7 +165,16 @@ export const PasswordlessView = ({
                 {showPhoneNumber && showIntro && <Intro>{i18n('passwordless.sms.intro')}</Intro>}
                 {showPhoneNumber && (
                     <Form
-                        fields={['phoneNumber']}
+                        fields={[
+                            {
+                                key: 'phoneNumber',
+                                type: 'phone',
+                                label: 'phoneNumber',
+                                allowInternational: phoneNumberOptions?.allowInternational ?? false,
+                                defaultCountry: phoneNumberOptions?.defaultCountry,
+                                phoneNumberOptions,
+                            },
+                        ]}
                         handler={sendSms}
                         onError={onError}
                         phoneNumberOptions={phoneNumberOptions}

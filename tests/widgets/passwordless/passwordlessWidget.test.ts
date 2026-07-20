@@ -272,6 +272,18 @@ describe('DOM testing', () => {
             expect(onError).not.toBeCalled();
         });
 
+        test('by phone number with phoneNumberOptions.allowInternational', async () => {
+            expect.assertions(1);
+
+            await generateComponent({
+                authType: 'sms',
+                phoneNumberOptions: { allowInternational: true, defaultCountry: 'FR' },
+            });
+
+            // Country select button only renders when allowInternational reaches the phone field
+            expect(screen.getByRole('button', { name: 'address.country' })).toBeInTheDocument();
+        });
+
         describe('with enableVerificationCode = false', () => {
             test('by email', async () => {
                 expect.assertions(8);

@@ -116,12 +116,21 @@ export default createWidget<ProfileEditorWidgetProps, ProfileEditorProps>({
             fields: [],
             ...options,
         };
-        const { accessToken, fields = [] } = opts;
+        const { accessToken, fields = [], phoneNumberOptions } = opts;
 
         const fieldDefinitions = withoutStaticContent(
             getFieldDefinitions(fields, config, {
                 errorArchivedConsents: false,
             })
+        ).map(field =>
+            phoneNumberOptions !== undefined && field.type === 'phone'
+                ? {
+                      allowInternational: phoneNumberOptions.allowInternational ?? false,
+                      defaultCountry: phoneNumberOptions.defaultCountry,
+                      phoneNumberOptions,
+                      ...field,
+                  }
+                : field
         );
 
         const haveNotAllowedFields = fieldDefinitions.some(field => {

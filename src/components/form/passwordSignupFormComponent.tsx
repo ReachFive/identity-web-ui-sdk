@@ -125,34 +125,44 @@ export const PasswordSignupForm = ({
         [blacklist]
     );
 
-    const fieldsWithCanShowPassword =
-        canShowPassword === undefined
-            ? signupFields
-            : signupFields.map(field => {
-                  if (typeof field === 'object' && 'staticContent' in field) return field;
+    const resolvedSignupFields = signupFields.map(field => {
+        if (typeof field === 'object' && 'staticContent' in field) return field;
 
-                  const key = typeof field === 'string' ? field : field.key;
-                  if (
-                      key !== 'password' &&
-                      key !== 'password_confirmation' &&
-                      key !== 'passwordConfirmation'
-                  ) {
-                      return field;
-                  }
+        const key = typeof field === 'string' ? field : field.key;
 
-                  return typeof field === 'string'
-                      ? { key: field, type: 'password' as const, canShowPassword }
-                      : { canShowPassword, ...field };
-              });
+        if (
+            canShowPassword !== undefined &&
+            (key === 'password' ||
+                key === 'password_confirmation' ||
+                key === 'passwordConfirmation')
+        ) {
+            return typeof field === 'string'
+                ? { key: field, type: 'password' as const, canShowPassword }
+                : { canShowPassword, ...field };
+        }
+
+        if (phoneNumberOptions !== undefined && (key === 'phoneNumber' || key === 'phone_number')) {
+            const resolvedPhoneNumberOptions = {
+                allowInternational: phoneNumberOptions.allowInternational ?? false,
+                defaultCountry: phoneNumberOptions.defaultCountry,
+                phoneNumberOptions,
+            };
+            return typeof field === 'string'
+                ? { key: field, type: 'phone' as const, ...resolvedPhoneNumberOptions }
+                : { ...resolvedPhoneNumberOptions, ...field };
+        }
+
+        return field;
+    });
 
     const allFields = userAgreement
         ? [
-              ...fieldsWithCanShowPassword,
+              ...resolvedSignupFields,
               {
                   staticContent: <UserAgreement content={userAgreement} />,
               },
           ]
-        : fieldsWithCanShowPassword;
+        : resolvedSignupFields;
 
     return (
         <CaptchaProvider

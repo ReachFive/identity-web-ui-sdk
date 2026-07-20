@@ -644,6 +644,18 @@ describe('DOM testing', () => {
             expect(screen.getAllByRole('switch', { name: 'password.show' })).toHaveLength(2);
         });
 
+        test('with phoneNumberOptions.allowInternational', async () => {
+            expect.assertions(1);
+            await generateComponent({
+                initialScreen: 'signup',
+                signupFields: ['email', 'phone_number', 'password', 'passwordConfirmation'],
+                phoneNumberOptions: { allowInternational: true, defaultCountry: 'FR' },
+            });
+
+            // Country select button only renders when allowInternational reaches the phone field
+            expect(screen.getByRole('button', { name: 'address.country' })).toBeInTheDocument();
+        });
+
         test('signup fields selection', async () => {
             expect.assertions(3);
             const signupFields = ['email', 'password', 'passwordConfirmation'];
