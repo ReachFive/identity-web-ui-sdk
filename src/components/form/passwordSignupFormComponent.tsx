@@ -71,7 +71,7 @@ export interface PasswordSignupFormProps {
 export const PasswordSignupForm = ({
     auth,
     beforeSignup = x => x,
-    // canShowPassword,
+    canShowPassword,
     phoneNumberOptions,
     recaptcha_enabled = false,
     recaptcha_site_key,
@@ -125,14 +125,34 @@ export const PasswordSignupForm = ({
         [blacklist]
     );
 
+    const fieldsWithCanShowPassword =
+        canShowPassword === undefined
+            ? signupFields
+            : signupFields.map(field => {
+                  if (typeof field === 'object' && 'staticContent' in field) return field;
+
+                  const key = typeof field === 'string' ? field : field.key;
+                  if (
+                      key !== 'password' &&
+                      key !== 'password_confirmation' &&
+                      key !== 'passwordConfirmation'
+                  ) {
+                      return field;
+                  }
+
+                  return typeof field === 'string'
+                      ? { key: field, type: 'password' as const, canShowPassword }
+                      : { canShowPassword, ...field };
+              });
+
     const allFields = userAgreement
         ? [
-              ...signupFields,
+              ...fieldsWithCanShowPassword,
               {
                   staticContent: <UserAgreement content={userAgreement} />,
               },
           ]
-        : signupFields;
+        : fieldsWithCanShowPassword;
 
     return (
         <CaptchaProvider

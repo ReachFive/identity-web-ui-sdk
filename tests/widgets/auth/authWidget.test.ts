@@ -633,6 +633,17 @@ describe('DOM testing', () => {
             expect(screen.getByLabelText('passwordConfirmation')).toBeInTheDocument();
         });
 
+        test('with canShowPassword', async () => {
+            expect.assertions(1);
+            await generateComponent({
+                initialScreen: 'signup',
+                canShowPassword: true,
+            });
+
+            // one toggle for `password`, one for `passwordConfirmation`
+            expect(screen.getAllByRole('switch', { name: 'password.show' })).toHaveLength(2);
+        });
+
         test('signup fields selection', async () => {
             expect.assertions(3);
             const signupFields = ['email', 'password', 'passwordConfirmation'];
