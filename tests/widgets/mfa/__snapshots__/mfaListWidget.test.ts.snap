@@ -119,13 +119,13 @@ exports[`Snapshot basic 1`] = `
             33612345678
           </div>
           <p
-            class="text-muted-foreground line-clamp-2 text-balance text-sm font-normal leading-normal [&>a:hover]:text-primary [&>a]:underline [&>a]:underline-offset-4"
+            class="m-0 text-muted-foreground line-clamp-2 text-balance text-sm font-normal leading-normal [&>a:hover]:text-primary [&>a]:underline [&>a]:underline-offset-4"
             data-slot="item-description"
           >
             33612345678
           </p>
           <p
-            class="text-muted-foreground line-clamp-2 text-balance text-sm font-normal leading-normal [&>a:hover]:text-primary [&>a]:underline [&>a]:underline-offset-4"
+            class="m-0 text-muted-foreground line-clamp-2 text-balance text-sm font-normal leading-normal [&>a:hover]:text-primary [&>a]:underline [&>a]:underline-offset-4"
             data-slot="item-description"
           >
             <span>
@@ -188,13 +188,13 @@ exports[`Snapshot basic 1`] = `
             identifier
           </div>
           <p
-            class="text-muted-foreground line-clamp-2 text-balance text-sm font-normal leading-normal [&>a:hover]:text-primary [&>a]:underline [&>a]:underline-offset-4"
+            class="m-0 text-muted-foreground line-clamp-2 text-balance text-sm font-normal leading-normal [&>a:hover]:text-primary [&>a]:underline [&>a]:underline-offset-4"
             data-slot="item-description"
           >
             root@reach5.co
           </p>
           <p
-            class="text-muted-foreground line-clamp-2 text-balance text-sm font-normal leading-normal [&>a:hover]:text-primary [&>a]:underline [&>a]:underline-offset-4"
+            class="m-0 text-muted-foreground line-clamp-2 text-balance text-sm font-normal leading-normal [&>a:hover]:text-primary [&>a]:underline [&>a]:underline-offset-4"
             data-slot="item-description"
           >
             <span>

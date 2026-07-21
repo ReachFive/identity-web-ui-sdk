@@ -24,7 +24,7 @@ import { useI18n } from '../../contexts/i18n';
 import { useReachfive } from '../../contexts/reachfive';
 import { useRouting } from '../../contexts/routing';
 import { isAppError, UserError } from '../../helpers/errors';
-import { ProviderId, providers as socialProviders } from '../../providers/providers';
+import { type Provider, ProviderId, providers as socialProviders } from '../../providers/providers';
 
 import type { OnError, OnSuccess } from '../../types';
 
@@ -177,15 +177,35 @@ const IdentityList = ({
                 </Item>
             )}
             {identities.map(({ provider, id, username }) => {
-                const providerInfos = socialProviders[provider as ProviderId];
+                const providerInfos: Provider = socialProviders[provider as ProviderId];
                 return (
-                    <Item variant="outline" key={id} data-testid={`identity-${provider}`}>
-                        <ItemMedia>
-                            <img src={providerInfos.icon} alt="" className="size-4 sm:size-10" />
+                    <Item
+                        variant="outline"
+                        className="flex-nowrap"
+                        key={id}
+                        data-testid={`identity-${provider}`}
+                    >
+                        <ItemMedia
+                            className="size-10 rounded-md"
+                            style={{
+                                backgroundColor:
+                                    providerInfos.btnBackgroundColor ?? providerInfos.color,
+                            }}
+                        >
+                            <img
+                                src={providerInfos.icon}
+                                alt=""
+                                // providers with an explicit btnBackgroundColor ship a
+                                // self-contained icon (e.g. Google); others (e.g. LinkedIn)
+                                // ship a glyph meant to sit inset on their brand color
+                                className={providerInfos.btnBackgroundColor ? 'size-10' : 'size-6'}
+                            />
                         </ItemMedia>
                         <ItemContent>
                             <ItemTitle>{providerInfos.name}</ItemTitle>
-                            <ItemDescription>{username}</ItemDescription>
+                            <ItemDescription className="line-clamp-1 truncate">
+                                {username}
+                            </ItemDescription>
                         </ItemContent>
                         <ItemActions>
                             <Button
