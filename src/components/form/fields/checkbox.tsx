@@ -63,9 +63,17 @@ const CheckboxField = React.forwardRef<
                     {...props}
                 />
                 <FieldContent className="gap-0.5">
-                    <FieldLabel htmlFor={resolvedId} className="items-center gap-0.5">
+                    {/* inline (not flex): the asterisk must flow with the label text like
+                        a trailing word, wrapping together with it, instead of sitting
+                        detached to the side once a long consent label wraps onto multiple lines */}
+                    <FieldLabel htmlFor={resolvedId} className="inline">
                         {i18n(label)}
-                        {required && <Required />}
+                        {required && (
+                            <>
+                                {' '}
+                                <Required />
+                            </>
+                        )}
                     </FieldLabel>
                     {description && <FieldDescription>{description}</FieldDescription>}
                     {errors && <FieldError errors={errors} id={errorId} />}
