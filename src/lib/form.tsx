@@ -568,7 +568,10 @@ function resolveConsentFieldDefinition(
         key: `consents.${consent.key}`, // Consent key should be snake_case
         label: consent.title,
         required: isRequired,
-        defaultChecked: consent.consentType === 'opt-out',
+        // the checkbox's initial state is driven solely by the field's own `defaultChecked`
+        // override (merged in by getFieldDefinition after this); consentType/required must
+        // not influence it — an opt-out consent isn't pre-checked unless explicitly asked to be
+        defaultChecked: false,
         description: consent.description ? (
             <MarkdownContent
                 root={({ children, ...props }) => <span {...props}>{children}</span>}

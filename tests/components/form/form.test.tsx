@@ -1482,7 +1482,7 @@ describe('DOM testing', () => {
             expect(onSubmit).not.toBeCalled();
         });
 
-        test('opt-out consent: is pre-checked by default and not required', () => {
+        test('opt-out consent: not pre-checked by default and not required', () => {
             render(
                 <WidgetContext
                     client={apiClient}
@@ -1497,11 +1497,53 @@ describe('DOM testing', () => {
             );
 
             const checkbox = screen.getByRole('checkbox', { name: 'Opt-out Testing v1' });
-            expect(checkbox).toBeChecked();
+            expect(checkbox).not.toBeChecked();
             expect(checkbox).not.toBeRequired();
         });
 
-        test('opt-out consent: submits with granted: true without user interaction', async () => {
+        test('opt-out consent: not pre-checked when required: true', () => {
+            render(
+                <WidgetContext
+                    client={apiClient}
+                    config={defaultConfig}
+                    defaultMessages={defaultI18n}
+                >
+                    <Form
+                        fields={[{ key: 'consents.optout_testing', required: true }]}
+                        handler={jest.fn<() => Promise<void>>().mockResolvedValue()}
+                    />
+                </WidgetContext>
+            );
+
+            const checkbox = screen.getByRole('checkbox', { name: 'Opt-out Testing v1' });
+            expect(checkbox).not.toBeChecked();
+        });
+
+        test('opt-out consent: pre-checked when defaultChecked: true, regardless of required', () => {
+            render(
+                <WidgetContext
+                    client={apiClient}
+                    config={defaultConfig}
+                    defaultMessages={defaultI18n}
+                >
+                    <Form
+                        fields={[
+                            {
+                                key: 'consents.optout_testing',
+                                defaultChecked: true,
+                                required: false,
+                            },
+                        ]}
+                        handler={jest.fn<() => Promise<void>>().mockResolvedValue()}
+                    />
+                </WidgetContext>
+            );
+
+            const checkbox = screen.getByRole('checkbox', { name: 'Opt-out Testing v1' });
+            expect(checkbox).toBeChecked();
+        });
+
+        test('opt-out consent: submits with granted: false without user interaction', async () => {
             const user = userEvent.setup();
             const onSubmit = jest.fn<() => Promise<void>>().mockResolvedValue();
 
@@ -1522,14 +1564,14 @@ describe('DOM testing', () => {
                     consents: {
                         optout_testing: expect.objectContaining({
                             consentType: 'opt-out',
-                            granted: true,
+                            granted: false,
                         }),
                     },
                 })
             );
         });
 
-        test('opt-out consent: unchecking submits with granted: false', async () => {
+        test('opt-out consent: checking submits with granted: true', async () => {
             const user = userEvent.setup();
             const onSubmit = jest.fn<() => Promise<void>>().mockResolvedValue();
 
@@ -1551,7 +1593,7 @@ describe('DOM testing', () => {
             await waitFor(() =>
                 expect(onSubmit).toBeCalledWith({
                     consents: {
-                        optout_testing: expect.objectContaining({ granted: false }),
+                        optout_testing: expect.objectContaining({ granted: true }),
                     },
                 })
             );
