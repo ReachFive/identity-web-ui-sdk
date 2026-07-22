@@ -136,4 +136,55 @@ describe('DOM testing', () => {
 
         await waitFor(() => expect(onValueChange).toHaveBeenCalledWith('cat'));
     });
+
+    test('optional field shows an empty option that clears the value', async () => {
+        const user = userEvent.setup();
+        const onValueChange = jest.fn();
+
+        render(
+            <WidgetContext config={defaultConfig} defaultMessages={defaultI18n}>
+                <SelectField
+                    label="Pet"
+                    values={options}
+                    value="cat"
+                    required={false}
+                    onValueChange={onValueChange}
+                    showLabels={true}
+                />
+            </WidgetContext>
+        );
+
+        const trigger = screen.getByRole('combobox', { name: 'Pet' });
+        await user.click(trigger);
+
+        const options_ = screen.getAllByRole('option');
+        expect(options_).toHaveLength(3);
+
+        await user.click(options_[0]);
+
+        await waitFor(() => expect(onValueChange).toHaveBeenCalledWith(''));
+    });
+
+    test('required field does not show an empty option', async () => {
+        const user = userEvent.setup();
+        const onValueChange = jest.fn();
+
+        render(
+            <WidgetContext config={defaultConfig} defaultMessages={defaultI18n}>
+                <SelectField
+                    label="Pet"
+                    values={options}
+                    value="cat"
+                    required={true}
+                    onValueChange={onValueChange}
+                    showLabels={true}
+                />
+            </WidgetContext>
+        );
+
+        const trigger = screen.getByRole('combobox', { name: 'Pet' });
+        await user.click(trigger);
+
+        expect(screen.getAllByRole('option')).toHaveLength(2);
+    });
 });

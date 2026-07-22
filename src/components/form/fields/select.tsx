@@ -13,6 +13,10 @@ import {
 import { useI18n } from '@/contexts/i18n';
 import { cn } from '@/lib/utils';
 
+// Radix `Select.Item` rejects an empty string value (it's reserved to represent
+// "no selection" on `Select.Root`), so the empty option uses this sentinel instead.
+const EMPTY_VALUE = '__r5_empty_select_value__';
+
 type SelectProps = React.ComponentPropsWithoutRef<typeof SelectTrigger> & {
     autoComplete?: string | undefined;
     defaultValue?: string;
@@ -69,7 +73,7 @@ const SelectField = React.forwardRef<React.ElementRef<typeof SelectTrigger>, Sel
                     defaultValue={defaultValue}
                     disabled={disabled}
                     name={name}
-                    onValueChange={onValueChange}
+                    onValueChange={v => onValueChange?.(v === EMPTY_VALUE ? '' : v)}
                     required={required}
                     value={value}
                 >
@@ -85,6 +89,7 @@ const SelectField = React.forwardRef<React.ElementRef<typeof SelectTrigger>, Sel
                     </SelectTrigger>
                     <SelectContent>
                         <SelectGroup>
+                            {!required && <SelectItem value={EMPTY_VALUE}>&nbsp;</SelectItem>}
                             {values
                                 .filter(({ value }) => value !== '')
                                 .map(({ value, label }) => (
