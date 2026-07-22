@@ -586,6 +586,37 @@ describe('DOM testing', () => {
             });
         });
 
+        test('optional select field (gender) can be cleared via the empty option without failing enum validation', async () => {
+            const user = userEvent.setup();
+            const onSubmit = jest.fn<() => Promise<void>>().mockResolvedValue();
+
+            render(
+                <WidgetContext
+                    client={apiClient}
+                    config={defaultConfig}
+                    defaultMessages={defaultI18n}
+                >
+                    <Form
+                        fields={[{ key: 'gender', required: false }]}
+                        initialModel={{ gender: 'male' }}
+                        handler={onSubmit}
+                    />
+                </WidgetContext>
+            );
+
+            const trigger = screen.getByRole('combobox', { name: 'gender' });
+            await user.click(trigger);
+
+            const options = screen.getAllByRole('option');
+            expect(options).toHaveLength(4); // empty option + male, female, other
+            await user.click(options[0]);
+
+            await user.click(screen.getByRole('button', { name: 'Submit' }));
+
+            expect(trigger).not.toHaveAccessibleErrorMessage();
+            await waitFor(() => expect(onSubmit).toBeCalledWith({ gender: '' }));
+        });
+
         test('email format validation triggers on invalid email', async () => {
             const user = userEvent.setup();
             const onSubmit = jest.fn<() => Promise<void>>().mockResolvedValue();

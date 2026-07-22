@@ -84,7 +84,12 @@ const FormFieldsRenderer = <
                                     watch,
                                 })
                                 .nullish();
-                            const result = await validate.safeParseAsync(value);
+                            // An empty string means "cleared" for an optional field (e.g. the Select's
+                            // empty option), but only `null`/`undefined` satisfy `.nullish()` — normalize
+                            // so optional fields don't fail validation just for being left blank.
+                            const result = await validate.safeParseAsync(
+                                value === '' ? undefined : value
+                            );
                             if (result.success) return;
                             return result.error.issues[0]?.message;
                         }
