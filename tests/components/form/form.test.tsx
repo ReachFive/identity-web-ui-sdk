@@ -440,6 +440,34 @@ describe('DOM testing', () => {
             );
         });
 
+        test('select field with no initial value does not log a controlled/uncontrolled warning when an option is picked', async () => {
+            const user = userEvent.setup();
+            const consoleWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+            const onSubmit = jest.fn<() => Promise<void>>().mockResolvedValue();
+
+            render(
+                <WidgetContext
+                    client={apiClient}
+                    config={defaultConfig}
+                    defaultMessages={defaultI18n}
+                >
+                    <Form fields={['address.custom_fields.cf_address_select']} handler={onSubmit} />
+                </WidgetContext>
+            );
+
+            const trigger = screen.getByRole('combobox', { name: 'Delivery instructions' });
+            await user.click(trigger);
+            await user.click(screen.getByRole('option', { name: 'Signature required' }));
+
+            const hasControlledWarning = consoleWarn.mock.calls.some(
+                call =>
+                    typeof call[0] === 'string' && call[0].includes('uncontrolled to controlled')
+            );
+            expect(hasControlledWarning).toBe(false);
+
+            consoleWarn.mockRestore();
+        });
+
         test('address custom field not found in config is ignored and logged instead of throwing', () => {
             const consoleError = jest.spyOn(console, 'error').mockImplementation(() => {});
 

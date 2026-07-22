@@ -75,7 +75,7 @@ const SelectField = React.forwardRef<React.ElementRef<typeof SelectTrigger>, Sel
                     name={name}
                     onValueChange={v => onValueChange?.(v === EMPTY_VALUE ? '' : v)}
                     required={required}
-                    value={value}
+                    value={value ?? ''}
                 >
                     <SelectTrigger
                         ref={ref}
