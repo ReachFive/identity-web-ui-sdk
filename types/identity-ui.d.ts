@@ -1,6 +1,6 @@
 /**
- * @reachfive/identity-ui - v2.0.1
- * Compiled Tue, 30 Jun 2026 12:00:34 UTC
+ * @reachfive/identity-ui - v2.0.2
+ * Compiled Fri, 24 Jul 2026 13:44:10 UTC
  *
  * Copyright (c) ReachFive.
  *
@@ -360,12 +360,22 @@ interface ButtonTheme {
     paddingX: number;
     /** Specifies the padding for the y axis. (top and bottom) */
     paddingY: number;
+    /** Specifies the background-color. */
+    background: NonNullable<CSSProperties['color']>;
     /** Specifies the border-color. */
     borderColor: NonNullable<CSSProperties['color']>;
     /** Specifies the border-radius. */
     borderRadius: number;
     /** Specifies the border-width. */
     borderWidth: number;
+    /** Specifies the text color. */
+    color: NonNullable<CSSProperties['color']>;
+    /** Specifies the background color on hover. */
+    hoverBackground: NonNullable<CSSProperties['color']>;
+    /** Specifies the border color on hover. */
+    hoverBorderColor: NonNullable<CSSProperties['color']>;
+    /** Specifies the color on hover. */
+    hoverColor: NonNullable<CSSProperties['color']>;
     /** Function that specifies the box shadow based on the border color. */
     focusBoxShadow: (color?: CSSProperties['color']) => NonNullable<CSSProperties['boxShadow']>;
     /** Specifies the height. */
@@ -690,6 +700,11 @@ interface ForgotPasswordViewProps {
      * @default false
      */
     allowPhoneNumberResetPassword?: boolean;
+    /**
+     * Whether or not to provide the display password in clear text option.
+     * @default false
+     */
+    canShowPassword?: boolean;
     /**
      * Whether or not to display a safe error message on password reset, given an invalid email address.
      * This mode ensures not to leak email addresses registered to the platform.

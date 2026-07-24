@@ -1,4 +1,4 @@
-import { darken, lighten, transparentize } from 'polished';
+import { darken, lighten, mix, transparentize } from 'polished';
 import { CSSProperties } from 'styled-components';
 
 import {
@@ -133,9 +133,14 @@ export const buildTheme = (themeOptions: ThemeOptions = {} as Partial<ThemeOptio
         lineHeight: base.lineHeight,
         paddingX: base.paddingX,
         paddingY: base.paddingY,
+        background: base.primaryColor,
         borderColor: base.borderColor,
         borderRadius: base.borderRadius,
         borderWidth: base.borderWidth,
+        color: '#ffffff',
+        hoverBackground: mix(0.9, base.primaryColor, 'rgba(0, 0, 0, 0)'),
+        hoverColor: '#ffffff',
+        hoverBorderColor: 'rgba(0, 0, 0, 0)',
         ...customButton,
     };
     const socialButton: Omit<SocialButtonTheme, 'focusBoxShadow' | 'height' | 'textVisible'> = {

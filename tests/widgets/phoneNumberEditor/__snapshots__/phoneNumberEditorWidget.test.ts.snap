@@ -45,7 +45,13 @@ exports[`Snapshot phone number editor basic 1`] = `
   --leading: 1.428571429;
   --border-width: 1px;
   --radius: 3px;
+  --button-background-color: #229955;
+  --button-hover-background-color: rgba(34,153,85,0.9);
+  --button-text-color: #ffffff;
+  --button-hover-text-color: #ffffff;
+  --button-font-weight: bold;
   --button-border: #ced4da;
+  --button-hover-border: rgba(0,0,0,0);
   --button-border-width: 1px;
   --button-height: 40px;
   --button-leading: 1.428571429;
@@ -66,6 +72,15 @@ exports[`Snapshot phone number editor basic 1`] = `
   --input-shadow: none;
   --input-text-color: #495057;
   --input-text-size: 14px;
+  --link-color: #229955;
+  --link-hover-color: #145a32;
+  --link-decoration: none;
+  --link-hover-decoration: none;
+  --password-strength-color-0: #dc4e41;
+  --password-strength-color-1: #dc4e41;
+  --password-strength-color-2: #ffc107;
+  --password-strength-color-3: #4ad786;
+  --password-strength-color-4: #229955;
 }
 
 <div>
@@ -121,7 +136,7 @@ exports[`Snapshot phone number editor basic 1`] = `
             />
           </div>
           <button
-            class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[var(--button-radius)] text-[length:var(--button-text-size)] leading-[var(--button-leading)] font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary text-primary-foreground shadow hover:bg-primary/90 h-[var(--button-height)] px-[var(--button-padding-x)] py-[var(--button-padding-y)] w-full"
+            class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[var(--button-radius)] text-[length:var(--button-text-size)] leading-[var(--button-leading)] font-[weight:var(--button-font-weight)] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-[var(--button-background-color)] text-[var(--button-text-color)] border-[length:var(--button-border-width)] border-[var(--button-border)] shadow hover:bg-[var(--button-hover-background-color)] hover:text-[var(--button-hover-text-color)] hover:border-[var(--button-hover-border)] h-[var(--button-height)] px-[var(--button-padding-x)] py-[var(--button-padding-y)] w-full"
             type="submit"
           >
             send

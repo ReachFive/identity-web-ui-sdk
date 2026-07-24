@@ -127,12 +127,22 @@ export interface ButtonTheme {
     paddingX: number;
     /** Specifies the padding for the y axis. (top and bottom) */
     paddingY: number;
+    /** Specifies the background-color. */
+    background: NonNullable<CSSProperties['color']>;
     /** Specifies the border-color. */
     borderColor: NonNullable<CSSProperties['color']>;
     /** Specifies the border-radius. */
     borderRadius: number;
     /** Specifies the border-width. */
     borderWidth: number;
+    /** Specifies the text color. */
+    color: NonNullable<CSSProperties['color']>;
+    /** Specifies the background color on hover. */
+    hoverBackground: NonNullable<CSSProperties['color']>;
+    /** Specifies the border color on hover. */
+    hoverBorderColor: NonNullable<CSSProperties['color']>;
+    /** Specifies the color on hover. */
+    hoverColor: NonNullable<CSSProperties['color']>;
     /** Function that specifies the box shadow based on the border color. */
     focusBoxShadow: (color?: CSSProperties['color']) => NonNullable<CSSProperties['boxShadow']>;
     /** Specifies the height. */
