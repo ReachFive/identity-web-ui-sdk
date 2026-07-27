@@ -113,20 +113,6 @@ const withIdentities = <T extends WithIdentitiesProps = WithIdentitiesProps>(
     return ComponentWithIdentities;
 };
 
-// const SocialIcon = styled.span<{ icon: string }>`
-//     position: absolute;
-//     left: 0;
-//     top: 0;
-//     bottom: 0;
-//     width: ${props => props.theme._blockInnerHeight}px;
-//     box-sizing: border-box;
-//     background-image: url(${props => props.icon});
-//     background-repeat: no-repeat;
-//     background-size: ${props => props.theme._absoluteLineHeight}px
-//         ${props => props.theme._absoluteLineHeight}px;
-//     background-position: center center;
-// `;
-
 interface IdentityListProps {
     identities?: Identity[];
     unlink: Unlink;
@@ -181,7 +167,7 @@ const IdentityList = ({
                 return (
                     <Item
                         variant="outline"
-                        className="flex-nowrap"
+                        className="flex-nowrap gap-2 sm:gap-4 p-2 sm:p-4"
                         key={id}
                         data-testid={`identity-${provider}`}
                     >
@@ -201,7 +187,7 @@ const IdentityList = ({
                                 className={providerInfos.btnBackgroundColor ? 'size-10' : 'size-6'}
                             />
                         </ItemMedia>
-                        <ItemContent>
+                        <ItemContent className="min-w-0">
                             <ItemTitle>{providerInfos.name}</ItemTitle>
                             <ItemDescription className="line-clamp-1 truncate">
                                 {username}
@@ -211,7 +197,7 @@ const IdentityList = ({
                             <Button
                                 size="icon"
                                 variant="ghost"
-                                className="rounded-full hover:bg-destructive hover:text-destructive-foreground"
+                                className="rounded-full hover:bg-destructive hover:text-destructive-foreground size-6 sm:size-[var(--button-height)]"
                                 onClick={() => onRemove(id!)}
                                 aria-label={`${i18n('remove')} ${providerInfos.name}`}
                             >
