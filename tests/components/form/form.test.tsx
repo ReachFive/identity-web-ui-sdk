@@ -1034,6 +1034,112 @@ describe('DOM testing', () => {
             });
         });
 
+        test('AppError: errorDetails field prefixed by the payload wrapper and snake_cased sets field-level error', async () => {
+            const user = userEvent.setup();
+            // as returned by POST /identity/v1/webauthn/signup-options, which nests the profile
+            // under a `profile` property and has no `error_message_key`
+            const appError = {
+                errorId: 'qENRZetnU0',
+                errorDescription: 'Validation failed',
+                error: 'invalid_request',
+                errorDetails: [
+                    {
+                        field: 'profile.phone_number',
+                        message: 'The phone number is invalid',
+                        code: 'invalid' as const,
+                    },
+                ],
+            };
+            const handler = jest.fn<() => Promise<void>>().mockRejectedValue(appError);
+
+            render(
+                <WidgetContext
+                    client={apiClient}
+                    config={defaultConfig}
+                    defaultMessages={defaultI18n}
+                >
+                    <Form fields={[{ key: 'phoneNumber', required: false }]} handler={handler} />
+                </WidgetContext>
+            );
+
+            const phoneInput = screen.getByRole('textbox', { name: 'phoneNumber' });
+            await user.click(screen.getByRole('button', { name: 'Submit' }));
+
+            await waitFor(() => {
+                expect(phoneInput).toHaveAccessibleErrorMessage('The phone number is invalid');
+            });
+            expect(screen.getByText('Validation failed')).toBeInTheDocument();
+        });
+
+        test('AppError: errorDetails field of a nested field sets field-level error', async () => {
+            const user = userEvent.setup();
+            const appError = {
+                errorId: '123',
+                errorDescription: 'Validation failed',
+                error: 'invalid_request',
+                errorDetails: [
+                    {
+                        field: 'profile.addresses.0.postal_code',
+                        message: 'The postal code is invalid',
+                        code: 'invalid' as const,
+                    },
+                ],
+            };
+            const handler = jest.fn<() => Promise<void>>().mockRejectedValue(appError);
+
+            render(
+                <WidgetContext
+                    client={apiClient}
+                    config={defaultConfig}
+                    defaultMessages={defaultI18n}
+                >
+                    <Form fields={['address.postalCode']} handler={handler} />
+                </WidgetContext>
+            );
+
+            const postalCodeInput = screen.getByRole('textbox', { name: 'address.postalCode' });
+            await user.type(postalCodeInput, '7500');
+            await user.click(screen.getByRole('button', { name: 'Submit' }));
+
+            await waitFor(() => {
+                expect(postalCodeInput).toHaveAccessibleErrorMessage('The postal code is invalid');
+            });
+        });
+
+        test('AppError: errorDetails message of an unknown field is appended to the root error', async () => {
+            const user = userEvent.setup();
+            const appError = {
+                errorId: '123',
+                errorDescription: 'Validation failed',
+                error: 'invalid_request',
+                errorDetails: [
+                    {
+                        field: 'profile.unknown_field',
+                        message: 'The field is invalid',
+                        code: 'invalid' as const,
+                    },
+                ],
+            };
+            const handler = jest.fn<() => Promise<void>>().mockRejectedValue(appError);
+
+            render(
+                <WidgetContext
+                    client={apiClient}
+                    config={defaultConfig}
+                    defaultMessages={defaultI18n}
+                >
+                    <Form fields={[{ key: 'givenName', required: false }]} handler={handler} />
+                </WidgetContext>
+            );
+
+            await user.click(screen.getByRole('button', { name: 'Submit' }));
+
+            await waitFor(() => {
+                expect(screen.getByRole('alert')).toHaveTextContent('Validation failed');
+            });
+            expect(screen.getByRole('alert')).toHaveTextContent('The field is invalid');
+        });
+
         test('AppError: errorDetails with unknown field key still sets root error', async () => {
             const user = userEvent.setup();
             const appError = {

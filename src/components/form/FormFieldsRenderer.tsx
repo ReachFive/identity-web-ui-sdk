@@ -21,7 +21,7 @@ import { SelectField } from '@/components/form/fields/select';
 import { useConfig } from '@/contexts/config';
 import { useI18n } from '@/contexts/i18n';
 import { useReachfive } from '@/contexts/reachfive';
-import { type FieldDefinition, type StaticContent } from '@/lib/form';
+import { type FieldDefinition, getFieldPath, type StaticContent } from '@/lib/form';
 
 type FormFieldsRendererProps<
     TFieldValues extends FieldValues = FieldValues,
@@ -57,9 +57,7 @@ const FormFieldsRenderer = <
             );
         }
 
-        const key = fieldDefinition.parent
-            ? `${typeof fieldDefinition.parent === 'string' ? fieldDefinition.parent : fieldDefinition.parent.join('.')}.${fieldDefinition.key}`
-            : fieldDefinition.key;
+        const key = getFieldPath(fieldDefinition);
 
         return (
             <Controller

@@ -3,7 +3,7 @@
  */
 import { describe, expect, jest, test } from '@jest/globals';
 import '@testing-library/jest-dom/jest-globals';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import 'jest-styled-components';
 import { beforeEach } from 'node:test';
@@ -419,11 +419,16 @@ describe('DOM testing', () => {
 
     const updatePassword = jest.fn<Client['updatePassword']>().mockResolvedValue();
 
+    const signupWithWebAuthn = jest
+        .fn<Client['signupWithWebAuthn']>()
+        .mockRejectedValue(new Error('This is a mock.'));
+
     beforeEach(() => {
         getPasswordStrength.mockClear();
         loginWithWebAuthn.mockClear();
         requestPasswordReset.mockClear();
         updatePassword.mockClear();
+        signupWithWebAuthn.mockClear();
     });
 
     const generateComponent = async (
@@ -435,6 +440,7 @@ describe('DOM testing', () => {
             getPasswordStrength,
             loginWithWebAuthn,
             requestPasswordReset,
+            signupWithWebAuthn,
             updatePassword,
         };
         const result = await authWidget(options, {
@@ -843,6 +849,46 @@ describe('DOM testing', () => {
 
             // Back link
             expect(screen.getByRole('link', { name: 'back' })).toBeInTheDocument();
+        });
+
+        test('signup form view with webauthn displays the API validation error on the phone number field', async () => {
+            const user = userEvent.setup();
+            // response of POST /identity/v1/webauthn/signup-options, which reports the invalid field
+            // with the `profile` payload prefix and no `error_message_key`
+            signupWithWebAuthn.mockRejectedValue({
+                errorId: 'qENRZetnU0',
+                errorDescription: 'Validation failed',
+                error: 'invalid_request',
+                errorDetails: [
+                    {
+                        field: 'profile.phone_number',
+                        message: 'The phone number is invalid',
+                        code: 'invalid',
+                    },
+                ],
+            });
+
+            await generateComponent(
+                {
+                    allowWebAuthnSignup: true,
+                    initialScreen: 'signup-with-web-authn',
+                    signupFields: ['email', 'phone_number'],
+                },
+                webauthnConfig
+            );
+
+            await user.type(screen.getByRole('textbox', { name: 'email' }), 'alice@reach5.co');
+
+            const phoneInput = screen.getByRole('textbox', { name: 'phoneNumber' });
+            await user.type(phoneInput, '0612345678');
+
+            await user.click(screen.getByRole('button', { name: 'signup.submitLabel' }));
+
+            await waitFor(() => expect(signupWithWebAuthn).toHaveBeenCalled());
+            await waitFor(() =>
+                expect(phoneInput).toHaveAccessibleErrorMessage('The phone number is invalid')
+            );
+            expect(screen.getByText('Validation failed')).toBeInTheDocument();
         });
     });
 

@@ -365,6 +365,66 @@ export function withoutStaticContent(fields: Exclude<Field, string>[]) {
     return fields.filter((field): field is FieldDefinition => !('staticContent' in field));
 }
 
+/**
+ * Apply the widget level phone number options to the phone number field, leaving any other field untouched.
+ * Options explicitly set on the field definition take precedence.
+ */
+export function withPhoneNumberOptions(
+    field: string | Field,
+    phoneNumberOptions?: PhoneNumberOptions
+): string | Field {
+    if (phoneNumberOptions === undefined) return field;
+    if (typeof field === 'object' && 'staticContent' in field) return field;
+
+    const key = typeof field === 'string' ? field : field.key;
+    if (key !== 'phoneNumber' && key !== 'phone_number') return field;
+
+    const resolvedOptions = {
+        allowInternational: phoneNumberOptions.allowInternational ?? false,
+        defaultCountry: phoneNumberOptions.defaultCountry,
+        phoneNumberOptions,
+    };
+
+    return typeof field === 'string'
+        ? { key: field, type: 'phone' as const, ...resolvedOptions }
+        : { ...resolvedOptions, ...field };
+}
+
+/** The react-hook-form path of a field definition, prefixed by its `parent` when it is a nested field. */
+export function getFieldPath(field: Pick<FieldDefinition, 'key' | 'parent'>): string {
+    const parent = Array.isArray(field.parent) ? field.parent.join('.') : field.parent;
+    return parent ? `${parent}.${field.key}` : field.key;
+}
+
+/**
+ * Resolve the `field` of an API validation error (`error_details[].field`) to the matching form field path.
+ *
+ * API errors reference the request payload path, which differs from the form field paths in two ways:
+ * - the payload nests the profile under a wrapper (`profile.phone_number` for the WebAuthn signup
+ *   endpoint, `data.email` for the signup one) whereas field paths are relative to that wrapper;
+ * - the payload is snake_case whereas field keys are camelCase (`custom_fields.*` and `consents.*`
+ *   keys being the exceptions, they stay snake_case).
+ *
+ * Leading segments are therefore dropped one by one until a known field path matches.
+ *
+ * @returns the matching form field path, or `undefined` when the error refers to no displayed field.
+ */
+export function resolveErrorFieldPath(
+    field: string,
+    fieldDefinitions: (FieldDefinition | StaticContent)[]
+): string | undefined {
+    const fieldPaths = new Set(withoutStaticContent(fieldDefinitions).map(getFieldPath));
+    const segments = field.split('.');
+    for (let i = 0; i < segments.length; i++) {
+        const candidate = segments.slice(i).join('.');
+        // the raw candidate is tested first so that `custom_fields.*` / `consents.*` keys match as-is
+        for (const variant of [candidate, camelCasePath(candidate), snakeCasePath(candidate)]) {
+            if (fieldPaths.has(variant)) return variant;
+        }
+    }
+    return undefined;
+}
+
 function setNestedValue(obj: Record<string, unknown>, path: string, value: unknown): void {
     const segments = path.split('.');
     let current = obj;
@@ -384,9 +444,7 @@ export function getDefaultFieldValues(
     const defaults: Record<string, unknown> = {};
     for (const fd of fieldDefinitions) {
         if ('staticContent' in fd) continue;
-        const path = fd.parent
-            ? `${typeof fd.parent === 'string' ? fd.parent : fd.parent.join('.')}.${fd.key}`
-            : fd.key;
+        const path = getFieldPath(fd);
         if (fd.type === 'checkbox' && 'defaultChecked' in fd) {
             const defaultVal = fd.defaultChecked === true;
             setNestedValue(defaults, path, fd.transform?.output(defaultVal) ?? defaultVal);

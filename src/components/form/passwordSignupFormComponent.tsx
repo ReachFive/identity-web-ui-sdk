@@ -7,7 +7,7 @@ import { CaptchaProvider, WithCaptchaProps, type WithCaptchaToken } from '../../
 import { useReachfive } from '../../contexts/reachfive';
 import { snakeCaseProperties } from '../../helpers/transformObjectProperties';
 import { isEqual, isValued } from '../../helpers/utils';
-import { type Field, type PhoneNumberOptions } from '../../lib/form';
+import { type Field, type PhoneNumberOptions, withPhoneNumberOptions } from '../../lib/form';
 import { extractCaptchaTokenFromData, importGoogleRecaptchaScript } from '../reCaptcha';
 import { Form } from './form';
 import { UserAgreement } from './UserAgreement';
@@ -141,18 +141,7 @@ export const PasswordSignupForm = ({
                 : { canShowPassword, ...field };
         }
 
-        if (phoneNumberOptions !== undefined && (key === 'phoneNumber' || key === 'phone_number')) {
-            const resolvedPhoneNumberOptions = {
-                allowInternational: phoneNumberOptions.allowInternational ?? false,
-                defaultCountry: phoneNumberOptions.defaultCountry,
-                phoneNumberOptions,
-            };
-            return typeof field === 'string'
-                ? { key: field, type: 'phone' as const, ...resolvedPhoneNumberOptions }
-                : { ...resolvedPhoneNumberOptions, ...field };
-        }
-
-        return field;
+        return withPhoneNumberOptions(field, phoneNumberOptions);
     });
 
     const allFields = userAgreement

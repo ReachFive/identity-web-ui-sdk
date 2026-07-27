@@ -16,7 +16,12 @@ interface FieldError {
 }
 
 export function isAppError(err: unknown): err is AppError {
-    return typeof err === 'object' && err !== null && 'errorMessageKey' in err;
+    return (
+        typeof err === 'object' &&
+        err !== null &&
+        'error' in err &&
+        ('errorDescription' in err || 'errorMessageKey' in err || 'errorDetails' in err)
+    );
 }
 
 export class UserError extends Error {

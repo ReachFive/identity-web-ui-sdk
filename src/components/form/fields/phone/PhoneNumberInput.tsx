@@ -63,6 +63,7 @@ export const PhoneNumberInput = React.forwardRef<HTMLInputElement, PhoneNumberIn
         const resolvedId = id ?? generatedId;
 
         const hasError = errors !== undefined && errors.length > 0;
+        const errorId = `${resolvedId}-error`;
 
         return (
             <PhoneNumberInputProvider
@@ -84,6 +85,7 @@ export const PhoneNumberInput = React.forwardRef<HTMLInputElement, PhoneNumberIn
                             placeholder={placeholder ?? (!showLabels ? label : undefined)}
                             required={required}
                             aria-invalid={hasError ? true : undefined}
+                            aria-errormessage={hasError ? errorId : undefined}
                             {...props}
                         />
                     ) : (
@@ -93,11 +95,12 @@ export const PhoneNumberInput = React.forwardRef<HTMLInputElement, PhoneNumberIn
                             placeholder={placeholder ?? (!showLabels ? label : undefined)}
                             required={required}
                             aria-invalid={hasError ? true : undefined}
+                            aria-errormessage={hasError ? errorId : undefined}
                             {...props}
                         />
                     )}
                     {description && <FieldDescription>{description}</FieldDescription>}
-                    {errors && <FieldError errors={errors} />}
+                    {errors && <FieldError errors={errors} id={errorId} />}
                 </Field>
             </PhoneNumberInputProvider>
         );
