@@ -1106,6 +1106,42 @@ describe('DOM testing', () => {
             });
         });
 
+        test('AppError: errorDetails field of a consent sets the error on the consent checkbox', async () => {
+            const user = userEvent.setup();
+            // consent keys stay snake_case in both the payload and the form field path,
+            // only the `data` wrapper has to be dropped to resolve them
+            const appError = {
+                errorId: '123',
+                errorDescription: 'Validation failed',
+                error: 'invalid_request',
+                errorDetails: [
+                    {
+                        field: 'data.consents.optin_testing',
+                        message: 'The consent is required',
+                        code: 'missing' as const,
+                    },
+                ],
+            };
+            const handler = jest.fn<() => Promise<void>>().mockRejectedValue(appError);
+
+            render(
+                <WidgetContext
+                    client={apiClient}
+                    config={defaultConfig}
+                    defaultMessages={defaultI18n}
+                >
+                    <Form fields={['consents.optin_testing']} handler={handler} />
+                </WidgetContext>
+            );
+
+            await user.click(screen.getByRole('button', { name: 'Submit' }));
+
+            const checkbox = screen.getByRole('checkbox', { name: 'Opt-in Testing v1' });
+            await waitFor(() =>
+                expect(checkbox).toHaveAccessibleErrorMessage('validation.required')
+            );
+        });
+
         test('AppError: errorDetails message of an unknown field is appended to the root error', async () => {
             const user = userEvent.setup();
             const appError = {
@@ -1759,6 +1795,101 @@ describe('DOM testing', () => {
                 expect(onSubmit).toBeCalledWith({
                     consents: {
                         optout_testing: expect.objectContaining({ granted: true }),
+                    },
+                })
+            );
+        });
+
+        test('opt-out consent with required: true — submitting without checking shows required error and blocks submission', async () => {
+            const user = userEvent.setup();
+            const onSubmit = jest.fn<() => Promise<void>>().mockResolvedValue();
+
+            render(
+                <WidgetContext
+                    client={apiClient}
+                    config={defaultConfig}
+                    defaultMessages={defaultI18n}
+                >
+                    <Form
+                        fields={[{ key: 'consents.optout_testing', required: true }]}
+                        handler={onSubmit}
+                    />
+                </WidgetContext>
+            );
+
+            await user.click(screen.getByRole('button', { name: 'Submit' }));
+
+            const checkbox = screen.getByRole('checkbox', { name: 'Opt-out Testing v1' });
+            await waitFor(() =>
+                expect(checkbox).toHaveAccessibleErrorMessage('validation.required')
+            );
+            expect(onSubmit).not.toBeCalled();
+        });
+
+        test('opt-out consent with required: true — checking then submitting clears the error and submits', async () => {
+            const user = userEvent.setup();
+            const onSubmit = jest.fn<() => Promise<void>>().mockResolvedValue();
+
+            render(
+                <WidgetContext
+                    client={apiClient}
+                    config={defaultConfig}
+                    defaultMessages={defaultI18n}
+                >
+                    <Form
+                        fields={[{ key: 'consents.optout_testing', required: true }]}
+                        handler={onSubmit}
+                    />
+                </WidgetContext>
+            );
+
+            await user.click(screen.getByRole('checkbox', { name: 'Opt-out Testing v1' }));
+            await user.click(screen.getByRole('button', { name: 'Submit' }));
+
+            await waitFor(() =>
+                expect(onSubmit).toBeCalledWith({
+                    consents: {
+                        optout_testing: expect.objectContaining({
+                            consentType: 'opt-out',
+                            granted: true,
+                        }),
+                    },
+                })
+            );
+        });
+
+        test('archived consent with required: true — cannot be granted, so it never blocks submission', async () => {
+            const user = userEvent.setup();
+            const onSubmit = jest.fn<() => Promise<void>>().mockResolvedValue();
+
+            const configWithArchivedConsent: Config = {
+                ...defaultConfig,
+                consents: defaultConfig.consents?.map(consent =>
+                    consent.key === 'optin_testing'
+                        ? { ...consent, status: 'archived' as const }
+                        : consent
+                ),
+            };
+
+            render(
+                <WidgetContext
+                    client={apiClient}
+                    config={configWithArchivedConsent}
+                    defaultMessages={defaultI18n}
+                >
+                    <Form
+                        fields={[{ key: 'consents.optin_testing', required: true }]}
+                        handler={onSubmit}
+                    />
+                </WidgetContext>
+            );
+
+            await user.click(screen.getByRole('button', { name: 'Submit' }));
+
+            await waitFor(() =>
+                expect(onSubmit).toBeCalledWith({
+                    consents: {
+                        optin_testing: expect.objectContaining({ granted: false }),
                     },
                 })
             );

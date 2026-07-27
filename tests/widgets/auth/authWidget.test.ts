@@ -8,7 +8,12 @@ import userEvent from '@testing-library/user-event';
 import 'jest-styled-components';
 import { beforeEach } from 'node:test';
 
-import type { Client, PasswordStrengthScore } from '@reachfive/identity-core';
+import type {
+    AuthResult,
+    Client,
+    ConsentType,
+    PasswordStrengthScore,
+} from '@reachfive/identity-core';
 
 import { type I18nMessages } from '../../../src/contexts/i18n';
 import { randomString } from '../../../src/helpers/random';
@@ -423,12 +428,15 @@ describe('DOM testing', () => {
         .fn<Client['signupWithWebAuthn']>()
         .mockRejectedValue(new Error('This is a mock.'));
 
+    const signup = jest.fn<Client['signup']>().mockResolvedValue({} as AuthResult);
+
     beforeEach(() => {
         getPasswordStrength.mockClear();
         loginWithWebAuthn.mockClear();
         requestPasswordReset.mockClear();
         updatePassword.mockClear();
         signupWithWebAuthn.mockClear();
+        signup.mockClear();
     });
 
     const generateComponent = async (
@@ -440,6 +448,7 @@ describe('DOM testing', () => {
             getPasswordStrength,
             loginWithWebAuthn,
             requestPasswordReset,
+            signup,
             signupWithWebAuthn,
             updatePassword,
         };
@@ -724,6 +733,69 @@ describe('DOM testing', () => {
             expect(screen.getByLabelText('email')).toBeInTheDocument();
             expect(screen.getByLabelText('password')).toBeInTheDocument();
             expect(screen.getByLabelText('Newsletter optin')).toBeInTheDocument();
+        });
+
+        // CA-6472: submitting with a required consent left unchecked must show an inline error
+        // instead of silently doing nothing.
+        const requiredConsentCases: { consentType: ConsentType; key: string; title: string }[] = [
+            { consentType: 'opt-in', key: 'optin_testing', title: 'Opt-in Testing v1' },
+            { consentType: 'opt-out', key: 'optout_testing', title: 'Opt-out Testing v1' },
+        ];
+
+        requiredConsentCases.forEach(({ consentType, key: consentKey, title: consentTitle }) => {
+            test(`required ${consentType} consent left unchecked blocks signup with an inline error`, async () => {
+                const user = userEvent.setup();
+
+                await generateComponent(
+                    {
+                        initialScreen: 'signup',
+                        signupFields: [
+                            'email',
+                            'password',
+                            { key: `consents.${consentKey}`, required: true },
+                        ],
+                    },
+                    {
+                        consents: [
+                            {
+                                key: consentKey,
+                                consentType,
+                                status: 'active',
+                                title: consentTitle,
+                                description: 'This is just a test',
+                            },
+                        ],
+                        consentsVersions: {
+                            [consentKey]: {
+                                key: consentKey,
+                                versions: [
+                                    {
+                                        versionId: 1,
+                                        title: consentTitle,
+                                        language: 'fr',
+                                        description: 'This is just a test',
+                                    },
+                                ],
+                                consentType,
+                                status: 'active',
+                            },
+                        },
+                    }
+                );
+
+                await user.type(screen.getByLabelText('email'), 'alice@reach5.co');
+                await user.type(screen.getByLabelText('password'), 'Wond3rFu11_Pa55w0rD*$');
+
+                const checkbox = screen.getByRole('checkbox', { name: consentTitle });
+                expect(checkbox).not.toBeChecked();
+
+                await user.click(screen.getByText('signup.submitLabel'));
+
+                await waitFor(() =>
+                    expect(checkbox).toHaveAccessibleErrorMessage('validation.required')
+                );
+                expect(signup).not.toBeCalled();
+            });
         });
     });
 

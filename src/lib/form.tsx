@@ -647,13 +647,14 @@ function resolveConsentFieldDefinition(
                     consentVersion,
                 }) satisfies Omit<UserConsent, 'date'>,
         },
-        // opt-in and double-opt-in require the user to actively check the box; the
-        // transform.output always produces a non-null object so required:true alone can't
-        // catch the unchecked state (granted:false is truthy as an object)
+        // a consent declared required must be actively checked, whatever its type — an opt-out
+        // consent isn't pre-checked either (see `defaultChecked` above), so leaving it out of the
+        // validation would let it be submitted ungranted with no feedback at all. An archived
+        // consent is excluded because it is forced to `granted: false` and could never be granted.
+        // The check has to be spelled out here: transform.output always produces a non-null object
+        // so required:true alone can't catch the unchecked state (granted:false is truthy as an object)
         validation:
-            isRequired &&
-            (consent.consentType === 'opt-in' || consent.consentType === 'double-opt-in') &&
-            !consentCannotBeGranted
+            isRequired && !consentCannotBeGranted
                 ? ({ i18n }) =>
                       z
                           .any()
