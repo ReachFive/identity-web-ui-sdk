@@ -36,6 +36,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Forward the widget-level `phoneNumberOptions` to phone fields resolved from a bare field name
   (passwordless SMS form, `signupFields`, profile editor fields)
 - Phone country selector rendered regardless of `withCountrySelect` / `allowInternational`
+- Apply `phoneNumberOptions` to the MFA credentials phone number field, which ignored
+  `withCountrySelect` / `allowInternational` and never showed the country selector
 - Stop pre-checking opt-out consents by default; the checkbox state now only follows `defaultChecked`
 - Keep the required asterisk inline with the checkbox label text instead of detaching it on wrapped labels
 - Consistent social accounts entry sizing, provider icon backgrounds and responsive identity list

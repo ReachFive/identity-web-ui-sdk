@@ -1120,5 +1120,60 @@ describe('DOM testing', () => {
                 })
             );
         });
+
+        describe('phone number view', () => {
+            const generatePhoneNumberView = async (
+                options: Parameters<typeof authWidget>[0] = {}
+            ) => {
+                await generateComponent(
+                    { initialScreen: 'forgot-password', ...options },
+                    { countryCode: 'FR', sms: true }
+                );
+                await user.click(
+                    screen.getByRole('button', { name: 'forgotPassword.usePhoneNumberButton' })
+                );
+            };
+
+            test('hides country select by default', async () => {
+                expect.assertions(1);
+                await generatePhoneNumberView({ allowPhoneNumberResetPassword: true });
+
+                expect(
+                    screen.queryByRole('button', { name: 'address.country' })
+                ).not.toBeInTheDocument();
+            });
+
+            test('hides country select with phoneNumberOptions.withCountrySelect: false', async () => {
+                expect.assertions(1);
+                await generatePhoneNumberView({
+                    allowPhoneNumberResetPassword: true,
+                    phoneNumberOptions: { withCountrySelect: false },
+                });
+
+                expect(
+                    screen.queryByRole('button', { name: 'address.country' })
+                ).not.toBeInTheDocument();
+            });
+
+            test('shows country select with phoneNumberOptions.withCountrySelect: true', async () => {
+                expect.assertions(1);
+                await generatePhoneNumberView({
+                    allowPhoneNumberResetPassword: true,
+                    phoneNumberOptions: { withCountrySelect: true },
+                });
+
+                expect(screen.getByRole('button', { name: 'address.country' })).toBeInTheDocument();
+            });
+
+            test('shows country select with phoneNumberOptions.allowInternational: true', async () => {
+                expect.assertions(1);
+                await generatePhoneNumberView({
+                    allowPhoneNumberResetPassword: true,
+                    phoneNumberOptions: { allowInternational: true, defaultCountry: 'FR' },
+                });
+
+                expect(screen.getByRole('button', { name: 'address.country' })).toBeInTheDocument();
+            });
+        });
     });
 });
