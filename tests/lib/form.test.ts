@@ -70,24 +70,41 @@ describe('getFieldDefinition("identifier")', () => {
         expect(identifierField(definition, buildConfig({ loginTypeAllowed }))?.type).toBe(expected);
     });
 
-    describe('phone number validation', () => {
-        it.each([
-            '+33612345678', // international
-            '0612345678', // national, in the resolved default country
-            'user@example.com',
-            'john.doe+2024@example.com', // its digits must not be read as the number '+2024'
-            'jdoe', // a custom identifier is neither an email nor a phone number
-            'jdoe2024', // nor is one that contains digits ('+332024')
-        ])('accepts %p', async value => {
-            await expect(validate(value)).resolves.toEqual([]);
-        });
+    it.each([
+        '+33612345678', // international phone number
+        '0612345678', // national phone number, in the resolved default country
+        'user@example.com',
+        'john.doe+2024@example.com', // a plus-addressed email is not the number '+2024'
+        'jdoe', // a custom identifier is neither an email nor a phone number
+        'jdoe2024', // nor is one that contains digits ('+332024')
+    ])('accepts %p', async value => {
+        await expect(validate(value)).resolves.toEqual([]);
+    });
 
+    describe('phone number validation', () => {
         it.each(['06 12', '12345'])('rejects %p', async value => {
             await expect(validate(value)).resolves.toContain('validation.phone');
         });
 
-        it('does not check anything when withPhoneNumber is false', async () => {
+        it('is skipped when withPhoneNumber is false', async () => {
             await expect(validate('12345', { withPhoneNumber: false })).resolves.toEqual([]);
+        });
+    });
+
+    describe('email validation', () => {
+        // any value holding an `@` is meant to be an email: neither a phone number nor a custom
+        // identifier contains one
+        it.each(['user@', '@example.com', 'foo@bar', 'user name@example.com'])(
+            'rejects %p',
+            async value => {
+                await expect(validate(value)).resolves.toContain('validation.email');
+            }
+        );
+
+        it('is not skipped when withPhoneNumber is false', async () => {
+            await expect(validate('foo@bar', { withPhoneNumber: false })).resolves.toContain(
+                'validation.email'
+            );
         });
     });
 

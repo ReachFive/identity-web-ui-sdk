@@ -200,19 +200,32 @@ const predefinedFields: Record<
             autoComplete: 'username webauthn',
             defaultCountry: country,
             validation: ({ i18n }) => {
+                const email = z.email();
+                // an identifier is an email, a phone number or a custom identifier (see
+                // `specializeIdentifier`): each shape is only held to its own rules, and a value
+                // matching none of them is a custom identifier, which has no format to check.
                 return z.string(i18n('validation.identifier')).superRefine((value, ctx) => {
+                    // no phone number nor custom identifier contains an `@`, so such a value is
+                    // meant to be an email and is reported as a malformed one when it isn't
+                    if (value.includes('@')) {
+                        if (!email.safeParse(value).success) {
+                            ctx.addIssue({
+                                code: 'custom',
+                                message: i18n('validation.email'),
+                            });
+                        }
+                        return;
+                    }
+
                     if (!withPhoneNumber) return;
+
                     // `extract: false` parses the whole input as a phone number instead of looking
-                    // for one inside it. Without it the digits of an email or of a username
-                    // (`john.doe+2024@example.com` → `+2024`, `jdoe2024` → `+332024`) are read as
-                    // an impossible phone number and the value is wrongly rejected.
+                    // for one inside it. Without it the digits of a custom identifier are read as
+                    // an impossible phone number (`jdoe2024` → `+332024`) and wrongly rejected.
                     const phoneNumber = parsePhoneNumberFromString(value, {
                         defaultCountry: country,
                         extract: false,
                     });
-                    // an identifier may also be an email or a custom identifier (see
-                    // `specializeIdentifier`), so only a value that does parse as a phone number
-                    // is held to phone number rules.
                     if (phoneNumber && false === phoneNumber.isPossible()) {
                         ctx.addIssue({
                             code: 'custom',
