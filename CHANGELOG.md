@@ -9,6 +9,16 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [2.0.2] - 2026-06-30
 
+### Added
+
+- Theme options for the button (`background`, `color`, `hoverBackground`, `hoverColor`, `hoverBorderColor`,
+  `fontWeight`), links (`color`, `hoverColor`, `decoration`, `hoverDecoration`) and the password strength
+  indicator colors, now exposed as CSS variables inside the widget
+
+### Changed
+
+- Publish an npm prerelease automatically for release pull requests
+
 ### Fixed
 
 - Filter empty values from select custom fields
@@ -22,6 +32,19 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Strip `defaultValue` from field props to avoid controlled/uncontrolled input warning
 - Restore Tailwind reset styles for `hr`, links, and text elements
 - Fix inverted password policy character checks blocking valid passwords on submit
+- Propagate `canShowPassword` to every password field (forgot password, password editor, signup fields)
+- Forward the widget-level `phoneNumberOptions` to phone fields resolved from a bare field name
+  (passwordless SMS form, `signupFields`, profile editor fields)
+- Phone country selector rendered regardless of `withCountrySelect` / `allowInternational`
+- Stop pre-checking opt-out consents by default; the checkbox state now only follows `defaultChecked`
+- Keep the required asterisk inline with the checkbox label text instead of detaching it on wrapped labels
+- Consistent social accounts entry sizing, provider icon backgrounds and responsive identity list
+- Show an empty option on optional select fields so a selection can be cleared again
+- Normalize an empty string to `undefined` before Zod validation so cleared optional fields pass validation
+- Keep `Select` controlled from the first render to avoid the Radix controlled/uncontrolled warning
+- Surface API field errors on the matching form fields instead of only in the global error message
+- Validate required opt-out consents on submit
+- Validate the email and phone number shapes of the `identifier` predefined field
 
 ## [2.0.1] - 2026-06-30
 
