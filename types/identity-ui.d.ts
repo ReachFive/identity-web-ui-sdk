@@ -1,6 +1,6 @@
 /**
  * @reachfive/identity-ui - v2.0.2
- * Compiled Fri, 24 Jul 2026 13:44:10 UTC
+ * Compiled Tue, 28 Jul 2026 12:46:05 UTC
  *
  * Copyright (c) ReachFive.
  *
@@ -14,7 +14,7 @@ import { ResourceKey, TFunction } from 'i18next';
 import { StepUpPasswordlessParams as StepUpPasswordlessParams$1 } from '@reachfive/identity-core/es/main/oAuthClient';
 import { WidgetDisplayMode } from '@captchafox/types';
 import { FieldValues, UseFormWatch } from 'react-hook-form';
-import { CountryCode } from 'libphonenumber-js';
+import { CountryCode } from 'libphonenumber-js/min';
 import z from 'zod';
 
 type I18nMessages = Record<string, ResourceKey>;
@@ -519,6 +519,7 @@ type FieldDefinition<TFieldType extends FieldType = FieldType, TFieldValues exte
     yearRange?: number;
 } | {
     type: 'identifier';
+    defaultCountry?: CountryCode;
     isWebAuthnLogin?: boolean;
     withPhoneNumber?: boolean;
 } | {
@@ -1047,6 +1048,10 @@ interface SignupWithWebAuthnViewProps {
     /**  */
     beforeSignup?: <T>(param: T) => T;
     /**
+     * Object that lets you set display options for the phone number field.
+     */
+    phoneNumberOptions?: PhoneNumberOptions;
+    /**
      * The URL sent in the email to which the user is redirected.
      * This URL must be whitelisted in the `Allowed Callback URLs` field of your ReachFive client settings.
      */
@@ -1091,7 +1096,7 @@ interface SignupWithWebAuthnViewProps {
      */
     onError?: OnError;
 }
-declare const SignupWithWebAuthnView: ({ auth, beforeSignup, redirectUrl, returnToAfterEmailConfirmation, signupFields, showLabels, userAgreement, onError, onSuccess, }: SignupWithWebAuthnViewProps) => React.JSX.Element;
+declare const SignupWithWebAuthnView: ({ auth, beforeSignup, phoneNumberOptions, redirectUrl, returnToAfterEmailConfirmation, signupFields, showLabels, userAgreement, onError, onSuccess, }: SignupWithWebAuthnViewProps) => React.JSX.Element;
 
 interface SignupViewProps extends SignupWithPasswordViewProps, SignupWithWebAuthnViewProps {
     /**

@@ -2,7 +2,7 @@ import React from 'react';
 import { FieldValues, UseFormWatch } from 'react-hook-form';
 
 import { TFunction } from 'i18next';
-import { CountryCode } from 'libphonenumber-js';
+import { CountryCode, isSupportedCountry, parsePhoneNumberFromString } from 'libphonenumber-js/min';
 import z from 'zod';
 
 import { Client, UserConsent } from '@reachfive/identity-core';
@@ -105,6 +105,7 @@ export type FieldDefinition<
           }
         | {
               type: 'identifier';
+              defaultCountry?: CountryCode;
               isWebAuthnLogin?: boolean;
               withPhoneNumber?: boolean;
           }
@@ -125,6 +126,15 @@ export type FieldDefinition<
               >;
           }
     );
+
+/**
+ * The country a national phone number is interpreted against, resolved the same way
+ * `PhoneNumberInput` does it, so that every phone-aware field agrees on the default.
+ */
+function resolveCountry(defaultCountry: CountryCode | undefined, config: Config): CountryCode {
+    const country = defaultCountry ?? config.locale ?? config.countryCode ?? config.language;
+    return isSupportedCountry(country) ? country : 'FR';
+}
 
 const predefinedFields: Record<
     string,
@@ -162,10 +172,11 @@ const predefinedFields: Record<
     }),
     identifier: ({ config, definition }) => {
         const { loginTypeAllowed } = config;
-        const { isWebAuthnLogin = false } = definition as FieldDefinition<
-            'identifier',
-            FieldValues
-        >;
+        const {
+            defaultCountry,
+            isWebAuthnLogin = false,
+            withPhoneNumber,
+        } = definition as FieldDefinition<'identifier', FieldValues>;
 
         // fallback to email if phoneNumber is not allowed
         if (!isWebAuthnLogin && loginTypeAllowed.email && !loginTypeAllowed.phoneNumber) {
@@ -176,12 +187,40 @@ const predefinedFields: Record<
             return predefinedFields.phoneNumber({ config, definition });
         }
 
+        // the country must be resolved here rather than left to the validation only: it is also
+        // handed over to the `IdentifierField` component, which formats the input as the user
+        // types. Both must agree on the country, otherwise a national number the component happily
+        // formats could be rejected by the validation (or the other way around).
+        const country = resolveCountry(defaultCountry, config);
+
         return {
             key: 'identifier',
             label: 'identifier',
             type: 'identifier',
             autoComplete: 'username webauthn',
-            validation: ({ i18n }) => z.string(i18n('validation.identifier')),
+            defaultCountry: country,
+            validation: ({ i18n }) => {
+                return z.string(i18n('validation.identifier')).superRefine((value, ctx) => {
+                    if (!withPhoneNumber) return;
+                    // `extract: false` parses the whole input as a phone number instead of looking
+                    // for one inside it. Without it the digits of an email or of a username
+                    // (`john.doe+2024@example.com` → `+2024`, `jdoe2024` → `+332024`) are read as
+                    // an impossible phone number and the value is wrongly rejected.
+                    const phoneNumber = parsePhoneNumberFromString(value, {
+                        defaultCountry: country,
+                        extract: false,
+                    });
+                    // an identifier may also be an email or a custom identifier (see
+                    // `specializeIdentifier`), so only a value that does parse as a phone number
+                    // is held to phone number rules.
+                    if (phoneNumber && false === phoneNumber.isPossible()) {
+                        ctx.addIssue({
+                            code: 'custom',
+                            message: i18n('validation.phone'),
+                        });
+                    }
+                });
+            },
         };
     },
     phoneNumber: () => ({
