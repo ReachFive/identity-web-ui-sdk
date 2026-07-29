@@ -385,6 +385,73 @@ describe('DOM testing', () => {
                 expect(onError).not.toBeCalled();
             });
 
+            // the field validation only holds a phone number to `isPossible()`, so the handler must
+            // route on the same criterion: a strict `isValid()` check would let the field accept a
+            // number it then refuses, surfacing a `validation.identifier` error in `onError` with
+            // nothing on the field
+            test('a possible but not strictly valid phone number starts the sms flow', async () => {
+                expect.assertions(2);
+
+                const user = userEvent.setup();
+
+                startPasswordless.mockResolvedValue({ challengeId: 'azerty' });
+
+                await generateComponent({ authType: ['magic_link', 'sms'] });
+
+                // `222` is an unassigned NANP area code: the number is possible but not valid
+                const identifierInput = screen.getByRole('textbox', { name: 'identifier' });
+                await user.type(identifierInput, '+12223333333');
+                await user.click(screen.getByRole('button', { name: 'send' }));
+
+                expect(startPasswordless).toBeCalledWith(
+                    expect.objectContaining({
+                        authType: 'sms',
+                        phoneNumber: '+12223333333',
+                    }),
+                    undefined // auth
+                );
+                expect(onError).not.toBeCalled();
+            });
+
+            // the phone number is submitted under `phoneNumber`, so the API names its validation
+            // error `phone_number` while the form only holds an `identifier` field
+            test('an api validation error on the submitted shape is attached to the identifier field', async () => {
+                expect.assertions(2);
+
+                const user = userEvent.setup();
+
+                startPasswordless.mockRejectedValue({
+                    errorId: 'tjj2o9z6sQ',
+                    errorDescription: 'Invalid form',
+                    error: 'invalid_request',
+                    errorUserMsg: 'Invalid form',
+                    errorMessageKey: 'error.invalidForm',
+                    errorDetails: [
+                        {
+                            field: 'phone_number',
+                            message: 'The phone number is invalid',
+                            code: 'invalid',
+                        },
+                    ],
+                });
+
+                await generateComponent({ authType: ['magic_link', 'sms'] });
+
+                const identifierInput = screen.getByRole('textbox', { name: 'identifier' });
+                await user.type(identifierInput, '+12223333333');
+                await user.click(screen.getByRole('button', { name: 'send' }));
+
+                expect(identifierInput).toHaveAccessibleErrorMessage('The phone number is invalid');
+                // the caller still receives the api error untouched
+                expect(onError).toBeCalledWith(
+                    expect.objectContaining({
+                        errorDetails: [
+                            expect.objectContaining({ field: 'phone_number', code: 'invalid' }),
+                        ],
+                    })
+                );
+            });
+
             test('a malformed email is rejected by the field validation', async () => {
                 expect.assertions(2);
 
@@ -525,6 +592,24 @@ describe('DOM testing', () => {
                 await user.click(screen.getByRole('button', { name: 'send' }));
 
                 expect(identifierInput).not.toHaveAccessibleErrorMessage();
+                expect(startPasswordless).not.toBeCalled();
+            });
+
+            // passwordless only serves an email or a phone number: any other shape the field lets
+            // through has no flow to start and is reported to the caller
+            test('a custom identifier is rejected by the handler', async () => {
+                expect.assertions(2);
+
+                const user = userEvent.setup();
+
+                await generateComponent({ authType: ['magic_link', 'sms'] });
+
+                await user.type(screen.getByRole('textbox', { name: 'identifier' }), 'jdoe2024');
+                await user.click(screen.getByRole('button', { name: 'send' }));
+
+                expect(onError).toBeCalledWith(
+                    expect.objectContaining({ message: 'validation.identifier' })
+                );
                 expect(startPasswordless).not.toBeCalled();
             });
         });

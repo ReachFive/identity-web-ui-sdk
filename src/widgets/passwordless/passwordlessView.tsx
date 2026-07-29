@@ -1,8 +1,5 @@
 import React, { useLayoutEffect } from 'react';
 
-import { isValidPhoneNumber } from 'libphonenumber-js';
-import z from 'zod';
-
 import { AuthOptions, SingleFactorPasswordlessParams } from '@reachfive/identity-core';
 
 import { CaptchaProvider, WithCaptchaProps, type WithCaptchaToken } from '@/components/captcha';
@@ -13,6 +10,7 @@ import { importGoogleRecaptchaScript } from '@/components/reCaptcha';
 import { useI18n } from '@/contexts/i18n';
 import { useReachfive } from '@/contexts/reachfive';
 import { useRouting } from '@/contexts/routing';
+import { specializeIdentifier } from '@/helpers/utils';
 import { PhoneNumberOptions } from '@/lib/form';
 
 import { VerificationCodeViewState } from './verificationCodeView';
@@ -135,14 +133,19 @@ export const PasswordlessView = ({
             return sendSms({ phoneNumber, ...rest });
         }
 
+        // the email / phone number / custom identifier decision is shared with the login widgets so
+        // that every widget reads an identifier the same way, and yields a value normalized for the
+        // API rather than the raw input
         const { identifier, ...rest } = data;
-        if (identifier && isValidPhoneNumber(identifier)) {
-            await sendSms({ phoneNumber: identifier, ...rest });
-        } else if (identifier && z.email().safeParse(identifier).success) {
-            await sendMagicLink({ email: identifier, ...rest });
-        } else {
-            throw new Error(i18n('validation.identifier'));
+        const specialized = specializeIdentifier(identifier);
+        if ('email' in specialized) {
+            return sendMagicLink({ email: specialized.email, ...rest });
         }
+        if ('phoneNumber' in specialized) {
+            return sendSms({ phoneNumber: specialized.phoneNumber, ...rest });
+        }
+        // a custom identifier has no passwordless flow to start
+        throw new Error(i18n('validation.identifier'));
     };
 
     const authTypes = [

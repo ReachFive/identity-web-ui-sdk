@@ -123,19 +123,25 @@ function Form<TFieldValues extends FieldValues = FieldValues, R = void>({
                 const unmappedMessages: string[] = [];
 
                 error.errorDetails?.forEach(errorDetail => {
-                    const fieldPath = errorDetail.field
+                    const resolved = errorDetail.field
                         ? resolveErrorFieldPath(errorDetail.field, fieldDefinitions)
                         : undefined;
+
+                    // a field the error only reaches through an alias holds another shape than the
+                    // one the API named, so its own message would describe the wrong thing: the
+                    // message stays named after the payload key, as it is when it matches no field
+                    const messageKey =
+                        resolved && !resolved.aliased ? resolved.path : errorDetail.field;
 
                     const message =
                         errorDetail.code === 'missing'
                             ? i18n('validation.required')
-                            : i18n(`validation.${fieldPath ?? errorDetail.field}`, {
+                            : i18n(`validation.${messageKey}`, {
                                   defaultValue: errorDetail.message,
                               });
 
-                    if (fieldPath) {
-                        setError(fieldPath as FieldPath<TFieldValues>, { message });
+                    if (resolved) {
+                        setError(resolved.path as FieldPath<TFieldValues>, { message });
                     } else {
                         unmappedMessages.push(message);
                     }

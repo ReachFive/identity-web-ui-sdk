@@ -10,6 +10,7 @@ import {
     intersection,
     isEmpty,
     isEqual,
+    specializeIdentifier,
     specializeIdentifierData,
     snakeCase,
 } from '../../src/helpers/utils';
@@ -130,6 +131,56 @@ describe('utils', () => {
             jest.runAllTimers();
 
             expect(func).toBeCalledTimes(2);
+        });
+    });
+
+    describe('specializeIdentifier', () => {
+        test('should specialize an email', () => {
+            expect(specializeIdentifier('bob@mail.com')).toEqual({ email: 'bob@mail.com' });
+        });
+
+        test('should specialize a phone number', () => {
+            expect(specializeIdentifier('+33612345678')).toEqual({ phoneNumber: '+33612345678' });
+        });
+
+        // the caller forwards the specialized value to the API, so the number must be handed over
+        // free of the separators a formatted input may carry
+        test('should strip the whitespaces of a phone number', () => {
+            expect(specializeIdentifier('+33 6 12 34 56 78')).toEqual({
+                phoneNumber: '+33612345678',
+            });
+        });
+
+        // a number is only held to `isPossible()`: whether it is actually assigned is the API's
+        // call, not the SDK's (`222` is an unassigned NANP area code)
+        test('should specialize a possible but not strictly valid phone number', () => {
+            expect(specializeIdentifier('+12223333333')).toEqual({ phoneNumber: '+12223333333' });
+        });
+
+        test('should specialize anything else as a custom identifier', () => {
+            expect(specializeIdentifier('jdoe2024')).toEqual({ customIdentifier: 'jdoe2024' });
+        });
+
+        // a malformed email is neither an email nor a phone number: it falls back to a custom
+        // identifier rather than being submitted as an email the API would refuse
+        test('should specialize a malformed email as a custom identifier', () => {
+            expect(specializeIdentifier('bob@@mail.com')).toEqual({
+                customIdentifier: 'bob@@mail.com',
+            });
+        });
+
+        // the whole value is read as an email, not just a part of it
+        test('should specialize an email surrounded by other characters as a custom identifier', () => {
+            expect(specializeIdentifier('mailto: bob@mail.com')).toEqual({
+                customIdentifier: 'mailto: bob@mail.com',
+            });
+        });
+
+        // an email is looked for first: a value carrying an `@` is never a phone number
+        test('should specialize an email holding digits as an email', () => {
+            expect(specializeIdentifier('+33612345678@mail.com')).toEqual({
+                email: '+33612345678@mail.com',
+            });
         });
     });
 

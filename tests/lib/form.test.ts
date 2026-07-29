@@ -5,7 +5,7 @@ import type { TFunction } from 'i18next';
 
 import type { Client } from '@reachfive/identity-core';
 
-import { getFieldDefinition, type FieldDefinition } from '@/lib/form';
+import { getFieldDefinition, resolveErrorFieldPath, type FieldDefinition } from '@/lib/form';
 
 import type { Config, Optional } from '@/types';
 
@@ -188,5 +188,59 @@ describe('getFieldDefinition("identifier")', () => {
 
             await expect(validate('(213) 373-4253', {}, config)).resolves.toEqual([]);
         });
+    });
+});
+
+describe('resolveErrorFieldPath', () => {
+    const field = (key: string) => ({ key, type: 'string' }) as FieldDefinition;
+    const identifier = () => {
+        const definition = identifierField();
+        if (!definition) throw new Error('expected an identifier definition');
+        return definition;
+    };
+
+    it('resolves a field to its own path', () => {
+        expect(resolveErrorFieldPath('email', [field('email')])).toEqual({
+            path: 'email',
+            aliased: false,
+        });
+    });
+
+    it('resolves a payload path to the field it points at', () => {
+        expect(resolveErrorFieldPath('profile.phone_number', [field('phoneNumber')])).toEqual({
+            path: 'phoneNumber',
+            aliased: false,
+        });
+    });
+
+    // the `identifier` field is submitted as the shape it resolves to, so the API names its errors
+    // after that shape
+    it.each(['email', 'phone_number', 'custom_identifier'])(
+        'resolves the payload key %s to the identifier field which stands for it',
+        errorField => {
+            expect(resolveErrorFieldPath(errorField, [identifier()])).toEqual({
+                path: 'identifier',
+                aliased: true,
+            });
+        }
+    );
+
+    it('resolves a wrapped payload key to the field which stands for it', () => {
+        expect(resolveErrorFieldPath('data.phone_number', [identifier()])).toEqual({
+            path: 'identifier',
+            aliased: true,
+        });
+    });
+
+    // an error naming a displayed field belongs to it, not to a field which merely stands for the key
+    it('prefers a displayed field over a field which stands for the payload key', () => {
+        expect(resolveErrorFieldPath('email', [identifier(), field('email')])).toEqual({
+            path: 'email',
+            aliased: false,
+        });
+    });
+
+    it('resolves nothing when the error refers to no displayed field', () => {
+        expect(resolveErrorFieldPath('phone_number', [field('email')])).toBeUndefined();
     });
 });

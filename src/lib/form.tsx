@@ -62,6 +62,14 @@ type BaseFieldDefinition<
     autoComplete?: AutoFill;
     defaultValue?: string;
     description?: React.ReactNode;
+    /**
+     * The API payload field names this form field stands for, when the value it holds is submitted
+     * under another key: the generic `identifier` field is sent as `email` / `phone_number` /
+     * `custom_identifier` (see `specializeIdentifier`), so an API validation error naming one of
+     * them belongs to it. Declared in the API's own casing.
+     * @see resolveErrorFieldPath
+     */
+    errorFields?: string[];
     label?: string;
     placeholder?: string;
     required?: boolean;
@@ -210,6 +218,9 @@ const predefinedFields: Record<
             label: 'identifier',
             type: 'identifier',
             autoComplete: 'username webauthn',
+            // the field is submitted as the shape it resolves to, so an API validation error names
+            // that shape rather than the field
+            errorFields: ['email', 'phone_number', 'custom_identifier'],
             defaultCountry: country,
             // carried on the definition so `IdentifierField` formats the input the same way the
             // validation below reads it
@@ -493,19 +504,38 @@ export function getFieldPath(field: Pick<FieldDefinition, 'key' | 'parent'>): st
  *
  * Leading segments are therefore dropped one by one until a known field path matches.
  *
+ * A field may also stand for payload keys of its own (see `errorFields`), which is how an error on
+ * `email` or `phone_number` reaches the generic `identifier` field. Such a match is reported as
+ * `aliased` so that the caller keeps naming the error after the payload key rather than after the
+ * form field, whose own message describes something else.
+ *
  * @returns the matching form field path, or `undefined` when the error refers to no displayed field.
  */
 export function resolveErrorFieldPath(
     field: string,
     fieldDefinitions: (FieldDefinition | StaticContent)[]
-): string | undefined {
-    const fieldPaths = new Set(withoutStaticContent(fieldDefinitions).map(getFieldPath));
+): { path: string; aliased: boolean } | undefined {
+    const definitions = withoutStaticContent(fieldDefinitions);
+    const fieldPaths = new Set(definitions.map(getFieldPath));
+    const aliases = new Map(
+        definitions.flatMap(definition =>
+            (definition.errorFields ?? []).map(
+                errorField => [errorField, getFieldPath(definition)] as const
+            )
+        )
+    );
     const segments = field.split('.');
     for (let i = 0; i < segments.length; i++) {
         const candidate = segments.slice(i).join('.');
         // the raw candidate is tested first so that `custom_fields.*` / `consents.*` keys match as-is
-        for (const variant of [candidate, camelCasePath(candidate), snakeCasePath(candidate)]) {
-            if (fieldPaths.has(variant)) return variant;
+        const variants = [candidate, camelCasePath(candidate), snakeCasePath(candidate)];
+        // a displayed field always wins over a field which merely stands for the payload key
+        for (const variant of variants) {
+            if (fieldPaths.has(variant)) return { path: variant, aliased: false };
+        }
+        for (const variant of variants) {
+            const path = aliases.get(variant);
+            if (path) return { path, aliased: true };
         }
     }
     return undefined;

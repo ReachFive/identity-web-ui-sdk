@@ -1071,6 +1071,82 @@ describe('DOM testing', () => {
             expect(screen.getByText('Validation failed')).toBeInTheDocument();
         });
 
+        // the `identifier` field is submitted as the shape it resolves to, so the API names its
+        // validation errors after that shape and they must still reach the field which holds it
+        test.each([
+            ['phone_number', 'The phone number is invalid'],
+            ['email', 'The email is invalid'],
+            ['custom_identifier', 'The custom identifier is invalid'],
+        ])(
+            'AppError: errorDetails field %s sets a field-level error on the identifier field',
+            async (field, message) => {
+                const user = userEvent.setup();
+                const appError = {
+                    errorId: 'tjj2o9z6sQ',
+                    errorDescription: 'Invalid form',
+                    error: 'invalid_request',
+                    errorUserMsg: 'Invalid form',
+                    errorMessageKey: 'error.invalidForm',
+                    errorDetails: [{ field, message, code: 'invalid' as const }],
+                };
+                const handler = jest.fn<() => Promise<void>>().mockRejectedValue(appError);
+
+                render(
+                    <WidgetContext
+                        client={apiClient}
+                        config={defaultConfig}
+                        defaultMessages={defaultI18n}
+                    >
+                        <Form fields={['identifier']} handler={handler} />
+                    </WidgetContext>
+                );
+
+                const identifierInput = screen.getByRole('textbox', { name: 'identifier' });
+                await user.type(identifierInput, 'alice@reach5.co');
+                await user.click(screen.getByRole('button', { name: 'Submit' }));
+
+                // the message is named after the payload key, not after the field it is attached to,
+                // whose own `validation.identifier` message describes the expected input instead
+                await waitFor(() => {
+                    expect(identifierInput).toHaveAccessibleErrorMessage(message);
+                });
+            }
+        );
+
+        test('AppError: errorDetails field of a displayed field takes precedence over an alias', async () => {
+            const user = userEvent.setup();
+            const appError = {
+                errorId: '123',
+                errorDescription: 'Invalid form',
+                error: 'invalid_request',
+                errorDetails: [
+                    { field: 'email', message: 'The email is invalid', code: 'invalid' as const },
+                ],
+            };
+            const handler = jest.fn<() => Promise<void>>().mockRejectedValue(appError);
+
+            render(
+                <WidgetContext
+                    client={apiClient}
+                    config={defaultConfig}
+                    defaultMessages={defaultI18n}
+                >
+                    <Form fields={['email', 'identifier']} handler={handler} />
+                </WidgetContext>
+            );
+
+            const emailInput = screen.getByRole('textbox', { name: 'email' });
+            const identifierInput = screen.getByRole('textbox', { name: 'identifier' });
+            await user.type(emailInput, 'alice@reach5.co');
+            await user.type(identifierInput, 'alice@reach5.co');
+            await user.click(screen.getByRole('button', { name: 'Submit' }));
+
+            await waitFor(() => {
+                expect(emailInput).toHaveAccessibleErrorMessage('The email is invalid');
+            });
+            expect(identifierInput).not.toHaveAccessibleErrorMessage();
+        });
+
         test('AppError: errorDetails field of a nested field sets field-level error', async () => {
             const user = userEvent.setup();
             const appError = {
