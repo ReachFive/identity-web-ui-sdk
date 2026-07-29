@@ -18,6 +18,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Changed
 
 - Publish an npm prerelease automatically for release pull requests
+- **`loginTypeAllowed` is now enforced for every identifier shape.** An email or a phone number that the
+  tenant does not allow as a login type is refused by the `identifier` field instead of being submitted:
+  the field narrows to the single allowed shape when only one of them is allowed, and rejects the other
+  shapes when neither is. This is a behaviour change for the WebAuthn login form, which previously opted
+  out of the restriction and accepted either shape whatever the tenant allowed — a credential enrolled
+  against a phone number can no longer be used in a tenant that forbids phone number login.
 
 ### Fixed
 
@@ -47,6 +53,21 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Surface API field errors on the matching form fields instead of only in the global error message
 - Validate required opt-out consents on submit
 - Validate the email and phone number shapes of the `identifier` predefined field
+- Validate the phone number shape of the passwordless `identifier` field when several `authType` values
+  are configured; a malformed number raised no field error and only produced a generic one after submitting
+- Derive the `identifier` field's phone number formatting from `loginTypeAllowed.phoneNumber` instead of
+  requiring every call site to pass `withPhoneNumber`, which silently disabled it when omitted
+- Accept the narrowed `email` / `phoneNumber` field in the passwordless identity form; with several
+  `authType` values configured and a single allowed login type, the form rendered a field the handler
+  could not read and rejected every submission with `validation.identifier`, making the form unusable
+  (long-standing, also present in 1.x)
+- Keep the typed identifier when switching from WebAuthn login to password login in a tenant that allows
+  only phone number login; the value was dropped
+
+### Deprecated
+
+- The `identifier` field's `isWebAuthnLogin` option, now ignored: `loginTypeAllowed` is tenant
+  configuration and no field option may opt out of it
 
 ## [2.0.1] - 2026-06-30
 
