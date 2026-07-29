@@ -1066,6 +1066,24 @@ describe('DOM testing', () => {
             expect(screen.getByText('forgotPassword.successMessage')).toBeInTheDocument();
         });
 
+        test('forwards returnToAfterPasswordReset to requestPasswordReset', async () => {
+            expect.assertions(1);
+            await generateComponent({
+                initialScreen: 'forgot-password',
+                returnToAfterPasswordReset: 'https://example.com/after-reset',
+            });
+
+            await user.type(screen.getByRole('textbox', { name: 'email' }), 'test@example.com');
+            await user.click(screen.getByRole('button', { name: 'forgotPassword.submitLabel' }));
+
+            expect(requestPasswordReset).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    email: 'test@example.com',
+                    returnToAfterPasswordReset: 'https://example.com/after-reset',
+                })
+            );
+        });
+
         test('with phone number reset password', async () => {
             await generateComponent(
                 {
@@ -1173,6 +1191,26 @@ describe('DOM testing', () => {
                 });
 
                 expect(screen.getByRole('button', { name: 'address.country' })).toBeInTheDocument();
+            });
+
+            test('forwards returnToAfterPasswordReset to requestPasswordReset', async () => {
+                expect.assertions(1);
+                await generatePhoneNumberView({
+                    allowPhoneNumberResetPassword: true,
+                    returnToAfterPasswordReset: 'https://example.com/after-reset',
+                });
+
+                await user.type(screen.getByRole('textbox', { name: 'phoneNumber' }), '0123456789');
+                await user.click(
+                    screen.getByRole('button', { name: 'forgotPassword.submitLabel.code' })
+                );
+
+                expect(requestPasswordReset).toHaveBeenCalledWith(
+                    expect.objectContaining({
+                        phoneNumber: '+33123456789',
+                        returnToAfterPasswordReset: 'https://example.com/after-reset',
+                    })
+                );
             });
         });
     });
