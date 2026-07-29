@@ -29,9 +29,12 @@ function buildConfig({
     } as Config;
 }
 
-/** The `identifier` field as the login widgets declare it: `withPhoneNumber`, no explicit country. */
+/**
+ * The `identifier` field as the widgets declare it: no explicit `withPhoneNumber` (it defaults from
+ * `loginTypeAllowed.phoneNumber`) and no explicit country.
+ */
 function identifierField(definition: IdentifierDefinition = {}, config: Config = buildConfig()) {
-    const field = { key: 'identifier', withPhoneNumber: true, ...definition };
+    const field = { key: 'identifier', ...definition };
     return getFieldDefinition(field as Optional<FieldDefinition, 'type'>, config, {});
 }
 
@@ -61,13 +64,49 @@ describe('getFieldDefinition("identifier")', () => {
         ['falls back to phone when only phoneNumber is allowed', { email: false }, {}, 'phone'],
         ['stays an identifier when both are allowed', {}, {}, 'identifier'],
         [
-            'stays an identifier for a WebAuthn login, whatever is allowed',
+            'stays an identifier when neither is allowed',
+            { email: false, phoneNumber: false, customIdentifier: true },
+            {},
+            'identifier',
+        ],
+        // `loginTypeAllowed` is tenant configuration: nothing on the field definition may opt out
+        // of it, so the deprecated `isWebAuthnLogin` escape hatch is ignored
+        [
+            'ignores the deprecated isWebAuthnLogin escape hatch',
             { phoneNumber: false },
             { isWebAuthnLogin: true },
-            'identifier',
+            'email',
         ],
     ])('%s', (_label, loginTypeAllowed, definition, expected) => {
         expect(identifierField(definition, buildConfig({ loginTypeAllowed }))?.type).toBe(expected);
+    });
+
+    // when neither email nor phone is an allowed login type the field stays generic (there is no
+    // single shape to narrow to), so the validation itself must refuse the forbidden shapes —
+    // otherwise `specializeIdentifier` still submits them as `{ email }` / `{ phoneNumber }`
+    describe('a shape the tenant forbids is rejected', () => {
+        const customOnly: LoginTypeAllowed = {
+            email: false,
+            phoneNumber: false,
+            customIdentifier: true,
+        };
+
+        it.each(['user@example.com', '+33612345678', '0612345678'])(
+            'rejects %p when only a custom identifier is allowed',
+            async value => {
+                const config = buildConfig({ loginTypeAllowed: customOnly });
+
+                await expect(validate(value, {}, config)).resolves.toContain(
+                    'validation.identifier'
+                );
+            }
+        );
+
+        it('still accepts a custom identifier', async () => {
+            const config = buildConfig({ loginTypeAllowed: customOnly });
+
+            await expect(validate('jdoe2024', {}, config)).resolves.toEqual([]);
+        });
     });
 
     it.each([
@@ -86,8 +125,30 @@ describe('getFieldDefinition("identifier")', () => {
             await expect(validate(value)).resolves.toContain('validation.phone');
         });
 
-        it('is skipped when withPhoneNumber is false', async () => {
-            await expect(validate('12345', { withPhoneNumber: false })).resolves.toEqual([]);
+        // `withPhoneNumber` only drives the as-you-type formatting; which shapes are accepted comes
+        // from `loginTypeAllowed` alone, so switching it off must not bypass the format check
+        it('is not bypassed by withPhoneNumber: false', async () => {
+            await expect(validate('06 12', { withPhoneNumber: false })).resolves.toContain(
+                'validation.phone'
+            );
+        });
+
+        // no widget passes the flag: it must default from the config, otherwise the input is
+        // formatted differently from the way the validation reads it
+        describe('withPhoneNumber defaults from loginTypeAllowed.phoneNumber', () => {
+            it.each<[LoginTypeAllowed, boolean]>([
+                [{ email: true, phoneNumber: true }, true],
+                [{ email: false, phoneNumber: false, customIdentifier: true }, false],
+            ])('is %p -> %p on the returned definition', (loginTypeAllowed, expected) => {
+                expect(identifierField({}, buildConfig({ loginTypeAllowed }))).toHaveProperty(
+                    'withPhoneNumber',
+                    expected
+                );
+            });
+
+            it('validates a phone number when phone login is allowed', async () => {
+                await expect(validate('06 12')).resolves.toContain('validation.phone');
+            });
         });
     });
 

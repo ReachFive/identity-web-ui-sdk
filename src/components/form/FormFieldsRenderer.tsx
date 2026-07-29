@@ -297,7 +297,16 @@ function renderField<
             );
         }
         case 'identifier': {
-            const { type, transform, validation, defaultValue, ...props } = fieldDefinition;
+            // `isWebAuthnLogin` is deprecated and ignored by the field definition builder (see
+            // `predefinedFields.identifier`); dropping it here keeps it off the DOM <input>
+            const {
+                type,
+                transform,
+                validation,
+                defaultValue,
+                isWebAuthnLogin: _isWebAuthnLogin,
+                ...props
+            } = fieldDefinition;
             return (
                 <IdentifierField
                     {...props}

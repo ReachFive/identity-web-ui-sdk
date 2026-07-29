@@ -294,6 +294,241 @@ describe('DOM testing', () => {
             ).not.toBeInTheDocument();
         });
 
+        // with more than one authType, a single `identifier` field is rendered and accepts either
+        // an email or a phone number, the filled shape deciding which passwordless flow is started
+        describe('by identifier (authType: magic_link + sms)', () => {
+            test('renders the identifier field', async () => {
+                expect.assertions(4);
+
+                await generateComponent({ authType: ['magic_link', 'sms'] });
+
+                expect(screen.getByText('passwordless.identity.intro')).toBeInTheDocument();
+                expect(screen.getByLabelText('identifier')).toBeInTheDocument();
+                expect(screen.getByRole('textbox', { name: 'identifier' })).toBeInTheDocument();
+                // the identifier field replaces the email and phone number ones
+                expect(screen.queryByRole('textbox', { name: 'email' })).not.toBeInTheDocument();
+            });
+
+            test('an email starts the magic link flow', async () => {
+                expect.assertions(3);
+
+                const user = userEvent.setup();
+
+                startPasswordless.mockResolvedValue({});
+
+                await generateComponent({ authType: ['magic_link', 'sms'] });
+
+                const identifierInput = screen.getByRole('textbox', { name: 'identifier' });
+                await user.type(identifierInput, 'alice@reach5.co');
+                await user.click(screen.getByRole('button', { name: 'send' }));
+
+                expect(startPasswordless).toBeCalledWith(
+                    expect.objectContaining({
+                        authType: 'magic_link',
+                        email: 'alice@reach5.co',
+                    }),
+                    undefined // auth
+                );
+
+                expect(screen.getByText('passwordless.emailSent')).toBeInTheDocument();
+                expect(onError).not.toBeCalled();
+            });
+
+            test('a phone number starts the sms flow', async () => {
+                expect.assertions(3);
+
+                const user = userEvent.setup();
+
+                startPasswordless.mockResolvedValue({ challengeId: 'azerty' });
+
+                await generateComponent({ authType: ['magic_link', 'sms'] });
+
+                const identifierInput = screen.getByRole('textbox', { name: 'identifier' });
+                await user.type(identifierInput, '+33612345678');
+                await user.click(screen.getByRole('button', { name: 'send' }));
+
+                expect(startPasswordless).toBeCalledWith(
+                    expect.objectContaining({
+                        authType: 'sms',
+                        phoneNumber: '+33612345678',
+                    }),
+                    undefined // auth
+                );
+
+                expect(
+                    screen.getByRole('textbox', { name: 'verificationCode' })
+                ).toBeInTheDocument();
+                expect(onError).not.toBeCalled();
+            });
+
+            test('a national phone number starts the sms flow', async () => {
+                expect.assertions(2);
+
+                const user = userEvent.setup();
+
+                startPasswordless.mockResolvedValue({ challengeId: 'azerty' });
+
+                await generateComponent({ authType: ['magic_link', 'sms'] });
+
+                // a national number is resolved against the default country (`fr` config language)
+                const identifierInput = screen.getByRole('textbox', { name: 'identifier' });
+                await user.type(identifierInput, '0612345678');
+                await user.click(screen.getByRole('button', { name: 'send' }));
+
+                expect(startPasswordless).toBeCalledWith(
+                    expect.objectContaining({
+                        authType: 'sms',
+                        phoneNumber: '+33612345678',
+                    }),
+                    undefined // auth
+                );
+                expect(onError).not.toBeCalled();
+            });
+
+            test('a malformed email is rejected by the field validation', async () => {
+                expect.assertions(2);
+
+                const user = userEvent.setup();
+
+                await generateComponent({ authType: ['magic_link', 'sms'] });
+
+                const identifierInput = screen.getByRole('textbox', { name: 'identifier' });
+                await user.type(identifierInput, 'alice@reach5');
+                await user.click(screen.getByRole('button', { name: 'send' }));
+
+                expect(identifierInput).toHaveAccessibleErrorMessage('validation.email');
+                expect(startPasswordless).not.toBeCalled();
+            });
+
+            test('a malformed phone number is rejected by the field validation', async () => {
+                expect.assertions(2);
+
+                const user = userEvent.setup();
+
+                await generateComponent({ authType: ['magic_link', 'sms'] });
+
+                const identifierInput = screen.getByRole('textbox', { name: 'identifier' });
+                await user.type(identifierInput, '06 12');
+                await user.click(screen.getByRole('button', { name: 'send' }));
+
+                expect(identifierInput).toHaveAccessibleErrorMessage('validation.phone');
+                expect(startPasswordless).not.toBeCalled();
+            });
+
+            // passwordless availability is gated by the widget's `authType`, not by
+            // `loginTypeAllowed` — so a tenant allowing a single login type must still get the
+            // generic identifier field the handler expects
+            // `loginTypeAllowed` is tenant configuration and stays authoritative here too: the field
+            // narrows to the single allowed shape, and the handler must cope with the narrowed key
+            // instead of rejecting every submission with `validation.identifier`
+            describe('under a restricted loginTypeAllowed', () => {
+                const emailOnly = { email: true, phoneNumber: false, customIdentifier: false };
+                const phoneOnly = { email: false, phoneNumber: true, customIdentifier: false };
+
+                test('narrows to an email field when only email login is allowed', async () => {
+                    expect.assertions(2);
+
+                    await generateComponent(
+                        { authType: ['magic_link', 'sms'] },
+                        { loginTypeAllowed: emailOnly }
+                    );
+
+                    expect(screen.getByRole('textbox', { name: 'email' })).toBeInTheDocument();
+                    expect(
+                        screen.queryByRole('textbox', { name: 'identifier' })
+                    ).not.toBeInTheDocument();
+                });
+
+                test('narrows to a phone number field when only phone login is allowed', async () => {
+                    expect.assertions(2);
+
+                    await generateComponent(
+                        { authType: ['magic_link', 'sms'] },
+                        { loginTypeAllowed: phoneOnly }
+                    );
+
+                    expect(
+                        screen.getByRole('textbox', { name: 'phoneNumber' })
+                    ).toBeInTheDocument();
+                    expect(
+                        screen.queryByRole('textbox', { name: 'identifier' })
+                    ).not.toBeInTheDocument();
+                });
+
+                test('the narrowed email field starts the magic link flow', async () => {
+                    expect.assertions(2);
+
+                    const user = userEvent.setup();
+
+                    startPasswordless.mockResolvedValue({});
+
+                    await generateComponent(
+                        { authType: ['magic_link', 'sms'] },
+                        { loginTypeAllowed: emailOnly }
+                    );
+
+                    await user.type(
+                        screen.getByRole('textbox', { name: 'email' }),
+                        'alice@reach5.co'
+                    );
+                    await user.click(screen.getByRole('button', { name: 'send' }));
+
+                    expect(startPasswordless).toBeCalledWith(
+                        expect.objectContaining({
+                            authType: 'magic_link',
+                            email: 'alice@reach5.co',
+                        }),
+                        undefined // auth
+                    );
+                    expect(onError).not.toBeCalled();
+                });
+
+                test('the narrowed phone number field starts the sms flow', async () => {
+                    expect.assertions(2);
+
+                    const user = userEvent.setup();
+
+                    startPasswordless.mockResolvedValue({ challengeId: 'azerty' });
+
+                    await generateComponent(
+                        { authType: ['magic_link', 'sms'] },
+                        { loginTypeAllowed: phoneOnly }
+                    );
+
+                    await user.type(
+                        screen.getByRole('textbox', { name: 'phoneNumber' }),
+                        '+33612345678'
+                    );
+                    await user.click(screen.getByRole('button', { name: 'send' }));
+
+                    expect(startPasswordless).toBeCalledWith(
+                        expect.objectContaining({
+                            authType: 'sms',
+                            phoneNumber: '+33612345678',
+                        }),
+                        undefined // auth
+                    );
+                    expect(onError).not.toBeCalled();
+                });
+            });
+
+            test('a custom identifier is accepted by the field validation', async () => {
+                expect.assertions(2);
+
+                const user = userEvent.setup();
+
+                await generateComponent({ authType: ['magic_link', 'sms'] });
+
+                // neither an email nor a phone number: no format to check, the handler rejects it
+                const identifierInput = screen.getByRole('textbox', { name: 'identifier' });
+                await user.type(identifierInput, 'jdoe2024');
+                await user.click(screen.getByRole('button', { name: 'send' }));
+
+                expect(identifierInput).not.toHaveAccessibleErrorMessage();
+                expect(startPasswordless).not.toBeCalled();
+            });
+        });
+
         describe('with enableVerificationCode = false', () => {
             test('by email', async () => {
                 expect.assertions(8);

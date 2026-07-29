@@ -4,7 +4,6 @@ import { type AuthOptions } from '@reachfive/identity-core';
 import { LoginWithPasswordParams } from '@reachfive/identity-core/es/main/oAuthClient';
 
 import { Form } from '@/components/form/form';
-import { useConfig } from '@/contexts/config';
 import { Field } from '@/lib/form';
 
 import { CaptchaProvider, WithCaptchaProps, WithCaptchaToken } from '../../../components/captcha';
@@ -66,7 +65,6 @@ export const LoginWithPasswordView = ({
     onError = (() => {}) as OnError,
     onSuccess = (() => {}) as OnSuccess,
 }: WithCaptchaProps<LoginWithPasswordViewProps>) => {
-    const config = useConfig();
     const i18n = useI18n();
     const coreClient = useReachfive();
     const { goTo, params } = useRouting();
@@ -107,7 +105,6 @@ export const LoginWithPasswordView = ({
             key: 'identifier',
             type: 'identifier',
             defaultValue: username,
-            withPhoneNumber: config.loginTypeAllowed.phoneNumber,
             // readOnly: true,
         },
         {

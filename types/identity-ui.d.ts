@@ -1,6 +1,6 @@
 /**
  * @reachfive/identity-ui - v2.0.2
- * Compiled Tue, 28 Jul 2026 12:46:05 UTC
+ * Compiled Wed, 29 Jul 2026 13:07:31 UTC
  *
  * Copyright (c) ReachFive.
  *
@@ -520,7 +520,16 @@ type FieldDefinition<TFieldType extends FieldType = FieldType, TFieldValues exte
 } | {
     type: 'identifier';
     defaultCountry?: CountryCode;
+    /**
+     * @deprecated Ignored. `loginTypeAllowed` is tenant configuration and is
+     * authoritative: no field option may opt out of it.
+     */
     isWebAuthnLogin?: boolean;
+    /**
+     * Whether the input is formatted as a phone number while the user types. Defaults to
+     * `loginTypeAllowed.phoneNumber`. It does not affect which shapes are accepted — that
+     * is decided by `loginTypeAllowed` alone.
+     */
     withPhoneNumber?: boolean;
 } | {
     type: 'hidden';

@@ -857,6 +857,100 @@ describe('DOM testing', () => {
             expect(screen.getByRole('link', { name: 'login.signupLink' })).toBeInTheDocument();
         });
 
+        // `loginTypeAllowed` is tenant configuration and is authoritative: an identifier shape the
+        // tenant forbids must never reach the API, WebAuthn login included
+        describe('login identifier field honours loginTypeAllowed', () => {
+            const emailOnly = { email: true, phoneNumber: false, customIdentifier: false };
+            const phoneOnly = { email: false, phoneNumber: true, customIdentifier: false };
+
+            const generateWebAuthnLoginView = (loginTypeAllowed?: Config['loginTypeAllowed']) =>
+                generateComponent(
+                    { allowWebAuthnLogin: true, initialScreen: 'login-with-web-authn' },
+                    loginTypeAllowed ? { ...webauthnConfig, loginTypeAllowed } : webauthnConfig
+                );
+
+            test('narrows to an email field when only email login is allowed', async () => {
+                expect.assertions(2);
+
+                await generateWebAuthnLoginView(emailOnly);
+
+                expect(screen.getByRole('textbox', { name: 'email' })).toBeInTheDocument();
+                expect(
+                    screen.queryByRole('textbox', { name: 'identifier' })
+                ).not.toBeInTheDocument();
+            });
+
+            test('narrows to a phone number field when only phone login is allowed', async () => {
+                expect.assertions(2);
+
+                await generateWebAuthnLoginView(phoneOnly);
+
+                expect(screen.getByRole('textbox', { name: 'phoneNumber' })).toBeInTheDocument();
+                expect(
+                    screen.queryByRole('textbox', { name: 'identifier' })
+                ).not.toBeInTheDocument();
+            });
+
+            test('rejects a phone number when only email login is allowed', async () => {
+                expect.assertions(2);
+
+                const user = userEvent.setup();
+                loginWithWebAuthn.mockResolvedValue({} as AuthResult);
+
+                await generateWebAuthnLoginView(emailOnly);
+
+                await user.type(screen.getByRole('textbox', { name: 'email' }), '+33612345678');
+                await user.click(screen.getByRole('button', { name: 'login.withBiometrics' }));
+
+                expect(screen.getByRole('textbox', { name: 'email' })).toHaveAccessibleErrorMessage(
+                    'validation.email'
+                );
+                expect(loginWithWebAuthn).not.toBeCalledWith(
+                    expect.objectContaining({ phoneNumber: expect.anything() })
+                );
+            });
+
+            // when the tenant allows both, the generic identifier field accepts either shape and
+            // must route it to the matching `loginWithWebAuthn` parameter
+            test('looks up a phone-enrolled credential when both shapes are allowed', async () => {
+                expect.assertions(1);
+
+                const user = userEvent.setup();
+                loginWithWebAuthn.mockResolvedValue({} as AuthResult);
+
+                await generateWebAuthnLoginView();
+
+                await user.type(
+                    screen.getByRole('textbox', { name: 'identifier' }),
+                    '+33612345678'
+                );
+                await user.click(screen.getByRole('button', { name: 'login.withBiometrics' }));
+
+                expect(loginWithWebAuthn).toBeCalledWith(
+                    expect.objectContaining({ phoneNumber: '+33612345678' })
+                );
+            });
+
+            test('looks up an email-enrolled credential when both shapes are allowed', async () => {
+                expect.assertions(1);
+
+                const user = userEvent.setup();
+                loginWithWebAuthn.mockResolvedValue({} as AuthResult);
+
+                await generateWebAuthnLoginView();
+
+                await user.type(
+                    screen.getByRole('textbox', { name: 'identifier' }),
+                    'alice@reach5.co'
+                );
+                await user.click(screen.getByRole('button', { name: 'login.withBiometrics' }));
+
+                expect(loginWithWebAuthn).toBeCalledWith(
+                    expect.objectContaining({ email: 'alice@reach5.co' })
+                );
+            });
+        });
+
         test('signup view with password or webauthn', async () => {
             expect.assertions(5);
             await generateComponent(

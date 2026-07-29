@@ -68,7 +68,6 @@ export const LoginForm = <ResultType,>({
                       type: 'identifier',
                       key: 'identifier',
                       defaultValue: defaultIdentifier,
-                      withPhoneNumber: config.loginTypeAllowed.phoneNumber,
                       required: !allowCustomIdentifier,
                       autoComplete: 'username webauthn',
                   },

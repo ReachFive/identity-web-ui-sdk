@@ -19,11 +19,16 @@ import { VerificationCodeViewState } from './verificationCodeView';
 
 import type { OnError, OnSuccess } from '@/types';
 
-type EmailFormData = { email: string; captchaToken?: string };
+type EmailFormData = { email: string };
 
-type PhoneNumberFormData = { phoneNumber: string; captchaToken?: string };
+type PhoneNumberFormData = { phoneNumber: string };
 
-type IdentityFormData = { identifier: string; captchaToken?: string };
+/**
+ * The identity form yields whichever field the tenant configuration allows: a generic `identifier`
+ * when both an email and a phone number are allowed login types, or the single narrowed field
+ * (`email` / `phoneNumber`) when only one of them is — see `predefinedFields.identifier`.
+ */
+type IdentityFormData = { identifier: string } | { email: string } | { phoneNumber: string };
 
 export interface PasswordlessViewProps {
     /**
@@ -120,6 +125,16 @@ export const PasswordlessView = ({
     };
 
     const handleIdentity = async (data: WithCaptchaToken<IdentityFormData>) => {
+        // a narrowed field already carries the resolved shape, so it goes straight to its flow
+        if ('email' in data) {
+            const { email, ...rest } = data;
+            return sendMagicLink({ email, ...rest });
+        }
+        if ('phoneNumber' in data) {
+            const { phoneNumber, ...rest } = data;
+            return sendSms({ phoneNumber, ...rest });
+        }
+
         const { identifier, ...rest } = data;
         if (identifier && isValidPhoneNumber(identifier)) {
             await sendSms({ phoneNumber: identifier, ...rest });

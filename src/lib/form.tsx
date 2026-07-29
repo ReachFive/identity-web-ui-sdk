@@ -106,7 +106,16 @@ export type FieldDefinition<
         | {
               type: 'identifier';
               defaultCountry?: CountryCode;
+              /**
+               * @deprecated Ignored. `loginTypeAllowed` is tenant configuration and is
+               * authoritative: no field option may opt out of it.
+               */
               isWebAuthnLogin?: boolean;
+              /**
+               * Whether the input is formatted as a phone number while the user types. Defaults to
+               * `loginTypeAllowed.phoneNumber`. It does not affect which shapes are accepted — that
+               * is decided by `loginTypeAllowed` alone.
+               */
               withPhoneNumber?: boolean;
           }
         | {
@@ -174,16 +183,19 @@ const predefinedFields: Record<
         const { loginTypeAllowed } = config;
         const {
             defaultCountry,
-            isWebAuthnLogin = false,
-            withPhoneNumber,
+            // no widget passes this: defaulting it here keeps the validation below and the
+            // `IdentifierField` formatting in agreement, and makes omitting it impossible to get wrong
+            withPhoneNumber = loginTypeAllowed.phoneNumber,
         } = definition as FieldDefinition<'identifier', FieldValues>;
 
+        // `loginTypeAllowed` is tenant configuration and is authoritative: when a single shape is an
+        // allowed login type the field narrows to it, and nothing on the definition may opt out.
         // fallback to email if phoneNumber is not allowed
-        if (!isWebAuthnLogin && loginTypeAllowed.email && !loginTypeAllowed.phoneNumber) {
+        if (loginTypeAllowed.email && !loginTypeAllowed.phoneNumber) {
             return predefinedFields.email({ config, definition });
         }
         // fallback to phoneNumber if email is not allowed
-        else if (!isWebAuthnLogin && loginTypeAllowed.phoneNumber && !loginTypeAllowed.email) {
+        else if (loginTypeAllowed.phoneNumber && !loginTypeAllowed.email) {
             return predefinedFields.phoneNumber({ config, definition });
         }
 
@@ -199,15 +211,28 @@ const predefinedFields: Record<
             type: 'identifier',
             autoComplete: 'username webauthn',
             defaultCountry: country,
+            // carried on the definition so `IdentifierField` formats the input the same way the
+            // validation below reads it
+            withPhoneNumber,
             validation: ({ i18n }) => {
                 const email = z.email();
                 // an identifier is an email, a phone number or a custom identifier (see
                 // `specializeIdentifier`): each shape is only held to its own rules, and a value
                 // matching none of them is a custom identifier, which has no format to check.
+                // A shape the tenant does not allow as a login type is refused outright — the field
+                // is only reached generically when neither email nor phone is allowed on its own,
+                // and `specializeIdentifier` would otherwise still submit it as that shape.
                 return z.string(i18n('validation.identifier')).superRefine((value, ctx) => {
                     // no phone number nor custom identifier contains an `@`, so such a value is
                     // meant to be an email and is reported as a malformed one when it isn't
                     if (value.includes('@')) {
+                        if (!loginTypeAllowed.email) {
+                            ctx.addIssue({
+                                code: 'custom',
+                                message: i18n('validation.identifier'),
+                            });
+                            return;
+                        }
                         if (!email.safeParse(value).success) {
                             ctx.addIssue({
                                 code: 'custom',
@@ -217,8 +242,6 @@ const predefinedFields: Record<
                         return;
                     }
 
-                    if (!withPhoneNumber) return;
-
                     // `extract: false` parses the whole input as a phone number instead of looking
                     // for one inside it. Without it the digits of a custom identifier are read as
                     // an impossible phone number (`jdoe2024` → `+332024`) and wrongly rejected.
@@ -226,7 +249,18 @@ const predefinedFields: Record<
                         defaultCountry: country,
                         extract: false,
                     });
-                    if (phoneNumber && false === phoneNumber.isPossible()) {
+                    // neither an email nor a phone number: a custom identifier, nothing to check
+                    if (!phoneNumber) return;
+
+                    if (!loginTypeAllowed.phoneNumber) {
+                        ctx.addIssue({
+                            code: 'custom',
+                            message: i18n('validation.identifier'),
+                        });
+                        return;
+                    }
+
+                    if (false === phoneNumber.isPossible()) {
                         ctx.addIssue({
                             code: 'custom',
                             message: i18n('validation.phone'),
