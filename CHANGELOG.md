@@ -63,6 +63,20 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   (long-standing, also present in 1.x)
 - Keep the typed identifier when switching from WebAuthn login to password login in a tenant that allows
   only phone number login; the value was dropped
+- Accept a possible phone number in the passwordless identity form. The form routed the submission on a
+  strict validity check while the field only required the number to be possible, so a number the field
+  accepted could still be refused: a valid but unassigned prefix (`+12223333333`) raised no field error
+  and surfaced `This is not a valid email or phone number` in `onError` instead of being sent. The
+  email / phone number / custom identifier decision now goes through `specializeIdentifier`, shared with
+  the login widgets, and forwards the normalized number rather than the raw input
+- Read an identifier as an email with the same validator as the `email` field validation instead of a
+  permissive unanchored regular expression, which accepted a malformed address (`bob@@mail.com`) and an
+  address held inside a larger value (`mailto: bob@mail.com`)
+- Attach an API validation error to the `identifier` field. The field is submitted as the shape it
+  resolves to, so the API names its errors `email` / `phone_number` / `custom_identifier` while the form
+  holds no such field: the message was only appended to the global error. A field definition can now
+  declare the payload keys it stands for (`errorFields`), and the message stays named after the payload
+  key so it is not replaced with the field's own one
 
 ### Deprecated
 
