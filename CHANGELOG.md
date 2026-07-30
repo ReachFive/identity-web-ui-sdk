@@ -14,6 +14,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Theme options for the button (`background`, `color`, `hoverBackground`, `hoverColor`, `hoverBorderColor`,
   `fontWeight`), links (`color`, `hoverColor`, `decoration`, `hoverDecoration`) and the password strength
   indicator colors, now exposed as CSS variables inside the widget
+- `readOnly` on a field definition, to display a value settled upstream without offering it for editing
+  again. Unlike a disabled field, a read-only one is still submitted
 
 ### Changed
 
@@ -93,6 +95,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Stop displaying the login view's dedicated custom identifier field when the tenant forbids that login
   type; its value could only be rejected by the API. The generic `identifier` field is required again when
   hiding it leaves it as the only identifier field displayed
+- Restore the read-only `identifier` field on the password login view, the second step of the WebAuthn
+  login flow. The identifier is settled on the previous screen and only carried over, but the field was
+  editable again: the user could replace it there, including with a shape the previous screen refuses
 
 ### Deprecated
 
