@@ -24,6 +24,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   shapes when neither is. This is a behaviour change for the WebAuthn login form, which previously opted
   out of the restriction and accepted either shape whatever the tenant allowed — a credential enrolled
   against a phone number can no longer be used in a tenant that forbids phone number login.
+- **`loginTypeAllowed.customIdentifier` is now enforced as well.** The `identifier` field held only the
+  email and phone number shapes to the tenant's login types: a value matching neither of them was read as
+  a custom identifier and submitted as `custom_identifier` even in a tenant that forbids that login type.
+  A field definition can also declare `allowCustomIdentifier: false` to refuse that shape where no flow
+  serves it, and the option may only narrow what the tenant allows — it never opts back into a login type
+  the tenant forbids
 
 ### Fixed
 
@@ -77,6 +83,16 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   holds no such field: the message was only appended to the global error. A field definition can now
   declare the payload keys it stands for (`errorFields`), and the message stays named after the payload
   key so it is not replaced with the field's own one
+- Refuse a custom identifier on the passwordless `identifier` field instead of reporting it only through
+  `onError`. With several `authType` values configured, `startPasswordless` starts either a magic link or
+  an SMS flow, so a value that is neither an email nor a phone number has none to start: the handler threw
+  an error the form displayed nowhere, leaving the form silent on an input it would never accept
+- Refuse a custom identifier on the WebAuthn login `identifier` field, for the same reason: a credential is
+  only ever enrolled against an email or a phone number, and the handler rejected the value with a console
+  error and no message on the field
+- Stop displaying the login view's dedicated custom identifier field when the tenant forbids that login
+  type; its value could only be rejected by the API. The generic `identifier` field is required again when
+  hiding it leaves it as the only identifier field displayed
 
 ### Deprecated
 
