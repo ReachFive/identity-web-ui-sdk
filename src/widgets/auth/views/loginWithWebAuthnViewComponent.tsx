@@ -162,6 +162,7 @@ export const LoginWithWebAuthnView = ({
                         defaultValue: defaultIdentifier,
                         required: true,
                         autoComplete: 'username webauthn',
+                        allowCustomIdentifier: false,
                     },
                 ]}
                 showLabels={showLabels}

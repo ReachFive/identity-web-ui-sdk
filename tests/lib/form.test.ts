@@ -114,10 +114,69 @@ describe('getFieldDefinition("identifier")', () => {
         '0612345678', // national phone number, in the resolved default country
         'user@example.com',
         'john.doe+2024@example.com', // a plus-addressed email is not the number '+2024'
-        'jdoe', // a custom identifier is neither an email nor a phone number
-        'jdoe2024', // nor is one that contains digits ('+332024')
     ])('accepts %p', async value => {
         await expect(validate(value)).resolves.toEqual([]);
+    });
+
+    // a value matching neither an email nor a phone number is a custom identifier, and is held to
+    // `loginTypeAllowed.customIdentifier` exactly as the other two shapes are held to their own
+    // login type — the field must not submit a shape the tenant forbids
+    describe('a custom identifier is held to loginTypeAllowed.customIdentifier', () => {
+        const customAllowed = buildConfig({ loginTypeAllowed: { customIdentifier: true } });
+
+        it.each([
+            'jdoe', // a custom identifier is neither an email nor a phone number
+            'jdoe2024', // nor is one that contains digits ('+332024')
+        ])('accepts %p when the tenant allows that login type', async value => {
+            await expect(validate(value, {}, customAllowed)).resolves.toEqual([]);
+        });
+
+        // `buildConfig` forbids the login type by default
+        it.each(['jdoe', 'jdoe2024'])(
+            'rejects %p when the tenant forbids that login type',
+            async value => {
+                await expect(validate(value)).resolves.toContain('validation.identifier');
+            }
+        );
+    });
+
+    // a widget which has no flow to serve a custom identifier (passwordless only starts an email or
+    // an sms one, WebAuthn enrolls no credential against one) opts out, so the field refuses that
+    // shape up front instead of accepting a value its handler then rejects with nothing on the field
+    describe('allowCustomIdentifier: false', () => {
+        const withoutCustom: IdentifierDefinition = { allowCustomIdentifier: false };
+        // the tenant allows the login type: the refusal must come from the option alone
+        const customAllowed = buildConfig({ loginTypeAllowed: { customIdentifier: true } });
+
+        it.each(['jdoe', 'jdoe2024'])('rejects the custom identifier %p', async value => {
+            await expect(validate(value, withoutCustom, customAllowed)).resolves.toContain(
+                'validation.identifier'
+            );
+        });
+
+        it.each(['user@example.com', '+33612345678', '0612345678'])(
+            'still accepts %p',
+            async value => {
+                await expect(validate(value, withoutCustom, customAllowed)).resolves.toEqual([]);
+            }
+        );
+
+        // a malformed email or phone number is still reported as such: its own message describes
+        // what is wrong with the value, where the generic one would not
+        it.each<[string, string]>([
+            ['foo@bar', 'validation.email'],
+            ['06 12', 'validation.phone'],
+        ])('reports %p as %s', async (value, message) => {
+            await expect(validate(value, withoutCustom, customAllowed)).resolves.toContain(message);
+        });
+    });
+
+    // `loginTypeAllowed` is tenant configuration and is authoritative: the option may only narrow
+    // what it allows, never opt back into a login type the tenant forbids
+    it('allowCustomIdentifier: true does not opt back into a forbidden login type', async () => {
+        await expect(validate('jdoe2024', { allowCustomIdentifier: true })).resolves.toContain(
+            'validation.identifier'
+        );
     });
 
     describe('phone number validation', () => {

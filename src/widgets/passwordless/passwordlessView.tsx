@@ -144,7 +144,9 @@ export const PasswordlessView = ({
         if ('phoneNumber' in specialized) {
             return sendSms({ phoneNumber: specialized.phoneNumber, ...rest });
         }
-        // a custom identifier has no passwordless flow to start
+        // a custom identifier has no passwordless flow to start. The field validation refuses that
+        // shape (`allowCustomIdentifier: false` below), so this only guards against a value reaching
+        // the handler another way
         throw new Error(i18n('validation.identifier'));
     };
 
@@ -200,7 +202,20 @@ export const PasswordlessView = ({
                 )}
                 {showIdentity && showIntro && <Intro>{i18n('passwordless.identity.intro')}</Intro>}
                 {showIdentity && (
-                    <Form fields={['identifier']} handler={handleIdentity} onError={onError} />
+                    <Form
+                        fields={[
+                            {
+                                key: 'identifier',
+                                type: 'identifier',
+                                // passwordless starts either a magic link or an sms flow: a custom
+                                // identifier addresses neither, so the field refuses it instead of
+                                // submitting a value `handleIdentity` could only reject
+                                allowCustomIdentifier: false,
+                            },
+                        ]}
+                        handler={handleIdentity}
+                        onError={onError}
+                    />
                 )}
             </CaptchaProvider>
         </div>

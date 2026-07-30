@@ -113,6 +113,15 @@ export type FieldDefinition<
           }
         | {
               type: 'identifier';
+              /**
+               * Whether a value matching neither an email nor a phone number is accepted as a custom
+               * identifier. Defaults to `loginTypeAllowed.customIdentifier`, as the email and phone
+               * number shapes default to their own login types. Set it to `false` in a widget which
+               * has no flow to serve one (WebAuthn login, passwordless), so that the field refuses
+               * that shape instead of submitting a value the handler then rejects. A tenant which
+               * forbids the login type may not be opted back in.
+               */
+              allowCustomIdentifier?: boolean;
               defaultCountry?: CountryCode;
               /**
                * @deprecated Ignored. `loginTypeAllowed` is tenant configuration and is
@@ -190,6 +199,7 @@ const predefinedFields: Record<
     identifier: ({ config, definition }) => {
         const { loginTypeAllowed } = config;
         const {
+            allowCustomIdentifier = true,
             defaultCountry,
             // no widget passes this: defaulting it here keeps the validation below and the
             // `IdentifierField` formatting in agreement, and makes omitting it impossible to get wrong
@@ -212,6 +222,11 @@ const predefinedFields: Record<
         // types. Both must agree on the country, otherwise a national number the component happily
         // formats could be rejected by the validation (or the other way around).
         const country = resolveCountry(defaultCountry, config);
+
+        // as for the email and phone number shapes, `loginTypeAllowed` decides whether a custom
+        // identifier is a valid one: the field option may only narrow what the tenant allows, never
+        // opt back into a login type it forbids
+        const acceptsCustomIdentifier = allowCustomIdentifier && loginTypeAllowed.customIdentifier;
 
         return {
             key: 'identifier',
@@ -260,8 +275,17 @@ const predefinedFields: Record<
                         defaultCountry: country,
                         extract: false,
                     });
-                    // neither an email nor a phone number: a custom identifier, nothing to check
-                    if (!phoneNumber) return;
+                    // neither an email nor a phone number: a custom identifier, which has no format
+                    // to check — unless that shape is no valid identifier here at all
+                    if (!phoneNumber) {
+                        if (!acceptsCustomIdentifier) {
+                            ctx.addIssue({
+                                code: 'custom',
+                                message: i18n('validation.identifier'),
+                            });
+                        }
+                        return;
+                    }
 
                     if (!loginTypeAllowed.phoneNumber) {
                         ctx.addIssue({

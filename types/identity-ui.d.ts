@@ -1,6 +1,6 @@
 /**
  * @reachfive/identity-ui - v2.0.2
- * Compiled Wed, 29 Jul 2026 13:07:31 UTC
+ * Compiled Thu, 30 Jul 2026 08:59:54 UTC
  *
  * Copyright (c) ReachFive.
  *
@@ -487,6 +487,14 @@ type BaseFieldDefinition<TFieldType extends FieldType, TFieldValues extends Fiel
     autoComplete?: AutoFill;
     defaultValue?: string;
     description?: React.ReactNode;
+    /**
+     * The API payload field names this form field stands for, when the value it holds is submitted
+     * under another key: the generic `identifier` field is sent as `email` / `phone_number` /
+     * `custom_identifier` (see `specializeIdentifier`), so an API validation error naming one of
+     * them belongs to it. Declared in the API's own casing.
+     * @see resolveErrorFieldPath
+     */
+    errorFields?: string[];
     label?: string;
     placeholder?: string;
     required?: boolean;
@@ -519,6 +527,15 @@ type FieldDefinition<TFieldType extends FieldType = FieldType, TFieldValues exte
     yearRange?: number;
 } | {
     type: 'identifier';
+    /**
+     * Whether a value matching neither an email nor a phone number is accepted as a custom
+     * identifier. Defaults to `loginTypeAllowed.customIdentifier`, as the email and phone
+     * number shapes default to their own login types. Set it to `false` in a widget which
+     * has no flow to serve one (WebAuthn login, passwordless), so that the field refuses
+     * that shape instead of submitting a value the handler then rejects. A tenant which
+     * forbids the login type may not be opted back in.
+     */
+    allowCustomIdentifier?: boolean;
     defaultCountry?: CountryCode;
     /**
      * @deprecated Ignored. `loginTypeAllowed` is tenant configuration and is

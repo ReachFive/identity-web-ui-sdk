@@ -1,12 +1,11 @@
 /**
  * @jest-environment jsdom
  */
-import { describe, expect, jest, test } from '@jest/globals';
+import { beforeEach, describe, expect, jest, test } from '@jest/globals';
 import '@testing-library/jest-dom/jest-globals';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import 'jest-styled-components';
-import { beforeEach } from 'node:test';
 
 import type {
     AuthResult,
@@ -420,6 +419,10 @@ describe('DOM testing', () => {
         .fn<Client['loginWithWebAuthn']>()
         .mockRejectedValue(new Error('This is a mock.'));
 
+    const loginWithPassword = jest
+        .fn<Client['loginWithPassword']>()
+        .mockResolvedValue({} as AuthResult);
+
     const requestPasswordReset = jest.fn<Client['requestPasswordReset']>().mockResolvedValue();
 
     const updatePassword = jest.fn<Client['updatePassword']>().mockResolvedValue();
@@ -432,6 +435,7 @@ describe('DOM testing', () => {
 
     beforeEach(() => {
         getPasswordStrength.mockClear();
+        loginWithPassword.mockClear();
         loginWithWebAuthn.mockClear();
         requestPasswordReset.mockClear();
         updatePassword.mockClear();
@@ -446,6 +450,7 @@ describe('DOM testing', () => {
         // @ts-expect-error partial Client
         const apiClient: Client = {
             getPasswordStrength,
+            loginWithPassword,
             loginWithWebAuthn,
             requestPasswordReset,
             signup,
@@ -481,6 +486,184 @@ describe('DOM testing', () => {
             expect(
                 screen.queryByRole('checkbox', { name: 'auth.persistent' })
             ).not.toBeInTheDocument();
+        });
+
+        // the identifier field already reads an email, a phone number or a custom identifier (see
+        // `specializeIdentifier`), so when the view adds its dedicated `customIdentifier` input the
+        // two are alternatives: exactly one of them carries the identifier
+        describe('with the dedicated customIdentifier field', () => {
+            const password = 'Wond3rFu11_Pa55w0rD*$';
+
+            const fillPasswordAndSubmit = async (user: ReturnType<typeof userEvent.setup>) => {
+                await user.type(screen.getByLabelText('password'), password);
+                await user.click(screen.getByRole('button', { name: 'login.submitLabel' }));
+            };
+
+            test('an email in the generic field is submitted as the email login type', async () => {
+                expect.assertions(1);
+
+                const user = userEvent.setup();
+
+                await generateComponent({ allowCustomIdentifier: true });
+
+                await user.type(
+                    screen.getByRole('textbox', { name: 'identifier' }),
+                    'alice@reach5.co'
+                );
+                await fillPasswordAndSubmit(user);
+
+                await waitFor(() =>
+                    expect(loginWithPassword).toBeCalledWith(
+                        expect.objectContaining({ email: 'alice@reach5.co', password })
+                    )
+                );
+            });
+
+            test('the dedicated field alone is submitted as the custom identifier login type', async () => {
+                expect.assertions(1);
+
+                const user = userEvent.setup();
+
+                await generateComponent({ allowCustomIdentifier: true });
+
+                await user.type(
+                    screen.getByRole('textbox', { name: 'customIdentifier' }),
+                    'jdoe2024'
+                );
+                await fillPasswordAndSubmit(user);
+
+                await waitFor(() =>
+                    expect(loginWithPassword).toBeCalledWith(
+                        expect.objectContaining({ customIdentifier: 'jdoe2024', password })
+                    )
+                );
+            });
+
+            // a field can only be held to its own value, so nothing client-side arbitrates between
+            // the two: `specializeIdentifierData` specializes the generic field and keeps the rest of
+            // the payload as it is, and the api decides which identifier it honours
+            test('filling both submits both and leaves the api to arbitrate', async () => {
+                expect.assertions(1);
+
+                const user = userEvent.setup();
+
+                await generateComponent({ allowCustomIdentifier: true });
+
+                await user.type(
+                    screen.getByRole('textbox', { name: 'identifier' }),
+                    'alice@reach5.co'
+                );
+                await user.type(
+                    screen.getByRole('textbox', { name: 'customIdentifier' }),
+                    'jdoe2024'
+                );
+                await fillPasswordAndSubmit(user);
+
+                await waitFor(() =>
+                    expect(loginWithPassword).toBeCalledWith(
+                        expect.objectContaining({
+                            email: 'alice@reach5.co',
+                            customIdentifier: 'jdoe2024',
+                            password,
+                        })
+                    )
+                );
+            });
+
+            // `loginTypeAllowed` is authoritative: the view may ask for the dedicated input, but a
+            // tenant which forbids that login type never gets a field whose value the API rejects
+            test('is not displayed when the tenant forbids that login type', async () => {
+                expect.assertions(3);
+
+                const user = userEvent.setup();
+
+                await generateComponent(
+                    { allowCustomIdentifier: true },
+                    {
+                        loginTypeAllowed: {
+                            email: true,
+                            phoneNumber: true,
+                            customIdentifier: false,
+                        },
+                    }
+                );
+
+                expect(
+                    screen.queryByRole('textbox', { name: 'customIdentifier' })
+                ).not.toBeInTheDocument();
+
+                // the generic field is then the only identifier the form holds, so it is required
+                // again rather than one alternative of a pair
+                await fillPasswordAndSubmit(user);
+
+                expect(
+                    screen.getByRole('textbox', { name: 'identifier' })
+                ).toHaveAccessibleErrorMessage('validation.required');
+                expect(loginWithPassword).not.toBeCalled();
+            });
+
+            // neither field is required on its own — a field can only be held to its own value, so
+            // the missing identifier is the api's to report. It answers `invalid_grant` with no
+            // `error_details`, so the message lands in the form's global error rather than on a field
+            test('filling neither submits without an identifier and reports the api error', async () => {
+                expect.assertions(3);
+
+                const user = userEvent.setup();
+
+                // an api error makes the Form call logError(), which logs to console.error by design
+                // (src/helpers/logger.ts): silenced so the expected error path stays out of the output
+                const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+
+                const errorUserMsg =
+                    'The identifier must be a valid email, a valid phone number or a custom identifier';
+                loginWithPassword.mockRejectedValueOnce({
+                    errorId: '2eiBH55Hvv',
+                    errorDescription: errorUserMsg,
+                    error: 'invalid_grant',
+                    errorUserMsg,
+                    errorMessageKey: 'error.identifier.mustBeValidLogin',
+                });
+
+                await generateComponent({ allowCustomIdentifier: true });
+
+                await fillPasswordAndSubmit(user);
+
+                await waitFor(() => expect(loginWithPassword).toBeCalled());
+                expect(loginWithPassword.mock.calls[0][0]).toEqual(
+                    expect.not.objectContaining({
+                        email: expect.anything(),
+                        phoneNumber: expect.anything(),
+                        customIdentifier: expect.anything(),
+                    })
+                );
+                // no message key in the bundle: i18next falls back to the api's user message
+                await waitFor(() =>
+                    expect(screen.getByRole('alert')).toHaveTextContent(errorUserMsg)
+                );
+
+                consoleErrorSpy.mockRestore();
+            });
+        });
+
+        // `loginTypeAllowed` is tenant configuration and is authoritative for every shape the
+        // identifier field reads, the custom identifier included
+        test('a custom identifier is rejected when the tenant forbids that login type', async () => {
+            expect.assertions(2);
+
+            const user = userEvent.setup();
+
+            await generateComponent(
+                {},
+                { loginTypeAllowed: { email: true, phoneNumber: true, customIdentifier: false } }
+            );
+
+            const identifierInput = screen.getByRole('textbox', { name: 'identifier' });
+            await user.type(identifierInput, 'jdoe2024');
+            await user.type(screen.getByLabelText('password'), 'Wond3rFu11_Pa55w0rD*$');
+            await user.click(screen.getByRole('button', { name: 'login.submitLabel' }));
+
+            expect(identifierInput).toHaveAccessibleErrorMessage('validation.identifier');
+            expect(loginWithPassword).not.toBeCalled();
         });
 
         test('login only', async () => {
@@ -948,6 +1131,59 @@ describe('DOM testing', () => {
                 expect(loginWithWebAuthn).toBeCalledWith(
                     expect.objectContaining({ email: 'alice@reach5.co' })
                 );
+            });
+
+            // a WebAuthn credential is only ever enrolled against an email or a phone number, so a
+            // custom identifier has no credential to look up — whatever the tenant allows as a login
+            // type. The field refuses that shape (`allowCustomIdentifier: false`) instead of letting
+            // the handler reject the submission with nothing shown on the field
+            describe('a custom identifier has no credential to look up', () => {
+                test('is rejected by the field validation', async () => {
+                    expect.assertions(2);
+
+                    const user = userEvent.setup();
+                    loginWithWebAuthn.mockResolvedValue({} as AuthResult);
+
+                    // the tenant allows a custom identifier as a login type: the restriction comes
+                    // from WebAuthn itself, not from `loginTypeAllowed`
+                    await generateWebAuthnLoginView();
+
+                    const identifierInput = screen.getByRole('textbox', { name: 'identifier' });
+                    await user.type(identifierInput, 'jdoe2024');
+                    await user.click(screen.getByRole('button', { name: 'login.withBiometrics' }));
+
+                    expect(identifierInput).toHaveAccessibleErrorMessage('validation.identifier');
+                    // the conditional mediation request the view starts on mount is the only call:
+                    // no identifier is ever submitted
+                    expect(loginWithWebAuthn).not.toBeCalledWith(
+                        expect.objectContaining({ customIdentifier: expect.anything() })
+                    );
+                });
+
+                // the password button submits the form as well as switching view, so the field
+                // validation must not stand in the way of the fallback: a custom identifier is a
+                // valid login with a password, and the value the user typed has to be carried over
+                test('still reaches the password login view through the fallback', async () => {
+                    expect.assertions(3);
+
+                    const user = userEvent.setup();
+
+                    await generateWebAuthnLoginView();
+
+                    await user.type(
+                        screen.getByRole('textbox', { name: 'identifier' }),
+                        'jdoe2024'
+                    );
+                    await user.click(screen.getByRole('button', { name: 'login.withPassword' }));
+
+                    expect(screen.getByLabelText('password')).toBeInTheDocument();
+                    expect(screen.getByRole('textbox', { name: 'identifier' })).toHaveValue(
+                        'jdoe2024'
+                    );
+                    expect(loginWithWebAuthn).not.toBeCalledWith(
+                        expect.objectContaining({ customIdentifier: expect.anything() })
+                    );
+                });
             });
         });
 

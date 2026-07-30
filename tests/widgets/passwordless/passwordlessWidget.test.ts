@@ -579,38 +579,25 @@ describe('DOM testing', () => {
                 });
             });
 
-            test('a custom identifier is accepted by the field validation', async () => {
-                expect.assertions(2);
+            // passwordless only serves an email or a phone number: a custom identifier has no flow
+            // to start, so the field refuses it as any other malformed input rather than letting
+            // the handler reject the submission with nothing shown on the field
+            test('a custom identifier is rejected by the field validation', async () => {
+                expect.assertions(3);
 
                 const user = userEvent.setup();
 
                 await generateComponent({ authType: ['magic_link', 'sms'] });
 
-                // neither an email nor a phone number: no format to check, the handler rejects it
                 const identifierInput = screen.getByRole('textbox', { name: 'identifier' });
                 await user.type(identifierInput, 'jdoe2024');
                 await user.click(screen.getByRole('button', { name: 'send' }));
 
-                expect(identifierInput).not.toHaveAccessibleErrorMessage();
+                expect(identifierInput).toHaveAccessibleErrorMessage('validation.identifier');
                 expect(startPasswordless).not.toBeCalled();
-            });
-
-            // passwordless only serves an email or a phone number: any other shape the field lets
-            // through has no flow to start and is reported to the caller
-            test('a custom identifier is rejected by the handler', async () => {
-                expect.assertions(2);
-
-                const user = userEvent.setup();
-
-                await generateComponent({ authType: ['magic_link', 'sms'] });
-
-                await user.type(screen.getByRole('textbox', { name: 'identifier' }), 'jdoe2024');
-                await user.click(screen.getByRole('button', { name: 'send' }));
-
-                expect(onError).toBeCalledWith(
-                    expect.objectContaining({ message: 'validation.identifier' })
-                );
-                expect(startPasswordless).not.toBeCalled();
+                // the submission never happens, so there is no error to report to the caller —
+                // as for every other value the field validation refuses
+                expect(onError).not.toBeCalled();
             });
         });
 
