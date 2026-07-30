@@ -1187,6 +1187,66 @@ describe('DOM testing', () => {
             });
         });
 
+        // the password login view is the second step of the WebAuthn-first flow: the identifier was
+        // already settled on the previous screen and is only carried over, so it is displayed
+        // read-only rather than offered for editing a second time
+        describe('password login view', () => {
+            const goToPasswordLoginView = async (
+                user: ReturnType<typeof userEvent.setup>,
+                identifier: string
+            ) => {
+                await generateComponent(
+                    { allowWebAuthnLogin: true, initialScreen: 'login-with-web-authn' },
+                    webauthnConfig
+                );
+                await user.type(screen.getByRole('textbox', { name: 'identifier' }), identifier);
+                await user.click(screen.getByRole('button', { name: 'login.withPassword' }));
+                return screen.getByRole('textbox', { name: 'identifier' });
+            };
+
+            test('carries the identifier over as a read-only field', async () => {
+                expect.assertions(2);
+
+                const user = userEvent.setup();
+
+                const identifierInput = await goToPasswordLoginView(user, 'alice@reach5.co');
+
+                expect(identifierInput).toHaveValue('alice@reach5.co');
+                expect(identifierInput).toHaveAttribute('readonly');
+            });
+
+            test('does not let the carried identifier be replaced', async () => {
+                expect.assertions(1);
+
+                const user = userEvent.setup();
+
+                const identifierInput = await goToPasswordLoginView(user, 'alice@reach5.co');
+                await user.type(identifierInput, 'bob@reach5.co');
+
+                expect(identifierInput).toHaveValue('alice@reach5.co');
+            });
+
+            // the identifier is settled upstream, so the shape restriction of the previous screen
+            // does not carry over: a custom identifier is a valid login with a password
+            test('submits a carried custom identifier as such', async () => {
+                expect.assertions(2);
+
+                const user = userEvent.setup();
+                loginWithPassword.mockResolvedValue({} as AuthResult);
+
+                const identifierInput = await goToPasswordLoginView(user, 'jdoe2024');
+                await user.type(screen.getByLabelText('password'), 'Wond3rFu11_Pa55w0rd*$');
+                await user.click(screen.getByRole('button', { name: 'login.submitLabel' }));
+
+                expect(identifierInput).toHaveAttribute('readonly');
+                await waitFor(() =>
+                    expect(loginWithPassword).toBeCalledWith(
+                        expect.objectContaining({ customIdentifier: 'jdoe2024' })
+                    )
+                );
+            });
+        });
+
         test('signup view with password or webauthn', async () => {
             expect.assertions(5);
             await generateComponent(

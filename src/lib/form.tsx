@@ -72,6 +72,7 @@ type BaseFieldDefinition<
     errorFields?: string[];
     label?: string;
     placeholder?: string;
+    readOnly?: boolean;
     required?: boolean;
     transform?: Transformer;
     validation?: Validation<TFieldType, TFieldValues>;
