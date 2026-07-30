@@ -5,6 +5,7 @@ import {
     Field,
     FieldContent,
     FieldDescription,
+    FieldError,
     FieldLabel,
     FieldLegend,
     FieldSet,
@@ -64,6 +65,7 @@ const RadioGroupField = React.forwardRef<React.ElementRef<typeof RadioGroup>, Ra
                         </Field>
                     ))}
                 </RadioGroup>
+                {errors && <FieldError errors={errors} id={errorId} className="-mt-3" />}
             </FieldSet>
         );
     }
