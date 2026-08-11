@@ -49,7 +49,6 @@ export const primitiveTheme: PrimitiveTheme = {
     dangerColor: '#dc4e41',
     warningColor: '#ffc107',
     successColor: '#229955',
-    lightBackgroundColor: gray200,
     maxWidth: 400,
 };
 
@@ -137,6 +136,7 @@ export const buildTheme = (themeOptions: ThemeOptions = {} as Partial<ThemeOptio
         borderColor: base.borderColor,
         borderRadius: base.borderRadius,
         borderWidth: base.borderWidth,
+        boxShadow: 'none',
         color: '#ffffff',
         hoverBackground: mix(0.9, base.primaryColor, 'rgba(0, 0, 0, 0)'),
         hoverColor: '#ffffff',
@@ -145,6 +145,8 @@ export const buildTheme = (themeOptions: ThemeOptions = {} as Partial<ThemeOptio
     };
     const socialButton: Omit<SocialButtonTheme, 'focusBoxShadow' | 'height' | 'textVisible'> = {
         inline: false,
+        color: button.color,
+        background: button.background,
         fontWeight: button.fontWeight,
         fontSize: button.fontSize,
         lineHeight: button.lineHeight,
@@ -153,6 +155,10 @@ export const buildTheme = (themeOptions: ThemeOptions = {} as Partial<ThemeOptio
         borderColor: button.borderColor,
         borderRadius: button.borderRadius,
         borderWidth: button.borderWidth,
+        boxShadow: button.boxShadow,
+        hoverBackground: button.hoverBackground,
+        hoverBorderColor: button.hoverBorderColor,
+        hoverColor: button.hoverColor,
         ...customSocialButton,
     };
     return {

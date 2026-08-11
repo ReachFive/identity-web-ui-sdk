@@ -71,10 +71,6 @@ export interface BaseTheme {
      * @default "#229955"
      */
     successColor: NonNullable<CSSProperties['color']>;
-    /**
-     * @default "#e9ecef"
-     */
-    lightBackgroundColor: NonNullable<CSSProperties['color']>;
     /** Specifies the padding for the x axis. (left and right) */
     paddingX: number;
     /** Specifies the padding for the y axis. (top and bottom) */
@@ -115,6 +111,8 @@ export interface InputTheme {
 }
 
 export interface ButtonTheme {
+    /** Specifies the text color. */
+    color: NonNullable<CSSProperties['color']>;
     /** Specifies the font-weight (such as normal, bold, or 900).
      * @default 'bold'
      */
@@ -137,6 +135,8 @@ export interface ButtonTheme {
     borderWidth: number;
     /** Specifies the text color. */
     color: NonNullable<CSSProperties['color']>;
+    /** Specifies the box shadow. */
+    boxShadow: NonNullable<CSSProperties['boxShadow']>;
     /** Specifies the background color on hover. */
     hoverBackground: NonNullable<CSSProperties['color']>;
     /** Specifies the border color on hover. */
@@ -149,31 +149,11 @@ export interface ButtonTheme {
     height: number;
 }
 
-export interface SocialButtonTheme {
+export interface SocialButtonTheme extends ButtonTheme {
     /** Boolean that specifies if the buttons are inline (horizonally-aligned). */
     inline: boolean;
     /** Boolean that specifies if the text is visible. */
     textVisible: boolean;
-    /** Specifies the font-weight (such as normal, bold, or 900). */
-    fontWeight: NonNullable<CSSProperties['fontWeight']>;
-    /** Specifies the font-size. */
-    fontSize: number;
-    /** Specifies the line-height. */
-    lineHeight: number;
-    /** Specifies the padding for the x axis. (left and right) */
-    paddingX: number;
-    /** Specifies the padding for the y axis. (top and bottom) */
-    paddingY: number;
-    /** Specifies the border-color. */
-    borderColor: NonNullable<CSSProperties['color']>;
-    /** Specifies the border-radius. */
-    borderRadius: number;
-    /** Specifies the border-width. */
-    borderWidth: number;
-    /** Function that specifies the box shadow based on the border color. */
-    focusBoxShadow: (color?: CSSProperties['color']) => NonNullable<CSSProperties['boxShadow']>;
-    /** Specifies the height. */
-    height: number;
 }
 
 export interface PasswordStrengthTheme {
