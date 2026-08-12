@@ -151,6 +151,7 @@ const DateField = React.forwardRef<HTMLInputElement, DateProps>(function DateFie
                                     aria-invalid={hasError ? true : undefined}
                                     aria-errormessage={hasError ? errorId : undefined}
                                     key={part}
+                                    data-part={part}
                                 />
                             );
                         case 'month':
@@ -163,6 +164,7 @@ const DateField = React.forwardRef<HTMLInputElement, DateProps>(function DateFie
                                     aria-invalid={hasError ? true : undefined}
                                     aria-errormessage={hasError ? errorId : undefined}
                                     key={part}
+                                    data-part={part}
                                 />
                             );
                         case 'day':
@@ -177,6 +179,7 @@ const DateField = React.forwardRef<HTMLInputElement, DateProps>(function DateFie
                                     aria-invalid={hasError ? true : undefined}
                                     aria-errormessage={hasError ? errorId : undefined}
                                     key={part}
+                                    data-part={part}
                                 />
                             );
                     }

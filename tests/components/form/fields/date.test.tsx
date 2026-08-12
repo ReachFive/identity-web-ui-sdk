@@ -77,12 +77,15 @@ describe('DOM testing', () => {
 
         const yearTrigger = screen.getByRole('combobox', { name: 'Année' });
         expect(yearTrigger).toBeInTheDocument();
+        expect(yearTrigger).toHaveAttribute('data-part', 'year');
 
         const monthTrigger = screen.getByRole('combobox', { name: 'Mois' });
         expect(monthTrigger).toBeInTheDocument();
+        expect(monthTrigger).toHaveAttribute('data-part', 'month');
 
         const dayTrigger = screen.getByRole('combobox', { name: 'Jour' });
         expect(dayTrigger).toBeInTheDocument();
+        expect(dayTrigger).toHaveAttribute('data-part', 'day');
 
         // Fields should be ordered according to locale (fr: day < month < year)
         expect(yearTrigger.compareDocumentPosition(monthTrigger)).toEqual(
