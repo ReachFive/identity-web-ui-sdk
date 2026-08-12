@@ -95,9 +95,14 @@ const FormFieldsRenderer = <
                 }}
                 render={({ field, fieldState }) => {
                     // `errorFields` only drives the mapping of the API validation errors onto the
-                    // form fields (see `resolveErrorFieldPath`): dropping it here keeps it off the
-                    // DOM, whichever field component the definition is rendered with
-                    const { errorFields: _errorFields, ...definition } = fieldDefinition;
+                    // form fields (see `resolveErrorFieldPath`), and `parent` is already consumed
+                    // by `getFieldPath` above to build the field name: dropping both here keeps
+                    // them off the DOM, whichever field component the definition is rendered with
+                    const {
+                        errorFields: _errorFields,
+                        parent: _parent,
+                        ...definition
+                    } = fieldDefinition;
                     return renderField(
                         {
                             ...definition,

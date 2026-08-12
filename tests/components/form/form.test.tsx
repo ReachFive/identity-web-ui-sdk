@@ -413,6 +413,24 @@ describe('DOM testing', () => {
             );
         });
 
+        test('nested field does not leak its `parent` onto the DOM', () => {
+            const onSubmit = jest.fn<() => Promise<void>>().mockResolvedValue();
+
+            render(
+                <WidgetContext
+                    client={apiClient}
+                    config={defaultConfig}
+                    defaultMessages={defaultI18n}
+                >
+                    <Form fields={['address.streetAddress']} handler={onSubmit} />
+                </WidgetContext>
+            );
+
+            const input = screen.getByRole('textbox', { name: 'address.streetAddress' });
+            expect(input).toHaveAttribute('name', 'addresses.0.streetAddress');
+            expect(input).not.toHaveAttribute('parent');
+        });
+
         test('select-type address custom field renders options and submits the selected value', async () => {
             const user = userEvent.setup();
             const onSubmit = jest.fn<() => Promise<void>>().mockResolvedValue();

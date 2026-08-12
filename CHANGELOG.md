@@ -98,6 +98,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Restore the read-only `identifier` field on the password login view, the second step of the WebAuthn
   login flow. The identifier is settled on the previous screen and only carried over, but the field was
   editable again: the user could replace it there, including with a shape the previous screen refuses
+- Stop rendering the internal `parent` of a nested field definition as a DOM attribute. The property only
+  prefixes the field name (`addresses.0.streetAddress`) and is consumed when that name is built, but it
+  was also forwarded to the field component and ended up on the `<input>` as `parent="addresses,0"`
 
 ### Deprecated
 
