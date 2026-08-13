@@ -7,7 +7,7 @@ import { CaptchaProvider, WithCaptchaProps, type WithCaptchaToken } from '../../
 import { useReachfive } from '../../contexts/reachfive';
 import { snakeCaseProperties } from '../../helpers/transformObjectProperties';
 import { isEqual, isValued } from '../../helpers/utils';
-import { type Field, type PhoneNumberOptions } from '../../lib/form';
+import { type Field, type PhoneNumberOptions, withPhoneNumberOptions } from '../../lib/form';
 import { extractCaptchaTokenFromData, importGoogleRecaptchaScript } from '../reCaptcha';
 import { Form } from './form';
 import { UserAgreement } from './UserAgreement';
@@ -71,7 +71,7 @@ export interface PasswordSignupFormProps {
 export const PasswordSignupForm = ({
     auth,
     beforeSignup = x => x,
-    // canShowPassword,
+    canShowPassword,
     phoneNumberOptions,
     recaptcha_enabled = false,
     recaptcha_site_key,
@@ -125,14 +125,33 @@ export const PasswordSignupForm = ({
         [blacklist]
     );
 
+    const resolvedSignupFields = signupFields.map(field => {
+        if (typeof field === 'object' && 'staticContent' in field) return field;
+
+        const key = typeof field === 'string' ? field : field.key;
+
+        if (
+            canShowPassword !== undefined &&
+            (key === 'password' ||
+                key === 'password_confirmation' ||
+                key === 'passwordConfirmation')
+        ) {
+            return typeof field === 'string'
+                ? { key: field, type: 'password' as const, canShowPassword }
+                : { canShowPassword, ...field };
+        }
+
+        return withPhoneNumberOptions(field, phoneNumberOptions);
+    });
+
     const allFields = userAgreement
         ? [
-              ...signupFields,
+              ...resolvedSignupFields,
               {
                   staticContent: <UserAgreement content={userAgreement} />,
               },
           ]
-        : signupFields;
+        : resolvedSignupFields;
 
     return (
         <CaptchaProvider

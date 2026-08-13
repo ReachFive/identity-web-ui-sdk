@@ -85,6 +85,33 @@ describe('DOM testing', () => {
         expect(onCheckedChange).toHaveBeenCalledWith(false);
     });
 
+    test('required: asterisk flows inline right after the label text, not as a detached flex item', () => {
+        const onCheckedChange = jest.fn();
+
+        render(
+            <WidgetContext config={defaultConfig} defaultMessages={defaultI18n}>
+                <CheckboxField
+                    label="checkbox"
+                    required
+                    checked={false}
+                    onCheckedChange={onCheckedChange}
+                />
+            </WidgetContext>
+        );
+
+        const label = screen.getByText('Check?', { selector: 'label' });
+
+        // the label must not be a flex container: a flex child (the asterisk) would be
+        // blockified and detach from the text flow once the label text wraps onto
+        // multiple lines, instead of trailing it like a word
+        expect(label.className).not.toMatch(/(?:^|\s)flex(?:\s|$)/);
+
+        // the asterisk is the last DOM node in the label, right after the text
+        // eslint-disable-next-line testing-library/no-node-access -- asserting DOM order, no semantic query fits
+        expect(label.lastElementChild?.tagName.toLowerCase()).toBe('svg');
+        expect(label.textContent).toBe('Check? ');
+    });
+
     test('description visible (consent-style)', () => {
         const onCheckedChange = jest.fn();
 

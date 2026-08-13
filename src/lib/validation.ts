@@ -20,7 +20,7 @@ export function passwordValidation({
             if (String(value).length === 0) return;
             if (!definition.withPolicyRules) return;
 
-            if (passwordPolicy.lowercaseCharacters && /[a-z]/.test(value)) {
+            if (passwordPolicy.lowercaseCharacters && !/[a-z]/.test(value)) {
                 ctx.addIssue({
                     code: 'custom',
                     message: i18n('validation.password.specials.lowercase'),
@@ -28,15 +28,7 @@ export function passwordValidation({
                 });
             }
 
-            if (passwordPolicy.uppercaseCharacters && /[A-Z]/.test(value)) {
-                ctx.addIssue({
-                    code: 'custom',
-                    message: i18n('validation.password.specials.digit'),
-                    path: ['password'],
-                });
-            }
-
-            if (passwordPolicy.digitCharacters && /\d/.test(value)) {
+            if (passwordPolicy.uppercaseCharacters && !/[A-Z]/.test(value)) {
                 ctx.addIssue({
                     code: 'custom',
                     message: i18n('validation.password.specials.uppercase'),
@@ -44,9 +36,17 @@ export function passwordValidation({
                 });
             }
 
+            if (passwordPolicy.digitCharacters && !/\d/.test(value)) {
+                ctx.addIssue({
+                    code: 'custom',
+                    message: i18n('validation.password.specials.digit'),
+                    path: ['password'],
+                });
+            }
+
             if (
                 passwordPolicy.specialCharacters &&
-                new RegExp('[ !"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~]').test(value)
+                !new RegExp('[ !"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~]').test(value)
             ) {
                 ctx.addIssue({
                     code: 'custom',

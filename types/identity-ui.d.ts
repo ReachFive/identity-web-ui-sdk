@@ -1,6 +1,6 @@
 /**
- * @reachfive/identity-ui - v2.0.1
- * Compiled Tue, 30 Jun 2026 12:00:34 UTC
+ * @reachfive/identity-ui - v2.0.2
+ * Compiled Thu, 30 Jul 2026 08:59:54 UTC
  *
  * Copyright (c) ReachFive.
  *
@@ -14,7 +14,7 @@ import { ResourceKey, TFunction } from 'i18next';
 import { StepUpPasswordlessParams as StepUpPasswordlessParams$1 } from '@reachfive/identity-core/es/main/oAuthClient';
 import { WidgetDisplayMode } from '@captchafox/types';
 import { FieldValues, UseFormWatch } from 'react-hook-form';
-import { CountryCode } from 'libphonenumber-js';
+import { CountryCode } from 'libphonenumber-js/min';
 import z from 'zod';
 
 type I18nMessages = Record<string, ResourceKey>;
@@ -360,12 +360,22 @@ interface ButtonTheme {
     paddingX: number;
     /** Specifies the padding for the y axis. (top and bottom) */
     paddingY: number;
+    /** Specifies the background-color. */
+    background: NonNullable<CSSProperties['color']>;
     /** Specifies the border-color. */
     borderColor: NonNullable<CSSProperties['color']>;
     /** Specifies the border-radius. */
     borderRadius: number;
     /** Specifies the border-width. */
     borderWidth: number;
+    /** Specifies the text color. */
+    color: NonNullable<CSSProperties['color']>;
+    /** Specifies the background color on hover. */
+    hoverBackground: NonNullable<CSSProperties['color']>;
+    /** Specifies the border color on hover. */
+    hoverBorderColor: NonNullable<CSSProperties['color']>;
+    /** Specifies the color on hover. */
+    hoverColor: NonNullable<CSSProperties['color']>;
     /** Function that specifies the box shadow based on the border color. */
     focusBoxShadow: (color?: CSSProperties['color']) => NonNullable<CSSProperties['boxShadow']>;
     /** Specifies the height. */
@@ -477,6 +487,14 @@ type BaseFieldDefinition<TFieldType extends FieldType, TFieldValues extends Fiel
     autoComplete?: AutoFill;
     defaultValue?: string;
     description?: React.ReactNode;
+    /**
+     * The API payload field names this form field stands for, when the value it holds is submitted
+     * under another key: the generic `identifier` field is sent as `email` / `phone_number` /
+     * `custom_identifier` (see `specializeIdentifier`), so an API validation error naming one of
+     * them belongs to it. Declared in the API's own casing.
+     * @see resolveErrorFieldPath
+     */
+    errorFields?: string[];
     label?: string;
     placeholder?: string;
     required?: boolean;
@@ -509,7 +527,26 @@ type FieldDefinition<TFieldType extends FieldType = FieldType, TFieldValues exte
     yearRange?: number;
 } | {
     type: 'identifier';
+    /**
+     * Whether a value matching neither an email nor a phone number is accepted as a custom
+     * identifier. Defaults to `loginTypeAllowed.customIdentifier`, as the email and phone
+     * number shapes default to their own login types. Set it to `false` in a widget which
+     * has no flow to serve one (WebAuthn login, passwordless), so that the field refuses
+     * that shape instead of submitting a value the handler then rejects. A tenant which
+     * forbids the login type may not be opted back in.
+     */
+    allowCustomIdentifier?: boolean;
+    defaultCountry?: CountryCode;
+    /**
+     * @deprecated Ignored. `loginTypeAllowed` is tenant configuration and is
+     * authoritative: no field option may opt out of it.
+     */
     isWebAuthnLogin?: boolean;
+    /**
+     * Whether the input is formatted as a phone number while the user types. Defaults to
+     * `loginTypeAllowed.phoneNumber`. It does not affect which shapes are accepted — that
+     * is decided by `loginTypeAllowed` alone.
+     */
     withPhoneNumber?: boolean;
 } | {
     type: 'hidden';
@@ -690,6 +727,11 @@ interface ForgotPasswordViewProps {
      * @default false
      */
     allowPhoneNumberResetPassword?: boolean;
+    /**
+     * Whether or not to provide the display password in clear text option.
+     * @default false
+     */
+    canShowPassword?: boolean;
     /**
      * Whether or not to display a safe error message on password reset, given an invalid email address.
      * This mode ensures not to leak email addresses registered to the platform.
@@ -1032,6 +1074,10 @@ interface SignupWithWebAuthnViewProps {
     /**  */
     beforeSignup?: <T>(param: T) => T;
     /**
+     * Object that lets you set display options for the phone number field.
+     */
+    phoneNumberOptions?: PhoneNumberOptions;
+    /**
      * The URL sent in the email to which the user is redirected.
      * This URL must be whitelisted in the `Allowed Callback URLs` field of your ReachFive client settings.
      */
@@ -1076,7 +1122,7 @@ interface SignupWithWebAuthnViewProps {
      */
     onError?: OnError;
 }
-declare const SignupWithWebAuthnView: ({ auth, beforeSignup, redirectUrl, returnToAfterEmailConfirmation, signupFields, showLabels, userAgreement, onError, onSuccess, }: SignupWithWebAuthnViewProps) => React.JSX.Element;
+declare const SignupWithWebAuthnView: ({ auth, beforeSignup, phoneNumberOptions, redirectUrl, returnToAfterEmailConfirmation, signupFields, showLabels, userAgreement, onError, onSuccess, }: SignupWithWebAuthnViewProps) => React.JSX.Element;
 
 interface SignupViewProps extends SignupWithPasswordViewProps, SignupWithWebAuthnViewProps {
     /**

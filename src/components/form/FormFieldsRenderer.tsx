@@ -21,7 +21,7 @@ import { SelectField } from '@/components/form/fields/select';
 import { useConfig } from '@/contexts/config';
 import { useI18n } from '@/contexts/i18n';
 import { useReachfive } from '@/contexts/reachfive';
-import { type FieldDefinition, type StaticContent } from '@/lib/form';
+import { type FieldDefinition, getFieldPath, type StaticContent } from '@/lib/form';
 
 type FormFieldsRendererProps<
     TFieldValues extends FieldValues = FieldValues,
@@ -57,9 +57,7 @@ const FormFieldsRenderer = <
             );
         }
 
-        const key = fieldDefinition.parent
-            ? `${typeof fieldDefinition.parent === 'string' ? fieldDefinition.parent : fieldDefinition.parent.join('.')}.${fieldDefinition.key}`
-            : fieldDefinition.key;
+        const key = getFieldPath(fieldDefinition);
 
         return (
             <Controller
@@ -84,23 +82,37 @@ const FormFieldsRenderer = <
                                     watch,
                                 })
                                 .nullish();
-                            const result = await validate.safeParseAsync(value);
+                            // An empty string means "cleared" for an optional field (e.g. the Select's
+                            // empty option), but only `null`/`undefined` satisfy `.nullish()` — normalize
+                            // so optional fields don't fail validation just for being left blank.
+                            const result = await validate.safeParseAsync(
+                                value === '' ? undefined : value
+                            );
                             if (result.success) return;
                             return result.error.issues[0]?.message;
                         }
                     },
                 }}
-                render={({ field, fieldState }) =>
-                    renderField(
+                render={({ field, fieldState }) => {
+                    // `errorFields` only drives the mapping of the API validation errors onto the
+                    // form fields (see `resolveErrorFieldPath`), and `parent` is already consumed
+                    // by `getFieldPath` above to build the field name: dropping both here keeps
+                    // them off the DOM, whichever field component the definition is rendered with
+                    const {
+                        errorFields: _errorFields,
+                        parent: _parent,
+                        ...definition
+                    } = fieldDefinition;
+                    return renderField(
                         {
-                            ...fieldDefinition,
+                            ...definition,
                             label: i18n(fieldDefinition.label ?? fieldDefinition.key),
                         },
                         field,
                         fieldState,
                         showLabels
-                    )
-                }
+                    );
+                }}
             />
         );
     });
@@ -121,7 +133,7 @@ function renderField<
         case 'object':
         case 'tags':
         case undefined: {
-            const { type, transform, validation, ...props } = fieldDefinition;
+            const { type, transform, validation, defaultValue, ...props } = fieldDefinition;
             return (
                 <InputField
                     type="text"
@@ -135,7 +147,7 @@ function renderField<
             );
         }
         case 'number': {
-            const { type, transform, validation, ...props } = fieldDefinition;
+            const { type, transform, validation, defaultValue, ...props } = fieldDefinition;
             return (
                 <InputField
                     type="number"
@@ -146,29 +158,23 @@ function renderField<
                 />
             );
         }
-        case 'integer': {
-            const { type, transform, validation, ...props } = fieldDefinition;
-            return (
-                <InputField
-                    type="number"
-                    pattern="\d*"
-                    {...props}
-                    showLabels={showLabels}
-                    onChange={e => onChange(transform?.output(e) ?? e)}
-                    {...(transform?.input(value) ?? { value })}
-                    {...field}
-                    errors={fieldState.invalid && fieldState.error ? [fieldState.error] : undefined}
-                />
-            );
-        }
+        case 'integer':
         case 'decimal': {
-            const { type, transform, validation, ...props } = fieldDefinition;
+            const { type, transform, validation, defaultValue, ...props } = fieldDefinition;
             return (
                 <InputField
                     type="number"
+                    pattern={type === 'integer' ? '\\d*' : undefined}
                     {...props}
                     showLabels={showLabels}
-                    onChange={e => onChange(transform?.output(e) ?? e)}
+                    onChange={e =>
+                        onChange(
+                            transform?.output(e) ??
+                                (Number.isNaN(e.target.valueAsNumber)
+                                    ? undefined
+                                    : e.target.valueAsNumber)
+                        )
+                    }
                     {...(transform?.input(value) ?? { value })}
                     {...field}
                     errors={fieldState.invalid && fieldState.error ? [fieldState.error] : undefined}
@@ -176,7 +182,7 @@ function renderField<
             );
         }
         case 'email': {
-            const { type, transform, validation, ...props } = fieldDefinition;
+            const { type, transform, validation, defaultValue, ...props } = fieldDefinition;
             return (
                 <InputField
                     type="email"
@@ -190,7 +196,8 @@ function renderField<
             );
         }
         case 'password': {
-            const { type, transform, validation, withPolicyRules, ...props } = fieldDefinition;
+            const { type, transform, validation, defaultValue, withPolicyRules, ...props } =
+                fieldDefinition;
             return (
                 <PasswordField
                     {...props}
@@ -205,7 +212,7 @@ function renderField<
             );
         }
         case 'date': {
-            const { type, transform, validation, ...props } = fieldDefinition;
+            const { type, transform, validation, defaultValue, ...props } = fieldDefinition;
             return (
                 <DateField
                     {...props}
@@ -218,7 +225,7 @@ function renderField<
             );
         }
         case 'checkbox': {
-            const { type, transform, validation, ...props } = fieldDefinition;
+            const { type, transform, validation, defaultValue, ...props } = fieldDefinition;
             return (
                 <CheckboxField
                     {...props}
@@ -231,7 +238,7 @@ function renderField<
             );
         }
         case 'radio-group': {
-            const { type, transform, validation, ...props } = fieldDefinition;
+            const { type, transform, validation, defaultValue, ...props } = fieldDefinition;
             return (
                 <RadioGroupField
                     {...props}
@@ -244,7 +251,7 @@ function renderField<
             );
         }
         case 'select': {
-            const { type, transform, validation, ...props } = fieldDefinition;
+            const { type, transform, validation, defaultValue, ...props } = fieldDefinition;
             return (
                 <SelectField
                     {...props}
@@ -257,7 +264,16 @@ function renderField<
             );
         }
         case 'phone': {
-            const { type, transform, validation, phoneNumberOptions, ...props } = fieldDefinition;
+            const {
+                type,
+                transform,
+                validation,
+                defaultValue,
+                phoneNumberOptions,
+                allowInternational,
+                defaultCountry,
+                ...props
+            } = fieldDefinition;
             return (
                 <PhoneNumberField
                     {...props}
@@ -269,15 +285,16 @@ function renderField<
                     allowInternational={
                         phoneNumberOptions?.allowInternational ??
                         phoneNumberOptions?.withCountrySelect ??
-                        phoneNumberOptions?.withCountryCallingCode
+                        phoneNumberOptions?.withCountryCallingCode ??
+                        allowInternational
                     }
-                    defaultCountry={phoneNumberOptions?.defaultCountry}
+                    defaultCountry={phoneNumberOptions?.defaultCountry ?? defaultCountry}
                     errors={fieldState.invalid && fieldState.error ? [fieldState.error] : undefined}
                 />
             );
         }
         case 'hidden': {
-            const { type, transform, validation, ...props } = fieldDefinition;
+            const { type, transform, validation, defaultValue, ...props } = fieldDefinition;
             return (
                 <input
                     type="hidden"
@@ -289,7 +306,18 @@ function renderField<
             );
         }
         case 'identifier': {
-            const { type, transform, validation, ...props } = fieldDefinition;
+            // `isWebAuthnLogin` is deprecated and ignored by the field definition builder, and
+            // `allowCustomIdentifier` is consumed by the validation it builds (see
+            // `predefinedFields.identifier`); dropping both here keeps them off the DOM <input>
+            const {
+                type,
+                transform,
+                validation,
+                defaultValue,
+                allowCustomIdentifier: _allowCustomIdentifier,
+                isWebAuthnLogin: _isWebAuthnLogin,
+                ...props
+            } = fieldDefinition;
             return (
                 <IdentifierField
                     {...props}

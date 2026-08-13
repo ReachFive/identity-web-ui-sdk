@@ -71,7 +71,13 @@ exports[`Snapshot forgot password view default 1`] = `
   --leading: 1.428571429;
   --border-width: 1px;
   --radius: 3px;
+  --button-background-color: #229955;
+  --button-hover-background-color: rgba(34,153,85,0.9);
+  --button-text-color: #ffffff;
+  --button-hover-text-color: #ffffff;
+  --button-font-weight: bold;
   --button-border: #ced4da;
+  --button-hover-border: rgba(0,0,0,0);
   --button-border-width: 1px;
   --button-height: 40px;
   --button-leading: 1.428571429;
@@ -92,6 +98,15 @@ exports[`Snapshot forgot password view default 1`] = `
   --input-shadow: none;
   --input-text-color: #495057;
   --input-text-size: 14px;
+  --link-color: #229955;
+  --link-hover-color: #145a32;
+  --link-decoration: none;
+  --link-hover-decoration: none;
+  --password-strength-color-0: #dc4e41;
+  --password-strength-color-1: #dc4e41;
+  --password-strength-color-2: #ffc107;
+  --password-strength-color-3: #4ad786;
+  --password-strength-color-4: #229955;
 }
 
 <div>
@@ -153,7 +168,7 @@ exports[`Snapshot forgot password view default 1`] = `
             />
           </div>
           <button
-            class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[var(--button-radius)] text-[length:var(--button-text-size)] leading-[var(--button-leading)] font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary text-primary-foreground shadow hover:bg-primary/90 h-[var(--button-height)] px-[var(--button-padding-x)] py-[var(--button-padding-y)] w-full"
+            class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[var(--button-radius)] text-[length:var(--button-text-size)] leading-[var(--button-leading)] font-[weight:var(--button-font-weight)] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-[var(--button-background-color)] text-[var(--button-text-color)] border-[length:var(--button-border-width)] border-[var(--button-border)] shadow hover:bg-[var(--button-hover-background-color)] hover:text-[var(--button-hover-text-color)] hover:border-[var(--button-hover-border)] h-[var(--button-height)] px-[var(--button-padding-x)] py-[var(--button-padding-y)] w-full"
             type="submit"
           >
             forgotPassword.submitLabel
@@ -271,7 +286,13 @@ exports[`Snapshot login view default 1`] = `
   --leading: 1.428571429;
   --border-width: 1px;
   --radius: 3px;
+  --button-background-color: #229955;
+  --button-hover-background-color: rgba(34,153,85,0.9);
+  --button-text-color: #ffffff;
+  --button-hover-text-color: #ffffff;
+  --button-font-weight: bold;
   --button-border: #ced4da;
+  --button-hover-border: rgba(0,0,0,0);
   --button-border-width: 1px;
   --button-height: 40px;
   --button-leading: 1.428571429;
@@ -292,6 +313,15 @@ exports[`Snapshot login view default 1`] = `
   --input-shadow: none;
   --input-text-color: #495057;
   --input-text-size: 14px;
+  --link-color: #229955;
+  --link-hover-color: #145a32;
+  --link-decoration: none;
+  --link-hover-decoration: none;
+  --password-strength-color-0: #dc4e41;
+  --password-strength-color-1: #dc4e41;
+  --password-strength-color-2: #ffc107;
+  --password-strength-color-3: #4ad786;
+  --password-strength-color-4: #229955;
 }
 
 .c4 {
@@ -534,7 +564,7 @@ exports[`Snapshot login view default 1`] = `
             </div>
           </div>
           <button
-            class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[var(--button-radius)] text-[length:var(--button-text-size)] leading-[var(--button-leading)] font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary text-primary-foreground shadow hover:bg-primary/90 h-[var(--button-height)] px-[var(--button-padding-x)] py-[var(--button-padding-y)] w-full"
+            class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[var(--button-radius)] text-[length:var(--button-text-size)] leading-[var(--button-leading)] font-[weight:var(--button-font-weight)] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-[var(--button-background-color)] text-[var(--button-text-color)] border-[length:var(--button-border-width)] border-[var(--button-border)] shadow hover:bg-[var(--button-hover-background-color)] hover:text-[var(--button-hover-text-color)] hover:border-[var(--button-hover-border)] h-[var(--button-height)] px-[var(--button-padding-x)] py-[var(--button-padding-y)] w-full"
             type="submit"
           >
             login.submitLabel
@@ -666,7 +696,13 @@ exports[`Snapshot login view inline social buttons 1`] = `
   --leading: 1.428571429;
   --border-width: 1px;
   --radius: 3px;
+  --button-background-color: #229955;
+  --button-hover-background-color: rgba(34,153,85,0.9);
+  --button-text-color: #ffffff;
+  --button-hover-text-color: #ffffff;
+  --button-font-weight: bold;
   --button-border: #ced4da;
+  --button-hover-border: rgba(0,0,0,0);
   --button-border-width: 1px;
   --button-height: 40px;
   --button-leading: 1.428571429;
@@ -687,6 +723,15 @@ exports[`Snapshot login view inline social buttons 1`] = `
   --input-shadow: none;
   --input-text-color: #495057;
   --input-text-size: 14px;
+  --link-color: #229955;
+  --link-hover-color: #145a32;
+  --link-decoration: none;
+  --link-hover-decoration: none;
+  --password-strength-color-0: #dc4e41;
+  --password-strength-color-1: #dc4e41;
+  --password-strength-color-2: #ffc107;
+  --password-strength-color-3: #4ad786;
+  --password-strength-color-4: #229955;
 }
 
 .c4 {
@@ -923,7 +968,7 @@ exports[`Snapshot login view inline social buttons 1`] = `
             </div>
           </div>
           <button
-            class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[var(--button-radius)] text-[length:var(--button-text-size)] leading-[var(--button-leading)] font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary text-primary-foreground shadow hover:bg-primary/90 h-[var(--button-height)] px-[var(--button-padding-x)] py-[var(--button-padding-y)] w-full"
+            class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[var(--button-radius)] text-[length:var(--button-text-size)] leading-[var(--button-leading)] font-[weight:var(--button-font-weight)] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-[var(--button-background-color)] text-[var(--button-text-color)] border-[length:var(--button-border-width)] border-[var(--button-border)] shadow hover:bg-[var(--button-hover-background-color)] hover:text-[var(--button-hover-text-color)] hover:border-[var(--button-hover-border)] h-[var(--button-height)] px-[var(--button-padding-x)] py-[var(--button-padding-y)] w-full"
             type="submit"
           >
             login.submitLabel
@@ -1055,7 +1100,13 @@ exports[`Snapshot login view no forgot password 1`] = `
   --leading: 1.428571429;
   --border-width: 1px;
   --radius: 3px;
+  --button-background-color: #229955;
+  --button-hover-background-color: rgba(34,153,85,0.9);
+  --button-text-color: #ffffff;
+  --button-hover-text-color: #ffffff;
+  --button-font-weight: bold;
   --button-border: #ced4da;
+  --button-hover-border: rgba(0,0,0,0);
   --button-border-width: 1px;
   --button-height: 40px;
   --button-leading: 1.428571429;
@@ -1076,6 +1127,15 @@ exports[`Snapshot login view no forgot password 1`] = `
   --input-shadow: none;
   --input-text-color: #495057;
   --input-text-size: 14px;
+  --link-color: #229955;
+  --link-hover-color: #145a32;
+  --link-decoration: none;
+  --link-hover-decoration: none;
+  --password-strength-color-0: #dc4e41;
+  --password-strength-color-1: #dc4e41;
+  --password-strength-color-2: #ffc107;
+  --password-strength-color-3: #4ad786;
+  --password-strength-color-4: #229955;
 }
 
 .c4 {
@@ -1318,7 +1378,7 @@ exports[`Snapshot login view no forgot password 1`] = `
             </div>
           </div>
           <button
-            class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[var(--button-radius)] text-[length:var(--button-text-size)] leading-[var(--button-leading)] font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary text-primary-foreground shadow hover:bg-primary/90 h-[var(--button-height)] px-[var(--button-padding-x)] py-[var(--button-padding-y)] w-full"
+            class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[var(--button-radius)] text-[length:var(--button-text-size)] leading-[var(--button-leading)] font-[weight:var(--button-font-weight)] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-[var(--button-background-color)] text-[var(--button-text-color)] border-[length:var(--button-border-width)] border-[var(--button-border)] shadow hover:bg-[var(--button-hover-background-color)] hover:text-[var(--button-hover-text-color)] hover:border-[var(--button-hover-border)] h-[var(--button-height)] px-[var(--button-padding-x)] py-[var(--button-padding-y)] w-full"
             type="submit"
           >
             login.submitLabel
@@ -1440,7 +1500,13 @@ exports[`Snapshot login view no signup 1`] = `
   --leading: 1.428571429;
   --border-width: 1px;
   --radius: 3px;
+  --button-background-color: #229955;
+  --button-hover-background-color: rgba(34,153,85,0.9);
+  --button-text-color: #ffffff;
+  --button-hover-text-color: #ffffff;
+  --button-font-weight: bold;
   --button-border: #ced4da;
+  --button-hover-border: rgba(0,0,0,0);
   --button-border-width: 1px;
   --button-height: 40px;
   --button-leading: 1.428571429;
@@ -1461,6 +1527,15 @@ exports[`Snapshot login view no signup 1`] = `
   --input-shadow: none;
   --input-text-color: #495057;
   --input-text-size: 14px;
+  --link-color: #229955;
+  --link-hover-color: #145a32;
+  --link-decoration: none;
+  --link-hover-decoration: none;
+  --password-strength-color-0: #dc4e41;
+  --password-strength-color-1: #dc4e41;
+  --password-strength-color-2: #ffc107;
+  --password-strength-color-3: #4ad786;
+  --password-strength-color-4: #229955;
 }
 
 .c4 {
@@ -1703,7 +1778,7 @@ exports[`Snapshot login view no signup 1`] = `
             </div>
           </div>
           <button
-            class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[var(--button-radius)] text-[length:var(--button-text-size)] leading-[var(--button-leading)] font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary text-primary-foreground shadow hover:bg-primary/90 h-[var(--button-height)] px-[var(--button-padding-x)] py-[var(--button-padding-y)] w-full"
+            class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[var(--button-radius)] text-[length:var(--button-text-size)] leading-[var(--button-leading)] font-[weight:var(--button-font-weight)] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-[var(--button-background-color)] text-[var(--button-text-color)] border-[length:var(--button-border-width)] border-[var(--button-border)] shadow hover:bg-[var(--button-hover-background-color)] hover:text-[var(--button-hover-text-color)] hover:border-[var(--button-hover-border)] h-[var(--button-height)] px-[var(--button-padding-x)] py-[var(--button-padding-y)] w-full"
             type="submit"
           >
             login.submitLabel
@@ -1821,7 +1896,13 @@ exports[`Snapshot login view with canShowPassword 1`] = `
   --leading: 1.428571429;
   --border-width: 1px;
   --radius: 3px;
+  --button-background-color: #229955;
+  --button-hover-background-color: rgba(34,153,85,0.9);
+  --button-text-color: #ffffff;
+  --button-hover-text-color: #ffffff;
+  --button-font-weight: bold;
   --button-border: #ced4da;
+  --button-hover-border: rgba(0,0,0,0);
   --button-border-width: 1px;
   --button-height: 40px;
   --button-leading: 1.428571429;
@@ -1842,6 +1923,15 @@ exports[`Snapshot login view with canShowPassword 1`] = `
   --input-shadow: none;
   --input-text-color: #495057;
   --input-text-size: 14px;
+  --link-color: #229955;
+  --link-hover-color: #145a32;
+  --link-decoration: none;
+  --link-hover-decoration: none;
+  --password-strength-color-0: #dc4e41;
+  --password-strength-color-1: #dc4e41;
+  --password-strength-color-2: #ffc107;
+  --password-strength-color-3: #4ad786;
+  --password-strength-color-4: #229955;
 }
 
 .c4 {
@@ -2089,7 +2179,7 @@ exports[`Snapshot login view with canShowPassword 1`] = `
               >
                 <button
                   aria-checked="false"
-                  class="justify-center whitespace-nowrap font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 hover:bg-accent hover:text-accent-foreground flex items-center gap-2 text-sm shadow-none size-6 rounded-[calc(var(--input-radius)-5px)] p-0 has-[>svg]:p-0"
+                  class="justify-center whitespace-nowrap font-[weight:var(--button-font-weight)] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 hover:bg-accent hover:text-accent-foreground flex items-center gap-2 text-sm shadow-none size-6 rounded-[calc(var(--input-radius)-5px)] p-0 has-[>svg]:p-0"
                   data-size="icon-xs"
                   data-testid="show-password-btn"
                   role="switch"
@@ -2126,7 +2216,7 @@ exports[`Snapshot login view with canShowPassword 1`] = `
             </div>
           </div>
           <button
-            class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[var(--button-radius)] text-[length:var(--button-text-size)] leading-[var(--button-leading)] font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary text-primary-foreground shadow hover:bg-primary/90 h-[var(--button-height)] px-[var(--button-padding-x)] py-[var(--button-padding-y)] w-full"
+            class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[var(--button-radius)] text-[length:var(--button-text-size)] leading-[var(--button-leading)] font-[weight:var(--button-font-weight)] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-[var(--button-background-color)] text-[var(--button-text-color)] border-[length:var(--button-border-width)] border-[var(--button-border)] shadow hover:bg-[var(--button-hover-background-color)] hover:text-[var(--button-hover-text-color)] hover:border-[var(--button-hover-border)] h-[var(--button-height)] px-[var(--button-padding-x)] py-[var(--button-padding-y)] w-full"
             type="submit"
           >
             login.submitLabel
@@ -2258,7 +2348,13 @@ exports[`Snapshot login view with remember me 1`] = `
   --leading: 1.428571429;
   --border-width: 1px;
   --radius: 3px;
+  --button-background-color: #229955;
+  --button-hover-background-color: rgba(34,153,85,0.9);
+  --button-text-color: #ffffff;
+  --button-hover-text-color: #ffffff;
+  --button-font-weight: bold;
   --button-border: #ced4da;
+  --button-hover-border: rgba(0,0,0,0);
   --button-border-width: 1px;
   --button-height: 40px;
   --button-leading: 1.428571429;
@@ -2279,6 +2375,15 @@ exports[`Snapshot login view with remember me 1`] = `
   --input-shadow: none;
   --input-text-color: #495057;
   --input-text-size: 14px;
+  --link-color: #229955;
+  --link-hover-color: #145a32;
+  --link-decoration: none;
+  --link-hover-decoration: none;
+  --password-strength-color-0: #dc4e41;
+  --password-strength-color-1: #dc4e41;
+  --password-strength-color-2: #ffc107;
+  --password-strength-color-3: #4ad786;
+  --password-strength-color-4: #229955;
 }
 
 .c4 {
@@ -2554,7 +2659,7 @@ exports[`Snapshot login view with remember me 1`] = `
                 data-slot="field-content"
               >
                 <label
-                  class="text-sm font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70 group/field-label peer/field-label flex w-fit leading-snug group-data-[disabled=true]/field:opacity-50 has-[>[data-slot=field]]:w-full has-[>[data-slot=field]]:flex-col has-[>[data-slot=field]]:rounded-md has-[>[data-slot=field]]:border [&>[data-slot=field]]:p-4 has-data-[state=checked]:bg-primary/5 has-data-[state=checked]:border-primary dark:has-data-[state=checked]:bg-primary/10 items-center gap-0.5"
+                  class="text-sm font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70 group/field-label peer/field-label w-fit gap-2 leading-snug group-data-[disabled=true]/field:opacity-50 has-[>[data-slot=field]]:w-full has-[>[data-slot=field]]:flex-col has-[>[data-slot=field]]:rounded-md has-[>[data-slot=field]]:border [&>[data-slot=field]]:p-4 has-data-[state=checked]:bg-primary/5 has-data-[state=checked]:border-primary dark:has-data-[state=checked]:bg-primary/10 inline"
                   data-slot="field-label"
                   for=":r6:"
                 >
@@ -2564,7 +2669,7 @@ exports[`Snapshot login view with remember me 1`] = `
             </div>
           </div>
           <button
-            class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[var(--button-radius)] text-[length:var(--button-text-size)] leading-[var(--button-leading)] font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary text-primary-foreground shadow hover:bg-primary/90 h-[var(--button-height)] px-[var(--button-padding-x)] py-[var(--button-padding-y)] w-full"
+            class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[var(--button-radius)] text-[length:var(--button-text-size)] leading-[var(--button-leading)] font-[weight:var(--button-font-weight)] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-[var(--button-background-color)] text-[var(--button-text-color)] border-[length:var(--button-border-width)] border-[var(--button-border)] shadow hover:bg-[var(--button-hover-background-color)] hover:text-[var(--button-hover-text-color)] hover:border-[var(--button-hover-border)] h-[var(--button-height)] px-[var(--button-padding-x)] py-[var(--button-padding-y)] w-full"
             type="submit"
           >
             login.submitLabel
@@ -2696,7 +2801,13 @@ exports[`Snapshot signup view default 1`] = `
   --leading: 1.428571429;
   --border-width: 1px;
   --radius: 3px;
+  --button-background-color: #229955;
+  --button-hover-background-color: rgba(34,153,85,0.9);
+  --button-text-color: #ffffff;
+  --button-hover-text-color: #ffffff;
+  --button-font-weight: bold;
   --button-border: #ced4da;
+  --button-hover-border: rgba(0,0,0,0);
   --button-border-width: 1px;
   --button-height: 40px;
   --button-leading: 1.428571429;
@@ -2717,6 +2828,15 @@ exports[`Snapshot signup view default 1`] = `
   --input-shadow: none;
   --input-text-color: #495057;
   --input-text-size: 14px;
+  --link-color: #229955;
+  --link-hover-color: #145a32;
+  --link-decoration: none;
+  --link-hover-decoration: none;
+  --password-strength-color-0: #dc4e41;
+  --password-strength-color-1: #dc4e41;
+  --password-strength-color-2: #ffc107;
+  --password-strength-color-3: #4ad786;
+  --password-strength-color-4: #229955;
 }
 
 .c4 {
@@ -3070,7 +3190,7 @@ exports[`Snapshot signup view default 1`] = `
             </div>
           </div>
           <button
-            class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[var(--button-radius)] text-[length:var(--button-text-size)] leading-[var(--button-leading)] font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary text-primary-foreground shadow hover:bg-primary/90 h-[var(--button-height)] px-[var(--button-padding-x)] py-[var(--button-padding-y)] w-full"
+            class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[var(--button-radius)] text-[length:var(--button-text-size)] leading-[var(--button-leading)] font-[weight:var(--button-font-weight)] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-[var(--button-background-color)] text-[var(--button-text-color)] border-[length:var(--button-border-width)] border-[var(--button-border)] shadow hover:bg-[var(--button-hover-background-color)] hover:text-[var(--button-hover-text-color)] hover:border-[var(--button-hover-border)] h-[var(--button-height)] px-[var(--button-padding-x)] py-[var(--button-padding-y)] w-full"
             type="submit"
           >
             signup.submitLabel
@@ -3192,7 +3312,13 @@ exports[`Snapshot signup view inline social buttons 1`] = `
   --leading: 1.428571429;
   --border-width: 1px;
   --radius: 3px;
+  --button-background-color: #229955;
+  --button-hover-background-color: rgba(34,153,85,0.9);
+  --button-text-color: #ffffff;
+  --button-hover-text-color: #ffffff;
+  --button-font-weight: bold;
   --button-border: #ced4da;
+  --button-hover-border: rgba(0,0,0,0);
   --button-border-width: 1px;
   --button-height: 40px;
   --button-leading: 1.428571429;
@@ -3213,6 +3339,15 @@ exports[`Snapshot signup view inline social buttons 1`] = `
   --input-shadow: none;
   --input-text-color: #495057;
   --input-text-size: 14px;
+  --link-color: #229955;
+  --link-hover-color: #145a32;
+  --link-decoration: none;
+  --link-hover-decoration: none;
+  --password-strength-color-0: #dc4e41;
+  --password-strength-color-1: #dc4e41;
+  --password-strength-color-2: #ffc107;
+  --password-strength-color-3: #4ad786;
+  --password-strength-color-4: #229955;
 }
 
 .c4 {
@@ -3560,7 +3695,7 @@ exports[`Snapshot signup view inline social buttons 1`] = `
             </div>
           </div>
           <button
-            class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[var(--button-radius)] text-[length:var(--button-text-size)] leading-[var(--button-leading)] font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary text-primary-foreground shadow hover:bg-primary/90 h-[var(--button-height)] px-[var(--button-padding-x)] py-[var(--button-padding-y)] w-full"
+            class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[var(--button-radius)] text-[length:var(--button-text-size)] leading-[var(--button-leading)] font-[weight:var(--button-font-weight)] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-[var(--button-background-color)] text-[var(--button-text-color)] border-[length:var(--button-border-width)] border-[var(--button-border)] shadow hover:bg-[var(--button-hover-background-color)] hover:text-[var(--button-hover-text-color)] hover:border-[var(--button-hover-border)] h-[var(--button-height)] px-[var(--button-padding-x)] py-[var(--button-padding-y)] w-full"
             type="submit"
           >
             signup.submitLabel
@@ -3664,7 +3799,13 @@ exports[`Snapshot signup view no login 1`] = `
   --leading: 1.428571429;
   --border-width: 1px;
   --radius: 3px;
+  --button-background-color: #229955;
+  --button-hover-background-color: rgba(34,153,85,0.9);
+  --button-text-color: #ffffff;
+  --button-hover-text-color: #ffffff;
+  --button-font-weight: bold;
   --button-border: #ced4da;
+  --button-hover-border: rgba(0,0,0,0);
   --button-border-width: 1px;
   --button-height: 40px;
   --button-leading: 1.428571429;
@@ -3685,6 +3826,15 @@ exports[`Snapshot signup view no login 1`] = `
   --input-shadow: none;
   --input-text-color: #495057;
   --input-text-size: 14px;
+  --link-color: #229955;
+  --link-hover-color: #145a32;
+  --link-decoration: none;
+  --link-hover-decoration: none;
+  --password-strength-color-0: #dc4e41;
+  --password-strength-color-1: #dc4e41;
+  --password-strength-color-2: #ffc107;
+  --password-strength-color-3: #4ad786;
+  --password-strength-color-4: #229955;
 }
 
 .c4 {
@@ -4038,7 +4188,7 @@ exports[`Snapshot signup view no login 1`] = `
             </div>
           </div>
           <button
-            class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[var(--button-radius)] text-[length:var(--button-text-size)] leading-[var(--button-leading)] font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary text-primary-foreground shadow hover:bg-primary/90 h-[var(--button-height)] px-[var(--button-padding-x)] py-[var(--button-padding-y)] w-full"
+            class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[var(--button-radius)] text-[length:var(--button-text-size)] leading-[var(--button-leading)] font-[weight:var(--button-font-weight)] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-[var(--button-background-color)] text-[var(--button-text-color)] border-[length:var(--button-border-width)] border-[var(--button-border)] shadow hover:bg-[var(--button-hover-background-color)] hover:text-[var(--button-hover-text-color)] hover:border-[var(--button-hover-border)] h-[var(--button-height)] px-[var(--button-padding-x)] py-[var(--button-padding-y)] w-full"
             type="submit"
           >
             signup.submitLabel
@@ -4146,7 +4296,13 @@ exports[`Snapshot signup view show labels 1`] = `
   --leading: 1.428571429;
   --border-width: 1px;
   --radius: 3px;
+  --button-background-color: #229955;
+  --button-hover-background-color: rgba(34,153,85,0.9);
+  --button-text-color: #ffffff;
+  --button-hover-text-color: #ffffff;
+  --button-font-weight: bold;
   --button-border: #ced4da;
+  --button-hover-border: rgba(0,0,0,0);
   --button-border-width: 1px;
   --button-height: 40px;
   --button-leading: 1.428571429;
@@ -4167,6 +4323,15 @@ exports[`Snapshot signup view show labels 1`] = `
   --input-shadow: none;
   --input-text-color: #495057;
   --input-text-size: 14px;
+  --link-color: #229955;
+  --link-hover-color: #145a32;
+  --link-decoration: none;
+  --link-hover-decoration: none;
+  --password-strength-color-0: #dc4e41;
+  --password-strength-color-1: #dc4e41;
+  --password-strength-color-2: #ffc107;
+  --password-strength-color-3: #4ad786;
+  --password-strength-color-4: #229955;
 }
 
 .c4 {
@@ -4515,7 +4680,7 @@ exports[`Snapshot signup view show labels 1`] = `
             </div>
           </div>
           <button
-            class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[var(--button-radius)] text-[length:var(--button-text-size)] leading-[var(--button-leading)] font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary text-primary-foreground shadow hover:bg-primary/90 h-[var(--button-height)] px-[var(--button-padding-x)] py-[var(--button-padding-y)] w-full"
+            class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[var(--button-radius)] text-[length:var(--button-text-size)] leading-[var(--button-leading)] font-[weight:var(--button-font-weight)] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-[var(--button-background-color)] text-[var(--button-text-color)] border-[length:var(--button-border-width)] border-[var(--button-border)] shadow hover:bg-[var(--button-hover-background-color)] hover:text-[var(--button-hover-text-color)] hover:border-[var(--button-hover-border)] h-[var(--button-height)] px-[var(--button-padding-x)] py-[var(--button-padding-y)] w-full"
             type="submit"
           >
             signup.submitLabel
@@ -4654,7 +4819,13 @@ exports[`Snapshot signup view with consents 1`] = `
   --leading: 1.428571429;
   --border-width: 1px;
   --radius: 3px;
+  --button-background-color: #229955;
+  --button-hover-background-color: rgba(34,153,85,0.9);
+  --button-text-color: #ffffff;
+  --button-hover-text-color: #ffffff;
+  --button-font-weight: bold;
   --button-border: #ced4da;
+  --button-hover-border: rgba(0,0,0,0);
   --button-border-width: 1px;
   --button-height: 40px;
   --button-leading: 1.428571429;
@@ -4675,6 +4846,15 @@ exports[`Snapshot signup view with consents 1`] = `
   --input-shadow: none;
   --input-text-color: #495057;
   --input-text-size: 14px;
+  --link-color: #229955;
+  --link-hover-color: #145a32;
+  --link-decoration: none;
+  --link-hover-decoration: none;
+  --password-strength-color-0: #dc4e41;
+  --password-strength-color-1: #dc4e41;
+  --password-strength-color-2: #ffc107;
+  --password-strength-color-3: #4ad786;
+  --password-strength-color-4: #229955;
 }
 
 .c4 {
@@ -4928,7 +5108,7 @@ exports[`Snapshot signup view with consents 1`] = `
             >
               <button
                 aria-checked="false"
-                aria-required="true"
+                aria-required="false"
                 class="grid place-content-center peer h-4 w-4 shrink-0 rounded-sm border border-primary shadow focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground"
                 data-state="unchecked"
                 id=":r18:"
@@ -4939,7 +5119,6 @@ exports[`Snapshot signup view with consents 1`] = `
               <input
                 aria-hidden="true"
                 name="consents.optin_testing"
-                required=""
                 style="position: absolute; pointer-events: none; opacity: 0; margin: 0px; transform: translateX(-100%); width: 0px; height: 0px;"
                 tabindex="-1"
                 type="checkbox"
@@ -4950,21 +5129,11 @@ exports[`Snapshot signup view with consents 1`] = `
                 data-slot="field-content"
               >
                 <label
-                  class="text-sm font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70 group/field-label peer/field-label flex w-fit leading-snug group-data-[disabled=true]/field:opacity-50 has-[>[data-slot=field]]:w-full has-[>[data-slot=field]]:flex-col has-[>[data-slot=field]]:rounded-md has-[>[data-slot=field]]:border [&>[data-slot=field]]:p-4 has-data-[state=checked]:bg-primary/5 has-data-[state=checked]:border-primary dark:has-data-[state=checked]:bg-primary/10 items-center gap-0.5"
+                  class="text-sm font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70 group/field-label peer/field-label w-fit gap-2 leading-snug group-data-[disabled=true]/field:opacity-50 has-[>[data-slot=field]]:w-full has-[>[data-slot=field]]:flex-col has-[>[data-slot=field]]:rounded-md has-[>[data-slot=field]]:border [&>[data-slot=field]]:p-4 has-data-[state=checked]:bg-primary/5 has-data-[state=checked]:border-primary dark:has-data-[state=checked]:bg-primary/10 inline"
                   data-slot="field-label"
                   for=":r18:"
                 >
                   Opt-in Testing v1
-                  <svg
-                    class="inline-block size-2 leading-4 fill-destructive"
-                    focusable="false"
-                    viewBox="0 0 128 128"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M110.1,16.4L75.8,56.8l0.3,1l50.6-10.2v32.2l-50.9-8.9l-0.3,1l34.7,39.1l-28.3,16.5L63.7,78.2L63,78.5l-18.5,49L17.2,111l34.1-39.8v-0.6l-50,9.2V47.6l49.3,9.9l0.3-0.6L17.2,16.7L45.5,0.5l17.8,48.7H64L82.1,0.5L110.1,16.4z"
-                    />
-                  </svg>
                 </label>
                 <p
                   class="text-muted-foreground text-sm font-normal leading-normal group-has-[[data-orientation=horizontal]]/field:text-balance nth-last-2:-mt-1 last:mt-0 [[data-variant=legend]+&]:-mt-1.5 [&>a:hover]:text-primary [&>a]:underline [&>a]:underline-offset-4"
@@ -4984,7 +5153,7 @@ exports[`Snapshot signup view with consents 1`] = `
             </div>
           </div>
           <button
-            class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[var(--button-radius)] text-[length:var(--button-text-size)] leading-[var(--button-leading)] font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary text-primary-foreground shadow hover:bg-primary/90 h-[var(--button-height)] px-[var(--button-padding-x)] py-[var(--button-padding-y)] w-full"
+            class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[var(--button-radius)] text-[length:var(--button-text-size)] leading-[var(--button-leading)] font-[weight:var(--button-font-weight)] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-[var(--button-background-color)] text-[var(--button-text-color)] border-[length:var(--button-border-width)] border-[var(--button-border)] shadow hover:bg-[var(--button-hover-background-color)] hover:text-[var(--button-hover-text-color)] hover:border-[var(--button-hover-border)] h-[var(--button-height)] px-[var(--button-padding-x)] py-[var(--button-padding-y)] w-full"
             type="submit"
           >
             signup.submitLabel
@@ -5106,7 +5275,13 @@ exports[`Snapshot signup view with custom fields 1`] = `
   --leading: 1.428571429;
   --border-width: 1px;
   --radius: 3px;
+  --button-background-color: #229955;
+  --button-hover-background-color: rgba(34,153,85,0.9);
+  --button-text-color: #ffffff;
+  --button-hover-text-color: #ffffff;
+  --button-font-weight: bold;
   --button-border: #ced4da;
+  --button-hover-border: rgba(0,0,0,0);
   --button-border-width: 1px;
   --button-height: 40px;
   --button-leading: 1.428571429;
@@ -5127,6 +5302,15 @@ exports[`Snapshot signup view with custom fields 1`] = `
   --input-shadow: none;
   --input-text-color: #495057;
   --input-text-size: 14px;
+  --link-color: #229955;
+  --link-hover-color: #145a32;
+  --link-decoration: none;
+  --link-hover-decoration: none;
+  --password-strength-color-0: #dc4e41;
+  --password-strength-color-1: #dc4e41;
+  --password-strength-color-2: #ffc107;
+  --password-strength-color-3: #4ad786;
+  --password-strength-color-4: #229955;
 }
 
 .c4 {
@@ -5402,11 +5586,12 @@ exports[`Snapshot signup view with custom fields 1`] = `
                 data-slot="field-content"
               >
                 <label
-                  class="text-sm font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70 group/field-label peer/field-label flex w-fit leading-snug group-data-[disabled=true]/field:opacity-50 has-[>[data-slot=field]]:w-full has-[>[data-slot=field]]:flex-col has-[>[data-slot=field]]:rounded-md has-[>[data-slot=field]]:border [&>[data-slot=field]]:p-4 has-data-[state=checked]:bg-primary/5 has-data-[state=checked]:border-primary dark:has-data-[state=checked]:bg-primary/10 items-center gap-0.5"
+                  class="text-sm font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70 group/field-label peer/field-label w-fit gap-2 leading-snug group-data-[disabled=true]/field:opacity-50 has-[>[data-slot=field]]:w-full has-[>[data-slot=field]]:flex-col has-[>[data-slot=field]]:rounded-md has-[>[data-slot=field]]:border [&>[data-slot=field]]:p-4 has-data-[state=checked]:bg-primary/5 has-data-[state=checked]:border-primary dark:has-data-[state=checked]:bg-primary/10 inline"
                   data-slot="field-label"
                   for=":r1e:"
                 >
                   Newsletter optin
+                   
                   <svg
                     class="inline-block size-2 leading-4 fill-destructive"
                     focusable="false"
@@ -5422,7 +5607,7 @@ exports[`Snapshot signup view with custom fields 1`] = `
             </div>
           </div>
           <button
-            class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[var(--button-radius)] text-[length:var(--button-text-size)] leading-[var(--button-leading)] font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary text-primary-foreground shadow hover:bg-primary/90 h-[var(--button-height)] px-[var(--button-padding-x)] py-[var(--button-padding-y)] w-full"
+            class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[var(--button-radius)] text-[length:var(--button-text-size)] leading-[var(--button-leading)] font-[weight:var(--button-font-weight)] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-[var(--button-background-color)] text-[var(--button-text-color)] border-[length:var(--button-border-width)] border-[var(--button-border)] shadow hover:bg-[var(--button-hover-background-color)] hover:text-[var(--button-hover-text-color)] hover:border-[var(--button-hover-border)] h-[var(--button-height)] px-[var(--button-padding-x)] py-[var(--button-padding-y)] w-full"
             type="submit"
           >
             signup.submitLabel
@@ -5544,7 +5729,13 @@ exports[`Snapshot signup view with mandatory consents 1`] = `
   --leading: 1.428571429;
   --border-width: 1px;
   --radius: 3px;
+  --button-background-color: #229955;
+  --button-hover-background-color: rgba(34,153,85,0.9);
+  --button-text-color: #ffffff;
+  --button-hover-text-color: #ffffff;
+  --button-font-weight: bold;
   --button-border: #ced4da;
+  --button-hover-border: rgba(0,0,0,0);
   --button-border-width: 1px;
   --button-height: 40px;
   --button-leading: 1.428571429;
@@ -5565,6 +5756,15 @@ exports[`Snapshot signup view with mandatory consents 1`] = `
   --input-shadow: none;
   --input-text-color: #495057;
   --input-text-size: 14px;
+  --link-color: #229955;
+  --link-hover-color: #145a32;
+  --link-decoration: none;
+  --link-hover-decoration: none;
+  --password-strength-color-0: #dc4e41;
+  --password-strength-color-1: #dc4e41;
+  --password-strength-color-2: #ffc107;
+  --password-strength-color-3: #4ad786;
+  --password-strength-color-4: #229955;
 }
 
 .c4 {
@@ -5840,11 +6040,12 @@ exports[`Snapshot signup view with mandatory consents 1`] = `
                 data-slot="field-content"
               >
                 <label
-                  class="text-sm font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70 group/field-label peer/field-label flex w-fit leading-snug group-data-[disabled=true]/field:opacity-50 has-[>[data-slot=field]]:w-full has-[>[data-slot=field]]:flex-col has-[>[data-slot=field]]:rounded-md has-[>[data-slot=field]]:border [&>[data-slot=field]]:p-4 has-data-[state=checked]:bg-primary/5 has-data-[state=checked]:border-primary dark:has-data-[state=checked]:bg-primary/10 items-center gap-0.5"
+                  class="text-sm font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70 group/field-label peer/field-label w-fit gap-2 leading-snug group-data-[disabled=true]/field:opacity-50 has-[>[data-slot=field]]:w-full has-[>[data-slot=field]]:flex-col has-[>[data-slot=field]]:rounded-md has-[>[data-slot=field]]:border [&>[data-slot=field]]:p-4 has-data-[state=checked]:bg-primary/5 has-data-[state=checked]:border-primary dark:has-data-[state=checked]:bg-primary/10 inline"
                   data-slot="field-label"
                   for=":r1b:"
                 >
                   Opt-in Testing v1
+                   
                   <svg
                     class="inline-block size-2 leading-4 fill-destructive"
                     focusable="false"
@@ -5874,7 +6075,7 @@ exports[`Snapshot signup view with mandatory consents 1`] = `
             </div>
           </div>
           <button
-            class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[var(--button-radius)] text-[length:var(--button-text-size)] leading-[var(--button-leading)] font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary text-primary-foreground shadow hover:bg-primary/90 h-[var(--button-height)] px-[var(--button-padding-x)] py-[var(--button-padding-y)] w-full"
+            class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[var(--button-radius)] text-[length:var(--button-text-size)] leading-[var(--button-leading)] font-[weight:var(--button-font-weight)] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-[var(--button-background-color)] text-[var(--button-text-color)] border-[length:var(--button-border-width)] border-[var(--button-border)] shadow hover:bg-[var(--button-hover-background-color)] hover:text-[var(--button-hover-text-color)] hover:border-[var(--button-hover-border)] h-[var(--button-height)] px-[var(--button-padding-x)] py-[var(--button-padding-y)] w-full"
             type="submit"
           >
             signup.submitLabel
@@ -5996,7 +6197,13 @@ exports[`Snapshot signup view with user agreement 1`] = `
   --leading: 1.428571429;
   --border-width: 1px;
   --radius: 3px;
+  --button-background-color: #229955;
+  --button-hover-background-color: rgba(34,153,85,0.9);
+  --button-text-color: #ffffff;
+  --button-hover-text-color: #ffffff;
+  --button-font-weight: bold;
   --button-border: #ced4da;
+  --button-hover-border: rgba(0,0,0,0);
   --button-border-width: 1px;
   --button-height: 40px;
   --button-leading: 1.428571429;
@@ -6017,6 +6224,15 @@ exports[`Snapshot signup view with user agreement 1`] = `
   --input-shadow: none;
   --input-text-color: #495057;
   --input-text-size: 14px;
+  --link-color: #229955;
+  --link-hover-color: #145a32;
+  --link-decoration: none;
+  --link-hover-decoration: none;
+  --password-strength-color-0: #dc4e41;
+  --password-strength-color-1: #dc4e41;
+  --password-strength-color-2: #ffc107;
+  --password-strength-color-3: #4ad786;
+  --password-strength-color-4: #229955;
 }
 
 .c4 {
@@ -6389,7 +6605,7 @@ exports[`Snapshot signup view with user agreement 1`] = `
 
           </div>
           <button
-            class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[var(--button-radius)] text-[length:var(--button-text-size)] leading-[var(--button-leading)] font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary text-primary-foreground shadow hover:bg-primary/90 h-[var(--button-height)] px-[var(--button-padding-x)] py-[var(--button-padding-y)] w-full"
+            class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[var(--button-radius)] text-[length:var(--button-text-size)] leading-[var(--button-leading)] font-[weight:var(--button-font-weight)] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-[var(--button-background-color)] text-[var(--button-text-color)] border-[length:var(--button-border-width)] border-[var(--button-border)] shadow hover:bg-[var(--button-hover-background-color)] hover:text-[var(--button-hover-text-color)] hover:border-[var(--button-hover-border)] h-[var(--button-height)] px-[var(--button-padding-x)] py-[var(--button-padding-y)] w-full"
             type="submit"
           >
             signup.submitLabel
@@ -6511,7 +6727,13 @@ exports[`Snapshot with webauthn feature and without password login new view with
   --leading: 1.428571429;
   --border-width: 1px;
   --radius: 3px;
+  --button-background-color: #229955;
+  --button-hover-background-color: rgba(34,153,85,0.9);
+  --button-text-color: #ffffff;
+  --button-hover-text-color: #ffffff;
+  --button-font-weight: bold;
   --button-border: #ced4da;
+  --button-hover-border: rgba(0,0,0,0);
   --button-border-width: 1px;
   --button-height: 40px;
   --button-leading: 1.428571429;
@@ -6532,6 +6754,15 @@ exports[`Snapshot with webauthn feature and without password login new view with
   --input-shadow: none;
   --input-text-color: #495057;
   --input-text-size: 14px;
+  --link-color: #229955;
+  --link-hover-color: #145a32;
+  --link-decoration: none;
+  --link-hover-decoration: none;
+  --password-strength-color-0: #dc4e41;
+  --password-strength-color-1: #dc4e41;
+  --password-strength-color-2: #ffc107;
+  --password-strength-color-3: #4ad786;
+  --password-strength-color-4: #229955;
 }
 
 .c4 {
@@ -6774,7 +7005,7 @@ exports[`Snapshot with webauthn feature and without password login new view with
             </div>
           </div>
           <button
-            class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[var(--button-radius)] text-[length:var(--button-text-size)] leading-[var(--button-leading)] font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary text-primary-foreground shadow hover:bg-primary/90 h-[var(--button-height)] px-[var(--button-padding-x)] py-[var(--button-padding-y)] w-full"
+            class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[var(--button-radius)] text-[length:var(--button-text-size)] leading-[var(--button-leading)] font-[weight:var(--button-font-weight)] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-[var(--button-background-color)] text-[var(--button-text-color)] border-[length:var(--button-border-width)] border-[var(--button-border)] shadow hover:bg-[var(--button-hover-background-color)] hover:text-[var(--button-hover-text-color)] hover:border-[var(--button-hover-border)] h-[var(--button-height)] px-[var(--button-padding-x)] py-[var(--button-padding-y)] w-full"
             type="submit"
           >
             login.submitLabel
@@ -6906,7 +7137,13 @@ exports[`Snapshot with webauthn feature and without password login old view with
   --leading: 1.428571429;
   --border-width: 1px;
   --radius: 3px;
+  --button-background-color: #229955;
+  --button-hover-background-color: rgba(34,153,85,0.9);
+  --button-text-color: #ffffff;
+  --button-hover-text-color: #ffffff;
+  --button-font-weight: bold;
   --button-border: #ced4da;
+  --button-hover-border: rgba(0,0,0,0);
   --button-border-width: 1px;
   --button-height: 40px;
   --button-leading: 1.428571429;
@@ -6927,6 +7164,15 @@ exports[`Snapshot with webauthn feature and without password login old view with
   --input-shadow: none;
   --input-text-color: #495057;
   --input-text-size: 14px;
+  --link-color: #229955;
+  --link-hover-color: #145a32;
+  --link-decoration: none;
+  --link-hover-decoration: none;
+  --password-strength-color-0: #dc4e41;
+  --password-strength-color-1: #dc4e41;
+  --password-strength-color-2: #ffc107;
+  --password-strength-color-3: #4ad786;
+  --password-strength-color-4: #229955;
 }
 
 .c4 {
@@ -7302,7 +7548,13 @@ exports[`Snapshot with webauthn feature and without password signup form view wi
   --leading: 1.428571429;
   --border-width: 1px;
   --radius: 3px;
+  --button-background-color: #229955;
+  --button-hover-background-color: rgba(34,153,85,0.9);
+  --button-text-color: #ffffff;
+  --button-hover-text-color: #ffffff;
+  --button-font-weight: bold;
   --button-border: #ced4da;
+  --button-hover-border: rgba(0,0,0,0);
   --button-border-width: 1px;
   --button-height: 40px;
   --button-leading: 1.428571429;
@@ -7323,6 +7575,15 @@ exports[`Snapshot with webauthn feature and without password signup form view wi
   --input-shadow: none;
   --input-text-color: #495057;
   --input-text-size: 14px;
+  --link-color: #229955;
+  --link-hover-color: #145a32;
+  --link-decoration: none;
+  --link-hover-decoration: none;
+  --password-strength-color-0: #dc4e41;
+  --password-strength-color-1: #dc4e41;
+  --password-strength-color-2: #ffc107;
+  --password-strength-color-3: #4ad786;
+  --password-strength-color-4: #229955;
 }
 
 <div>
@@ -7535,7 +7796,7 @@ exports[`Snapshot with webauthn feature and without password signup form view wi
               </div>
             </div>
             <button
-              class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[var(--button-radius)] text-[length:var(--button-text-size)] leading-[var(--button-leading)] font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary text-primary-foreground shadow hover:bg-primary/90 h-[var(--button-height)] px-[var(--button-padding-x)] py-[var(--button-padding-y)] w-full"
+              class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[var(--button-radius)] text-[length:var(--button-text-size)] leading-[var(--button-leading)] font-[weight:var(--button-font-weight)] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-[var(--button-background-color)] text-[var(--button-text-color)] border-[length:var(--button-border-width)] border-[var(--button-border)] shadow hover:bg-[var(--button-hover-background-color)] hover:text-[var(--button-hover-text-color)] hover:border-[var(--button-hover-border)] h-[var(--button-height)] px-[var(--button-padding-x)] py-[var(--button-padding-y)] w-full"
               type="submit"
             >
               signup.submitLabel
@@ -7620,7 +7881,13 @@ exports[`Snapshot with webauthn feature and without password signup form view wi
   --leading: 1.428571429;
   --border-width: 1px;
   --radius: 3px;
+  --button-background-color: #229955;
+  --button-hover-background-color: rgba(34,153,85,0.9);
+  --button-text-color: #ffffff;
+  --button-hover-text-color: #ffffff;
+  --button-font-weight: bold;
   --button-border: #ced4da;
+  --button-hover-border: rgba(0,0,0,0);
   --button-border-width: 1px;
   --button-height: 40px;
   --button-leading: 1.428571429;
@@ -7641,6 +7908,15 @@ exports[`Snapshot with webauthn feature and without password signup form view wi
   --input-shadow: none;
   --input-text-color: #495057;
   --input-text-size: 14px;
+  --link-color: #229955;
+  --link-hover-color: #145a32;
+  --link-decoration: none;
+  --link-hover-decoration: none;
+  --password-strength-color-0: #dc4e41;
+  --password-strength-color-1: #dc4e41;
+  --password-strength-color-2: #ffc107;
+  --password-strength-color-3: #4ad786;
+  --password-strength-color-4: #229955;
 }
 
 <div>
@@ -7768,7 +8044,7 @@ exports[`Snapshot with webauthn feature and without password signup form view wi
               />
             </div>
             <button
-              class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[var(--button-radius)] text-[length:var(--button-text-size)] leading-[var(--button-leading)] font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary text-primary-foreground shadow hover:bg-primary/90 h-[var(--button-height)] px-[var(--button-padding-x)] py-[var(--button-padding-y)] w-full"
+              class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[var(--button-radius)] text-[length:var(--button-text-size)] leading-[var(--button-leading)] font-[weight:var(--button-font-weight)] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-[var(--button-background-color)] text-[var(--button-text-color)] border-[length:var(--button-border-width)] border-[var(--button-border)] shadow hover:bg-[var(--button-hover-background-color)] hover:text-[var(--button-hover-text-color)] hover:border-[var(--button-hover-border)] h-[var(--button-height)] px-[var(--button-padding-x)] py-[var(--button-padding-y)] w-full"
               type="submit"
             >
               signup.submitLabel
@@ -7853,7 +8129,13 @@ exports[`Snapshot with webauthn feature and without password signup form view wi
   --leading: 1.428571429;
   --border-width: 1px;
   --radius: 3px;
+  --button-background-color: #229955;
+  --button-hover-background-color: rgba(34,153,85,0.9);
+  --button-text-color: #ffffff;
+  --button-hover-text-color: #ffffff;
+  --button-font-weight: bold;
   --button-border: #ced4da;
+  --button-hover-border: rgba(0,0,0,0);
   --button-border-width: 1px;
   --button-height: 40px;
   --button-leading: 1.428571429;
@@ -7874,6 +8156,15 @@ exports[`Snapshot with webauthn feature and without password signup form view wi
   --input-shadow: none;
   --input-text-color: #495057;
   --input-text-size: 14px;
+  --link-color: #229955;
+  --link-hover-color: #145a32;
+  --link-decoration: none;
+  --link-hover-decoration: none;
+  --password-strength-color-0: #dc4e41;
+  --password-strength-color-1: #dc4e41;
+  --password-strength-color-2: #ffc107;
+  --password-strength-color-3: #4ad786;
+  --password-strength-color-4: #229955;
 }
 
 <div>
@@ -8001,7 +8292,7 @@ exports[`Snapshot with webauthn feature and without password signup form view wi
               />
             </div>
             <button
-              class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[var(--button-radius)] text-[length:var(--button-text-size)] leading-[var(--button-leading)] font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary text-primary-foreground shadow hover:bg-primary/90 h-[var(--button-height)] px-[var(--button-padding-x)] py-[var(--button-padding-y)] w-full"
+              class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[var(--button-radius)] text-[length:var(--button-text-size)] leading-[var(--button-leading)] font-[weight:var(--button-font-weight)] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-[var(--button-background-color)] text-[var(--button-text-color)] border-[length:var(--button-border-width)] border-[var(--button-border)] shadow hover:bg-[var(--button-hover-background-color)] hover:text-[var(--button-hover-text-color)] hover:border-[var(--button-hover-border)] h-[var(--button-height)] px-[var(--button-padding-x)] py-[var(--button-padding-y)] w-full"
               type="submit"
             >
               signup.submitLabel
@@ -8120,7 +8411,13 @@ exports[`Snapshot with webauthn feature and without password signup view with we
   --leading: 1.428571429;
   --border-width: 1px;
   --radius: 3px;
+  --button-background-color: #229955;
+  --button-hover-background-color: rgba(34,153,85,0.9);
+  --button-text-color: #ffffff;
+  --button-hover-text-color: #ffffff;
+  --button-font-weight: bold;
   --button-border: #ced4da;
+  --button-hover-border: rgba(0,0,0,0);
   --button-border-width: 1px;
   --button-height: 40px;
   --button-leading: 1.428571429;
@@ -8141,6 +8438,15 @@ exports[`Snapshot with webauthn feature and without password signup view with we
   --input-shadow: none;
   --input-text-color: #495057;
   --input-text-size: 14px;
+  --link-color: #229955;
+  --link-hover-color: #145a32;
+  --link-decoration: none;
+  --link-hover-decoration: none;
+  --password-strength-color-0: #dc4e41;
+  --password-strength-color-1: #dc4e41;
+  --password-strength-color-2: #ffc107;
+  --password-strength-color-3: #4ad786;
+  --password-strength-color-4: #229955;
 }
 
 .c4 {
@@ -8495,7 +8801,13 @@ exports[`Snapshot with webauthn feature login new view with integrated webauthn 
   --leading: 1.428571429;
   --border-width: 1px;
   --radius: 3px;
+  --button-background-color: #229955;
+  --button-hover-background-color: rgba(34,153,85,0.9);
+  --button-text-color: #ffffff;
+  --button-hover-text-color: #ffffff;
+  --button-font-weight: bold;
   --button-border: #ced4da;
+  --button-hover-border: rgba(0,0,0,0);
   --button-border-width: 1px;
   --button-height: 40px;
   --button-leading: 1.428571429;
@@ -8516,6 +8828,15 @@ exports[`Snapshot with webauthn feature login new view with integrated webauthn 
   --input-shadow: none;
   --input-text-color: #495057;
   --input-text-size: 14px;
+  --link-color: #229955;
+  --link-hover-color: #145a32;
+  --link-decoration: none;
+  --link-hover-decoration: none;
+  --password-strength-color-0: #dc4e41;
+  --password-strength-color-1: #dc4e41;
+  --password-strength-color-2: #ffc107;
+  --password-strength-color-3: #4ad786;
+  --password-strength-color-4: #229955;
 }
 
 .c4 {
@@ -8758,7 +9079,7 @@ exports[`Snapshot with webauthn feature login new view with integrated webauthn 
             </div>
           </div>
           <button
-            class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[var(--button-radius)] text-[length:var(--button-text-size)] leading-[var(--button-leading)] font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary text-primary-foreground shadow hover:bg-primary/90 h-[var(--button-height)] px-[var(--button-padding-x)] py-[var(--button-padding-y)] w-full"
+            class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[var(--button-radius)] text-[length:var(--button-text-size)] leading-[var(--button-leading)] font-[weight:var(--button-font-weight)] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-[var(--button-background-color)] text-[var(--button-text-color)] border-[length:var(--button-border-width)] border-[var(--button-border)] shadow hover:bg-[var(--button-hover-background-color)] hover:text-[var(--button-hover-text-color)] hover:border-[var(--button-hover-border)] h-[var(--button-height)] px-[var(--button-padding-x)] py-[var(--button-padding-y)] w-full"
             type="submit"
           >
             login.submitLabel
@@ -8890,7 +9211,13 @@ exports[`Snapshot with webauthn feature login old view with webauthn or password
   --leading: 1.428571429;
   --border-width: 1px;
   --radius: 3px;
+  --button-background-color: #229955;
+  --button-hover-background-color: rgba(34,153,85,0.9);
+  --button-text-color: #ffffff;
+  --button-hover-text-color: #ffffff;
+  --button-font-weight: bold;
   --button-border: #ced4da;
+  --button-hover-border: rgba(0,0,0,0);
   --button-border-width: 1px;
   --button-height: 40px;
   --button-leading: 1.428571429;
@@ -8911,6 +9238,15 @@ exports[`Snapshot with webauthn feature login old view with webauthn or password
   --input-shadow: none;
   --input-text-color: #495057;
   --input-text-size: 14px;
+  --link-color: #229955;
+  --link-hover-color: #145a32;
+  --link-decoration: none;
+  --link-hover-decoration: none;
+  --password-strength-color-0: #dc4e41;
+  --password-strength-color-1: #dc4e41;
+  --password-strength-color-2: #ffc107;
+  --password-strength-color-3: #4ad786;
+  --password-strength-color-4: #229955;
 }
 
 .c4 {
@@ -9311,7 +9647,13 @@ exports[`Snapshot with webauthn feature signup form view with password 1`] = `
   --leading: 1.428571429;
   --border-width: 1px;
   --radius: 3px;
+  --button-background-color: #229955;
+  --button-hover-background-color: rgba(34,153,85,0.9);
+  --button-text-color: #ffffff;
+  --button-hover-text-color: #ffffff;
+  --button-font-weight: bold;
   --button-border: #ced4da;
+  --button-hover-border: rgba(0,0,0,0);
   --button-border-width: 1px;
   --button-height: 40px;
   --button-leading: 1.428571429;
@@ -9332,6 +9674,15 @@ exports[`Snapshot with webauthn feature signup form view with password 1`] = `
   --input-shadow: none;
   --input-text-color: #495057;
   --input-text-size: 14px;
+  --link-color: #229955;
+  --link-hover-color: #145a32;
+  --link-decoration: none;
+  --link-hover-decoration: none;
+  --password-strength-color-0: #dc4e41;
+  --password-strength-color-1: #dc4e41;
+  --password-strength-color-2: #ffc107;
+  --password-strength-color-3: #4ad786;
+  --password-strength-color-4: #229955;
 }
 
 <div>
@@ -9544,7 +9895,7 @@ exports[`Snapshot with webauthn feature signup form view with password 1`] = `
               </div>
             </div>
             <button
-              class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[var(--button-radius)] text-[length:var(--button-text-size)] leading-[var(--button-leading)] font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary text-primary-foreground shadow hover:bg-primary/90 h-[var(--button-height)] px-[var(--button-padding-x)] py-[var(--button-padding-y)] w-full"
+              class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[var(--button-radius)] text-[length:var(--button-text-size)] leading-[var(--button-leading)] font-[weight:var(--button-font-weight)] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-[var(--button-background-color)] text-[var(--button-text-color)] border-[length:var(--button-border-width)] border-[var(--button-border)] shadow hover:bg-[var(--button-hover-background-color)] hover:text-[var(--button-hover-text-color)] hover:border-[var(--button-hover-border)] h-[var(--button-height)] px-[var(--button-padding-x)] py-[var(--button-padding-y)] w-full"
               type="submit"
             >
               signup.submitLabel
@@ -9629,7 +9980,13 @@ exports[`Snapshot with webauthn feature signup form view with webauthn 1`] = `
   --leading: 1.428571429;
   --border-width: 1px;
   --radius: 3px;
+  --button-background-color: #229955;
+  --button-hover-background-color: rgba(34,153,85,0.9);
+  --button-text-color: #ffffff;
+  --button-hover-text-color: #ffffff;
+  --button-font-weight: bold;
   --button-border: #ced4da;
+  --button-hover-border: rgba(0,0,0,0);
   --button-border-width: 1px;
   --button-height: 40px;
   --button-leading: 1.428571429;
@@ -9650,6 +10007,15 @@ exports[`Snapshot with webauthn feature signup form view with webauthn 1`] = `
   --input-shadow: none;
   --input-text-color: #495057;
   --input-text-size: 14px;
+  --link-color: #229955;
+  --link-hover-color: #145a32;
+  --link-decoration: none;
+  --link-hover-decoration: none;
+  --password-strength-color-0: #dc4e41;
+  --password-strength-color-1: #dc4e41;
+  --password-strength-color-2: #ffc107;
+  --password-strength-color-3: #4ad786;
+  --password-strength-color-4: #229955;
 }
 
 <div>
@@ -9777,7 +10143,7 @@ exports[`Snapshot with webauthn feature signup form view with webauthn 1`] = `
               />
             </div>
             <button
-              class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[var(--button-radius)] text-[length:var(--button-text-size)] leading-[var(--button-leading)] font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary text-primary-foreground shadow hover:bg-primary/90 h-[var(--button-height)] px-[var(--button-padding-x)] py-[var(--button-padding-y)] w-full"
+              class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[var(--button-radius)] text-[length:var(--button-text-size)] leading-[var(--button-leading)] font-[weight:var(--button-font-weight)] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-[var(--button-background-color)] text-[var(--button-text-color)] border-[length:var(--button-border-width)] border-[var(--button-border)] shadow hover:bg-[var(--button-hover-background-color)] hover:text-[var(--button-hover-text-color)] hover:border-[var(--button-hover-border)] h-[var(--button-height)] px-[var(--button-padding-x)] py-[var(--button-padding-y)] w-full"
               type="submit"
             >
               signup.submitLabel
@@ -9896,7 +10262,13 @@ exports[`Snapshot with webauthn feature signup view with webauthn or password 1`
   --leading: 1.428571429;
   --border-width: 1px;
   --radius: 3px;
+  --button-background-color: #229955;
+  --button-hover-background-color: rgba(34,153,85,0.9);
+  --button-text-color: #ffffff;
+  --button-hover-text-color: #ffffff;
+  --button-font-weight: bold;
   --button-border: #ced4da;
+  --button-hover-border: rgba(0,0,0,0);
   --button-border-width: 1px;
   --button-height: 40px;
   --button-leading: 1.428571429;
@@ -9917,6 +10289,15 @@ exports[`Snapshot with webauthn feature signup view with webauthn or password 1`
   --input-shadow: none;
   --input-text-color: #495057;
   --input-text-size: 14px;
+  --link-color: #229955;
+  --link-hover-color: #145a32;
+  --link-decoration: none;
+  --link-hover-decoration: none;
+  --password-strength-color-0: #dc4e41;
+  --password-strength-color-1: #dc4e41;
+  --password-strength-color-2: #ffc107;
+  --password-strength-color-3: #4ad786;
+  --password-strength-color-4: #229955;
 }
 
 .c4 {

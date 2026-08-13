@@ -45,7 +45,13 @@ exports[`Snapshot phone number editor basic 1`] = `
   --leading: 1.428571429;
   --border-width: 1px;
   --radius: 3px;
+  --button-background-color: #229955;
+  --button-hover-background-color: rgba(34,153,85,0.9);
+  --button-text-color: #ffffff;
+  --button-hover-text-color: #ffffff;
+  --button-font-weight: bold;
   --button-border: #ced4da;
+  --button-hover-border: rgba(0,0,0,0);
   --button-border-width: 1px;
   --button-height: 40px;
   --button-leading: 1.428571429;
@@ -66,6 +72,15 @@ exports[`Snapshot phone number editor basic 1`] = `
   --input-shadow: none;
   --input-text-color: #495057;
   --input-text-size: 14px;
+  --link-color: #229955;
+  --link-hover-color: #145a32;
+  --link-decoration: none;
+  --link-hover-decoration: none;
+  --password-strength-color-0: #dc4e41;
+  --password-strength-color-1: #dc4e41;
+  --password-strength-color-2: #ffc107;
+  --password-strength-color-3: #4ad786;
+  --password-strength-color-4: #229955;
 }
 
 <div>
@@ -110,63 +125,18 @@ exports[`Snapshot phone number editor basic 1`] = `
                 />
               </svg>
             </label>
-            <div
-              class="group/input-group dark:bg-input/30 shadow-xs relative flex w-full items-center outline-none transition-[color,box-shadow] has-[>textarea]:h-auto h-[var(--input-height)] rounded-[var(--input-radius)] bg-[var(--input-background)] border-[var(--input-border)] border-[length:var(--input-border-width)] shadow-[var(--input-shadow)] disabled:bg-[var(--input-disabled-background)] has-[>[data-align=inline-start]]:[&>input]:pl-2 has-[>[data-align=inline-end]]:[&>input]:pr-2 has-[>[data-align=block-start]]:h-auto has-[>[data-align=block-start]]:flex-col has-[>[data-align=block-start]]:[&>input]:pb-3 has-[>[data-align=block-end]]:h-auto has-[>[data-align=block-end]]:flex-col has-[>[data-align=block-end]]:[&>input]:pt-3 has-[[data-slot=input-group-control]:focus-visible]:ring-ring has-[[data-slot=input-group-control]:focus-visible]:ring-1 has-[[data-slot][aria-invalid=true]]:ring-destructive/20 has-[[data-slot][aria-invalid=true]]:border-destructive dark:has-[[data-slot][aria-invalid=true]]:ring-destructive/40"
-              data-slot="input-group"
-              role="group"
-            >
-              <div
-                class="text-muted-foreground flex h-auto cursor-text select-none items-center justify-center gap-2 py-[var(--input-padding-y)] text-sm font-medium group-data-[disabled=true]/input-group:opacity-50 [&>kbd]:rounded-[calc(var(--input-radius)-5px)] [&>svg:not([class*='size-'])]:size-4 order-first pl-[var(--input-padding-x)] has-[>button]:ml-[-0.45rem] has-[>kbd]:ml-[-0.35rem]"
-                data-align="inline-start"
-                data-slot="input-group-addon"
-                role="group"
-              >
-                <button
-                  aria-expanded="false"
-                  aria-haspopup="menu"
-                  aria-label="address.country"
-                  class="justify-center whitespace-nowrap font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 hover:bg-accent hover:text-accent-foreground flex items-center gap-2 text-sm shadow-none size-6 rounded-[calc(var(--input-radius)-5px)] p-0 has-[>svg]:p-0"
-                  data-size="icon-xs"
-                  data-state="closed"
-                  id="radix-:r1:"
-                  type="button"
-                >
-                  <svg
-                    viewBox="0 0 513 342"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <title>
-                      FR
-                    </title>
-                    <path
-                      d="M0 0h513v342H0z"
-                      fill="#FFF"
-                    />
-                    <path
-                      d="M0 0h171v342H0z"
-                      fill="#00318A"
-                    />
-                    <path
-                      d="M342 0h171v342H342z"
-                      fill="#D80027"
-                    />
-                  </svg>
-                </button>
-              </div>
-              <input
-                class="flex w-full transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground focus-visible:outline-none focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm h-[var(--input-height)] px-[var(--input-padding-x)] py-[var(--input-padding-y)] text-[var(--input-text-color)] text-[length:var(--input-text-size)] leading-[var(--input-leading)] border-[var(--input-border)] placeholder:text-[var(--input-placeholder)] disabled:bg-[var(--input-disabled-background)] flex-1 rounded-none border-0 bg-transparent shadow-none focus-visible:ring-0 dark:bg-transparent"
-                data-slot="input-group-control"
-                id=":r0:"
-                name="phoneNumber"
-                placeholder="phoneNumber"
-                required=""
-                type="tel"
-                value=""
-              />
-            </div>
+            <input
+              class="flex w-full dark:bg-input/30 shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm h-[var(--input-height)] px-[var(--input-padding-x)] py-[var(--input-padding-y)] text-[var(--input-text-color)] text-[length:var(--input-text-size)] leading-[var(--input-leading)] rounded-[var(--input-radius)] bg-[var(--input-background)] border-[var(--input-border)] border-[length:var(--input-border-width)] placeholder:text-[var(--input-placeholder)] disabled:bg-[var(--input-disabled-background)]"
+              id=":r0:"
+              name="phoneNumber"
+              placeholder="phoneNumber"
+              required=""
+              type="tel"
+              value=""
+            />
           </div>
           <button
-            class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[var(--button-radius)] text-[length:var(--button-text-size)] leading-[var(--button-leading)] font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary text-primary-foreground shadow hover:bg-primary/90 h-[var(--button-height)] px-[var(--button-padding-x)] py-[var(--button-padding-y)] w-full"
+            class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[var(--button-radius)] text-[length:var(--button-text-size)] leading-[var(--button-leading)] font-[weight:var(--button-font-weight)] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-[var(--button-background-color)] text-[var(--button-text-color)] border-[length:var(--button-border-width)] border-[var(--button-border)] shadow hover:bg-[var(--button-hover-background-color)] hover:text-[var(--button-hover-text-color)] hover:border-[var(--button-hover-border)] h-[var(--button-height)] px-[var(--button-padding-x)] py-[var(--button-padding-y)] w-full"
             type="submit"
           >
             send

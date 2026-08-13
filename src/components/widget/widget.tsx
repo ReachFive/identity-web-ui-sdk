@@ -51,7 +51,13 @@ export const themeVariables = css`
     --border-width: ${props => props.theme.borderWidth}px;
     --radius: ${props => props.theme.borderRadius}px;
 
+    --button-background-color: ${props => props.theme.button.background};
+    --button-hover-background-color: ${props => props.theme.button.hoverBackground};
+    --button-text-color: ${props => props.theme.button.color};
+    --button-hover-text-color: ${props => props.theme.button.hoverColor};
+    --button-font-weight: ${props => props.theme.button.fontWeight};
     --button-border: ${props => props.theme.button.borderColor};
+    --button-hover-border: ${props => props.theme.button.hoverBorderColor};
     --button-border-width: ${props => props.theme.button.borderWidth}px;
     --button-height: ${props => props.theme.button.height}px;
     --button-leading: ${props => props.theme.button.lineHeight};
@@ -73,6 +79,17 @@ export const themeVariables = css`
     --input-shadow: ${props => props.theme.input.boxShadow};
     --input-text-color: ${props => props.theme.input.color};
     --input-text-size: ${props => props.theme.input.fontSize}px;
+
+    --link-color: ${props => props.theme.link.color};
+    --link-hover-color: ${props => props.theme.link.hoverColor};
+    --link-decoration: ${props => props.theme.link.decoration};
+    --link-hover-decoration: ${props => props.theme.link.hoverDecoration};
+
+    --password-strength-color-0: ${props => props.theme.passwordStrengthValidator.color0};
+    --password-strength-color-1: ${props => props.theme.passwordStrengthValidator.color1};
+    --password-strength-color-2: ${props => props.theme.passwordStrengthValidator.color2};
+    --password-strength-color-3: ${props => props.theme.passwordStrengthValidator.color3};
+    --password-strength-color-4: ${props => props.theme.passwordStrengthValidator.color4};
 `;
 
 export const ThemeVariablesContainer = styled.div`

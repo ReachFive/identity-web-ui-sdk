@@ -73,7 +73,15 @@ const PhoneNumberRegisteringCredentialForm = ({
         PhoneNumberRegisteringCredentialFormData,
         StartMfaPhoneNumberRegistrationResponse
     >) => {
-    let fields: Field[] = [{ key: 'phoneNumber', type: 'phone', ...phoneNumberOptions }];
+    let fields: Field[] = [
+        {
+            key: 'phoneNumber',
+            type: 'phone',
+            allowInternational: phoneNumberOptions?.allowInternational ?? false,
+            defaultCountry: phoneNumberOptions?.defaultCountry,
+            phoneNumberOptions,
+        },
+    ];
 
     if (displayTrustDevice) {
         fields = [

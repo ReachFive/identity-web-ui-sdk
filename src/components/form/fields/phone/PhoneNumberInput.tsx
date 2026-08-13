@@ -23,7 +23,7 @@ export interface PhoneNumberInputProps extends BasePhoneNumberInputProps {
     onChange: (val: string | undefined) => void;
     value: string | undefined;
     /**
-     * Whether international phone numbers are allowed. Defaults to `true`.
+     * Whether international phone numbers are allowed. Defaults to `false`.
      * If allowed, the phone number input will be prefixed with the country code,
      * and the selected country will be displayed in the input's left add-on, and
      * autoformatting will be enabled.
@@ -38,7 +38,7 @@ export interface PhoneNumberInputProps extends BasePhoneNumberInputProps {
 export const PhoneNumberInput = React.forwardRef<HTMLInputElement, PhoneNumberInputProps>(
     function PhoneNumberInput(
         {
-            allowInternational = true,
+            allowInternational = false,
             defaultCountry,
             description,
             errors,
@@ -63,6 +63,7 @@ export const PhoneNumberInput = React.forwardRef<HTMLInputElement, PhoneNumberIn
         const resolvedId = id ?? generatedId;
 
         const hasError = errors !== undefined && errors.length > 0;
+        const errorId = `${resolvedId}-error`;
 
         return (
             <PhoneNumberInputProvider
@@ -84,6 +85,7 @@ export const PhoneNumberInput = React.forwardRef<HTMLInputElement, PhoneNumberIn
                             placeholder={placeholder ?? (!showLabels ? label : undefined)}
                             required={required}
                             aria-invalid={hasError ? true : undefined}
+                            aria-errormessage={hasError ? errorId : undefined}
                             {...props}
                         />
                     ) : (
@@ -93,11 +95,12 @@ export const PhoneNumberInput = React.forwardRef<HTMLInputElement, PhoneNumberIn
                             placeholder={placeholder ?? (!showLabels ? label : undefined)}
                             required={required}
                             aria-invalid={hasError ? true : undefined}
+                            aria-errormessage={hasError ? errorId : undefined}
                             {...props}
                         />
                     )}
                     {description && <FieldDescription>{description}</FieldDescription>}
-                    {errors && <FieldError errors={errors} />}
+                    {errors && <FieldError errors={errors} id={errorId} />}
                 </Field>
             </PhoneNumberInputProvider>
         );

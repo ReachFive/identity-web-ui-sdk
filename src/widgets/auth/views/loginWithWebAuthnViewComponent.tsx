@@ -4,7 +4,6 @@ import { useFormContext } from 'react-hook-form';
 import type { AuthOptions, LoginWithWebAuthnParams } from '@reachfive/identity-core';
 
 import { Form } from '@/components/form/form';
-import { useConfig } from '@/contexts/config';
 
 import { SocialButtons } from '../../../components/form/socialButtonsComponent';
 import { WebAuthnLoginViewButtons } from '../../../components/form/webAuthAndPasswordButtonsComponent';
@@ -23,7 +22,15 @@ import { LoginWithPasswordViewState } from './loginWithPasswordViewComponent';
 
 import type { OnError, OnSuccess } from '../../../types';
 
-type LoginWithWebAuthnFormData = { identifier: string } | { email: string };
+/**
+ * The form yields whichever field the tenant configuration allows: a generic `identifier` when both
+ * an email and a phone number are allowed login types, or the single narrowed field when only one of
+ * them is — see `predefinedFields.identifier`.
+ */
+type LoginWithWebAuthnFormData =
+    | { identifier: string }
+    | { email: string }
+    | { phoneNumber: string };
 
 export interface LoginWithWebAuthnViewProps {
     /**
@@ -79,7 +86,6 @@ export const LoginWithWebAuthnView = ({
     onError = (() => {}) as OnError,
     onSuccess = (() => {}) as OnSuccess,
 }: LoginWithWebAuthnViewProps) => {
-    const config = useConfig();
     const coreClient = useReachfive();
     const { goTo } = useRouting();
     const i18n = useI18n();
@@ -121,7 +127,13 @@ export const LoginWithWebAuthnView = ({
     const redirectToPasswordLoginView = useCallback(
         (data: LoginWithWebAuthnFormData) => {
             const username =
-                'identifier' in data ? data.identifier : 'email' in data ? data.email : '';
+                'identifier' in data
+                    ? data.identifier
+                    : 'email' in data
+                      ? data.email
+                      : 'phoneNumber' in data
+                        ? data.phoneNumber
+                        : '';
             goTo<LoginWithPasswordViewState>('login-with-password', { username });
         },
         [goTo]
@@ -148,9 +160,9 @@ export const LoginWithWebAuthnView = ({
                         type: 'identifier',
                         key: 'identifier',
                         defaultValue: defaultIdentifier,
-                        withPhoneNumber: config.loginTypeAllowed.phoneNumber,
                         required: true,
                         autoComplete: 'username webauthn',
+                        allowCustomIdentifier: false,
                     },
                 ]}
                 showLabels={showLabels}

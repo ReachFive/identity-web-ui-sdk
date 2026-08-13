@@ -76,6 +76,34 @@ module.exports = {
           borderStyle: "solid",
           borderWidth: 0,
         },
+        ".r5-widget hr": {
+          height: 0,
+          color: "inherit",
+          borderTopWidth: "1px",
+        },
+        a: {
+          color: "inherit",
+          "-webkit-text-decoration": "inherit",
+          textDecoration: "inherit",
+        },
+        "b,strong": {
+          fontWeight: "bolder",
+        },
+        small: {
+          fontSize: "80%",
+        },
+        "sub,sup": {
+          verticalAlign: "baseline",
+          fontSize: "75%",
+          lineHeight: 0,
+          position: "relative",
+        },
+        sub: {
+          bottom: "-.25em",
+        },
+        sup: {
+          top: "-.5em",
+        },
       });
     },
   ],

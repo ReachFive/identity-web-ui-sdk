@@ -14,7 +14,7 @@ import {
     getDefaultFieldValues,
     getFieldDefinitions,
     PhoneNumberOptions,
-    withoutStaticContent,
+    resolveErrorFieldPath,
 } from '@/lib/form';
 
 type SubmitComponent = React.ComponentType<{
@@ -73,14 +73,6 @@ function Form<TFieldValues extends FieldValues = FieldValues, R = void>({
         });
     }, [fields, config, errorArchivedConsents, phoneNumberOptions]);
 
-    // Utility function to check if a field is valid (defined in fieldDefinitions)
-    const isValidField = React.useCallback(
-        (field: string): field is FieldPath<TFieldValues> => {
-            return withoutStaticContent(fieldDefinitions).some(f => f.key === field);
-        },
-        [fieldDefinitions]
-    );
-
     const defaultValues = React.useMemo(
         () =>
             ({
@@ -126,29 +118,40 @@ function Form<TFieldValues extends FieldValues = FieldValues, R = void>({
             await onError?.(error);
 
             if (isAppError(error)) {
-                if (error.errorDetails && error.errorDetails.length > 0) {
-                    error.errorDetails.map(errorDetail => {
-                        setError(
-                            errorDetail.field
-                                ? isValidField(errorDetail.field)
-                                    ? errorDetail.field
-                                    : `root.${errorDetail.field}`
-                                : 'root',
-                            {
-                                message:
-                                    errorDetail.code === 'missing'
-                                        ? i18n('validation.required')
-                                        : i18n(`validation.${errorDetail.field}`, {
-                                              defaultValue: errorDetail.message,
-                                          }),
-                            }
-                        );
-                    });
-                }
+                // messages of the error details which match no displayed field, appended to the global
+                // error message so that they are not silently dropped
+                const unmappedMessages: string[] = [];
+
+                error.errorDetails?.forEach(errorDetail => {
+                    const resolved = errorDetail.field
+                        ? resolveErrorFieldPath(errorDetail.field, fieldDefinitions)
+                        : undefined;
+
+                    // a field the error only reaches through an alias holds another shape than the
+                    // one the API named, so its own message would describe the wrong thing: the
+                    // message stays named after the payload key, as it is when it matches no field
+                    const messageKey =
+                        resolved && !resolved.aliased ? resolved.path : errorDetail.field;
+
+                    const message =
+                        errorDetail.code === 'missing'
+                            ? i18n('validation.required')
+                            : i18n(`validation.${messageKey}`, {
+                                  defaultValue: errorDetail.message,
+                              });
+
+                    if (resolved) {
+                        setError(resolved.path as FieldPath<TFieldValues>, { message });
+                    } else {
+                        unmappedMessages.push(message);
+                    }
+                });
+
+                const errorMessage = i18n(error.errorMessageKey ?? error.error, {
+                    defaultValue: error.errorUserMsg ?? error.errorDescription ?? error.error,
+                });
                 setError('root', {
-                    message: i18n(error.errorMessageKey ?? error.error, {
-                        defaultValue: error.errorUserMsg ?? error.errorDescription ?? error.error,
-                    }),
+                    message: [errorMessage, ...unmappedMessages].join(' '),
                 });
                 logError(error.errorDescription ?? error.error);
             }
@@ -159,7 +162,7 @@ function Form<TFieldValues extends FieldValues = FieldValues, R = void>({
 
             return error;
         },
-        [i18n, isValidField, onError, resetAfterError]
+        [fieldDefinitions, i18n, onError, resetAfterError]
     );
 
     const onSubmit = React.useCallback(

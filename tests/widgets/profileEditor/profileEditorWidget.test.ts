@@ -237,6 +237,40 @@ describe('DOM testing', () => {
             expect(onError).toBeCalledWith('Unexpected error');
         });
 
+        test('with phoneNumberOptions.allowInternational', async () => {
+            // @ts-expect-error partial Profile
+            const profile: Profile = {
+                phoneNumber: '+33612345678',
+            };
+
+            getUser.mockResolvedValue(profile);
+
+            await generateComponent({
+                fields: ['phone_number'],
+                phoneNumberOptions: { allowInternational: true, defaultCountry: 'FR' },
+            });
+
+            // Country select button only renders when allowInternational reaches the phone field
+            expect(screen.getByRole('button', { name: 'address.country' })).toBeInTheDocument();
+        });
+
+        test('hides country select by default', async () => {
+            // @ts-expect-error partial Profile
+            const profile: Profile = {
+                phoneNumber: '+33612345678',
+            };
+
+            getUser.mockResolvedValue(profile);
+
+            await generateComponent({
+                fields: ['phone_number'],
+            });
+
+            expect(
+                screen.queryByRole('button', { name: 'address.country' })
+            ).not.toBeInTheDocument();
+        });
+
         test('api update user failed', async () => {
             const user = userEvent.setup();
 

@@ -4,7 +4,6 @@ import { type AuthOptions } from '@reachfive/identity-core';
 import { LoginWithPasswordParams } from '@reachfive/identity-core/es/main/oAuthClient';
 
 import { Form } from '@/components/form/form';
-import { useConfig } from '@/contexts/config';
 import { Field } from '@/lib/form';
 
 import { CaptchaProvider, WithCaptchaProps, WithCaptchaToken } from '../../../components/captcha';
@@ -66,7 +65,6 @@ export const LoginWithPasswordView = ({
     onError = (() => {}) as OnError,
     onSuccess = (() => {}) as OnSuccess,
 }: WithCaptchaProps<LoginWithPasswordViewProps>) => {
-    const config = useConfig();
     const i18n = useI18n();
     const coreClient = useReachfive();
     const { goTo, params } = useRouting();
@@ -107,8 +105,10 @@ export const LoginWithPasswordView = ({
             key: 'identifier',
             type: 'identifier',
             defaultValue: username,
-            withPhoneNumber: config.loginTypeAllowed.phoneNumber,
-            // readOnly: true,
+            // this view is the second step of the WebAuthn-first flow: the identifier was settled on
+            // the previous screen and is only carried over here, so it is shown for confirmation
+            // rather than offered for editing again. A read-only field is still submitted.
+            readOnly: true,
         },
         {
             key: 'password',

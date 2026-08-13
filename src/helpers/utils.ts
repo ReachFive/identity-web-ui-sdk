@@ -1,5 +1,6 @@
 import { intlFormat } from 'date-fns';
-import * as libphonenumber from 'libphonenumber-js';
+import { isPossiblePhoneNumber } from 'libphonenumber-js';
+import z from 'zod';
 
 import {
     AuthResult,
@@ -117,9 +118,9 @@ export function enrichLoginEvent<T extends LoginWithPasswordParams | LoginWithWe
 }
 
 export const specializeIdentifier = (identifier: string): SpecializedIdentifier =>
-    isValidEmail(identifier)
+    z.email().safeParse(identifier).success
         ? { email: identifier }
-        : libphonenumber.isValidNumber(identifier)
+        : isPossiblePhoneNumber(identifier)
           ? { phoneNumber: identifier.replace(/\s+/g, '') }
           : { customIdentifier: identifier };
 
@@ -132,10 +133,6 @@ export function specializeIdentifierData<
         return { ...specializedIdentifier, ...rest } as unknown as T;
     }
     return data as T;
-}
-
-export function isValidEmail(email: string) {
-    return /\S+@\S+\.\S+/.test(email);
 }
 
 export type CamelCase<T extends string> = T extends `${infer U}_${infer V}`

@@ -32,7 +32,6 @@ function expectValidTheme(theme: Partial<Theme>) {
     expect(theme).toHaveProperty('dangerColor');
     expect(theme).toHaveProperty('warningColor');
     expect(theme).toHaveProperty('successColor');
-    expect(theme).toHaveProperty('lightBackgroundColor');
     expect(theme).toHaveProperty('maxWidth');
     expect(theme).toHaveProperty('paddingY');
     expect(theme).toHaveProperty('paddingX');

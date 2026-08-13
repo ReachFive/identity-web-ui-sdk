@@ -7,6 +7,106 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [2.0.2] - 2026-06-30
+
+### Added
+
+- Theme options for the button (`background`, `color`, `hoverBackground`, `hoverColor`, `hoverBorderColor`,
+  `fontWeight`), links (`color`, `hoverColor`, `decoration`, `hoverDecoration`) and the password strength
+  indicator colors, now exposed as CSS variables inside the widget
+- `readOnly` on a field definition, to display a value settled upstream without offering it for editing
+  again. Unlike a disabled field, a read-only one is still submitted
+
+### Changed
+
+- Publish an npm prerelease automatically for release pull requests
+- **`loginTypeAllowed` is now enforced for every identifier shape.** An email or a phone number that the
+  tenant does not allow as a login type is refused by the `identifier` field instead of being submitted:
+  the field narrows to the single allowed shape when only one of them is allowed, and rejects the other
+  shapes when neither is. This is a behaviour change for the WebAuthn login form, which previously opted
+  out of the restriction and accepted either shape whatever the tenant allowed — a credential enrolled
+  against a phone number can no longer be used in a tenant that forbids phone number login.
+- **`loginTypeAllowed.customIdentifier` is now enforced as well.** The `identifier` field held only the
+  email and phone number shapes to the tenant's login types: a value matching neither of them was read as
+  a custom identifier and submitted as `custom_identifier` even in a tenant that forbids that login type.
+  A field definition can also declare `allowCustomIdentifier: false` to refuse that shape where no flow
+  serves it, and the option may only narrow what the tenant allows — it never opts back into a login type
+  the tenant forbids
+
+### Fixed
+
+- Filter empty values from select custom fields
+- Preserve type override for custom fields
+- Opt-in consent not required by default
+- Select `defaultValue` ignored on form submit
+- Filter empty values from select items rendering
+- Restore custom address fields support and numeric coercion for custom fields
+- Allow consent fields without the `consents.` prefix in `signupFields`
+- Ignore unknown `signupFields` entries instead of throwing
+- Strip `defaultValue` from field props to avoid controlled/uncontrolled input warning
+- Restore Tailwind reset styles for `hr`, links, and text elements
+- Fix inverted password policy character checks blocking valid passwords on submit
+- Propagate `canShowPassword` to every password field (forgot password, password editor, signup fields)
+- Forward the widget-level `phoneNumberOptions` to phone fields resolved from a bare field name
+  (passwordless SMS form, `signupFields`, profile editor fields)
+- Phone country selector rendered regardless of `withCountrySelect` / `allowInternational`
+- Apply `phoneNumberOptions` to the MFA credentials phone number field, which ignored
+  `withCountrySelect` / `allowInternational` and never showed the country selector
+- Stop pre-checking opt-out consents by default; the checkbox state now only follows `defaultChecked`
+- Keep the required asterisk inline with the checkbox label text instead of detaching it on wrapped labels
+- Consistent social accounts entry sizing, provider icon backgrounds and responsive identity list
+- Show an empty option on optional select fields so a selection can be cleared again
+- Normalize an empty string to `undefined` before Zod validation so cleared optional fields pass validation
+- Keep `Select` controlled from the first render to avoid the Radix controlled/uncontrolled warning
+- Surface API field errors on the matching form fields instead of only in the global error message
+- Validate required opt-out consents on submit
+- Validate the email and phone number shapes of the `identifier` predefined field
+- Validate the phone number shape of the passwordless `identifier` field when several `authType` values
+  are configured; a malformed number raised no field error and only produced a generic one after submitting
+- Derive the `identifier` field's phone number formatting from `loginTypeAllowed.phoneNumber` instead of
+  requiring every call site to pass `withPhoneNumber`, which silently disabled it when omitted
+- Accept the narrowed `email` / `phoneNumber` field in the passwordless identity form; with several
+  `authType` values configured and a single allowed login type, the form rendered a field the handler
+  could not read and rejected every submission with `validation.identifier`, making the form unusable
+  (long-standing, also present in 1.x)
+- Keep the typed identifier when switching from WebAuthn login to password login in a tenant that allows
+  only phone number login; the value was dropped
+- Accept a possible phone number in the passwordless identity form. The form routed the submission on a
+  strict validity check while the field only required the number to be possible, so a number the field
+  accepted could still be refused: a valid but unassigned prefix (`+12223333333`) raised no field error
+  and surfaced `This is not a valid email or phone number` in `onError` instead of being sent. The
+  email / phone number / custom identifier decision now goes through `specializeIdentifier`, shared with
+  the login widgets, and forwards the normalized number rather than the raw input
+- Read an identifier as an email with the same validator as the `email` field validation instead of a
+  permissive unanchored regular expression, which accepted a malformed address (`bob@@mail.com`) and an
+  address held inside a larger value (`mailto: bob@mail.com`)
+- Attach an API validation error to the `identifier` field. The field is submitted as the shape it
+  resolves to, so the API names its errors `email` / `phone_number` / `custom_identifier` while the form
+  holds no such field: the message was only appended to the global error. A field definition can now
+  declare the payload keys it stands for (`errorFields`), and the message stays named after the payload
+  key so it is not replaced with the field's own one
+- Refuse a custom identifier on the passwordless `identifier` field instead of reporting it only through
+  `onError`. With several `authType` values configured, `startPasswordless` starts either a magic link or
+  an SMS flow, so a value that is neither an email nor a phone number has none to start: the handler threw
+  an error the form displayed nowhere, leaving the form silent on an input it would never accept
+- Refuse a custom identifier on the WebAuthn login `identifier` field, for the same reason: a credential is
+  only ever enrolled against an email or a phone number, and the handler rejected the value with a console
+  error and no message on the field
+- Stop displaying the login view's dedicated custom identifier field when the tenant forbids that login
+  type; its value could only be rejected by the API. The generic `identifier` field is required again when
+  hiding it leaves it as the only identifier field displayed
+- Restore the read-only `identifier` field on the password login view, the second step of the WebAuthn
+  login flow. The identifier is settled on the previous screen and only carried over, but the field was
+  editable again: the user could replace it there, including with a shape the previous screen refuses
+- Stop rendering the internal `parent` of a nested field definition as a DOM attribute. The property only
+  prefixes the field name (`addresses.0.streetAddress`) and is consumed when that name is built, but it
+  was also forwarded to the field component and ended up on the `<input>` as `parent="addresses,0"`
+
+### Deprecated
+
+- The `identifier` field's `isWebAuthnLogin` option, now ignored: `loginTypeAllowed` is tenant
+  configuration and no field option may opt out of it
+
 ## [2.0.1] - 2026-06-30
 
 ### Fixed
@@ -735,7 +835,8 @@ The eye icon is now correctly displayed in the Auth widget.
 
 First version of the SDK Web UI.
 
-[Unreleased]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v2.0.1...HEAD
+[Unreleased]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v2.0.2...HEAD
+[2.0.2]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v2.0.1...v2.0.2
 [2.0.1]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v2.0.0...v2.0.1
 [2.0.0]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.43.1...v2.0.0
 [1.43.1]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v1.43.0...v1.43.1

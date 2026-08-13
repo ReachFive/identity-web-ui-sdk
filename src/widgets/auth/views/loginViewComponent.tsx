@@ -61,6 +61,17 @@ export const LoginForm = <ResultType,>({
         allowAuthentMailPhone &&
         (config.loginTypeAllowed.email || config.loginTypeAllowed.phoneNumber);
 
+    // `loginTypeAllowed` is tenant configuration and is authoritative: the view may ask for the
+    // dedicated input, but a tenant which forbids that login type never gets a field whose value the
+    // API can only reject
+    const hasCustomIdentifierField =
+        Boolean(allowCustomIdentifier) && config.loginTypeAllowed.customIdentifier;
+
+    // the generic identifier field already reads a custom identifier (see `specializeIdentifier`), so
+    // when the dedicated input is displayed next to it the two are alternatives: neither is required
+    // on its own, and only one of them may carry the identifier
+    const hasBothIdentifierFields = hasCustomIdentifierField && hasIdentifierField;
+
     const fields: Field[] = [
         ...((hasIdentifierField
             ? [
@@ -68,20 +79,19 @@ export const LoginForm = <ResultType,>({
                       type: 'identifier',
                       key: 'identifier',
                       defaultValue: defaultIdentifier,
-                      withPhoneNumber: config.loginTypeAllowed.phoneNumber,
-                      required: !allowCustomIdentifier,
+                      required: !hasBothIdentifierFields,
                       autoComplete: 'username webauthn',
                   },
               ]
             : []) satisfies Field[]),
-        ...(allowCustomIdentifier && hasIdentifierField
+        ...(hasBothIdentifierFields
             ? [
                   {
                       staticContent: <Separator text={i18n('or')} />,
                   },
               ]
             : []),
-        ...((allowCustomIdentifier
+        ...((hasCustomIdentifierField
             ? [
                   {
                       key: 'customIdentifier',

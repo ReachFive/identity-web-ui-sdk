@@ -1,8 +1,5 @@
 import React, { useLayoutEffect } from 'react';
 
-import { isValidPhoneNumber } from 'libphonenumber-js';
-import z from 'zod';
-
 import { AuthOptions, SingleFactorPasswordlessParams } from '@reachfive/identity-core';
 
 import { CaptchaProvider, WithCaptchaProps, type WithCaptchaToken } from '@/components/captcha';
@@ -13,17 +10,23 @@ import { importGoogleRecaptchaScript } from '@/components/reCaptcha';
 import { useI18n } from '@/contexts/i18n';
 import { useReachfive } from '@/contexts/reachfive';
 import { useRouting } from '@/contexts/routing';
+import { specializeIdentifier } from '@/helpers/utils';
 import { PhoneNumberOptions } from '@/lib/form';
 
 import { VerificationCodeViewState } from './verificationCodeView';
 
 import type { OnError, OnSuccess } from '@/types';
 
-type EmailFormData = { email: string; captchaToken?: string };
+type EmailFormData = { email: string };
 
-type PhoneNumberFormData = { phoneNumber: string; captchaToken?: string };
+type PhoneNumberFormData = { phoneNumber: string };
 
-type IdentityFormData = { identifier: string; captchaToken?: string };
+/**
+ * The identity form yields whichever field the tenant configuration allows: a generic `identifier`
+ * when both an email and a phone number are allowed login types, or the single narrowed field
+ * (`email` / `phoneNumber`) when only one of them is — see `predefinedFields.identifier`.
+ */
+type IdentityFormData = { identifier: string } | { email: string } | { phoneNumber: string };
 
 export interface PasswordlessViewProps {
     /**
@@ -120,14 +123,31 @@ export const PasswordlessView = ({
     };
 
     const handleIdentity = async (data: WithCaptchaToken<IdentityFormData>) => {
-        const { identifier, ...rest } = data;
-        if (identifier && isValidPhoneNumber(identifier)) {
-            await sendSms({ phoneNumber: identifier, ...rest });
-        } else if (identifier && z.email().safeParse(identifier).success) {
-            await sendMagicLink({ email: identifier, ...rest });
-        } else {
-            throw new Error(i18n('validation.identifier'));
+        // a narrowed field already carries the resolved shape, so it goes straight to its flow
+        if ('email' in data) {
+            const { email, ...rest } = data;
+            return sendMagicLink({ email, ...rest });
         }
+        if ('phoneNumber' in data) {
+            const { phoneNumber, ...rest } = data;
+            return sendSms({ phoneNumber, ...rest });
+        }
+
+        // the email / phone number / custom identifier decision is shared with the login widgets so
+        // that every widget reads an identifier the same way, and yields a value normalized for the
+        // API rather than the raw input
+        const { identifier, ...rest } = data;
+        const specialized = specializeIdentifier(identifier);
+        if ('email' in specialized) {
+            return sendMagicLink({ email: specialized.email, ...rest });
+        }
+        if ('phoneNumber' in specialized) {
+            return sendSms({ phoneNumber: specialized.phoneNumber, ...rest });
+        }
+        // a custom identifier has no passwordless flow to start. The field validation refuses that
+        // shape (`allowCustomIdentifier: false` below), so this only guards against a value reaching
+        // the handler another way
+        throw new Error(i18n('validation.identifier'));
     };
 
     const authTypes = [
@@ -165,7 +185,16 @@ export const PasswordlessView = ({
                 {showPhoneNumber && showIntro && <Intro>{i18n('passwordless.sms.intro')}</Intro>}
                 {showPhoneNumber && (
                     <Form
-                        fields={['phoneNumber']}
+                        fields={[
+                            {
+                                key: 'phoneNumber',
+                                type: 'phone',
+                                label: 'phoneNumber',
+                                allowInternational: phoneNumberOptions?.allowInternational ?? false,
+                                defaultCountry: phoneNumberOptions?.defaultCountry,
+                                phoneNumberOptions,
+                            },
+                        ]}
                         handler={sendSms}
                         onError={onError}
                         phoneNumberOptions={phoneNumberOptions}
@@ -173,7 +202,20 @@ export const PasswordlessView = ({
                 )}
                 {showIdentity && showIntro && <Intro>{i18n('passwordless.identity.intro')}</Intro>}
                 {showIdentity && (
-                    <Form fields={['identifier']} handler={handleIdentity} onError={onError} />
+                    <Form
+                        fields={[
+                            {
+                                key: 'identifier',
+                                type: 'identifier',
+                                // passwordless starts either a magic link or an sms flow: a custom
+                                // identifier addresses neither, so the field refuses it instead of
+                                // submitting a value `handleIdentity` could only reject
+                                allowCustomIdentifier: false,
+                            },
+                        ]}
+                        handler={handleIdentity}
+                        onError={onError}
+                    />
                 )}
             </CaptchaProvider>
         </div>

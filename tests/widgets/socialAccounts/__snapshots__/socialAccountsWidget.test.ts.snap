@@ -76,7 +76,13 @@ exports[`Snapshot basic 1`] = `
   --leading: 1.428571429;
   --border-width: 1px;
   --radius: 3px;
+  --button-background-color: #229955;
+  --button-hover-background-color: rgba(34,153,85,0.9);
+  --button-text-color: #ffffff;
+  --button-hover-text-color: #ffffff;
+  --button-font-weight: bold;
   --button-border: #ced4da;
+  --button-hover-border: rgba(0,0,0,0);
   --button-border-width: 1px;
   --button-height: 40px;
   --button-leading: 1.428571429;
@@ -97,6 +103,15 @@ exports[`Snapshot basic 1`] = `
   --input-shadow: none;
   --input-text-color: #495057;
   --input-text-size: 14px;
+  --link-color: #229955;
+  --link-hover-color: #145a32;
+  --link-decoration: none;
+  --link-hover-decoration: none;
+  --password-strength-color-0: #dc4e41;
+  --password-strength-color-1: #dc4e41;
+  --password-strength-color-2: #ffc107;
+  --password-strength-color-3: #4ad786;
+  --password-strength-color-4: #229955;
 }
 
 .c2 {

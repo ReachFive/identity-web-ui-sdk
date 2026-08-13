@@ -232,7 +232,6 @@ const PasswordPolicyRules = function PasswordPolicyRules(_props: PasswordPolicyR
 PasswordPolicyRules.displayName = 'PasswordPolicyRules';
 
 const StrengthIndicator = function StrengthIndicator({ strength }: { strength: PasswordStrength }) {
-    const { passwordPolicy } = useConfig();
     const i18n = useI18n();
     const label = i18n(`passwordStrength.score${strength.score}`);
     return (
@@ -249,17 +248,19 @@ const StrengthIndicator = function StrengthIndicator({ strength }: { strength: P
                 id="password-strength"
             >
                 {Array.from({ length: 4 }).map((_, i) => {
-                    const color =
-                        strength.score >= passwordPolicy.minStrength
-                            ? 'bg-primary'
-                            : 'bg-destructive';
-
                     return (
                         <div
                             key={i}
+                            style={
+                                {
+                                    '--strengh-color': `var(--password-strength-color-${strength.score})`,
+                                } as React.CSSProperties
+                            }
                             className={cn(
                                 'h-1 flex-1 rounded-full',
-                                strength.score > i ? color : 'bg-foreground/20'
+                                strength.score > i
+                                    ? 'bg-[var(--strengh-color)]'
+                                    : 'bg-foreground/20'
                             )}
                         />
                     );

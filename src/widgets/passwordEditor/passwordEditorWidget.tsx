@@ -45,6 +45,7 @@ export const PasswordEditorForm = ({
             key: 'password_confirmation',
             label: 'passwordConfirmation',
             autoComplete: 'new-password',
+            canShowPassword,
         },
     ];
 
@@ -55,6 +56,7 @@ export const PasswordEditorForm = ({
                 key: 'old_password',
                 label: 'oldPassword',
                 withPolicyRules: false,
+                canShowPassword,
             },
             ...fields,
         ];

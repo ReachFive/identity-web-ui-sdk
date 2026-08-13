@@ -291,6 +291,48 @@ describe('DOM testing', () => {
             });
         });
 
+        test('phone number field hides country select by default', async () => {
+            await generateComponent(
+                { showIntro: true, showRemoveMfaCredentials: true },
+                defaultConfig,
+                []
+            );
+
+            expect(
+                screen.queryByRole('button', { name: 'address.country' })
+            ).not.toBeInTheDocument();
+        });
+
+        test('phone number field hides country select with withCountrySelect: false', async () => {
+            await generateComponent(
+                {
+                    showIntro: true,
+                    showRemoveMfaCredentials: true,
+                    phoneNumberOptions: { withCountrySelect: false },
+                },
+                defaultConfig,
+                []
+            );
+
+            expect(
+                screen.queryByRole('button', { name: 'address.country' })
+            ).not.toBeInTheDocument();
+        });
+
+        test('phone number field shows country select with withCountrySelect: true', async () => {
+            await generateComponent(
+                {
+                    showIntro: true,
+                    showRemoveMfaCredentials: true,
+                    phoneNumberOptions: { withCountrySelect: true },
+                },
+                defaultConfig,
+                []
+            );
+
+            expect(screen.getByRole('button', { name: 'address.country' })).toBeInTheDocument();
+        });
+
         test('requireMfaRegistration', async () => {
             await generateComponent(
                 { showIntro: true, showRemoveMfaCredentials: true, requireMfaRegistration: true },

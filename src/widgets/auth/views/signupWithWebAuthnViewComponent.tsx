@@ -9,7 +9,7 @@ import { Alternative, Heading, Link } from '../../../components/miscComponent';
 import { useI18n } from '../../../contexts/i18n';
 import { useReachfive } from '../../../contexts/reachfive';
 import { snakeCaseProperties } from '../../../helpers/transformObjectProperties';
-import { type Field } from '../../../lib/form';
+import { type Field, type PhoneNumberOptions, withPhoneNumberOptions } from '../../../lib/form';
 
 import type { OnError, OnSuccess } from '../../../types';
 
@@ -23,6 +23,10 @@ export interface SignupWithWebAuthnViewProps {
     auth?: AuthOptions;
     /**  */
     beforeSignup?: <T>(param: T) => T;
+    /**
+     * Object that lets you set display options for the phone number field.
+     */
+    phoneNumberOptions?: PhoneNumberOptions;
     /**
      * The URL sent in the email to which the user is redirected.
      * This URL must be whitelisted in the `Allowed Callback URLs` field of your ReachFive client settings.
@@ -72,6 +76,7 @@ export interface SignupWithWebAuthnViewProps {
 export const SignupWithWebAuthnView = ({
     auth,
     beforeSignup = x => x,
+    phoneNumberOptions,
     redirectUrl,
     returnToAfterEmailConfirmation,
     signupFields = ['given_name', 'family_name', 'email'],
@@ -97,11 +102,9 @@ export const SignupWithWebAuthnView = ({
             auth
         );
 
-    const webAuthnSignupFields = signupFields.filter(
-        field => field !== 'password' && field !== 'password_confirmation'
-    );
-
-    // const fields = buildFormFields(webAuthnSignupFields, config);
+    const webAuthnSignupFields = signupFields
+        .filter(field => field !== 'password' && field !== 'password_confirmation')
+        .map(field => withPhoneNumberOptions(field, phoneNumberOptions));
 
     const allFields = userAgreement
         ? [
@@ -121,6 +124,7 @@ export const SignupWithWebAuthnView = ({
                     <Heading>{i18n('signup.withBiometrics')}</Heading>
                     <Form
                         fields={allFields}
+                        phoneNumberOptions={phoneNumberOptions}
                         showLabels={showLabels}
                         submitLabel="signup.submitLabel"
                         beforeSubmit={beforeSignup}
