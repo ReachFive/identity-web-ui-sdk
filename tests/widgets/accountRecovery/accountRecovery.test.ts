@@ -89,7 +89,7 @@ describe('DOM testing', () => {
             { config: { ...defaultConfig, ...config }, apiClient, defaultI18n }
         );
 
-        return waitFor(async () => {
+        return waitFor(() => {
             return render(result);
         });
     };
@@ -118,7 +118,7 @@ describe('DOM testing', () => {
             );
 
             expect(
-                screen.queryByText('accountRecovery.passkeyReset.successMessage')
+                screen.getByText('accountRecovery.passkeyReset.successMessage')
             ).toBeInTheDocument();
 
             expect(onSuccess).toBeCalledWith(
@@ -177,7 +177,7 @@ describe('DOM testing', () => {
                 })
             );
 
-            expect(screen.queryByText('passwordReset.successMessage')).toBeInTheDocument();
+            expect(screen.getByText('passwordReset.successMessage')).toBeInTheDocument();
 
             expect(onSuccess).toBeCalledWith(
                 expect.objectContaining({

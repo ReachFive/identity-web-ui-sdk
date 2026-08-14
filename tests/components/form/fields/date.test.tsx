@@ -52,6 +52,10 @@ const defaultI18n: I18nMessages = {
     day: 'Jour',
 };
 
+// Wrapped in an arrow function (rather than passing `jest.advanceTimersByTime`
+// directly) to avoid an @typescript-eslint/unbound-method lint error.
+const advanceTimersByTime = (ms: number) => jest.advanceTimersByTime(ms);
+
 describe('DOM testing', () => {
     beforeEach(() => {
         jest.useFakeTimers();
@@ -63,7 +67,7 @@ describe('DOM testing', () => {
     });
 
     test('default settings — triggers render and locale ordering', async () => {
-        const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
+        const user = userEvent.setup({ advanceTimers: advanceTimersByTime });
         const onChange = jest.fn();
 
         render(
@@ -127,7 +131,7 @@ describe('DOM testing', () => {
     });
 
     test('onChange fires with ISO string when all parts selected', async () => {
-        const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
+        const user = userEvent.setup({ advanceTimers: advanceTimersByTime });
         const onChange = jest.fn();
 
         render(
@@ -161,7 +165,7 @@ describe('DOM testing', () => {
     });
 
     test('day options update when month changes', async () => {
-        const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
+        const user = userEvent.setup({ advanceTimers: advanceTimersByTime });
         const onChange = jest.fn();
 
         render(

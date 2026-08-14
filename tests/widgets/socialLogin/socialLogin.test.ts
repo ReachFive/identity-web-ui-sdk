@@ -59,10 +59,12 @@ describe('Snapshot', () => {
                 defaultI18n,
             });
 
-            await waitFor(async () => {
-                const { container } = await render(widget);
-                expect(container).toMatchSnapshot();
-            });
+            const { container } = render(widget);
+            // Flush any state update triggered by a useEffect-initiated async call on
+            // mount, so it lands inside this act() boundary instead of racing with
+            // the snapshot assertion below.
+            await waitFor(() => {});
+            expect(container).toMatchSnapshot();
         };
 
     describe('social login', () => {
@@ -107,7 +109,7 @@ describe('DOM testing', () => {
         await generateComponent({});
 
         defaultConfig.socialProviders.forEach(provider => {
-            expect(screen.queryByTitle(providers[provider as ProviderId].name)).toBeInTheDocument();
+            expect(screen.getByTitle(providers[provider as ProviderId].name)).toBeInTheDocument();
         });
 
         const provider = defaultConfig.socialProviders[0] as ProviderId;
@@ -133,7 +135,7 @@ describe('DOM testing', () => {
         });
 
         defaultConfig.socialProviders.forEach(provider => {
-            expect(screen.queryByTitle(providers[provider as ProviderId].name)).toBeInTheDocument();
+            expect(screen.getByTitle(providers[provider as ProviderId].name)).toBeInTheDocument();
         });
     });
 
@@ -146,7 +148,7 @@ describe('DOM testing', () => {
         await generateComponent({});
 
         defaultConfig.socialProviders.forEach(provider => {
-            expect(screen.queryByTitle(providers[provider as ProviderId].name)).toBeInTheDocument();
+            expect(screen.getByTitle(providers[provider as ProviderId].name)).toBeInTheDocument();
         });
 
         const provider = defaultConfig.socialProviders[0] as ProviderId;
