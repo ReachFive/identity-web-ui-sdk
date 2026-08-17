@@ -289,7 +289,7 @@ const RuleCheckedItem = function RuleCheckedItem({
         <div className="flex gap-2 items-center" {...props}>
             {checked ? (
                 <>
-                    <CircleCheckIcon className="size-4 text-primary" aria-hidden="true" />
+                    <CircleCheckIcon className="size-4 text-success" aria-hidden="true" />
                     <span className="sr-only" aria-live="polite">
                         {i18n('validated')}
                     </span>
