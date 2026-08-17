@@ -1,7 +1,7 @@
 import type { ComponentType, PropsWithChildren } from 'react';
 import React from 'react';
 
-import type { Config } from '../types';
+import type { Config } from '@/types';
 
 export interface Props {
     config: Config;

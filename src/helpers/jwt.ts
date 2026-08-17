@@ -1,7 +1,7 @@
 import type { AuthResult } from '@reachfive/identity-core';
 
-import { decodeBase64UrlSafe } from './base64';
-import { camelCaseProperties } from './transformObjectProperties';
+import { decodeBase64UrlSafe } from '@/helpers/base64';
+import { camelCaseProperties } from '@/helpers/transformObjectProperties';
 
 export type IdTokenPayload = AuthResult['idTokenPayload'];
 

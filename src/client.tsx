@@ -3,50 +3,50 @@ import { createRoot } from 'react-dom/client';
 
 import type { AuthOptions, Client as CoreClient, SessionInfo } from '@reachfive/identity-core';
 
-import { ErrorText } from './components/miscComponent';
-import { type I18nMessages } from './contexts/i18n';
-import { UserError } from './helpers/errors';
-import { logError } from './helpers/logger';
-import { Config, Prettify } from './types';
+import { ErrorText } from '@/components/miscComponent';
+import { type I18nMessages } from '@/contexts/i18n';
+import { UserError } from '@/helpers/errors';
+import { logError } from '@/helpers/logger';
+import { Config, Prettify } from '@/types';
 import accountRecoveryWidget, {
     type AccountRecoveryWidgetProps,
-} from './widgets/accountRecovery/accountRecoveryWidget.tsx';
-import authWidget, { type AuthWidgetProps } from './widgets/auth/authWidget';
+} from '@/widgets/accountRecovery/accountRecoveryWidget.tsx';
+import authWidget, { type AuthWidgetProps } from '@/widgets/auth/authWidget';
 import emailEditorWidget, {
     type EmailEditorWidgetProps,
-} from './widgets/emailEditor/emailEditorWidget';
+} from '@/widgets/emailEditor/emailEditorWidget';
 import mfaCredentialsWidget, {
     type MfaCredentialsWidgetProps,
-} from './widgets/mfa/MfaCredentialsWidget';
-import mfaListWidget, { type MfaListWidgetProps } from './widgets/mfa/mfaListWidget';
+} from '@/widgets/mfa/MfaCredentialsWidget';
+import mfaListWidget, { type MfaListWidgetProps } from '@/widgets/mfa/mfaListWidget';
 import trustedDevicesWidget, {
     type TrustedDeviceWidgetProps,
-} from './widgets/mfa/trustedDevicesWidget.tsx';
+} from '@/widgets/mfa/trustedDevicesWidget.tsx';
 import passwordEditorWidget, {
     type PasswordEditorWidgetProps,
-} from './widgets/passwordEditor/passwordEditorWidget';
+} from '@/widgets/passwordEditor/passwordEditorWidget';
 import passwordlessWidget, {
     type PasswordlessWidgetProps,
-} from './widgets/passwordless/passwordlessWidget';
+} from '@/widgets/passwordless/passwordlessWidget';
 import passwordResetWidget, {
     type PasswordResetWidgetProps,
-} from './widgets/passwordReset/passwordResetWidget';
+} from '@/widgets/passwordReset/passwordResetWidget';
 import phoneNumberEditorWidget, {
     type PhoneNumberEditorWidgetProps,
-} from './widgets/phoneNumberEditor/phoneNumberEditorWidget';
+} from '@/widgets/phoneNumberEditor/phoneNumberEditorWidget';
 import profileEditorWidget, {
     type ProfileEditorWidgetProps,
-} from './widgets/profileEditor/profileEditorWidget';
+} from '@/widgets/profileEditor/profileEditorWidget';
 import socialAccountsWidget, {
     type SocialAccountsWidgetProps,
-} from './widgets/socialAccounts/socialAccountsWidget';
+} from '@/widgets/socialAccounts/socialAccountsWidget';
 import socialLoginWidget, {
     type SocialLoginWidgetProps,
-} from './widgets/socialLogin/socialLoginWidget';
-import mfaStepUpWidget, { type MfaStepUpWidgetProps } from './widgets/stepUp/mfaStepUpWidget';
-import webAuthnWidget, { type WebAuthnWidgetProps } from './widgets/webAuthn/webAuthnDevicesWidget';
+} from '@/widgets/socialLogin/socialLoginWidget';
+import mfaStepUpWidget, { type MfaStepUpWidgetProps } from '@/widgets/stepUp/mfaStepUpWidget';
+import webAuthnWidget, { type WebAuthnWidgetProps } from '@/widgets/webAuthn/webAuthnDevicesWidget';
 
-import type { Context, I18nProps, ThemeProps } from './components/widget/widget';
+import type { Context, I18nProps, ThemeProps } from '@/components/widget/widget';
 
 export interface WidgetInstance {
     destroy(): void;

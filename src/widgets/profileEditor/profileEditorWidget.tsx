@@ -3,6 +3,10 @@ import React from 'react';
 import { ConsentVersions, Profile, UserConsent } from '@reachfive/identity-core';
 
 import { Form } from '@/components/form/form';
+import { createWidget } from '@/components/widget/widget';
+import { useReachfive } from '@/contexts/reachfive';
+import { UserError } from '@/helpers/errors';
+import { camelCaseProperties } from '@/helpers/transformObjectProperties';
 import {
     Field,
     FieldDefinition,
@@ -10,14 +14,9 @@ import {
     StaticContent,
     withoutStaticContent,
 } from '@/lib/form';
+import { type PhoneNumberOptions } from '@/lib/form';
 
-import { createWidget } from '../../components/widget/widget';
-import { useReachfive } from '../../contexts/reachfive';
-import { UserError } from '../../helpers/errors';
-import { camelCaseProperties } from '../../helpers/transformObjectProperties';
-import { type PhoneNumberOptions } from '../../lib/form';
-
-import type { OnError, OnSuccess } from '../../types';
+import type { OnError, OnSuccess } from '@/types';
 
 type ProfileWithConsents = Profile & { consents?: Record<string, UserConsent> };
 

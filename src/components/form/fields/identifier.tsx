@@ -2,7 +2,7 @@ import React from 'react';
 
 import { AsYouType, CountryCode } from 'libphonenumber-js/min';
 
-import { InputField } from './input';
+import { InputField } from '@/components/form/fields/input';
 
 type IdentifierFieldProps = React.ComponentPropsWithoutRef<typeof InputField> & {
     defaultCountry?: CountryCode;

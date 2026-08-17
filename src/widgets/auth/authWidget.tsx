@@ -2,32 +2,35 @@ import { ComponentProps } from 'react';
 
 import { type SessionInfo } from '@reachfive/identity-core';
 
-import { InitialScreen } from '../../../constants.ts';
-import { createMultiViewWidget } from '../../components/widget/widget';
-import { UserError } from '../../helpers/errors';
-import { ProviderId } from '../../providers/providers';
-import { FaSelectionView, VerificationCodeView } from '../stepUp/mfaStepUpWidget';
+import { createMultiViewWidget } from '@/components/widget/widget';
+import { UserError } from '@/helpers/errors';
 import {
     AccountRecoverySuccessView,
     AccountRecoveryView,
-} from './views/accountRecoveryViewComponent.tsx';
+} from '@/widgets/auth/views/accountRecoveryViewComponent.tsx';
 import {
     ForgotPasswordCodeView,
     ForgotPasswordPhoneNumberView,
     ForgotPasswordSuccessView,
     ForgotPasswordView,
-} from './views/forgotPasswordViewComponent';
-import LoginView from './views/loginViewComponent';
-import LoginWithPasswordView from './views/loginWithPasswordViewComponent';
-import LoginWithWebAuthnView from './views/loginWithWebAuthnViewComponent';
-import QuickLoginView from './views/quickLoginViewComponent';
-import ReauthView from './views/reauthViewComponent';
-import SignupView from './views/signupViewComponent';
-import SignupWithPasswordView from './views/signupWithPasswordViewComponent';
-import SignupWithWebAuthnView from './views/signupWithWebAuthnViewComponent';
+} from '@/widgets/auth/views/forgotPasswordViewComponent';
+import LoginView from '@/widgets/auth/views/loginViewComponent';
+import LoginWithPasswordView from '@/widgets/auth/views/loginWithPasswordViewComponent';
+import LoginWithWebAuthnView from '@/widgets/auth/views/loginWithWebAuthnViewComponent';
+import QuickLoginView from '@/widgets/auth/views/quickLoginViewComponent';
+import ReauthView from '@/widgets/auth/views/reauthViewComponent';
+import SignupView from '@/widgets/auth/views/signupViewComponent';
+import SignupWithPasswordView from '@/widgets/auth/views/signupWithPasswordViewComponent';
+import SignupWithWebAuthnView from '@/widgets/auth/views/signupWithWebAuthnViewComponent';
+import { FaSelectionView, VerificationCodeView } from '@/widgets/stepUp/mfaStepUpWidget';
 
-import type { PropsWithSession } from '../../contexts/session';
-import type { FaSelectionViewState, VerificationCodeViewState } from '../stepUp/mfaStepUpWidget';
+import type { InitialScreen } from '@/../constants.ts';
+import type { PropsWithSession } from '@/contexts/session';
+import type { ProviderId } from '@/providers/providers';
+import type {
+    FaSelectionViewState,
+    VerificationCodeViewState,
+} from '@/widgets/stepUp/mfaStepUpWidget';
 
 export interface AuthWidgetProps
     extends

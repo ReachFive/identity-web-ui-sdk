@@ -1,15 +1,14 @@
 import React from 'react';
 
 import { Form } from '@/components/form/form';
+import { Info, Intro } from '@/components/miscComponent';
+import { createMultiViewWidget } from '@/components/widget/widget';
+import { useI18n } from '@/contexts/i18n';
+import { useReachfive } from '@/contexts/reachfive';
+import { useRouting } from '@/contexts/routing';
+import { type PhoneNumberOptions } from '@/lib/form';
 
-import { Info, Intro } from '../../components/miscComponent';
-import { createMultiViewWidget } from '../../components/widget/widget';
-import { useI18n } from '../../contexts/i18n';
-import { useReachfive } from '../../contexts/reachfive';
-import { useRouting } from '../../contexts/routing';
-import { type PhoneNumberOptions } from '../../lib/form';
-
-import type { OnError, OnSuccess, Prettify } from '../../types';
+import type { OnError, OnSuccess, Prettify } from '@/types';
 
 type PhoneNumberFormData = { phoneNumber: string };
 

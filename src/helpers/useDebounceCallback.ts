@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef } from 'react';
 
-import { debounce } from './utils';
+import { debounce } from '@/helpers/utils';
 
 export const useDebounceCallback = <T extends unknown[]>(
     callback: (...args: T) => void,

@@ -4,7 +4,7 @@ import { Transition, TransitionStatus } from 'react-transition-group';
 import classes from 'classnames';
 import styled, { useTheme } from 'styled-components';
 
-import { Heading, Intro } from '../miscComponent';
+import { Heading, Intro } from '@/components/miscComponent';
 
 interface WidgetContentProps extends React.HTMLAttributes<HTMLDivElement> {
     name?: string;

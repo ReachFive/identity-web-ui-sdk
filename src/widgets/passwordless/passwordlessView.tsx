@@ -12,8 +12,7 @@ import { useReachfive } from '@/contexts/reachfive';
 import { useRouting } from '@/contexts/routing';
 import { specializeIdentifier } from '@/helpers/utils';
 import { PhoneNumberOptions } from '@/lib/form';
-
-import { VerificationCodeViewState } from './verificationCodeView';
+import { VerificationCodeViewState } from '@/widgets/passwordless/verificationCodeView';
 
 import type { OnError, OnSuccess } from '@/types';
 

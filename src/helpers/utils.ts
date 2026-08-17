@@ -8,7 +8,7 @@ import {
     LoginWithWebAuthnParams,
 } from '@reachfive/identity-core';
 
-import type { AuthType, IdentifierType, LoginEventWrappingObject } from '../types';
+import type { AuthType, IdentifierType, LoginEventWrappingObject } from '@/types';
 
 const CHARS = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
 

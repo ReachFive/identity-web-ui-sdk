@@ -3,9 +3,8 @@ import * as React from "react"
 import * as DropdownMenuPrimitive from "@radix-ui/react-dropdown-menu"
 import { Check, ChevronRight, Circle } from "lucide-react"
 
+import { ThemeVariablesContainer } from "@/components/widget/widget"
 import { cn } from "@/lib/utils"
-
-import { ThemeVariablesContainer } from "../widget/widget"
 
 const DropdownMenu = DropdownMenuPrimitive.Root
 

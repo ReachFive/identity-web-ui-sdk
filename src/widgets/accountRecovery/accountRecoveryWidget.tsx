@@ -3,20 +3,19 @@ import React from 'react';
 import styled from 'styled-components';
 
 import { Form } from '@/components/form/form.tsx';
-
-import { Alternative, Heading, Info, Link, Separator } from '../../components/miscComponent';
-import { createMultiViewWidget } from '../../components/widget/widget';
-import { useI18n } from '../../contexts/i18n';
-import { useReachfive } from '../../contexts/reachfive';
-import { useRouting } from '../../contexts/routing';
-import { parseQueryString } from '../../helpers/queryString';
-import { ReactComponent as Passkeys } from '../../icons/passkeys.svg';
+import { Alternative, Heading, Info, Link, Separator } from '@/components/miscComponent';
+import { createMultiViewWidget } from '@/components/widget/widget';
+import { useI18n } from '@/contexts/i18n';
+import { useReachfive } from '@/contexts/reachfive';
+import { useRouting } from '@/contexts/routing';
+import { parseQueryString } from '@/helpers/queryString';
+import { ReactComponent as Passkeys } from '@/icons/passkeys.svg';
 import {
     PasswordEditorForm,
     PasswordEditorFormData,
-} from '../passwordEditor/passwordEditorWidget.tsx';
+} from '@/widgets/passwordEditor/passwordEditorWidget.tsx';
 
-import type { OnError, OnSuccess } from '../../types';
+import type { OnError, OnSuccess } from '@/types';
 
 interface MainViewProps {
     /**

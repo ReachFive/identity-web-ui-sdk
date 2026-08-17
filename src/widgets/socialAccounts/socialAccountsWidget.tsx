@@ -5,6 +5,9 @@ import styled from 'styled-components';
 
 import { AuthOptions, Identity, Profile } from '@reachfive/identity-core';
 
+import { DefaultButton } from '@/components/form/buttonComponent';
+import { SocialButtons } from '@/components/form/socialButtonsComponent';
+import { Alternative, Link } from '@/components/miscComponent';
 import { Button } from '@/components/ui/button';
 import {
     Item,
@@ -15,18 +18,14 @@ import {
     ItemMedia,
     ItemTitle,
 } from '@/components/ui/item';
+import { createMultiViewWidget } from '@/components/widget/widget';
+import { useI18n } from '@/contexts/i18n';
+import { useReachfive } from '@/contexts/reachfive';
+import { useRouting } from '@/contexts/routing';
+import { isAppError, UserError } from '@/helpers/errors';
+import { type Provider, ProviderId, providers as socialProviders } from '@/providers/providers';
 
-import { DefaultButton } from '../../components/form/buttonComponent';
-import { SocialButtons } from '../../components/form/socialButtonsComponent';
-import { Alternative, Link } from '../../components/miscComponent';
-import { createMultiViewWidget } from '../../components/widget/widget';
-import { useI18n } from '../../contexts/i18n';
-import { useReachfive } from '../../contexts/reachfive';
-import { useRouting } from '../../contexts/routing';
-import { isAppError, UserError } from '../../helpers/errors';
-import { type Provider, ProviderId, providers as socialProviders } from '../../providers/providers';
-
-import type { OnError, OnSuccess } from '../../types';
+import type { OnError, OnSuccess } from '@/types';
 
 type Unlink = (id: string) => Promise<void>;
 

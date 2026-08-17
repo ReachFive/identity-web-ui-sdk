@@ -1,4 +1,4 @@
-import { randomString } from './random';
+import { randomString } from '@/helpers/random';
 
 export default function generateId(key: string) {
     return process.env.NODE_ENV !== 'test'

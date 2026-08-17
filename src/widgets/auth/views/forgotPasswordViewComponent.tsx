@@ -1,21 +1,20 @@
 import React, { useCallback, useLayoutEffect } from 'react';
 
+import { CaptchaProvider, WithCaptchaProps } from '@/components/captcha.tsx';
+import { DefaultButton } from '@/components/form/buttonComponent.tsx';
 import { Form } from '@/components/form/form.tsx';
+import { Alternative, Heading, Info, Intro, Link } from '@/components/miscComponent';
+import { importGoogleRecaptchaScript } from '@/components/reCaptcha';
+import { useConfig } from '@/contexts/config.tsx';
+import { useI18n } from '@/contexts/i18n';
+import { useReachfive } from '@/contexts/reachfive';
+import { useRouting } from '@/contexts/routing';
+import { isAppError } from '@/helpers/errors';
+import { type PhoneNumberOptions } from '@/lib/form';
+import { selectLogin } from '@/widgets/auth/authWidget.tsx';
 
-import { InitialScreen } from '../../../../constants.ts';
-import { CaptchaProvider, WithCaptchaProps } from '../../../components/captcha.tsx';
-import { DefaultButton } from '../../../components/form/buttonComponent.tsx';
-import { Alternative, Heading, Info, Intro, Link } from '../../../components/miscComponent';
-import { importGoogleRecaptchaScript } from '../../../components/reCaptcha';
-import { useConfig } from '../../../contexts/config.tsx';
-import { useI18n } from '../../../contexts/i18n';
-import { useReachfive } from '../../../contexts/reachfive';
-import { useRouting } from '../../../contexts/routing';
-import { isAppError } from '../../../helpers/errors';
-import { type PhoneNumberOptions } from '../../../lib/form';
-import { selectLogin } from '../authWidget.tsx';
-
-import type { OnError, OnSuccess } from '../../../types';
+import type { InitialScreen } from '@/../constants.ts';
+import type { OnError, OnSuccess } from '@/types';
 
 type EmailIdentifier = { email: string };
 type PhoneNumberIdentifier = { phoneNumber: string };

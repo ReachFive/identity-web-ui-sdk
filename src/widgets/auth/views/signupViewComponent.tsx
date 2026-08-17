@@ -1,18 +1,18 @@
 import React from 'react';
 
-import { InitialScreen } from '../../../../constants.ts';
-import PasswordSignupForm from '../../../components/form/passwordSignupFormComponent';
-import { SocialButtons } from '../../../components/form/socialButtonsComponent';
-import { WebAuthnSignupViewButtons } from '../../../components/form/webAuthAndPasswordButtonsComponent';
-import { Alternative, Heading, Link, Separator } from '../../../components/miscComponent';
-import { useI18n } from '../../../contexts/i18n';
-import { useRouting } from '../../../contexts/routing';
-import { type PhoneNumberOptions } from '../../../lib/form';
-import { selectLogin } from '../authWidget.tsx';
+import PasswordSignupForm from '@/components/form/passwordSignupFormComponent';
+import { SocialButtons } from '@/components/form/socialButtonsComponent';
+import { WebAuthnSignupViewButtons } from '@/components/form/webAuthAndPasswordButtonsComponent';
+import { Alternative, Heading, Link, Separator } from '@/components/miscComponent';
+import { useI18n } from '@/contexts/i18n';
+import { useRouting } from '@/contexts/routing';
+import { selectLogin } from '@/widgets/auth/authWidget.tsx';
 
-import type { OnError, OnSuccess } from '../../../types';
-import type { SignupWithPasswordViewProps } from './signupWithPasswordViewComponent';
-import type { SignupWithWebAuthnViewProps } from './signupWithWebAuthnViewComponent';
+import type { InitialScreen } from '@/../constants.ts';
+import type { PhoneNumberOptions } from '@/lib/form';
+import type { OnError, OnSuccess } from '@/types';
+import type { SignupWithPasswordViewProps } from '@/widgets/auth/views/signupWithPasswordViewComponent';
+import type { SignupWithWebAuthnViewProps } from '@/widgets/auth/views/signupWithWebAuthnViewComponent';
 
 export interface SignupViewProps extends SignupWithPasswordViewProps, SignupWithWebAuthnViewProps {
     /**
