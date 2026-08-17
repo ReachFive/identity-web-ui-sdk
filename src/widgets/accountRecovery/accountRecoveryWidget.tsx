@@ -9,12 +9,11 @@ import { useI18n } from '@/contexts/i18n';
 import { useReachfive } from '@/contexts/reachfive';
 import { useRouting } from '@/contexts/routing';
 import { parseQueryString } from '@/helpers/queryString';
-
-import { ReactComponent as Passkeys } from '../../icons/passkeys.svg';
+import { ReactComponent as Passkeys } from '@/icons/passkeys.svg';
 import {
     PasswordEditorForm,
     PasswordEditorFormData,
-} from '../passwordEditor/passwordEditorWidget.tsx';
+} from '@/widgets/passwordEditor/passwordEditorWidget.tsx';
 
 import type { OnError, OnSuccess } from '@/types';
 

@@ -4,14 +4,13 @@ import { AuthOptions } from '@reachfive/identity-core';
 import { SignupParams } from '@reachfive/identity-core/es/main/oAuthClient';
 
 import { CaptchaProvider, WithCaptchaProps, type WithCaptchaToken } from '@/components/captcha';
+import { Form } from '@/components/form/form';
+import { UserAgreement } from '@/components/form/UserAgreement';
+import { extractCaptchaTokenFromData, importGoogleRecaptchaScript } from '@/components/reCaptcha';
 import { useReachfive } from '@/contexts/reachfive';
 import { snakeCaseProperties } from '@/helpers/transformObjectProperties';
 import { isEqual, isValued } from '@/helpers/utils';
 import { type Field, type PhoneNumberOptions, withPhoneNumberOptions } from '@/lib/form';
-
-import { extractCaptchaTokenFromData, importGoogleRecaptchaScript } from '../reCaptcha';
-import { Form } from './form';
-import { UserAgreement } from './UserAgreement';
 
 import type { OnError, OnSuccess } from '@/types';
 

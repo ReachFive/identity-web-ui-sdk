@@ -8,8 +8,7 @@ import { useI18n } from '@/contexts/i18n';
 import { useReachfive } from '@/contexts/reachfive';
 import { PropsWithSession } from '@/contexts/session';
 import { intersection } from '@/helpers/utils';
-
-import { LoginForm, type LoginFormData } from './loginViewComponent';
+import { LoginForm, type LoginFormData } from '@/widgets/auth/views/loginViewComponent';
 
 import type { OnError, OnSuccess } from '@/types';
 

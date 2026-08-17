@@ -10,11 +10,11 @@ import { ReachfiveProvider } from '@/contexts/reachfive';
 import { RoutingProvider } from '@/contexts/routing';
 import { SessionProvider } from '@/contexts/session';
 import { ThemeVariablesProvider, useThemeVariables } from '@/contexts/themeVariables';
+import { buildTheme } from '@/core/theme';
+import { buildThemeVariables } from '@/core/themeVariables';
 import { cn } from '@/lib/utils';
 import { Theme, ThemeOptions } from '@/types/styled';
 
-import { buildTheme } from '../../core/theme';
-import { buildThemeVariables } from '../../core/themeVariables';
 import WidgetContainer, { WidgetContainerProps } from './widgetContainerComponent';
 
 import type { Config, Prettify } from '@/types';

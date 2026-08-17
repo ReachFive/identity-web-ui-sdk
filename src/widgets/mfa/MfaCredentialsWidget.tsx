@@ -17,12 +17,11 @@ import { useRouting } from '@/contexts/routing';
 import { isAppError, UserError } from '@/helpers/errors';
 import { type PhoneNumberOptions } from '@/lib/form';
 import { Field } from '@/lib/form.tsx';
-
 import {
     useCredentials,
     withCredentials,
     type CredentialsProviderProps,
-} from './contexts/credentials';
+} from '@/widgets/mfa/contexts/credentials';
 
 import type { OnError, OnSuccess, Prettify } from '@/types';
 

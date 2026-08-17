@@ -1,10 +1,10 @@
 import type { PropsWithChildren } from 'react';
 import React from 'react';
 
-import { logError } from '../helpers/logger';
-import { cn } from '../lib/utils';
+import { logError } from '@/helpers/logger';
+import { cn } from '@/lib/utils';
 
-import type { ThemeVariables } from '../core/themeVariables';
+import type { ThemeVariables } from '@/core/themeVariables';
 
 export interface Props {
     variables: ThemeVariables;
@@ -12,7 +12,6 @@ export interface Props {
 
 interface ThemeVariablesScope {
     variables: ThemeVariables;
-    /** Class the declarations are attached to. Must be set on every element that needs them. */
     className: string;
 }
 

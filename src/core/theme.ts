@@ -204,9 +204,6 @@ export const buildTheme = (themeOptions: ThemeOptions = {} as Partial<ThemeOptio
         ...base,
         link: {
             ...link,
-            // `customLink` is spread into `link` above, but `hoverColor` is omitted from its type
-            // and has to be re-applied here — reading it from the options rather than overwriting
-            // it unconditionally is what makes `theme.link.hoverColor` settable at all.
             hoverColor: customLink?.hoverColor ?? darkenColor(link.color, 15),
         },
         input: {

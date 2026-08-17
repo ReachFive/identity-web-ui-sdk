@@ -12,9 +12,8 @@ import { useReachfive } from '@/contexts/reachfive';
 import { useRouting } from '@/contexts/routing';
 import { useSession } from '@/contexts/session';
 import { enrichLoginEvent, isCustomIdentifier, specializeIdentifierData } from '@/helpers/utils';
-
-import { useConditionalWebAuthn } from '../hooks/useConditionalWebAuthn';
-import { LoginWithPasswordViewState } from './loginWithPasswordViewComponent';
+import { useConditionalWebAuthn } from '@/widgets/auth/hooks/useConditionalWebAuthn';
+import { LoginWithPasswordViewState } from '@/widgets/auth/views/loginWithPasswordViewComponent';
 
 import type { OnError, OnSuccess } from '@/types';
 

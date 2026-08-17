@@ -8,13 +8,11 @@ import { SocialButtons } from '@/components/slo/social-buttons';
 import { useI18n } from '@/contexts/i18n';
 import { useRouting } from '@/contexts/routing';
 import { type PhoneNumberOptions } from '@/lib/form';
-
-import { selectLogin } from '../authWidget.tsx';
+import { selectLogin } from '@/widgets/auth/authWidget.tsx';
 
 import type { OnError, OnSuccess } from '@/types';
-
-import type { SignupWithPasswordViewProps } from './signupWithPasswordViewComponent';
-import type { SignupWithWebAuthnViewProps } from './signupWithWebAuthnViewComponent';
+import type { SignupWithPasswordViewProps } from '@/widgets/auth/views/signupWithPasswordViewComponent';
+import type { SignupWithWebAuthnViewProps } from '@/widgets/auth/views/signupWithWebAuthnViewComponent';
 
 export interface SignupViewProps extends SignupWithPasswordViewProps, SignupWithWebAuthnViewProps {
     /**

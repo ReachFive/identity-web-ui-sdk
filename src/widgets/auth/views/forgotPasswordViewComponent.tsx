@@ -1,5 +1,6 @@
 import React, { useCallback, useLayoutEffect } from 'react';
 
+import { InitialScreen } from '@/../constants.ts';
 import { CaptchaProvider, WithCaptchaProps } from '@/components/captcha.tsx';
 import { DefaultButton } from '@/components/form/buttonComponent.tsx';
 import { Form } from '@/components/form/form.tsx';
@@ -11,9 +12,7 @@ import { useReachfive } from '@/contexts/reachfive';
 import { useRouting } from '@/contexts/routing';
 import { isAppError } from '@/helpers/errors';
 import { type PhoneNumberOptions } from '@/lib/form';
-
-import { InitialScreen } from '../../../../constants.ts';
-import { selectLogin } from '../authWidget.tsx';
+import { selectLogin } from '@/widgets/auth/authWidget.tsx';
 
 import type { OnError, OnSuccess } from '@/types';
 

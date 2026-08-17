@@ -12,8 +12,7 @@ import { useReachfive } from '@/contexts/reachfive';
 import { useRouting } from '@/contexts/routing';
 import { enrichLoginEvent, specializeIdentifierData } from '@/helpers/utils';
 import { Field } from '@/lib/form';
-
-import { FaSelectionViewState } from '../../stepUp/mfaStepUpWidget';
+import { FaSelectionViewState } from '@/widgets/stepUp/mfaStepUpWidget';
 
 import type { OnError, OnSuccess } from '@/types';
 
