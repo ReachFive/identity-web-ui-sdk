@@ -35,7 +35,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - A `boxShadow` of `none` no longer removes the keyboard focus ring
 - The widget no longer fails on an unknown social provider or an unparseable theme colour
 
-## [2.0.2] - 2026-06-30
+## [2.0.2] - 2026-08-13
 
 ### Added
 
