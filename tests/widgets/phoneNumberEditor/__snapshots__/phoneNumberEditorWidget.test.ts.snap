@@ -29,6 +29,10 @@ exports[`Snapshot phone number editor basic 1`] = `
   --primary-foreground: 0 0% 100%;
   --destructive: 5.03 68.89% 55.88%;
   --destructive-foreground: 0 0% 100%;
+  --warning: 45 100% 51.37%;
+  --warning-foreground: 0 0% 100%;
+  --success: 145.71 63.64% 36.67%;
+  --success-foreground: 0 0% 100%;
   --popover: 0 0% 100%;
   --popover-foreground: 210 8.75% 31.37%;
   --background: 0 0% 100%;
