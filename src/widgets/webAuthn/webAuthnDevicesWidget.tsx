@@ -4,15 +4,15 @@ import styled from 'styled-components';
 
 import { type DeviceCredential } from '@reachfive/identity-core';
 
+import { Card, CloseIcon } from '@/components/form/cardComponent';
 import { Form } from '@/components/form/form';
+import { Heading, Info, MutedText, Paragraph } from '@/components/miscComponent';
+import { createWidget } from '@/components/widget/widget';
+import { useConfig } from '@/contexts/config';
+import { useI18n } from '@/contexts/i18n';
+import { useReachfive } from '@/contexts/reachfive';
+import { UserError } from '@/helpers/errors';
 
-import { Card, CloseIcon } from '../../components/form/cardComponent';
-import { Heading, Info, MutedText, Paragraph } from '../../components/miscComponent';
-import { createWidget } from '../../components/widget/widget';
-import { useConfig } from '../../contexts/config';
-import { useI18n } from '../../contexts/i18n';
-import { useReachfive } from '../../contexts/reachfive';
-import { UserError } from '../../helpers/errors';
 // Source https://github.com/passkeydeveloper/passkey-authenticator-aaguids
 import { ReactComponent as FingerPrint } from '../../icons/fingerprint.svg';
 import { ReactComponent as OnePassword } from '../../icons/webauthn/1password.svg';
@@ -34,7 +34,7 @@ import { ReactComponent as WindowsHello } from '../../icons/webauthn/windows-hel
 
 // Source https://github.com/passkeydeveloper/passkey-authenticator-aaguids
 
-import type { OnError, OnSuccess } from '../../types';
+import type { OnError, OnSuccess } from '@/types';
 
 const DeviceName = styled.div`
     font-weight: bold;

@@ -1,16 +1,15 @@
 import React, { ComponentProps, useLayoutEffect } from 'react';
 
+import { CaptchaProvider, WithCaptchaProps, type WithCaptchaToken } from '@/components/captcha';
 import { Form } from '@/components/form/form';
+import { Info, Intro } from '@/components/miscComponent';
+import { importGoogleRecaptchaScript } from '@/components/reCaptcha';
+import { createMultiViewWidget } from '@/components/widget/widget';
+import { useI18n } from '@/contexts/i18n';
+import { useReachfive } from '@/contexts/reachfive';
+import { useRouting } from '@/contexts/routing';
 
-import { CaptchaProvider, WithCaptchaProps, type WithCaptchaToken } from '../../components/captcha';
-import { Info, Intro } from '../../components/miscComponent';
-import { importGoogleRecaptchaScript } from '../../components/reCaptcha';
-import { createMultiViewWidget } from '../../components/widget/widget';
-import { useI18n } from '../../contexts/i18n';
-import { useReachfive } from '../../contexts/reachfive';
-import { useRouting } from '../../contexts/routing';
-
-import type { OnError, OnSuccess } from '../../types';
+import type { OnError, OnSuccess } from '@/types';
 
 type EmailFormData = { email: string };
 

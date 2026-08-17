@@ -1,6 +1,13 @@
-import { darken, lighten, mix, transparentize } from 'polished';
 import { CSSProperties } from 'styled-components';
 
+import {
+    darkenColor,
+    fadeColor,
+    lightenColor,
+    pickByLightness,
+    shadeColor,
+    toHexColor,
+} from '@/lib/utils';
 import {
     BaseTheme,
     ButtonTheme,
@@ -9,7 +16,7 @@ import {
     SocialButtonTheme,
     Theme,
     ThemeOptions,
-} from '../types/styled';
+} from '@/types/styled';
 
 const white = '#fff';
 // const gray100 = '#f8f9fa';
@@ -69,10 +76,45 @@ export const _blockHeight = (
     theme: Parameters<typeof _blockInnerHeight>[0] & Pick<PrimitiveTheme, 'borderWidth'>
 ) => _blockInnerHeight(theme) + 2 * theme.borderWidth;
 
+/**
+ * Text color the design system pins on its own brand colors, overriding the derived,
+ * contrast-driven value.
+ *
+ * {@link pickByLightness} would pick black on both of them: white is 3.65:1 on the brand green
+ * against black's 5.76:1, and 4.03:1 on the brand red against 5.21:1. The design system mandates
+ * white in both places, and that is a deliberate, documented exception — neither meets WCAG 2.x AA
+ * for normal text.
+ */
+const brandSurfaceTextColor = '#ffffff';
+
+/**
+ * Builds the resolver for "text rendered on a filled surface of some color".
+ *
+ * The exception above is keyed to one specific `brandColor`, which keeps it tied to the role it
+ * was granted for: a tenant who picks the brand red as their *primary* color still gets the
+ * contrast-derived text color on their buttons. Every color other than `brandColor` — including a
+ * tenant's own — keeps the derived value.
+ *
+ * Normalises through hex so a brand color is recognised whatever notation it is written in
+ * (`#229955`, `#229955` uppercased, `rgb(34, 153, 85)`, …).
+ */
+const textColorOn =
+    (brandColor: string) =>
+    (color: string): string =>
+        toHexColor(color) === toHexColor(brandColor)
+            ? brandSurfaceTextColor
+            : pickByLightness(color, '#ffffff', '#000000');
+
+/** Text color to render on a filled button standing on `primaryColor`. */
+export const buttonTextColor = textColorOn(primitiveTheme.primaryColor);
+
+/** Text color to render on a destructive surface standing on `dangerColor`. */
+export const destructiveTextColor = textColorOn(primitiveTheme.dangerColor);
+
 export const inputBtnFocusBoxShadow = (
     color?: CSSProperties['color']
 ): NonNullable<CSSProperties['boxShadow']> =>
-    color ? `0 0 0 3px ${transparentize(0.5, color)}` : 'none';
+    color ? `0 0 0 3px ${fadeColor(color, 0.5)}` : 'none';
 
 export const height = (
     fontSize: number,
@@ -123,7 +165,7 @@ export const buildTheme = (themeOptions: ThemeOptions = {} as Partial<ThemeOptio
         borderColor: base.borderColor,
         borderRadius: base.borderRadius,
         borderWidth: base.borderWidth,
-        focusBorderColor: lighten(0.25, base.primaryColor),
+        focusBorderColor: lightenColor(base.primaryColor, 25),
         ...customInput,
     };
     const button: Omit<ButtonTheme, 'focusBoxShadow' | 'height'> = {
@@ -133,39 +175,39 @@ export const buildTheme = (themeOptions: ThemeOptions = {} as Partial<ThemeOptio
         paddingX: base.paddingX,
         paddingY: base.paddingY,
         background: base.primaryColor,
-        borderColor: base.borderColor,
+        borderColor: base.primaryColor,
         borderRadius: base.borderRadius,
         borderWidth: base.borderWidth,
         boxShadow: 'none',
-        color: '#ffffff',
-        hoverBackground: mix(0.9, base.primaryColor, 'rgba(0, 0, 0, 0)'),
-        hoverColor: '#ffffff',
-        hoverBorderColor: 'rgba(0, 0, 0, 0)',
+        color: buttonTextColor(base.primaryColor),
+        hoverBackground: shadeColor(base.primaryColor),
+        hoverColor: buttonTextColor(base.primaryColor),
+        hoverBorderColor: base.primaryColor,
         ...customButton,
     };
+    // Shape is inherited from the regular button, but the colors (`color`, `background`,
+    // `borderColor` and their `hover*` counterparts) are deliberately left unset: each social
+    // button then falls back to its provider's own brand color. See components/slo/social-buttons.
     const socialButton: Omit<SocialButtonTheme, 'focusBoxShadow' | 'height' | 'textVisible'> = {
         inline: false,
-        color: button.color,
-        background: button.background,
         fontWeight: button.fontWeight,
         fontSize: button.fontSize,
         lineHeight: button.lineHeight,
         paddingX: button.paddingX,
         paddingY: button.paddingY,
-        borderColor: button.borderColor,
         borderRadius: button.borderRadius,
         borderWidth: button.borderWidth,
         boxShadow: button.boxShadow,
-        hoverBackground: button.hoverBackground,
-        hoverBorderColor: button.hoverBorderColor,
-        hoverColor: button.hoverColor,
         ...customSocialButton,
     };
     return {
         ...base,
         link: {
             ...link,
-            hoverColor: darken(0.15, link.color),
+            // `customLink` is spread into `link` above, but `hoverColor` is omitted from its type
+            // and has to be re-applied here — reading it from the options rather than overwriting
+            // it unconditionally is what makes `theme.link.hoverColor` settable at all.
+            hoverColor: customLink?.hoverColor ?? darkenColor(link.color, 15),
         },
         input: {
             ...input,
@@ -192,7 +234,7 @@ export const buildTheme = (themeOptions: ThemeOptions = {} as Partial<ThemeOptio
             color0: base.dangerColor,
             color1: base.dangerColor,
             color2: base.warningColor,
-            color3: lighten(0.2, base.successColor),
+            color3: lightenColor(base.successColor, 20),
             color4: base.successColor,
         },
     };

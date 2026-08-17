@@ -2,10 +2,11 @@ import { ComponentProps } from 'react';
 
 import { type SessionInfo } from '@reachfive/identity-core';
 
+import { createMultiViewWidget } from '@/components/widget/widget';
+import { UserError } from '@/helpers/errors';
+import { ProviderId } from '@/providers/providers';
+
 import { InitialScreen } from '../../../constants.ts';
-import { createMultiViewWidget } from '../../components/widget/widget';
-import { UserError } from '../../helpers/errors';
-import { ProviderId } from '../../providers/providers';
 import { FaSelectionView, VerificationCodeView } from '../stepUp/mfaStepUpWidget';
 import {
     AccountRecoverySuccessView,
@@ -26,7 +27,8 @@ import SignupView from './views/signupViewComponent';
 import SignupWithPasswordView from './views/signupWithPasswordViewComponent';
 import SignupWithWebAuthnView from './views/signupWithWebAuthnViewComponent';
 
-import type { PropsWithSession } from '../../contexts/session';
+import type { PropsWithSession } from '@/contexts/session';
+
 import type { FaSelectionViewState, VerificationCodeViewState } from '../stepUp/mfaStepUpWidget';
 
 export interface AuthWidgetProps

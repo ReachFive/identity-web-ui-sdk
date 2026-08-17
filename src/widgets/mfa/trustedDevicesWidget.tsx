@@ -23,8 +23,8 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
     AlertDialogTrigger,
-} from '../../components/ui/alert-dialog';
-import { Button } from '../../components/ui/button';
+} from '@/components/ui/alert-dialog';
+import { Button } from '@/components/ui/button';
 import {
     Item,
     ItemActions,
@@ -32,11 +32,11 @@ import {
     ItemDescription,
     ItemMedia,
     ItemTitle,
-} from '../../components/ui/item';
-import { createWidget } from '../../components/widget/widget.tsx';
-import { useI18n } from '../../contexts/i18n.tsx';
-import { useReachfive } from '../../contexts/reachfive.tsx';
-import { OnError, OnSuccess } from '../../types';
+} from '@/components/ui/item';
+import { createWidget } from '@/components/widget/widget.tsx';
+import { useI18n } from '@/contexts/i18n.tsx';
+import { useReachfive } from '@/contexts/reachfive.tsx';
+import { OnError, OnSuccess } from '@/types';
 
 export type TrustedDeviceWidgetProps = {
     accessToken: string;
@@ -175,7 +175,9 @@ export const TrustedDeviceList = ({
     return (
         <div>
             {trustedDevices.length === 0 && (
-                <div className="mb-1 text-center text-theme">{i18n('trustedDevices.empty')}</div>
+                <div className="text-foreground mb-1 text-center">
+                    {i18n('trustedDevices.empty')}
+                </div>
             )}
             <div className="flex w-full max-w-md flex-col gap-4">
                 {trustedDevices.map((trustedDevice, _) => (

@@ -30,7 +30,18 @@ export interface windowSize {
 
 export interface Provider {
     key: string;
+    /**
+     * The provider's name, used to identify it — and interpolated as `{provider}` into
+     * translated button labels such as `"Continue with {provider}"`. Keep it to the bare brand
+     * name; use {@link Provider.buttonLabel} when the button has to read differently.
+     */
     name: string;
+    /**
+     * Default text of the button for this provider, when it cannot simply be built from
+     * {@link Provider.name}. Apple, for instance, requires its button to read
+     * "Sign in with Apple". Overridden by the `socialButton.<key>.title` translation.
+     */
+    buttonLabel?: string;
     color: string;
     fontWeight?: number;
     fontFamily?: string;

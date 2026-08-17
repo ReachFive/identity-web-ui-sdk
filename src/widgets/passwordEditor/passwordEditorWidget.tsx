@@ -1,12 +1,11 @@
 import React from 'react';
 
 import { Form, FormProps } from '@/components/form/form';
+import { createWidget } from '@/components/widget/widget';
+import { useReachfive } from '@/contexts/reachfive';
 import { Field } from '@/lib/form';
 
-import { createWidget } from '../../components/widget/widget';
-import { useReachfive } from '../../contexts/reachfive';
-
-import type { OnError, OnSuccess } from '../../types';
+import type { OnError, OnSuccess } from '@/types';
 
 export type PasswordEditorFormData = {
     password: string;

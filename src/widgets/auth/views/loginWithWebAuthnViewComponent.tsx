@@ -4,23 +4,19 @@ import { useFormContext } from 'react-hook-form';
 import type { AuthOptions, LoginWithWebAuthnParams } from '@reachfive/identity-core';
 
 import { Form } from '@/components/form/form';
+import { WebAuthnLoginViewButtons } from '@/components/form/webAuthAndPasswordButtonsComponent';
+import { Alternative, Heading, Link, Separator } from '@/components/miscComponent';
+import { SocialButtons } from '@/components/slo/social-buttons';
+import { useI18n } from '@/contexts/i18n';
+import { useReachfive } from '@/contexts/reachfive';
+import { useRouting } from '@/contexts/routing';
+import { useSession } from '@/contexts/session';
+import { enrichLoginEvent, isCustomIdentifier, specializeIdentifierData } from '@/helpers/utils';
 
-import { SocialButtons } from '../../../components/form/socialButtonsComponent';
-import { WebAuthnLoginViewButtons } from '../../../components/form/webAuthAndPasswordButtonsComponent';
-import { Alternative, Heading, Link, Separator } from '../../../components/miscComponent';
-import { useI18n } from '../../../contexts/i18n';
-import { useReachfive } from '../../../contexts/reachfive';
-import { useRouting } from '../../../contexts/routing';
-import { useSession } from '../../../contexts/session';
-import {
-    enrichLoginEvent,
-    isCustomIdentifier,
-    specializeIdentifierData,
-} from '../../../helpers/utils';
 import { useConditionalWebAuthn } from '../hooks/useConditionalWebAuthn';
 import { LoginWithPasswordViewState } from './loginWithPasswordViewComponent';
 
-import type { OnError, OnSuccess } from '../../../types';
+import type { OnError, OnSuccess } from '@/types';
 
 /**
  * The form yields whichever field the tenant configuration allows: a generic `identifier` when both
@@ -33,10 +29,6 @@ type LoginWithWebAuthnFormData =
     | { phoneNumber: string };
 
 export interface LoginWithWebAuthnViewProps {
-    /**
-     * @deprecated
-     */
-    acceptTos?: boolean;
     /**
      * Boolean that specifies whether signup is enabled.
      *
@@ -76,7 +68,6 @@ export interface LoginWithWebAuthnViewProps {
 }
 
 export const LoginWithWebAuthnView = ({
-    acceptTos,
     allowSignup = true,
     auth,
     enablePasswordAuthentication = true,
@@ -148,7 +139,6 @@ export const LoginWithWebAuthnView = ({
                 <SocialButtons
                     providers={socialProviders}
                     auth={auth}
-                    acceptTos={acceptTos}
                     onSuccess={onSuccess}
                     onError={onError}
                 />

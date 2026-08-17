@@ -2,14 +2,15 @@ import React from 'react';
 
 import type { AuthOptions } from '@reachfive/identity-core';
 
+import { Alternative, Heading, Intro, Link } from '@/components/miscComponent';
+import { SocialButtons } from '@/components/slo/social-buttons';
+import { useI18n } from '@/contexts/i18n';
+import { PropsWithSession } from '@/contexts/session';
+
 import { InitialScreen } from '../../../../constants.ts';
-import { SocialButtons } from '../../../components/form/socialButtonsComponent';
-import { Alternative, Heading, Intro, Link } from '../../../components/miscComponent';
-import { useI18n } from '../../../contexts/i18n';
-import { PropsWithSession } from '../../../contexts/session';
 import { selectLogin } from '../authWidget.tsx';
 
-import type { OnError, OnSuccess } from '../../../types';
+import type { OnError, OnSuccess } from '@/types';
 
 export interface QuickLoginViewProps {
     initialScreen?: InitialScreen;

@@ -3,19 +3,19 @@ import React, { useLayoutEffect } from 'react';
 import { type AuthOptions } from '@reachfive/identity-core';
 import { LoginWithPasswordParams } from '@reachfive/identity-core/es/main/oAuthClient';
 
+import { CaptchaProvider, WithCaptchaProps, WithCaptchaToken } from '@/components/captcha';
 import { Form } from '@/components/form/form';
+import { Alternative, Heading, Link } from '@/components/miscComponent';
+import { importGoogleRecaptchaScript } from '@/components/reCaptcha';
+import { useI18n } from '@/contexts/i18n';
+import { useReachfive } from '@/contexts/reachfive';
+import { useRouting } from '@/contexts/routing';
+import { enrichLoginEvent, specializeIdentifierData } from '@/helpers/utils';
 import { Field } from '@/lib/form';
 
-import { CaptchaProvider, WithCaptchaProps, WithCaptchaToken } from '../../../components/captcha';
-import { Alternative, Heading, Link } from '../../../components/miscComponent';
-import { importGoogleRecaptchaScript } from '../../../components/reCaptcha';
-import { useI18n } from '../../../contexts/i18n';
-import { useReachfive } from '../../../contexts/reachfive';
-import { useRouting } from '../../../contexts/routing';
-import { enrichLoginEvent, specializeIdentifierData } from '../../../helpers/utils';
 import { FaSelectionViewState } from '../../stepUp/mfaStepUpWidget';
 
-import type { OnError, OnSuccess } from '../../../types';
+import type { OnError, OnSuccess } from '@/types';
 
 type LoginWithPasswordFormData = {
     identifier: string;

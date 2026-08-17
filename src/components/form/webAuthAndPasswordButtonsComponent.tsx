@@ -3,7 +3,8 @@ import React, { PropsWithChildren } from 'react';
 import classes from 'classnames';
 import styled, { useTheme } from 'styled-components';
 
-import { useI18n } from '../../contexts/i18n';
+import { useI18n } from '@/contexts/i18n';
+
 import { ReactComponent as FingerPrint } from '../../icons/fingerprint.svg';
 import { ReactComponent as Keyboard } from '../../icons/keyboard.svg';
 import { Separator } from '../miscComponent';

@@ -6,25 +6,25 @@ import type {
     StartMfaPhoneNumberRegistrationResponse,
 } from '@reachfive/identity-core/es/main/mfaClient';
 
+import { DestructiveButton } from '@/components/form/buttonComponent';
 import { Form, FormProps } from '@/components/form/form.tsx';
+import { Intro, Separator } from '@/components/miscComponent';
+import { createMultiViewWidget } from '@/components/widget/widget';
+import { useConfig } from '@/contexts/config';
+import { useI18n } from '@/contexts/i18n';
+import { useReachfive } from '@/contexts/reachfive';
+import { useRouting } from '@/contexts/routing';
+import { isAppError, UserError } from '@/helpers/errors';
+import { type PhoneNumberOptions } from '@/lib/form';
 import { Field } from '@/lib/form.tsx';
 
-import { DestructiveButton } from '../../components/form/buttonComponent';
-import { Intro, Separator } from '../../components/miscComponent';
-import { createMultiViewWidget } from '../../components/widget/widget';
-import { useConfig } from '../../contexts/config';
-import { useI18n } from '../../contexts/i18n';
-import { useReachfive } from '../../contexts/reachfive';
-import { useRouting } from '../../contexts/routing';
-import { isAppError, UserError } from '../../helpers/errors';
-import { type PhoneNumberOptions } from '../../lib/form';
 import {
     useCredentials,
     withCredentials,
     type CredentialsProviderProps,
 } from './contexts/credentials';
 
-import type { OnError, OnSuccess, Prettify } from '../../types';
+import type { OnError, OnSuccess, Prettify } from '@/types';
 
 type EmailRegisteringCredentialFormData = { trustDevice: boolean };
 

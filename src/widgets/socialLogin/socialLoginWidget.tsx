@@ -1,7 +1,7 @@
-import { SocialButtons } from '../../components/form/socialButtonsComponent';
-import { createWidget } from '../../components/widget/widget';
+import { SocialButtons } from '@/components/slo/social-buttons';
+import { createWidget } from '@/components/widget/widget';
 
-import type { SocialButtonsProps } from '../../components/form/socialButtonsComponent';
+import type { SocialButtonsProps } from '@/components/slo/social-buttons';
 
 export interface SocialLoginWidgetProps extends Omit<SocialButtonsProps, 'providers'> {
     /**

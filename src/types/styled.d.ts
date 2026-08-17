@@ -1,4 +1,5 @@
 import { CSSProperties } from 'react';
+
 import 'styled-components';
 
 import { RecursivePartial } from './index';
@@ -133,8 +134,6 @@ export interface ButtonTheme {
     borderRadius: number;
     /** Specifies the border-width. */
     borderWidth: number;
-    /** Specifies the text color. */
-    color: NonNullable<CSSProperties['color']>;
     /** Specifies the box shadow. */
     boxShadow: NonNullable<CSSProperties['boxShadow']>;
     /** Specifies the background color on hover. */
@@ -149,11 +148,32 @@ export interface ButtonTheme {
     height: number;
 }
 
-export interface SocialButtonTheme extends ButtonTheme {
+/**
+ * Social button colors that fall back to each provider's own brand color when left unset.
+ * @see components/slo/social-buttons.tsx
+ */
+type ProviderBrandedColors =
+    | 'color'
+    | 'background'
+    | 'borderColor'
+    | 'hoverBackground'
+    | 'hoverBorderColor'
+    | 'hoverColor';
+
+export interface SocialButtonTheme
+    extends
+        Omit<ButtonTheme, ProviderBrandedColors | 'focusBoxShadow'>,
+        Partial<Pick<ButtonTheme, ProviderBrandedColors>> {
     /** Boolean that specifies if the buttons are inline (horizonally-aligned). */
     inline: boolean;
     /** Boolean that specifies if the text is visible. */
     textVisible: boolean;
+    /**
+     * @deprecated Has no effect. Social buttons take their focus ring from the provider's own
+     * brand color, applied through the `--ring` custom property. Still computed so that reading
+     * it keeps working, but changing it changes nothing.
+     */
+    focusBoxShadow: (color?: CSSProperties['color']) => NonNullable<CSSProperties['boxShadow']>;
 }
 
 export interface PasswordStrengthTheme {

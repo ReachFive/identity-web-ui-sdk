@@ -1,5 +1,3 @@
-import { borderWidth } from "polished";
-
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   darkMode: "selector",
@@ -40,7 +38,6 @@ module.exports = {
           DEFAULT: "hsl(var(--muted))",
           foreground: "hsl(var(--muted-foreground))",
         },
-        theme: "hsl(var(--text))",
       },
       spacing: {
         DEFAULT: "var(--spacing)",
@@ -52,16 +49,16 @@ module.exports = {
         DEFAULT: "var(--font-size)",
       },
       lineHeight: {
-        DEFAULT: "var(--leading-generic)",
+        DEFAULT: "var(--leading)",
       },
       width: {
-        icon: "var(--leading-generic)",
+        icon: "var(--leading)",
       },
       height: {
-        icon: "var(--leading-generic)",
+        icon: "var(--leading)",
       },
       padding: {
-        DEFAULT: "var(--spacing-padding-y) var(--spacing-padding-x)",
+        DEFAULT: "var(--padding-y) var(--padding-x)",
       },
       borderWidth: {
         DEFAULT: "var(--border-width)",

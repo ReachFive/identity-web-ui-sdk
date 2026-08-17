@@ -1,20 +1,23 @@
 import React, { ComponentType } from 'react';
 
-import { convert } from 'colorizr';
-import styled, { css, StyleSheetManager, ThemeProvider } from 'styled-components';
+import { StyleSheetManager, ThemeProvider } from 'styled-components';
 
 import type { Client as CoreClient, SessionInfo } from '@reachfive/identity-core';
 
-import { ConfigProvider } from '../../contexts/config';
-import { I18nProvider, type I18nMessages } from '../../contexts/i18n';
-import { ReachfiveProvider } from '../../contexts/reachfive';
-import { RoutingProvider } from '../../contexts/routing';
-import { SessionProvider } from '../../contexts/session';
+import { ConfigProvider } from '@/contexts/config';
+import { I18nProvider, type I18nMessages } from '@/contexts/i18n';
+import { ReachfiveProvider } from '@/contexts/reachfive';
+import { RoutingProvider } from '@/contexts/routing';
+import { SessionProvider } from '@/contexts/session';
+import { ThemeVariablesProvider, useThemeVariables } from '@/contexts/themeVariables';
+import { cn } from '@/lib/utils';
+import { Theme, ThemeOptions } from '@/types/styled';
+
 import { buildTheme } from '../../core/theme';
-import { Theme, ThemeOptions } from '../../types/styled';
+import { buildThemeVariables } from '../../core/themeVariables';
 import WidgetContainer, { WidgetContainerProps } from './widgetContainerComponent';
 
-import type { Config, Prettify } from '../../types';
+import type { Config, Prettify } from '@/types';
 
 export type I18nProps = { i18n?: I18nMessages };
 export type ThemeProps = { theme?: ThemeOptions };
@@ -22,83 +25,14 @@ export type ThemeProps = { theme?: ThemeOptions };
 export type PropsWithI18n<P> = Prettify<P & I18nProps>;
 export type PropsWithTheme<P> = Prettify<P & ThemeProps>;
 
-function colorToHSL(color: string) {
-    return convert(color, 'hsl').replace('hsl(', '').replace(')', '');
-}
-
-export const themeVariables = css`
-    --primary: ${props => colorToHSL(props.theme.primaryColor)};
-    --primary-foreground: ${_ => colorToHSL('#ffffff')};
-    --destructive: ${props => colorToHSL(props.theme.dangerColor)};
-    --destructive-foreground: ${_ => colorToHSL('#ffffff')};
-    --popover: ${props => colorToHSL(props.theme.backgroundColor)};
-    --popover-foreground: ${props => colorToHSL(props.theme.textColor)};
-    --background: ${props => colorToHSL(props.theme.backgroundColor)};
-    --border: ${props => colorToHSL(props.theme.borderColor)};
-    --text: ${props => colorToHSL(props.theme.textColor)};
-    --accent: ${props => colorToHSL(props.theme.primaryColor)};
-    --muted: ${props => colorToHSL(props.theme.mutedTextColor)};
-    --input: ${props => colorToHSL(props.theme.input.borderColor)};
-    --ring: ${props => colorToHSL(props.theme.input.focusBorderColor)};
-
-    --spacing-padding-y: ${props => props.theme.paddingY}px;
-    --spacing-padding-x: ${props => props.theme.paddingX}px;
-    --spacing: ${props => props.theme.spacing}px;
-
-    --font-size: ${props => props.theme.fontSize}px;
-    --leading: ${props => props.theme.lineHeight};
-
-    --border-width: ${props => props.theme.borderWidth}px;
-    --radius: ${props => props.theme.borderRadius}px;
-
-    --button-background-color: ${props => props.theme.button.background};
-    --button-hover-background-color: ${props => props.theme.button.hoverBackground};
-    --button-text-color: ${props => props.theme.button.color};
-    --button-hover-text-color: ${props => props.theme.button.hoverColor};
-    --button-font-weight: ${props => props.theme.button.fontWeight};
-    --button-border: ${props => props.theme.button.borderColor};
-    --button-hover-border: ${props => props.theme.button.hoverBorderColor};
-    --button-border-width: ${props => props.theme.button.borderWidth}px;
-    --button-height: ${props => props.theme.button.height}px;
-    --button-leading: ${props => props.theme.button.lineHeight};
-    --button-padding-x: ${props => props.theme.button.paddingX}px;
-    --button-padding-y: ${props => props.theme.button.paddingY}px;
-    --button-radius: ${props => props.theme.button.borderRadius}px;
-    --button-text-size: ${props => props.theme.button.fontSize}px;
-
-    --input-background: ${props => props.theme.input.background};
-    --input-border: ${props => props.theme.input.borderColor};
-    --input-border-width: ${props => props.theme.input.borderWidth}px;
-    --input-disabled-background: ${props => props.theme.input.disabledBackground};
-    --input-height: ${props => props.theme.input.height}px;
-    --input-leading: ${props => props.theme.input.lineHeight};
-    --input-padding-x: ${props => props.theme.input.paddingX}px;
-    --input-padding-y: ${props => props.theme.input.paddingY}px;
-    --input-placeholder: ${props => props.theme.input.placeholderColor};
-    --input-radius: ${props => props.theme.input.borderRadius}px;
-    --input-shadow: ${props => props.theme.input.boxShadow};
-    --input-text-color: ${props => props.theme.input.color};
-    --input-text-size: ${props => props.theme.input.fontSize}px;
-
-    --link-color: ${props => props.theme.link.color};
-    --link-hover-color: ${props => props.theme.link.hoverColor};
-    --link-decoration: ${props => props.theme.link.decoration};
-    --link-hover-decoration: ${props => props.theme.link.hoverDecoration};
-
-    --password-strength-color-0: ${props => props.theme.passwordStrengthValidator.color0};
-    --password-strength-color-1: ${props => props.theme.passwordStrengthValidator.color1};
-    --password-strength-color-2: ${props => props.theme.passwordStrengthValidator.color2};
-    --password-strength-color-3: ${props => props.theme.passwordStrengthValidator.color3};
-    --password-strength-color-4: ${props => props.theme.passwordStrengthValidator.color4};
-`;
-
-export const ThemeVariablesContainer = styled.div`
-    ${themeVariables}
-`;
-
-export const WidgetContainerThemeVariables = styled(WidgetContainer)`
-    ${themeVariables}
-`;
+/** The widget shell, carrying the widget's CSS custom properties. */
+export const WidgetContainerThemeVariables = ({
+    className,
+    ...props
+}: React.PropsWithChildren<WidgetContainerProps>) => {
+    const { className: themeClassName } = useThemeVariables();
+    return <WidgetContainer className={cn(themeClassName, className)} {...props} />;
+};
 
 export type Context = {
     config: Config;
@@ -129,27 +63,30 @@ export function createWidget<P, U = P>({
                 const Component = component;
 
                 const theme: Theme = buildTheme(customTheme);
+                const themeVariables = buildThemeVariables(customTheme ?? {}, theme);
 
                 return (
                     <ConfigProvider config={context.config}>
                         <ReachfiveProvider client={context.apiClient}>
                             <SessionProvider session={context.session}>
-                                <StyleSheetManager>
-                                    <ThemeProvider theme={theme}>
-                                        <I18nProvider
-                                            defaultMessages={context.defaultI18n}
-                                            messages={preparedOptions.i18n}
-                                            locale={context.config.language}
-                                        >
-                                            <WidgetContainerThemeVariables
-                                                {...widgetAttrs}
-                                                className="r5-widget"
+                                <ThemeVariablesProvider variables={themeVariables}>
+                                    <StyleSheetManager>
+                                        <ThemeProvider theme={theme}>
+                                            <I18nProvider
+                                                defaultMessages={context.defaultI18n}
+                                                messages={preparedOptions.i18n}
+                                                locale={context.config.language}
                                             >
-                                                <Component {...preparedOptions} />
-                                            </WidgetContainerThemeVariables>
-                                        </I18nProvider>
-                                    </ThemeProvider>
-                                </StyleSheetManager>
+                                                <WidgetContainerThemeVariables
+                                                    {...widgetAttrs}
+                                                    className="r5-widget"
+                                                >
+                                                    <Component {...preparedOptions} />
+                                                </WidgetContainerThemeVariables>
+                                            </I18nProvider>
+                                        </ThemeProvider>
+                                    </StyleSheetManager>
+                                </ThemeVariablesProvider>
                             </SessionProvider>
                         </ReachfiveProvider>
                     </ConfigProvider>

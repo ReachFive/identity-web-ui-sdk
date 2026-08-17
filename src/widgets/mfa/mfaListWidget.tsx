@@ -5,16 +5,6 @@ import { LoaderCircle, Mail, MessageSquareMore, X } from 'lucide-react';
 import { MFA } from '@reachfive/identity-core';
 
 import {
-    Item,
-    ItemActions,
-    ItemContent,
-    ItemDescription,
-    ItemGroup,
-    ItemMedia,
-    ItemTitle,
-} from '@/components/ui/item.tsx';
-
-import {
     AlertDialog,
     AlertDialogAction,
     AlertDialogCancel,
@@ -24,14 +14,24 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
     AlertDialogTrigger,
-} from '../../components/ui/alert-dialog';
-import { Button } from '../../components/ui/button';
-import { createWidget } from '../../components/widget/widget';
-import { useConfig } from '../../contexts/config';
-import { useI18n } from '../../contexts/i18n';
-import { useReachfive } from '../../contexts/reachfive.tsx';
-import { dateFormat } from '../../helpers/utils.ts';
-import { OnError, OnSuccess } from '../../types';
+} from '@/components/ui/alert-dialog';
+import { Button } from '@/components/ui/button';
+import {
+    Item,
+    ItemActions,
+    ItemContent,
+    ItemDescription,
+    ItemGroup,
+    ItemMedia,
+    ItemTitle,
+} from '@/components/ui/item.tsx';
+import { createWidget } from '@/components/widget/widget';
+import { useConfig } from '@/contexts/config';
+import { useI18n } from '@/contexts/i18n';
+import { useReachfive } from '@/contexts/reachfive.tsx';
+import { dateFormat } from '@/helpers/utils.ts';
+import { OnError, OnSuccess } from '@/types';
+
 import {
     CredentialsProviderProps,
     useCredentials,

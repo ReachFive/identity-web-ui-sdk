@@ -7,6 +7,34 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+- Support for social providers configured outside the built-in list, with a per-provider `buttonLabel` option
+
+### Changed
+
+- The palette drives the widget colour scheme: overriding `--primary` in CSS now moves every unthemed
+  component. Set `--primary-hover` alongside it
+- Component CSS variables are prefixed `--r5-` (`--button-bg` → `--r5-button-bg`); old names stop applying
+- `theme.socialButton` colours now apply, falling back to the provider's brand colour — and so may be
+  `undefined` on `SocialButtonTheme`
+- Button colours follow `primaryColor`: contrast-derived text, a darker hover shade, and `outline` / `ghost`
+  variants that no longer reuse the filled-button tokens
+
+### Deprecated
+
+- `theme.socialButton.focusBoxShadow`, now that the focus ring follows the provider's brand colour
+
+### Removed
+
+- `acceptTos` from the login view and social buttons props, and `lightBackgroundColor` from `BaseTheme`
+
+### Fixed
+
+- Theme options that silently did nothing: `fontSize`, `boxShadow`, button border colours, `link.hoverColor`
+- A `boxShadow` of `none` no longer removes the keyboard focus ring
+- The widget no longer fails on an unknown social provider or an unparseable theme colour
+
 ## [2.0.2] - 2026-06-30
 
 ### Added

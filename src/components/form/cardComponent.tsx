@@ -1,5 +1,6 @@
-import { darken } from 'polished';
 import styled from 'styled-components';
+
+import { darkenColor } from '@/lib/utils';
 
 export const CloseIcon = styled.span`
     position: absolute;
@@ -13,7 +14,7 @@ export const CloseIcon = styled.span`
     &:hover {
         &::before,
         &::after {
-            background: ${props => darken(0.2, props.theme.mutedTextColor)};
+            background: ${props => darkenColor(props.theme.mutedTextColor, 20)};
         }
     }
 

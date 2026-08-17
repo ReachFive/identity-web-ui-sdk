@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
 
-import { SignupEvent } from '@/types/events';
-
 import PasswordSignupForm, {
     type PasswordSignupFormProps,
-} from '../../../components/form/passwordSignupFormComponent';
-import { Alternative, Heading, Link } from '../../../components/miscComponent';
-import { useI18n } from '../../../contexts/i18n';
+} from '@/components/form/passwordSignupFormComponent';
+import { Alternative, Heading, Link } from '@/components/miscComponent';
+import { useI18n } from '@/contexts/i18n';
+import { SignupEvent } from '@/types/events';
 
 import type { OnSuccess } from '@/types';
 
