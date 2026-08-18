@@ -1,15 +1,15 @@
 import React from 'react';
 
-import { InitialScreen } from '@/../constants.ts';
 import PasswordSignupForm from '@/components/form/passwordSignupFormComponent';
 import { WebAuthnSignupViewButtons } from '@/components/form/webAuthAndPasswordButtonsComponent';
 import { Alternative, Heading, Link, Separator } from '@/components/miscComponent';
 import { SocialButtons } from '@/components/slo/social-buttons';
 import { useI18n } from '@/contexts/i18n';
 import { useRouting } from '@/contexts/routing';
-import { type PhoneNumberOptions } from '@/lib/form';
 import { selectLogin } from '@/widgets/auth/authWidget.tsx';
 
+import type { InitialScreen } from '@/../constants.ts';
+import type { PhoneNumberOptions } from '@/lib/form';
 import type { OnError, OnSuccess } from '@/types';
 import type { SignupWithPasswordViewProps } from '@/widgets/auth/views/signupWithPasswordViewComponent';
 import type { SignupWithWebAuthnViewProps } from '@/widgets/auth/views/signupWithWebAuthnViewComponent';

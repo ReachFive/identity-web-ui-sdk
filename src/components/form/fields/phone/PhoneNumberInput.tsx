@@ -2,15 +2,14 @@ import React from 'react';
 
 import { CountryCode, isSupportedCountry } from 'libphonenumber-js/min';
 
+import { PhoneNumberInputProvider } from '@/components/form/fields/phone/PhoneNumberInputContext';
+import { PhoneNumberInputWithCountry } from '@/components/form/fields/phone/PhoneNumberInputWithCountry';
+import { PhoneNumberInputWithoutCountry } from '@/components/form/fields/phone/PhoneNumberInputWithoutCountry';
 import { Required } from '@/components/form/fields/required';
 import { Field, FieldDescription, FieldError, FieldLabel } from '@/components/ui/field';
 import { useConfig } from '@/contexts/config';
 import { useI18n } from '@/contexts/i18n';
 import { cn } from '@/lib/utils';
-
-import { PhoneNumberInputProvider } from './PhoneNumberInputContext';
-import { PhoneNumberInputWithCountry } from './PhoneNumberInputWithCountry';
-import { PhoneNumberInputWithoutCountry } from './PhoneNumberInputWithoutCountry';
 
 export type BasePhoneNumberInputProps = Omit<
     React.ComponentProps<'input'>,

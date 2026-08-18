@@ -1,6 +1,5 @@
 import React, { useCallback, useLayoutEffect } from 'react';
 
-import { InitialScreen } from '@/../constants.ts';
 import { CaptchaProvider, WithCaptchaProps } from '@/components/captcha.tsx';
 import { DefaultButton } from '@/components/form/buttonComponent.tsx';
 import { Form } from '@/components/form/form.tsx';
@@ -14,6 +13,7 @@ import { isAppError } from '@/helpers/errors';
 import { type PhoneNumberOptions } from '@/lib/form';
 import { selectLogin } from '@/widgets/auth/authWidget.tsx';
 
+import type { InitialScreen } from '@/../constants.ts';
 import type { OnError, OnSuccess } from '@/types';
 
 type EmailIdentifier = { email: string };

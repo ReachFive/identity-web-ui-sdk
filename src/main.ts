@@ -1,9 +1,9 @@
 import type { Config, ConsentVersions, Client as CoreClient } from '@reachfive/identity-core';
 import { createClient as createCoreClient } from '@reachfive/identity-core';
 
-import { UiClient } from './client';
-import { toQueryString } from './helpers/queryString';
-import { camelCaseProperties } from './helpers/transformObjectProperties';
+import { UiClient } from '@/client';
+import { toQueryString } from '@/helpers/queryString';
+import { camelCaseProperties } from '@/helpers/transformObjectProperties';
 
 import type { RemoteSettings } from './types';
 

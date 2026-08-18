@@ -31,12 +31,11 @@ import { useI18n } from '@/contexts/i18n';
 import { useReachfive } from '@/contexts/reachfive.tsx';
 import { dateFormat } from '@/helpers/utils.ts';
 import { OnError, OnSuccess } from '@/types';
-
 import {
-    CredentialsProviderProps,
+    type CredentialsProviderProps,
     useCredentials,
     withCredentials,
-} from './contexts/credentials.tsx';
+} from '@/widgets/mfa/contexts/credentials.tsx';
 
 type CredentialIconProps = {
     type: MFA.CredentialsResponse['credentials'][number]['type'];

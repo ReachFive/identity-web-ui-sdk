@@ -1,8 +1,7 @@
 import React from 'react';
 
+import { usePhoneNumberInput } from '@/components/form/fields/phone/PhoneNumberInputContext';
 import { Input } from '@/components/ui/input';
-
-import { usePhoneNumberInput } from './PhoneNumberInputContext';
 
 type PhoneNumberInputWithoutCountryProps = React.ComponentProps<'input'>;
 

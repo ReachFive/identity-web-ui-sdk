@@ -1,6 +1,6 @@
 import React, { useLayoutEffect } from 'react';
 
-import { type AuthOptions } from '@reachfive/identity-core';
+import type { AuthOptions } from '@reachfive/identity-core';
 import { LoginWithPasswordParams } from '@reachfive/identity-core/es/main/oAuthClient';
 
 import { CaptchaProvider, WithCaptchaProps, WithCaptchaToken } from '@/components/captcha';

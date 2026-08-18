@@ -4,6 +4,9 @@ import { StyleSheetManager, ThemeProvider } from 'styled-components';
 
 import type { Client as CoreClient, SessionInfo } from '@reachfive/identity-core';
 
+import WidgetContainer, {
+    WidgetContainerProps,
+} from '@/components/widget/widgetContainerComponent';
 import { ConfigProvider } from '@/contexts/config';
 import { I18nProvider, type I18nMessages } from '@/contexts/i18n';
 import { ReachfiveProvider } from '@/contexts/reachfive';
@@ -14,8 +17,6 @@ import { buildTheme } from '@/core/theme';
 import { buildThemeVariables } from '@/core/themeVariables';
 import { cn } from '@/lib/utils';
 import { Theme, ThemeOptions } from '@/types/styled';
-
-import WidgetContainer, { WidgetContainerProps } from './widgetContainerComponent';
 
 import type { Config, Prettify } from '@/types';
 
