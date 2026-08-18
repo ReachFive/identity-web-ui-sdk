@@ -179,9 +179,7 @@ describe('rendering', () => {
         );
 
         // never "Continue with Sign in with Apple"
-        expect(getSocialButton('Continue with {provider}')).toHaveTextContent(
-            'Continue with Apple'
-        );
+        expect(getSocialButton('Continue with Apple')).toHaveTextContent('Continue with Apple');
     });
 
     test('translates the button label and title', () => {
@@ -196,8 +194,8 @@ describe('rendering', () => {
             }
         );
 
-        // the title is resolved without the `provider` interpolation variable
-        const button = getSocialButton('Continue with {provider}');
+        // the title and the label share the same resolved translation
+        const button = getSocialButton('Continue with Facebook');
         expect(button).toHaveTextContent('Continue with Facebook');
     });
 
