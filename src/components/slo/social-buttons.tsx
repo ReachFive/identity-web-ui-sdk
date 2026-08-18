@@ -122,6 +122,13 @@ const SocialButton = ({
     // which would leave the ring invisible.
     const focusRingColor = colorToHSL(provider.color);
 
+    const label = i18n(`socialButton.${provider.key}.title`, {
+        defaultValue: provider.buttonLabel ?? provider.name,
+        // `name` stays the bare brand name, so "Continue with {provider}" reads
+        // correctly even for providers whose own label is a full sentence
+        provider: provider.name,
+    });
+
     return (
         <Button
             size={theme.socialButton.textVisible ? size : 'icon'}
@@ -150,22 +157,11 @@ const SocialButton = ({
                     '--ring': focusRingColor,
                 } as React.CSSProperties
             }
-            title={i18n(`socialButton.${provider.key}.title`, {
-                defaultValue: provider.buttonLabel ?? provider.name,
-            })}
+            title={label}
             {...props}
         >
             <ProviderIcon href={provider.icon} />
-            {theme.socialButton.textVisible && (
-                <span className="r5-btn-social-text">
-                    {i18n(`socialButton.${provider.key}.title`, {
-                        defaultValue: provider.buttonLabel ?? provider.name,
-                        // `name` stays the bare brand name, so "Continue with {provider}" reads
-                        // correctly even for providers whose own label is a full sentence
-                        provider: provider.name,
-                    })}
-                </span>
-            )}
+            {theme.socialButton.textVisible && <span className="r5-btn-social-text">{label}</span>}
         </Button>
     );
 };
