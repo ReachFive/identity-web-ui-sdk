@@ -84,3 +84,24 @@ export const providers = {
 export default providers;
 
 export type ProviderId = keyof typeof providers;
+
+/**
+ * Resolves a provider by its key, looking it up among the built-in providers first, then among the
+ * custom providers declared in the remote settings.
+ *
+ * Custom providers are keyed by their `key` property, never by their key in the `customProviders`
+ * record: custom keys may contain `-` or `_`, and the API may rewrite JSON keys to camelCase or
+ * snake_case, so the record key cannot be matched against reliably.
+ *
+ * @param providerKey the provider key to resolve, without its variant suffix (`google`, not `google:2`)
+ * @param customProviders the custom providers declared in the remote settings
+ */
+export function findProvider(
+    providerKey: string,
+    customProviders?: Record<string, Provider>
+): Provider | undefined {
+    return (
+        providers[providerKey as ProviderId] ??
+        Object.values(customProviders ?? {}).find(({ key }) => key === providerKey)
+    );
+}

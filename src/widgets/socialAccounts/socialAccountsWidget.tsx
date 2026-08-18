@@ -23,7 +23,7 @@ import { useReachfive } from '@/contexts/reachfive';
 import { useRouting } from '@/contexts/routing';
 import { isAppError, UserError } from '@/helpers/errors';
 import { logError } from '@/helpers/logger';
-import { type Provider, ProviderId, providers as builtInProviders } from '@/providers/providers';
+import { findProvider } from '@/providers/providers';
 
 import type { OnError, OnSuccess } from '@/types';
 
@@ -166,8 +166,7 @@ const IdentityList = ({
                 </Item>
             )}
             {identities.flatMap(({ provider, id, username }) => {
-                const providerInfos: Provider | undefined =
-                    builtInProviders[provider as ProviderId] ?? customProviders?.[provider];
+                const providerInfos = findProvider(provider, customProviders);
                 if (!providerInfos) {
                     logError(`${provider} provider not found.`);
                     return [];

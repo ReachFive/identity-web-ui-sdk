@@ -11,9 +11,9 @@ import { useReachfive } from '@/contexts/reachfive';
 import { composableShadow } from '@/core/themeVariables';
 import { logError } from '@/helpers/logger';
 import { cn, colorToHSL, pickByLightness, shadeColor } from '@/lib/utils';
-import { providers as builtInProviders } from '@/providers/providers';
+import { findProvider } from '@/providers/providers';
 
-import type { Provider, ProviderId } from '@/providers/providers';
+import type { Provider } from '@/providers/providers';
 import type { OnError, OnSuccess } from '@/types';
 
 export type SocialButtonsProps = {
@@ -76,8 +76,7 @@ const SocialButtons = ({
         >
             {providers.flatMap(providerKey => {
                 const [providerName] = providerKey.split(':');
-                const provider =
-                    builtInProviders[providerName as ProviderId] ?? customProviders?.[providerName];
+                const provider = findProvider(providerName, customProviders);
                 if (!provider) {
                     logError(`${providerName} provider not found.`);
                     return [];
