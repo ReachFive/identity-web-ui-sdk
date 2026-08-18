@@ -1,7 +1,7 @@
 import type { PropsWithChildren } from 'react';
 import React from 'react';
 
-import { log, logError } from '../helpers/logger';
+import { log, logError } from '@/helpers/logger';
 
 export interface Logger {
     log: typeof log;

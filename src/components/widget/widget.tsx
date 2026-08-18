@@ -5,16 +5,18 @@ import styled, { css, StyleSheetManager, ThemeProvider } from 'styled-components
 
 import type { Client as CoreClient, SessionInfo } from '@reachfive/identity-core';
 
-import { ConfigProvider } from '../../contexts/config';
-import { I18nProvider, type I18nMessages } from '../../contexts/i18n';
-import { ReachfiveProvider } from '../../contexts/reachfive';
-import { RoutingProvider } from '../../contexts/routing';
-import { SessionProvider } from '../../contexts/session';
-import { buildTheme } from '../../core/theme';
-import { Theme, ThemeOptions } from '../../types/styled';
-import WidgetContainer, { WidgetContainerProps } from './widgetContainerComponent';
+import WidgetContainer, {
+    WidgetContainerProps,
+} from '@/components/widget/widgetContainerComponent';
+import { ConfigProvider } from '@/contexts/config';
+import { I18nProvider, type I18nMessages } from '@/contexts/i18n';
+import { ReachfiveProvider } from '@/contexts/reachfive';
+import { RoutingProvider } from '@/contexts/routing';
+import { SessionProvider } from '@/contexts/session';
+import { buildTheme } from '@/core/theme';
+import { Theme, ThemeOptions } from '@/types/styled';
 
-import type { Config, Prettify } from '../../types';
+import type { Config, Prettify } from '@/types';
 
 export type I18nProps = { i18n?: I18nMessages };
 export type ThemeProps = { theme?: ThemeOptions };

@@ -1,4 +1,4 @@
-import { camelCaseProperties, snakeCaseProperties } from './transformObjectProperties';
+import { camelCaseProperties, snakeCaseProperties } from '@/helpers/transformObjectProperties';
 
 export function parseQueryString(value: string) {
     const qs = value.split('&').reduce((acc, param) => {

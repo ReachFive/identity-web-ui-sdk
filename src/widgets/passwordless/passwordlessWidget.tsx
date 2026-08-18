@@ -3,9 +3,8 @@ import React, { ComponentProps } from 'react';
 import { Info } from '@/components/miscComponent';
 import { createMultiViewWidget } from '@/components/widget/widget';
 import { useI18n } from '@/contexts/i18n';
-
-import { PasswordlessView } from './passwordlessView';
-import { VerificationCodeView } from './verificationCodeView';
+import { PasswordlessView } from '@/widgets/passwordless/passwordlessView';
+import { VerificationCodeView } from '@/widgets/passwordless/verificationCodeView';
 
 import type { Prettify } from '@/types';
 

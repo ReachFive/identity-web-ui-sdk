@@ -3,9 +3,8 @@ import * as React from "react"
 import * as SelectPrimitive from "@radix-ui/react-select"
 import { Check, ChevronDown, ChevronUp } from "lucide-react"
 
+import { ThemeVariablesContainer } from "@/components/widget/widget"
 import { cn } from "@/lib/utils"
-
-import { ThemeVariablesContainer } from "../widget/widget"
 
 const Select = SelectPrimitive.Root
 

@@ -2,15 +2,15 @@ import React from 'react';
 
 import { AuthOptions } from '@reachfive/identity-core';
 
-import { SocialButtons } from '../../../components/form/socialButtonsComponent';
-import { Heading, Intro, Separator } from '../../../components/miscComponent';
-import { useI18n } from '../../../contexts/i18n';
-import { useReachfive } from '../../../contexts/reachfive';
-import { PropsWithSession } from '../../../contexts/session';
-import { intersection } from '../../../helpers/utils';
-import { LoginForm, type LoginFormData } from './loginViewComponent';
+import { SocialButtons } from '@/components/form/socialButtonsComponent';
+import { Heading, Intro, Separator } from '@/components/miscComponent';
+import { useI18n } from '@/contexts/i18n';
+import { useReachfive } from '@/contexts/reachfive';
+import { PropsWithSession } from '@/contexts/session';
+import { intersection } from '@/helpers/utils';
+import { LoginForm, type LoginFormData } from '@/widgets/auth/views/loginViewComponent';
 
-import type { OnError, OnSuccess } from '../../../types';
+import type { OnError, OnSuccess } from '@/types';
 
 export interface ReauthViewProps {
     /**

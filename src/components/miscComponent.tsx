@@ -9,7 +9,7 @@ import React, {
 import { marked } from 'marked';
 import styled from 'styled-components';
 
-import { useRouting } from '../contexts/routing';
+import { useRouting } from '@/contexts/routing';
 
 export const Heading = styled.div`
     margin-bottom: ${props => props.theme.spacing * 1.5}px;

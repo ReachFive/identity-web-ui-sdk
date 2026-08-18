@@ -1,4 +1,4 @@
-import { camelCase, snakeCase as underlingSnakeCase } from './utils';
+import { camelCase, snakeCase as underlingSnakeCase } from '@/helpers/utils';
 
 export const snakeCasePath = (path: string) => path.split('.').map(snakeCase).join('.');
 

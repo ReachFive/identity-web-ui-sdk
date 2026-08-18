@@ -6,6 +6,7 @@ import * as Flags from 'country-flag-icons/react/3x2';
 import { CountryCode, getCountries, getCountryCallingCode } from 'libphonenumber-js/min';
 import { GlobeIcon } from 'lucide-react';
 
+import { usePhoneNumberInput } from '@/components/form/fields/phone/PhoneNumberInputContext';
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -21,8 +22,6 @@ import {
 } from '@/components/ui/input-group';
 import { useConfig } from '@/contexts/config';
 import { useI18n } from '@/contexts/i18n';
-
-import { usePhoneNumberInput } from './PhoneNumberInputContext';
 
 type PhoneNumberInputWithCountryProps = React.ComponentProps<'input'>;
 

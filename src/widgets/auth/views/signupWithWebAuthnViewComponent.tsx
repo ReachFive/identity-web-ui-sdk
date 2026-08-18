@@ -2,16 +2,16 @@ import React, { useState } from 'react';
 
 import type { AuthOptions, Client as CoreClient } from '@reachfive/identity-core';
 
-import { Form } from '../../../components/form/form';
-import { UserAgreement } from '../../../components/form/UserAgreement';
-// import { buildFormFields, type Field } from '../../../components/form/formFieldFactory';
-import { Alternative, Heading, Link } from '../../../components/miscComponent';
-import { useI18n } from '../../../contexts/i18n';
-import { useReachfive } from '../../../contexts/reachfive';
-import { snakeCaseProperties } from '../../../helpers/transformObjectProperties';
-import { type Field, type PhoneNumberOptions, withPhoneNumberOptions } from '../../../lib/form';
+import { Form } from '@/components/form/form';
+import { UserAgreement } from '@/components/form/UserAgreement';
+// import { buildFormFields, type Field } from '@/components/form/formFieldFactory';
+import { Alternative, Heading, Link } from '@/components/miscComponent';
+import { useI18n } from '@/contexts/i18n';
+import { useReachfive } from '@/contexts/reachfive';
+import { snakeCaseProperties } from '@/helpers/transformObjectProperties';
+import { type Field, type PhoneNumberOptions, withPhoneNumberOptions } from '@/lib/form';
 
-import type { OnError, OnSuccess } from '../../../types';
+import type { OnError, OnSuccess } from '@/types';
 
 type SignupFormData = Parameters<CoreClient['signupWithWebAuthn']>[0]['profile'] & {
     friendlyName?: string;

@@ -2,9 +2,9 @@ import React from 'react';
 
 import type { AuthOptions } from '@reachfive/identity-core';
 
-import { useReachfive } from '../../../contexts/reachfive';
+import { useReachfive } from '@/contexts/reachfive';
 
-import type { OnError } from '../../../types';
+import type { OnError } from '@/types';
 
 interface UseConditionalWebAuthnParams {
     auth?: AuthOptions;

@@ -1,7 +1,7 @@
 import { AuthResult, ErrorResponse } from '@reachfive/identity-core';
 
-import { parseJwtTokenPayload } from '../helpers/jwt';
-import { logError } from '../helpers/logger';
+import { parseJwtTokenPayload } from '@/helpers/jwt';
+import { logError } from '@/helpers/logger';
 
 export function enrichAuthResult(response: AuthResult) {
     if (response.idToken) {

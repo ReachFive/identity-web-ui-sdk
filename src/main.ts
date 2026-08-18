@@ -6,9 +6,9 @@ import type {
 } from '@reachfive/identity-core';
 import { createClient as createCoreClient } from '@reachfive/identity-core';
 
-import { UiClient } from './client';
-import { toQueryString } from './helpers/queryString';
-import { camelCaseProperties } from './helpers/transformObjectProperties';
+import { UiClient } from '@/client';
+import { toQueryString } from '@/helpers/queryString';
+import { camelCaseProperties } from '@/helpers/transformObjectProperties';
 
 export type { Config } from '@reachfive/identity-core';
 
