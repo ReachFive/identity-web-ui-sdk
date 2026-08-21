@@ -12,6 +12,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Phone number input: selecting another country no longer clears the number already entered — the
   national number is kept, re-formatted and re-validated against the selected country
   ([CA-6623](https://reachfive.atlassian.net/browse/CA-6623))
+- Phone number input: entering a number with an international prefix now selects the matching
+  country in the country select, without overriding an explicit selection that shares the same
+  calling code
 
 ## [2.0.2] - 2026-08-13
 

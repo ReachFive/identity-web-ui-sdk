@@ -50,6 +50,11 @@ const defaultI18n: I18nMessages = {
     'address.country': 'Country',
 };
 
+/** Country code of the flag currently displayed in the country select. */
+function selectedCountry() {
+    return screen.getByRole('button', { name: 'Country' }).querySelector('title')?.textContent;
+}
+
 type ControlledPhoneInputProps = Omit<React.ComponentProps<typeof PhoneNumberInput>, 'value'> & {
     initialValue?: string;
 };
@@ -195,5 +200,79 @@ describe('DOM testing', () => {
         const input = screen.getByLabelText('Phone number');
         expect(input).toHaveValue('');
         expect(onChange).not.toHaveBeenCalledWith(expect.stringMatching(/\d/));
+    });
+
+    test('an international prefix selects the country it belongs to', async () => {
+        const user = userEvent.setup();
+        const onChange = jest.fn();
+
+        render(
+            <WidgetContext config={defaultConfig} defaultMessages={defaultI18n}>
+                <ControlledPhoneInput
+                    label="phone"
+                    initialValue={undefined}
+                    onChange={onChange}
+                    showLabels={true}
+                    allowInternational={true}
+                    defaultCountry="FR"
+                />
+            </WidgetContext>
+        );
+
+        expect(selectedCountry()).toBe('FR');
+
+        // A +1 number that is not assigned to any NANP country: the number itself
+        // cannot be matched to a country, but its calling code still can.
+        await user.type(screen.getByLabelText('Phone number'), '+12223334444');
+
+        await waitFor(() => expect(selectedCountry()).toBe('US'));
+        await waitFor(() => expect(onChange).toHaveBeenLastCalledWith('+12223334444'));
+    });
+
+    test('an initial value carrying another country prefix selects that country', async () => {
+        const onChange = jest.fn();
+
+        render(
+            <WidgetContext config={defaultConfig} defaultMessages={defaultI18n}>
+                <ControlledPhoneInput
+                    label="phone"
+                    initialValue="+12223334444"
+                    onChange={onChange}
+                    showLabels={true}
+                    allowInternational={true}
+                    defaultCountry="FR"
+                />
+            </WidgetContext>
+        );
+
+        await waitFor(() => expect(selectedCountry()).toBe('US'));
+        expect(screen.getByLabelText('Phone number')).toHaveValue(
+            format('+12223334444', 'INTERNATIONAL')
+        );
+    });
+
+    test('a country selection sharing the calling code is kept', async () => {
+        const user = userEvent.setup();
+        const onChange = jest.fn();
+
+        render(
+            <WidgetContext config={defaultConfig} defaultMessages={defaultI18n}>
+                <ControlledPhoneInput
+                    label="phone"
+                    initialValue={undefined}
+                    onChange={onChange}
+                    showLabels={true}
+                    allowInternational={true}
+                    defaultCountry="CA"
+                />
+            </WidgetContext>
+        );
+
+        // +1 213 373 4253 is a valid US number, but Canada shares its calling code:
+        // the explicit selection must not be overridden.
+        await user.type(screen.getByLabelText('Phone number'), '+12133734253');
+
+        await waitFor(() => expect(onChange).toHaveBeenLastCalledWith('+12133734253'));
+        expect(selectedCountry()).toBe('CA');
     });
 });

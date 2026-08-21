@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { AsYouType, CountryCode } from 'libphonenumber-js/min';
+import { AsYouType, CountryCode, Metadata, PhoneNumber } from 'libphonenumber-js/min';
 
 type PhoneNumberInputContextProps = {
     allowInternational?: boolean;
@@ -52,6 +52,43 @@ export const usePhoneNumberInput = (): PhoneNumberInputContextValue => {
         throw new Error(`usePhoneNumber must be used within a PhoneNumberProvider component`);
     }
     return context;
+};
+
+/**
+ * `Metadata` exposes the countries sharing a calling code, the first one being
+ * its main country (+1 → US, +44 → GB). Nothing in the public API does, hence
+ * the cast and the optional call: were the method to go away, callers just fall
+ * back to keeping the country currently selected.
+ */
+type CallingCodeMetadata = Metadata & {
+    getCountryCodesForCallingCode?: (callingCode: string) => CountryCode[] | undefined;
+};
+
+const countriesForCallingCode = (callingCode: string): CountryCode[] =>
+    (new Metadata() as CallingCodeMetadata).getCountryCodesForCallingCode?.(callingCode) ?? [];
+
+/**
+ * Country to select for the number being entered, or `undefined` when it cannot
+ * be told yet.
+ *
+ * A `PhoneNumber` only carries a `country` once it is valid for exactly one of
+ * them, which never happens while the number is incomplete — nor for a number
+ * whose prefix is simply unassigned. Its calling code is known much earlier, so
+ * it drives the selection too: the country already selected is kept whenever it
+ * shares that calling code (someone who picked Canada and types a +1 number
+ * keeps Canada), and the calling code's main country is used otherwise.
+ */
+const resolveCountry = (
+    number: PhoneNumber | undefined,
+    callingCode: string | undefined,
+    selectedCountry: CountryCode
+): CountryCode | undefined => {
+    if (!callingCode) return number?.country;
+
+    const countries = countriesForCallingCode(callingCode);
+    if (countries.includes(selectedCountry)) return selectedCountry;
+
+    return number?.country ?? countries[0];
 };
 
 /**
@@ -108,9 +145,13 @@ const useProvidePhoneNumberInput = ({
                 setInputValue(formatter.input(appended));
 
                 if (allowInternational) {
-                    const number = formatter.getNumber();
-                    if (number?.country && number.country !== country) {
-                        setCountry(number.country);
+                    const nextCountry = resolveCountry(
+                        formatter.getNumber(),
+                        formatter.getCallingCode(),
+                        country
+                    );
+                    if (nextCountry && nextCountry !== country) {
+                        setCountry(nextCountry);
                     }
                 }
             } else {
@@ -125,9 +166,9 @@ const useProvidePhoneNumberInput = ({
             const e164 = formatter.getNumber()?.number ?? '';
             onChange(e164);
 
-            // On a similar vein, do not set country even if the country has changed
-            // so that the cursor position does not get lost.
-            // Change country on blur instead.
+            // On a similar vein, a change other than an append neither reformats the
+            // input nor updates the country, so that the cursor position does not get
+            // lost. Both happen on blur instead.
             return;
         },
         [country, getFormatter, inputValue, allowInternational, onChange]
@@ -179,6 +220,16 @@ const useProvidePhoneNumberInput = ({
         // 2. `formatter.getNumber().number` will transform that into "65" and cut out the remaining characters since the remaining string is not a valid number
         // 3. Will need to call onChange on this new number.
         onChange(e164);
+
+        // Update the country if the number belongs to a different one. Done before
+        // the number gets reformatted, as that resets the formatter.
+        if (allowInternational) {
+            const nextCountry = resolveCountry(number, formatter.getCallingCode(), country);
+            if (nextCountry && nextCountry !== country) {
+                setCountry(nextCountry);
+            }
+        }
+
         // Check and update possibility
         const possible = number?.isPossible();
 
@@ -190,11 +241,6 @@ const useProvidePhoneNumberInput = ({
                 ? number.formatInternational()
                 : number.formatNational();
             setInputValue(formatter.input(nextValue));
-            // Update the country if the parsed number belongs to a different
-            // country.
-            if (allowInternational && number?.country && number.country !== country) {
-                setCountry(number.country);
-            }
         } else {
             // Format the phone number
             setInputValue(formatter.input(''));
