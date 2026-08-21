@@ -141,4 +141,59 @@ describe('DOM testing', () => {
         const input = screen.getByLabelText('Phone number');
         expect(input).toBeInTheDocument();
     });
+
+    test('changing the country keeps the entered number and reformats it', async () => {
+        const user = userEvent.setup();
+        const onChange = jest.fn();
+
+        render(
+            <WidgetContext config={defaultConfig} defaultMessages={defaultI18n}>
+                <ControlledPhoneInput
+                    label="phone"
+                    initialValue={undefined}
+                    onChange={onChange}
+                    showLabels={true}
+                    allowInternational={true}
+                    defaultCountry="FR"
+                />
+            </WidgetContext>
+        );
+
+        const input = screen.getByLabelText('Phone number');
+        await user.type(input, '612345678');
+        await waitFor(() => expect(onChange).toHaveBeenLastCalledWith('+33612345678'));
+
+        // Switch the country to Germany (+49) — the only country with that calling code.
+        await user.click(screen.getByRole('button', { name: 'Country' }));
+        await user.click(screen.getByRole('menuitem', { name: /\(\+49\)/ }));
+
+        // The national number is kept, re-prefixed with the new country calling code.
+        await waitFor(() => expect(onChange).toHaveBeenLastCalledWith('+49612345678'));
+        expect(input).toHaveValue(format('+49612345678', 'INTERNATIONAL'));
+    });
+
+    test('changing the country on an empty input does not emit a number', async () => {
+        const user = userEvent.setup();
+        const onChange = jest.fn();
+
+        render(
+            <WidgetContext config={defaultConfig} defaultMessages={defaultI18n}>
+                <ControlledPhoneInput
+                    label="phone"
+                    initialValue={undefined}
+                    onChange={onChange}
+                    showLabels={true}
+                    allowInternational={true}
+                    defaultCountry="FR"
+                />
+            </WidgetContext>
+        );
+
+        await user.click(screen.getByRole('button', { name: 'Country' }));
+        await user.click(screen.getByRole('menuitem', { name: /\(\+49\)/ }));
+
+        const input = screen.getByLabelText('Phone number');
+        expect(input).toHaveValue('');
+        expect(onChange).not.toHaveBeenCalledWith(expect.stringMatching(/\d/));
+    });
 });

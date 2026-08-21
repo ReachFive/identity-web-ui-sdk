@@ -54,6 +54,17 @@ export const usePhoneNumberInput = (): PhoneNumberInputContextValue => {
     return context;
 };
 
+/**
+ * Extract the national (significant) number out of a — possibly partially
+ * formatted — input value, so it can be re-formatted against another country.
+ * Returns an empty string when the value holds no national digit yet.
+ */
+const getNationalNumber = (value: string, country: CountryCode): string => {
+    const formatter = new AsYouType(country);
+    formatter.input(value);
+    return formatter.getNumber()?.nationalNumber ?? '';
+};
+
 const useProvidePhoneNumberInput = ({
     defaultValue,
     defaultCountry,
@@ -70,11 +81,23 @@ const useProvidePhoneNumberInput = ({
     // the selected country changes.
     const innerInputRef = React.useRef<HTMLInputElement | null>(null);
 
-    const formatter = React.useMemo(() => new AsYouType(country), [country]);
+    // The as-you-type formatter is held in a ref rather than derived from `country`
+    // so that handlers captured by an earlier render always operate on the formatter
+    // of the currently selected country. Selecting a country restores focus to the
+    // dropdown trigger, which fires the input's blur handler from the previous
+    // render: with a per-render formatter, that blur would resurrect the number of
+    // the previously selected country.
+    const formatterRef = React.useRef<AsYouType | null>(null);
+    const getFormatter = React.useCallback(() => {
+        formatterRef.current ??= new AsYouType(defaultCountry);
+        return formatterRef.current;
+    }, [defaultCountry]);
 
     const onInputChange = React.useCallback(
         (newValue: string) => {
             if (inputValue === newValue) return;
+
+            const formatter = getFormatter();
 
             // The as-you-type formatter only works with append-only inputs.
             // Changes other than append require a reset.
@@ -107,7 +130,7 @@ const useProvidePhoneNumberInput = ({
             // Change country on blur instead.
             return;
         },
-        [country, formatter, inputValue, allowInternational, onChange]
+        [country, getFormatter, inputValue, allowInternational, onChange]
     );
 
     const handleInputChange: React.ChangeEventHandler<HTMLInputElement> = React.useCallback(
@@ -126,14 +149,27 @@ const useProvidePhoneNumberInput = ({
     const handleCountryChange = React.useCallback(
         (newCountry: CountryCode) => {
             if (country === newCountry) return;
-            onInputChange('');
+
+            // Keep the national (significant) number already entered and re-format it
+            // against the newly selected country instead of discarding it.
+            const nationalNumber = getNationalNumber(inputValue, country);
+            const formatter = new AsYouType(newCountry);
+            const asYouTypeValue = formatter.input(nationalNumber);
+            const number = formatter.getNumber();
+
+            formatterRef.current = formatter;
             setCountry(newCountry);
+            setInputValue(number ? number.formatInternational() : asYouTypeValue);
+            // Let the consumer re-validate the number against the new country.
+            onChange(number?.number ?? '');
+
             innerInputRef?.current?.focus();
         },
-        [country, onInputChange]
+        [country, inputValue, onChange]
     );
 
     const handleFormatInput = React.useCallback(() => {
+        const formatter = getFormatter();
         const number = formatter.getNumber();
         const e164 = number?.number ?? '';
 
@@ -163,7 +199,7 @@ const useProvidePhoneNumberInput = ({
             // Format the phone number
             setInputValue(formatter.input(''));
         }
-    }, [country, formatter, allowInternational, onChange]);
+    }, [country, getFormatter, allowInternational, onChange]);
 
     const handleInputBlur = React.useCallback(() => {
         onBlur?.();
@@ -175,6 +211,7 @@ const useProvidePhoneNumberInput = ({
     // This allows the cursor position to be updated after formatting the input
     // without "jumping" to the end of the input string and disrupting the user.
     React.useLayoutEffect(() => {
+        const formatter = getFormatter();
         const e164 = formatter.getNumber()?.number ?? '';
 
         if (e164 !== defaultValue) {
@@ -188,7 +225,7 @@ const useProvidePhoneNumberInput = ({
         }
     }, [
         defaultValue,
-        formatter,
+        getFormatter,
         inputValue,
         onChange,
         country,

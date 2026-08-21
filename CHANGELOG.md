@@ -7,6 +7,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Fixed
+
+- Phone number input: selecting another country no longer clears the number already entered — the
+  national number is kept, re-formatted and re-validated against the selected country
+  ([CA-6623](https://reachfive.atlassian.net/browse/CA-6623))
+
 ## [2.0.2] - 2026-08-13
 
 ### Added
