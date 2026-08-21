@@ -14,7 +14,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   ([CA-6623](https://reachfive.atlassian.net/browse/CA-6623))
 - Phone number input: entering a number with an international prefix now selects the matching
   country in the country select, without overriding an explicit selection that shares the same
-  calling code
+  calling code ([CA-6623](https://reachfive.atlassian.net/browse/CA-6623))
 
 ## [2.0.2] - 2026-08-13
 
