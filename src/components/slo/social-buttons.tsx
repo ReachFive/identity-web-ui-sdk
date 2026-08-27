@@ -134,7 +134,7 @@ const SocialButton = ({
             size={theme.socialButton.textVisible ? size : 'icon'}
             className={cn(
                 `r5-btn-social r5-btn-social-${provider.key}`,
-                `grid grid-cols-[1rem_1fr_1rem]`,
+                theme.socialButton.inline ? 'flex' : `grid grid-cols-[1rem_1fr_1rem]`,
                 className
             )}
             style={
