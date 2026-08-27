@@ -1,7 +1,7 @@
-import { colorToHSL, fadeColor, shadeColor } from '@/lib/utils';
+import { colorToHSL, fadeColor, pickByLightness, shadeColor } from '@/lib/utils';
 import { Theme, ThemeOptions } from '@/types/styled';
 
-import { buttonTextColor, destructiveTextColor } from './theme';
+import { buttonTextColor, destructiveTextColor, successTextColor } from './theme';
 
 /** The CSS custom properties a widget is rendered with, as a React `style` object. */
 export type ThemeVariables = Record<string, string>;
@@ -81,6 +81,12 @@ export function buildThemeVariables(options: ThemeOptions, theme: Theme): ThemeV
         '--primary-hover': colorToHSL(shadeColor(theme.primaryColor)),
         '--destructive': colorToHSL(theme.dangerColor),
         '--destructive-foreground': colorToHSL(destructiveTextColor(theme.dangerColor)),
+        '--warning': colorToHSL(theme.warningColor),
+        '--warning-foreground': colorToHSL(
+            pickByLightness(theme.warningColor, '#ffffff', '#000000')
+        ),
+        '--success': colorToHSL(theme.successColor),
+        '--success-foreground': colorToHSL(successTextColor(theme.successColor)),
         '--popover': colorToHSL(theme.backgroundColor),
         '--popover-foreground': colorToHSL(theme.textColor),
         '--accent': colorToHSL(theme.primaryColor),

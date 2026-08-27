@@ -111,6 +111,14 @@ export const buttonTextColor = textColorOn(primitiveTheme.primaryColor);
 /** Text color to render on a destructive surface standing on `dangerColor`. */
 export const destructiveTextColor = textColorOn(primitiveTheme.dangerColor);
 
+/**
+ * Text color to render on a success surface standing on `successColor`.
+ *
+ * `successColor` defaults to the brand green, so the pinned-white exception above applies to it
+ * exactly as it does to `primaryColor` — the two roles hold the same color and must not disagree.
+ */
+export const successTextColor = textColorOn(primitiveTheme.successColor);
+
 export const inputBtnFocusBoxShadow = (
     color?: CSSProperties['color']
 ): NonNullable<CSSProperties['boxShadow']> =>
