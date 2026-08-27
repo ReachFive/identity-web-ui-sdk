@@ -188,7 +188,7 @@ export const buildTheme = (themeOptions: ThemeOptions = {} as Partial<ThemeOptio
     // Shape is inherited from the regular button, but the colors (`color`, `background`,
     // `borderColor` and their `hover*` counterparts) are deliberately left unset: each social
     // button then falls back to its provider's own brand color. See components/slo/social-buttons.
-    const socialButton: Omit<SocialButtonTheme, 'focusBoxShadow' | 'height' | 'textVisible'> = {
+    const socialButton: Omit<SocialButtonTheme, 'focusBoxShadow' | 'height'> = {
         inline: false,
         fontWeight: button.fontWeight,
         fontSize: button.fontSize,
@@ -218,7 +218,6 @@ export const buildTheme = (themeOptions: ThemeOptions = {} as Partial<ThemeOptio
         },
         socialButton: {
             ...socialButton,
-            textVisible: !socialButton.inline,
             focusBoxShadow: inputBtnFocusBoxShadow,
             height: height(
                 socialButton.fontSize,

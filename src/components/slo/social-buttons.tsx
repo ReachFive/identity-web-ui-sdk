@@ -121,6 +121,9 @@ const SocialButton = ({
     // instead of the resolved background because the latter is white for some providers (Google),
     // which would leave the ring invisible.
     const focusRingColor = colorToHSL(provider.color);
+    // The label is hidden exactly when the buttons are laid out inline: a row of labelled
+    // buttons does not fit. `inline` is the single switch for both.
+    const showLabel = !theme.socialButton.inline;
 
     const label = i18n(`socialButton.${provider.key}.title`, {
         defaultValue: provider.buttonLabel ?? provider.name,
@@ -131,10 +134,10 @@ const SocialButton = ({
 
     return (
         <Button
-            size={theme.socialButton.textVisible ? size : 'icon'}
+            size={showLabel ? size : 'icon'}
             className={cn(
                 `r5-btn-social r5-btn-social-${provider.key}`,
-                theme.socialButton.inline ? 'flex' : `grid grid-cols-[1rem_1fr_1rem]`,
+                showLabel ? `grid grid-cols-[1rem_1fr_1rem]` : 'flex',
                 className
             )}
             style={
@@ -161,7 +164,7 @@ const SocialButton = ({
             {...props}
         >
             <ProviderIcon href={provider.icon} />
-            {theme.socialButton.textVisible && <span className="r5-btn-social-text">{label}</span>}
+            {showLabel && <span className="r5-btn-social-text">{label}</span>}
         </Button>
     );
 };

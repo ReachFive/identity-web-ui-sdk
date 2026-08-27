@@ -84,7 +84,6 @@ function expectValidTheme(theme: Partial<Theme>) {
     // socialButton
     expect(theme).toHaveProperty('socialButton');
     expect(theme.socialButton).toHaveProperty('inline');
-    expect(theme.socialButton).toHaveProperty('textVisible');
     expect(theme.socialButton).toHaveProperty('fontWeight');
     expect(theme.socialButton).toHaveProperty('fontSize');
     expect(theme.socialButton).toHaveProperty('lineHeight');
@@ -223,7 +222,6 @@ describe('theme', () => {
             );
             // social button
             expect(actual).toHaveProperty('socialButton.inline', false);
-            expect(actual).toHaveProperty('socialButton.textVisible', true);
             expect(actual).toHaveProperty('socialButton.fontSize', actual.fontSize);
             expect(actual).toHaveProperty('socialButton.lineHeight', actual.lineHeight);
             expect(actual).toHaveProperty('socialButton.paddingX', actual.paddingX);
@@ -299,7 +297,6 @@ describe('theme', () => {
                 )
             );
             expect(actual).toHaveProperty('socialButton.inline', true);
-            expect(actual).toHaveProperty('socialButton.textVisible', false);
             // the social button inherits the overridden button font size
             expect(actual).toHaveProperty('socialButton.fontSize', 18);
             expect(actual).toHaveProperty(
@@ -309,6 +306,49 @@ describe('theme', () => {
                     actual.lineHeight,
                     actual.paddingY,
                     actual.borderWidth
+                )
+            );
+        });
+
+        test('should reject an explicit height and keep the computed one', () => {
+            const actual = buildTheme({
+                input: {
+                    // @ts-expect-error `height` is derived, so it is not part of `ThemeOptions`
+                    height: 999,
+                },
+                button: {
+                    paddingY: 12,
+                    // @ts-expect-error `height` is derived, so it is not part of `ThemeOptions`
+                    height: 999,
+                },
+                socialButton: {
+                    // @ts-expect-error `height` is derived, so it is not part of `ThemeOptions`
+                    height: 999,
+                },
+            });
+
+            expect(actual.input.height).toBe(
+                height(
+                    actual.input.fontSize,
+                    actual.input.lineHeight,
+                    actual.input.paddingY,
+                    actual.input.borderWidth
+                )
+            );
+            expect(actual.button.height).toBe(
+                height(
+                    actual.button.fontSize,
+                    actual.button.lineHeight,
+                    12,
+                    actual.button.borderWidth
+                )
+            );
+            expect(actual.socialButton.height).toBe(
+                height(
+                    actual.socialButton.fontSize,
+                    actual.socialButton.lineHeight,
+                    actual.socialButton.paddingY,
+                    actual.socialButton.borderWidth
                 )
             );
         });

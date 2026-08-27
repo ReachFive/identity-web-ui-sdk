@@ -24,7 +24,6 @@ const themeOptions: ThemeOptions = {
         borderWidth: 1,
         paddingX: 16,
         paddingY: 8,
-        height: 40,
     },
 };
 

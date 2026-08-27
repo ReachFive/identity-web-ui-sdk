@@ -28,6 +28,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Removed
 
 - `acceptTos` from the login view and social buttons props, and `lightBackgroundColor` from `BaseTheme`
+- `height` from the theme options of `input`, `button` and `socialButton` — it is computed from `fontSize`,
+  `lineHeight`, `paddingY` and `borderWidth`, and setting it never had any effect
+- `theme.socialButton.textVisible`, which only ever mirrored `!inline`. `inline` is now the single
+  switch: an inline row renders icon-only buttons, a stacked column renders labelled ones
 
 ### Fixed
 
