@@ -197,12 +197,21 @@ export interface SocialButtonTheme
     focusBoxShadow: (color?: CSSProperties['color']) => NonNullable<CSSProperties['boxShadow']>;
 }
 
+/**
+ * Colors of the five password strength scores.
+ *
+ * Every score is optional and left unset by `buildTheme`: the defaults are derived from
+ * `dangerColor`, `warningColor` and `successColor`, and applying them here would flatten them
+ * into literals. `buildThemeVariables` resolves each score instead, which lets the two lowest
+ * ones point at the `--destructive` palette role for as long as the theme does not name a color
+ * of its own. Same arrangement as the social button brand colors.
+ */
 export interface PasswordStrengthTheme {
-    color0: NonNullable<CSSProperties['color']>;
-    color1: NonNullable<CSSProperties['color']>;
-    color2: NonNullable<CSSProperties['color']>;
-    color3: NonNullable<CSSProperties['color']>;
-    color4: NonNullable<CSSProperties['color']>;
+    color0?: NonNullable<CSSProperties['color']>;
+    color1?: NonNullable<CSSProperties['color']>;
+    color2?: NonNullable<CSSProperties['color']>;
+    color3?: NonNullable<CSSProperties['color']>;
+    color4?: NonNullable<CSSProperties['color']>;
 }
 
 export interface Theme extends BaseTheme {

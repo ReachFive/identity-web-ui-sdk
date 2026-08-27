@@ -103,13 +103,34 @@ const textColorOn =
     (color: string): string =>
         toHexColor(color) === toHexColor(brandColor)
             ? brandSurfaceTextColor
-            : pickByLightness(color, '#ffffff', '#000000');
+            : derivedTextColor(color);
+
+/** Text color a surface gets from its own contrast, with no design-system exception applied. */
+const derivedTextColor = (color: string): string => pickByLightness(color, '#ffffff', '#000000');
 
 /** Text color to render on a filled button standing on `primaryColor`. */
 export const buttonTextColor = textColorOn(primitiveTheme.primaryColor);
 
 /** Text color to render on a destructive surface standing on `dangerColor`. */
 export const destructiveTextColor = textColorOn(primitiveTheme.dangerColor);
+
+/**
+ * Text color to render on a success surface standing on `successColor`.
+ *
+ * The default success color *is* the brand green, so it inherits the same pinned white as a
+ * filled button — one exception, applied consistently wherever that green becomes a surface.
+ */
+export const successTextColor = textColorOn(primitiveTheme.successColor);
+
+/**
+ * Text color to render on a warning surface standing on `warningColor`.
+ *
+ * The only one of the four with no pinned exception, and deliberately so: the design system
+ * mandates white on the green and the red, both of which merely fall short of AA. White on the
+ * default amber is 1.63:1 against black's 12.88:1 — pinning it there would be unreadable, not
+ * just sub-AA. The amber takes the contrast-derived color like any tenant color would.
+ */
+export const warningTextColor = derivedTextColor;
 
 export const inputBtnFocusBoxShadow = (
     color?: CSSProperties['color']
@@ -226,12 +247,9 @@ export const buildTheme = (themeOptions: ThemeOptions = {} as Partial<ThemeOptio
                 socialButton.borderWidth
             ),
         },
-        passwordStrengthValidator: {
-            color0: base.dangerColor,
-            color1: base.dangerColor,
-            color2: base.warningColor,
-            color3: lightenColor(base.successColor, 20),
-            color4: base.successColor,
-        },
+        // Deliberately left as the caller wrote it: the per-score defaults are derived from
+        // `dangerColor`, `warningColor` and `successColor`, and resolving them here would cost
+        // scores 0 and 1 their `--destructive` pointer. @see core/themeVariables
+        passwordStrengthValidator: { ...customBase.passwordStrengthValidator },
     };
 };

@@ -28,6 +28,9 @@ describe('buildThemeVariables', () => {
             ['--r5-input-radius', 'var(--radius)'],
             ['--r5-link-text', 'hsl(var(--primary))'],
             ['--r5-password-strength-bg-0', 'hsl(var(--destructive))'],
+            ['--r5-password-strength-bg-1', 'hsl(var(--destructive))'],
+            ['--r5-password-strength-bg-2', 'hsl(var(--warning))'],
+            ['--r5-password-strength-bg-4', 'hsl(var(--success))'],
         ])('%s -> %s', (property, expected) => {
             expect(build()[property]).toBe(expected);
         });
@@ -63,6 +66,13 @@ describe('buildThemeVariables', () => {
             );
         });
 
+        test('passwordStrengthValidator.color0 replaces the palette pointer', () => {
+            const variables = build({ passwordStrengthValidator: { color0: '#654321' } });
+            expect(variables['--r5-password-strength-bg-0']).toBe('#654321');
+            // the scores it does not name keep pointing at the palette
+            expect(variables['--r5-password-strength-bg-1']).toBe('hsl(var(--destructive))');
+        });
+
         test('a zero value is an override, not an absent option', () => {
             expect(build({ button: { paddingX: 0 } })['--r5-button-padding-x']).toBe('0px');
         });
@@ -81,6 +91,8 @@ describe('buildThemeVariables', () => {
             primaryColor: '#3366ff',
             borderColor: '#778899',
             dangerColor: '#ff8800',
+            warningColor: '#8800ff',
+            successColor: '#00ccaa',
             fontSize: 18,
             lineHeight: 1.6,
             borderRadius: 9,
@@ -98,16 +110,12 @@ describe('buildThemeVariables', () => {
             ['--r5-button-hover-text', '--primary-foreground', theme.button.hoverColor],
             ['--r5-input-border-color', '--border', theme.input.borderColor],
             ['--r5-link-text', '--primary', theme.link.color],
-            [
-                '--r5-password-strength-bg-0',
-                '--destructive',
-                theme.passwordStrengthValidator.color0,
-            ],
-            [
-                '--r5-password-strength-bg-1',
-                '--destructive',
-                theme.passwordStrengthValidator.color1,
-            ],
+            // the scale carries no value of its own until the theme names one: scores 0 and 1
+            // default to `dangerColor`, which is exactly what `--destructive` holds
+            ['--r5-password-strength-bg-0', '--destructive', theme.dangerColor],
+            ['--r5-password-strength-bg-1', '--destructive', theme.dangerColor],
+            ['--r5-password-strength-bg-2', '--warning', theme.warningColor],
+            ['--r5-password-strength-bg-4', '--success', theme.successColor],
         ])('%s points at %s, which holds the resolved color', (token, role, resolved) => {
             expect(variables[token]).toBe(`hsl(var(${role}))`);
             expect(variables[role]).toBe(colorToHSL(resolved));
@@ -129,6 +137,21 @@ describe('buildThemeVariables', () => {
         ])('%s points at %s, which holds the resolved scale', (token, role, resolved) => {
             expect(variables[token]).toBe(`var(${role})`);
             expect(variables[role]).toBe(resolved);
+        });
+
+        // Score 3 is a pointer too, but a compound one: it blends the two roles it sits between
+        // instead of naming a single one, so it has no row in the table above. Naming both is
+        // what keeps the middle step moving when a neighbour moves — resolving the blend in JS
+        // would leave it behind on the old color.
+        test('--r5-password-strength-bg-3 blends the two roles it sits between', () => {
+            expect(variables['--r5-password-strength-bg-3']).toBe(
+                'color-mix(in oklch, hsl(var(--warning)), hsl(var(--success)))'
+            );
+            expect(variables['--warning']).toBe(colorToHSL(theme.warningColor));
+            expect(variables['--success']).toBe(colorToHSL(theme.successColor));
+            // `oklch` is the space colorizr's `mix` interpolates in, so moving the blend from JS
+            // to CSS left the rendered color unchanged
+            expect(variables['--r5-password-strength-bg-3']).toContain('in oklch');
         });
 
         test('--primary matches the resolved button background', () => {
@@ -208,6 +231,23 @@ describe('buildThemeVariables', () => {
             // 4.03), but a red destructive button with white text is what the design system asks
             // for. Guards the default theme against a naive `pickByLightness` swap.
             expect(build()['--destructive-foreground']).toBe('0 0% 100%');
+        });
+
+        test('the success role reuses the brand exception, the warning role does not', () => {
+            const variables = build();
+            // the default success color *is* the brand green, pinned white like a filled button
+            expect(variables['--success-foreground']).toBe('0 0% 100%');
+            // white on the default amber would be 1.63:1 — no exception there, contrast decides
+            expect(variables['--warning-foreground']).toBe('0 0% 0%');
+        });
+
+        test.each([
+            ['warning', '#000080', '0 0% 100%', 'navy, dark'],
+            ['warning', '#ffff00', '0 0% 0%', 'yellow, light'],
+            ['success', '#000080', '0 0% 100%', 'navy, dark'],
+            ['success', '#ffff00', '0 0% 0%', 'yellow, light'],
+        ])('%sColor %s -> --%s-foreground %s (%s)', (role, color, expected) => {
+            expect(build({ [`${role}Color`]: color })[`--${role}-foreground`]).toBe(expected);
         });
 
         test('a light danger color drops to black', () => {

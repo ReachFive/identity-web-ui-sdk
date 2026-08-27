@@ -1,7 +1,7 @@
 import { colorToHSL, fadeColor, shadeColor } from '@/lib/utils';
 import { Theme, ThemeOptions } from '@/types/styled';
 
-import { buttonTextColor, destructiveTextColor } from './theme';
+import { buttonTextColor, destructiveTextColor, successTextColor, warningTextColor } from './theme';
 
 /** The CSS custom properties a widget is rendered with, as a React `style` object. */
 export type ThemeVariables = Record<string, string>;
@@ -66,7 +66,7 @@ export const composableShadow = (value: string): string => (value === 'none' ? '
  * @param theme the same options resolved through {@link buildTheme}
  */
 export function buildThemeVariables(options: ThemeOptions, theme: Theme): ThemeVariables {
-    const { button, input, link } = options;
+    const { button, input, link, passwordStrengthValidator: passwordStrength } = options;
 
     return {
         /* Palette roles. */
@@ -81,6 +81,10 @@ export function buildThemeVariables(options: ThemeOptions, theme: Theme): ThemeV
         '--primary-hover': colorToHSL(shadeColor(theme.primaryColor)),
         '--destructive': colorToHSL(theme.dangerColor),
         '--destructive-foreground': colorToHSL(destructiveTextColor(theme.dangerColor)),
+        '--warning': colorToHSL(theme.warningColor),
+        '--warning-foreground': colorToHSL(warningTextColor(theme.warningColor)),
+        '--success': colorToHSL(theme.successColor),
+        '--success-foreground': colorToHSL(successTextColor(theme.successColor)),
         '--popover': colorToHSL(theme.backgroundColor),
         '--popover-foreground': colorToHSL(theme.textColor),
         '--accent': colorToHSL(theme.primaryColor),
@@ -146,11 +150,18 @@ export function buildThemeVariables(options: ThemeOptions, theme: Theme): ThemeV
         '--r5-link-decoration': `${theme.link.decoration}`,
         '--r5-link-hover-decoration': `${theme.link.hoverDecoration}`,
 
-        /* Password strength. Scores 0 and 1 are `dangerColor` unchanged; the rest are derived. */
-        '--r5-password-strength-bg-0': 'hsl(var(--destructive))',
-        '--r5-password-strength-bg-1': 'hsl(var(--destructive))',
-        '--r5-password-strength-bg-2': theme.passwordStrengthValidator.color2,
-        '--r5-password-strength-bg-3': theme.passwordStrengthValidator.color3,
-        '--r5-password-strength-bg-4': theme.passwordStrengthValidator.color4,
+        /* Password strength. Every score defaults to a palette role unchanged, so it points at
+           that role until the theme names a color of its own. Score 3 sits halfway between the
+           warning and the success color, so it reads as its own step rather than as a paler
+           score 4 — `oklch` because that is the space colorizr's `mix` interpolates in, so the
+           CSS blend lands on the color the JS one used to compute. Doing it in CSS keeps score 3
+           a pointer like the other four: overriding `--warning` moves it too. */
+        '--r5-password-strength-bg-0': passwordStrength?.color0 ?? 'hsl(var(--destructive))',
+        '--r5-password-strength-bg-1': passwordStrength?.color1 ?? 'hsl(var(--destructive))',
+        '--r5-password-strength-bg-2': passwordStrength?.color2 ?? 'hsl(var(--warning))',
+        '--r5-password-strength-bg-3':
+            passwordStrength?.color3 ??
+            'color-mix(in oklch, hsl(var(--warning)), hsl(var(--success)))',
+        '--r5-password-strength-bg-4': passwordStrength?.color4 ?? 'hsl(var(--success))',
     };
 }
