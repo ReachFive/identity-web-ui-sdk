@@ -4,7 +4,7 @@ import * as AlertDialogPrimitive from "@radix-ui/react-alert-dialog"
 import { type AlertDialogActionProps } from "@radix-ui/react-alert-dialog"
 import { type VariantProps } from "class-variance-authority"
 
-import { ThemeVariablesContainer } from "@/components/widget/widget"
+import { ThemeVariablesContainer } from "@/contexts/themeVariables"
 import { cn } from "@/lib/utils"
 
 import { buttonVariants } from "./button"

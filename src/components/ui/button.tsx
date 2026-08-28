@@ -5,26 +5,44 @@ import { cva, type VariantProps } from "class-variance-authority"
 
 import { cn } from "@/lib/utils"
 
+/**
+ * `theme.button.*` describes the *filled* button, and the other variants derive from it — so a
+ * tenant who themes the button sees `outline` and `ghost` follow, instead of drifting back to the
+ * brand color. Setting `primaryColor` alone is enough, since the `--r5-button-*` tokens point at
+ * the palette until an option overrides them.
+ *
+ * `outline` and `ghost` hover onto `--r5-button-subtle-bg`, a low-alpha tint of the button color.
+ * That keeps shadcn's intent — a neutral interactive surface, its `accent` role — while tracking
+ * the tenant's own color rather than a fixed gray.
+ *
+ * The border width sits on the variants that draw a border rather than on the base, so `ghost`,
+ * `link` and `destructive` do not inherit a width with no matching color, which resolves to
+ * `currentColor` and paints a hairline in the text color.
+ */
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[var(--button-radius)] text-[length:var(--button-text-size)] leading-[var(--button-leading)] font-[weight:var(--button-font-weight)] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[var(--r5-button-radius)] text-[length:var(--r5-button-text-size)] font-[var(--r5-button-font-weight)] leading-[var(--r5-button-leading)] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
   {
     variants: {
       variant: {
         default:
-          "bg-[var(--button-background-color)] text-[var(--button-text-color)] border-[length:var(--button-border-width)] border-[var(--button-border)] shadow hover:bg-[var(--button-hover-background-color)] hover:text-[var(--button-hover-text-color)] hover:border-[var(--button-hover-border)]",
-        destructive: "bg-destructive text-white shadow-sm hover:bg-destructive/90",
+          "border-[length:var(--r5-button-border-width)] border-[var(--r5-button-border-color)] bg-[var(--r5-button-bg)] text-[var(--r5-button-text)] shadow-[shadow:var(--r5-button-shadow)] hover:border-[var(--r5-button-hover-border-color)] hover:bg-[var(--r5-button-hover-bg)] hover:text-[var(--r5-button-hover-text)]",
+        // The label takes the *fill* color, not the border color: a tenant setting a hairline gray
+        // `button.borderColor` would otherwise get a light gray label on white.
         outline:
-          "border-[length:var(--button-border-width)] border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground",
-        secondary: "bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80",
-        ghost: "hover:bg-accent hover:text-accent-foreground",
-        link: "text-[var(--link-color)] underline-offset-4 hover:underline",
+          "border-[length:var(--r5-button-border-width)] border-[var(--r5-button-border-color)] bg-background text-[var(--r5-button-bg)] shadow-[shadow:var(--r5-button-shadow)] hover:border-[var(--r5-button-hover-border-color)] hover:bg-[var(--r5-button-subtle-bg)]",
+        // Transparent rather than `bg-background`, so it stays invisible on any surface — it is
+        // the default variant of `InputGroupButton`, where the field background may differ.
+        ghost: "bg-transparent hover:bg-[var(--r5-button-subtle-bg)]",
+        destructive:
+          "bg-destructive text-destructive-foreground shadow-[shadow:var(--r5-button-shadow)] hover:bg-destructive/90",
+        link: "text-[var(--r5-link-text)] underline-offset-4 hover:text-[var(--r5-link-hover-text)] hover:underline",
       },
       size: {
         default:
-          "h-[var(--button-height)] px-[var(--button-padding-x)] py-[var(--button-padding-y)]",
-        sm: "h-8 px-3 text-xs",
-        lg: "h-10 px-8",
-        icon: "size-[var(--button-height)]",
+          "h-[var(--r5-button-height)] px-[var(--r5-button-padding-x)] py-[var(--r5-button-padding-y)]",
+        sm: "h-8 rounded-md px-3 text-xs",
+        lg: "h-10 rounded-md px-8",
+        icon: "size-[var(--r5-button-height)]",
         "icon-xs": "size-6 rounded-md [&_svg:not([class*='size-'])]:size-3",
         "icon-sm": "size-8",
         "icon-lg": "size-10",

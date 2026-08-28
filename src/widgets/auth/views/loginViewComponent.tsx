@@ -4,9 +4,9 @@ import { AuthOptions, LoginWithPasswordParams } from '@reachfive/identity-core';
 
 import { CaptchaProvider, WithCaptchaProps, type WithCaptchaToken } from '@/components/captcha';
 import { Form, FormProps } from '@/components/form/form';
-import { SocialButtons } from '@/components/form/socialButtonsComponent';
 import { Alternative, Heading, Link, Separator } from '@/components/miscComponent';
 import { importGoogleRecaptchaScript } from '@/components/reCaptcha';
+import { SocialButtons } from '@/components/slo/social-buttons';
 import { useConfig } from '@/contexts/config';
 import { useI18n } from '@/contexts/i18n';
 import { useReachfive } from '@/contexts/reachfive';
@@ -124,10 +124,6 @@ export const LoginForm = <ResultType,>({
 
 export type LoginViewProps = {
     /**
-     * @deprecated
-     */
-    acceptTos?: boolean;
-    /**
      * Boolean that specifies whether an additional field for the custom identifier is shown.
      *
      * @default false
@@ -218,7 +214,6 @@ export type LoginViewProps = {
 };
 
 export const LoginView = ({
-    acceptTos,
     allowForgotPassword = true,
     allowSignup = true,
     allowWebAuthnLogin,
@@ -291,7 +286,6 @@ export const LoginView = ({
                 <SocialButtons
                     providers={socialProviders}
                     auth={auth}
-                    acceptTos={acceptTos}
                     onSuccess={onSuccess}
                     onError={onError}
                 />

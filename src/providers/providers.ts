@@ -30,7 +30,18 @@ export interface windowSize {
 
 export interface Provider {
     key: string;
+    /**
+     * The provider's name, used to identify it — and interpolated as `{provider}` into
+     * translated button labels such as `"Continue with {provider}"`. Keep it to the bare brand
+     * name; use {@link Provider.buttonLabel} when the button has to read differently.
+     */
     name: string;
+    /**
+     * Default text of the button for this provider, when it cannot simply be built from
+     * {@link Provider.name}. Apple, for instance, requires its button to read
+     * "Sign in with Apple". Overridden by the `socialButton.<key>.title` translation.
+     */
+    buttonLabel?: string;
     color: string;
     fontWeight?: number;
     fontFamily?: string;
@@ -73,3 +84,24 @@ export const providers = {
 export default providers;
 
 export type ProviderId = keyof typeof providers;
+
+/**
+ * Resolves a provider by its key, looking it up among the built-in providers first, then among the
+ * custom providers declared in the remote settings.
+ *
+ * Custom providers are keyed by their `key` property, never by their key in the `customProviders`
+ * record: custom keys may contain `-` or `_`, and the API may rewrite JSON keys to camelCase or
+ * snake_case, so the record key cannot be matched against reliably.
+ *
+ * @param providerKey the provider key to resolve, without its variant suffix (`google`, not `google:2`)
+ * @param customProviders the custom providers declared in the remote settings
+ */
+export function findProvider(
+    providerKey: string,
+    customProviders?: Record<string, Provider>
+): Provider | undefined {
+    return (
+        providers[providerKey as ProviderId] ??
+        Object.values(customProviders ?? {}).find(({ key }) => key === providerKey)
+    );
+}

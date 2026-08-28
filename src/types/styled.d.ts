@@ -1,4 +1,5 @@
 import { CSSProperties } from 'react';
+
 import 'styled-components';
 
 import { RecursivePartial } from './index';
@@ -7,7 +8,24 @@ declare module 'styled-components' {
     export interface DefaultTheme extends Theme {}
 }
 
-export type ThemeOptions = RecursivePartial<Theme>;
+/**
+ * Keys `buildTheme` derives from the other tokens rather than reading from the options.
+ *
+ * `height` is arithmetic over `fontSize`, `lineHeight`, `paddingY` and `borderWidth`
+ * (@see core/theme#height): the resolved {@link Theme} always carries it, but `buildTheme`
+ * recomputes it after merging, so a value passed here would be silently dropped. Excluding it
+ * from the options turns that into a compile-time error instead — to make a control taller,
+ * move `paddingY`, `fontSize` or `lineHeight`.
+ */
+type DerivedThemeKeys = 'height';
+
+export type ThemeOptions = RecursivePartial<
+    Omit<Theme, 'input' | 'button' | 'socialButton'> & {
+        input: Omit<InputTheme, DerivedThemeKeys>;
+        button: Omit<ButtonTheme, DerivedThemeKeys>;
+        socialButton: Omit<SocialButtonTheme, DerivedThemeKeys>;
+    }
+>;
 
 export interface BaseTheme {
     /**
@@ -107,6 +125,7 @@ export interface InputTheme {
     boxShadow: NonNullable<CSSProperties['boxShadow']>;
     focusBorderColor: NonNullable<CSSProperties['color']>;
     focusBoxShadow: (color?: CSSProperties['color']) => NonNullable<CSSProperties['boxShadow']>;
+    /** Computed from `fontSize`, `lineHeight`, `paddingY` and `borderWidth`. Not settable — @see DerivedThemeKeys */
     height: number;
 }
 
@@ -133,8 +152,6 @@ export interface ButtonTheme {
     borderRadius: number;
     /** Specifies the border-width. */
     borderWidth: number;
-    /** Specifies the text color. */
-    color: NonNullable<CSSProperties['color']>;
     /** Specifies the box shadow. */
     boxShadow: NonNullable<CSSProperties['boxShadow']>;
     /** Specifies the background color on hover. */
@@ -145,15 +162,39 @@ export interface ButtonTheme {
     hoverColor: NonNullable<CSSProperties['color']>;
     /** Function that specifies the box shadow based on the border color. */
     focusBoxShadow: (color?: CSSProperties['color']) => NonNullable<CSSProperties['boxShadow']>;
-    /** Specifies the height. */
+    /** Computed from `fontSize`, `lineHeight`, `paddingY` and `borderWidth`. Not settable — @see DerivedThemeKeys */
     height: number;
 }
 
-export interface SocialButtonTheme extends ButtonTheme {
-    /** Boolean that specifies if the buttons are inline (horizonally-aligned). */
+/**
+ * Social button colors that fall back to each provider's own brand color when left unset.
+ * @see components/slo/social-buttons.tsx
+ */
+type ProviderBrandedColors =
+    | 'color'
+    | 'background'
+    | 'borderColor'
+    | 'hoverBackground'
+    | 'hoverBorderColor'
+    | 'hoverColor';
+
+export interface SocialButtonTheme
+    extends
+        Omit<ButtonTheme, ProviderBrandedColors | 'focusBoxShadow'>,
+        Partial<Pick<ButtonTheme, ProviderBrandedColors>> {
+    /**
+     * Boolean that specifies if the buttons are inline (horizonally-aligned).
+     *
+     * Also drives the label: an inline row renders icon-only buttons, a stacked column renders
+     * labelled ones. @see components/slo/social-buttons
+     */
     inline: boolean;
-    /** Boolean that specifies if the text is visible. */
-    textVisible: boolean;
+    /**
+     * @deprecated Has no effect. Social buttons take their focus ring from the provider's own
+     * brand color, applied through the `--ring` custom property. Still computed so that reading
+     * it keeps working, but changing it changes nothing.
+     */
+    focusBoxShadow: (color?: CSSProperties['color']) => NonNullable<CSSProperties['boxShadow']>;
 }
 
 export interface PasswordStrengthTheme {

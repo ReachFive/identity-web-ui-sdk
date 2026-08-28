@@ -175,7 +175,9 @@ export const TrustedDeviceList = ({
     return (
         <div>
             {trustedDevices.length === 0 && (
-                <div className="mb-1 text-center text-theme">{i18n('trustedDevices.empty')}</div>
+                <div className="text-foreground mb-1 text-center">
+                    {i18n('trustedDevices.empty')}
+                </div>
             )}
             <div className="flex w-full max-w-md flex-col gap-4">
                 {trustedDevices.map((trustedDevice, _) => (

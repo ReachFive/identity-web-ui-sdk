@@ -2,8 +2,8 @@
 .circleci
 .github
 
-# Ignore generated types
-types
+# Ignore generated types (anchored: a bare `types` would also match src/types/)
+/types
 
 # Ignore markdown files
 *.md
