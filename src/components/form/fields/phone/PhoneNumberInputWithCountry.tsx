@@ -4,7 +4,7 @@ import * as DropdownMenuPrimitive from '@radix-ui/react-dropdown-menu';
 import { hasFlag } from 'country-flag-icons';
 import * as Flags from 'country-flag-icons/react/3x2';
 import { CountryCode, getCountries, getCountryCallingCode } from 'libphonenumber-js/min';
-import { GlobeIcon } from 'lucide-react';
+import { ChevronDown, GlobeIcon } from 'lucide-react';
 
 import { usePhoneNumberInput } from '@/components/form/fields/phone/PhoneNumberInputContext';
 import {
@@ -82,10 +82,11 @@ const CountrySelect = React.forwardRef<
                 <InputGroupButton
                     variant="ghost"
                     aria-label={i18n('address.country')}
-                    size="icon-xs"
+                    size="xs"
                     disabled={props.disabled ?? props.readOnly}
                 >
-                    <CountryFlag country={country} />
+                    <CountryFlag country={country} className="!w-auto" />
+                    <ChevronDown className="h-4 w-4 opacity-50" />
                 </InputGroupButton>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
@@ -104,12 +105,13 @@ const CountrySelect = React.forwardRef<
 const CountryFlag = function CountryFlag({
     country,
     title,
-}: {
+    ...props
+}: React.HTMLAttributes<SVGElement> & {
     country: CountryCode;
     title?: string;
 }) {
     const Flag = hasFlag(country) ? Flags[country] : null;
-    return Flag ? <Flag title={title ?? country} /> : <GlobeIcon />;
+    return Flag ? <Flag title={title ?? country} {...props} /> : <GlobeIcon {...props} />;
 };
 
 function getCallingCode(country: CountryCode) {
