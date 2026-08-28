@@ -3,16 +3,24 @@
  */
 import { beforeEach, describe, expect, jest, test } from '@jest/globals';
 import '@testing-library/jest-dom/jest-globals';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import 'jest-styled-components';
 
 import { type Client, type Profile } from '@reachfive/identity-core';
 
 import { type I18nMessages } from '../../../src/contexts/i18n';
+import { type Provider } from '../../../src/providers/providers';
 import socialAccountsWidget from '../../../src/widgets/socialAccounts/socialAccountsWidget';
 
 import type { Config, OnError, OnSuccess } from '../../../src/types';
+
+const customProvider: Provider = {
+    key: 'my-idp',
+    name: 'My IdP',
+    color: '#4c1d95',
+    icon: 'my-idp.svg',
+};
 
 const defaultConfig: Config = {
     clientId: 'local',
@@ -23,7 +31,8 @@ const defaultConfig: Config = {
     language: 'fr',
     pkceEnforced: false,
     isPublic: true,
-    socialProviders: ['facebook', 'google', 'line:custom'],
+    socialProviders: ['facebook', 'google', 'line:custom', 'my-idp'],
+    customProviders: { 'my-idp': customProvider },
     customFields: [],
     resourceBaseUrl: 'http://localhost',
     mfaSmsEnabled: false,
@@ -146,18 +155,20 @@ describe('DOM testing', () => {
         });
 
         test('with all identities configured', async () => {
-            expect.assertions(6);
+            expect.assertions(7);
 
             await generateComponent({}, defaultConfig, [
                 { id: '123456789', provider: 'facebook', username: 'John Doe' },
                 { id: '987654321', provider: 'google', username: 'John Doe' },
                 { id: '000000000', provider: 'line', username: 'John Doe' },
+                { id: '111111111', provider: 'my-idp', username: 'John Doe' },
             ]);
 
             expect(screen.queryByText('socialAccounts.noLinkedAccount')).not.toBeInTheDocument();
             expect(screen.getByTestId('identity-facebook')).toBeInTheDocument();
             expect(screen.getByTestId('identity-google')).toBeInTheDocument();
             expect(screen.getByTestId('identity-line')).toBeInTheDocument();
+            expect(screen.getByTestId('identity-my-idp')).toBeInTheDocument();
             expect(screen.queryByText('socialAccounts.linkNewAccount')).not.toBeInTheDocument();
         });
 
@@ -219,6 +230,83 @@ describe('DOM testing', () => {
 
             expect(onSuccess).not.toBeCalled();
             expect(onError).toBeCalled();
+        });
+    });
+
+    describe('with custom providers', () => {
+        test('linked custom provider identity is displayed', async () => {
+            await generateComponent({}, defaultConfig, [
+                { id: '111111111', provider: 'my-idp', username: 'John Doe' },
+            ]);
+
+            const identity = screen.getByTestId('identity-my-idp');
+            expect(identity).toBeInTheDocument();
+            expect(identity).toHaveTextContent(customProvider.name);
+            expect(within(identity).getByRole('presentation')).toHaveAttribute(
+                'src',
+                customProvider.icon
+            );
+        });
+
+        test('custom provider is listed as available provider', async () => {
+            const user = userEvent.setup();
+
+            await generateComponent({}, defaultConfig, [
+                { id: '123456789', provider: 'facebook', username: 'John Doe' },
+                { id: '987654321', provider: 'google', username: 'John Doe' },
+                { id: '000000000', provider: 'line', username: 'John Doe' },
+            ]);
+
+            await user.click(screen.getByText('socialAccounts.linkNewAccount'));
+
+            expect(screen.getByRole('button', { name: customProvider.name })).toBeInTheDocument();
+        });
+
+        test('unlink custom provider identity', async () => {
+            const user = userEvent.setup();
+
+            unlink.mockResolvedValue();
+
+            await generateComponent({}, defaultConfig, [
+                { id: '111111111', provider: 'my-idp', username: 'John Doe' },
+            ]);
+
+            const unlinkBtn = screen.getByRole('button', {
+                name: `remove ${customProvider.name}`,
+            });
+            await user.click(unlinkBtn);
+
+            expect(unlink).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    accessToken: 'azerty',
+                    identityId: '111111111',
+                })
+            );
+
+            expect(screen.queryByTestId('identity-my-idp')).not.toBeInTheDocument();
+
+            expect(onSuccess).toBeCalledWith(
+                expect.objectContaining({
+                    identityId: '111111111',
+                    name: 'unlink',
+                })
+            );
+            expect(onError).not.toBeCalled();
+        });
+
+        test('unknown provider identity is skipped', async () => {
+            const logError = jest.spyOn(console, 'error').mockImplementation(() => {});
+
+            await generateComponent({}, defaultConfig, [
+                { id: '123456789', provider: 'facebook', username: 'John Doe' },
+                { id: '222222222', provider: 'unknown-idp', username: 'John Doe' },
+            ]);
+
+            expect(screen.getByTestId('identity-facebook')).toBeInTheDocument();
+            expect(screen.queryByTestId('identity-unknown-idp')).not.toBeInTheDocument();
+            expect(logError).toHaveBeenCalledWith('unknown-idp provider not found.');
+
+            logError.mockRestore();
         });
     });
 });

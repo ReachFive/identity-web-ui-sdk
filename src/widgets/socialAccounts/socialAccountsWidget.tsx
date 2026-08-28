@@ -1,13 +1,11 @@
 import React, { Fragment, useCallback, useEffect, useState } from 'react';
 
 import { AlertTriangleIcon, XIcon } from 'lucide-react';
-import styled from 'styled-components';
 
-import { AuthOptions, Identity, Profile } from '@reachfive/identity-core';
+import { AuthOptions, Identity } from '@reachfive/identity-core';
 
-import { DefaultButton } from '@/components/form/buttonComponent';
-import { SocialButtons } from '@/components/form/socialButtonsComponent';
-import { Alternative, Link } from '@/components/miscComponent';
+import { Alternative } from '@/components/miscComponent';
+import { SocialButtons } from '@/components/slo/social-buttons';
 import { Button } from '@/components/ui/button';
 import {
     Item,
@@ -19,11 +17,13 @@ import {
     ItemTitle,
 } from '@/components/ui/item';
 import { createMultiViewWidget } from '@/components/widget/widget';
+import { useConfig } from '@/contexts/config';
 import { useI18n } from '@/contexts/i18n';
 import { useReachfive } from '@/contexts/reachfive';
 import { useRouting } from '@/contexts/routing';
 import { isAppError, UserError } from '@/helpers/errors';
-import { type Provider, ProviderId, providers as socialProviders } from '@/providers/providers';
+import { logError } from '@/helpers/logger';
+import { findProvider } from '@/providers/providers';
 
 import type { OnError, OnSuccess } from '@/types';
 
@@ -61,38 +61,40 @@ const withIdentities = <T extends WithIdentitiesProps = WithIdentitiesProps>(
         const { goTo } = useRouting();
         const [identities, setIdentities] = useState<Identity[]>([]);
 
-        const refresh = useCallback(() => {
-            coreClient
-                .getUser({
+        const refresh = useCallback(async () => {
+            try {
+                const { socialIdentities } = await coreClient.getUser({
                     accessToken: props.accessToken,
                     fields: 'social_identities{id,provider,username}',
-                })
-                .then(({ socialIdentities }: Profile) => setIdentities(socialIdentities))
-                .catch(props.onError);
+                });
+                setIdentities(socialIdentities);
+            } catch (error) {
+                props.onError?.(error);
+            }
         }, [props.accessToken, coreClient]);
 
         const unlink = useCallback(
-            (identityId: string) => {
+            async (identityId: string) => {
                 const prevIdentities = identities;
                 // Optimistic update
                 setIdentities(identities.filter(i => i.id !== identityId));
                 // api call + catch failure
-                return coreClient
-                    .unlink({ accessToken: props.accessToken, identityId })
-                    .then(() => props.onSuccess?.({ name: 'unlink', identityId }))
-                    .catch((error: unknown) => {
-                        props.onError?.(error);
-                        // restore previous identities
-                        setIdentities(prevIdentities);
-                        // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
-                        return Promise.reject(error);
-                    });
+                try {
+                    await coreClient.unlink({ accessToken: props.accessToken, identityId });
+                    props.onSuccess?.({ name: 'unlink', identityId });
+                } catch (error) {
+                    props.onError?.(error);
+                    // restore previous identities
+                    setIdentities(prevIdentities);
+                    // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
+                    return Promise.reject(error);
+                }
             },
             [props.accessToken, coreClient, identities]
         );
 
         const handleAuthenticated = useCallback(() => {
-            refresh();
+            void refresh();
             goTo('links');
         }, [goTo, refresh]);
 
@@ -100,7 +102,7 @@ const withIdentities = <T extends WithIdentitiesProps = WithIdentitiesProps>(
             if (props.auth?.popupMode) {
                 coreClient.on('authenticated', handleAuthenticated);
             }
-            refresh();
+            void refresh();
             return () => coreClient.off('authenticated', handleAuthenticated);
         }, [coreClient, props.auth, handleAuthenticated, refresh]);
 
@@ -127,21 +129,23 @@ const IdentityList = ({
     unlink,
 }: IdentityListProps) => {
     const i18n = useI18n();
+    const { customProviders } = useConfig();
     const [error, setError] = useState<UserError | undefined>();
 
-    const onRemove = (id: string) => {
-        unlink(id)
-            .then(() => setError(undefined))
-            .catch((error: unknown) => {
-                onError(error);
-                if (isAppError(error)) {
-                    setError(UserError.fromAppError(error));
-                }
-            });
+    const onRemove = async (id: string) => {
+        try {
+            await unlink(id);
+            setError(undefined);
+        } catch (error) {
+            onError(error);
+            if (isAppError(error)) {
+                setError(UserError.fromAppError(error));
+            }
+        }
     };
 
     return (
-        <ItemGroup>
+        <ItemGroup className="gap-2">
             {identities.length === 0 && (
                 <Item>
                     <ItemContent>
@@ -161,8 +165,12 @@ const IdentityList = ({
                     </ItemContent>
                 </Item>
             )}
-            {identities.map(({ provider, id, username }) => {
-                const providerInfos: Provider = socialProviders[provider as ProviderId];
+            {identities.flatMap(({ provider, id, username }) => {
+                const providerInfos = findProvider(provider, customProviders);
+                if (!providerInfos) {
+                    logError(`${provider} provider not found.`);
+                    return [];
+                }
                 return (
                     <Item
                         variant="outline"
@@ -196,8 +204,8 @@ const IdentityList = ({
                             <Button
                                 size="icon"
                                 variant="ghost"
-                                className="rounded-full hover:bg-destructive hover:text-destructive-foreground size-6 sm:size-[var(--button-height)]"
-                                onClick={() => onRemove(id!)}
+                                className="rounded-full hover:bg-destructive hover:text-destructive-foreground size-6 sm:size-[var(--r5-button-height)]"
+                                onClick={() => void onRemove(id!)}
                                 aria-label={`${i18n('remove')} ${providerInfos.name}`}
                             >
                                 <XIcon />
@@ -213,10 +221,6 @@ const IdentityList = ({
     );
 };
 
-const AvailableProvider = styled.div`
-    margin-top: ${props => props.theme.spacing}px;
-`;
-
 interface SocialAccountsProps {
     accessToken: string;
     auth?: AuthOptions;
@@ -231,16 +235,20 @@ const SocialAccounts = withIdentities(
         const { goTo } = useRouting();
         const availableProviders = findAvailableProviders(providers, identities);
         return (
-            <Fragment>
+            <div className="space-y-4">
                 <IdentityList identities={identities} unlink={unlink} />
                 {availableProviders.length > 0 && (
-                    <AvailableProvider>
-                        <DefaultButton onClick={() => goTo('link-account')}>
+                    <div className="space-y-2">
+                        <Button
+                            variant="outline"
+                            className="w-full"
+                            onClick={() => goTo('link-account')}
+                        >
                             {i18n('socialAccounts.linkNewAccount')}
-                        </DefaultButton>
-                    </AvailableProvider>
+                        </Button>
+                    </div>
                 )}
-            </Fragment>
+            </div>
         );
     }
 );
@@ -258,6 +266,7 @@ interface LinkAccountProps {
 const LinkAccount = withIdentities(
     ({ auth, accessToken, identities = [], providers, onSuccess, onError }: LinkAccountProps) => {
         const i18n = useI18n();
+        const { goTo } = useRouting();
         const availableProviders = findAvailableProviders(providers, identities);
         return (
             <Fragment>
@@ -268,7 +277,9 @@ const LinkAccount = withIdentities(
                     onError={onError}
                 />
                 <Alternative>
-                    <Link target="links">{i18n('back')}</Link>
+                    <Button variant="outline" className="w-full" onClick={() => goTo('links')}>
+                        {i18n('back')}
+                    </Button>
                 </Alternative>
             </Fragment>
         );

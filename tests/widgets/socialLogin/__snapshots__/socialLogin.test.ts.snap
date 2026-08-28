@@ -1,111 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Snapshot social login basic 1`] = `
-.c3 {
-  display: block;
-  width: 100%;
-  box-sizing: border-box;
-  text-align: center;
-  font-weight: bold;
-  vertical-align: middle;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-  touch-action: manipulation;
-  cursor: pointer;
-  color: #ffffff;
-  background-color: #3b5998;
-  border: 1px solid #3b5998;
-  padding: 9px 12px;
-  font-size: 14px;
-  line-height: 1.428571429;
-  border-radius: 3px;
-  -webkit-transition: all 0.15s ease-in-out;
-  transition: all 0.15s ease-in-out;
-}
-
-.c3:focus {
-  outline: 0;
-  box-shadow: 0 0 0 3px rgba(59,89,152,0.5);
-}
-
-.c3:hover,
-.c3:active {
-  color: #ffffff;
-  background-color: #30487b;
-  border-color: #30487b;
-}
-
-.c3[disabled] {
-  opacity: 0.65;
-}
-
-.c6 {
-  display: block;
-  width: 100%;
-  box-sizing: border-box;
-  text-align: center;
-  font-weight: bold;
-  vertical-align: middle;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-  touch-action: manipulation;
-  cursor: pointer;
-  color: #58666e;
-  background-color: #ffffff;
-  border: 1px solid rgba(0,0,0,.15);
-  padding: 9px 12px;
-  font-size: 14px;
-  line-height: 1.428571429;
-  border-radius: 3px;
-  -webkit-transition: all 0.15s ease-in-out;
-  transition: all 0.15s ease-in-out;
-}
-
-.c6:focus {
-  outline: 0;
-  box-shadow: 0 0 0 3px rgba(0,0,0,0);
-}
-
-.c6:hover,
-.c6:active {
-  color: #58666e;
-  background-color: #ebebeb;
-  border-color: rgba(0,0,0,0.15);
-}
-
-.c6[disabled] {
-  opacity: 0.65;
-}
-
-.c5 {
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 38px;
-  box-sizing: border-box;
-  border-radius: 2px;
-  background-image: url(svg);
-  background-repeat: no-repeat;
-  background-size: 20px 20px;
-  background-position: center center;
-}
-
-.c4 {
-  margin-bottom: 10px;
-  position: relative;
-  width: 100%;
-  height: 40px;
-}
-
-.c2 {
-  text-align: center;
-}
-
 .c0 {
   font-size: 14px;
   -webkit-transition: -webkit-transform 400ms ease, opacity 400ms ease;
@@ -114,84 +9,34 @@ exports[`Snapshot social login basic 1`] = `
   opacity: 0;
 }
 
-.c1 {
-  --primary: 145.71 63.64% 36.67%;
-  --primary-foreground: 0 0% 100%;
-  --destructive: 5.03 68.89% 55.88%;
-  --destructive-foreground: 0 0% 100%;
-  --warning: 45 100% 51.37%;
-  --warning-foreground: 0 0% 100%;
-  --success: 145.71 63.64% 36.67%;
-  --success-foreground: 0 0% 100%;
-  --popover: 0 0% 100%;
-  --popover-foreground: 210 8.75% 31.37%;
-  --background: 0 0% 100%;
-  --border: 210 13.95% 83.14%;
-  --text: 210 8.75% 31.37%;
-  --accent: 145.71 63.64% 36.67%;
-  --muted: 210 10.81% 70.98%;
-  --input: 210 13.95% 83.14%;
-  --ring: 145.65 63.27% 61.57%;
-  --spacing-padding-y: 9px;
-  --spacing-padding-x: 12px;
-  --spacing: 10px;
-  --font-size: 14px;
-  --leading: 1.428571429;
-  --border-width: 1px;
-  --radius: 3px;
-  --button-background-color: #229955;
-  --button-hover-background-color: rgba(34,153,85,0.9);
-  --button-text-color: #ffffff;
-  --button-hover-text-color: #ffffff;
-  --button-font-weight: bold;
-  --button-border: #ced4da;
-  --button-hover-border: rgba(0,0,0,0);
-  --button-border-width: 1px;
-  --button-height: 40px;
-  --button-leading: 1.428571429;
-  --button-padding-x: 12px;
-  --button-padding-y: 9px;
-  --button-radius: 3px;
-  --button-text-size: 14px;
-  --input-background: #fff;
-  --input-border: #ced4da;
-  --input-border-width: 1px;
-  --input-disabled-background: #e9ecef;
-  --input-height: 40px;
-  --input-leading: 1.428571429;
-  --input-padding-x: 12px;
-  --input-padding-y: 9px;
-  --input-placeholder: #868e96;
-  --input-radius: 3px;
-  --input-shadow: none;
-  --input-text-color: #495057;
-  --input-text-size: 14px;
-  --link-color: #229955;
-  --link-hover-color: #145a32;
-  --link-decoration: none;
-  --link-hover-decoration: none;
-  --password-strength-color-0: #dc4e41;
-  --password-strength-color-1: #dc4e41;
-  --password-strength-color-2: #ffc107;
-  --password-strength-color-3: #4ad786;
-  --password-strength-color-4: #229955;
-}
-
 <div>
+  <style>
+    :where(.r5-theme-1sjyr8l){--background:0 0% 100%;--foreground:210 8.75% 31.37%;--primary:145.71 63.64% 36.67%;--primary-foreground:0 0% 100%;--primary-hover:145.81 63.24% 26.67%;--destructive:5.03 68.89% 55.88%;--destructive-foreground:0 0% 100%;--warning:45 100% 51.37%;--warning-foreground:0 0% 0%;--success:145.71 63.64% 36.67%;--success-foreground:0 0% 100%;--popover:0 0% 100%;--popover-foreground:210 8.75% 31.37%;--accent:145.71 63.64% 36.67%;--accent-foreground:210 8.75% 31.37%;--muted:210 15.79% 92.55%;--muted-foreground:210 10.81% 70.98%;--border:210 13.95% 83.14%;--input:210 13.95% 83.14%;--ring:145.65 63.27% 61.57%;--spacing:10px;--padding-x:12px;--padding-y:9px;--font-size:14px;--leading:1.428571429;--border-width:1px;--radius:3px;--r5-button-bg:hsl(var(--primary));--r5-button-hover-bg:hsl(var(--primary-hover));--r5-button-border-color:hsl(var(--primary));--r5-button-hover-border-color:hsl(var(--primary));--r5-button-text:hsl(var(--primary-foreground));--r5-button-hover-text:hsl(var(--primary-foreground));--r5-button-subtle-bg:hsl(var(--primary) / 0.08);--r5-button-text-size:var(--font-size);--r5-button-leading:var(--leading);--r5-button-padding-x:var(--padding-x);--r5-button-padding-y:var(--padding-y);--r5-button-radius:var(--radius);--r5-button-border-width:var(--border-width);--r5-button-font-weight:bold;--r5-button-shadow:0 0 #0000;--r5-button-height:40px;--r5-input-bg:#fff;--r5-input-text:#495057;--r5-input-placeholder-text:#868e96;--r5-input-disabled-bg:#e9ecef;--r5-input-border-color:hsl(var(--border));--r5-input-border-width:var(--border-width);--r5-input-radius:var(--radius);--r5-input-text-size:var(--font-size);--r5-input-leading:var(--leading);--r5-input-padding-x:var(--padding-x);--r5-input-padding-y:var(--padding-y);--r5-input-shadow:0 0 #0000;--r5-input-height:40px;--r5-link-text:hsl(var(--primary));--r5-link-hover-text:#145a32;--r5-link-decoration:none;--r5-link-hover-decoration:none;--r5-password-strength-bg-0:hsl(var(--destructive));--r5-password-strength-bg-1:hsl(var(--destructive));--r5-password-strength-bg-2:#ffc107;--r5-password-strength-bg-3:#4ad786;--r5-password-strength-bg-4:#229955}
+  </style>
   <div
-    class="c0 c1 r5-widget r5-social-login r5-widget-active"
+    class="c0 r5-theme-1sjyr8l r5-widget r5-social-login r5-widget-active"
     transition="entering"
   >
     <div
-      class="r5-social-buttons c2"
+      class="r5-social-buttons flex gap-2 flex-col items-stretch"
     >
       <button
-        class="c3 c4 r5-btn-social r5-btn-social-facebook"
+        class="items-center justify-center gap-2 whitespace-nowrap rounded-[var(--r5-button-radius)] text-[length:var(--r5-button-text-size)] font-[var(--r5-button-font-weight)] leading-[var(--r5-button-leading)] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 border-[length:var(--r5-button-border-width)] border-[var(--r5-button-border-color)] bg-[var(--r5-button-bg)] text-[var(--r5-button-text)] shadow-[shadow:var(--r5-button-shadow)] hover:border-[var(--r5-button-hover-border-color)] hover:bg-[var(--r5-button-hover-bg)] hover:text-[var(--r5-button-hover-text)] h-[var(--r5-button-height)] px-[var(--r5-button-padding-x)] py-[var(--r5-button-padding-y)] r5-btn-social r5-btn-social-facebook [&_svg]:size-[length:var(--r5-button-text-size)] grid grid-cols-[calc(var(--r5-button-text-size)*var(--r5-button-leading))_1fr_calc(var(--r5-button-text-size)*var(--r5-button-leading))]"
+        style="--r5-button-height: 40px; --r5-button-padding-x: 12px; --r5-button-padding-y: 9px; --r5-button-radius: 3px; --r5-button-text-size: 14px; --r5-button-font-weight: bold; --r5-button-leading: 1.428571429; --r5-button-border-width: 1px; --r5-button-shadow: 0 0 #0000; --r5-button-text: #ffffff; --r5-button-hover-text: #ffffff; --r5-button-bg: #3b5998; --r5-button-hover-bg: #2d4373; --r5-button-border-color: #3b5998; --r5-button-hover-border-color: #2d4373; --ring: 220.65 44.08% 41.37%;"
         title="Facebook"
       >
-        <span
-          class="r5-btn-social-icon c5"
-        />
+        <svg
+          class="r5-btn-social-icon"
+          preserveAspectRatio="xMinYMin meet"
+          viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <image
+            height="24"
+            href="svg"
+            width="24"
+          />
+        </svg>
         <span
           class="r5-btn-social-text"
         >
@@ -199,16 +44,49 @@ exports[`Snapshot social login basic 1`] = `
         </span>
       </button>
       <button
-        class="c6 c4 r5-btn-social r5-btn-social-google"
+        class="items-center justify-center gap-2 whitespace-nowrap rounded-[var(--r5-button-radius)] text-[length:var(--r5-button-text-size)] font-[var(--r5-button-font-weight)] leading-[var(--r5-button-leading)] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 border-[length:var(--r5-button-border-width)] border-[var(--r5-button-border-color)] bg-[var(--r5-button-bg)] text-[var(--r5-button-text)] shadow-[shadow:var(--r5-button-shadow)] hover:border-[var(--r5-button-hover-border-color)] hover:bg-[var(--r5-button-hover-bg)] hover:text-[var(--r5-button-hover-text)] h-[var(--r5-button-height)] px-[var(--r5-button-padding-x)] py-[var(--r5-button-padding-y)] r5-btn-social r5-btn-social-google [&_svg]:size-[length:var(--r5-button-text-size)] grid grid-cols-[calc(var(--r5-button-text-size)*var(--r5-button-leading))_1fr_calc(var(--r5-button-text-size)*var(--r5-button-leading))]"
+        style="--r5-button-height: 40px; --r5-button-padding-x: 12px; --r5-button-padding-y: 9px; --r5-button-radius: 3px; --r5-button-text-size: 14px; --r5-button-font-weight: bold; --r5-button-leading: 1.428571429; --r5-button-border-width: 1px; --r5-button-shadow: 0 0 #0000; --r5-button-text: #58666e; --r5-button-hover-text: #58666e; --r5-button-bg: #ffffff; --r5-button-hover-bg: #e6e6e6; --r5-button-border-color: rgba(0,0,0,.15); --r5-button-hover-border-color: #1a1a1a26; --ring: 4.64 81.17% 56.27%;"
         title="Google"
       >
-        <span
-          class="r5-btn-social-icon c5"
-        />
+        <svg
+          class="r5-btn-social-icon"
+          preserveAspectRatio="xMinYMin meet"
+          viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <image
+            height="24"
+            href="svg"
+            width="24"
+          />
+        </svg>
         <span
           class="r5-btn-social-text"
         >
           Google
+        </span>
+      </button>
+      <button
+        class="items-center justify-center gap-2 whitespace-nowrap rounded-[var(--r5-button-radius)] text-[length:var(--r5-button-text-size)] font-[var(--r5-button-font-weight)] leading-[var(--r5-button-leading)] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 border-[length:var(--r5-button-border-width)] border-[var(--r5-button-border-color)] bg-[var(--r5-button-bg)] text-[var(--r5-button-text)] shadow-[shadow:var(--r5-button-shadow)] hover:border-[var(--r5-button-hover-border-color)] hover:bg-[var(--r5-button-hover-bg)] hover:text-[var(--r5-button-hover-text)] h-[var(--r5-button-height)] px-[var(--r5-button-padding-x)] py-[var(--r5-button-padding-y)] r5-btn-social r5-btn-social-my-idp [&_svg]:size-[length:var(--r5-button-text-size)] grid grid-cols-[calc(var(--r5-button-text-size)*var(--r5-button-leading))_1fr_calc(var(--r5-button-text-size)*var(--r5-button-leading))]"
+        style="--r5-button-height: 40px; --r5-button-padding-x: 12px; --r5-button-padding-y: 9px; --r5-button-radius: 3px; --r5-button-text-size: 14px; --r5-button-font-weight: bold; --r5-button-leading: 1.428571429; --r5-button-border-width: 1px; --r5-button-shadow: 0 0 #0000; --r5-button-text: #ffffff; --r5-button-hover-text: #ffffff; --r5-button-bg: #4c1d95; --r5-button-hover-bg: #36156a; --r5-button-border-color: #4c1d95; --r5-button-hover-border-color: #36156a; --ring: 263.5 67.42% 34.9%;"
+        title="My IdP"
+      >
+        <svg
+          class="r5-btn-social-icon"
+          preserveAspectRatio="xMinYMin meet"
+          viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <image
+            height="24"
+            href="my-idp.svg"
+            width="24"
+          />
+        </svg>
+        <span
+          class="r5-btn-social-text"
+        >
+          My IdP
         </span>
       </button>
     </div>

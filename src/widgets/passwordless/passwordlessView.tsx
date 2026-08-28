@@ -4,9 +4,9 @@ import { AuthOptions, SingleFactorPasswordlessParams } from '@reachfive/identity
 
 import { CaptchaProvider, WithCaptchaProps, type WithCaptchaToken } from '@/components/captcha';
 import { Form } from '@/components/form/form';
-import { SocialButtons } from '@/components/form/socialButtonsComponent';
 import { Intro, Separator } from '@/components/miscComponent';
 import { importGoogleRecaptchaScript } from '@/components/reCaptcha';
+import { SocialButtons } from '@/components/slo/social-buttons';
 import { useI18n } from '@/contexts/i18n';
 import { useReachfive } from '@/contexts/reachfive';
 import { useRouting } from '@/contexts/routing';

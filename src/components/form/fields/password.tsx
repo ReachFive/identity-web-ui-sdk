@@ -253,13 +253,13 @@ const StrengthIndicator = function StrengthIndicator({ strength }: { strength: P
                             key={i}
                             style={
                                 {
-                                    '--strengh-color': `var(--password-strength-color-${strength.score})`,
+                                    '--r5-strength-bg': `var(--r5-password-strength-bg-${strength.score})`,
                                 } as React.CSSProperties
                             }
                             className={cn(
                                 'h-1 flex-1 rounded-full',
                                 strength.score > i
-                                    ? 'bg-[var(--strengh-color)]'
+                                    ? 'bg-[var(--r5-strength-bg)]'
                                     : 'bg-foreground/20'
                             )}
                         />
