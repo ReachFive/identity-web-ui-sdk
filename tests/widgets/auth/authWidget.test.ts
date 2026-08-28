@@ -16,10 +16,17 @@ import type {
 
 import { type I18nMessages } from '../../../src/contexts/i18n';
 import { randomString } from '../../../src/helpers/random';
-import { providers, type ProviderId } from '../../../src/providers/providers';
+import { type Provider, providers, type ProviderId } from '../../../src/providers/providers';
 import authWidget from '../../../src/widgets/auth/authWidget';
 
 import type { Config } from '../../../src/types';
+
+const customProvider: Provider = {
+    key: 'my-idp',
+    name: 'My IdP',
+    color: '#4c1d95',
+    icon: 'my-idp.svg',
+};
 
 const defaultConfig: Config = {
     clientId: 'local',
@@ -30,7 +37,8 @@ const defaultConfig: Config = {
     language: 'fr',
     pkceEnforced: false,
     isPublic: true,
-    socialProviders: ['facebook', 'google'],
+    socialProviders: ['facebook', 'google', 'my-idp'],
+    customProviders: { 'my-idp': customProvider },
     customFields: [],
     resourceBaseUrl: 'http://localhost',
     mfaSmsEnabled: false,
@@ -78,13 +86,16 @@ const defaultI18n: I18nMessages = {};
 const webauthnConfig = { ...defaultConfig, webAuthn: true };
 
 function expectSocialButtons(toBeInTheDocument = true) {
-    defaultConfig.socialProviders.forEach(provider => {
+    defaultConfig.socialProviders.forEach(providerKey => {
+        const provider =
+            providers[providerKey as ProviderId] ?? defaultConfig.customProviders?.[providerKey];
+        if (!provider) {
+            throw new Error(`Unknown provider with key "${providerKey}".`);
+        }
         if (toBeInTheDocument) {
-            expect(screen.getByTitle(providers[provider as ProviderId].name)).toBeInTheDocument();
+            expect(screen.getByTitle(provider.name)).toBeInTheDocument();
         } else {
-            expect(
-                screen.queryByTitle(providers[provider as ProviderId].name)
-            ).not.toBeInTheDocument();
+            expect(screen.queryByTitle(provider.name)).not.toBeInTheDocument();
         }
     });
 }
@@ -467,7 +478,7 @@ describe('DOM testing', () => {
 
     describe('login view', () => {
         test('default config', async () => {
-            expect.assertions(6);
+            expect.assertions(7);
             await generateComponent({});
 
             // Form button
@@ -677,7 +688,7 @@ describe('DOM testing', () => {
         });
 
         test('without forgot password', async () => {
-            expect.assertions(3);
+            expect.assertions(4);
             await generateComponent({
                 allowSignup: false,
                 allowForgotPassword: false,
@@ -704,20 +715,6 @@ describe('DOM testing', () => {
             });
 
             expect(screen.getByRole('switch', { name: 'password.show' })).toBeInTheDocument();
-        });
-
-        test('inline social buttons', async () => {
-            expect.assertions(2);
-            await generateComponent({
-                theme: {
-                    socialButton: {
-                        inline: true,
-                    },
-                },
-            });
-
-            // Social buttons
-            expectSocialButtons(true);
         });
 
         describe('i18n', () => {
@@ -777,7 +774,7 @@ describe('DOM testing', () => {
 
     describe('signup view', () => {
         test('default config', async () => {
-            expect.assertions(4);
+            expect.assertions(5);
             await generateComponent({
                 initialScreen: 'signup',
             });
@@ -787,21 +784,6 @@ describe('DOM testing', () => {
 
             // Login link
             expect(screen.getByText('signup.loginLink')).toBeInTheDocument();
-
-            // Social buttons
-            expectSocialButtons(true);
-        });
-
-        test('inline social buttons', async () => {
-            expect.assertions(2);
-            await generateComponent({
-                initialScreen: 'signup',
-                theme: {
-                    socialButton: {
-                        inline: true,
-                    },
-                },
-            });
 
             // Social buttons
             expectSocialButtons(true);
@@ -984,7 +966,7 @@ describe('DOM testing', () => {
 
     describe('with webauthn feature', () => {
         test('new login view', async () => {
-            expect.assertions(6);
+            expect.assertions(7);
 
             loginWithWebAuthn.mockRejectedValue(new Error('This is a mock.'));
 
@@ -1012,7 +994,7 @@ describe('DOM testing', () => {
         });
 
         test('old login view', async () => {
-            expect.assertions(6);
+            expect.assertions(7);
 
             loginWithWebAuthn.mockRejectedValue(new Error('This is a mock.'));
 
@@ -1248,7 +1230,7 @@ describe('DOM testing', () => {
         });
 
         test('signup view with password or webauthn', async () => {
-            expect.assertions(5);
+            expect.assertions(6);
             await generateComponent(
                 { allowWebAuthnSignup: true, initialScreen: 'signup' },
                 webauthnConfig
@@ -1356,7 +1338,7 @@ describe('DOM testing', () => {
 
     describe('with webauthn feature and without password', () => {
         test('old login view', async () => {
-            expect.assertions(6);
+            expect.assertions(7);
 
             loginWithWebAuthn.mockRejectedValue(new Error('This is a mock.'));
 
@@ -1386,7 +1368,7 @@ describe('DOM testing', () => {
         });
 
         test('signup view without password and with webauthn', async () => {
-            expect.assertions(5);
+            expect.assertions(6);
             await generateComponent(
                 {
                     allowWebAuthnSignup: true,

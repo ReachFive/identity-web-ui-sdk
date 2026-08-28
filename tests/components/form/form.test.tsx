@@ -31,6 +31,7 @@ describe('DOM testing', () => {
         pkceEnforced: false,
         isPublic: true,
         socialProviders: ['facebook', 'google'],
+        customProviders: {},
         customFields: [
             {
                 name: 'username',

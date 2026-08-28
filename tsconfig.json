@@ -22,7 +22,7 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
 
-    "baseUrl": ".",
+    /* `paths` are resolved relative to this file; `baseUrl` is deprecated as of TS 6.0. */
     "paths": {
       "@/*": ["./src/*"]
     }

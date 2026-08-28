@@ -3,7 +3,7 @@ import * as React from "react"
 import * as SelectPrimitive from "@radix-ui/react-select"
 import { Check, ChevronDown, ChevronUp } from "lucide-react"
 
-import { ThemeVariablesContainer } from "@/components/widget/widget"
+import { ThemeVariablesContainer } from "@/contexts/themeVariables"
 import { cn } from "@/lib/utils"
 
 const Select = SelectPrimitive.Root
@@ -19,8 +19,8 @@ const SelectTrigger = React.forwardRef<
   <SelectPrimitive.Trigger
     ref={ref}
     className={cn(
-      "flex h-9 w-full items-center justify-between whitespace-nowrap rounded-md border border-input bg-transparent dark:bg-input/30 px-3 py-2 text-sm shadow-sm ring-offset-background data-[placeholder]:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1",
-      "h-[var(--input-height)] px-[var(--input-padding-x)] py-[var(--input-padding-y)] text-[var(--input-text-color)] text-[length:var(--input-text-size)] leading-[var(--input-leading)] rounded-[var(--input-radius)] bg-[var(--input-background)] border-[var(--input-border)] border-[length:var(--input-border-width)] placeholder:text-[var(--input-placeholder)] disabled:bg-[var(--input-disabled-background)]",
+      "flex h-9 w-full items-center justify-between whitespace-nowrap rounded-md border border-input bg-transparent dark:bg-input/30 px-3 py-2 text-sm shadow-sm ring-offset-background data-[placeholder]:text-[var(--r5-input-placeholder-text)] focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1",
+      "h-[var(--r5-input-height)] px-[var(--r5-input-padding-x)] py-[var(--r5-input-padding-y)] text-[var(--r5-input-text)] text-[length:var(--r5-input-text-size)] leading-[var(--r5-input-leading)] rounded-[var(--r5-input-radius)] bg-[var(--r5-input-bg)] border-[var(--r5-input-border-color)] border-[length:var(--r5-input-border-width)] placeholder:text-[var(--r5-input-placeholder-text)] disabled:bg-[var(--r5-input-disabled-bg)]",
       className
     )}
     {...props}

@@ -1,9 +1,9 @@
 import React from 'react';
 
 import PasswordSignupForm from '@/components/form/passwordSignupFormComponent';
-import { SocialButtons } from '@/components/form/socialButtonsComponent';
 import { WebAuthnSignupViewButtons } from '@/components/form/webAuthAndPasswordButtonsComponent';
 import { Alternative, Heading, Link, Separator } from '@/components/miscComponent';
+import { SocialButtons } from '@/components/slo/social-buttons';
 import { useI18n } from '@/contexts/i18n';
 import { useRouting } from '@/contexts/routing';
 import { selectLogin } from '@/widgets/auth/authWidget.tsx';

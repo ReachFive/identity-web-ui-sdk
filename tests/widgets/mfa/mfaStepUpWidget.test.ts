@@ -24,6 +24,7 @@ const defaultConfig: Config = {
     pkceEnforced: false,
     isPublic: true,
     socialProviders: ['facebook', 'google'],
+    customProviders: {},
     customFields: [],
     resourceBaseUrl: 'http://localhost',
     mfaSmsEnabled: true,

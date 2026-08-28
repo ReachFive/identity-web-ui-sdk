@@ -1,7 +1,8 @@
 import React, { PropsWithChildren } from 'react';
 
-import { darken } from 'polished';
 import styled, { useTheme, type DefaultTheme } from 'styled-components';
+
+import { darkenColor } from '@/lib/utils';
 
 const buttonTheme = <
     ThemePrefix extends 'button' | 'socialButton',
@@ -56,8 +57,8 @@ export const Button = styled.button<ExtraButtonProps>`
     &:active {
         color: ${props => props.$color};
         background-color: ${props =>
-            darken(0.08, props.$background ?? props.theme.backgroundColor)};
-        border-color: ${props => darken(0.08, props.$border ?? props.theme.borderColor)};
+            darkenColor(props.$background ?? props.theme.backgroundColor, 8)};
+        border-color: ${props => darkenColor(props.$border ?? props.theme.borderColor, 8)};
     }
 
     &[disabled] {

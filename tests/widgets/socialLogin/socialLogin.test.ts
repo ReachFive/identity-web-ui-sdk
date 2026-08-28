@@ -10,10 +10,17 @@ import 'jest-styled-components';
 import { type Client } from '@reachfive/identity-core';
 
 import { type I18nMessages } from '../../../src/contexts/i18n';
-import { providers, type ProviderId } from '../../../src/providers/providers';
+import { type Provider, providers, type ProviderId } from '../../../src/providers/providers';
 import socialLoginWidget from '../../../src/widgets/socialLogin/socialLoginWidget';
 
 import type { Config, OnError, OnSuccess } from '../../../src/types';
+
+const customProvider: Provider = {
+    key: 'my-idp',
+    name: 'My IdP',
+    color: '#4c1d95',
+    icon: 'my-idp.svg',
+};
 
 const defaultConfig: Config = {
     clientId: 'local',
@@ -24,7 +31,8 @@ const defaultConfig: Config = {
     language: 'fr',
     pkceEnforced: false,
     isPublic: true,
-    socialProviders: ['facebook', 'google'],
+    socialProviders: ['facebook', 'google', 'my-idp'],
+    customProviders: { 'my-idp': customProvider },
     customFields: [],
     resourceBaseUrl: 'http://localhost',
     mfaSmsEnabled: false,
@@ -45,6 +53,21 @@ const defaultConfig: Config = {
 };
 
 const defaultI18n: I18nMessages = {};
+
+function expectSocialButtons(toBeInTheDocument = true) {
+    defaultConfig.socialProviders.forEach(providerKey => {
+        const provider =
+            providers[providerKey as ProviderId] ?? defaultConfig.customProviders?.[providerKey];
+        if (!provider) {
+            throw new Error(`Unknown provider with key "${providerKey}".`);
+        }
+        if (toBeInTheDocument) {
+            expect(screen.getByTitle(provider.name)).toBeInTheDocument();
+        } else {
+            expect(screen.queryByTitle(provider.name)).not.toBeInTheDocument();
+        }
+    });
+}
 
 describe('Snapshot', () => {
     const generateSnapshot =
@@ -108,9 +131,7 @@ describe('DOM testing', () => {
 
         await generateComponent({});
 
-        defaultConfig.socialProviders.forEach(provider => {
-            expect(screen.getByTitle(providers[provider as ProviderId].name)).toBeInTheDocument();
-        });
+        expectSocialButtons(true);
 
         const provider = defaultConfig.socialProviders[0] as ProviderId;
         const button = screen.getByTitle(providers[provider].name);
@@ -127,18 +148,6 @@ describe('DOM testing', () => {
         expect(onError).not.toBeCalled();
     });
 
-    test('themed', async () => {
-        await generateComponent({
-            theme: {
-                primaryColor: '#ff0000',
-            },
-        });
-
-        defaultConfig.socialProviders.forEach(provider => {
-            expect(screen.getByTitle(providers[provider as ProviderId].name)).toBeInTheDocument();
-        });
-    });
-
     test('login with social failure', async () => {
         const user = userEvent.setup();
 
@@ -147,9 +156,7 @@ describe('DOM testing', () => {
 
         await generateComponent({});
 
-        defaultConfig.socialProviders.forEach(provider => {
-            expect(screen.getByTitle(providers[provider as ProviderId].name)).toBeInTheDocument();
-        });
+        expectSocialButtons(true);
 
         const provider = defaultConfig.socialProviders[0] as ProviderId;
         const button = screen.getByTitle(providers[provider].name);

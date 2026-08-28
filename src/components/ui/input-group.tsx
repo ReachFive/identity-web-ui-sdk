@@ -16,7 +16,7 @@ function InputGroup({ className, ...props }: React.ComponentProps<"div">) {
         "group/input-group border-input dark:bg-input/30 shadow-xs relative flex w-full items-center rounded-md border outline-none transition-[color,box-shadow]",
         "h-9 has-[>textarea]:h-auto",
         // Reachfive's theme variables
-        "h-[var(--input-height)] rounded-[var(--input-radius)] bg-[var(--input-background)] border-[var(--input-border)] border-[length:var(--input-border-width)] shadow-[var(--input-shadow)] disabled:bg-[var(--input-disabled-background)]",
+        "h-[var(--r5-input-height)] rounded-[var(--r5-input-radius)] bg-[var(--r5-input-bg)] border-[var(--r5-input-border-color)] border-[length:var(--r5-input-border-width)] shadow-[shadow:var(--r5-input-shadow)] disabled:bg-[var(--r5-input-disabled-bg)]",
 
         // Variants based on alignment.
         "has-[>[data-align=inline-start]]:[&>input]:pl-2",
@@ -38,18 +38,18 @@ function InputGroup({ className, ...props }: React.ComponentProps<"div">) {
 }
 
 const inputGroupAddonVariants = cva(
-  "text-muted-foreground flex h-auto cursor-text select-none items-center justify-center gap-2 py-[var(--input-padding-y)] text-sm font-medium group-data-[disabled=true]/input-group:opacity-50 [&>kbd]:rounded-[calc(var(--input-radius)-5px)] [&>svg:not([class*='size-'])]:size-4",
+  "text-muted-foreground flex h-auto cursor-text select-none items-center justify-center gap-2 py-[var(--r5-input-padding-y)] text-sm font-medium group-data-[disabled=true]/input-group:opacity-50 [&>kbd]:rounded-[calc(var(--r5-input-radius)-5px)] [&>svg:not([class*='size-'])]:size-4",
   {
     variants: {
       align: {
         "inline-start":
-          "order-first pl-[var(--input-padding-x)] has-[>button]:ml-[-0.45rem] has-[>kbd]:ml-[-0.35rem]",
+          "order-first pl-[var(--r5-input-padding-x)] has-[>button]:ml-[-0.45rem] has-[>kbd]:ml-[-0.35rem]",
         "inline-end":
-          "order-last pr-[var(--input-padding-x)] has-[>button]:mr-[-0.4rem] has-[>kbd]:mr-[-0.35rem]",
+          "order-last pr-[var(--r5-input-padding-x)] has-[>button]:mr-[-0.4rem] has-[>kbd]:mr-[-0.35rem]",
         "block-start":
-          "[.border-b]:pb-[var(--input-padding-y)] order-first w-full justify-start px-[var(--input-padding-x)] pt-[var(--input-padding-y)] group-has-[>input]/input-group:pt-2.5",
+          "[.border-b]:pb-[var(--r5-input-padding-y)] order-first w-full justify-start px-[var(--r5-input-padding-x)] pt-[var(--r5-input-padding-y)] group-has-[>input]/input-group:pt-2.5",
         "block-end":
-          "[.border-t]:pt-[var(--input-padding-y)] order-last w-full justify-start px-[var(--input-padding-x)] pb-[var(--input-padding-y)] group-has-[>input]/input-group:pb-2.5",
+          "[.border-t]:pt-[var(--r5-input-padding-y)] order-last w-full justify-start px-[var(--r5-input-padding-x)] pb-[var(--r5-input-padding-y)] group-has-[>input]/input-group:pb-2.5",
       },
     },
     defaultVariants: {
@@ -83,9 +83,9 @@ function InputGroupAddon({
 const inputGroupButtonVariants = cva("flex items-center gap-2 text-sm shadow-none", {
   variants: {
     size: {
-      xs: "h-6 gap-1 rounded-[calc(var(--input-radius)-5px)] px-2 has-[>svg]:px-2 [&>svg:not([class*='size-'])]:size-3.5",
+      xs: "h-6 gap-1 rounded-[calc(var(--r5-input-radius)-5px)] px-2 has-[>svg]:px-2 [&>svg:not([class*='size-'])]:size-3.5",
       sm: "h-8 gap-1.5 rounded-md px-2.5 has-[>svg]:px-2.5",
-      "icon-xs": "size-6 rounded-[calc(var(--input-radius)-5px)] p-0 has-[>svg]:p-0",
+      "icon-xs": "size-6 rounded-[calc(var(--r5-input-radius)-5px)] p-0 has-[>svg]:p-0",
       "icon-sm": "size-8 p-0 has-[>svg]:p-0",
     },
   },

@@ -2,8 +2,8 @@ import React from 'react';
 
 import type { AuthOptions } from '@reachfive/identity-core';
 
-import { SocialButtons } from '@/components/form/socialButtonsComponent';
 import { Alternative, Heading, Intro, Link } from '@/components/miscComponent';
+import { SocialButtons } from '@/components/slo/social-buttons';
 import { useI18n } from '@/contexts/i18n';
 import { PropsWithSession } from '@/contexts/session';
 import { selectLogin } from '@/widgets/auth/authWidget.tsx';
