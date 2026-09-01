@@ -230,19 +230,30 @@ const useProvidePhoneNumberInput = ({
             }
         }
 
-        // Check and update possibility
-        const possible = number?.isPossible();
+        // Reformat the value now that the user is done typing.
+        //
+        // In international mode this happens whatever the number's length. The
+        // calling code says which country the number is being read against, and
+        // withholding it from a number too short or too long for that country is
+        // what makes an invalid number look like a plain national one: a 9 digit
+        // number stayed "0769521258" under Turkey, which requires 10, while
+        // selecting Turkey from the dropdown did prefix it. Showing "+90" is a
+        // display concern; rejecting the number is `predefinedFields.phoneNumber`'s.
+        //
+        // `formatNational()` carries no such information and drops the trunk
+        // prefix on an impossible number ("07 69" -> "769"), so it stays gated on
+        // `isPossible()`.
+        const nextValue = allowInternational
+            ? number?.formatInternational()
+            : number?.isPossible()
+              ? number.formatNational()
+              : undefined;
 
-        if (number && possible) {
-            // Reformat the phone number as international if international numbers
-            // are enabled.
+        if (nextValue !== undefined) {
             formatter.reset();
-            const nextValue = allowInternational
-                ? number.formatInternational()
-                : number.formatNational();
             setInputValue(formatter.input(nextValue));
         } else {
-            // Format the phone number
+            // Nothing to reformat against — keep the value as typed.
             setInputValue(formatter.input(''));
         }
     }, [country, getFormatter, allowInternational, onChange]);
