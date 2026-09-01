@@ -4,6 +4,16 @@ import { AsYouType, CountryCode } from 'libphonenumber-js/min';
 
 import { InputField } from '@/components/form/fields/input';
 
+/**
+ * `AsYouType` silently discards every character it cannot read as part of a phone number, so an
+ * email or a custom identifier reaches it as its digits alone: `ccu123456789@yopmail.com` is seen
+ * as `123456789`, a perfectly possible French number. Acting on that would replace what the user
+ * is typing with the phone number the formatter believes it found, hence: the formatter's output
+ * is only trusted while the raw input still looks like a phone number — digits and the separators
+ * a phone number may carry, nothing else.
+ */
+const PHONE_NUMBER_SHAPE = /^[+\d\s().\-/]*$/;
+
 type IdentifierFieldProps = React.ComponentPropsWithoutRef<typeof InputField> & {
     defaultCountry?: CountryCode;
     value?: string;
@@ -20,6 +30,27 @@ const IdentifierField = React.forwardRef<HTMLInputElement, IdentifierFieldProps>
 
         const formatter = React.useMemo(() => new AsYouType(country), []);
 
+        const isPhoneNumber = React.useCallback(
+            (rawValue: string) => Boolean(withPhoneNumber) && PHONE_NUMBER_SHAPE.test(rawValue),
+            [withPhoneNumber]
+        );
+
+        const handleFormatInput = React.useCallback(
+            (rawValue: string) => {
+                if (!isPhoneNumber(rawValue)) return;
+                const number = formatter.getNumber();
+                if (number?.isPossible()) {
+                    if (number.country && number.country !== country) {
+                        setCountry(number.country);
+                    }
+                    const nextValue = formatter.getChars();
+                    formatter.reset();
+                    setInputValue(formatter.input(nextValue));
+                }
+            },
+            [formatter, isPhoneNumber, country]
+        );
+
         const handleChange: React.ChangeEventHandler<HTMLInputElement> = React.useCallback(
             e => {
                 const newValue = e.target.value;
@@ -34,7 +65,7 @@ const IdentifierField = React.forwardRef<HTMLInputElement, IdentifierFieldProps>
                 if (isAppend) {
                     const appended = newValue.slice(inputValue.length);
                     formatter.input(appended);
-                    handleFormatInput();
+                    handleFormatInput(newValue);
                 } else {
                     // Reset the formatter, but do not reformat.
                     // Doing so now will cause the user to lose their cursor position
@@ -43,30 +74,18 @@ const IdentifierField = React.forwardRef<HTMLInputElement, IdentifierFieldProps>
                     formatter.input(newValue);
                 }
 
-                const number = formatter.getNumber();
+                const number = isPhoneNumber(newValue) ? formatter.getNumber() : undefined;
                 const e164 = number?.number ?? '';
                 const value = number?.isPossible() ? e164 : newValue;
                 onChange?.({ target: { value } } as React.ChangeEvent<HTMLInputElement>);
             },
-            [inputValue, formatter, onChange]
+            [inputValue, formatter, handleFormatInput, isPhoneNumber, onChange]
         );
-
-        const handleFormatInput = React.useCallback(() => {
-            const number = formatter.getNumber();
-            if (withPhoneNumber && number?.isPossible()) {
-                if (number?.country && number.country !== country) {
-                    setCountry(number.country);
-                }
-                const nextValue = formatter.getChars();
-                formatter.reset();
-                setInputValue(formatter.input(nextValue));
-            }
-        }, [formatter]);
 
         const handleInputBlur = React.useCallback(() => {
             onBlur?.({ target: { value: inputValue } } as React.FocusEvent<HTMLInputElement>);
-            handleFormatInput();
-        }, [handleFormatInput, onBlur]);
+            handleFormatInput(inputValue);
+        }, [inputValue, handleFormatInput, onBlur]);
 
         // Sync display when value prop changes externally (form reset, etc.)
         React.useLayoutEffect(() => {
@@ -76,7 +95,7 @@ const IdentifierField = React.forwardRef<HTMLInputElement, IdentifierFieldProps>
                 if (value) {
                     formatter.input(value);
                 }
-                handleFormatInput();
+                handleFormatInput(value);
             }
         }, [value]);
 
