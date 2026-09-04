@@ -28,6 +28,9 @@ describe('buildThemeVariables', () => {
             ['--r5-input-radius', 'var(--radius)'],
             ['--r5-link-text', 'hsl(var(--primary))'],
             ['--r5-password-strength-bg-0', 'hsl(var(--destructive))'],
+            ['--r5-password-strength-bg-1', 'hsl(var(--destructive))'],
+            ['--r5-password-strength-bg-2', 'hsl(var(--warning))'],
+            ['--r5-password-strength-bg-4', 'hsl(var(--success))'],
         ])('%s -> %s', (property, expected) => {
             expect(build()[property]).toBe(expected);
         });
@@ -63,6 +66,13 @@ describe('buildThemeVariables', () => {
             );
         });
 
+        test('passwordStrengthValidator.color0 replaces the palette pointer', () => {
+            const variables = build({ passwordStrengthValidator: { color0: '#654321' } });
+            expect(variables['--r5-password-strength-bg-0']).toBe('#654321');
+            // an unset score still points at the palette
+            expect(variables['--r5-password-strength-bg-1']).toBe('hsl(var(--destructive))');
+        });
+
         test('a zero value is an override, not an absent option', () => {
             expect(build({ button: { paddingX: 0 } })['--r5-button-padding-x']).toBe('0px');
         });
@@ -81,6 +91,8 @@ describe('buildThemeVariables', () => {
             primaryColor: '#3366ff',
             borderColor: '#778899',
             dangerColor: '#ff8800',
+            warningColor: '#8800ff',
+            successColor: '#00ccaa',
             fontSize: 18,
             lineHeight: 1.6,
             borderRadius: 9,
@@ -98,16 +110,11 @@ describe('buildThemeVariables', () => {
             ['--r5-button-hover-text', '--primary-foreground', theme.button.hoverColor],
             ['--r5-input-border-color', '--border', theme.input.borderColor],
             ['--r5-link-text', '--primary', theme.link.color],
-            [
-                '--r5-password-strength-bg-0',
-                '--destructive',
-                theme.passwordStrengthValidator.color0,
-            ],
-            [
-                '--r5-password-strength-bg-1',
-                '--destructive',
-                theme.passwordStrengthValidator.color1,
-            ],
+            // scores 0 and 1 default to `dangerColor`, the color `--destructive` holds
+            ['--r5-password-strength-bg-0', '--destructive', theme.dangerColor],
+            ['--r5-password-strength-bg-1', '--destructive', theme.dangerColor],
+            ['--r5-password-strength-bg-2', '--warning', theme.warningColor],
+            ['--r5-password-strength-bg-4', '--success', theme.successColor],
         ])('%s points at %s, which holds the resolved color', (token, role, resolved) => {
             expect(variables[token]).toBe(`hsl(var(${role}))`);
             expect(variables[role]).toBe(colorToHSL(resolved));
@@ -129,6 +136,15 @@ describe('buildThemeVariables', () => {
         ])('%s points at %s, which holds the resolved scale', (token, role, resolved) => {
             expect(variables[token]).toBe(`var(${role})`);
             expect(variables[role]).toBe(resolved);
+        });
+
+        // Score 3 has no row in the table above: it points at two variables instead of one.
+        test('--r5-password-strength-bg-3 blends the two roles it sits between', () => {
+            expect(variables['--r5-password-strength-bg-3']).toBe(
+                'color-mix(in oklch, hsl(var(--warning)), hsl(var(--success)))'
+            );
+            expect(variables['--warning']).toBe(colorToHSL(theme.warningColor));
+            expect(variables['--success']).toBe(colorToHSL(theme.successColor));
         });
 
         test('--primary matches the resolved button background', () => {
@@ -210,13 +226,32 @@ describe('buildThemeVariables', () => {
             expect(build()['--destructive-foreground']).toBe('0 0% 100%');
         });
 
+        test('the success role reuses the brand exception, the warning role does not', () => {
+            const variables = build();
+            // the default success color is the brand green, so white is pinned as on a button
+            expect(variables['--success-foreground']).toBe('0 0% 100%');
+            // white on the default amber would be unreadable, so the contrast decides
+            expect(variables['--warning-foreground']).toBe('0 0% 0%');
+        });
+
+        test.each([
+            ['warning', '#000080', '0 0% 100%', 'navy, dark'],
+            ['warning', '#ffff00', '0 0% 0%', 'yellow, light'],
+            ['success', '#000080', '0 0% 100%', 'navy, dark'],
+            ['success', '#ffff00', '0 0% 0%', 'yellow, light'],
+        ])('%sColor %s -> --%s-foreground %s (%s)', (role, color, expected) => {
+            expect(build({ [`${role}Color`]: color })[`--${role}-foreground`]).toBe(expected);
+        });
+
         test('a light danger color drops to black', () => {
             expect(build({ dangerColor: '#ffff00' })['--destructive-foreground']).toBe('0 0% 0%');
         });
 
-        test('the destructive exception does not leak into the primary role', () => {
-            // A tenant picking the brand red as their *primary* still gets the derived color.
-            expect(build({ primaryColor: '#dc4e41' })['--primary-foreground']).toBe('0 0% 0%');
+        test('the pinned white follows a brand color into another role', () => {
+            // The exception is keyed to the color, not to the role it defaults to: a tenant
+            // picking the brand red as their *primary* gets the same white a destructive
+            // surface does.
+            expect(build({ primaryColor: '#dc4e41' })['--primary-foreground']).toBe('0 0% 100%');
         });
     });
 

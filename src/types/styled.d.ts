@@ -182,35 +182,33 @@ export interface SocialButtonTheme
     extends
         Omit<ButtonTheme, ProviderBrandedColors | 'focusBoxShadow'>,
         Partial<Pick<ButtonTheme, ProviderBrandedColors>> {
-    /**
-     * Boolean that specifies if the buttons are inline (horizonally-aligned).
-     *
-     * Also drives the label: an inline row renders icon-only buttons, a stacked column renders
-     * labelled ones. @see components/slo/social-buttons
-     */
+    /** Boolean that specifies if the buttons are inline (horizonally-aligned). */
     inline: boolean;
     /**
      * @deprecated Has no effect. Social buttons take their focus ring from the provider's own
-     * brand color, applied through the `--ring` custom property. Still computed so that reading
-     * it keeps working, but changing it changes nothing.
+     * brand color, applied through the `--ring` custom property.
      */
     focusBoxShadow: (color?: CSSProperties['color']) => NonNullable<CSSProperties['boxShadow']>;
 }
 
+/** Colors of the five password strength scores. */
 export interface PasswordStrengthTheme {
-    color0: NonNullable<CSSProperties['color']>;
-    color1: NonNullable<CSSProperties['color']>;
-    color2: NonNullable<CSSProperties['color']>;
-    color3: NonNullable<CSSProperties['color']>;
-    color4: NonNullable<CSSProperties['color']>;
+    color0?: NonNullable<CSSProperties['color']>;
+    color1?: NonNullable<CSSProperties['color']>;
+    color2?: NonNullable<CSSProperties['color']>;
+    color3?: NonNullable<CSSProperties['color']>;
+    color4?: NonNullable<CSSProperties['color']>;
 }
 
 export interface Theme extends BaseTheme {
+    /** Link theming options. */
     link: LinkTheme;
+    /** Input theming options. */
     input: InputTheme;
     /** Button theming options. */
     button: ButtonTheme;
     /** Social button theming options. */
     socialButton: SocialButtonTheme;
+    /** Password strength scores color options */
     passwordStrengthValidator: PasswordStrengthTheme;
 }

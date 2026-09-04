@@ -94,13 +94,8 @@ function expectValidTheme(theme: Partial<Theme>) {
     expect(theme.socialButton).toHaveProperty('boxShadow');
     expect(theme.socialButton).toHaveProperty('focusBoxShadow');
     expect(theme.socialButton).toHaveProperty('height');
-    // passwordStrengthValidator
+    // passwordStrengthValidator: the object is always present, the scores only when the theme sets them
     expect(theme).toHaveProperty('passwordStrengthValidator');
-    expect(theme.passwordStrengthValidator).toHaveProperty('color0');
-    expect(theme.passwordStrengthValidator).toHaveProperty('color1');
-    expect(theme.passwordStrengthValidator).toHaveProperty('color2');
-    expect(theme.passwordStrengthValidator).toHaveProperty('color3');
-    expect(theme.passwordStrengthValidator).toHaveProperty('color4');
 }
 
 describe('theme', () => {
@@ -243,15 +238,19 @@ describe('theme', () => {
             expect(actual.socialButton.hoverColor).toBeUndefined();
             expect(actual.socialButton.hoverBackground).toBeUndefined();
             expect(actual.socialButton.hoverBorderColor).toBeUndefined();
-            // passwordStrengthValidator
-            expect(actual).toHaveProperty('passwordStrengthValidator.color0', actual.dangerColor);
-            expect(actual).toHaveProperty('passwordStrengthValidator.color1', actual.dangerColor);
-            expect(actual).toHaveProperty('passwordStrengthValidator.color2', actual.warningColor);
-            expect(actual).toHaveProperty(
-                'passwordStrengthValidator.color3',
-                lightenColor(actual.successColor, 20)
-            );
-            expect(actual).toHaveProperty('passwordStrengthValidator.color4', actual.successColor);
+            // the scores stay unset so that `buildThemeVariables` can apply the defaults
+            expect(actual.passwordStrengthValidator).toEqual({});
+        });
+
+        test('should carry the password strength colors through untouched', () => {
+            const actual = buildTheme({
+                passwordStrengthValidator: { color2: '#abcdef', color3: '#fedcba' },
+            });
+
+            expect(actual.passwordStrengthValidator).toEqual({
+                color2: '#abcdef',
+                color3: '#fedcba',
+            });
         });
 
         test('should return default theme with overrided values', () => {
