@@ -79,58 +79,28 @@ export const _blockHeight = (
 /**
  * Text color the design system pins on its own brand colors, overriding the derived,
  * contrast-driven value.
- *
- * {@link pickByLightness} would pick black on both of them: white is 3.65:1 on the brand green
- * against black's 5.76:1, and 4.03:1 on the brand red against 5.21:1. The design system mandates
- * white in both places, and that is a deliberate, documented exception — neither meets WCAG 2.x AA
- * for normal text.
  */
 const brandSurfaceTextColor = '#ffffff';
 
 /**
- * Builds the resolver for "text rendered on a filled surface of some color".
- *
- * The exception above is keyed to one specific `brandColor`, which keeps it tied to the role it
- * was granted for: a tenant who picks the brand red as their *primary* color still gets the
- * contrast-derived text color on their buttons. Every color other than `brandColor` — including a
- * tenant's own — keeps the derived value.
+ * Brand surfaces the pinned text color applies to.
  *
  * Normalises through hex so a brand color is recognised whatever notation it is written in
  * (`#229955`, `#229955` uppercased, `rgb(34, 153, 85)`, …).
  */
-const textColorOn =
-    (brandColor: string) =>
-    (color: string): string =>
-        toHexColor(color) === toHexColor(brandColor)
-            ? brandSurfaceTextColor
-            : derivedTextColor(color);
+const brandSurfaces = new Set(
+    [primitiveTheme.primaryColor, primitiveTheme.dangerColor, primitiveTheme.successColor].map(
+        toHexColor
+    )
+);
 
-/** Text color a surface gets from its own contrast, with no design-system exception applied. */
-const derivedTextColor = (color: string): string => pickByLightness(color, '#ffffff', '#000000');
+/** Text color picked from the contrast of the surface color, without the brand exception. */
+export const derivedTextColor = (color: string): string =>
+    pickByLightness(color, '#ffffff', '#000000');
 
-/** Text color to render on a filled button standing on `primaryColor`. */
-export const buttonTextColor = textColorOn(primitiveTheme.primaryColor);
-
-/** Text color to render on a destructive surface standing on `dangerColor`. */
-export const destructiveTextColor = textColorOn(primitiveTheme.dangerColor);
-
-/**
- * Text color to render on a success surface standing on `successColor`.
- *
- * The default success color *is* the brand green, so it inherits the same pinned white as a
- * filled button — one exception, applied consistently wherever that green becomes a surface.
- */
-export const successTextColor = textColorOn(primitiveTheme.successColor);
-
-/**
- * Text color to render on a warning surface standing on `warningColor`.
- *
- * The only one of the four with no pinned exception, and deliberately so: the design system
- * mandates white on the green and the red, both of which merely fall short of AA. White on the
- * default amber is 1.63:1 against black's 12.88:1 — pinning it there would be unreadable, not
- * just sub-AA. The amber takes the contrast-derived color like any tenant color would.
- */
-export const warningTextColor = derivedTextColor;
+/** Text color to render on a filled surface of `color`. */
+export const surfaceTextColor = (color: string): string =>
+    brandSurfaces.has(toHexColor(color)) ? brandSurfaceTextColor : derivedTextColor(color);
 
 export const inputBtnFocusBoxShadow = (
     color?: CSSProperties['color']
@@ -200,9 +170,9 @@ export const buildTheme = (themeOptions: ThemeOptions = {} as Partial<ThemeOptio
         borderRadius: base.borderRadius,
         borderWidth: base.borderWidth,
         boxShadow: 'none',
-        color: buttonTextColor(base.primaryColor),
+        color: surfaceTextColor(base.primaryColor),
         hoverBackground: shadeColor(base.primaryColor),
-        hoverColor: buttonTextColor(base.primaryColor),
+        hoverColor: surfaceTextColor(base.primaryColor),
         hoverBorderColor: base.primaryColor,
         ...customButton,
     };
@@ -247,9 +217,8 @@ export const buildTheme = (themeOptions: ThemeOptions = {} as Partial<ThemeOptio
                 socialButton.borderWidth
             ),
         },
-        // Deliberately left as the caller wrote it: the per-score defaults are derived from
-        // `dangerColor`, `warningColor` and `successColor`, and resolving them here would cost
-        // scores 0 and 1 their `--destructive` pointer. @see core/themeVariables
-        passwordStrengthValidator: { ...customBase.passwordStrengthValidator },
+        passwordStrengthValidator: {
+            ...customBase.passwordStrengthValidator,
+        },
     };
 };

@@ -1,7 +1,7 @@
 import { colorToHSL, fadeColor, shadeColor } from '@/lib/utils';
 import { Theme, ThemeOptions } from '@/types/styled';
 
-import { buttonTextColor, destructiveTextColor, successTextColor, warningTextColor } from './theme';
+import { derivedTextColor, surfaceTextColor } from './theme';
 
 /** The CSS custom properties a widget is rendered with, as a React `style` object. */
 export type ThemeVariables = Record<string, string>;
@@ -73,18 +73,14 @@ export function buildThemeVariables(options: ThemeOptions, theme: Theme): ThemeV
         '--background': colorToHSL(theme.backgroundColor),
         '--foreground': colorToHSL(theme.textColor),
         '--primary': colorToHSL(theme.primaryColor),
-        // Contrast-derived rather than a fixed white, so it agrees with `theme.button.color`:
-        // the `--r5-button-text` pointer below targets it.
-        '--primary-foreground': colorToHSL(buttonTextColor(theme.primaryColor)),
-        // The shade `button.hoverBackground` defaults to. Promoted to the palette so that
-        // overriding `--primary` in CSS also moves button hover states.
+        '--primary-foreground': colorToHSL(surfaceTextColor(theme.primaryColor)),
         '--primary-hover': colorToHSL(shadeColor(theme.primaryColor)),
         '--destructive': colorToHSL(theme.dangerColor),
-        '--destructive-foreground': colorToHSL(destructiveTextColor(theme.dangerColor)),
+        '--destructive-foreground': colorToHSL(surfaceTextColor(theme.dangerColor)),
         '--warning': colorToHSL(theme.warningColor),
-        '--warning-foreground': colorToHSL(warningTextColor(theme.warningColor)),
+        '--warning-foreground': colorToHSL(derivedTextColor(theme.warningColor)),
         '--success': colorToHSL(theme.successColor),
-        '--success-foreground': colorToHSL(successTextColor(theme.successColor)),
+        '--success-foreground': colorToHSL(surfaceTextColor(theme.successColor)),
         '--popover': colorToHSL(theme.backgroundColor),
         '--popover-foreground': colorToHSL(theme.textColor),
         '--accent': colorToHSL(theme.primaryColor),
@@ -104,15 +100,14 @@ export function buildThemeVariables(options: ThemeOptions, theme: Theme): ThemeV
         '--border-width': `${theme.borderWidth}px`,
         '--radius': `${theme.borderRadius}px`,
 
-        /* Button. `theme.button.*` describes the filled button; other variants derive from it. */
+        /* Button. */
         '--r5-button-bg': button?.background ?? 'hsl(var(--primary))',
         '--r5-button-hover-bg': button?.hoverBackground ?? 'hsl(var(--primary-hover))',
         '--r5-button-border-color': button?.borderColor ?? 'hsl(var(--primary))',
         '--r5-button-hover-border-color': button?.hoverBorderColor ?? 'hsl(var(--primary))',
         '--r5-button-text': button?.color ?? 'hsl(var(--primary-foreground))',
         '--r5-button-hover-text': button?.hoverColor ?? 'hsl(var(--primary-foreground))',
-        // Hover surface for the `outline` and `ghost` variants. `fadeColor`'s second argument is
-        // how much transparency to *add*, so the resulting alpha is `1 - amount`.
+        // Hover surface for the `outline` and `ghost` variants.
         '--r5-button-subtle-bg': button?.background
             ? fadeColor(button.background, 1 - SUBTLE_BG_ALPHA)
             : `hsl(var(--primary) / ${SUBTLE_BG_ALPHA})`,
@@ -124,11 +119,9 @@ export function buildThemeVariables(options: ThemeOptions, theme: Theme): ThemeV
         '--r5-button-border-width': px(button?.borderWidth, 'var(--border-width)'),
         '--r5-button-font-weight': `${theme.button.fontWeight}`,
         '--r5-button-shadow': composableShadow(`${theme.button.boxShadow}`),
-        // Arithmetic over four other tokens; no CSS equivalent.
         '--r5-button-height': `${theme.button.height}px`,
 
-        /* Input. The color defaults are fixed constants in `baseInputTheme`, not derived from the
-           palette, so they stay literal. */
+        /* Input */
         '--r5-input-bg': theme.input.background,
         '--r5-input-text': theme.input.color,
         '--r5-input-placeholder-text': theme.input.placeholderColor,
@@ -143,19 +136,13 @@ export function buildThemeVariables(options: ThemeOptions, theme: Theme): ThemeV
         '--r5-input-shadow': composableShadow(`${theme.input.boxShadow}`),
         '--r5-input-height': `${theme.input.height}px`,
 
-        /* Link. */
+        /* Link */
         '--r5-link-text': link?.color ?? 'hsl(var(--primary))',
-        // `darkenColor(color, 15)` — link-specific math, so no palette token to point at.
         '--r5-link-hover-text': theme.link.hoverColor,
         '--r5-link-decoration': `${theme.link.decoration}`,
         '--r5-link-hover-decoration': `${theme.link.hoverDecoration}`,
 
-        /* Password strength. Every score defaults to a palette role unchanged, so it points at
-           that role until the theme names a color of its own. Score 3 sits halfway between the
-           warning and the success color, so it reads as its own step rather than as a paler
-           score 4 — `oklch` because that is the space colorizr's `mix` interpolates in, so the
-           CSS blend lands on the color the JS one used to compute. Doing it in CSS keeps score 3
-           a pointer like the other four: overriding `--warning` moves it too. */
+        /* Password strength. */
         '--r5-password-strength-bg-0': passwordStrength?.color0 ?? 'hsl(var(--destructive))',
         '--r5-password-strength-bg-1': passwordStrength?.color1 ?? 'hsl(var(--destructive))',
         '--r5-password-strength-bg-2': passwordStrength?.color2 ?? 'hsl(var(--warning))',

@@ -69,7 +69,7 @@ describe('buildThemeVariables', () => {
         test('passwordStrengthValidator.color0 replaces the palette pointer', () => {
             const variables = build({ passwordStrengthValidator: { color0: '#654321' } });
             expect(variables['--r5-password-strength-bg-0']).toBe('#654321');
-            // the scores it does not name keep pointing at the palette
+            // an unset score still points at the palette
             expect(variables['--r5-password-strength-bg-1']).toBe('hsl(var(--destructive))');
         });
 
@@ -110,8 +110,7 @@ describe('buildThemeVariables', () => {
             ['--r5-button-hover-text', '--primary-foreground', theme.button.hoverColor],
             ['--r5-input-border-color', '--border', theme.input.borderColor],
             ['--r5-link-text', '--primary', theme.link.color],
-            // the scale carries no value of its own until the theme names one: scores 0 and 1
-            // default to `dangerColor`, which is exactly what `--destructive` holds
+            // scores 0 and 1 default to `dangerColor`, the color `--destructive` holds
             ['--r5-password-strength-bg-0', '--destructive', theme.dangerColor],
             ['--r5-password-strength-bg-1', '--destructive', theme.dangerColor],
             ['--r5-password-strength-bg-2', '--warning', theme.warningColor],
@@ -139,19 +138,13 @@ describe('buildThemeVariables', () => {
             expect(variables[role]).toBe(resolved);
         });
 
-        // Score 3 is a pointer too, but a compound one: it blends the two roles it sits between
-        // instead of naming a single one, so it has no row in the table above. Naming both is
-        // what keeps the middle step moving when a neighbour moves — resolving the blend in JS
-        // would leave it behind on the old color.
+        // Score 3 has no row in the table above: it points at two variables instead of one.
         test('--r5-password-strength-bg-3 blends the two roles it sits between', () => {
             expect(variables['--r5-password-strength-bg-3']).toBe(
                 'color-mix(in oklch, hsl(var(--warning)), hsl(var(--success)))'
             );
             expect(variables['--warning']).toBe(colorToHSL(theme.warningColor));
             expect(variables['--success']).toBe(colorToHSL(theme.successColor));
-            // `oklch` is the space colorizr's `mix` interpolates in, so moving the blend from JS
-            // to CSS left the rendered color unchanged
-            expect(variables['--r5-password-strength-bg-3']).toContain('in oklch');
         });
 
         test('--primary matches the resolved button background', () => {
@@ -235,9 +228,9 @@ describe('buildThemeVariables', () => {
 
         test('the success role reuses the brand exception, the warning role does not', () => {
             const variables = build();
-            // the default success color *is* the brand green, pinned white like a filled button
+            // the default success color is the brand green, so white is pinned as on a button
             expect(variables['--success-foreground']).toBe('0 0% 100%');
-            // white on the default amber would be 1.63:1 — no exception there, contrast decides
+            // white on the default amber would be unreadable, so the contrast decides
             expect(variables['--warning-foreground']).toBe('0 0% 0%');
         });
 
@@ -254,9 +247,11 @@ describe('buildThemeVariables', () => {
             expect(build({ dangerColor: '#ffff00' })['--destructive-foreground']).toBe('0 0% 0%');
         });
 
-        test('the destructive exception does not leak into the primary role', () => {
-            // A tenant picking the brand red as their *primary* still gets the derived color.
-            expect(build({ primaryColor: '#dc4e41' })['--primary-foreground']).toBe('0 0% 0%');
+        test('the pinned white follows a brand color into another role', () => {
+            // The exception is keyed to the color, not to the role it defaults to: a tenant
+            // picking the brand red as their *primary* gets the same white a destructive
+            // surface does.
+            expect(build({ primaryColor: '#dc4e41' })['--primary-foreground']).toBe('0 0% 100%');
         });
     });
 

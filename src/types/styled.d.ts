@@ -182,30 +182,16 @@ export interface SocialButtonTheme
     extends
         Omit<ButtonTheme, ProviderBrandedColors | 'focusBoxShadow'>,
         Partial<Pick<ButtonTheme, ProviderBrandedColors>> {
-    /**
-     * Boolean that specifies if the buttons are inline (horizonally-aligned).
-     *
-     * Also drives the label: an inline row renders icon-only buttons, a stacked column renders
-     * labelled ones. @see components/slo/social-buttons
-     */
+    /** Boolean that specifies if the buttons are inline (horizonally-aligned). */
     inline: boolean;
     /**
      * @deprecated Has no effect. Social buttons take their focus ring from the provider's own
-     * brand color, applied through the `--ring` custom property. Still computed so that reading
-     * it keeps working, but changing it changes nothing.
+     * brand color, applied through the `--ring` custom property.
      */
     focusBoxShadow: (color?: CSSProperties['color']) => NonNullable<CSSProperties['boxShadow']>;
 }
 
-/**
- * Colors of the five password strength scores.
- *
- * Every score is optional and left unset by `buildTheme`: the defaults are derived from
- * `dangerColor`, `warningColor` and `successColor`, and applying them here would flatten them
- * into literals. `buildThemeVariables` resolves each score instead, which lets the two lowest
- * ones point at the `--destructive` palette role for as long as the theme does not name a color
- * of its own. Same arrangement as the social button brand colors.
- */
+/** Colors of the five password strength scores. */
 export interface PasswordStrengthTheme {
     color0?: NonNullable<CSSProperties['color']>;
     color1?: NonNullable<CSSProperties['color']>;
@@ -215,11 +201,14 @@ export interface PasswordStrengthTheme {
 }
 
 export interface Theme extends BaseTheme {
+    /** Link theming options. */
     link: LinkTheme;
+    /** Input theming options. */
     input: InputTheme;
     /** Button theming options. */
     button: ButtonTheme;
     /** Social button theming options. */
     socialButton: SocialButtonTheme;
+    /** Password strength scores color options */
     passwordStrengthValidator: PasswordStrengthTheme;
 }

@@ -94,8 +94,7 @@ function expectValidTheme(theme: Partial<Theme>) {
     expect(theme.socialButton).toHaveProperty('boxShadow');
     expect(theme.socialButton).toHaveProperty('focusBoxShadow');
     expect(theme.socialButton).toHaveProperty('height');
-    // passwordStrengthValidator: the container is always there, the scores only when the theme
-    // names them — the defaults are resolved by `buildThemeVariables`
+    // passwordStrengthValidator: the object is always present, the scores only when the theme sets them
     expect(theme).toHaveProperty('passwordStrengthValidator');
 }
 
@@ -239,8 +238,7 @@ describe('theme', () => {
             expect(actual.socialButton.hoverColor).toBeUndefined();
             expect(actual.socialButton.hoverBackground).toBeUndefined();
             expect(actual.socialButton.hoverBorderColor).toBeUndefined();
-            // passwordStrengthValidator: every score is left unset, so `buildThemeVariables` can
-            // still tell a default apart from a chosen color. @see core/themeVariables
+            // the scores stay unset so that `buildThemeVariables` can apply the defaults
             expect(actual.passwordStrengthValidator).toEqual({});
         });
 
@@ -249,7 +247,6 @@ describe('theme', () => {
                 passwordStrengthValidator: { color2: '#abcdef', color3: '#fedcba' },
             });
 
-            // the scores the theme names, and only those
             expect(actual.passwordStrengthValidator).toEqual({
                 color2: '#abcdef',
                 color3: '#fedcba',
