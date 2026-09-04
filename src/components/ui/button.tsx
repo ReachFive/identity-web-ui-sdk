@@ -42,7 +42,10 @@ const buttonVariants = cva(
           "h-[var(--r5-button-height)] px-[var(--r5-button-padding-x)] py-[var(--r5-button-padding-y)]",
         sm: "h-8 rounded-md px-3 text-xs",
         lg: "h-10 rounded-md px-8",
-        icon: "h-[var(--r5-button-height)] w-[var(--r5-button-height)]",
+        icon: "size-[var(--r5-button-height)]",
+        "icon-xs": "size-6 rounded-md [&_svg:not([class*='size-'])]:size-3",
+        "icon-sm": "size-8",
+        "icon-lg": "size-10",
       },
     },
     defaultVariants: {
