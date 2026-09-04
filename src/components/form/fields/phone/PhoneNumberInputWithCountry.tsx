@@ -86,7 +86,7 @@ const CountrySelect = React.forwardRef<
                     disabled={props.disabled ?? props.readOnly}
                 >
                     <CountryFlag country={country} className="!w-auto" />
-                    <ChevronDown className="h-4 w-4 opacity-50" />
+                    <ChevronDown className="h-4 w-4" />
                 </InputGroupButton>
             </DropdownMenuTrigger>
             <DropdownMenuContent>

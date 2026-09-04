@@ -250,6 +250,105 @@ describe('getFieldDefinition("identifier")', () => {
     });
 });
 
+type PhoneDefinition = Partial<FieldDefinition<'phone'>>;
+
+/**
+ * The `phoneNumber` field as the widgets declare it (see `passwordlessView` and
+ * `phoneNumberEditorWidget`): a `type: 'phone'` definition carrying no explicit validation, so the
+ * predefined one applies.
+ */
+function phoneNumberField(definition: PhoneDefinition = {}, config: Config = buildConfig()) {
+    const field = { key: 'phoneNumber', type: 'phone', ...definition };
+    return getFieldDefinition(field as Optional<FieldDefinition, 'type'>, config, {});
+}
+
+/** The validation messages the phone number field raises for `value`, empty when it is accepted. */
+async function validatePhoneNumber(
+    value: string,
+    definition: PhoneDefinition = {},
+    config: Config = buildConfig()
+) {
+    const field = phoneNumberField(definition, config);
+    if (!field?.validation) throw new Error('expected a validation function on the phone number');
+
+    const schema = field.validation({
+        client: {} as Client,
+        config,
+        definition: field,
+        i18n: ((key: string) => key) as unknown as TFunction,
+        watch: (() => undefined) as unknown as UseFormWatch<FieldValues>,
+    });
+    const result = await schema.safeParseAsync(value);
+    return result.success ? [] : result.error.issues.map(issue => issue.message);
+}
+
+describe('getFieldDefinition("phoneNumber")', () => {
+    it('accepts a valid number', async () => {
+        await expect(validatePhoneNumber('+33612345678')).resolves.toEqual([]);
+    });
+
+    it('accepts a national number, read against the resolved country', async () => {
+        await expect(validatePhoneNumber('0612345678')).resolves.toEqual([]);
+    });
+
+    // the length is checked against the country's numbering plan. A pure E.164 format check only
+    // bounds the total digit count, which accepts a French number carrying up to 4 extra digits
+    // and one missing up to 3 -- the shapes the hosted pages E2E suite asserts an error on.
+    describe('rejects a number whose length does not match its country', () => {
+        it.each([
+            ['too short', '+336'],
+            ['too short, within E.164 bounds', '+336123456'],
+            ['too long, one extra digit', '+336123456789'],
+            ['too long, within E.164 bounds', '+336123456789012'],
+            ['too long, beyond E.164 bounds', '+3361234567890123456'],
+        ])('%s: %p', async (_label, value) => {
+            await expect(validatePhoneNumber(value)).resolves.toContain('validation.phone');
+        });
+    });
+
+    it('rejects a value which is no phone number at all', async () => {
+        await expect(validatePhoneNumber('jdoe2024')).resolves.toContain('validation.phone');
+    });
+
+    describe('default country', () => {
+        // the length is checked against the resolved country's plan: 10 digits for the US, so a
+        // 9 digit French national number is rejected there and accepted in France
+        it('validates a national number against the config locale', async () => {
+            await expect(
+                validatePhoneNumber('(213) 373-4253', {}, buildConfig({ locale: 'US' }))
+            ).resolves.toEqual([]);
+            await expect(
+                validatePhoneNumber('612345678', {}, buildConfig({ locale: 'US' }))
+            ).resolves.toContain('validation.phone');
+            await expect(
+                validatePhoneNumber('612345678', {}, buildConfig({ locale: 'FR' }))
+            ).resolves.toEqual([]);
+        });
+
+        it('lets the field definition override it', async () => {
+            const config = buildConfig({ locale: 'US' });
+
+            await expect(
+                validatePhoneNumber('0612345678', { defaultCountry: 'FR' }, config)
+            ).resolves.toEqual([]);
+        });
+
+        // `withPhoneNumberOptions` carries the widget level options onto the field, and the
+        // renderer prefers them over the field's own country: the validation must agree
+        it('prefers the country carried by the deprecated phoneNumberOptions', async () => {
+            const config = buildConfig({ locale: 'US' });
+
+            await expect(
+                validatePhoneNumber(
+                    '0612345678',
+                    { defaultCountry: 'US', phoneNumberOptions: { defaultCountry: 'FR' } },
+                    config
+                )
+            ).resolves.toEqual([]);
+        });
+    });
+});
+
 describe('resolveErrorFieldPath', () => {
     const field = (key: string) => ({ key, type: 'string' }) as FieldDefinition;
     const identifier = () => {
