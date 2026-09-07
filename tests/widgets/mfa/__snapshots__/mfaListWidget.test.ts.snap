@@ -24,12 +24,12 @@ exports[`Snapshot basic 1`] = `
     transition="entering"
   >
     <div
-      class="group/item-group flex flex-col"
+      class="group/item-group flex w-full flex-col gap-4 has-data-[size=sm]:gap-2.5 has-data-[size=xs]:gap-2"
       data-slot="item-group"
       role="list"
     >
       <div
-        class="group/item [a]:hover:bg-accent/50 focus-visible:border-ring focus-visible:ring-ring/50 [a]:transition-colors flex flex-wrap items-center rounded-md border text-sm outline-none transition-colors duration-100 focus-visible:ring-[3px] border-border gap-4 p-4"
+        class="group/item [a]:hover:bg-accent/50 focus-visible:border-ring focus-visible:ring-ring/50 [a]:transition-colors flex flex-wrap items-center rounded-md border text-sm outline-none transition-colors duration-100 focus-visible:ring-[3px] border-border gap-3.5 px-4 py-3.5"
         data-size="default"
         data-slot="item"
         data-testid="credential"
@@ -37,7 +37,7 @@ exports[`Snapshot basic 1`] = `
         id="credential-33612345678"
       >
         <div
-          class="flex shrink-0 items-center justify-center gap-2 group-has-[[data-slot=item-description]]/item:translate-y-0.5 group-has-[[data-slot=item-description]]/item:self-start [&_svg]:pointer-events-none size-10 overflow-hidden rounded-sm [&_img]:size-full [&_img]:object-cover !self-center"
+          class="flex shrink-0 items-center justify-center gap-2 group-has-[[data-slot=item-description]]/item:translate-y-0.5 group-has-[[data-slot=item-description]]/item:self-start [&_svg]:pointer-events-none size-10 overflow-hidden rounded-lg group-data-[size=sm]/item:size-8 group-data-[size=xs]/item:size-6 group-data-[size=xs]/item:rounded-md [&_img]:size-full [&_img]:object-cover !self-center"
           data-slot="item-media"
           data-variant="image"
         >
@@ -100,7 +100,7 @@ exports[`Snapshot basic 1`] = `
         </div>
       </div>
       <div
-        class="group/item [a]:hover:bg-accent/50 focus-visible:border-ring focus-visible:ring-ring/50 [a]:transition-colors flex flex-wrap items-center rounded-md border text-sm outline-none transition-colors duration-100 focus-visible:ring-[3px] border-border gap-4 p-4"
+        class="group/item [a]:hover:bg-accent/50 focus-visible:border-ring focus-visible:ring-ring/50 [a]:transition-colors flex flex-wrap items-center rounded-md border text-sm outline-none transition-colors duration-100 focus-visible:ring-[3px] border-border gap-3.5 px-4 py-3.5"
         data-size="default"
         data-slot="item"
         data-testid="credential"
@@ -108,7 +108,7 @@ exports[`Snapshot basic 1`] = `
         id="credential-identifier"
       >
         <div
-          class="flex shrink-0 items-center justify-center gap-2 group-has-[[data-slot=item-description]]/item:translate-y-0.5 group-has-[[data-slot=item-description]]/item:self-start [&_svg]:pointer-events-none size-10 overflow-hidden rounded-sm [&_img]:size-full [&_img]:object-cover !self-center"
+          class="flex shrink-0 items-center justify-center gap-2 group-has-[[data-slot=item-description]]/item:translate-y-0.5 group-has-[[data-slot=item-description]]/item:self-start [&_svg]:pointer-events-none size-10 overflow-hidden rounded-lg group-data-[size=sm]/item:size-8 group-data-[size=xs]/item:size-6 group-data-[size=xs]/item:rounded-md [&_img]:size-full [&_img]:object-cover !self-center"
           data-slot="item-media"
           data-variant="image"
         >
@@ -197,12 +197,12 @@ exports[`Snapshot empty 1`] = `
     transition="entering"
   >
     <div
-      class="group/item-group flex flex-col"
+      class="group/item-group flex w-full flex-col gap-4 has-data-[size=sm]:gap-2.5 has-data-[size=xs]:gap-2"
       data-slot="item-group"
       role="list"
     >
       <div
-        class="group/item [a]:hover:bg-accent/50 focus-visible:border-ring focus-visible:ring-ring/50 [a]:transition-colors flex flex-wrap items-center rounded-md border border-transparent text-sm outline-none transition-colors duration-100 focus-visible:ring-[3px] bg-transparent gap-4 p-4"
+        class="group/item [a]:hover:bg-accent/50 focus-visible:border-ring focus-visible:ring-ring/50 [a]:transition-colors flex flex-wrap items-center rounded-md border border-transparent text-sm outline-none transition-colors duration-100 focus-visible:ring-[3px] bg-transparent gap-3.5 px-4 py-3.5"
         data-size="default"
         data-slot="item"
         data-variant="default"
