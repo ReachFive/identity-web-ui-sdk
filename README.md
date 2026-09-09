@@ -18,6 +18,11 @@ You'll find the documentation of the widgets [here](https://developer.reachfive.
 
 Please refer to [changelog](CHANGELOG.md) to see the descriptions of each release.
 
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for local development, including how to run this SDK against a
+local `ciam-app` instead of the published CDN build.
+
 ## License
 
 MIT © [ReachFive](https://www.reachfive.com)
