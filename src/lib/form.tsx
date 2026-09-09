@@ -306,16 +306,44 @@ const predefinedFields: Record<
             },
         };
     },
-    phoneNumber: () => ({
-        key: 'phoneNumber',
-        label: 'phoneNumber',
-        type: 'phone',
-        validation: ({ i18n }) =>
-            z.e164({
-                error: issue =>
-                    !issue.input ? i18n('validation.required') : i18n('validation.phone'),
-            }),
-    }),
+    phoneNumber: ({ config, definition }) => {
+        const { defaultCountry, phoneNumberOptions } = definition as FieldDefinition<
+            'phone',
+            FieldValues
+        >;
+        // resolved the way `FormFieldsRenderer` hands the country over to `PhoneNumberInput`, so
+        // that a national number the input formats is read against the same country here
+        const country = resolveCountry(
+            phoneNumberOptions?.defaultCountry ?? defaultCountry,
+            config
+        );
+
+        return {
+            key: 'phoneNumber',
+            label: 'phoneNumber',
+            type: 'phone',
+            validation: ({ i18n }) =>
+                z.string(i18n('validation.phone')).superRefine((value, ctx) => {
+                    // `extract: false` parses the whole input rather than looking for a number
+                    // inside it, as in `identifier`. The input emits an E.164 value, but an
+                    // initial model or a widget default may still carry a national one.
+                    const phoneNumber = parsePhoneNumberFromString(value, {
+                        defaultCountry: country,
+                        extract: false,
+                    });
+                    // `isPossible` checks the length against the country's numbering plan, which
+                    // is what a too short or too long number fails. `z.e164` only bounded the
+                    // total digit count (7 to 15) with no notion of country, so both slipped
+                    // through — a French number with up to 4 extra digits was accepted.
+                    if (!phoneNumber?.isPossible()) {
+                        ctx.addIssue({
+                            code: 'custom',
+                            message: i18n('validation.phone'),
+                        });
+                    }
+                }),
+        };
+    },
     password: () => ({
         key: 'password',
         label: 'password',

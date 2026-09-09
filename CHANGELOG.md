@@ -38,7 +38,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   `link.hoverColor`, `passwordStrengthValidator`
 - A `boxShadow` of `none` no longer removes the keyboard focus ring
 - The widget no longer fails on an unknown social provider or an unparseable theme colour
-- Password strength score colors may be customized with theme options
+- Phone number input: selecting another country no longer clears the number already entered — the
+  national number is kept, re-formatted and re-validated against the selected country
+- Phone number input: entering a number with an international prefix now selects the matching
+  country in the country select, without overriding an explicit selection that shares the same
+  calling code
+- Password strength score colors can be customized with theme options
 
 ## [2.0.2] - 2026-08-13
 

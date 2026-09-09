@@ -51,6 +51,11 @@ const defaultI18n: I18nMessages = {
     'address.country': 'Country',
 };
 
+/** Country code of the flag currently displayed in the country select. */
+function selectedCountry() {
+    return screen.getByRole('button', { name: 'Country' }).querySelector('title')?.textContent;
+}
+
 type ControlledPhoneInputProps = Omit<React.ComponentProps<typeof PhoneNumberInput>, 'value'> & {
     initialValue?: string;
 };
@@ -141,5 +146,207 @@ describe('DOM testing', () => {
         // Just verify the component renders without errors
         const input = screen.getByLabelText('Phone number');
         expect(input).toBeInTheDocument();
+    });
+
+    test('changing the country keeps the entered number and reformats it', async () => {
+        const user = userEvent.setup();
+        const onChange = jest.fn();
+
+        render(
+            <WidgetContext config={defaultConfig} defaultMessages={defaultI18n}>
+                <ControlledPhoneInput
+                    label="phone"
+                    initialValue={undefined}
+                    onChange={onChange}
+                    showLabels={true}
+                    allowInternational={true}
+                    defaultCountry="FR"
+                />
+            </WidgetContext>
+        );
+
+        const input = screen.getByLabelText('Phone number');
+        await user.type(input, '612345678');
+        await waitFor(() => expect(onChange).toHaveBeenLastCalledWith('+33612345678'));
+
+        // Switch the country to Germany (+49) — the only country with that calling code.
+        await user.click(screen.getByRole('button', { name: 'Country' }));
+        await user.click(screen.getByRole('menuitem', { name: /\(\+49\)/ }));
+
+        // The national number is kept, re-prefixed with the new country calling code.
+        await waitFor(() => expect(onChange).toHaveBeenLastCalledWith('+49612345678'));
+        expect(input).toHaveValue(format('+49612345678', 'INTERNATIONAL'));
+    });
+
+    test('changing the country on an empty input does not emit a number', async () => {
+        const user = userEvent.setup();
+        const onChange = jest.fn();
+
+        render(
+            <WidgetContext config={defaultConfig} defaultMessages={defaultI18n}>
+                <ControlledPhoneInput
+                    label="phone"
+                    initialValue={undefined}
+                    onChange={onChange}
+                    showLabels={true}
+                    allowInternational={true}
+                    defaultCountry="FR"
+                />
+            </WidgetContext>
+        );
+
+        await user.click(screen.getByRole('button', { name: 'Country' }));
+        await user.click(screen.getByRole('menuitem', { name: /\(\+49\)/ }));
+
+        const input = screen.getByLabelText('Phone number');
+        expect(input).toHaveValue('');
+        expect(onChange).not.toHaveBeenCalledWith(expect.stringMatching(/\d/));
+    });
+
+    test('an international prefix selects the country it belongs to', async () => {
+        const user = userEvent.setup();
+        const onChange = jest.fn();
+
+        render(
+            <WidgetContext config={defaultConfig} defaultMessages={defaultI18n}>
+                <ControlledPhoneInput
+                    label="phone"
+                    initialValue={undefined}
+                    onChange={onChange}
+                    showLabels={true}
+                    allowInternational={true}
+                    defaultCountry="FR"
+                />
+            </WidgetContext>
+        );
+
+        expect(selectedCountry()).toBe('FR');
+
+        // A +1 number that is not assigned to any NANP country: the number itself
+        // cannot be matched to a country, but its calling code still can.
+        await user.type(screen.getByLabelText('Phone number'), '+12223334444');
+
+        await waitFor(() => expect(selectedCountry()).toBe('US'));
+        await waitFor(() => expect(onChange).toHaveBeenLastCalledWith('+12223334444'));
+    });
+
+    test('an initial value carrying another country prefix selects that country', async () => {
+        const onChange = jest.fn();
+
+        render(
+            <WidgetContext config={defaultConfig} defaultMessages={defaultI18n}>
+                <ControlledPhoneInput
+                    label="phone"
+                    initialValue="+12223334444"
+                    onChange={onChange}
+                    showLabels={true}
+                    allowInternational={true}
+                    defaultCountry="FR"
+                />
+            </WidgetContext>
+        );
+
+        await waitFor(() => expect(selectedCountry()).toBe('US'));
+        expect(screen.getByLabelText('Phone number')).toHaveValue(
+            format('+12223334444', 'INTERNATIONAL')
+        );
+    });
+
+    test('a country selection sharing the calling code is kept', async () => {
+        const user = userEvent.setup();
+        const onChange = jest.fn();
+
+        render(
+            <WidgetContext config={defaultConfig} defaultMessages={defaultI18n}>
+                <ControlledPhoneInput
+                    label="phone"
+                    initialValue={undefined}
+                    onChange={onChange}
+                    showLabels={true}
+                    allowInternational={true}
+                    defaultCountry="CA"
+                />
+            </WidgetContext>
+        );
+
+        // +1 213 373 4253 is a valid US number, but Canada shares its calling code:
+        // the explicit selection must not be overridden.
+        await user.type(screen.getByLabelText('Phone number'), '+12133734253');
+
+        await waitFor(() => expect(onChange).toHaveBeenLastCalledWith('+12133734253'));
+        expect(selectedCountry()).toBe('CA');
+    });
+    test('a number too short for its country is still prefixed on blur', async () => {
+        const user = userEvent.setup();
+        const onChange = jest.fn();
+
+        render(
+            <WidgetContext config={defaultConfig} defaultMessages={defaultI18n}>
+                <ControlledPhoneInput
+                    label="phone"
+                    initialValue={undefined}
+                    onChange={onChange}
+                    showLabels={true}
+                    allowInternational={true}
+                    defaultCountry="TR"
+                />
+            </WidgetContext>
+        );
+
+        const input = screen.getByLabelText('Phone number');
+        // Turkey requires 10 significant digits — this one carries 9.
+        await user.type(input, '0769521258');
+        await user.tab();
+
+        await waitFor(() => expect(input).toHaveValue('+90 769521258'));
+    });
+
+    test('a number too long for its country is still prefixed on blur', async () => {
+        const user = userEvent.setup();
+        const onChange = jest.fn();
+
+        render(
+            <WidgetContext config={defaultConfig} defaultMessages={defaultI18n}>
+                <ControlledPhoneInput
+                    label="phone"
+                    initialValue={undefined}
+                    onChange={onChange}
+                    showLabels={true}
+                    allowInternational={true}
+                    defaultCountry="FR"
+                />
+            </WidgetContext>
+        );
+
+        const input = screen.getByLabelText('Phone number');
+        await user.type(input, '07695212581234');
+        await user.tab();
+
+        await waitFor(() => expect(input).toHaveValue('+33 7695212581234'));
+    });
+
+    test('without country select, an impossible number keeps its national formatting on blur', async () => {
+        const user = userEvent.setup();
+        const onChange = jest.fn();
+
+        render(
+            <WidgetContext config={defaultConfig} defaultMessages={defaultI18n}>
+                <ControlledPhoneInput
+                    label="phone"
+                    initialValue={undefined}
+                    onChange={onChange}
+                    showLabels={true}
+                    allowInternational={false}
+                    defaultCountry="FR"
+                />
+            </WidgetContext>
+        );
+
+        const input = screen.getByLabelText('Phone number');
+        await user.type(input, '0769');
+        await user.tab();
+
+        // `formatNational()` would drop the trunk prefix ("07 69" -> "769").
+        await waitFor(() => expect(input).toHaveValue('07 69'));
     });
 });

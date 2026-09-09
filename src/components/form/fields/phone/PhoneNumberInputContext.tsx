@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { AsYouType, CountryCode } from 'libphonenumber-js/min';
+import { AsYouType, CountryCode, Metadata, PhoneNumber } from 'libphonenumber-js/min';
 
 type PhoneNumberInputContextProps = {
     allowInternational?: boolean;
@@ -54,6 +54,54 @@ export const usePhoneNumberInput = (): PhoneNumberInputContextValue => {
     return context;
 };
 
+/**
+ * `Metadata` exposes the countries sharing a calling code, the first one being
+ * its main country (+1 → US, +44 → GB). Nothing in the public API does, hence
+ * the cast and the optional call: were the method to go away, callers just fall
+ * back to keeping the country currently selected.
+ */
+type CallingCodeMetadata = Metadata & {
+    getCountryCodesForCallingCode?: (callingCode: string) => CountryCode[] | undefined;
+};
+
+const countriesForCallingCode = (callingCode: string): CountryCode[] =>
+    (new Metadata() as CallingCodeMetadata).getCountryCodesForCallingCode?.(callingCode) ?? [];
+
+/**
+ * Country to select for the number being entered, or `undefined` when it cannot
+ * be told yet.
+ *
+ * A `PhoneNumber` only carries a `country` once it is valid for exactly one of
+ * them, which never happens while the number is incomplete — nor for a number
+ * whose prefix is simply unassigned. Its calling code is known much earlier, so
+ * it drives the selection too: the country already selected is kept whenever it
+ * shares that calling code (someone who picked Canada and types a +1 number
+ * keeps Canada), and the calling code's main country is used otherwise.
+ */
+const resolveCountry = (
+    number: PhoneNumber | undefined,
+    callingCode: string | undefined,
+    selectedCountry: CountryCode
+): CountryCode | undefined => {
+    if (!callingCode) return number?.country;
+
+    const countries = countriesForCallingCode(callingCode);
+    if (countries.includes(selectedCountry)) return selectedCountry;
+
+    return number?.country ?? countries[0];
+};
+
+/**
+ * Extract the national (significant) number out of a — possibly partially
+ * formatted — input value, so it can be re-formatted against another country.
+ * Returns an empty string when the value holds no national digit yet.
+ */
+const getNationalNumber = (value: string, country: CountryCode): string => {
+    const formatter = new AsYouType(country);
+    formatter.input(value);
+    return formatter.getNumber()?.nationalNumber ?? '';
+};
+
 const useProvidePhoneNumberInput = ({
     defaultValue,
     defaultCountry,
@@ -70,11 +118,23 @@ const useProvidePhoneNumberInput = ({
     // the selected country changes.
     const innerInputRef = React.useRef<HTMLInputElement | null>(null);
 
-    const formatter = React.useMemo(() => new AsYouType(country), [country]);
+    // The as-you-type formatter is held in a ref rather than derived from `country`
+    // so that handlers captured by an earlier render always operate on the formatter
+    // of the currently selected country. Selecting a country restores focus to the
+    // dropdown trigger, which fires the input's blur handler from the previous
+    // render: with a per-render formatter, that blur would resurrect the number of
+    // the previously selected country.
+    const formatterRef = React.useRef<AsYouType | null>(null);
+    const getFormatter = React.useCallback(() => {
+        formatterRef.current ??= new AsYouType(defaultCountry);
+        return formatterRef.current;
+    }, [defaultCountry]);
 
     const onInputChange = React.useCallback(
         (newValue: string) => {
             if (inputValue === newValue) return;
+
+            const formatter = getFormatter();
 
             // The as-you-type formatter only works with append-only inputs.
             // Changes other than append require a reset.
@@ -85,9 +145,13 @@ const useProvidePhoneNumberInput = ({
                 setInputValue(formatter.input(appended));
 
                 if (allowInternational) {
-                    const number = formatter.getNumber();
-                    if (number?.country && number.country !== country) {
-                        setCountry(number.country);
+                    const nextCountry = resolveCountry(
+                        formatter.getNumber(),
+                        formatter.getCallingCode(),
+                        country
+                    );
+                    if (nextCountry && nextCountry !== country) {
+                        setCountry(nextCountry);
                     }
                 }
             } else {
@@ -102,12 +166,12 @@ const useProvidePhoneNumberInput = ({
             const e164 = formatter.getNumber()?.number ?? '';
             onChange(e164);
 
-            // On a similar vein, do not set country even if the country has changed
-            // so that the cursor position does not get lost.
-            // Change country on blur instead.
+            // On a similar vein, a change other than an append neither reformats the
+            // input nor updates the country, so that the cursor position does not get
+            // lost. Both happen on blur instead.
             return;
         },
-        [country, formatter, inputValue, allowInternational, onChange]
+        [country, getFormatter, inputValue, allowInternational, onChange]
     );
 
     const handleInputChange: React.ChangeEventHandler<HTMLInputElement> = React.useCallback(
@@ -126,14 +190,27 @@ const useProvidePhoneNumberInput = ({
     const handleCountryChange = React.useCallback(
         (newCountry: CountryCode) => {
             if (country === newCountry) return;
-            onInputChange('');
+
+            // Keep the national (significant) number already entered and re-format it
+            // against the newly selected country instead of discarding it.
+            const nationalNumber = getNationalNumber(inputValue, country);
+            const formatter = new AsYouType(newCountry);
+            const asYouTypeValue = formatter.input(nationalNumber);
+            const number = formatter.getNumber();
+
+            formatterRef.current = formatter;
             setCountry(newCountry);
+            setInputValue(number ? number.formatInternational() : asYouTypeValue);
+            // Let the consumer re-validate the number against the new country.
+            onChange(number?.number ?? '');
+
             innerInputRef?.current?.focus();
         },
-        [country, onInputChange]
+        [country, inputValue, onChange]
     );
 
     const handleFormatInput = React.useCallback(() => {
+        const formatter = getFormatter();
         const number = formatter.getNumber();
         const e164 = number?.number ?? '';
 
@@ -143,27 +220,43 @@ const useProvidePhoneNumberInput = ({
         // 2. `formatter.getNumber().number` will transform that into "65" and cut out the remaining characters since the remaining string is not a valid number
         // 3. Will need to call onChange on this new number.
         onChange(e164);
-        // Check and update possibility
-        const possible = number?.isPossible();
 
-        if (number && possible) {
-            // Reformat the phone number as international if international numbers
-            // are enabled.
-            formatter.reset();
-            const nextValue = allowInternational
-                ? number.formatInternational()
-                : number.formatNational();
-            setInputValue(formatter.input(nextValue));
-            // Update the country if the parsed number belongs to a different
-            // country.
-            if (allowInternational && number?.country && number.country !== country) {
-                setCountry(number.country);
+        // Update the country if the number belongs to a different one. Done before
+        // the number gets reformatted, as that resets the formatter.
+        if (allowInternational) {
+            const nextCountry = resolveCountry(number, formatter.getCallingCode(), country);
+            if (nextCountry && nextCountry !== country) {
+                setCountry(nextCountry);
             }
+        }
+
+        // Reformat the value now that the user is done typing.
+        //
+        // In international mode this happens whatever the number's length. The
+        // calling code says which country the number is being read against, and
+        // withholding it from a number too short or too long for that country is
+        // what makes an invalid number look like a plain national one: a 9 digit
+        // number stayed "0769521258" under Turkey, which requires 10, while
+        // selecting Turkey from the dropdown did prefix it. Showing "+90" is a
+        // display concern; rejecting the number is `predefinedFields.phoneNumber`'s.
+        //
+        // `formatNational()` carries no such information and drops the trunk
+        // prefix on an impossible number ("07 69" -> "769"), so it stays gated on
+        // `isPossible()`.
+        const nextValue = allowInternational
+            ? number?.formatInternational()
+            : number?.isPossible()
+              ? number.formatNational()
+              : undefined;
+
+        if (nextValue !== undefined) {
+            formatter.reset();
+            setInputValue(formatter.input(nextValue));
         } else {
-            // Format the phone number
+            // Nothing to reformat against — keep the value as typed.
             setInputValue(formatter.input(''));
         }
-    }, [country, formatter, allowInternational, onChange]);
+    }, [country, getFormatter, allowInternational, onChange]);
 
     const handleInputBlur = React.useCallback(() => {
         onBlur?.();
@@ -175,6 +268,7 @@ const useProvidePhoneNumberInput = ({
     // This allows the cursor position to be updated after formatting the input
     // without "jumping" to the end of the input string and disrupting the user.
     React.useLayoutEffect(() => {
+        const formatter = getFormatter();
         const e164 = formatter.getNumber()?.number ?? '';
 
         if (e164 !== defaultValue) {
@@ -188,7 +282,7 @@ const useProvidePhoneNumberInput = ({
         }
     }, [
         defaultValue,
-        formatter,
+        getFormatter,
         inputValue,
         onChange,
         country,
