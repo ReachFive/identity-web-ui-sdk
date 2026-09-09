@@ -15,17 +15,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - The palette drives the widget colour scheme: overriding `--primary` in CSS now moves every unthemed
   component. Set `--primary-hover` alongside it
-- Component CSS variables are prefixed `--r5-` (`--button-bg` → `--r5-button-bg`); old names stop applying
 - `theme.socialButton` colours now apply, falling back to the provider's brand colour — and so may be
   `undefined` on `SocialButtonTheme`
 - Button colours follow `primaryColor`: contrast-derived text, a darker hover shade, and `outline` / `ghost`
   variants that no longer reuse the filled-button tokens
-- Password strength score 3 is now the midpoint between `warningColor` and `successColor`, instead of a
-  lighter `successColor` that read as a paler score 4. It is blended with `color-mix()`, so it follows
-  a CSS override of `--warning` or `--success` like the other four scores
-- `warningColor` and `successColor` join the palette as the `--warning` / `--warning-foreground` and
-  `--success` / `--success-foreground` roles, like `dangerColor` already did with `--destructive`;
-  overriding them in CSS moves what points at them
 
 ### Deprecated
 
@@ -45,6 +38,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   `link.hoverColor`, `passwordStrengthValidator`
 - A `boxShadow` of `none` no longer removes the keyboard focus ring
 - The widget no longer fails on an unknown social provider or an unparseable theme colour
+- Password strength score colors may be customized with theme options
 
 ## [2.0.2] - 2026-08-13
 
