@@ -44,6 +44,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   country in the country select, without overriding an explicit selection that shares the same
   calling code
 - Password strength score colors can be customized with theme options
+- Password strength gauge: five bars instead of four, one per score, so that the weakest score fills a
+  single bar and `passwordStrengthValidator.color0` is applied — it previously had no effect
 
 ## [2.0.2] - 2026-08-13
 

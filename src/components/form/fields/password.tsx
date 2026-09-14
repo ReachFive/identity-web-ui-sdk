@@ -247,10 +247,15 @@ const StrengthIndicator = function StrengthIndicator({ strength }: { strength: P
                 className="flex gap-1"
                 id="password-strength"
             >
-                {Array.from({ length: 4 }).map((_, i) => {
+                {/* one bar per score, so that the weakest score (0) still fills one bar
+                    and every passwordStrengthValidator color is reachable */}
+                {Array.from({ length: 5 }).map((_, i) => {
                     return (
                         <div
                             key={i}
+                            // `meter` has presentational children: the bars carry no
+                            // semantics of their own, the meter carries the value
+                            role="presentation"
                             style={
                                 {
                                     '--r5-strength-bg': `var(--r5-password-strength-bg-${strength.score})`,
@@ -258,7 +263,7 @@ const StrengthIndicator = function StrengthIndicator({ strength }: { strength: P
                             }
                             className={cn(
                                 'h-1 flex-1 rounded-full',
-                                strength.score > i
+                                strength.score >= i
                                     ? 'bg-[var(--r5-strength-bg)]'
                                     : 'bg-foreground/20'
                             )}
