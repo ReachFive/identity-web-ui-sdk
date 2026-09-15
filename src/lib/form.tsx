@@ -115,6 +115,14 @@ export type FieldDefinition<
         | {
               type: 'identifier';
               /**
+               * Whether a phone number is displayed in its international shape. Defaults to
+               * `false`, as on a phone number field: a number from `defaultCountry` is then shown
+               * in its national shape. A number from any other country is always shown with its
+               * calling code, whatever this option says. It only affects the display — the value
+               * submitted is always E.164.
+               */
+              allowInternational?: boolean;
+              /**
                * Whether a value matching neither an email nor a phone number is accepted as a custom
                * identifier. Defaults to `loginTypeAllowed.customIdentifier`, as the email and phone
                * number shapes default to their own login types. Set it to `false` in a widget which

@@ -15,6 +15,7 @@ import { InputField } from '@/components/form/fields/input';
 const PHONE_NUMBER_SHAPE = /^[+\d\s().\-/]*$/;
 
 type IdentifierFieldProps = React.ComponentPropsWithoutRef<typeof InputField> & {
+    allowInternational?: boolean;
     defaultCountry?: CountryCode;
     value?: string;
     withPhoneNumber?: boolean;
@@ -22,7 +23,15 @@ type IdentifierFieldProps = React.ComponentPropsWithoutRef<typeof InputField> & 
 
 const IdentifierField = React.forwardRef<HTMLInputElement, IdentifierFieldProps>(
     function IdentifierField(
-        { defaultCountry = 'FR', withPhoneNumber, onChange, onBlur, value = '', ...props },
+        {
+            allowInternational = false,
+            defaultCountry = 'FR',
+            withPhoneNumber,
+            onChange,
+            onBlur,
+            value = '',
+            ...props
+        },
         ref
     ) {
         const [country, setCountry] = React.useState(defaultCountry);
@@ -48,13 +57,23 @@ const IdentifierField = React.forwardRef<HTMLInputElement, IdentifierFieldProps>
                     // still holds the IDD prefix the formatter consumed, so `0033767697150` came
                     // back as `+0033767697150` — no country calling code starts with a `0`, so the
                     // formatter could not read its own output and both the field and the submitted
-                    // value kept that string. The international shape is also the one the field
-                    // submits, so what is displayed is what is sent.
+                    // value kept that string.
+                    // Which shape to show is decided exactly as the phone number field decides it
+                    // (see `PhoneNumberInputContext`): national unless international numbers are
+                    // allowed, and always international for a number that is not from `country` —
+                    // its national shape carries no calling code and would read back as a local
+                    // number.
                     formatter.reset();
-                    setInputValue(formatter.input(number.formatInternational()));
+                    const isForeignNumber =
+                        number.country !== undefined && number.country !== country;
+                    const nextValue =
+                        allowInternational || isForeignNumber
+                            ? number.formatInternational()
+                            : number.formatNational();
+                    setInputValue(formatter.input(nextValue));
                 }
             },
-            [formatter, isPhoneNumber, country]
+            [formatter, isPhoneNumber, country, allowInternational]
         );
 
         const handleChange: React.ChangeEventHandler<HTMLInputElement> = React.useCallback(

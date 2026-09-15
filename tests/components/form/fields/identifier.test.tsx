@@ -260,7 +260,7 @@ describe('DOM testing', () => {
 
         await user.tab();
 
-        expect(input).toHaveValue(format('+33612345678', 'FR', 'INTERNATIONAL'));
+        expect(input).toHaveValue(format('+33612345678', 'FR', 'NATIONAL'));
     });
 
     test('withPhoneNumber = true — custom identifier holding a possible phone number', async () => {
@@ -291,7 +291,7 @@ describe('DOM testing', () => {
         );
     });
 
-    test('withPhoneNumber = true — phone number formatted to international on blur', async () => {
+    test('withPhoneNumber = true — phone number formatted on blur', async () => {
         const user = userEvent.setup();
         const onChange = jest.fn();
         const phoneValue = '+33123456789';
@@ -313,7 +313,7 @@ describe('DOM testing', () => {
         await user.type(input, phoneValue);
         await user.tab();
 
-        const formatted = format(phoneValue, 'FR', 'INTERNATIONAL');
+        const formatted = format(phoneValue, 'FR', 'NATIONAL');
         const expected = format(phoneValue, 'FR', 'E.164');
         expect(input).toHaveValue(formatted);
         expect(onChange).toHaveBeenLastCalledWith(
@@ -343,7 +343,7 @@ describe('DOM testing', () => {
         await user.type(input, '0033123456789');
         await user.tab();
 
-        const formatted = format('+33123456789', 'FR', 'INTERNATIONAL');
+        const formatted = format('+33123456789', 'FR', 'NATIONAL');
         const expected = format('+33123456789', 'FR', 'E.164');
         expect(input).toHaveValue(formatted);
         expect(onChange).toHaveBeenLastCalledWith(
@@ -380,7 +380,7 @@ describe('DOM testing', () => {
         );
     });
 
-    test('withPhoneNumber = true — national phone number reformatted to international', async () => {
+    test('withPhoneNumber = true — national phone number keeps its national shape', async () => {
         const user = userEvent.setup();
         const onChange = jest.fn();
 
@@ -401,12 +401,39 @@ describe('DOM testing', () => {
         await user.type(input, '0123456789');
         await user.tab();
 
-        // the field shows the number in the shape it submits it, whichever shape it was typed in
-        const formatted = format('+33123456789', 'FR', 'INTERNATIONAL');
+        const formatted = format('+33123456789', 'FR', 'NATIONAL');
         const expected = format('+33123456789', 'FR', 'E.164');
         expect(input).toHaveValue(formatted);
         expect(onChange).toHaveBeenLastCalledWith(
             expect.objectContaining({ target: expect.objectContaining({ value: expected }) })
+        );
+    });
+
+    test('withPhoneNumber = true, allowInternational = true — local number shown international', async () => {
+        const user = userEvent.setup();
+        const onChange = jest.fn();
+
+        render(
+            <WidgetContext config={defaultConfig} defaultMessages={defaultI18n}>
+                <ControlledIdentifierField
+                    label="Identifiant"
+                    initialValue=""
+                    onChange={onChange}
+                    showLabels={true}
+                    withPhoneNumber={true}
+                    allowInternational={true}
+                />
+            </WidgetContext>
+        );
+
+        const input = screen.getByLabelText('Identifiant');
+        await user.clear(input);
+        await user.type(input, '0123456789');
+        await user.tab();
+
+        expect(input).toHaveValue(format('+33123456789', 'FR', 'INTERNATIONAL'));
+        expect(onChange).toHaveBeenLastCalledWith(
+            expect.objectContaining({ target: expect.objectContaining({ value: '+33123456789' }) })
         );
     });
 
@@ -526,7 +553,7 @@ describe('DOM testing', () => {
         await user.type(input, phoneValue);
         await user.tab();
 
-        const formatted = format(phoneValue, 'FR', 'INTERNATIONAL');
+        const formatted = format(phoneValue, 'FR', 'NATIONAL');
         const expected = format(phoneValue, 'FR', 'E.164');
         expect(input).toHaveValue(formatted);
         expect(onChange).toHaveBeenLastCalledWith(
