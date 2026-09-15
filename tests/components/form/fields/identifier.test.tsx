@@ -198,6 +198,71 @@ describe('DOM testing', () => {
         );
     });
 
+    test('withPhoneNumber = true — email whose local part is a whole possible phone number', async () => {
+        const user = userEvent.setup();
+        const onChange = jest.fn();
+
+        render(
+            <WidgetContext config={defaultConfig} defaultMessages={defaultI18n}>
+                <ControlledIdentifierField
+                    label="Identifiant"
+                    initialValue=""
+                    onChange={onChange}
+                    showLabels={true}
+                    withPhoneNumber={true}
+                />
+            </WidgetContext>
+        );
+
+        const input = screen.getByLabelText('Identifiant');
+        // unlike `ccu123456789@…`, this one is phone-shaped until the `@`: the field must not bake
+        // the phone formatting into it, since nothing typed afterwards can take it back out
+        const emailValue = '0612345678@yopmail.com';
+        await user.clear(input);
+        await user.type(input, emailValue);
+
+        expect(input).toHaveValue(emailValue);
+
+        await user.tab();
+
+        expect(input).toHaveValue(emailValue);
+        expect(onChange).toHaveBeenLastCalledWith(
+            expect.objectContaining({ target: expect.objectContaining({ value: emailValue }) })
+        );
+    });
+
+    test('withPhoneNumber = true — a possible phone number is only reformatted on blur', async () => {
+        const user = userEvent.setup();
+        const onChange = jest.fn();
+
+        render(
+            <WidgetContext config={defaultConfig} defaultMessages={defaultI18n}>
+                <ControlledIdentifierField
+                    label="Identifiant"
+                    initialValue=""
+                    onChange={onChange}
+                    showLabels={true}
+                    withPhoneNumber={true}
+                />
+            </WidgetContext>
+        );
+
+        const input = screen.getByLabelText('Identifiant');
+        await user.clear(input);
+        await user.type(input, '0612345678');
+
+        // the field cannot know yet whether this is a phone number or the start of something else,
+        // so it leaves the value alone while the user is still typing
+        expect(input).toHaveValue('0612345678');
+        expect(onChange).toHaveBeenLastCalledWith(
+            expect.objectContaining({ target: expect.objectContaining({ value: '+33612345678' }) })
+        );
+
+        await user.tab();
+
+        expect(input).toHaveValue(format('+33612345678', 'FR', 'INTERNATIONAL'));
+    });
+
     test('withPhoneNumber = true — custom identifier holding a possible phone number', async () => {
         const user = userEvent.setup();
         const onChange = jest.fn();

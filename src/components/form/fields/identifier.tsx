@@ -69,13 +69,17 @@ const IdentifierField = React.forwardRef<HTMLInputElement, IdentifierFieldProps>
                     newValue.length > inputValue.length && newValue.startsWith(inputValue);
 
                 if (isAppend) {
-                    const appended = newValue.slice(inputValue.length);
-                    formatter.input(appended);
-                    handleFormatInput(newValue);
+                    // Feed the formatter so the E.164 value below stays up to date, but do not
+                    // reformat: the field cannot know yet whether it is holding a phone number or
+                    // the beginning of something else, and its formatting cannot be taken back out
+                    // afterwards — `0612345678` rewritten as `+33 6 12 34 56 78` turned the email
+                    // `0612345678@yopmail.com` into `+33 6 12 34 56 78@yopmail.com`, which the
+                    // validation then rejected as a malformed email. Wait until blur to reformat.
+                    formatter.input(newValue.slice(inputValue.length));
                 } else {
                     // Reset the formatter, but do not reformat.
                     // Doing so now will cause the user to lose their cursor position
-                    // Wait until blur or append to reformat.
+                    // Wait until blur to reformat.
                     formatter.reset();
                     formatter.input(newValue);
                 }
@@ -85,7 +89,7 @@ const IdentifierField = React.forwardRef<HTMLInputElement, IdentifierFieldProps>
                 const value = number?.isPossible() ? e164 : newValue;
                 onChange?.({ target: { value } } as React.ChangeEvent<HTMLInputElement>);
             },
-            [inputValue, formatter, handleFormatInput, isPhoneNumber, onChange]
+            [inputValue, formatter, isPhoneNumber, onChange]
         );
 
         const handleInputBlur = React.useCallback(() => {
