@@ -79,45 +79,28 @@ export const _blockHeight = (
 /**
  * Text color the design system pins on its own brand colors, overriding the derived,
  * contrast-driven value.
- *
- * {@link pickByLightness} would pick black on both of them: white is 3.65:1 on the brand green
- * against black's 5.76:1, and 4.03:1 on the brand red against 5.21:1. The design system mandates
- * white in both places, and that is a deliberate, documented exception — neither meets WCAG 2.x AA
- * for normal text.
  */
 const brandSurfaceTextColor = '#ffffff';
 
 /**
- * Builds the resolver for "text rendered on a filled surface of some color".
- *
- * The exception above is keyed to one specific `brandColor`, which keeps it tied to the role it
- * was granted for: a tenant who picks the brand red as their *primary* color still gets the
- * contrast-derived text color on their buttons. Every color other than `brandColor` — including a
- * tenant's own — keeps the derived value.
+ * Brand surfaces the pinned text color applies to.
  *
  * Normalises through hex so a brand color is recognised whatever notation it is written in
  * (`#229955`, `#229955` uppercased, `rgb(34, 153, 85)`, …).
  */
-const textColorOn =
-    (brandColor: string) =>
-    (color: string): string =>
-        toHexColor(color) === toHexColor(brandColor)
-            ? brandSurfaceTextColor
-            : pickByLightness(color, '#ffffff', '#000000');
+const brandSurfaces = new Set(
+    [primitiveTheme.primaryColor, primitiveTheme.dangerColor, primitiveTheme.successColor].map(
+        toHexColor
+    )
+);
 
-/** Text color to render on a filled button standing on `primaryColor`. */
-export const buttonTextColor = textColorOn(primitiveTheme.primaryColor);
+/** Text color picked from the contrast of the surface color, without the brand exception. */
+export const derivedTextColor = (color: string): string =>
+    pickByLightness(color, '#ffffff', '#000000');
 
-/** Text color to render on a destructive surface standing on `dangerColor`. */
-export const destructiveTextColor = textColorOn(primitiveTheme.dangerColor);
-
-/**
- * Text color to render on a success surface standing on `successColor`.
- *
- * `successColor` defaults to the brand green, so the pinned-white exception above applies to it
- * exactly as it does to `primaryColor` — the two roles hold the same color and must not disagree.
- */
-export const successTextColor = textColorOn(primitiveTheme.successColor);
+/** Text color to render on a filled surface of `color`. */
+export const surfaceTextColor = (color: string): string =>
+    brandSurfaces.has(toHexColor(color)) ? brandSurfaceTextColor : derivedTextColor(color);
 
 export const inputBtnFocusBoxShadow = (
     color?: CSSProperties['color']
@@ -187,9 +170,9 @@ export const buildTheme = (themeOptions: ThemeOptions = {} as Partial<ThemeOptio
         borderRadius: base.borderRadius,
         borderWidth: base.borderWidth,
         boxShadow: 'none',
-        color: buttonTextColor(base.primaryColor),
+        color: surfaceTextColor(base.primaryColor),
         hoverBackground: shadeColor(base.primaryColor),
-        hoverColor: buttonTextColor(base.primaryColor),
+        hoverColor: surfaceTextColor(base.primaryColor),
         hoverBorderColor: base.primaryColor,
         ...customButton,
     };
@@ -235,11 +218,7 @@ export const buildTheme = (themeOptions: ThemeOptions = {} as Partial<ThemeOptio
             ),
         },
         passwordStrengthValidator: {
-            color0: base.dangerColor,
-            color1: base.dangerColor,
-            color2: base.warningColor,
-            color3: lightenColor(base.successColor, 20),
-            color4: base.successColor,
+            ...customBase.passwordStrengthValidator,
         },
     };
 };

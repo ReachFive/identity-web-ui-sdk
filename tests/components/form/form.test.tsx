@@ -633,6 +633,71 @@ describe('DOM testing', () => {
             });
         });
 
+        // the length of a phone number is checked against its country's numbering plan, which is
+        // what a too short or too long number fails. A pure E.164 format check only bounds the
+        // total digit count, and accepted a French number carrying up to 4 extra digits.
+        test('a phone number whose length does not match its country is refused', async () => {
+            const user = userEvent.setup();
+            const onSubmit = jest.fn<() => Promise<void>>().mockResolvedValue();
+
+            render(
+                <WidgetContext
+                    client={apiClient}
+                    config={defaultConfig}
+                    defaultMessages={defaultI18n}
+                >
+                    <Form fields={[{ key: 'phoneNumber', required: true }]} handler={onSubmit} />
+                </WidgetContext>
+            );
+
+            const phoneInput = screen.getByRole('textbox', { name: 'phoneNumber' });
+            const submitBtn = screen.getByRole('button', { name: 'Submit' });
+
+            // one digit too many for a French number
+            await user.type(phoneInput, '06123456789');
+            await user.click(submitBtn);
+
+            expect(onSubmit).not.toBeCalled();
+            expect(phoneInput).toHaveAccessibleErrorMessage('validation.phone');
+
+            // dropping the extra digit makes it acceptable
+            await user.clear(phoneInput);
+            await user.type(phoneInput, '0612345678');
+            await user.click(submitBtn);
+
+            await waitFor(() =>
+                expect(onSubmit).toBeCalledWith(
+                    expect.objectContaining({ phoneNumber: '+33612345678' })
+                )
+            );
+            expect(phoneInput).not.toHaveAccessibleErrorMessage('validation.phone');
+        });
+
+        // a number too short fails the same rule, and is the shape the SMS-only passwordless
+        // page lets the user submit while they are still typing
+        test('a phone number which is too short is refused', async () => {
+            const user = userEvent.setup();
+            const onSubmit = jest.fn<() => Promise<void>>().mockResolvedValue();
+
+            render(
+                <WidgetContext
+                    client={apiClient}
+                    config={defaultConfig}
+                    defaultMessages={defaultI18n}
+                >
+                    <Form fields={[{ key: 'phoneNumber', required: true }]} handler={onSubmit} />
+                </WidgetContext>
+            );
+
+            const phoneInput = screen.getByRole('textbox', { name: 'phoneNumber' });
+
+            await user.type(phoneInput, '061234');
+            await user.click(screen.getByRole('button', { name: 'Submit' }));
+
+            expect(onSubmit).not.toBeCalled();
+            expect(phoneInput).toHaveAccessibleErrorMessage('validation.phone');
+        });
+
         test('optional select field (gender) can be cleared via the empty option without failing enum validation', async () => {
             const user = userEvent.setup();
             const onSubmit = jest.fn<() => Promise<void>>().mockResolvedValue();

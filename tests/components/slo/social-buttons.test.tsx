@@ -445,7 +445,7 @@ describe('theming', () => {
             const button = getSocialButton('Facebook');
             expect(getSocialButtonLabel(button)).not.toBeInTheDocument();
             // icon size: square, sized on the button height
-            expect(button).toHaveClass('w-[var(--r5-button-height)]');
+            expect(button).toHaveClass('size-[var(--r5-button-height)]');
             // the icon is still rendered, and the title still labels the button
             expect(getProviderIcon(button)).toBeInTheDocument();
         });
