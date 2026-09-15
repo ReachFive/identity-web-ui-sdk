@@ -5,7 +5,7 @@ import React from 'react';
 
 import { afterEach, beforeEach, describe, expect, jest, test } from '@jest/globals';
 import '@testing-library/jest-dom/jest-globals';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import 'jest-styled-components';
 
@@ -423,4 +423,54 @@ describe('DOM testing', () => {
             )
         );
     });
+    // one bar per score (0-4), so that score 0 fills a single bar and every
+    // passwordStrengthValidator color — color0 included — is reachable
+    test.each([0, 1, 2, 3, 4] as const)(
+        'with PasswordPolicyRules — score %i fills the matching number of gauge bars',
+        async score => {
+            const user = userEvent.setup({
+                advanceTimers: jest.advanceTimersByTimeAsync.bind(this),
+            });
+            const onChange = jest.fn();
+
+            getPasswordStrength.mockResolvedValue({ score });
+
+            render(
+                <WidgetContext
+                    client={apiClient}
+                    config={defaultConfig}
+                    defaultMessages={defaultI18n}
+                >
+                    <ControlledPasswordField
+                        label="Password"
+                        initialValue=""
+                        onChange={onChange}
+                        showLabels={true}
+                    >
+                        <PasswordPolicyRules />
+                    </ControlledPasswordField>
+                </WidgetContext>
+            );
+
+            const input = screen.getByLabelText('Password');
+            await user.type(input, 'whatever');
+            await jest.runOnlyPendingTimersAsync();
+
+            const meter = await screen.findByRole('meter');
+            await waitFor(() => expect(meter).toHaveAttribute('aria-valuenow', String(score)));
+
+            const bars = within(meter).getAllByRole('presentation');
+            expect(bars).toHaveLength(5);
+
+            const filled = bars.filter(bar => bar.className.includes('bg-[var(--r5-strength-bg)]'));
+            expect(filled).toHaveLength(score + 1);
+
+            // the filled bars read the color variable of the current score
+            filled.forEach(bar =>
+                expect(bar).toHaveStyle({
+                    '--r5-strength-bg': `var(--r5-password-strength-bg-${score})`,
+                })
+            );
+        }
+    );
 });

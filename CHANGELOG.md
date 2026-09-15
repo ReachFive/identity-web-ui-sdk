@@ -15,7 +15,6 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - The palette drives the widget colour scheme: overriding `--primary` in CSS now moves every unthemed
   component. Set `--primary-hover` alongside it
-- Component CSS variables are prefixed `--r5-` (`--button-bg` → `--r5-button-bg`); old names stop applying
 - `theme.socialButton` colours now apply, falling back to the provider's brand colour — and so may be
   `undefined` on `SocialButtonTheme`
 - Button colours follow `primaryColor`: contrast-derived text, a darker hover shade, and `outline` / `ghost`
@@ -35,15 +34,18 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 
-- Theme options that silently did nothing: `fontSize`, `boxShadow`, button border colours, `link.hoverColor`
+- Theme options that silently did nothing: `fontSize`, `boxShadow`, button border colours,
+  `link.hoverColor`, `passwordStrengthValidator`
 - A `boxShadow` of `none` no longer removes the keyboard focus ring
 - The widget no longer fails on an unknown social provider or an unparseable theme colour
 - Phone number input: selecting another country no longer clears the number already entered — the
   national number is kept, re-formatted and re-validated against the selected country
-  ([CA-6623](https://reachfive.atlassian.net/browse/CA-6623))
 - Phone number input: entering a number with an international prefix now selects the matching
   country in the country select, without overriding an explicit selection that shares the same
-  calling code ([CA-6623](https://reachfive.atlassian.net/browse/CA-6623))
+  calling code
+- Password strength score colors can be customized with theme options
+- Password strength gauge: five bars instead of four, one per score, so that the weakest score fills a
+  single bar and `passwordStrengthValidator.color0` is applied — it previously had no effect
 
 ## [2.0.2] - 2026-08-13
 
