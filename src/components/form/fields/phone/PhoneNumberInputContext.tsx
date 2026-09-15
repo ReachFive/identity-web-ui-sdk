@@ -114,9 +114,11 @@ const useProvidePhoneNumberInput = ({
         e => {
             let newValue = e.target.value;
             if (!allowInternational) {
-                // Remove all non-numeric, non-space characters so country cannot be
-                // changed.
-                newValue = newValue.replace(/[^\d ]/g, '');
+                // Remove every character a phone number cannot carry, but keep a leading `+`:
+                // without a country select, a number that is not from `country` can only be
+                // identified by its calling code, so erasing it here would silently turn the
+                // number into a local one on the very next keystroke.
+                newValue = (newValue.startsWith('+') ? '+' : '') + newValue.replace(/[^\d ]/g, '');
             }
             onInputChange(newValue);
         },
@@ -147,12 +149,18 @@ const useProvidePhoneNumberInput = ({
         const possible = number?.isPossible();
 
         if (number && possible) {
-            // Reformat the phone number as international if international numbers
-            // are enabled.
+            // Reformat the phone number as international if international numbers are enabled.
+            // A number that does not belong to `country` is also shown in its international shape,
+            // even when they are not: its national shape carries no calling code, so it would be
+            // indistinguishable from a local number — `+212668996442` displayed as `0668996442`
+            // reads back as the French `+33668996442` as soon as the field is edited, and the
+            // number is submitted as someone else's.
             formatter.reset();
-            const nextValue = allowInternational
-                ? number.formatInternational()
-                : number.formatNational();
+            const isForeignNumber = number.country !== undefined && number.country !== country;
+            const nextValue =
+                allowInternational || isForeignNumber
+                    ? number.formatInternational()
+                    : number.formatNational();
             setInputValue(formatter.input(nextValue));
             // Update the country if the parsed number belongs to a different
             // country.
