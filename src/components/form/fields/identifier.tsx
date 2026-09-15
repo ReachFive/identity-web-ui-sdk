@@ -43,9 +43,15 @@ const IdentifierField = React.forwardRef<HTMLInputElement, IdentifierFieldProps>
                     if (number.country && number.country !== country) {
                         setCountry(number.country);
                     }
-                    const nextValue = formatter.getChars();
+                    // re-seed the formatter from the parsed number rather than from
+                    // `formatter.getChars()`: the latter is `'+' + state.digits`, and `state.digits`
+                    // still holds the IDD prefix the formatter consumed, so `0033767697150` came
+                    // back as `+0033767697150` — no country calling code starts with a `0`, so the
+                    // formatter could not read its own output and both the field and the submitted
+                    // value kept that string. The international shape is also the one the field
+                    // submits, so what is displayed is what is sent.
                     formatter.reset();
-                    setInputValue(formatter.input(nextValue));
+                    setInputValue(formatter.input(number.formatInternational()));
                 }
             },
             [formatter, isPhoneNumber, country]

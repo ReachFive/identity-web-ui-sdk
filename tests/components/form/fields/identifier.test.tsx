@@ -256,6 +256,95 @@ describe('DOM testing', () => {
         );
     });
 
+    test('withPhoneNumber = true — phone number typed with the `00` IDD prefix', async () => {
+        const user = userEvent.setup();
+        const onChange = jest.fn();
+
+        render(
+            <WidgetContext config={defaultConfig} defaultMessages={defaultI18n}>
+                <ControlledIdentifierField
+                    label="Identifiant"
+                    initialValue=""
+                    onChange={onChange}
+                    showLabels={true}
+                    withPhoneNumber={true}
+                />
+            </WidgetContext>
+        );
+
+        const input = screen.getByLabelText('Identifiant');
+        await user.clear(input);
+        // `0033…` is the same number as `+33…`, written with the IDD prefix instead of the `+`
+        await user.type(input, '0033123456789');
+        await user.tab();
+
+        const formatted = format('+33123456789', 'FR', 'INTERNATIONAL');
+        const expected = format('+33123456789', 'FR', 'E.164');
+        expect(input).toHaveValue(formatted);
+        expect(onChange).toHaveBeenLastCalledWith(
+            expect.objectContaining({ target: expect.objectContaining({ value: expected }) })
+        );
+    });
+
+    test('withPhoneNumber = true — foreign phone number typed with the `00` IDD prefix', async () => {
+        const user = userEvent.setup();
+        const onChange = jest.fn();
+
+        render(
+            <WidgetContext config={defaultConfig} defaultMessages={defaultI18n}>
+                <ControlledIdentifierField
+                    label="Identifiant"
+                    initialValue=""
+                    onChange={onChange}
+                    showLabels={true}
+                    withPhoneNumber={true}
+                />
+            </WidgetContext>
+        );
+
+        const input = screen.getByLabelText('Identifiant');
+        await user.clear(input);
+        await user.type(input, '00447911123456');
+        await user.tab();
+
+        const formatted = format('+447911123456', 'GB', 'INTERNATIONAL');
+        const expected = format('+447911123456', 'GB', 'E.164');
+        expect(input).toHaveValue(formatted);
+        expect(onChange).toHaveBeenLastCalledWith(
+            expect.objectContaining({ target: expect.objectContaining({ value: expected }) })
+        );
+    });
+
+    test('withPhoneNumber = true — national phone number reformatted to international', async () => {
+        const user = userEvent.setup();
+        const onChange = jest.fn();
+
+        render(
+            <WidgetContext config={defaultConfig} defaultMessages={defaultI18n}>
+                <ControlledIdentifierField
+                    label="Identifiant"
+                    initialValue=""
+                    onChange={onChange}
+                    showLabels={true}
+                    withPhoneNumber={true}
+                />
+            </WidgetContext>
+        );
+
+        const input = screen.getByLabelText('Identifiant');
+        await user.clear(input);
+        await user.type(input, '0123456789');
+        await user.tab();
+
+        // the field shows the number in the shape it submits it, whichever shape it was typed in
+        const formatted = format('+33123456789', 'FR', 'INTERNATIONAL');
+        const expected = format('+33123456789', 'FR', 'E.164');
+        expect(input).toHaveValue(formatted);
+        expect(onChange).toHaveBeenLastCalledWith(
+            expect.objectContaining({ target: expect.objectContaining({ value: expected }) })
+        );
+    });
+
     test('withPhoneNumber = true — custom identifier passed through unchanged', async () => {
         const user = userEvent.setup();
         const onChange = jest.fn();
