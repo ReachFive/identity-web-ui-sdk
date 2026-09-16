@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>reCAPTCHA Enterprise — score-based web key</title>
+        <link rel="stylesheet" href="../shared/demo.css" />
+    </head>
+    <body>
+        <main>
+            <header>
+                <h1>reCAPTCHA Enterprise — score-based web key</h1>
+                <p class="lede">
+                    The default Enterprise integration. The SDK mints a token with
+                    <code>grecaptcha.enterprise.execute()</code> and posts it as
+                    <code>captcha_token</code>; ReachFive creates an assessment and compares the
+                    returned score against the threshold configured on the client.
+                    <strong>A challenge is never shown</strong> — the score is the only signal.
+                </p>
+            </header>
+
+            <section class="panel">
+                <h2>What this key does</h2>
+                <dl class="facts">
+                    <dt>Key type</dt>
+                    <dd>SCORE (website key)</dd>
+                    <dt>Script</dt>
+                    <dd>https://www.google.com/recaptcha/enterprise.js?render=SITE_KEY</dd>
+                    <dt>Token call</dt>
+                    <dd>grecaptcha.enterprise.execute(SITE_KEY, { action })</dd>
+                    <dt>Sent as</dt>
+                    <dd>captcha_token + captcha_provider: "recaptcha_enterprise"</dd>
+                    <dt>User friction</dt>
+                    <dd>none — invisible</dd>
+                </dl>
+            </section>
+
+            <div class="cols">
+                <section class="panel">
+                    <h2>Account settings</h2>
+                    <div id="settings"></div>
+                </section>
+
+                <section class="panel">
+                    <h2>Widget</h2>
+                    <div id="widget"></div>
+                </section>
+            </div>
+
+            <section class="panel">
+                <h2>What went over the wire</h2>
+                <div id="log"></div>
+            </section>
+
+            <section class="panel">
+                <h2>ReachFive configuration</h2>
+                <p class="lede">
+                    In the console, under the client's reCAPTCHA Enterprise configuration, set the
+                    Google Cloud project ID, this site key, a credential (API key or service
+                    account) and a threshold, and enable the endpoints you want protected. Pinning
+                    an <em>action</em> per endpoint is optional here — when it is left unset,
+                    ReachFive enforces the expected action itself.
+                </p>
+            </section>
+        </main>
+
+        <script src="../../umd/identity-ui.js"></script>
+        <script src="../shared/demo.js"></script>
+        <script>
+            Demo.start({
+                captchaOptions: settings => ({
+                    captcha: {
+                        provider: 'recaptcha_enterprise',
+                        siteKey: settings.siteKey,
+                    },
+                }),
+                describe: 'expect one captcha_token per submit, and no challenge at any point',
+            });
+        </script>
+    </body>
+</html>

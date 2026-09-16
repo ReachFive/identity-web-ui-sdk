@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>reCAPTCHA Enterprise — Universal key</title>
+        <link rel="stylesheet" href="../shared/demo.css" />
+    </head>
+    <body>
+        <main>
+            <header>
+                <h1>reCAPTCHA Enterprise — Universal key</h1>
+                <p class="lede">
+                    A Universal key unlocks the <strong>Policy Engine</strong>: CEL rules decide
+                    deterministically whether to challenge a user, instead of handing back a score
+                    for you to threshold. The browser integration is <strong>identical</strong> to
+                    the score-based key — same script, same
+                    <code>grecaptcha.enterprise.execute()</code>, same <code>captcha_token</code>.
+                    This page runs the very same SDK options as the web-key demo; everything that
+                    differs lives in Google Cloud and in the ReachFive client configuration.
+                </p>
+            </header>
+
+            <section class="note">
+                <strong>Pin an action.</strong> ReachFive requires an expected action to be
+                configured per endpoint for Universal keys, because Policy Engine rules are written
+                against the action name. With no action pinned, rules that match on it cannot fire.
+            </section>
+
+            <section class="panel">
+                <h2>What this key does</h2>
+                <dl class="facts">
+                    <dt>Key type</dt>
+                    <dd>Universal (created with --universal / universalSettings)</dd>
+                    <dt>Script</dt>
+                    <dd>https://www.google.com/recaptcha/enterprise.js?render=SITE_KEY</dd>
+                    <dt>Token call</dt>
+                    <dd>grecaptcha.enterprise.execute(SITE_KEY, { action })</dd>
+                    <dt>Sent as</dt>
+                    <dd>captcha_token + captcha_provider: "recaptcha_enterprise"</dd>
+                    <dt>User friction</dt>
+                    <dd>a challenge may appear when a policy rule fires</dd>
+                    <dt>Requires</dt>
+                    <dd>billing enabled on the Google Cloud project</dd>
+                </dl>
+            </section>
+
+            <div class="cols">
+                <section class="panel">
+                    <h2>Account settings</h2>
+                    <div id="settings"></div>
+                </section>
+
+                <section class="panel">
+                    <h2>Widget</h2>
+                    <div id="widget"></div>
+                </section>
+            </div>
+
+            <section class="panel">
+                <h2>What went over the wire</h2>
+                <div id="log"></div>
+            </section>
+
+            <section class="panel">
+                <h2>What to watch for</h2>
+                <p class="lede">
+                    Submit the form with a policy rule configured to challenge. The challenge is
+                    rendered by <code>execute()</code> itself, so the promise settles only once the
+                    user has dealt with it — the log stays silent in between, and no request is sent
+                    until then. If the user dismisses the challenge, <code>execute()</code> rejects
+                    and the widget reports the SDK's generic <code>recaptcha.error</code> message;
+                    that is worth keeping in mind when writing copy for a Universal-key deployment,
+                    since the same message covers "Google is unreachable" and "you closed the
+                    challenge".
+                </p>
+            </section>
+        </main>
+
+        <script src="../../umd/identity-ui.js"></script>
+        <script src="../shared/demo.js"></script>
+        <script>
+            Demo.start({
+                // Deliberately identical to the web-key demo: one browser integration covers both.
+                captchaOptions: settings => ({
+                    captcha: {
+                        provider: 'recaptcha_enterprise',
+                        siteKey: settings.siteKey,
+                    },
+                }),
+                describe:
+                    'a challenge may appear before the request is sent; the token still travels in the body',
+            });
+        </script>
+    </body>
+</html>

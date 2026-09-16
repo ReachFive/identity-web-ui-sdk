@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>reCAPTCHA Enterprise — Universal key with AutoExecute</title>
+        <link rel="stylesheet" href="../shared/demo.css" />
+    </head>
+    <body>
+        <main>
+            <header>
+                <h1>reCAPTCHA Enterprise — Universal key with AutoExecute</h1>
+                <p class="lede">
+                    AutoExecute is a Universal-key feature that removes the manual
+                    <code>execute()</code> call: the reCAPTCHA library intercepts the requests you
+                    have told it to protect and attaches the token itself, as an
+                    <code>X-Recaptcha-Token</code> header. The SDK therefore mints
+                    <strong>no token at all</strong> — if it did, you would pay for two assessments
+                    and only one would be read.
+                </p>
+            </header>
+
+            <section class="note">
+                <strong>Not yet verifiable end to end.</strong> ReachFive reads the captcha token
+                from the request body, so a token that arrives only as a header is not consumed
+                today. This page is built against the assumption that the backend will accept
+                <code>X-Recaptcha-Token</code>; until it does, expect the header to be present in
+                the log and the request to be rejected or treated as tokenless. The log below
+                distinguishes the two carriers precisely so this stays visible.
+            </section>
+
+            <section class="panel">
+                <h2>How it differs</h2>
+                <dl class="facts">
+                    <dt>Key type</dt>
+                    <dd>Universal, with AutoExecute enabled in the policy settings</dd>
+                    <dt>Script</dt>
+                    <dd>https://www.google.com/recaptcha/enterprise.js?render=SITE_KEY</dd>
+                    <dt>Token call</dt>
+                    <dd>none — the library intercepts the request</dd>
+                    <dt>Sent as</dt>
+                    <dd>X-Recaptcha-Token header (no captcha_token in the body)</dd>
+                    <dt>Protected routes</dt>
+                    <dd>configured in Google Cloud, not in the SDK</dd>
+                </dl>
+            </section>
+
+            <div class="cols">
+                <section class="panel">
+                    <h2>Account settings</h2>
+                    <div id="settings"></div>
+                </section>
+
+                <section class="panel">
+                    <h2>Widget</h2>
+                    <div id="widget"></div>
+                </section>
+            </div>
+
+            <section class="panel">
+                <h2>What went over the wire</h2>
+                <div id="log"></div>
+            </section>
+
+            <section class="panel">
+                <h2>Configuring the interception</h2>
+                <p class="lede">
+                    AutoExecute only fires for the endpoints named in the key's policy settings in
+                    Google Cloud. Point those at the ReachFive identity routes you want covered —
+                    for example <code>/identity/v1/signup</code> and <code>/oauth/token</code> on
+                    your ReachFive domain. If the log shows a request with neither a header nor a
+                    body token, the interception pattern did not match that URL, which is the usual
+                    mistake.
+                </p>
+            </section>
+        </main>
+
+        <script src="../../umd/identity-ui.js"></script>
+        <script src="../shared/demo.js"></script>
+        <script>
+            Demo.start({
+                captchaOptions: settings => ({
+                    captcha: {
+                        provider: 'recaptcha_enterprise',
+                        siteKey: settings.siteKey,
+                        // Suppresses the SDK's own execute() call; the library supplies the token.
+                        autoExecute: true,
+                    },
+                }),
+                describe: 'expect an X-Recaptcha-Token header and NO captcha_token in the body',
+            });
+        </script>
+    </body>
+</html>
