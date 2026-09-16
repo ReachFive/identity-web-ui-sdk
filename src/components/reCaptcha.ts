@@ -10,6 +10,11 @@ declare global {
         grecaptcha: {
             ready(callback: () => void): void;
             execute(siteKey: string, action: { action: string }): PromiseLike<string>;
+            // Only present once `enterprise.js` has loaded; `api.js` does not define it.
+            enterprise: {
+                ready(callback: () => void): void;
+                execute(siteKey: string, action: { action: string }): PromiseLike<string>;
+            };
         };
     }
 }

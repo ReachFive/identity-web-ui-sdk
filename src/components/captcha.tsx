@@ -6,6 +6,7 @@ import styled from 'styled-components';
 
 import CaptchaFox, { CaptchaFoxConf } from './captchaFox';
 import ReCaptcha, { importGoogleRecaptchaScript, ReCaptchaConf } from './reCaptcha';
+import ReCaptchaEnterprise, { importGoogleRecaptchaEnterpriseScript } from './reCaptchaEnterprise';
 
 import type { CaptchaOperation } from './captchaOperation';
 
@@ -24,6 +25,20 @@ export type CaptchaOptions =
            * setup, paired with the secret key configured on the ReachFive client.
            */
           siteKey: string;
+      }
+    | {
+          provider: 'recaptcha_enterprise';
+          /**
+           * The SITE key of the reCAPTCHA Enterprise key, from the Google Cloud console. Score-based
+           * web keys and Universal keys share this one integration; which of the two a key is only
+           * changes how the assessment is scored server side.
+           */
+          siteKey: string;
+          /**
+           * Set when the Universal key has AutoExecute enabled, so the reCAPTCHA library attaches
+           * the token to the requests it intercepts and the SDK must not fetch one of its own.
+           */
+          autoExecute?: boolean;
       }
     | {
           provider: 'captchafox';
@@ -106,8 +121,15 @@ export const CaptchaProvider = ({ children, operation, captcha }: CaptchaProvide
 
     // Start the provider's script as the widget appears, so it is ready by the time the user submits.
     useEffect(() => {
-        if (captcha?.provider === 'recaptcha') {
-            void importGoogleRecaptchaScript(captcha.siteKey).catch(() => {
+        const load =
+            captcha?.provider === 'recaptcha'
+                ? importGoogleRecaptchaScript
+                : captcha?.provider === 'recaptcha_enterprise'
+                  ? importGoogleRecaptchaEnterpriseScript
+                  : undefined;
+
+        if (load && captcha) {
+            void load(captcha.siteKey).catch(() => {
                 // Reported to the user by the handler if they go on to submit.
             });
         }
@@ -118,6 +140,20 @@ export const CaptchaProvider = ({ children, operation, captcha }: CaptchaProvide
             const settings = { siteKey: captcha.siteKey, operation };
             const handler = <T, R>(data: T, callback: (data: T) => Promise<R>) =>
                 ReCaptcha.handle(data, settings, callback);
+
+            return (
+                <CaptchaContext.Provider value={{ handler }}>{children}</CaptchaContext.Provider>
+            );
+        }
+
+        case 'recaptcha_enterprise': {
+            const settings = {
+                siteKey: captcha.siteKey,
+                autoExecute: captcha.autoExecute,
+                operation,
+            };
+            const handler = <T, R>(data: T, callback: (data: T) => Promise<R>) =>
+                ReCaptchaEnterprise.handle(data, settings, callback);
 
             return (
                 <CaptchaContext.Provider value={{ handler }}>{children}</CaptchaContext.Provider>

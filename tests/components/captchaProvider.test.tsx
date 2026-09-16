@@ -38,6 +38,23 @@ describe('CaptchaProvider loads its provider on mount', () => {
         );
     });
 
+    test('requests the Enterprise script for an Enterprise widget', async () => {
+        render(
+            <CaptchaProvider
+                operation="login"
+                captcha={{ provider: 'recaptcha_enterprise', siteKey: 'mount-enterprise' }}
+            >
+                <span>form</span>
+            </CaptchaProvider>
+        );
+
+        await waitFor(() =>
+            expect(scripts()).toContain(
+                'https://www.google.com/recaptcha/enterprise.js?render=mount-enterprise'
+            )
+        );
+    });
+
     test('requests nothing when no captcha is configured', async () => {
         render(
             <CaptchaProvider operation="login">
