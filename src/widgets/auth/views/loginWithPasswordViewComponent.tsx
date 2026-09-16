@@ -52,11 +52,7 @@ export const LoginWithPasswordView = ({
     allowAccountRecovery = false,
     auth,
     canShowPassword,
-    recaptcha_enabled = false,
-    recaptcha_site_key,
-    captchaFoxEnabled = false,
-    captchaFoxSiteKey,
-    captchaFoxMode,
+    captcha,
     showLabels,
     showRememberMe,
     allowTrustDevice,
@@ -70,8 +66,8 @@ export const LoginWithPasswordView = ({
     const { username } = params as LoginWithPasswordViewState;
 
     useLayoutEffect(() => {
-        importGoogleRecaptchaScript(recaptcha_site_key);
-    }, [recaptcha_site_key]);
+        if (captcha?.provider === 'recaptcha') importGoogleRecaptchaScript(captcha.siteKey);
+    }, [captcha]);
 
     const callback = (data: WithCaptchaToken<LoginWithPasswordFormData>) => {
         const specializedIdentifierData = specializeIdentifierData<LoginWithPasswordParams>(data);
@@ -133,14 +129,7 @@ export const LoginWithPasswordView = ({
     }
 
     return (
-        <CaptchaProvider
-            recaptcha_enabled={recaptcha_enabled}
-            recaptcha_site_key={recaptcha_site_key}
-            captchaFoxEnabled={captchaFoxEnabled}
-            captchaFoxSiteKey={captchaFoxSiteKey}
-            captchaFoxMode={captchaFoxMode}
-            action="login"
-        >
+        <CaptchaProvider captcha={captcha} operation="login">
             <Heading>{i18n('login.title')}</Heading>
             <Form
                 fields={fields}

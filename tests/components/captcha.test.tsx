@@ -51,9 +51,8 @@ const defaultConfig = {
 const defaultI18n: I18nMessages = {};
 
 const captchaFox = {
-    action: 'login',
-    captchaFoxEnabled: true,
-    captchaFoxSiteKey: 'site-key',
+    operation: 'login',
+    captcha: { provider: 'captchafox', siteKey: 'site-key' },
 } as const;
 
 function Captcha() {

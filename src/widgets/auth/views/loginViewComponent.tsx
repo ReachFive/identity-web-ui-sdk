@@ -224,11 +224,7 @@ export const LoginView = ({
     allowCustomIdentifier = false,
     showLabels = false,
     showRememberMe = false,
-    recaptcha_enabled = false,
-    recaptcha_site_key,
-    captchaFoxEnabled = false,
-    captchaFoxSiteKey,
-    captchaFoxMode = 'hidden',
+    captcha,
     allowAuthentMailPhone = true,
     allowTrustDevice,
     action,
@@ -241,8 +237,8 @@ export const LoginView = ({
     const session = useSession();
 
     useLayoutEffect(() => {
-        importGoogleRecaptchaScript(recaptcha_site_key);
-    }, [recaptcha_site_key]);
+        if (captcha?.provider === 'recaptcha') importGoogleRecaptchaScript(captcha.siteKey);
+    }, [captcha]);
 
     const { abort: abortConditionalWebAuthn } = useConditionalWebAuthn({
         auth,
@@ -291,14 +287,7 @@ export const LoginView = ({
                 />
             )}
             {socialProviders && socialProviders.length > 0 && <Separator text={i18n('or')} />}
-            <CaptchaProvider
-                recaptcha_enabled={recaptcha_enabled}
-                recaptcha_site_key={recaptcha_site_key}
-                captchaFoxEnabled={captchaFoxEnabled}
-                captchaFoxSiteKey={captchaFoxSiteKey}
-                captchaFoxMode={captchaFoxMode}
-                action="login"
-            >
+            <CaptchaProvider captcha={captcha} operation="login">
                 <LoginForm
                     showLabels={showLabels}
                     showRememberMe={showRememberMe}

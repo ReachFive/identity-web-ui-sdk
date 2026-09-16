@@ -39,11 +39,7 @@ export type VerificationCodeFormData = { verificationCode: string };
 
 export const VerificationCodeView = ({
     auth,
-    recaptcha_enabled = false,
-    recaptcha_site_key,
-    captchaFoxEnabled = false,
-    captchaFoxMode = 'hidden',
-    captchaFoxSiteKey,
+    captcha,
     onSuccess = (() => {}) as OnSuccess,
     onError = (() => {}) as OnError,
 }: WithCaptchaProps<VerificationCodeViewProps>) => {
@@ -51,14 +47,6 @@ export const VerificationCodeView = ({
     const i18n = useI18n();
     const { params } = useRouting();
     const state = params as VerificationCodeViewState;
-    const captcha = {
-        recaptcha_enabled,
-        recaptcha_site_key,
-        captchaFoxEnabled,
-        captchaFoxSiteKey,
-        captchaFoxMode,
-    };
-
     const handleSubmit = async (data: WithCaptchaToken<VerificationCodeFormData>) => {
         const result = await coreClient.verifyPasswordless({
             ...state,
@@ -89,7 +77,7 @@ export const VerificationCodeView = ({
 
     return (
         <div>
-            <CaptchaProvider {...captcha} action={`verify_passwordless_${state.authType}`}>
+            <CaptchaProvider captcha={captcha} operation={`verify_passwordless_${state.authType}`}>
                 <Info>
                     {state.authType === 'sms'
                         ? i18n('passwordless.sms.verification.intro')
@@ -101,8 +89,8 @@ export const VerificationCodeView = ({
                             key: 'verification_code',
                             onResend: handleResend,
                             resendCaptcha: {
-                                ...captcha,
-                                action:
+                                captcha,
+                                operation:
                                     state.authType === 'sms'
                                         ? 'passwordless_phone'
                                         : 'passwordless_email',

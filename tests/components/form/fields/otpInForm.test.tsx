@@ -287,7 +287,7 @@ describe('otp field in a form', () => {
     test('passes the captcha token to the resend request', async () => {
         const user = userEvent.setup();
         const onResend = jest.fn<() => Promise<void>>().mockResolvedValue();
-        renderForm({ code: { onResend, resendCaptcha: { action: 'passwordless_phone' } } });
+        renderForm({ code: { onResend, resendCaptcha: { operation: 'passwordless_phone' } } });
 
         await user.click(resendButton());
 

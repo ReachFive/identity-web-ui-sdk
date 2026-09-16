@@ -73,11 +73,7 @@ export const PasswordSignupForm = ({
     beforeSignup = x => x,
     canShowPassword,
     phoneNumberOptions,
-    recaptcha_enabled = false,
-    recaptcha_site_key,
-    captchaFoxEnabled = false,
-    captchaFoxSiteKey,
-    captchaFoxMode = 'hidden',
+    captcha,
     redirectUrl,
     returnToAfterEmailConfirmation,
     showLabels,
@@ -90,8 +86,8 @@ export const PasswordSignupForm = ({
     const [blacklist, setBlacklist] = useState<string[]>([]);
 
     useLayoutEffect(() => {
-        importGoogleRecaptchaScript(recaptcha_site_key);
-    }, [recaptcha_site_key]);
+        if (captcha?.provider === 'recaptcha') importGoogleRecaptchaScript(captcha.siteKey);
+    }, [captcha]);
 
     const callback = useCallback(
         (data: WithCaptchaToken<SignupParams['data']>) => {
@@ -154,14 +150,7 @@ export const PasswordSignupForm = ({
         : resolvedSignupFields;
 
     return (
-        <CaptchaProvider
-            recaptcha_enabled={recaptcha_enabled}
-            recaptcha_site_key={recaptcha_site_key}
-            captchaFoxEnabled={captchaFoxEnabled}
-            captchaFoxSiteKey={captchaFoxSiteKey}
-            captchaFoxMode={captchaFoxMode}
-            action="signup"
-        >
+        <CaptchaProvider captcha={captcha} operation="signup">
             <Form
                 fields={allFields}
                 showLabels={showLabels}
