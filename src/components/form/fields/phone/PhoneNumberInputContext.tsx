@@ -178,9 +178,11 @@ const useProvidePhoneNumberInput = ({
         e => {
             let newValue = e.target.value;
             if (!allowInternational) {
-                // Remove all non-numeric, non-space characters so country cannot be
-                // changed.
-                newValue = newValue.replace(/[^\d ]/g, '');
+                // Remove every character a phone number cannot carry, but keep a leading `+`:
+                // without a country select, a number that is not from `country` can only be
+                // identified by its calling code, so erasing it here would silently turn the
+                // number into a local one on the very next keystroke.
+                newValue = (newValue.startsWith('+') ? '+' : '') + newValue.replace(/[^\d ]/g, '');
             }
             onInputChange(newValue);
         },
@@ -243,11 +245,21 @@ const useProvidePhoneNumberInput = ({
         // `formatNational()` carries no such information and drops the trunk
         // prefix on an impossible number ("07 69" -> "769"), so it stays gated on
         // `isPossible()`.
-        const nextValue = allowInternational
-            ? number?.formatInternational()
-            : number?.isPossible()
-              ? number.formatNational()
-              : undefined;
+        //
+        // A number that is not from `country` keeps its calling code even when
+        // international numbers are not allowed: its national shape carries none, so
+        // `+212668996442` shown as `0668996442` reads back as the French
+        // `+33668996442` on the next keystroke, and the number is submitted as
+        // someone else's.
+        const isForeignNumber =
+            number?.country !== undefined && number.country !== country && number.isPossible();
+
+        const nextValue =
+            allowInternational || isForeignNumber
+                ? number?.formatInternational()
+                : number?.isPossible()
+                  ? number.formatNational()
+                  : undefined;
 
         if (nextValue !== undefined) {
             formatter.reset();

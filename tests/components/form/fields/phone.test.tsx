@@ -126,6 +126,147 @@ describe('DOM testing', () => {
         await waitFor(() => expect(onChange).toHaveBeenCalledWith(expect.stringMatching(/^\+1/)));
     });
 
+    test('without country select — foreign number typed with the `00` IDD prefix', async () => {
+        const user = userEvent.setup();
+        const onChange = jest.fn();
+
+        render(
+            <WidgetContext config={defaultConfig} defaultMessages={defaultI18n}>
+                <ControlledPhoneInput
+                    label="phone"
+                    initialValue={undefined}
+                    onChange={onChange}
+                    showLabels={true}
+                    allowInternational={false}
+                    defaultCountry="FR"
+                />
+            </WidgetContext>
+        );
+
+        const input = screen.getByLabelText('Phone number');
+        // a Moroccan number, on a field whose default country is France
+        await user.type(input, '00212668996442');
+        await user.tab();
+
+        // it does not belong to the field's country, so it keeps its calling code on screen:
+        // displaying it as `0668996442` would be indistinguishable from a French mobile
+        expect(input).toHaveValue(format('+212668996442', 'MA', 'INTERNATIONAL'));
+        expect(onChange).toHaveBeenLastCalledWith('+212668996442');
+    });
+
+    test('without country select — editing a foreign number does not turn it into a local one', async () => {
+        const user = userEvent.setup();
+        const onChange = jest.fn();
+
+        render(
+            <WidgetContext config={defaultConfig} defaultMessages={defaultI18n}>
+                <ControlledPhoneInput
+                    label="phone"
+                    initialValue={undefined}
+                    onChange={onChange}
+                    showLabels={true}
+                    allowInternational={false}
+                    defaultCountry="FR"
+                />
+            </WidgetContext>
+        );
+
+        const input = screen.getByLabelText('Phone number');
+        await user.type(input, '00212668996442');
+        await user.tab();
+
+        await user.click(input);
+        await user.type(input, '{backspace}2');
+        await user.tab();
+
+        expect(input).toHaveValue(format('+212668996442', 'MA', 'INTERNATIONAL'));
+        expect(onChange).toHaveBeenLastCalledWith('+212668996442');
+    });
+
+    test('without country select — a foreign number does not change the country of the next one', async () => {
+        const user = userEvent.setup();
+        const onChange = jest.fn();
+
+        render(
+            <WidgetContext config={defaultConfig} defaultMessages={defaultI18n}>
+                <ControlledPhoneInput
+                    label="phone"
+                    initialValue={undefined}
+                    onChange={onChange}
+                    showLabels={true}
+                    allowInternational={false}
+                    defaultCountry="FR"
+                />
+            </WidgetContext>
+        );
+
+        const input = screen.getByLabelText('Phone number');
+        await user.type(input, '00212668996442');
+        await user.tab();
+
+        // the field has no country select: the country it reads national numbers with stays the
+        // one it was configured with, whatever number was typed before
+        await user.clear(input);
+        await user.type(input, '0668996442');
+        await user.tab();
+
+        expect(input).toHaveValue(format('+33668996442', 'FR', 'NATIONAL'));
+        expect(onChange).toHaveBeenLastCalledWith('+33668996442');
+    });
+
+    test('without country select — a local number keeps its national shape', async () => {
+        const user = userEvent.setup();
+        const onChange = jest.fn();
+
+        render(
+            <WidgetContext config={defaultConfig} defaultMessages={defaultI18n}>
+                <ControlledPhoneInput
+                    label="phone"
+                    initialValue={undefined}
+                    onChange={onChange}
+                    showLabels={true}
+                    allowInternational={false}
+                    defaultCountry="FR"
+                />
+            </WidgetContext>
+        );
+
+        const input = screen.getByLabelText('Phone number');
+        await user.type(input, '0612345678');
+        await user.tab();
+
+        expect(input).toHaveValue(format('+33612345678', 'FR', 'NATIONAL'));
+        expect(onChange).toHaveBeenLastCalledWith('+33612345678');
+    });
+
+    test('without country select — a stored foreign number survives an edit', async () => {
+        const user = userEvent.setup();
+        const onChange = jest.fn();
+
+        render(
+            <WidgetContext config={defaultConfig} defaultMessages={defaultI18n}>
+                <ControlledPhoneInput
+                    label="phone"
+                    initialValue="+212668996442"
+                    onChange={onChange}
+                    showLabels={true}
+                    allowInternational={false}
+                    defaultCountry="FR"
+                />
+            </WidgetContext>
+        );
+
+        const input = screen.getByLabelText('Phone number');
+        expect(input).toHaveValue(format('+212668996442', 'MA', 'INTERNATIONAL'));
+
+        await user.click(input);
+        await user.type(input, '{backspace}2');
+        await user.tab();
+
+        expect(input).toHaveValue(format('+212668996442', 'MA', 'INTERNATIONAL'));
+        expect(onChange).toHaveBeenLastCalledWith('+212668996442');
+    });
+
     test('optional — onChange not called on initial render', () => {
         const onChange = jest.fn();
 

@@ -165,7 +165,133 @@ describe('DOM testing', () => {
         );
     });
 
-    test('withPhoneNumber = true — phone number formatted to international on blur', async () => {
+    test('withPhoneNumber = true — email whose local part holds a possible phone number', async () => {
+        const user = userEvent.setup();
+        const onChange = jest.fn();
+
+        render(
+            <WidgetContext config={defaultConfig} defaultMessages={defaultI18n}>
+                <ControlledIdentifierField
+                    label="Identifiant"
+                    initialValue=""
+                    onChange={onChange}
+                    showLabels={true}
+                    withPhoneNumber={true}
+                />
+            </WidgetContext>
+        );
+
+        const input = screen.getByLabelText('Identifiant');
+        const emailValue = 'ccu123456789@yopmail.com';
+        await user.clear(input);
+        await user.type(input, emailValue);
+
+        // the 9th digit makes `123456789` a possible French number: the formatter must not
+        // claim the value and drop everything it cannot read
+        expect(input).toHaveValue(emailValue);
+
+        await user.tab();
+
+        expect(input).toHaveValue(emailValue);
+        expect(onChange).toHaveBeenLastCalledWith(
+            expect.objectContaining({ target: expect.objectContaining({ value: emailValue }) })
+        );
+    });
+
+    test('withPhoneNumber = true — email whose local part is a whole possible phone number', async () => {
+        const user = userEvent.setup();
+        const onChange = jest.fn();
+
+        render(
+            <WidgetContext config={defaultConfig} defaultMessages={defaultI18n}>
+                <ControlledIdentifierField
+                    label="Identifiant"
+                    initialValue=""
+                    onChange={onChange}
+                    showLabels={true}
+                    withPhoneNumber={true}
+                />
+            </WidgetContext>
+        );
+
+        const input = screen.getByLabelText('Identifiant');
+        // unlike `ccu123456789@…`, this one is phone-shaped until the `@`: the field must not bake
+        // the phone formatting into it, since nothing typed afterwards can take it back out
+        const emailValue = '0612345678@yopmail.com';
+        await user.clear(input);
+        await user.type(input, emailValue);
+
+        expect(input).toHaveValue(emailValue);
+
+        await user.tab();
+
+        expect(input).toHaveValue(emailValue);
+        expect(onChange).toHaveBeenLastCalledWith(
+            expect.objectContaining({ target: expect.objectContaining({ value: emailValue }) })
+        );
+    });
+
+    test('withPhoneNumber = true — a possible phone number is only reformatted on blur', async () => {
+        const user = userEvent.setup();
+        const onChange = jest.fn();
+
+        render(
+            <WidgetContext config={defaultConfig} defaultMessages={defaultI18n}>
+                <ControlledIdentifierField
+                    label="Identifiant"
+                    initialValue=""
+                    onChange={onChange}
+                    showLabels={true}
+                    withPhoneNumber={true}
+                />
+            </WidgetContext>
+        );
+
+        const input = screen.getByLabelText('Identifiant');
+        await user.clear(input);
+        await user.type(input, '0612345678');
+
+        // the field cannot know yet whether this is a phone number or the start of something else,
+        // so it leaves the value alone while the user is still typing
+        expect(input).toHaveValue('0612345678');
+        expect(onChange).toHaveBeenLastCalledWith(
+            expect.objectContaining({ target: expect.objectContaining({ value: '+33612345678' }) })
+        );
+
+        await user.tab();
+
+        expect(input).toHaveValue(format('+33612345678', 'FR', 'NATIONAL'));
+    });
+
+    test('withPhoneNumber = true — custom identifier holding a possible phone number', async () => {
+        const user = userEvent.setup();
+        const onChange = jest.fn();
+
+        render(
+            <WidgetContext config={defaultConfig} defaultMessages={defaultI18n}>
+                <ControlledIdentifierField
+                    label="Identifiant"
+                    initialValue=""
+                    onChange={onChange}
+                    showLabels={true}
+                    withPhoneNumber={true}
+                />
+            </WidgetContext>
+        );
+
+        const input = screen.getByLabelText('Identifiant');
+        const otherValue = 'ccu123456789';
+        await user.clear(input);
+        await user.type(input, otherValue);
+        await user.tab();
+
+        expect(input).toHaveValue(otherValue);
+        expect(onChange).toHaveBeenLastCalledWith(
+            expect.objectContaining({ target: expect.objectContaining({ value: otherValue }) })
+        );
+    });
+
+    test('withPhoneNumber = true — phone number formatted on blur', async () => {
         const user = userEvent.setup();
         const onChange = jest.fn();
         const phoneValue = '+33123456789';
@@ -187,11 +313,127 @@ describe('DOM testing', () => {
         await user.type(input, phoneValue);
         await user.tab();
 
-        const formatted = format(phoneValue, 'FR', 'INTERNATIONAL');
+        const formatted = format(phoneValue, 'FR', 'NATIONAL');
         const expected = format(phoneValue, 'FR', 'E.164');
         expect(input).toHaveValue(formatted);
         expect(onChange).toHaveBeenLastCalledWith(
             expect.objectContaining({ target: expect.objectContaining({ value: expected }) })
+        );
+    });
+
+    test('withPhoneNumber = true — phone number typed with the `00` IDD prefix', async () => {
+        const user = userEvent.setup();
+        const onChange = jest.fn();
+
+        render(
+            <WidgetContext config={defaultConfig} defaultMessages={defaultI18n}>
+                <ControlledIdentifierField
+                    label="Identifiant"
+                    initialValue=""
+                    onChange={onChange}
+                    showLabels={true}
+                    withPhoneNumber={true}
+                />
+            </WidgetContext>
+        );
+
+        const input = screen.getByLabelText('Identifiant');
+        await user.clear(input);
+        // `0033…` is the same number as `+33…`, written with the IDD prefix instead of the `+`
+        await user.type(input, '0033123456789');
+        await user.tab();
+
+        const formatted = format('+33123456789', 'FR', 'NATIONAL');
+        const expected = format('+33123456789', 'FR', 'E.164');
+        expect(input).toHaveValue(formatted);
+        expect(onChange).toHaveBeenLastCalledWith(
+            expect.objectContaining({ target: expect.objectContaining({ value: expected }) })
+        );
+    });
+
+    test('withPhoneNumber = true — foreign phone number typed with the `00` IDD prefix', async () => {
+        const user = userEvent.setup();
+        const onChange = jest.fn();
+
+        render(
+            <WidgetContext config={defaultConfig} defaultMessages={defaultI18n}>
+                <ControlledIdentifierField
+                    label="Identifiant"
+                    initialValue=""
+                    onChange={onChange}
+                    showLabels={true}
+                    withPhoneNumber={true}
+                />
+            </WidgetContext>
+        );
+
+        const input = screen.getByLabelText('Identifiant');
+        await user.clear(input);
+        await user.type(input, '00447911123456');
+        await user.tab();
+
+        const formatted = format('+447911123456', 'GB', 'INTERNATIONAL');
+        const expected = format('+447911123456', 'GB', 'E.164');
+        expect(input).toHaveValue(formatted);
+        expect(onChange).toHaveBeenLastCalledWith(
+            expect.objectContaining({ target: expect.objectContaining({ value: expected }) })
+        );
+    });
+
+    test('withPhoneNumber = true — national phone number keeps its national shape', async () => {
+        const user = userEvent.setup();
+        const onChange = jest.fn();
+
+        render(
+            <WidgetContext config={defaultConfig} defaultMessages={defaultI18n}>
+                <ControlledIdentifierField
+                    label="Identifiant"
+                    initialValue=""
+                    onChange={onChange}
+                    showLabels={true}
+                    withPhoneNumber={true}
+                />
+            </WidgetContext>
+        );
+
+        const input = screen.getByLabelText('Identifiant');
+        await user.clear(input);
+        await user.type(input, '0123456789');
+        await user.tab();
+
+        const formatted = format('+33123456789', 'FR', 'NATIONAL');
+        const expected = format('+33123456789', 'FR', 'E.164');
+        expect(input).toHaveValue(formatted);
+        expect(onChange).toHaveBeenLastCalledWith(
+            expect.objectContaining({ target: expect.objectContaining({ value: expected }) })
+        );
+    });
+
+    test('withPhoneNumber = true, allowInternational = true — local number shown international', async () => {
+        const user = userEvent.setup();
+        const onChange = jest.fn();
+
+        render(
+            <WidgetContext config={defaultConfig} defaultMessages={defaultI18n}>
+                <ControlledIdentifierField
+                    label="Identifiant"
+                    initialValue=""
+                    onChange={onChange}
+                    showLabels={true}
+                    withPhoneNumber={true}
+                    allowInternational={true}
+                />
+            </WidgetContext>
+        );
+
+        const input = screen.getByLabelText('Identifiant');
+        await user.clear(input);
+        await user.type(input, '0123456789');
+        await user.tab();
+
+        expect(input).toHaveValue(format('+33123456789', 'FR', 'INTERNATIONAL'));
+        expect(onChange).toHaveBeenLastCalledWith(
+            expect.objectContaining({ target: expect.objectContaining({ value: '+33123456789' }) })
         );
     });
 
@@ -311,7 +553,7 @@ describe('DOM testing', () => {
         await user.type(input, phoneValue);
         await user.tab();
 
-        const formatted = format(phoneValue, 'FR', 'INTERNATIONAL');
+        const formatted = format(phoneValue, 'FR', 'NATIONAL');
         const expected = format(phoneValue, 'FR', 'E.164');
         expect(input).toHaveValue(formatted);
         expect(onChange).toHaveBeenLastCalledWith(
