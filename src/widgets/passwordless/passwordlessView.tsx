@@ -1,11 +1,10 @@
-import React, { useLayoutEffect } from 'react';
+import React from 'react';
 
 import { AuthOptions, SingleFactorPasswordlessParams } from '@reachfive/identity-core';
 
 import { CaptchaProvider, WithCaptchaProps, type WithCaptchaToken } from '@/components/captcha';
 import { Form } from '@/components/form/form';
 import { Intro, Separator } from '@/components/miscComponent';
-import { importGoogleRecaptchaScript } from '@/components/reCaptcha';
 import { SocialButtons } from '@/components/slo/social-buttons';
 import { useI18n } from '@/contexts/i18n';
 import { useReachfive } from '@/contexts/reachfive';
@@ -89,10 +88,6 @@ export const PasswordlessView = ({
     const coreClient = useReachfive();
     const i18n = useI18n();
     const { goTo } = useRouting();
-
-    useLayoutEffect(() => {
-        if (captcha?.provider === 'recaptcha') importGoogleRecaptchaScript(captcha.siteKey);
-    }, [captcha]);
 
     const sendMagicLink = async (data: WithCaptchaToken<EmailFormData>) => {
         await coreClient.startPasswordless({ authType: 'magic_link', ...data }, auth);

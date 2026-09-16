@@ -1,11 +1,10 @@
-import React, { useCallback, useLayoutEffect } from 'react';
+import React, { useCallback } from 'react';
 
 import { RequestAccountRecoveryParams } from '@reachfive/identity-core/es/main/profileClient';
 
 import { CaptchaProvider, WithCaptchaProps } from '@/components/captcha';
 import { Form } from '@/components/form/form';
 import { Alternative, Heading, Info, Intro, Link } from '@/components/miscComponent';
-import { importGoogleRecaptchaScript } from '@/components/reCaptcha';
 import { useI18n } from '@/contexts/i18n';
 import { useReachfive } from '@/contexts/reachfive';
 import { useRouting } from '@/contexts/routing';
@@ -80,10 +79,6 @@ export const AccountRecoveryView = ({
         },
         [coreClient, redirectUrl, returnToAfterAccountRecovery]
     );
-
-    useLayoutEffect(() => {
-        if (captcha?.provider === 'recaptcha') importGoogleRecaptchaScript(captcha.siteKey);
-    }, [captcha]);
 
     return (
         <div>

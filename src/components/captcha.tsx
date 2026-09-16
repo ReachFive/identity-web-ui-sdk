@@ -7,7 +7,7 @@ import { logError } from '@/helpers/logger';
 import { cn } from '@/lib/utils';
 
 import CaptchaFox, { CaptchaFoxConf } from './captchaFox';
-import ReCaptcha, { ReCaptchaConf } from './reCaptcha';
+import ReCaptcha, { importGoogleRecaptchaScript, ReCaptchaConf } from './reCaptcha';
 
 import type { CaptchaOperation } from './captchaOperation';
 
@@ -137,6 +137,15 @@ function CaptchaFoxField({
 
 function CaptchaProvider({ children, operation, captcha }: React.PropsWithChildren<CaptchaConfig>) {
     const captchaFoxInstanceRef = React.useRef<CaptchaFoxInstance>(null);
+
+    // Start the provider's script as the widget appears, so it is ready by the time the user submits.
+    React.useEffect(() => {
+        if (captcha?.provider === 'recaptcha') {
+            void importGoogleRecaptchaScript(captcha.siteKey).catch(() => {
+                // Reported to the user by the handler if they go on to submit.
+            });
+        }
+    }, [captcha]);
 
     // memoized to keeps its identity across renders
     const value = React.useMemo<CaptchaValues>(() => {

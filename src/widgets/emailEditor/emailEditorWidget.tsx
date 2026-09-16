@@ -1,9 +1,8 @@
-import React, { ComponentProps, useLayoutEffect } from 'react';
+import React, { ComponentProps } from 'react';
 
 import { CaptchaProvider, WithCaptchaProps, type WithCaptchaToken } from '@/components/captcha';
 import { Form } from '@/components/form/form';
 import { Info, Intro } from '@/components/miscComponent';
-import { importGoogleRecaptchaScript } from '@/components/reCaptcha';
 import { createMultiViewWidget } from '@/components/widget/widget';
 import { useI18n } from '@/contexts/i18n';
 import { useReachfive } from '@/contexts/reachfive';
@@ -49,10 +48,6 @@ const MainView = ({
     const coreClient = useReachfive();
     const i18n = useI18n();
     const { goTo } = useRouting();
-
-    useLayoutEffect(() => {
-        if (captcha?.provider === 'recaptcha') importGoogleRecaptchaScript(captcha.siteKey);
-    }, [captcha]);
 
     const callback = (data: WithCaptchaToken<EmailFormData>) => {
         return coreClient.updateEmail({ ...data, accessToken, redirectUrl });
