@@ -32,11 +32,7 @@ export type VerificationCodeViewState =
 export type VerificationCodeFormData = { verificationCode: string };
 
 export const VerificationCodeView = ({
-    recaptcha_enabled = false,
-    recaptcha_site_key,
-    captchaFoxEnabled = false,
-    captchaFoxMode = 'hidden',
-    captchaFoxSiteKey,
+    captcha,
     onSuccess = (() => {}) as OnSuccess,
     onError = (() => {}) as OnError,
 }: WithCaptchaProps<VerificationCodeViewProps>) => {
@@ -60,14 +56,7 @@ export const VerificationCodeView = ({
 
     return (
         <div>
-            <CaptchaProvider
-                recaptcha_enabled={recaptcha_enabled}
-                recaptcha_site_key={recaptcha_site_key}
-                captchaFoxEnabled={captchaFoxEnabled}
-                captchaFoxSiteKey={captchaFoxSiteKey}
-                captchaFoxMode={captchaFoxMode}
-                action={`verify_passwordless_${state.authType}`}
-            >
+            <CaptchaProvider captcha={captcha} operation={`verify_passwordless_${state.authType}`}>
                 <Info>
                     {state.authType === 'sms'
                         ? i18n('passwordless.sms.verification.intro')

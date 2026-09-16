@@ -40,11 +40,7 @@ interface MainViewProps {
 
 const MainView = ({
     accessToken,
-    recaptcha_enabled = false,
-    recaptcha_site_key,
-    captchaFoxEnabled = false,
-    captchaFoxMode = 'hidden',
-    captchaFoxSiteKey,
+    captcha,
     redirectUrl,
     showLabels = false,
     onError = (() => {}) as OnError,
@@ -55,8 +51,8 @@ const MainView = ({
     const { goTo } = useRouting();
 
     useLayoutEffect(() => {
-        importGoogleRecaptchaScript(recaptcha_site_key);
-    }, [recaptcha_site_key]);
+        if (captcha?.provider === 'recaptcha') importGoogleRecaptchaScript(captcha.siteKey);
+    }, [captcha]);
 
     const callback = (data: WithCaptchaToken<EmailFormData>) => {
         return coreClient.updateEmail({ ...data, accessToken, redirectUrl });
@@ -69,14 +65,7 @@ const MainView = ({
 
     return (
         <div>
-            <CaptchaProvider
-                recaptcha_enabled={recaptcha_enabled}
-                recaptcha_site_key={recaptcha_site_key}
-                captchaFoxEnabled={captchaFoxEnabled}
-                captchaFoxSiteKey={captchaFoxSiteKey}
-                captchaFoxMode={captchaFoxMode}
-                action="update_email"
-            >
+            <CaptchaProvider captcha={captcha} operation="update_email">
                 <Intro>{i18n('emailEditor.intro')}</Intro>
                 <Form
                     fields={['email']}

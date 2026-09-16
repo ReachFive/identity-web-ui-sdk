@@ -60,11 +60,7 @@ export const AccountRecoveryView = ({
     allowLogin = true,
     displaySafeErrorMessage = false,
     showLabels = false,
-    recaptcha_enabled = false,
-    recaptcha_site_key,
-    captchaFoxEnabled = false,
-    captchaFoxSiteKey,
-    captchaFoxMode,
+    captcha,
     redirectUrl,
     returnToAfterAccountRecovery,
     onError = (() => {}) as OnError,
@@ -86,21 +82,14 @@ export const AccountRecoveryView = ({
     );
 
     useLayoutEffect(() => {
-        importGoogleRecaptchaScript(recaptcha_site_key);
-    }, [recaptcha_site_key]);
+        if (captcha?.provider === 'recaptcha') importGoogleRecaptchaScript(captcha.siteKey);
+    }, [captcha]);
 
     return (
         <div>
             <Heading>{i18n('accountRecovery.title')}</Heading>
             <Intro>{i18n('accountRecovery.prompt')}</Intro>
-            <CaptchaProvider
-                recaptcha_enabled={recaptcha_enabled}
-                recaptcha_site_key={recaptcha_site_key}
-                captchaFoxEnabled={captchaFoxEnabled}
-                captchaFoxSiteKey={captchaFoxSiteKey}
-                captchaFoxMode={captchaFoxMode}
-                action="account_recovery"
-            >
+            <CaptchaProvider captcha={captcha} operation="account_recovery">
                 <Form
                     fields={[
                         {

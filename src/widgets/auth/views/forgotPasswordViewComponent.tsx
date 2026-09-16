@@ -105,11 +105,7 @@ export const ForgotPasswordView = ({
     showLabels = false,
     allowWebAuthnLogin = false,
     initialScreen,
-    recaptcha_enabled = false,
-    recaptcha_site_key,
-    captchaFoxEnabled = false,
-    captchaFoxMode = 'hidden',
-    captchaFoxSiteKey,
+    captcha,
     origin,
     redirectUrl,
     returnToAfterPasswordReset,
@@ -130,21 +126,14 @@ export const ForgotPasswordView = ({
         });
 
     useLayoutEffect(() => {
-        importGoogleRecaptchaScript(recaptcha_site_key);
-    }, [recaptcha_site_key]);
+        if (captcha?.provider === 'recaptcha') importGoogleRecaptchaScript(captcha.siteKey);
+    }, [captcha]);
 
     return (
         <div>
             <Heading>{i18n('forgotPassword.title')}</Heading>
             <Intro>{i18n('forgotPassword.prompt')}</Intro>
-            <CaptchaProvider
-                recaptcha_enabled={recaptcha_enabled}
-                recaptcha_site_key={recaptcha_site_key}
-                captchaFoxEnabled={captchaFoxEnabled}
-                captchaFoxSiteKey={captchaFoxSiteKey}
-                captchaFoxMode={captchaFoxMode}
-                action="password_reset_requested"
-            >
+            <CaptchaProvider captcha={captcha} operation="forgot_password">
                 <Form
                     fields={[
                         {
@@ -190,11 +179,7 @@ export const ForgotPasswordPhoneNumberView = ({
     allowWebAuthnLogin = false,
     initialScreen,
     phoneNumberOptions,
-    recaptcha_enabled = false,
-    recaptcha_site_key,
-    captchaFoxEnabled = false,
-    captchaFoxMode = 'hidden',
-    captchaFoxSiteKey,
+    captcha,
     redirectUrl,
     returnToAfterPasswordReset,
     onError = (() => {}) as OnError,
@@ -217,21 +202,14 @@ export const ForgotPasswordPhoneNumberView = ({
     };
 
     useLayoutEffect(() => {
-        importGoogleRecaptchaScript(recaptcha_site_key);
-    }, [recaptcha_site_key]);
+        if (captcha?.provider === 'recaptcha') importGoogleRecaptchaScript(captcha.siteKey);
+    }, [captcha]);
 
     return (
         <div>
             <Heading>{i18n('forgotPassword.title')}</Heading>
             <Intro>{i18n('forgotPassword.prompt.phoneNumber')}</Intro>
-            <CaptchaProvider
-                recaptcha_enabled={recaptcha_enabled}
-                recaptcha_site_key={recaptcha_site_key}
-                captchaFoxEnabled={captchaFoxEnabled}
-                captchaFoxSiteKey={captchaFoxSiteKey}
-                captchaFoxMode={captchaFoxMode}
-                action="password_reset_requested"
-            >
+            <CaptchaProvider captcha={captcha} operation="forgot_password">
                 <Form
                     fields={[
                         {

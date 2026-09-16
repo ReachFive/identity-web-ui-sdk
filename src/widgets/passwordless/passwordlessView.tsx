@@ -78,11 +78,7 @@ export const PasswordlessView = ({
     auth,
     authType = 'magic_link',
     enableVerificationCode,
-    recaptcha_enabled = false,
-    recaptcha_site_key,
-    captchaFoxEnabled = false,
-    captchaFoxMode = 'hidden',
-    captchaFoxSiteKey,
+    captcha,
     showIntro = true,
     showSocialLogins = false,
     socialProviders,
@@ -95,8 +91,8 @@ export const PasswordlessView = ({
     const { goTo } = useRouting();
 
     useLayoutEffect(() => {
-        importGoogleRecaptchaScript(recaptcha_site_key);
-    }, [recaptcha_site_key]);
+        if (captcha?.provider === 'recaptcha') importGoogleRecaptchaScript(captcha.siteKey);
+    }, [captcha]);
 
     const sendMagicLink = async (data: WithCaptchaToken<EmailFormData>) => {
         await coreClient.startPasswordless({ authType: 'magic_link', ...data }, auth);
@@ -172,12 +168,8 @@ export const PasswordlessView = ({
                 <Separator text={i18n('or')} />
             )}
             <CaptchaProvider
-                recaptcha_enabled={recaptcha_enabled}
-                recaptcha_site_key={recaptcha_site_key}
-                captchaFoxEnabled={captchaFoxEnabled}
-                captchaFoxSiteKey={captchaFoxSiteKey}
-                captchaFoxMode={captchaFoxMode}
-                action={showEmail ? 'passwordless_email' : 'passwordless_phone'}
+                captcha={captcha}
+                operation={showEmail ? 'passwordless_email' : 'passwordless_phone'}
             >
                 {showEmail && showIntro && <Intro>{i18n('passwordless.intro')}</Intro>}
                 {showEmail && <Form fields={['email']} handler={sendMagicLink} onError={onError} />}

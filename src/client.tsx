@@ -3,6 +3,11 @@ import { createRoot } from 'react-dom/client';
 
 import type { AuthOptions, Client as CoreClient, SessionInfo } from '@reachfive/identity-core';
 
+import {
+    type CaptchaOptions,
+    type DeprecatedCaptchaConf,
+    resolveCaptchaOptions,
+} from '@/components/captcha';
 import { ErrorText } from '@/components/miscComponent';
 import { type I18nMessages } from '@/contexts/i18n';
 import { UserError } from '@/helpers/errors';
@@ -150,7 +155,22 @@ export class UiClient {
         options: P = {} as P,
         props = {}
     ) {
-        const { container: _c1, countryCode: _c2, onReady: _c3, ...widgetProps } = options;
+        const {
+            container: _c1,
+            countryCode: _c2,
+            onReady: _c3,
+            // The deprecated per-provider options are translated once, here at the public boundary,
+            // so the deprecated fields don't leak all over.
+            recaptcha_enabled: _d1,
+            recaptcha_site_key: _d2,
+            captchaFoxEnabled: _d3,
+            captchaFoxSiteKey: _d4,
+            captchaFoxMode: _d5,
+            ...rest
+        } = options as P & DeprecatedCaptchaConf & { captcha?: CaptchaOptions };
+
+        const captcha = resolveCaptchaOptions(options);
+        const widgetProps = { ...rest, ...(captcha ? { captcha } : {}) };
 
         const container =
             typeof options.container === 'string'
@@ -171,7 +191,7 @@ export class UiClient {
                 countryCode: options.countryCode ?? this.config.countryCode ?? 'FR',
             };
 
-            const WidgetComponent = await widget(widgetProps, {
+            const WidgetComponent = await widget(widgetProps as Omit<P, keyof WidgetProps>, {
                 ...props,
                 config,
                 apiClient: this.core,

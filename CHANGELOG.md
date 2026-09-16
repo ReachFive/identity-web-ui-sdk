@@ -10,6 +10,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Added
 
 - Support for social providers configured outside the built-in list, with a per-provider `buttonLabel` option
+- `captcha`, a single widget option naming the provider and its settings, replacing the per-provider
+  flags.
 
 ### Changed
 
@@ -23,6 +25,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Deprecated
 
 - `theme.socialButton.focusBoxShadow`, now that the focus ring follows the provider's brand colour
+- `recaptcha_enabled`, `recaptcha_site_key`, `captchaFoxEnabled`, `captchaFoxSiteKey` and
+  `captchaFoxMode`. Use `captcha: { provider, siteKey, … }` instead; the old options are still
+  honoured and are translated internally
 
 ### Removed
 
