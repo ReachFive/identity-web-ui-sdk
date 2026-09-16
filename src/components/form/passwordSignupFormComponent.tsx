@@ -1,4 +1,4 @@
-import React, { useCallback, useLayoutEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 
 import { AuthOptions } from '@reachfive/identity-core';
 import { SignupParams } from '@reachfive/identity-core/es/main/oAuthClient';
@@ -6,7 +6,7 @@ import { SignupParams } from '@reachfive/identity-core/es/main/oAuthClient';
 import { CaptchaProvider, WithCaptchaProps, type WithCaptchaToken } from '@/components/captcha';
 import { Form } from '@/components/form/form';
 import { UserAgreement } from '@/components/form/UserAgreement';
-import { extractCaptchaTokenFromData, importGoogleRecaptchaScript } from '@/components/reCaptcha';
+import { extractCaptchaTokenFromData } from '@/components/reCaptcha';
 import { useReachfive } from '@/contexts/reachfive';
 import { snakeCaseProperties } from '@/helpers/transformObjectProperties';
 import { isEqual, isValued } from '@/helpers/utils';
@@ -84,10 +84,6 @@ export const PasswordSignupForm = ({
 }: WithCaptchaProps<PasswordSignupFormProps>) => {
     const coreClient = useReachfive();
     const [blacklist, setBlacklist] = useState<string[]>([]);
-
-    useLayoutEffect(() => {
-        if (captcha?.provider === 'recaptcha') importGoogleRecaptchaScript(captcha.siteKey);
-    }, [captcha]);
 
     const callback = useCallback(
         (data: WithCaptchaToken<SignupParams['data']>) => {

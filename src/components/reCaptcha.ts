@@ -1,12 +1,14 @@
 import { UserError } from '@/helpers/errors';
 
 import { WithCaptchaToken } from './captcha';
+import { importCaptchaScript } from './captchaScript';
 
 import type { CaptchaOperation } from './captchaOperation';
 
 declare global {
     interface Window {
         grecaptcha: {
+            ready(callback: () => void): void;
             execute(siteKey: string, action: { action: string }): PromiseLike<string>;
         };
     }
@@ -78,6 +80,7 @@ export default class ReCaptcha {
         callback: (data: WithCaptchaToken<T>) => Promise<R>
     ) => {
         try {
+            await importGoogleRecaptchaScript(siteKey);
             const captchaToken = await this.getRecaptchaToken(siteKey, actions[operation]);
             return callback({ ...data, captchaToken, captchaProvider: 'recaptcha' });
         } catch (_error) {
@@ -93,16 +96,12 @@ export default class ReCaptcha {
     };
 }
 
-export function importGoogleRecaptchaScript(siteKey: string) {
-    const src = `https://www.google.com/recaptcha/api.js?render=${siteKey}`;
-    if (!document.body.querySelector(`script[src="${src}"]`)) {
-        const script = document.createElement('script');
-        script.type = 'text/javascript';
-        script.async = true;
-        script.defer = true;
-        script.src = src;
-        document.body.appendChild(script);
-    }
+export function importGoogleRecaptchaScript(siteKey: string): Promise<void> {
+    return importCaptchaScript({
+        src: `https://www.google.com/recaptcha/api.js?render=${encodeURIComponent(siteKey)}`,
+        isLoaded: () => typeof window.grecaptcha?.execute === 'function',
+        whenReady: () => new Promise(resolve => window.grecaptcha.ready(() => resolve())),
+    });
 }
 
 export function extractCaptchaTokenFromData<T extends { captchaToken?: string }>(data: T) {

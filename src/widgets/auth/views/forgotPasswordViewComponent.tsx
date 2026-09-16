@@ -1,10 +1,9 @@
-import React, { useCallback, useLayoutEffect } from 'react';
+import React, { useCallback } from 'react';
 
 import { CaptchaProvider, WithCaptchaProps } from '@/components/captcha.tsx';
 import { DefaultButton } from '@/components/form/buttonComponent.tsx';
 import { Form } from '@/components/form/form.tsx';
 import { Alternative, Heading, Info, Intro, Link } from '@/components/miscComponent';
-import { importGoogleRecaptchaScript } from '@/components/reCaptcha';
 import { useConfig } from '@/contexts/config.tsx';
 import { useI18n } from '@/contexts/i18n';
 import { useReachfive } from '@/contexts/reachfive';
@@ -125,10 +124,6 @@ export const ForgotPasswordView = ({
             returnToAfterPasswordReset,
         });
 
-    useLayoutEffect(() => {
-        if (captcha?.provider === 'recaptcha') importGoogleRecaptchaScript(captcha.siteKey);
-    }, [captcha]);
-
     return (
         <div>
             <Heading>{i18n('forgotPassword.title')}</Heading>
@@ -200,10 +195,6 @@ export const ForgotPasswordPhoneNumberView = ({
     const onSuccess = ({ phoneNumber }: PhoneNumberIdentifier) => {
         goTo<PhoneNumberIdentifier>('forgot-password-code', { phoneNumber });
     };
-
-    useLayoutEffect(() => {
-        if (captcha?.provider === 'recaptcha') importGoogleRecaptchaScript(captcha.siteKey);
-    }, [captcha]);
 
     return (
         <div>

@@ -1,11 +1,11 @@
-import React, { ComponentType, useRef } from 'react';
+import React, { ComponentType, useEffect, useRef } from 'react';
 
 import { CaptchaFoxInstance, CaptchaFox as CaptchaFoxWidget } from '@captchafox/react';
 import type { WidgetDisplayMode } from '@captchafox/types';
 import styled from 'styled-components';
 
 import CaptchaFox, { CaptchaFoxConf } from './captchaFox';
-import ReCaptcha, { ReCaptchaConf } from './reCaptcha';
+import ReCaptcha, { importGoogleRecaptchaScript, ReCaptchaConf } from './reCaptcha';
 
 import type { CaptchaOperation } from './captchaOperation';
 
@@ -103,6 +103,15 @@ export type CaptchaProviderProps = {
 
 export const CaptchaProvider = ({ children, operation, captcha }: CaptchaProviderProps) => {
     const captchaFoxInstanceRef = useRef<CaptchaFoxInstance>(null);
+
+    // Start the provider's script as the widget appears, so it is ready by the time the user submits.
+    useEffect(() => {
+        if (captcha?.provider === 'recaptcha') {
+            void importGoogleRecaptchaScript(captcha.siteKey).catch(() => {
+                // Reported to the user by the handler if they go on to submit.
+            });
+        }
+    }, [captcha]);
 
     switch (captcha?.provider) {
         case 'recaptcha': {
