@@ -15,14 +15,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
-- The palette drives the widget colour scheme: overriding `--primary` in CSS now moves every unthemed
-  component. Set `--primary-hover` alongside it
-- `theme.socialButton` colours now apply, falling back to the provider's brand colour — and so may be
-  `undefined` on `SocialButtonTheme`
+- `theme.socialButton` colours now apply, falling back to the provider's brand colour
 - Button colours follow `primaryColor`: contrast-derived text, a darker hover shade, and `outline` / `ghost`
   variants that no longer reuse the filled-button tokens
-- The WebAuthn registered-devices list is rebuilt on the shared `Item` primitives, so it matches the
-  credential lists of the MFA and social-accounts widgets
+- The WebAuthn registered-devices list is rebuilt on the shared `Item` primitives
 
 ### Deprecated
 
@@ -47,14 +43,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Phone number input: entering a number with an international prefix now selects the matching
   country in the country select, without overriding an explicit selection that shares the same
   calling code
+- Phone number input: the country select shows its chevron indicator again
 - Password strength score colors can be customized with theme options
 - Password strength gauge: five bars instead of four, one per score, so that the weakest score fills a
   single bar and `passwordStrengthValidator.color0` is applied — it previously had no effect
-- Password rules: a satisfied rule is shown in the success colour instead of the error one
-- Phone number input: the country select shows its chevron indicator again
+- Password rules: a satisfied rule is shown in the success colour instead of the primary color
 - The identifier field keeps what was typed when it is not a phone number, instead of clearing it
-- The bundled type declarations no longer fail to resolve `class-variance-authority/types`, which broke
-  `npm run build`
 
 ## [2.0.2] - 2026-08-13
 
