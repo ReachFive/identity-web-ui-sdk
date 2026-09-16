@@ -2,10 +2,33 @@ import * as React from "react"
 
 import { Slot } from "@radix-ui/react-slot"
 import { cva, type VariantProps } from "class-variance-authority"
+import type { ClassValue } from "clsx"
 
 import { cn } from "@/lib/utils"
 
 /**
+ * A copy of CVA's own `ClassProp`: `class` and `className` are interchangeable, never both.
+ *
+ * It is re-declared here rather than imported because the package's `exports` map exposes
+ * `class-variance-authority/types` under the `types` condition only — see {@link buttonVariants}.
+ */
+type ClassProp =
+  | { class: ClassValue; className?: never }
+  | { class?: never; className: ClassValue }
+  | { class?: never; className?: never }
+
+/** The variants accepted by {@link buttonVariants} — keep in sync with the `cva` config below. */
+type ButtonVariants = {
+  variant?: "default" | "outline" | "ghost" | "destructive" | "link"
+  size?: "default" | "sm" | "lg" | "icon" | "icon-xs" | "icon-sm" | "icon-lg"
+}
+
+/**
+ * The return type is annotated rather than inferred: TypeScript would otherwise inline
+ * `import("class-variance-authority/types").ClassProp` into the emitted declaration, and that
+ * subpath is only declared under the `types` condition of the package's `exports` map, which
+ * Rollup cannot resolve while bundling `types/identity-ui.d.ts`.
+ *
  * `theme.button.*` describes the *filled* button, and the other variants derive from it — so a
  * tenant who themes the button sees `outline` and `ghost` follow, instead of drifting back to the
  * brand color. Setting `primaryColor` alone is enough, since the `--r5-button-*` tokens point at
@@ -19,7 +42,7 @@ import { cn } from "@/lib/utils"
  * `link` and `destructive` do not inherit a width with no matching color, which resolves to
  * `currentColor` and paints a hairline in the text color.
  */
-const buttonVariants = cva(
+const buttonVariants: (props?: ButtonVariants & ClassProp) => string = cva(
   "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[var(--r5-button-radius)] text-[length:var(--r5-button-text-size)] font-[var(--r5-button-font-weight)] leading-[var(--r5-button-leading)] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
   {
     variants: {
