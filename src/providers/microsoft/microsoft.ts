@@ -7,5 +7,6 @@ export default {
     fontKey: 'windows',
     name: 'Microsoft',
     color: '#00a1f1',
+    btnTextColor: '#ffffff',
     icon,
 } satisfies Provider;

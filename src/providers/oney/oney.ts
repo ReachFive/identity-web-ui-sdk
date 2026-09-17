@@ -6,5 +6,6 @@ export default {
     key: 'oney',
     name: 'Oney',
     color: '#8bbc06',
+    btnTextColor: '#ffffff',
     icon,
 } satisfies Provider;
