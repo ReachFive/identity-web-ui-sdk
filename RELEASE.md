@@ -29,9 +29,11 @@
 
 4. Create a pull request named `Release vx.y.z` (add the Github tag `release`) and submit it.
 
-   > **Automatic prereleases.** As soon as the PR carries the `release` label,
-   > every push publishes a release-candidate build to npm — `vx.y.z-rc.1`,
-   > `vx.y.z-rc.2`, … — under the `next` dist-tag. Install a candidate with
+   > **On-demand prereleases.** Comment `/rc` on the release PR to publish a
+   > release-candidate build to npm — `vx.y.z-rc.1`, `vx.y.z-rc.2`, … — under
+   > the `next` dist-tag. The PR must carry the `release` label and the comment
+   > must come from a repository member; CI reacts 🚀 to the comment when it
+   > picks the command up. Install a candidate with
    > `npm install @reachfive/identity-ui@<version>` (the exact version is posted
    > as a comment on the PR). Prereleases are **never** tagged `latest`, so they
    > cannot reach production consumers who track `latest`. The base version in
