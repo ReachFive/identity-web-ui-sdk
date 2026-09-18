@@ -6,6 +6,7 @@ export default {
     key: 'wechat',
     name: 'WeChat',
     color: '#44b549',
+    btnTextColor: '#ffffff',
     icon,
     windowSize: {
         width: 450,

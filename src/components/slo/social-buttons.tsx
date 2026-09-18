@@ -137,10 +137,9 @@ const SocialButton = ({
             size={showLabel ? size : 'icon'}
             className={cn(
                 `r5-btn-social r5-btn-social-${provider.key}`,
-                `[&_svg]:size-[length:var(--r5-button-text-size)]`,
                 showLabel
-                    ? `grid grid-cols-[calc(var(--r5-button-text-size)*var(--r5-button-leading))_1fr_calc(var(--r5-button-text-size)*var(--r5-button-leading))]`
-                    : 'flex',
+                    ? `grid grid-cols-[calc(var(--r5-button-text-size)*var(--r5-button-leading))_1fr_calc(var(--r5-button-text-size)*var(--r5-button-leading))] [&_svg]:size-[length:var(--r5-button-text-size)]`
+                    : 'flex shrink-0 [&_svg]:size-6',
                 className
             )}
             style={

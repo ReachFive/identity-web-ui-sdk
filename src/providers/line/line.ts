@@ -6,6 +6,7 @@ export default {
     key: 'line',
     name: 'Line',
     color: '#00c300',
+    btnTextColor: '#ffffff',
     icon,
     windowSize: {
         width: 440,

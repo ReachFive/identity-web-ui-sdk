@@ -6,6 +6,7 @@ export default {
     key: 'naver',
     name: 'Naver',
     color: '#19CE60',
+    btnTextColor: '#ffffff',
     icon,
     windowSize: {
         width: 450,
