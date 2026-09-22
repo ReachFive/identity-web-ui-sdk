@@ -32,7 +32,23 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
 
+      # The published tarball is large (~6 MB packed, ~30 MB unpacked), so npm
+      # processes it asynchronously: `npm publish` returns before the version is
+      # queryable, and any dist-tag write against it fails with a 403 until the
+      # registry catches up (observed: ~5 minutes for v2.1.0). Retry until the
+      # version lands rather than failing the release on that race.
       - name: Point next tag at the release
-        run: npm dist-tag add "@reachfive/identity-ui@$(node -p "require('./package.json').version")" next
+        run: |
+          version=$(node -p "require('./package.json').version")
+          for attempt in $(seq 1 60); do
+            if npm dist-tag add "@reachfive/identity-ui@$version" next; then
+              echo "next now points at $version"
+              exit 0
+            fi
+            echo "Attempt $attempt failed; the registry may still be processing the publish. Retrying in 10s..."
+            sleep 10
+          done
+          echo "::error::Timed out after 10 minutes pointing the next dist-tag at $version."
+          exit 1
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
