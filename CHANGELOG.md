@@ -7,6 +7,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Fixed
+
+- Inline social login buttons (`theme.socialButton.inline`) wrap onto several lines again instead of
+  being squeezed onto a single row
+
 ## [2.1.0] - 2026-09-16
 
 ### Added
