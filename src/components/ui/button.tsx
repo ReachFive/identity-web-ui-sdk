@@ -58,7 +58,7 @@ const buttonVariants: (props?: ButtonVariants & ClassProp) => string = cva(
         ghost: "bg-transparent hover:bg-[var(--r5-button-subtle-bg)]",
         destructive:
           "bg-destructive text-destructive-foreground shadow-[shadow:var(--r5-button-shadow)] hover:bg-destructive/90",
-        link: "text-[var(--r5-link-text)] underline-offset-4 hover:text-[var(--r5-link-hover-text)] hover:underline",
+        link: "text-[var(--r5-link-text)] font-normal underline-offset-4 hover:text-[var(--r5-link-hover-text)] hover:underline",
       },
       size: {
         default:

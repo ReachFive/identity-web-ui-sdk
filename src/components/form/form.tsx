@@ -4,6 +4,7 @@ import { DefaultValues, FieldPath, FieldValues, FormProvider, useForm } from 're
 import { useCaptcha } from '@/components/captcha';
 import { Required } from '@/components/form/fields/required';
 import { FormFieldsRenderer } from '@/components/form/FormFieldsRenderer';
+import { FormSubmissionProvider, useFormSubmissionState } from '@/components/form/formSubmission';
 import { Button } from '@/components/ui/button';
 import { useConfig } from '@/contexts/config';
 import { useI18n } from '@/contexts/i18n';
@@ -15,6 +16,7 @@ import {
     getFieldDefinitions,
     PhoneNumberOptions,
     resolveErrorFieldPath,
+    resolveErrorMessageKeyField,
 } from '@/lib/form';
 
 type SubmitComponent = React.ComponentType<{
@@ -150,7 +152,13 @@ function Form<TFieldValues extends FieldValues = FieldValues, R = void>({
                 const errorMessage = i18n(error.errorMessageKey ?? error.error, {
                     defaultValue: error.errorUserMsg ?? error.errorDescription ?? error.error,
                 });
-                setError('root', {
+                // an error a field declares it stands for is displayed on that field instead of
+                // above the form, typed after its key so that the field can tell it apart
+                const errorField = error.errorMessageKey
+                    ? resolveErrorMessageKeyField(error.errorMessageKey, fieldDefinitions)
+                    : undefined;
+                setError((errorField as FieldPath<TFieldValues> | undefined) ?? 'root', {
+                    type: errorField ? error.errorMessageKey : undefined,
                     message: [errorMessage, ...unmappedMessages].join(' '),
                 });
                 logError(error.errorDescription ?? error.error);
@@ -165,69 +173,101 @@ function Form<TFieldValues extends FieldValues = FieldValues, R = void>({
         [fieldDefinitions, i18n, onError, resetAfterError]
     );
 
+    // a field may lock the submission, e.g. a verification code which can no longer be used
+    const { locked, setSucceeded, value: submission } = useFormSubmissionState();
+
     const onSubmit = React.useCallback(
         async (data: TFieldValues): Promise<void> => {
+            setSucceeded(false);
             const processedData = beforeSubmit ? beforeSubmit(data) : data;
             try {
                 const result = await captchaHandler(processedData, handler);
+                // told before `onSuccess` runs, which may navigate away right away
+                setSucceeded(true);
                 await handleSuccess(result);
             } catch (error) {
                 if (typeof skipError === 'function' ? skipError(error) : skipError === true) {
+                    setSucceeded(true);
                     await handleSuccess({} as Awaited<ReturnType<typeof handler>>);
                 } else {
+                    setSucceeded(false);
                     await handleError(error);
                 }
             }
         },
-        [beforeSubmit, captchaHandler, handler, handleSuccess, handleError, skipError]
+        [beforeSubmit, captchaHandler, handler, handleSuccess, handleError, setSucceeded, skipError]
+    );
+
+    // react-hook-form does not guard `handleSubmit` against a submission already in flight: only the
+    // disabled submit button does, which `form.requestSubmit()` ignores — an auto-submitted field (see
+    // `OtpField`) would send the request again. The guard sits before `handleSubmit`, since a nested
+    // call returning early would still end by setting `isSubmitting` back to `false` mid-request.
+    const inFlight = React.useRef(false);
+
+    const submit = React.useCallback(
+        (event: React.FormEvent<HTMLFormElement>) => {
+            event.preventDefault();
+            if (locked || inFlight.current) return;
+            inFlight.current = true;
+            void handleSubmit(onSubmit)(event).finally(() => {
+                inFlight.current = false;
+            });
+        },
+        [handleSubmit, locked, onSubmit]
     );
 
     return (
         <FormProvider {...form}>
-            <form
-                onSubmit={e => void handleSubmit(onSubmit)(e)}
-                noValidate
-                aria-busy={formState.isSubmitting}
-            >
-                <div className="space-y-4">
-                    {formState.errors.root?.message && (
-                        <p className="text-destructive text-center" role="alert" aria-live="polite">
-                            {formState.errors.root.message}
-                        </p>
-                    )}
+            <FormSubmissionProvider value={submission}>
+                <form onSubmit={submit} noValidate aria-busy={formState.isSubmitting}>
+                    <div className="space-y-4">
+                        {formState.errors.root?.message && (
+                            <p
+                                className="text-destructive text-center"
+                                role="alert"
+                                aria-live="polite"
+                            >
+                                {formState.errors.root.message}
+                            </p>
+                        )}
 
-                    <FormFieldsRenderer
-                        control={control}
-                        fields={fieldDefinitions}
-                        showLabels={showLabels}
-                    />
-
-                    {children}
-
-                    {SubmitComponent ? (
-                        <SubmitComponent
-                            disabled={formState.isSubmitting}
-                            label={i18n(submitLabel)}
-                            onClick={() => void trigger()}
+                        <FormFieldsRenderer
+                            control={control}
+                            fields={fieldDefinitions}
+                            showLabels={showLabels}
                         />
-                    ) : (
-                        <Button type="submit" className="w-full" disabled={formState.isSubmitting}>
-                            {i18n(submitLabel)}
-                        </Button>
-                    )}
 
-                    {showLabels && (
-                        <p
-                            className="flex w-full leading-snug justify-center gap-2 text-sm text-muted-foreground"
-                            aria-hidden="true"
-                        >
-                            <Required /> {i18n('form.required.fields')}
-                        </p>
-                    )}
+                        {children}
 
-                    {Captcha && <Captcha />}
-                </div>
-            </form>
+                        {Captcha && <Captcha />}
+
+                        {SubmitComponent ? (
+                            <SubmitComponent
+                                disabled={locked || formState.isSubmitting}
+                                label={i18n(submitLabel)}
+                                onClick={() => void trigger()}
+                            />
+                        ) : (
+                            <Button
+                                type="submit"
+                                className="w-full"
+                                disabled={locked || formState.isSubmitting}
+                            >
+                                {i18n(submitLabel)}
+                            </Button>
+                        )}
+
+                        {showLabels && (
+                            <p
+                                className="flex w-full leading-snug justify-center gap-2 text-sm text-muted-foreground"
+                                aria-hidden="true"
+                            >
+                                <Required /> {i18n('form.required.fields')}
+                            </p>
+                        )}
+                    </div>
+                </form>
+            </FormSubmissionProvider>
         </FormProvider>
     );
 }

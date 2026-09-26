@@ -7,7 +7,9 @@ import z from 'zod';
 
 import { Client, UserConsent } from '@reachfive/identity-core';
 
+import { type CaptchaConfig } from '@/components/captcha';
 import { MarkdownContent } from '@/components/miscComponent';
+import { VERIFICATION_CODE_REFUSED } from '@/helpers/errors';
 import { logError } from '@/helpers/logger';
 import { camelCasePath, snakeCasePath } from '@/helpers/transformObjectProperties';
 import { passwordValidation } from '@/lib/validation';
@@ -23,6 +25,7 @@ type FieldType =
     | 'integer'
     | 'number'
     | 'object'
+    | 'otp'
     | 'password'
     | 'phone'
     | 'radio-group'
@@ -70,6 +73,13 @@ type BaseFieldDefinition<
      * @see resolveErrorFieldPath
      */
     errorFields?: string[];
+    /**
+     * The `errorMessageKey`s of the API errors which are about this field although the API does
+     * not name it, e.g. `error.invalidVerificationCode` for a verification code: such an error is
+     * displayed on the field instead of above the form, typed after its key.
+     * @see resolveErrorMessageKeyField
+     */
+    errorMessageKeys?: string[];
     label?: string;
     placeholder?: string;
     readOnly?: boolean;
@@ -148,12 +158,42 @@ export type FieldDefinition<
               type: 'hidden';
           }
         | {
+              type: 'otp';
+              /**
+               * The number of digits the code is made of. Defaults to the tenant's
+               * `verificationCodeLength` on the `verificationCode` field; a code which does not
+               * come from ReachFive (e.g. a TOTP) has to set its own.
+               */
+              length?: number;
+              /** Submits the form as soon as every digit is typed. */
+              autoSubmit?: boolean;
+              /**
+               * The times the API may refuse the code before it is known to be unusable, which
+               * locks the field until a new code is sent. Defaults to the tenant's
+               * `verificationCodeMaxTrials` on the `verificationCode` field.
+               */
+              maxTrials?: number;
+              /**
+               * The codes that may be sent in total, the first one included. When given, the resend
+               * link tells how many were sent, and is disabled once they all were.
+               */
+              maxSends?: number;
+              /**
+               * Sends a new code. When given, a "Resend code" link is displayed under the code. It
+               * receives the captcha token when `resendCaptcha` is configured.
+               */
+              onResend?: (captcha: { captchaToken?: string }) => Promise<unknown>;
+              /** The captcha the resend request is protected by, when the send endpoint requires one. */
+              resendCaptcha?: CaptchaConfig;
+          }
+        | {
               type: Exclude<
                   FieldType,
                   | 'checkbox'
                   | 'date'
                   | 'hidden'
                   | 'identifier'
+                  | 'otp'
                   | 'password'
                   | 'phone'
                   | 'radio-group'
@@ -171,6 +211,12 @@ function resolveCountry(defaultCountry: CountryCode | undefined, config: Config)
     return isSupportedCountry(country) ? country : 'FR';
 }
 
+/** The length ReachFive generates its codes with when the tenant has not configured one. */
+export const DEFAULT_VERIFICATION_CODE_LENGTH = 6;
+
+/** The wrong codes ReachFive accepts on one code when the remote settings do not tell. */
+export const DEFAULT_VERIFICATION_CODE_MAX_TRIALS = 3;
+
 const predefinedFields: Record<
     string,
     (args: {
@@ -178,6 +224,23 @@ const predefinedFields: Record<
         definition: Omit<FieldDefinition<FieldType, FieldValues>, 'key' | 'type'>;
     }) => FieldDefinition<FieldType, FieldValues>
 > = {
+    verificationCode: ({ config }) => ({
+        key: 'verificationCode',
+        label: 'verificationCode',
+        type: 'otp',
+        autoSubmit: true,
+        length: config.verificationCodeLength ?? DEFAULT_VERIFICATION_CODE_LENGTH,
+        maxTrials: config.verificationCodeMaxTrials ?? DEFAULT_VERIFICATION_CODE_MAX_TRIALS,
+        errorMessageKeys: [VERIFICATION_CODE_REFUSED],
+        validation: ({ definition, i18n }) => {
+            const length =
+                ('length' in definition ? definition.length : undefined) ??
+                DEFAULT_VERIFICATION_CODE_LENGTH;
+            return z
+                .string()
+                .regex(new RegExp(`^\\d{${length}}$`), i18n('validation.verificationCode'));
+        },
+    }),
     customIdentifier: () => ({
         key: 'customIdentifier',
         label: 'customIdentifier',
@@ -600,6 +663,22 @@ export function resolveErrorFieldPath(
         }
     }
     return undefined;
+}
+
+/**
+ * Resolve the field an API error without field details is about, from its `errorMessageKey` (see
+ * `errorMessageKeys`).
+ *
+ * @returns the path of the first field declaring the key, or `undefined` when none does.
+ */
+export function resolveErrorMessageKeyField(
+    errorMessageKey: string,
+    fieldDefinitions: (FieldDefinition | StaticContent)[]
+): string | undefined {
+    const definition = withoutStaticContent(fieldDefinitions).find(definition =>
+        definition.errorMessageKeys?.includes(errorMessageKey)
+    );
+    return definition ? getFieldPath(definition) : undefined;
 }
 
 function setNestedValue(obj: Record<string, unknown>, path: string, value: unknown): void {

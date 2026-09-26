@@ -1,0 +1,294 @@
+import React from 'react';
+import { useFormContext } from 'react-hook-form';
+
+import { REGEXP_ONLY_DIGITS } from 'input-otp';
+import { AlertTriangleIcon, RefreshCwIcon } from 'lucide-react';
+
+import { CaptchaBoundary, useCaptcha, type CaptchaConfig } from '@/components/captcha';
+import { Required } from '@/components/form/fields/required';
+import { useFormSubmissionSucceeded, useLockFormSubmit } from '@/components/form/formSubmission';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Button } from '@/components/ui/button';
+import { Field, FieldDescription, FieldError, FieldLabel } from '@/components/ui/field';
+import {
+    InputOTP,
+    InputOTPGroup,
+    InputOTPSlot,
+    type InputOTPSlotStatus,
+} from '@/components/ui/input-otp';
+import { useI18n } from '@/contexts/i18n';
+import { isAppError, VERIFICATION_CODE_REFUSED } from '@/helpers/errors';
+import { cn } from '@/lib/utils';
+
+type OtpError = { message?: string; type?: string };
+
+type OtpFieldProps = {
+    label: string;
+    /** The number of digits the code is made of: one slot is rendered per digit. */
+    length: number;
+    showLabels: boolean;
+    autoFocus?: boolean;
+    /** Submits the enclosing form as soon as every slot is filled. */
+    autoSubmit?: boolean;
+    description?: React.ReactNode;
+    disabled?: boolean;
+    /** An error typed `VERIFICATION_CODE_REFUSED` counts as a refused code, see `maxTrials`. */
+    errors?: OtpError[];
+    id?: string;
+    /**
+     * The codes that may be sent in total, the first one included. When given, the resend link
+     * tells how many were sent, and is disabled once they all were.
+     */
+    maxSends?: number;
+    /**
+     * The times the code may be refused before it is known to be unusable: the field is then
+     * locked, along with the enclosing form, until a new code is sent.
+     */
+    maxTrials?: number;
+    name?: string;
+    readOnly?: boolean;
+    required?: boolean;
+    /** The captcha the resend request is protected by, when the send endpoint requires one. */
+    resendCaptcha?: CaptchaConfig;
+    value?: string;
+    onBlur?: () => void;
+    onChange?: (value: string) => void;
+    /** Called with the code once every slot is filled. */
+    onComplete?: (value: string) => void;
+    /**
+     * Sends a new code. When given, a "Resend code" link is displayed under the code. It receives
+     * the captcha token when `resendCaptcha` is configured.
+     */
+    onResend?: (captcha: { captchaToken?: string }) => Promise<unknown>;
+};
+
+function resolveSlotStatus(
+    accepted: boolean,
+    disabled: boolean,
+    hasError: boolean
+): InputOTPSlotStatus | undefined {
+    if (accepted) return 'success';
+    if (disabled) return 'disabled';
+    if (hasError) return 'error';
+    return undefined;
+}
+
+/**
+ * Counts the codes the API refused, one per refusal error set on the field. React-hook-form sets a
+ * new error object on each `setError`, so a refusal is counted once however often the field
+ * renders.
+ */
+function useRefusedCodes(error: OtpError | undefined) {
+    const [refusedCodes, setRefusedCodes] = React.useState(0);
+    const counted = React.useRef<OtpError | undefined>(undefined);
+
+    React.useEffect(() => {
+        if (error?.type === VERIFICATION_CODE_REFUSED && error !== counted.current) {
+            counted.current = error;
+            setRefusedCodes(count => count + 1);
+        }
+    }, [error]);
+
+    return [refusedCodes, () => setRefusedCodes(0)] as const;
+}
+
+/**
+ * A verification code, typed one digit per slot.
+ *
+ * The API gives no way to tell a wrong code from a code which reached its maximum number of
+ * trials, on purpose. The field therefore counts the refused codes itself, since the last code was
+ * sent, and locks itself once they reach `maxTrials`: at that point the code is known to be
+ * unusable, whatever the flow. Sending a new code resets the count, which may underestimate the
+ * trials of a flow keeping its code — the user then sees one more "Incorrect code" — but never
+ * locks a code which can still be used. The resend link stays available once the field is locked,
+ * so that an expired code never leaves the user stuck — unless every code allowed by `maxSends`
+ * was sent: the limit is then reached, and the flow has to start over.
+ */
+const OtpField = React.forwardRef<HTMLInputElement, OtpFieldProps>(function OtpField(
+    {
+        autoSubmit,
+        description,
+        disabled = false,
+        errors,
+        id,
+        label,
+        length,
+        maxSends,
+        maxTrials,
+        name,
+        required,
+        resendCaptcha,
+        showLabels,
+        value,
+        onChange,
+        onComplete,
+        onResend,
+        ...props
+    },
+    ref
+) {
+    const i18n = useI18n();
+    // `null` when the field is used outside a form
+    const form = useFormContext() as ReturnType<typeof useFormContext> | null;
+
+    const inputRef = React.useRef<HTMLInputElement>(null);
+    React.useImperativeHandle(ref, () => inputRef.current!);
+
+    const [refusedCodes, resetRefusedCodes] = useRefusedCodes(errors?.[0]);
+    const [sentCodes, setSentCodes] = React.useState(1);
+
+    // a successful submission of the enclosing form accepted the code
+    const accepted = useFormSubmissionSucceeded();
+    const exhausted = maxTrials !== undefined && refusedCodes >= maxTrials;
+    const allSent = maxSends !== undefined && sentCodes >= maxSends;
+    // no code can be used any more, and no other one can be sent: the flow has to start over
+    const limitReached = exhausted && (!onResend || allSent);
+    useLockFormSubmit(exhausted || accepted);
+
+    const handleComplete = (code: string) => {
+        onComplete?.(code);
+        if (autoSubmit) inputRef.current?.form?.requestSubmit();
+    };
+
+    const resend = async (captcha: { captchaToken?: string }) => {
+        await onResend?.(captcha);
+        setSentCodes(count => count + 1);
+        resetRefusedCodes();
+        // unlike clearing the value through `onChange`, which re-validates the now empty field and
+        // flags it as required, `resetField` clears both the value and its error
+        if (form && name) form.resetField(name);
+        else onChange?.('');
+    };
+
+    const generatedId = React.useId();
+    const resolvedId = id ?? generatedId;
+    const hasError = errors !== undefined && errors.length > 0;
+    const errorId = `${resolvedId}-error`;
+    const locked = disabled || exhausted || accepted;
+
+    return (
+        <Field data-invalid={hasError}>
+            <FieldLabel htmlFor={resolvedId} className={cn(showLabels ? '' : 'sr-only')}>
+                {label}
+                {required && <Required />}
+            </FieldLabel>
+            <InputOTP
+                ref={inputRef}
+                id={resolvedId}
+                name={name}
+                maxLength={length}
+                pattern={REGEXP_ONLY_DIGITS}
+                inputMode="numeric"
+                autoComplete="one-time-code"
+                disabled={locked}
+                required={required}
+                value={value ?? ''}
+                onChange={newValue => onChange?.(newValue)}
+                onComplete={handleComplete}
+                aria-invalid={hasError ? true : undefined}
+                aria-errormessage={hasError ? errorId : undefined}
+                {...props}
+            >
+                <InputOTPGroup data-slot="widget-otp">
+                    {Array.from({ length }, (_, index) => (
+                        <InputOTPSlot
+                            key={index}
+                            index={index}
+                            status={resolveSlotStatus(accepted, locked, hasError)}
+                            data-slot="widget-otp-slot"
+                        />
+                    ))}
+                </InputOTPGroup>
+            </InputOTP>
+            {description && <FieldDescription>{description}</FieldDescription>}
+            {errors && <FieldError errors={errors} id={errorId} />}
+            {exhausted && !limitReached && (
+                <Alert variant="destructive" data-slot="widget-otp-unusable">
+                    <AlertTriangleIcon className="size-4" aria-hidden="true" />
+                    <AlertTitle className="mt-0">
+                        {i18n('verificationCode.unusable.title')}
+                    </AlertTitle>
+                    <AlertDescription>
+                        {i18n('verificationCode.unusable.description')}
+                    </AlertDescription>
+                </Alert>
+            )}
+            {limitReached && (
+                <Alert variant="destructive" data-slot="widget-otp-limit-reached">
+                    <AlertTriangleIcon className="size-4" aria-hidden="true" />
+                    <AlertTitle className="mt-0">
+                        {i18n('verificationCode.limitReached.title')}
+                    </AlertTitle>
+                    <AlertDescription>
+                        {i18n('verificationCode.limitReached.description')}
+                    </AlertDescription>
+                </Alert>
+            )}
+            {onResend && !limitReached && (
+                <CaptchaBoundary captcha={resendCaptcha}>
+                    <ResendCode
+                        // an accepted code is already on its way: no other one is needed
+                        disabled={accepted || allSent}
+                        maxSends={maxSends}
+                        sentCodes={sentCodes}
+                        onResend={resend}
+                    />
+                </CaptchaBoundary>
+            )}
+        </Field>
+    );
+});
+OtpField.displayName = 'OtpField';
+
+type ResendCodeProps = {
+    disabled: boolean;
+    maxSends?: number;
+    sentCodes: number;
+    onResend: (captcha: { captchaToken?: string }) => Promise<void>;
+};
+
+function ResendCode({ disabled, maxSends, sentCodes, onResend }: ResendCodeProps) {
+    const i18n = useI18n();
+    const { Captcha, handler: captchaHandler } = useCaptcha();
+    const [pending, setPending] = React.useState(false);
+    const [error, setError] = React.useState<{ message: string }>();
+
+    const resend = async () => {
+        setPending(true);
+        setError(undefined);
+        try {
+            await captchaHandler({}, onResend);
+        } catch (err) {
+            setError({
+                message: isAppError(err)
+                    ? i18n(err.errorMessageKey ?? err.error, {
+                          defaultValue: err.errorUserMsg ?? err.errorDescription ?? err.error,
+                      })
+                    : i18n('verificationCode.resend.error'),
+            });
+        } finally {
+            setPending(false);
+        }
+    };
+
+    return (
+        <div data-slot="widget-otp-resend" className="flex flex-col gap-2">
+            <Button
+                type="button"
+                variant="link"
+                className="h-auto justify-start p-0"
+                disabled={disabled || pending}
+                onClick={() => void resend()}
+            >
+                <RefreshCwIcon className="size-4" aria-hidden="true" />
+                {maxSends !== undefined
+                    ? i18n('verificationCode.resend.count', { sent: sentCodes, max: maxSends })
+                    : i18n('verificationCode.resend')}
+            </Button>
+            {error && <FieldError errors={[error]} />}
+            {Captcha && <Captcha />}
+        </div>
+    );
+}
+
+export { OtpField };

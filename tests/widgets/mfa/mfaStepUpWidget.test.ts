@@ -52,7 +52,7 @@ const auth = {
 
 const myStepUpToken = 'myStepUpToken';
 const myChallengeId = 'myChallengeId';
-const myVerificationCode = '1234';
+const myVerificationCode = '123456';
 
 describe('DOM testing', () => {
     const { location } = window;
@@ -137,14 +137,13 @@ describe('DOM testing', () => {
         // wait for view redirect to code verification view
         expect(await screen.findByText('passwordless.sms.verification.intro')).toBeInTheDocument();
 
-        expect(screen.getByRole('textbox', { name: 'verificationCode' })).toBeInTheDocument();
-        const input = screen.getByPlaceholderText('verificationCode');
+        const input = screen.getByRole('textbox', { name: 'verificationCode' });
         expect(input).toBeInTheDocument();
-        const submitBtn = screen.getByRole('button', { name: 'send' });
-        expect(submitBtn).toBeInTheDocument();
+        expect(input).toHaveAttribute('maxlength', String(myVerificationCode.length));
+        expect(screen.getByRole('button', { name: 'send' })).toBeInTheDocument();
 
+        // the last digit submits the code by itself
         await user.type(input, myVerificationCode);
-        await user.click(submitBtn);
 
         await waitFor(() =>
             expect(verifyMfaPasswordless).toHaveBeenNthCalledWith(
@@ -199,6 +198,41 @@ describe('DOM testing', () => {
             await user.click(stepUpStartBtn);
 
             await assertStepUpWorkflow(user, ['sms']);
+        });
+
+        test('sends a new code with the same step-up token and verifies it on its new challenge', async () => {
+            const user = userEvent.setup();
+
+            await generateComponent({ auth, showStepUpStart: false }, { stepUpTokenMaxUses: 2 });
+            expect(
+                await screen.findByText('passwordless.sms.verification.intro')
+            ).toBeInTheDocument();
+
+            startPasswordless.mockResolvedValueOnce({ challengeId: 'myOtherChallengeId' });
+            const resend = screen.getByRole('button', { name: 'verificationCode.resend.count' });
+            await user.click(resend);
+
+            expect(startPasswordless).toHaveBeenLastCalledWith({
+                authType: 'sms',
+                stepUp: myStepUpToken,
+            });
+            // the token may send no more code than the tenant allows, the first one included
+            await waitFor(() =>
+                expect(
+                    screen.getByRole('button', { name: 'verificationCode.resend.count' })
+                ).toBeDisabled()
+            );
+
+            await user.type(
+                screen.getByRole('textbox', { name: 'verificationCode' }),
+                myVerificationCode
+            );
+
+            await waitFor(() =>
+                expect(verifyMfaPasswordless).toBeCalledWith(
+                    expect.objectContaining({ challengeId: 'myOtherChallengeId' })
+                )
+            );
         });
 
         test('showStepUpStart: false', async () => {
