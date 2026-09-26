@@ -2,6 +2,7 @@ import React from 'react';
 
 import { CaptchaFoxInstance, CaptchaFox as CaptchaFoxWidget } from '@captchafox/react';
 
+import { logError } from '@/helpers/logger';
 import { cn } from '@/lib/utils';
 
 import CaptchaFox, { CaptchaFoxConf } from './captchaFox';
@@ -56,7 +57,7 @@ function CaptchaFoxField({
     ...props
 }: CaptchaFoxFieldProps) {
     const handleError: CaptchaProps['onError'] = cause => {
-        console.error(cause);
+        logError(cause ?? 'CaptchaFox error');
         onError?.(cause);
     };
 

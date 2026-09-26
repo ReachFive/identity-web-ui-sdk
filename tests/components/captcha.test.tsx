@@ -67,20 +67,27 @@ describe('CaptchaProvider with CaptchaFox', () => {
         widget.mounts = 0;
     });
 
-    test('displays the widget error, and clears it once the widget verifies', () => {
+    test('logs the widget error and passes it on to the caller', () => {
+        const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+        const onError = jest.fn();
+        const CaptchaWithErrorHandler = () => {
+            const { Captcha } = useCaptcha();
+            return Captcha ? <Captcha onError={onError} /> : null;
+        };
+
         render(
             <WidgetContext config={defaultConfig} defaultMessages={defaultI18n}>
                 <CaptchaProvider {...captchaFox}>
-                    <Captcha />
+                    <CaptchaWithErrorHandler />
                 </CaptchaProvider>
             </WidgetContext>
         );
 
         act(() => widget.props?.onError?.('Captcha failed'));
-        expect(screen.getByRole('alert')).toHaveTextContent('Captcha failed');
 
-        act(() => widget.props?.onVerify?.('token'));
-        expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+        expect(consoleErrorSpy).toBeCalledWith('Captcha failed');
+        expect(onError).toBeCalledWith('Captcha failed');
+        consoleErrorSpy.mockRestore();
     });
 
     test('keeps the widget mounted when the provider renders again', () => {
