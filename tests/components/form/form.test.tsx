@@ -12,6 +12,7 @@ import 'jest-styled-components';
 import { Client } from '@reachfive/identity-core';
 
 import { Form } from '@/components/form/form';
+import { useLockFormSubmit } from '@/components/form/formSubmission';
 import { I18nMessages } from '@/contexts/i18n';
 import { Config } from '@/types';
 
@@ -754,6 +755,101 @@ describe('DOM testing', () => {
     });
 
     describe('Form Submission', () => {
+        test('verification code is typed digit by digit and validated against its length', async () => {
+            const user = userEvent.setup();
+            const onSubmit = jest.fn<() => Promise<void>>().mockResolvedValue();
+
+            const { container } = render(
+                <WidgetContext
+                    client={apiClient}
+                    config={{ ...defaultConfig, verificationCodeLength: 8 }}
+                    defaultMessages={defaultI18n}
+                >
+                    <Form fields={['verification_code']} handler={onSubmit} />
+                </WidgetContext>
+            );
+
+            expect(container.querySelectorAll('[data-slot="widget-otp-slot"]')).toHaveLength(8);
+
+            const input = screen.getByLabelText('verificationCode');
+            await user.type(input, '123456');
+            await user.click(screen.getByRole('button', { name: 'Submit' }));
+
+            expect(onSubmit).not.toBeCalled();
+            expect(input).toHaveAccessibleErrorMessage('validation.verificationCode');
+
+            await user.type(input, '78');
+            await user.click(screen.getByRole('button', { name: 'Submit' }));
+
+            expect(onSubmit).toBeCalledWith({ verificationCode: '12345678' });
+        });
+
+        test('verification code submits itself once every digit is typed, only once', async () => {
+            const user = userEvent.setup();
+            let resolveHandler: () => void = () => {};
+            const onSubmit = jest.fn<() => Promise<void>>(
+                () => new Promise<void>(resolve => (resolveHandler = resolve))
+            );
+
+            render(
+                <WidgetContext
+                    client={apiClient}
+                    config={defaultConfig}
+                    defaultMessages={defaultI18n}
+                >
+                    <Form
+                        fields={[{ key: 'verification_code', autoSubmit: true }]}
+                        handler={onSubmit}
+                    />
+                </WidgetContext>
+            );
+
+            await user.type(screen.getByLabelText('verificationCode'), '123456');
+            await waitFor(() => expect(onSubmit).toBeCalledWith({ verificationCode: '123456' }));
+
+            // a code completed again while the request is pending submits the form natively
+            // (`requestSubmit`), which the disabled submit button does not prevent
+            await user.type(screen.getByLabelText('verificationCode'), '{Backspace}7');
+            expect(onSubmit).toBeCalledTimes(1);
+            // the pending request is still reported as such
+            expect(screen.getByRole('button', { name: 'Submit' })).toBeDisabled();
+            expect(document.querySelector('form')).toHaveAttribute('aria-busy', 'true');
+
+            resolveHandler();
+            // the accepted code locks the form: it is not sent again either
+            await waitFor(() => expect(screen.getByLabelText('verificationCode')).toBeDisabled());
+            expect(screen.getByRole('button', { name: 'Submit' })).toBeDisabled();
+            expect(onSubmit).toBeCalledTimes(1);
+        });
+
+        test('a field locking the submission prevents it', async () => {
+            const user = userEvent.setup();
+            const onSubmit = jest.fn<() => Promise<void>>().mockResolvedValue();
+            const Lock = () => {
+                useLockFormSubmit(true);
+                return null;
+            };
+
+            render(
+                <WidgetContext
+                    client={apiClient}
+                    config={defaultConfig}
+                    defaultMessages={defaultI18n}
+                >
+                    <Form fields={[{ key: 'givenName' }]} handler={onSubmit}>
+                        <Lock />
+                    </Form>
+                </WidgetContext>
+            );
+
+            await user.type(screen.getByRole('textbox', { name: 'givenName' }), 'alice');
+            const submit = screen.getByRole('button', { name: 'Submit' });
+            expect(submit).toBeDisabled();
+            await user.type(screen.getByRole('textbox', { name: 'givenName' }), '{Enter}');
+
+            expect(onSubmit).not.toBeCalled();
+        });
+
         test('applies beforeSubmit transformation before calling handler', async () => {
             const user = userEvent.setup();
             const onSubmit = jest.fn<() => Promise<void>>().mockResolvedValue();
@@ -1027,6 +1123,80 @@ describe('DOM testing', () => {
 
         afterEach(() => {
             consoleErrorSpy.mockRestore();
+        });
+
+        test('an API error a field declares in errorMessageKeys is displayed under that field instead of above the form', async () => {
+            const user = userEvent.setup();
+            const handler = jest.fn<() => Promise<void>>().mockRejectedValue({
+                error: 'invalid_grant',
+                errorDescription: 'Invalid verification code',
+                errorMessageKey: 'error.invalidVerificationCode',
+            });
+
+            render(
+                <WidgetContext
+                    client={apiClient}
+                    config={defaultConfig}
+                    defaultMessages={defaultI18n}
+                >
+                    <Form
+                        fields={[
+                            { key: 'givenName', required: false },
+                            // declares `error.invalidVerificationCode`, whatever its position
+                            'verification_code',
+                        ]}
+                        handler={handler}
+                    />
+                </WidgetContext>
+            );
+
+            const input = screen.getByLabelText('verificationCode');
+            await user.type(input, '123456');
+            await user.click(screen.getByRole('button', { name: 'Submit' }));
+
+            await waitFor(() =>
+                expect(input).toHaveAccessibleErrorMessage('Invalid verification code')
+            );
+            // the field's own error is the only alert: nothing is displayed above the form
+            expect(screen.getAllByRole('alert')).toEqual([
+                document.getElementById(input.getAttribute('aria-errormessage')!),
+            ]);
+        });
+
+        test('errorDetails matching no field stay above the form when the error is displayed under a field', async () => {
+            const user = userEvent.setup();
+            const handler = jest.fn<() => Promise<void>>().mockRejectedValue({
+                error: 'invalid_grant',
+                errorDescription: 'Invalid verification code',
+                errorMessageKey: 'error.invalidVerificationCode',
+                errorDetails: [
+                    {
+                        field: 'profile.unknown_field',
+                        message: 'The field is invalid',
+                        code: 'invalid' as const,
+                    },
+                ],
+            });
+
+            render(
+                <WidgetContext
+                    client={apiClient}
+                    config={defaultConfig}
+                    defaultMessages={defaultI18n}
+                >
+                    <Form fields={['verification_code']} handler={handler} />
+                </WidgetContext>
+            );
+
+            const input = screen.getByLabelText('verificationCode');
+            await user.type(input, '123456');
+            await user.click(screen.getByRole('button', { name: 'Submit' }));
+
+            await waitFor(() =>
+                expect(input).toHaveAccessibleErrorMessage('Invalid verification code')
+            );
+            // exact match: the root error holds the unmapped message alone
+            expect(screen.getByText('The field is invalid')).toHaveAttribute('role', 'alert');
         });
 
         test('onError called when handler throws a generic error', async () => {

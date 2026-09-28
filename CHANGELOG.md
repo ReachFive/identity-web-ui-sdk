@@ -7,6 +7,20 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+- An `otp` field type, which takes the code one digit per slot, and a predefined `verification_code` field built
+  on it, whose length follows the tenant's `verificationCodeLength` (6 digits when not configured)
+- A "Resend code" link on every verification code screen, which counts the codes sent against
+  `stepUpTokenMaxUses` in the MFA step-up
+
+### Changed
+
+- Verification codes are typed one digit per slot, in the passwordless, MFA registration, MFA step-up, phone number
+  editor and password reset by SMS flows, and submit themselves once complete (except for the password reset,
+  where the new password is typed after the code)
+- A verification code refused as many times as `verificationCodeMaxTrials` allows is locked until a new code is sent
+
 ## [2.1.0] - 2026-09-16
 
 ### Added
