@@ -32,13 +32,9 @@ function useCaptcha() {
     return React.useContext(CaptchaContext);
 }
 
-export type CaptchaProviderProps = WithCaptchaProps<{
-    children: React.ReactNode;
+export type CaptchaConfig = WithCaptchaProps<{
     action: RecaptchaAction;
 }>;
-
-/** The configuration of a `CaptchaProvider`: which captcha protects which action. */
-export type CaptchaConfig = Omit<CaptchaProviderProps, 'children'>;
 
 type CaptchaFoxFieldProps = CaptchaProps & {
     instanceRef: React.Ref<CaptchaFoxInstance>;
@@ -47,7 +43,7 @@ type CaptchaFoxFieldProps = CaptchaProps & {
 };
 
 /**
- * The CaptchaFox widget, with its error displayed under it.
+ * The CaptchaFox widget.
  */
 function CaptchaFoxField({
     className,
@@ -72,15 +68,14 @@ function CaptchaFoxField({
     );
 }
 
-function CaptchaProvider({ children, action, ...options }: CaptchaProviderProps) {
+function CaptchaProvider({ children, action, ...options }: React.PropsWithChildren<CaptchaConfig>) {
     const captchaFoxInstanceRef = React.useRef<CaptchaFoxInstance>(null);
 
     const recaptchaSiteKey = options.recaptcha_enabled ? options.recaptcha_site_key : undefined;
     const captchaFoxSiteKey = options.captchaFoxEnabled ? options.captchaFoxSiteKey : undefined;
     const captchaFoxMode = options.captchaFoxMode ?? 'hidden';
 
-    // memoized so that `Captcha` keeps its identity across renders: a component type created anew
-    // on each render makes React remount the widget, which reloads it
+    // memoized to keeps its identity across renders
     const value = React.useMemo<CaptchaValues>(() => {
         if (recaptchaSiteKey) {
             return {
@@ -115,13 +110,7 @@ function CaptchaProvider({ children, action, ...options }: CaptchaProviderProps)
     return <CaptchaContext.Provider value={value}>{children}</CaptchaContext.Provider>;
 }
 
-/**
- * Protects its children with the captcha `captcha` configures, or leaves them as they are when it
- * is not given: they then keep the captcha of the enclosing `CaptchaProvider`, if any.
- *
- * Useful for a request of its own nested in a protected form, e.g. sending a new verification
- * code, whose endpoint expects another captcha action than the form's.
- */
+/** Wrap its children with captcha provider if configured, or leaves them untouch. */
 function CaptchaBoundary({
     captcha,
     children,

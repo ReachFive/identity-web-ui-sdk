@@ -120,8 +120,7 @@ function Form<TFieldValues extends FieldValues = FieldValues, R = void>({
             await onError?.(error);
 
             if (isAppError(error)) {
-                // messages of the error details which match no displayed field, appended to the global
-                // error message so that they are not silently dropped
+                // messages matching no field, shown with the global error instead of being dropped
                 const unmappedMessages: string[] = [];
 
                 error.errorDetails?.forEach(errorDetail => {
@@ -129,9 +128,7 @@ function Form<TFieldValues extends FieldValues = FieldValues, R = void>({
                         ? resolveErrorFieldPath(errorDetail.field, fieldDefinitions)
                         : undefined;
 
-                    // a field the error only reaches through an alias holds another shape than the
-                    // one the API named, so its own message would describe the wrong thing: the
-                    // message stays named after the payload key, as it is when it matches no field
+                    // aliased fields keep the API key's message, as their own would not fit
                     const messageKey =
                         resolved && !resolved.aliased ? resolved.path : errorDetail.field;
 
@@ -152,15 +149,21 @@ function Form<TFieldValues extends FieldValues = FieldValues, R = void>({
                 const errorMessage = i18n(error.errorMessageKey ?? error.error, {
                     defaultValue: error.errorUserMsg ?? error.errorDescription ?? error.error,
                 });
-                // an error a field declares it stands for is displayed on that field instead of
-                // above the form, typed after its key so that the field can tell it apart
+                // if a field claims this error key, set the error on that field rather than form root
                 const errorField = error.errorMessageKey
-                    ? resolveErrorMessageKeyField(error.errorMessageKey, fieldDefinitions)
+                    ? resolveErrorMessageKeyField<TFieldValues>(
+                          error.errorMessageKey,
+                          fieldDefinitions
+                      )
                     : undefined;
-                setError((errorField as FieldPath<TFieldValues> | undefined) ?? 'root', {
-                    type: errorField ? error.errorMessageKey : undefined,
-                    message: [errorMessage, ...unmappedMessages].join(' '),
-                });
+                if (errorField) {
+                    setError(errorField, { type: error.errorMessageKey, message: errorMessage });
+                    if (unmappedMessages.length > 0) {
+                        setError('root', { message: unmappedMessages.join(' ') });
+                    }
+                } else {
+                    setError('root', { message: [errorMessage, ...unmappedMessages].join(' ') });
+                }
                 logError(error.errorDescription ?? error.error);
             }
 
@@ -173,7 +176,6 @@ function Form<TFieldValues extends FieldValues = FieldValues, R = void>({
         [fieldDefinitions, i18n, onError, resetAfterError]
     );
 
-    // a field may lock the submission, e.g. a verification code which can no longer be used
     const { locked, setSucceeded, value: submission } = useFormSubmissionState();
 
     const onSubmit = React.useCallback(
@@ -182,7 +184,6 @@ function Form<TFieldValues extends FieldValues = FieldValues, R = void>({
             const processedData = beforeSubmit ? beforeSubmit(data) : data;
             try {
                 const result = await captchaHandler(processedData, handler);
-                // told before `onSuccess` runs, which may navigate away right away
                 setSucceeded(true);
                 await handleSuccess(result);
             } catch (error) {
@@ -198,10 +199,7 @@ function Form<TFieldValues extends FieldValues = FieldValues, R = void>({
         [beforeSubmit, captchaHandler, handler, handleSuccess, handleError, setSucceeded, skipError]
     );
 
-    // react-hook-form does not guard `handleSubmit` against a submission already in flight: only the
-    // disabled submit button does, which `form.requestSubmit()` ignores — an auto-submitted field (see
-    // `OtpField`) would send the request again. The guard sits before `handleSubmit`, since a nested
-    // call returning early would still end by setting `isSubmitting` back to `false` mid-request.
+    // blocks a second submit while one is in flight
     const inFlight = React.useRef(false);
 
     const submit = React.useCallback(

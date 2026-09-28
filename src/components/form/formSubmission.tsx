@@ -1,23 +1,17 @@
 import React from 'react';
 
 type FormSubmissionContextValue = {
-    /** Whether the last submission succeeded: the handler resolved, or its error was skipped. */
+    /** Whether the last submission succeeded. */
     succeeded: boolean;
+    /** Sets or releases the submit lock held by `id`. */
     setLock: (id: string, locked: boolean) => void;
 };
 
 const FormSubmissionContext = React.createContext<FormSubmissionContextValue | null>(null);
 
 /**
- * The state of a form's submission, shared with its fields.
- *
- * - `succeeded` tells whether the last submission succeeded. React-hook-form's
- *   `isSubmitSuccessful` cannot tell it, since `Form` catches the handler's errors: it only turns
- *   false when the error happens to be set on a field.
- * - Fields may hold locks on the submission, e.g. a verification code which can no longer be used:
- *   while any is held, the form disables its submit button and ignores submissions.
- *   React-hook-form has no equivalent: a disabled field is left out of the submitted values, but
- *   does not prevent the submission.
+ * Holds a form's submission state: whether the last submission succeeded, and the submit locks
+ * set by its descendants.
  */
 export function useFormSubmissionState() {
     const [succeeded, setSucceeded] = React.useState(false);

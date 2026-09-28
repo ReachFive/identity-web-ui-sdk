@@ -41,24 +41,21 @@ type OtpFieldProps = {
      */
     maxSends?: number;
     /**
-     * The times the code may be refused before it is known to be unusable: the field is then
+     * The number of times the code may be refused before it is known to be unusable: the field is then
      * locked, along with the enclosing form, until a new code is sent.
      */
     maxTrials?: number;
     name?: string;
     readOnly?: boolean;
     required?: boolean;
-    /** The captcha the resend request is protected by, when the send endpoint requires one. */
+    /** The captcha config to use with the resend request. */
     resendCaptcha?: CaptchaConfig;
     value?: string;
     onBlur?: () => void;
     onChange?: (value: string) => void;
     /** Called with the code once every slot is filled. */
     onComplete?: (value: string) => void;
-    /**
-     * Sends a new code. When given, a "Resend code" link is displayed under the code. It receives
-     * the captcha token when `resendCaptcha` is configured.
-     */
+    /** The function called by the resend link. */
     onResend?: (captcha: { captchaToken?: string }) => Promise<unknown>;
 };
 
@@ -73,11 +70,7 @@ function resolveSlotStatus(
     return undefined;
 }
 
-/**
- * Counts the codes the API refused, one per refusal error set on the field. React-hook-form sets a
- * new error object on each `setError`, so a refusal is counted once however often the field
- * renders.
- */
+/** Counts the codes the API refused. */
 function useRefusedCodes(error: OtpError | undefined) {
     const [refusedCodes, setRefusedCodes] = React.useState(0);
     const counted = React.useRef<OtpError | undefined>(undefined);
@@ -92,18 +85,6 @@ function useRefusedCodes(error: OtpError | undefined) {
     return [refusedCodes, () => setRefusedCodes(0)] as const;
 }
 
-/**
- * A verification code, typed one digit per slot.
- *
- * The API gives no way to tell a wrong code from a code which reached its maximum number of
- * trials, on purpose. The field therefore counts the refused codes itself, since the last code was
- * sent, and locks itself once they reach `maxTrials`: at that point the code is known to be
- * unusable, whatever the flow. Sending a new code resets the count, which may underestimate the
- * trials of a flow keeping its code — the user then sees one more "Incorrect code" — but never
- * locks a code which can still be used. The resend link stays available once the field is locked,
- * so that an expired code never leaves the user stuck — unless every code allowed by `maxSends`
- * was sent: the limit is then reached, and the flow has to start over.
- */
 const OtpField = React.forwardRef<HTMLInputElement, OtpFieldProps>(function OtpField(
     {
         autoSubmit,
@@ -132,21 +113,24 @@ const OtpField = React.forwardRef<HTMLInputElement, OtpFieldProps>(function OtpF
     const form = useFormContext() as ReturnType<typeof useFormContext> | null;
 
     const inputRef = React.useRef<HTMLInputElement>(null);
+    // expose the input as ref of this component
     React.useImperativeHandle(ref, () => inputRef.current!);
 
     const [refusedCodes, resetRefusedCodes] = useRefusedCodes(errors?.[0]);
     const [sentCodes, setSentCodes] = React.useState(1);
 
-    // a successful submission of the enclosing form accepted the code
+    // Whether the last form submission accepted the code
     const accepted = useFormSubmissionSucceeded();
     const exhausted = maxTrials !== undefined && refusedCodes >= maxTrials;
     const allSent = maxSends !== undefined && sentCodes >= maxSends;
     // no code can be used any more, and no other one can be sent: the flow has to start over
     const limitReached = exhausted && (!onResend || allSent);
+    // Locks the form submission if succeed or if max trials has been reached
     useLockFormSubmit(exhausted || accepted);
 
     const handleComplete = (code: string) => {
         onComplete?.(code);
+        // Tigger form submission if autoSubmit is enable
         if (autoSubmit) inputRef.current?.form?.requestSubmit();
     };
 
@@ -154,10 +138,11 @@ const OtpField = React.forwardRef<HTMLInputElement, OtpFieldProps>(function OtpF
         await onResend?.(captcha);
         setSentCodes(count => count + 1);
         resetRefusedCodes();
-        // unlike clearing the value through `onChange`, which re-validates the now empty field and
-        // flags it as required, `resetField` clears both the value and its error
-        if (form && name) form.resetField(name);
-        else onChange?.('');
+        // Clears both the value and its error
+        if (form && name) {
+            // do not use `onChange` to avoid revalidates empty field
+            form.resetField(name);
+        } else onChange?.('');
     };
 
     const generatedId = React.useId();

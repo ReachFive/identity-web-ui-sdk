@@ -1,5 +1,5 @@
 import React from 'react';
-import { FieldValues, UseFormWatch } from 'react-hook-form';
+import { FieldPath, FieldValues, UseFormWatch } from 'react-hook-form';
 
 import { TFunction } from 'i18next';
 import { CountryCode, isSupportedCountry, parsePhoneNumberFromString } from 'libphonenumber-js/min';
@@ -671,14 +671,14 @@ export function resolveErrorFieldPath(
  *
  * @returns the path of the first field declaring the key, or `undefined` when none does.
  */
-export function resolveErrorMessageKeyField(
+export function resolveErrorMessageKeyField<TFieldValues extends FieldValues = FieldValues>(
     errorMessageKey: string,
     fieldDefinitions: (FieldDefinition | StaticContent)[]
-): string | undefined {
+): FieldPath<TFieldValues> | undefined {
     const definition = withoutStaticContent(fieldDefinitions).find(definition =>
         definition.errorMessageKeys?.includes(errorMessageKey)
     );
-    return definition ? getFieldPath(definition) : undefined;
+    return definition ? (getFieldPath(definition) as FieldPath<TFieldValues>) : undefined;
 }
 
 function setNestedValue(obj: Record<string, unknown>, path: string, value: unknown): void {

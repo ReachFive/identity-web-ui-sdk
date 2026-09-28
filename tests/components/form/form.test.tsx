@@ -1163,6 +1163,42 @@ describe('DOM testing', () => {
             ]);
         });
 
+        test('errorDetails matching no field stay above the form when the error is displayed under a field', async () => {
+            const user = userEvent.setup();
+            const handler = jest.fn<() => Promise<void>>().mockRejectedValue({
+                error: 'invalid_grant',
+                errorDescription: 'Invalid verification code',
+                errorMessageKey: 'error.invalidVerificationCode',
+                errorDetails: [
+                    {
+                        field: 'profile.unknown_field',
+                        message: 'The field is invalid',
+                        code: 'invalid' as const,
+                    },
+                ],
+            });
+
+            render(
+                <WidgetContext
+                    client={apiClient}
+                    config={defaultConfig}
+                    defaultMessages={defaultI18n}
+                >
+                    <Form fields={['verification_code']} handler={handler} />
+                </WidgetContext>
+            );
+
+            const input = screen.getByLabelText('verificationCode');
+            await user.type(input, '123456');
+            await user.click(screen.getByRole('button', { name: 'Submit' }));
+
+            await waitFor(() =>
+                expect(input).toHaveAccessibleErrorMessage('Invalid verification code')
+            );
+            // exact match: the root error holds the unmapped message alone
+            expect(screen.getByText('The field is invalid')).toHaveAttribute('role', 'alert');
+        });
+
         test('onError called when handler throws a generic error', async () => {
             const user = userEvent.setup();
             const onError = jest.fn<(err: unknown) => void>();
