@@ -86,27 +86,27 @@ module.exports = {
           color: "inherit",
           borderTopWidth: "1px",
         },
-        a: {
+        ".r5-widget a": {
           color: "inherit",
           "-webkit-text-decoration": "inherit",
           textDecoration: "inherit",
         },
-        "b,strong": {
+        ".r5-widget b, .r5-widget strong": {
           fontWeight: "bolder",
         },
-        small: {
+        ".r5-widget small": {
           fontSize: "80%",
         },
-        "sub,sup": {
+        ".r5-widget sub, .r5-widget sup": {
           verticalAlign: "baseline",
           fontSize: "75%",
           lineHeight: 0,
           position: "relative",
         },
-        sub: {
+        ".r5-widget sub": {
           bottom: "-.25em",
         },
-        sup: {
+        ".r5-widget sup": {
           top: "-.5em",
         },
       });
