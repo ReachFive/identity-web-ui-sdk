@@ -1,10 +1,10 @@
 import React, { ForwardedRef, PropsWithChildren } from 'react';
 import { Transition, TransitionStatus } from 'react-transition-group';
 
-import classes from 'classnames';
-import styled, { useTheme } from 'styled-components';
+import { useTheme } from 'styled-components';
 
 import { Heading, Intro } from '@/components/miscComponent';
+import { cn } from '@/lib/utils';
 
 interface WidgetContentProps extends React.HTMLAttributes<HTMLDivElement> {
     name?: string;
@@ -12,43 +12,38 @@ interface WidgetContentProps extends React.HTMLAttributes<HTMLDivElement> {
     transition?: TransitionStatus;
 }
 
-const WidgetContent = styled(
-    React.forwardRef(function WidgetContent(
-        { name, className, children, standalone, ...props }: PropsWithChildren<WidgetContentProps>,
-        ref: ForwardedRef<HTMLDivElement>
-    ) {
-        return (
-            <div
-                ref={ref}
-                className={classes(className, {
+const WidgetContent = React.forwardRef(function WidgetContent(
+    {
+        name,
+        className,
+        children,
+        standalone,
+        transition,
+        ...props
+    }: PropsWithChildren<WidgetContentProps>,
+    ref: ForwardedRef<HTMLDivElement>
+) {
+    return (
+        <div
+            ref={ref}
+            data-slot="widget-content"
+            className={cn(
+                'text-[length:var(--font-size)] transition-[transform,opacity] duration-[400ms] ease-[ease]',
+                transition === 'entered' ? 'opacity-100' : 'opacity-0',
+                standalone &&
+                    'mx-auto max-w-widget-max-width rounded bg-background p-[calc(var(--spacing)*2)]',
+                {
                     [`r5-${name}`]: !!name,
                     'r5-widget-active': !!name,
-                })}
-                {...props}
-            >
-                {children}
-            </div>
-        );
-    })
-)`
-    font-size: ${props => props.theme.fontSize}px;
-    transition:
-        transform 400ms ease,
-        opacity 400ms ease;
-
-    opacity: ${props => (props.transition === 'entered' ? '1' : '0')};
-
-    ${props =>
-        props.standalone &&
-        `
-        padding: ${props.theme.spacing * 2}px;
-        border-radius: ${props.theme.borderRadius}px;
-        background-color: ${props.theme.backgroundColor};
-        max-width: ${props.theme.maxWidth}px;
-        box-sizing: border-box;
-        margin: 0 auto;
-    `}
-`;
+                },
+                className
+            )}
+            {...props}
+        >
+            {children}
+        </div>
+    );
+});
 
 export interface WidgetContainerProps extends React.HTMLAttributes<HTMLDivElement> {
     name?: string;

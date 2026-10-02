@@ -201,6 +201,33 @@ describe('buildThemeVariables', () => {
         });
     });
 
+    describe('heading', () => {
+        // The size stays a pointer over `--font-size`: `calc()` reproduces the former
+        // `fontSize * 1.2` exactly, so a `--font-size` override written in CSS still moves it.
+        test('the size points at --font-size rather than resolving to a literal', () => {
+            expect(build({ fontSize: 18 })['--r5-heading-text-size']).toBe(
+                'calc(var(--font-size) * 1.2)'
+            );
+        });
+
+        test('the color is a fixed constant, not derived from the palette', () => {
+            const variables = build({ primaryColor: '#3366ff', textColor: '#202020' });
+            expect(variables['--r5-heading-text']).toBe('#212529');
+        });
+
+        test('headingColor overrides it', () => {
+            expect(build({ headingColor: '#123456' })['--r5-heading-text']).toBe('#123456');
+        });
+
+        test('the weight is hardcoded, since no option describes it', () => {
+            expect(build()['--r5-heading-font-weight']).toBe('bold');
+        });
+    });
+
+    test('maxWidth sets the widget max width', () => {
+        expect(build({ maxWidth: 480 })['--r5-widget-max-width']).toBe('480px');
+    });
+
     describe('foreground roles are contrast-derived', () => {
         // `--primary-foreground` is what `--r5-button-text` points at, so it has to resolve to the
         // same color `theme.button.color` does — for every primary color, not just the brand one.

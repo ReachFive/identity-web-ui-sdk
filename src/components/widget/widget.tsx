@@ -29,10 +29,17 @@ export type PropsWithTheme<P> = Prettify<P & ThemeProps>;
 /** The widget shell, carrying the widget's CSS custom properties. */
 export const WidgetContainerThemeVariables = ({
     className,
+    children,
     ...props
 }: React.PropsWithChildren<WidgetContainerProps>) => {
     const { className: themeClassName } = useThemeVariables();
-    return <WidgetContainer className={cn(themeClassName, className)} {...props} />;
+    // `.r5-widget` sits on a wrapper: `important: '.r5-widget'` compiles to a descendant selector,
+    // so no utility can style the element carrying that class.
+    return (
+        <div className={cn(themeClassName, className)}>
+            <WidgetContainer {...props}>{children}</WidgetContainer>
+        </div>
+    );
 };
 
 export type Context = {

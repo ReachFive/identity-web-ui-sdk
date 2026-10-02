@@ -1,10 +1,10 @@
 import React, { useCallback, useLayoutEffect } from 'react';
 
 import { CaptchaProvider, WithCaptchaProps } from '@/components/captcha.tsx';
-import { DefaultButton } from '@/components/form/buttonComponent.tsx';
 import { Form } from '@/components/form/form.tsx';
 import { Alternative, Heading, Info, Intro, Link } from '@/components/miscComponent';
 import { importGoogleRecaptchaScript } from '@/components/reCaptcha';
+import { Button } from '@/components/ui/button';
 import { useConfig } from '@/contexts/config.tsx';
 import { useI18n } from '@/contexts/i18n';
 import { useReachfive } from '@/contexts/reachfive';
@@ -167,9 +167,13 @@ export const ForgotPasswordView = ({
             </CaptchaProvider>
             {allowPhoneNumberResetPassword && config.sms && (
                 <Alternative>
-                    <DefaultButton onClick={() => goTo('forgot-password-phone-number')}>
+                    <Button
+                        variant="outline"
+                        className="w-full"
+                        onClick={() => goTo('forgot-password-phone-number')}
+                    >
                         {i18n('forgotPassword.usePhoneNumberButton')}
-                    </DefaultButton>
+                    </Button>
                 </Alternative>
             )}
             {allowLogin && (
@@ -253,9 +257,13 @@ export const ForgotPasswordPhoneNumberView = ({
                 />
             </CaptchaProvider>
             <Alternative>
-                <DefaultButton onClick={() => goTo('forgot-password')}>
+                <Button
+                    variant="outline"
+                    className="w-full"
+                    onClick={() => goTo('forgot-password')}
+                >
                     {i18n('forgotPassword.useEmailButton')}
-                </DefaultButton>
+                </Button>
             </Alternative>
             {allowLogin && (
                 <Alternative>

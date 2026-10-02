@@ -1,14 +1,9 @@
 import React, { ComponentType, useRef } from 'react';
 
 import { CaptchaFoxInstance, CaptchaFox as CaptchaFoxWidget } from '@captchafox/react';
-import styled from 'styled-components';
 
 import CaptchaFox, { CaptchaFoxConf } from './captchaFox';
 import ReCaptcha, { RecaptchaAction, ReCaptchaConf } from './reCaptcha';
-
-const StyledCaptchaFoxWidget = styled(CaptchaFoxWidget)`
-    margin-bottom: ${props => props.theme.spacing}px;
-`;
 
 export type WithCaptchaProps<T> = T & Partial<ReCaptchaConf & CaptchaFoxConf>;
 
@@ -58,11 +53,11 @@ export const CaptchaProvider = ({ children, action, ...options }: CaptchaProvide
                 value={{
                     handler,
                     Captcha: () => (
-                        <StyledCaptchaFoxWidget
+                        <CaptchaFoxWidget
                             ref={captchaFoxInstanceRef}
                             sitekey={options.captchaFoxSiteKey!}
                             mode={options.captchaFoxMode ?? 'hidden'}
-                            className="[&_.cf-button]:!max-w-full"
+                            className="[&_.cf-button]:!max-w-full mb-4"
                         />
                     ),
                 }}

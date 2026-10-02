@@ -59,6 +59,14 @@ export function buildThemeVariables(options: ThemeOptions, theme: Theme): ThemeV
         '--border-width': `${theme.borderWidth}px`,
         '--radius': `${theme.borderRadius}px`,
 
+        /* Widget shell. */
+        '--r5-widget-max-width': `${theme.maxWidth}px`,
+
+        /* Heading. The size stays a pointer, so it follows `fontSize` like the former `fontSize * 1.2`. */
+        '--r5-heading-text': theme.headingColor,
+        '--r5-heading-text-size': 'calc(var(--font-size) * 1.2)',
+        '--r5-heading-font-weight': 'bold',
+
         /* Button. */
         '--r5-button-bg': button?.background ?? 'hsl(var(--primary))',
         '--r5-button-hover-bg': button?.hoverBackground ?? 'hsl(var(--primary-hover))',

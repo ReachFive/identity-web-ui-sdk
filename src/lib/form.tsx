@@ -7,7 +7,7 @@ import z from 'zod';
 
 import { Client, UserConsent } from '@reachfive/identity-core';
 
-import { MarkdownContent } from '@/components/miscComponent';
+import { MarkdownContent } from '@/components/markdown';
 import { logError } from '@/helpers/logger';
 import { camelCasePath, snakeCasePath } from '@/helpers/transformObjectProperties';
 import { passwordValidation } from '@/lib/validation';

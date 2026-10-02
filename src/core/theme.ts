@@ -1,4 +1,4 @@
-import { CSSProperties } from 'styled-components';
+import type { CSSProperties } from 'react';
 
 import {
     darkenColor,
