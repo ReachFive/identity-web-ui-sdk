@@ -59,7 +59,7 @@ const DropdownMenuContent = React.forwardRef<
   React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Content>
 >(({ className, sideOffset = 4, ...props }, ref) => (
   <DropdownMenuPrimitive.Portal>
-    <ThemeVariablesContainer className="r5-widget">
+    <ThemeVariablesContainer>
       <DropdownMenuPrimitive.Content
         ref={ref}
         sideOffset={sideOffset}

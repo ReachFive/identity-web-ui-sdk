@@ -67,17 +67,19 @@ function hash(value: string): string {
 }
 
 /**
- * Carries the widget's CSS custom properties on a plain `div`.
+ * A plain `div` carrying the widget's token scope and the `.r5-widget` class Tailwind prefixes
+ * every utility with.
  *
- * Used by every Radix portal, which renders into `document.body` — outside both the token scope
- * and the `.r5-widget` selector Tailwind prefixes each utility with.
+ * Wraps the widget itself, and every Radix portal, which renders into `document.body` — outside
+ * both. `important: '.r5-widget'` compiles to a descendant selector, so no utility can style this
+ * element itself: put styles on its children.
  */
 export const ThemeVariablesContainer = ({
     className,
     ...props
 }: React.HTMLAttributes<HTMLDivElement>) => {
     const { className: themeClassName } = useTheme();
-    return <div className={cn(themeClassName, className)} {...props} />;
+    return <div className={cn(themeClassName, 'r5-widget', className)} {...props} />;
 };
 
 /**

@@ -36,7 +36,7 @@ const AlertDialogContent = React.forwardRef<
 >(({ className, ...props }, ref) => {
   return (
     <AlertDialogPortal>
-      <ThemeVariablesContainer className="r5-widget">
+      <ThemeVariablesContainer>
         <AlertDialogOverlay />
         <AlertDialogPrimitive.Content
           ref={ref}

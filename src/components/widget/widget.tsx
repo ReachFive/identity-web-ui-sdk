@@ -10,8 +10,7 @@ import { I18nProvider, type I18nMessages } from '@/contexts/i18n';
 import { ReachfiveProvider } from '@/contexts/reachfive';
 import { RoutingProvider } from '@/contexts/routing';
 import { SessionProvider } from '@/contexts/session';
-import { ThemeProvider, useTheme } from '@/contexts/theme';
-import { cn } from '@/lib/utils';
+import { ThemeProvider, ThemeVariablesContainer } from '@/contexts/theme';
 import { ThemeOptions } from '@/types/theme';
 
 import type { Config, Prettify } from '@/types';
@@ -21,22 +20,6 @@ export type ThemeProps = { theme?: ThemeOptions };
 
 export type PropsWithI18n<P> = Prettify<P & I18nProps>;
 export type PropsWithTheme<P> = Prettify<P & ThemeProps>;
-
-/** The widget shell, carrying the widget's CSS custom properties. */
-export const WidgetContainerThemeVariables = ({
-    className,
-    children,
-    ...props
-}: React.PropsWithChildren<WidgetContainerProps>) => {
-    const { className: themeClassName } = useTheme();
-    // `.r5-widget` sits on a wrapper: `important: '.r5-widget'` compiles to a descendant selector,
-    // so no utility can style the element carrying that class.
-    return (
-        <div className={cn(themeClassName, className)}>
-            <WidgetContainer {...props}>{children}</WidgetContainer>
-        </div>
-    );
-};
 
 export type Context = {
     config: Config;
@@ -76,12 +59,11 @@ export function createWidget<P, U = P>({
                                         messages={preparedOptions.i18n}
                                         locale={context.config.language}
                                     >
-                                        <WidgetContainerThemeVariables
-                                            {...widgetAttrs}
-                                            className="r5-widget"
-                                        >
-                                            <Component {...preparedOptions} />
-                                        </WidgetContainerThemeVariables>
+                                        <ThemeVariablesContainer>
+                                            <WidgetContainer {...widgetAttrs}>
+                                                <Component {...preparedOptions} />
+                                            </WidgetContainer>
+                                        </ThemeVariablesContainer>
                                     </I18nProvider>
                                 </ThemeProvider>
                             </SessionProvider>
