@@ -14,8 +14,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
-- Social button metrics are exposed as `--r5-social-button-*` CSS variables, following the button ones unless
-  `theme.socialButton` sets them, so stylesheet overrides now reach social buttons too
+- Social button metrics and colors are exposed as `--r5-social-button-*` CSS variables, so stylesheet overrides
+  now reach social buttons too. Metrics follow the button ones and colors fall back to each provider's, unless
+  `theme.socialButton` sets them
 
 ### Removed
 

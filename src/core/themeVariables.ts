@@ -20,6 +20,32 @@ const px = (value: number | undefined, fallback: string): string =>
 export const composableShadow = (value: string): string => (value === 'none' ? '0 0 #0000' : value);
 
 /**
+ * Social button colors, emitted only for the options supplied: unset, each button falls back to its
+ * provider's colors (@see components/slo/social-buttons). Derived values are computed from the
+ * supplied color, as the button would from the provider's.
+ */
+function socialButtonColors(socialButton: ThemeOptions['socialButton']): ThemeVariables {
+    const { background, hoverBackground, color, hoverColor, borderColor, hoverBorderColor } =
+        socialButton ?? {};
+    const entries: [string, string | undefined][] = [
+        ['--r5-social-button-bg', background],
+        ['--r5-social-button-hover-bg', hoverBackground ?? (background && shadeColor(background))],
+        ['--r5-social-button-text', color],
+        // Ranks below the provider's own text color, hence a token of its own.
+        ['--r5-social-button-contrast-text', background && derivedTextColor(background)],
+        ['--r5-social-button-hover-text', hoverColor],
+        ['--r5-social-button-border-color', borderColor],
+        [
+            '--r5-social-button-hover-border-color',
+            hoverBorderColor ?? (borderColor && shadeColor(borderColor)),
+        ],
+    ];
+    return Object.fromEntries(
+        entries.filter((entry): entry is [string, string] => entry[1] !== undefined)
+    );
+}
+
+/**
  * Builds the widget's CSS variables: shadcn palette and scales unprefixed, component tokens `--r5-*`.
  * A component token points at the palette (`hsl(var(--primary))`) unless its option was supplied,
  * hence the raw `options` alongside the resolved `theme`, which can no longer tell the two apart.
@@ -98,8 +124,7 @@ export function buildThemeVariables(options: ThemeOptions, theme: Theme): ThemeV
         '--r5-button-shadow': composableShadow(`${theme.button.boxShadow}`),
         '--r5-button-height': `${theme.button.height}px`,
 
-        /* Social button. Metrics follow the button unless `theme.socialButton` sets them; colors are
-           combined with each provider's brand colors in components/slo/social-buttons. */
+        /* Social button. Metrics follow the button unless `theme.socialButton` sets them. */
         '--r5-social-button-height': socialHeightSet
             ? `${theme.socialButton.height}px`
             : 'var(--r5-button-height)',
@@ -117,6 +142,7 @@ export function buildThemeVariables(options: ThemeOptions, theme: Theme): ThemeV
             socialButton?.boxShadow !== undefined
                 ? composableShadow(`${socialButton.boxShadow}`)
                 : 'var(--r5-button-shadow)',
+        ...socialButtonColors(socialButton),
 
         /* Input */
         '--r5-input-bg': theme.input.background,

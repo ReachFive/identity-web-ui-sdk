@@ -164,7 +164,7 @@ export interface ButtonTheme {
  * Social button colors that fall back to each provider's own brand color when left unset.
  * @see components/slo/social-buttons.tsx
  */
-export type ProviderBrandedColors =
+type ProviderBrandedColors =
     | 'color'
     | 'background'
     | 'borderColor'

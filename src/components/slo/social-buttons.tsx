@@ -15,23 +15,13 @@ import type { Provider } from '@/providers/providers';
 import type { OnError, OnSuccess } from '@/types';
 
 export type SocialButtonsProps = {
-    /**
-     * List of authentication options
-     */
+    /** List of authentication options. */
     auth?: AuthOptions;
-    /**
-     * Lists the available social providers. This is an array of strings.
-     *
-     * Tip: If you pass an empty array, social providers will not be displayed.
-     * */
+    /** The social providers to display; an empty array displays none. */
     providers: string[];
-    /**
-     * Callback function called when the request has succeed.
-     */
+    /** Callback function called when the request has succeeded. */
     onSuccess?: OnSuccess;
-    /**
-     * Callback function called when the request has failed.
-     */
+    /** Callback function called when the request has failed. */
     onError?: OnError;
 };
 
@@ -104,31 +94,20 @@ const SocialButton = ({
     const i18n = useI18n();
     const { settings: themeSettings } = useTheme();
 
-    const backgroundColor =
-        themeSettings.socialButton.background ?? provider.btnBackgroundColor ?? provider.color;
-    const hoverBackgroundColor =
-        themeSettings.socialButton.hoverBackground ?? shadeColor(backgroundColor);
+    // Provider colors are fallbacks for the `--r5-social-button-*` colors (@see core/themeVariables).
+    const backgroundColor = provider.btnBackgroundColor ?? provider.color;
+    const borderColor = provider.btnBorderColor ?? provider.color;
     const textColor =
-        themeSettings.socialButton.color ??
         provider.btnTextColor ??
-        pickByLightness(backgroundColor, '#ffffff', '#000000');
-    const hoverTextColor = themeSettings.socialButton.hoverColor ?? textColor;
-    const borderColor =
-        themeSettings.socialButton.borderColor ?? provider.btnBorderColor ?? provider.color;
-    const hoverBorderColor = themeSettings.socialButton.hoverBorderColor ?? shadeColor(borderColor);
-    // The focus ring is keyed to the provider's brand color rather than to the widget-wide
-    // `input.focusBorderColor`, so it relates to the button it sits on. `provider.color` is used
-    // instead of the resolved background because the latter is white for some providers (Google),
-    // which would leave the ring invisible.
+        `var(--r5-social-button-contrast-text, ${pickByLightness(backgroundColor, '#ffffff', '#000000')})`;
+    // Brand color rather than background, which is white for some providers (Google).
     const focusRingColor = colorToHSL(provider.color);
-    // The label is hidden exactly when the buttons are laid out inline: a row of labelled
-    // buttons does not fit. `inline` is the single switch for both.
+    // Inline buttons are icon-only: a row of labelled buttons does not fit.
     const showLabel = !themeSettings.socialButton.inline;
 
     const label = i18n(`socialButton.${provider.key}.title`, {
         defaultValue: provider.buttonLabel ?? provider.name,
-        // `name` stays the bare brand name, so "Continue with {provider}" reads
-        // correctly even for providers whose own label is a full sentence
+        // Bare brand name, so "Continue with {provider}" reads well whatever the provider's label.
         provider: provider.name,
     });
 
@@ -144,7 +123,7 @@ const SocialButton = ({
             )}
             style={
                 {
-                    // Metrics come from the `--r5-social-button-*` tokens, so CSS overrides reach them.
+                    // Relayed from the `--r5-social-button-*` tokens, so CSS overrides reach them.
                     '--r5-button-height': 'var(--r5-social-button-height)',
                     '--r5-button-padding-x': 'var(--r5-social-button-padding-x)',
                     '--r5-button-padding-y': 'var(--r5-social-button-padding-y)',
@@ -154,12 +133,13 @@ const SocialButton = ({
                     '--r5-button-leading': 'var(--r5-social-button-leading)',
                     '--r5-button-border-width': 'var(--r5-social-button-border-width)',
                     '--r5-button-shadow': 'var(--r5-social-button-shadow)',
-                    '--r5-button-text': textColor,
-                    '--r5-button-hover-text': hoverTextColor,
-                    '--r5-button-bg': backgroundColor,
-                    '--r5-button-hover-bg': hoverBackgroundColor,
-                    '--r5-button-border-color': borderColor,
-                    '--r5-button-hover-border-color': hoverBorderColor,
+                    '--r5-button-bg': `var(--r5-social-button-bg, ${backgroundColor})`,
+                    '--r5-button-hover-bg': `var(--r5-social-button-hover-bg, ${shadeColor(backgroundColor)})`,
+                    '--r5-button-text': `var(--r5-social-button-text, ${textColor})`,
+                    '--r5-button-hover-text':
+                        'var(--r5-social-button-hover-text, var(--r5-button-text))',
+                    '--r5-button-border-color': `var(--r5-social-button-border-color, ${borderColor})`,
+                    '--r5-button-hover-border-color': `var(--r5-social-button-hover-border-color, ${shadeColor(borderColor)})`,
                     '--ring': focusRingColor,
                 } as React.CSSProperties
             }

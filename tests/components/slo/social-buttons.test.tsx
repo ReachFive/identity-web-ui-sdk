@@ -15,6 +15,7 @@ import { ConfigProvider } from '../../../src/contexts/config';
 import { I18nProvider, type I18nMessages } from '../../../src/contexts/i18n';
 import { ReachfiveProvider } from '../../../src/contexts/reachfive';
 import { ThemeProvider } from '../../../src/contexts/theme';
+import { resolveTheme } from '../../../src/core/resolveTheme';
 import { type Provider } from '../../../src/providers/providers';
 
 import type { Config } from '../../../src/types';
@@ -68,11 +69,15 @@ type RenderOptions = {
     theme?: ThemeOptions;
 };
 
+/** The widget variables of the last render, against which `cssVar` resolves `var()`. */
+let themeVariables: Record<string, string> = {};
+
 function renderSocialButtons(
     props: React.ComponentProps<typeof SocialButtons>,
     { config = {}, i18n = {}, theme = {} }: RenderOptions = {}
 ) {
     const mergedConfig = { ...defaultConfig, ...config };
+    themeVariables = resolveTheme(theme).variables;
     return render(
         <ConfigProvider config={mergedConfig}>
             <ReachfiveProvider client={apiClient}>
@@ -86,9 +91,41 @@ function renderSocialButtons(
     );
 }
 
-/** Reads a CSS custom property off the element inline style (jsdom does not resolve them). */
+/**
+ * Substitutes every `var(--name, fallback)` in `value`, as the browser would: the property if
+ * `lookup` defines it, else the fallback.
+ */
+function substituteVars(value: string, lookup: (name: string) => string | undefined): string {
+    const start = value.indexOf('var(');
+    if (start === -1) return value;
+
+    let depth = 0;
+    let comma = -1;
+    let end = start + 3;
+    for (; end < value.length; end++) {
+        const char = value[end];
+        if (char === '(') depth++;
+        else if (char === ',' && depth === 1 && comma === -1) comma = end;
+        else if (char === ')' && --depth === 0) break;
+    }
+    const name = value.slice(start + 4, comma === -1 ? end : comma).trim();
+    const fallback = comma === -1 ? '' : value.slice(comma + 1, end).trim();
+    const resolved = substituteVars(lookup(name) ?? fallback, lookup);
+
+    return value.slice(0, start) + resolved + substituteVars(value.slice(end + 1), lookup);
+}
+
+/**
+ * Reads a CSS custom property off the element inline style, resolved against the element's own
+ * declarations and the widget variables — jsdom does not resolve custom properties.
+ */
 function cssVar(element: HTMLElement, property: string): string {
-    return element.style.getPropertyValue(property);
+    // A widget variable is computed on the scope element, so its own `var()` resolve there.
+    const inScope = (name: string): string | undefined =>
+        name in themeVariables ? substituteVars(themeVariables[name], inScope) : undefined;
+    const onElement = (name: string): string | undefined =>
+        element.style.getPropertyValue(name) || inScope(name);
+    return substituteVars(element.style.getPropertyValue(property), onElement);
 }
 
 function getSocialButton(name: string): HTMLElement {
@@ -356,24 +393,64 @@ describe('theming', () => {
     });
 
     describe('metrics', () => {
-        // Their values are emitted by `buildThemeVariables`; the button only relays them, so a CSS
-        // override of a `--r5-social-button-*` token reaches it. @see tests/themeVariables.test.ts
-        test.each([
-            'height',
-            'padding-x',
-            'padding-y',
-            'radius',
-            'border-width',
-            'text-size',
-            'font-weight',
-            'leading',
-            'shadow',
-        ])('reads its %s from the social button token', metric => {
+        test('applies the default theme metrics', () => {
             renderSocialButtons({ providers: ['facebook'] });
 
-            expect(cssVar(getSocialButton('Facebook'), `--r5-button-${metric}`)).toBe(
-                `var(--r5-social-button-${metric})`
+            const button = getSocialButton('Facebook');
+            expect(cssVar(button, '--r5-button-height')).toBe('40px');
+            expect(cssVar(button, '--r5-button-padding-x')).toBe('12px');
+            expect(cssVar(button, '--r5-button-padding-y')).toBe('9px');
+            expect(cssVar(button, '--r5-button-radius')).toBe('3px');
+            expect(cssVar(button, '--r5-button-border-width')).toBe('1px');
+            expect(cssVar(button, '--r5-button-text-size')).toBe('14px');
+            expect(cssVar(button, '--r5-button-font-weight')).toBe('bold');
+            // A `boxShadow` of `none` is emitted as a transparent shadow, so it stays valid inside
+            // the shadow list Tailwind shares with the focus ring. @see composableShadow
+            expect(cssVar(button, '--r5-button-shadow')).toBe('0 0 #0000');
+        });
+
+        test('applies the social button theme metrics', () => {
+            renderSocialButtons(
+                { providers: ['facebook'] },
+                {
+                    theme: {
+                        socialButton: {
+                            fontSize: 18,
+                            fontWeight: 300,
+                            lineHeight: 2,
+                            paddingX: 24,
+                            paddingY: 12,
+                            borderRadius: 8,
+                            borderWidth: 2,
+                            boxShadow: '0 1px 2px rgba(0, 0, 0, 0.5)',
+                        },
+                    },
+                }
             );
+
+            const button = getSocialButton('Facebook');
+            expect(cssVar(button, '--r5-button-padding-x')).toBe('24px');
+            expect(cssVar(button, '--r5-button-padding-y')).toBe('12px');
+            expect(cssVar(button, '--r5-button-radius')).toBe('8px');
+            expect(cssVar(button, '--r5-button-border-width')).toBe('2px');
+            expect(cssVar(button, '--r5-button-font-weight')).toBe('300');
+            expect(cssVar(button, '--r5-button-leading')).toBe('2');
+            expect(cssVar(button, '--r5-button-shadow')).toBe('0 1px 2px rgba(0, 0, 0, 0.5)');
+            expect(cssVar(button, '--r5-button-text-size')).toBe('18px');
+            // height is derived from fontSize × lineHeight + paddings + borders
+            expect(cssVar(button, '--r5-button-height')).toBe('64px');
+        });
+
+        test('inherits the button theme metrics when the social button sets none', () => {
+            renderSocialButtons(
+                { providers: ['facebook'] },
+                { theme: { button: { paddingX: 30, borderRadius: 10, borderWidth: 4 } } }
+            );
+
+            const button = getSocialButton('Facebook');
+            expect(cssVar(button, '--r5-button-padding-x')).toBe('30px');
+            expect(cssVar(button, '--r5-button-radius')).toBe('10px');
+            expect(cssVar(button, '--r5-button-border-width')).toBe('4px');
         });
     });
 

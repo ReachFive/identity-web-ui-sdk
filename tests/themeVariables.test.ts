@@ -282,6 +282,48 @@ describe('buildThemeVariables', () => {
             );
         });
 
+        test('emits no color by default, so each button keeps its provider colors', () => {
+            expect(
+                Object.keys(build()).filter(key =>
+                    /^--r5-social-button-.*(bg|text|color)$/.test(key)
+                )
+            ).toEqual([]);
+        });
+
+        test('a background brings its hover shade and a contrasting text color', () => {
+            const variables = build({ socialButton: { background: '#ff0000' } });
+            expect(variables['--r5-social-button-bg']).toBe('#ff0000');
+            expect(variables['--r5-social-button-hover-bg']).toBe('#cc0000');
+            expect(variables['--r5-social-button-contrast-text']).toBe('#000000'); // red reads as light
+            expect(variables['--r5-social-button-text']).toBeUndefined();
+        });
+
+        test('explicit hover colors win over the derived ones', () => {
+            const variables = build({
+                socialButton: {
+                    background: '#ff0000',
+                    hoverBackground: '#00ff00',
+                    borderColor: '#0f0f0f',
+                    hoverBorderColor: '#f0f0f0',
+                    color: '#001122',
+                    hoverColor: '#abcdef',
+                },
+            });
+            expect(variables['--r5-social-button-hover-bg']).toBe('#00ff00');
+            expect(variables['--r5-social-button-border-color']).toBe('#0f0f0f');
+            expect(variables['--r5-social-button-hover-border-color']).toBe('#f0f0f0');
+            expect(variables['--r5-social-button-text']).toBe('#001122');
+            expect(variables['--r5-social-button-hover-text']).toBe('#abcdef');
+        });
+
+        test('a border color brings its hover shade', () => {
+            expect(
+                build({ socialButton: { borderColor: '#ff0000' } })[
+                    '--r5-social-button-hover-border-color'
+                ]
+            ).toBe('#cc0000');
+        });
+
         test('a none shadow stays composable with the focus ring', () => {
             expect(
                 build({ socialButton: { boxShadow: 'none' } })['--r5-social-button-shadow']
