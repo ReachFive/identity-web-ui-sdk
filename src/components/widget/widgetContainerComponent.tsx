@@ -1,9 +1,8 @@
 import React, { ForwardedRef, PropsWithChildren } from 'react';
 import { Transition, TransitionStatus } from 'react-transition-group';
 
-import { useTheme } from 'styled-components';
-
 import { Heading, Intro } from '@/components/miscComponent';
+import { useTheme } from '@/contexts/theme';
 import { cn } from '@/lib/utils';
 
 interface WidgetContentProps extends React.HTMLAttributes<HTMLDivElement> {

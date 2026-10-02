@@ -3,19 +3,18 @@
  */
 import React from 'react';
 
-import { ThemeProvider } from 'styled-components';
-
 import { Client } from '@reachfive/identity-core';
 
 import { ConfigProvider } from '../../../src/contexts/config';
 import { I18nProvider, type I18nMessages } from '../../../src/contexts/i18n';
 import { ReachfiveProvider } from '../../../src/contexts/reachfive';
+import { ThemeProvider } from '../../../src/contexts/theme';
 import { ThemeVariablesProvider } from '../../../src/contexts/themeVariables';
 import { buildTheme } from '../../../src/core/theme';
 import { buildThemeVariables } from '../../../src/core/themeVariables';
 
 import type { Config } from '../../../src/types';
-import type { ThemeOptions, Theme } from '../../../src/types/styled';
+import type { ThemeOptions, Theme } from '../../../src/types/theme';
 
 const themeOptions: ThemeOptions = {
     primaryColor: '#ff0000',

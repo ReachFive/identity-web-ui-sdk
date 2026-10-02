@@ -7,7 +7,6 @@ import { beforeEach, describe, expect, jest, test } from '@jest/globals';
 import '@testing-library/jest-dom/jest-globals';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { ThemeProvider } from 'styled-components';
 
 import { type Client } from '@reachfive/identity-core';
 
@@ -15,11 +14,12 @@ import { SocialButtons } from '../../../src/components/slo/social-buttons';
 import { ConfigProvider } from '../../../src/contexts/config';
 import { I18nProvider, type I18nMessages } from '../../../src/contexts/i18n';
 import { ReachfiveProvider } from '../../../src/contexts/reachfive';
+import { ThemeProvider } from '../../../src/contexts/theme';
 import { buildTheme } from '../../../src/core/theme';
 import { type Provider } from '../../../src/providers/providers';
 
 import type { Config } from '../../../src/types';
-import type { ThemeOptions } from '../../../src/types/styled';
+import type { ThemeOptions } from '../../../src/types/theme';
 
 const customProvider: Provider = {
     key: 'my-idp',

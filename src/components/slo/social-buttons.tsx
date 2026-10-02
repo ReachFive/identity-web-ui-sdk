@@ -1,13 +1,12 @@
 import React from 'react';
 
-import { useTheme } from 'styled-components';
-
 import { AuthOptions } from '@reachfive/identity-core';
 
 import { Button } from '@/components/ui/button';
 import { useConfig } from '@/contexts/config';
 import { useI18n } from '@/contexts/i18n';
 import { useReachfive } from '@/contexts/reachfive';
+import { useTheme } from '@/contexts/theme';
 import { composableShadow } from '@/core/themeVariables';
 import { logError } from '@/helpers/logger';
 import { cn, colorToHSL, pickByLightness, shadeColor } from '@/lib/utils';

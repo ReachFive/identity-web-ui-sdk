@@ -4,7 +4,7 @@ import { buildTheme } from '../src/core/theme';
 import { buildThemeVariables } from '../src/core/themeVariables';
 import { colorToHSL, shadeColor } from '../src/lib/utils';
 
-import type { ThemeOptions } from '../src/types/styled';
+import type { ThemeOptions } from '../src/types/theme';
 
 const build = (options: ThemeOptions = {}) => buildThemeVariables(options, buildTheme(options));
 

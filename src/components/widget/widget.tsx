@@ -1,7 +1,5 @@
 import React, { ComponentType } from 'react';
 
-import { StyleSheetManager, ThemeProvider } from 'styled-components';
-
 import type { Client as CoreClient, SessionInfo } from '@reachfive/identity-core';
 
 import WidgetContainer, {
@@ -12,11 +10,12 @@ import { I18nProvider, type I18nMessages } from '@/contexts/i18n';
 import { ReachfiveProvider } from '@/contexts/reachfive';
 import { RoutingProvider } from '@/contexts/routing';
 import { SessionProvider } from '@/contexts/session';
+import { ThemeProvider } from '@/contexts/theme';
 import { ThemeVariablesProvider, useThemeVariables } from '@/contexts/themeVariables';
 import { buildTheme } from '@/core/theme';
 import { buildThemeVariables } from '@/core/themeVariables';
 import { cn } from '@/lib/utils';
-import { Theme, ThemeOptions } from '@/types/styled';
+import { Theme, ThemeOptions } from '@/types/theme';
 
 import type { Config, Prettify } from '@/types';
 
@@ -78,22 +77,20 @@ export function createWidget<P, U = P>({
                         <ReachfiveProvider client={context.apiClient}>
                             <SessionProvider session={context.session}>
                                 <ThemeVariablesProvider variables={themeVariables}>
-                                    <StyleSheetManager>
-                                        <ThemeProvider theme={theme}>
-                                            <I18nProvider
-                                                defaultMessages={context.defaultI18n}
-                                                messages={preparedOptions.i18n}
-                                                locale={context.config.language}
+                                    <ThemeProvider theme={theme}>
+                                        <I18nProvider
+                                            defaultMessages={context.defaultI18n}
+                                            messages={preparedOptions.i18n}
+                                            locale={context.config.language}
+                                        >
+                                            <WidgetContainerThemeVariables
+                                                {...widgetAttrs}
+                                                className="r5-widget"
                                             >
-                                                <WidgetContainerThemeVariables
-                                                    {...widgetAttrs}
-                                                    className="r5-widget"
-                                                >
-                                                    <Component {...preparedOptions} />
-                                                </WidgetContainerThemeVariables>
-                                            </I18nProvider>
-                                        </ThemeProvider>
-                                    </StyleSheetManager>
+                                                <Component {...preparedOptions} />
+                                            </WidgetContainerThemeVariables>
+                                        </I18nProvider>
+                                    </ThemeProvider>
                                 </ThemeVariablesProvider>
                             </SessionProvider>
                         </ReachfiveProvider>

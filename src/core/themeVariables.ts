@@ -1,5 +1,5 @@
 import { colorToHSL, fadeColor, shadeColor } from '@/lib/utils';
-import { Theme, ThemeOptions } from '@/types/styled';
+import { Theme, ThemeOptions } from '@/types/theme';
 
 import { derivedTextColor, surfaceTextColor } from './theme';
 

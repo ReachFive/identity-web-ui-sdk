@@ -5,7 +5,6 @@ import { beforeEach, describe, expect, jest, test } from '@jest/globals';
 import '@testing-library/jest-dom/jest-globals';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import 'jest-styled-components';
 
 import type {
     AuthResult,
