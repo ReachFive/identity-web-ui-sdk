@@ -19,8 +19,8 @@ const SelectTrigger = React.forwardRef<
   <SelectPrimitive.Trigger
     ref={ref}
     className={cn(
-      "flex h-9 w-full items-center justify-between whitespace-nowrap rounded-md border border-input bg-transparent dark:bg-input/30 px-3 py-2 text-sm shadow-sm ring-offset-background data-[placeholder]:text-[var(--r5-input-placeholder-text)] focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1",
-      "h-[var(--r5-input-height)] px-[var(--r5-input-padding-x)] py-[var(--r5-input-padding-y)] text-[var(--r5-input-text)] text-[length:var(--r5-input-text-size)] leading-[var(--r5-input-leading)] rounded-[var(--r5-input-radius)] bg-[var(--r5-input-bg)] border-[var(--r5-input-border-color)] border-[length:var(--r5-input-border-width)] placeholder:text-[var(--r5-input-placeholder-text)] disabled:bg-[var(--r5-input-disabled-bg)]",
+      "flex h-9 w-full items-center justify-between whitespace-nowrap rounded-md border border-input bg-transparent dark:bg-input/30 px-3 py-2 text-sm shadow-sm ring-offset-background data-[placeholder]:text-input-placeholder-text focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1",
+      "h-input-height px-input-padding-x py-input-padding-y text-input-text text-input-text-size leading-input rounded-input bg-input-bg border-input-border-color border-input-border-width placeholder:text-input-placeholder-text disabled:bg-input-disabled-bg",
       className
     )}
     {...props}

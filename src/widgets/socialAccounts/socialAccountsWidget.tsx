@@ -204,7 +204,7 @@ const IdentityList = ({
                             <Button
                                 size="icon"
                                 variant="ghost"
-                                className="rounded-full hover:bg-destructive hover:text-destructive-foreground size-6 sm:size-[var(--r5-button-height)]"
+                                className="rounded-full hover:bg-destructive hover:text-destructive-foreground size-6 sm:size-button-height"
                                 onClick={() => void onRemove(id!)}
                                 aria-label={`${i18n('remove')} ${providerInfos.name}`}
                             >
