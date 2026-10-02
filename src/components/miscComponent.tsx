@@ -58,7 +58,12 @@ export const Separator = ({
     className,
     ...props
 }: React.HTMLAttributes<HTMLDivElement> & { text?: string }) => (
-    <Marker data-slot="widget-separator" variant="separator" className={className} {...props}>
+    <Marker
+        data-slot="widget-separator"
+        variant="separator"
+        className={cn('my-4', className)}
+        {...props}
+    >
         <MarkerContent data-slot="widget-separator-text">{text}</MarkerContent>
     </Marker>
 );
