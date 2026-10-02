@@ -14,7 +14,7 @@ import {
 } from '../src/core/theme';
 import { darkenColor, lightenColor } from '../src/lib/utils';
 
-import type { Theme } from '../src/types/styled';
+import type { Theme } from '../src/types/theme';
 
 function expectValidTheme(theme: Partial<Theme>) {
     // base

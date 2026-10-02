@@ -1,35 +1,31 @@
 import type { PropsWithChildren } from 'react';
 import React from 'react';
 
+import { resolveTheme, type ThemeSettings } from '@/core/resolveTheme';
 import { logError } from '@/helpers/logger';
 import { cn } from '@/lib/utils';
 
 import type { ThemeVariables } from '@/core/themeVariables';
+import type { ThemeOptions } from '@/types/theme';
 
 export interface Props {
-    variables: ThemeVariables;
+    /** The integrator's theme options, as passed to the widget. */
+    options?: ThemeOptions;
 }
 
-interface ThemeVariablesScope {
-    variables: ThemeVariables;
+interface ThemeContextValue {
+    /** Scope class carrying the widget's CSS variables. */
     className: string;
+    /** The theme options read from JS rather than through CSS variables. */
+    settings: ThemeSettings;
 }
 
-export const ThemeVariablesContext = React.createContext<ThemeVariablesScope | undefined>(
-    undefined
-);
+export const ThemeContext = React.createContext<ThemeContextValue | undefined>(undefined);
 
-/**
- * The CSS custom property scope of the enclosing widget.
- *
- * Consumed by every element that has to carry the tokens — the widget container itself, and each
- * Radix portal, which renders into `document.body` and would otherwise sit outside both the token
- * scope and the `.r5-widget` selector Tailwind prefixes every utility with.
- */
-export function useThemeVariables(): ThemeVariablesScope {
-    const context = React.useContext(ThemeVariablesContext);
+export function useTheme(): ThemeContextValue {
+    const context = React.useContext(ThemeContext);
     if (!context) {
-        throw new Error('No ThemeVariablesContext provided');
+        throw new Error('No ThemeContext provided');
     }
 
     return context;
@@ -71,23 +67,28 @@ function hash(value: string): string {
 }
 
 /**
- * Carries the widget's CSS custom properties on a plain `div`.
+ * A plain `div` carrying the widget's token scope and the `.r5-widget` class Tailwind prefixes
+ * every utility with.
  *
- * Used by every Radix portal, which renders into `document.body` — outside both the token scope
- * and the `.r5-widget` selector Tailwind prefixes each utility with.
+ * Wraps the widget itself, and every Radix portal, which renders into `document.body` — outside
+ * both. `important: '.r5-widget'` compiles to a descendant selector, so no utility can style this
+ * element itself: put styles on its children.
  */
 export const ThemeVariablesContainer = ({
     className,
     ...props
 }: React.HTMLAttributes<HTMLDivElement>) => {
-    const { className: themeClassName } = useThemeVariables();
-    return <div className={cn(themeClassName, className)} {...props} />;
+    const { className: themeClassName } = useTheme();
+    return <div className={cn(themeClassName, 'r5-widget', className)} {...props} />;
 };
 
-export function ThemeVariablesProvider({
-    children,
-    variables,
-}: PropsWithChildren<Props>): JSX.Element | null {
+/**
+ * Resolves the theme options once per widget: the CSS variables are written into a scoped
+ * `<style>`, the remaining settings are exposed through {@link useTheme}.
+ */
+export function ThemeProvider({ children, options }: PropsWithChildren<Props>): JSX.Element | null {
+    const { variables, settings } = React.useMemo(() => resolveTheme(options), [options]);
+
     const { className, style } = React.useMemo(() => {
         const block = declarations(variables);
         // Scoped per theme: two widgets on the same page may be themed differently.
@@ -99,12 +100,12 @@ export function ThemeVariablesProvider({
         return { className, style: `:where(.${className}){${block}}` };
     }, [variables]);
 
-    const scope = React.useMemo(() => ({ variables, className }), [variables, className]);
+    const value = React.useMemo(() => ({ className, settings }), [className, settings]);
 
     return (
-        <ThemeVariablesContext.Provider value={scope}>
+        <ThemeContext.Provider value={value}>
             <style>{style}</style>
             {children}
-        </ThemeVariablesContext.Provider>
+        </ThemeContext.Provider>
     );
 }

@@ -61,6 +61,7 @@ module.exports = {
         "input-border-color": "var(--r5-input-border-color)",
         "link-text": "var(--r5-link-text)",
         "link-hover-text": "var(--r5-link-hover-text)",
+        "heading-text": "var(--r5-heading-text)",
       },
       spacing: {
         DEFAULT: "var(--spacing)",
@@ -74,9 +75,11 @@ module.exports = {
         DEFAULT: "var(--font-size)",
         "button-text-size": "var(--r5-button-text-size)",
         "input-text-size": "var(--r5-input-text-size)",
+        "heading-text-size": "var(--r5-heading-text-size)",
       },
       fontWeight: {
         "button-font-weight": "var(--r5-button-font-weight)",
+        "heading-font-weight": "var(--r5-heading-font-weight)",
       },
       lineHeight: {
         DEFAULT: "var(--leading)",
@@ -93,6 +96,9 @@ module.exports = {
       },
       size: {
         "button-height": "var(--r5-button-height)",
+      },
+      maxWidth: {
+        "widget-max-width": "var(--r5-widget-max-width)",
       },
       padding: {
         DEFAULT: "var(--padding-y) var(--padding-x)",
@@ -113,6 +119,12 @@ module.exports = {
     },
   },
   plugins: [
+    ({ addUtilities }) => {
+      addUtilities({
+        ".link-decoration": { textDecoration: "var(--r5-link-decoration)" },
+        ".link-decoration:hover": { textDecoration: "var(--r5-link-hover-decoration)" },
+      });
+    },
     ({ addBase }) => {
       addBase({
         ".r5-widget *, .r5-widget ::before, .r5-widget ::after": {
