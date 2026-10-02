@@ -70,7 +70,7 @@ exports[`Snapshot phone number editor basic 1`] = `
               </svg>
             </label>
             <input
-              class="flex w-full dark:bg-input/30 shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm h-[var(--r5-input-height)] px-[var(--r5-input-padding-x)] py-[var(--r5-input-padding-y)] text-[var(--r5-input-text)] text-[length:var(--r5-input-text-size)] leading-[var(--r5-input-leading)] rounded-[var(--r5-input-radius)] bg-[var(--r5-input-bg)] border-[var(--r5-input-border-color)] border-[length:var(--r5-input-border-width)] placeholder:text-[var(--r5-input-placeholder-text)] disabled:bg-[var(--r5-input-disabled-bg)]"
+              class="flex w-full dark:bg-input/30 shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm h-input-height px-input-padding-x py-input-padding-y text-input-text text-input-text-size leading-input rounded-input bg-input-bg border-input-border-color border-input-border-width placeholder:text-input-placeholder-text disabled:bg-input-disabled-bg"
               id=":r0:"
               name="phoneNumber"
               placeholder="phoneNumber"
@@ -80,7 +80,7 @@ exports[`Snapshot phone number editor basic 1`] = `
             />
           </div>
           <button
-            class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[var(--r5-button-radius)] text-[length:var(--r5-button-text-size)] font-[var(--r5-button-font-weight)] leading-[var(--r5-button-leading)] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border-[length:var(--r5-button-border-width)] border-[var(--r5-button-border-color)] bg-[var(--r5-button-bg)] text-[var(--r5-button-text)] shadow-[shadow:var(--r5-button-shadow)] hover:border-[var(--r5-button-hover-border-color)] hover:bg-[var(--r5-button-hover-bg)] hover:text-[var(--r5-button-hover-text)] h-[var(--r5-button-height)] px-[var(--r5-button-padding-x)] py-[var(--r5-button-padding-y)] w-full"
+            class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-button text-button-text-size font-button-font-weight leading-button transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border-button-border-width border-button-border-color bg-button-bg text-button-text shadow-button-shadow hover:border-button-hover-border-color hover:bg-button-hover-bg hover:text-button-hover-text h-button-height px-button-padding-x py-button-padding-y w-full"
             type="submit"
           >
             send

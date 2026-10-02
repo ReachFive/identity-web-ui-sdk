@@ -16,7 +16,7 @@ function InputGroup({ className, ...props }: React.ComponentProps<"div">) {
         "group/input-group border-input dark:bg-input/30 shadow-xs relative flex w-full items-center rounded-md border outline-none transition-[color,box-shadow]",
         "h-9 has-[>textarea]:h-auto",
         // Reachfive's theme variables
-        "h-[var(--r5-input-height)] rounded-[var(--r5-input-radius)] bg-[var(--r5-input-bg)] border-[var(--r5-input-border-color)] border-[length:var(--r5-input-border-width)] shadow-[shadow:var(--r5-input-shadow)] disabled:bg-[var(--r5-input-disabled-bg)]",
+        "h-input-height rounded-input bg-input-bg border-input-border-color border-input-border-width shadow-input-shadow disabled:bg-input-disabled-bg",
 
         // Variants based on alignment.
         "has-[>[data-align=inline-start]]:[&>input]:pl-2",
@@ -38,18 +38,18 @@ function InputGroup({ className, ...props }: React.ComponentProps<"div">) {
 }
 
 const inputGroupAddonVariants = cva(
-  "text-muted-foreground flex h-auto cursor-text select-none items-center justify-center gap-2 py-[var(--r5-input-padding-y)] text-sm font-medium group-data-[disabled=true]/input-group:opacity-50 [&>kbd]:rounded-[calc(var(--r5-input-radius)-5px)] [&>svg:not([class*='size-'])]:size-4",
+  "text-muted-foreground flex h-auto cursor-text select-none items-center justify-center gap-2 py-input-padding-y text-sm font-medium group-data-[disabled=true]/input-group:opacity-50 [&>kbd]:rounded-[calc(var(--r5-input-radius)-5px)] [&>svg:not([class*='size-'])]:size-4",
   {
     variants: {
       align: {
         "inline-start":
-          "order-first pl-[var(--r5-input-padding-x)] has-[>button]:ml-[-0.45rem] has-[>kbd]:ml-[-0.35rem]",
+          "order-first pl-input-padding-x has-[>button]:ml-[-0.45rem] has-[>kbd]:ml-[-0.35rem]",
         "inline-end":
-          "order-last pr-[var(--r5-input-padding-x)] has-[>button]:mr-[-0.4rem] has-[>kbd]:mr-[-0.35rem]",
+          "order-last pr-input-padding-x has-[>button]:mr-[-0.4rem] has-[>kbd]:mr-[-0.35rem]",
         "block-start":
-          "[.border-b]:pb-[var(--r5-input-padding-y)] order-first w-full justify-start px-[var(--r5-input-padding-x)] pt-[var(--r5-input-padding-y)] group-has-[>input]/input-group:pt-2.5",
+          "[.border-b]:pb-input-padding-y order-first w-full justify-start px-input-padding-x pt-input-padding-y group-has-[>input]/input-group:pt-2.5",
         "block-end":
-          "[.border-t]:pt-[var(--r5-input-padding-y)] order-last w-full justify-start px-[var(--r5-input-padding-x)] pb-[var(--r5-input-padding-y)] group-has-[>input]/input-group:pb-2.5",
+          "[.border-t]:pt-input-padding-y order-last w-full justify-start px-input-padding-x pb-input-padding-y group-has-[>input]/input-group:pb-2.5",
       },
     },
     defaultVariants: {
