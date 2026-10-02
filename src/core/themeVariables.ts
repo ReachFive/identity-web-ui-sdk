@@ -25,7 +25,17 @@ export const composableShadow = (value: string): string => (value === 'none' ? '
  * hence the raw `options` alongside the resolved `theme`, which can no longer tell the two apart.
  */
 export function buildThemeVariables(options: ThemeOptions, theme: Theme): ThemeVariables {
-    const { button, input, link, passwordStrengthValidator: passwordStrength } = options;
+    const {
+        button,
+        input,
+        link,
+        socialButton,
+        passwordStrengthValidator: passwordStrength,
+    } = options;
+    // The height is derived, so it only stops following the button when one of its inputs is set.
+    const socialHeightSet = (['fontSize', 'lineHeight', 'paddingY', 'borderWidth'] as const).some(
+        key => socialButton?.[key] !== undefined
+    );
 
     return {
         /* Palette roles. */
@@ -87,6 +97,26 @@ export function buildThemeVariables(options: ThemeOptions, theme: Theme): ThemeV
         '--r5-button-font-weight': `${theme.button.fontWeight}`,
         '--r5-button-shadow': composableShadow(`${theme.button.boxShadow}`),
         '--r5-button-height': `${theme.button.height}px`,
+
+        /* Social button. Metrics follow the button unless `theme.socialButton` sets them; colors are
+           combined with each provider's brand colors in components/slo/social-buttons. */
+        '--r5-social-button-height': socialHeightSet
+            ? `${theme.socialButton.height}px`
+            : 'var(--r5-button-height)',
+        '--r5-social-button-padding-x': px(socialButton?.paddingX, 'var(--r5-button-padding-x)'),
+        '--r5-social-button-padding-y': px(socialButton?.paddingY, 'var(--r5-button-padding-y)'),
+        '--r5-social-button-radius': px(socialButton?.borderRadius, 'var(--r5-button-radius)'),
+        '--r5-social-button-text-size': px(socialButton?.fontSize, 'var(--r5-button-text-size)'),
+        '--r5-social-button-font-weight': `${socialButton?.fontWeight ?? 'var(--r5-button-font-weight)'}`,
+        '--r5-social-button-leading': `${socialButton?.lineHeight ?? 'var(--r5-button-leading)'}`,
+        '--r5-social-button-border-width': px(
+            socialButton?.borderWidth,
+            'var(--r5-button-border-width)'
+        ),
+        '--r5-social-button-shadow':
+            socialButton?.boxShadow !== undefined
+                ? composableShadow(`${socialButton.boxShadow}`)
+                : 'var(--r5-button-shadow)',
 
         /* Input */
         '--r5-input-bg': theme.input.background,

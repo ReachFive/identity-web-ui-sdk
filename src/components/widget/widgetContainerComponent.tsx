@@ -61,10 +61,15 @@ export default function WidgetContainer({
     children,
     ...props
 }: PropsWithChildren<WidgetContainerProps>) {
-    const theme = useTheme();
+    const { settings: themeSettings } = useTheme();
     const nodeRef = React.useRef<HTMLDivElement>(null);
     return (
-        <Transition nodeRef={nodeRef} in={true} appear={theme.animateWidgetEntrance} timeout={400}>
+        <Transition
+            nodeRef={nodeRef}
+            in={true}
+            appear={themeSettings.animateWidgetEntrance}
+            timeout={400}
+        >
             {state => (
                 <WidgetContent
                     ref={nodeRef}

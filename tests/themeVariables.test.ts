@@ -224,6 +224,71 @@ describe('buildThemeVariables', () => {
         });
     });
 
+    describe('social button', () => {
+        const metrics = [
+            'height',
+            'padding-x',
+            'padding-y',
+            'radius',
+            'border-width',
+            'text-size',
+            'font-weight',
+            'leading',
+            'shadow',
+        ];
+
+        test.each(metrics)('%s follows the button token by default', metric => {
+            expect(build()[`--r5-social-button-${metric}`]).toBe(`var(--r5-button-${metric})`);
+        });
+
+        test('keeps following the button when only the button is themed', () => {
+            const variables = build({ button: { paddingX: 30, borderRadius: 10, borderWidth: 4 } });
+            expect(variables['--r5-social-button-padding-x']).toBe('var(--r5-button-padding-x)');
+            expect(variables['--r5-button-padding-x']).toBe('30px');
+            expect(variables['--r5-social-button-height']).toBe('var(--r5-button-height)');
+        });
+
+        test('socialButton options are emitted as literals', () => {
+            const variables = build({
+                socialButton: {
+                    fontSize: 18,
+                    fontWeight: 300,
+                    lineHeight: 2,
+                    paddingX: 24,
+                    paddingY: 12,
+                    borderRadius: 8,
+                    borderWidth: 2,
+                    boxShadow: '0 1px 2px rgba(0, 0, 0, 0.5)',
+                },
+            });
+            expect(variables['--r5-social-button-padding-x']).toBe('24px');
+            expect(variables['--r5-social-button-padding-y']).toBe('12px');
+            expect(variables['--r5-social-button-radius']).toBe('8px');
+            expect(variables['--r5-social-button-border-width']).toBe('2px');
+            expect(variables['--r5-social-button-text-size']).toBe('18px');
+            expect(variables['--r5-social-button-font-weight']).toBe('300');
+            expect(variables['--r5-social-button-leading']).toBe('2');
+            expect(variables['--r5-social-button-shadow']).toBe('0 1px 2px rgba(0, 0, 0, 0.5)');
+            // fontSize × lineHeight + paddings + borders
+            expect(variables['--r5-social-button-height']).toBe('64px');
+        });
+
+        test('the height stops following the button as soon as one of its inputs is set', () => {
+            expect(build({ socialButton: { paddingX: 24 } })['--r5-social-button-height']).toBe(
+                'var(--r5-button-height)'
+            );
+            expect(build({ socialButton: { paddingY: 12 } })['--r5-social-button-height']).toBe(
+                `${buildTheme({ socialButton: { paddingY: 12 } }).socialButton.height}px`
+            );
+        });
+
+        test('a none shadow stays composable with the focus ring', () => {
+            expect(
+                build({ socialButton: { boxShadow: 'none' } })['--r5-social-button-shadow']
+            ).toBe('0 0 #0000');
+        });
+    });
+
     test('maxWidth sets the widget max width', () => {
         expect(build({ maxWidth: 480 })['--r5-widget-max-width']).toBe('480px');
     });

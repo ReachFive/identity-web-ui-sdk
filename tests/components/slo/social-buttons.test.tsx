@@ -15,7 +15,6 @@ import { ConfigProvider } from '../../../src/contexts/config';
 import { I18nProvider, type I18nMessages } from '../../../src/contexts/i18n';
 import { ReachfiveProvider } from '../../../src/contexts/reachfive';
 import { ThemeProvider } from '../../../src/contexts/theme';
-import { buildTheme } from '../../../src/core/theme';
 import { type Provider } from '../../../src/providers/providers';
 
 import type { Config } from '../../../src/types';
@@ -77,7 +76,7 @@ function renderSocialButtons(
     return render(
         <ConfigProvider config={mergedConfig}>
             <ReachfiveProvider client={apiClient}>
-                <ThemeProvider theme={buildTheme(theme)}>
+                <ThemeProvider options={theme}>
                     <I18nProvider defaultMessages={i18n} locale={mergedConfig.language}>
                         <SocialButtons {...props} />
                     </I18nProvider>
@@ -357,64 +356,24 @@ describe('theming', () => {
     });
 
     describe('metrics', () => {
-        test('applies the default theme metrics', () => {
+        // Their values are emitted by `buildThemeVariables`; the button only relays them, so a CSS
+        // override of a `--r5-social-button-*` token reaches it. @see tests/themeVariables.test.ts
+        test.each([
+            'height',
+            'padding-x',
+            'padding-y',
+            'radius',
+            'border-width',
+            'text-size',
+            'font-weight',
+            'leading',
+            'shadow',
+        ])('reads its %s from the social button token', metric => {
             renderSocialButtons({ providers: ['facebook'] });
 
-            const button = getSocialButton('Facebook');
-            expect(cssVar(button, '--r5-button-height')).toBe('40px');
-            expect(cssVar(button, '--r5-button-padding-x')).toBe('12px');
-            expect(cssVar(button, '--r5-button-padding-y')).toBe('9px');
-            expect(cssVar(button, '--r5-button-radius')).toBe('3px');
-            expect(cssVar(button, '--r5-button-border-width')).toBe('1px');
-            expect(cssVar(button, '--r5-button-text-size')).toBe('14px');
-            expect(cssVar(button, '--r5-button-font-weight')).toBe('bold');
-            // A `boxShadow` of `none` is emitted as a transparent shadow, so it stays valid inside
-            // the shadow list Tailwind shares with the focus ring. @see composableShadow
-            expect(cssVar(button, '--r5-button-shadow')).toBe('0 0 #0000');
-        });
-
-        test('applies the social button theme metrics', () => {
-            renderSocialButtons(
-                { providers: ['facebook'] },
-                {
-                    theme: {
-                        socialButton: {
-                            fontSize: 18,
-                            fontWeight: 300,
-                            lineHeight: 2,
-                            paddingX: 24,
-                            paddingY: 12,
-                            borderRadius: 8,
-                            borderWidth: 2,
-                            boxShadow: '0 1px 2px rgba(0, 0, 0, 0.5)',
-                        },
-                    },
-                }
+            expect(cssVar(getSocialButton('Facebook'), `--r5-button-${metric}`)).toBe(
+                `var(--r5-social-button-${metric})`
             );
-
-            const button = getSocialButton('Facebook');
-            expect(cssVar(button, '--r5-button-padding-x')).toBe('24px');
-            expect(cssVar(button, '--r5-button-padding-y')).toBe('12px');
-            expect(cssVar(button, '--r5-button-radius')).toBe('8px');
-            expect(cssVar(button, '--r5-button-border-width')).toBe('2px');
-            expect(cssVar(button, '--r5-button-font-weight')).toBe('300');
-            expect(cssVar(button, '--r5-button-leading')).toBe('2');
-            expect(cssVar(button, '--r5-button-shadow')).toBe('0 1px 2px rgba(0, 0, 0, 0.5)');
-            expect(cssVar(button, '--r5-button-text-size')).toBe('18px');
-            // height is derived from fontSize × lineHeight + paddings + borders
-            expect(cssVar(button, '--r5-button-height')).toBe('64px');
-        });
-
-        test('inherits the button theme metrics when the social button sets none', () => {
-            renderSocialButtons(
-                { providers: ['facebook'] },
-                { theme: { button: { paddingX: 30, borderRadius: 10, borderWidth: 4 } } }
-            );
-
-            const button = getSocialButton('Facebook');
-            expect(cssVar(button, '--r5-button-padding-x')).toBe('30px');
-            expect(cssVar(button, '--r5-button-radius')).toBe('10px');
-            expect(cssVar(button, '--r5-button-border-width')).toBe('4px');
         });
     });
 

@@ -12,6 +12,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - `data-slot="widget-*"` attributes on the widget content, headings, texts, separators and links, as styling hooks
   for integrators
 
+### Changed
+
+- Social button metrics are exposed as `--r5-social-button-*` CSS variables, following the button ones unless
+  `theme.socialButton` sets them, so stylesheet overrides now reach social buttons too
+
 ### Removed
 
 - `styled-components` is no longer a peer dependency

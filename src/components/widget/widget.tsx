@@ -10,12 +10,9 @@ import { I18nProvider, type I18nMessages } from '@/contexts/i18n';
 import { ReachfiveProvider } from '@/contexts/reachfive';
 import { RoutingProvider } from '@/contexts/routing';
 import { SessionProvider } from '@/contexts/session';
-import { ThemeProvider } from '@/contexts/theme';
-import { ThemeVariablesProvider, useThemeVariables } from '@/contexts/themeVariables';
-import { buildTheme } from '@/core/theme';
-import { buildThemeVariables } from '@/core/themeVariables';
+import { ThemeProvider, useTheme } from '@/contexts/theme';
 import { cn } from '@/lib/utils';
-import { Theme, ThemeOptions } from '@/types/theme';
+import { ThemeOptions } from '@/types/theme';
 
 import type { Config, Prettify } from '@/types';
 
@@ -31,7 +28,7 @@ export const WidgetContainerThemeVariables = ({
     children,
     ...props
 }: React.PropsWithChildren<WidgetContainerProps>) => {
-    const { className: themeClassName } = useThemeVariables();
+    const { className: themeClassName } = useTheme();
     // `.r5-widget` sits on a wrapper: `important: '.r5-widget'` compiles to a descendant selector,
     // so no utility can style the element carrying that class.
     return (
@@ -69,29 +66,24 @@ export function createWidget<P, U = P>({
             ({ theme: customTheme, ...preparedOptions }) => {
                 const Component = component;
 
-                const theme: Theme = buildTheme(customTheme);
-                const themeVariables = buildThemeVariables(customTheme ?? {}, theme);
-
                 return (
                     <ConfigProvider config={context.config}>
                         <ReachfiveProvider client={context.apiClient}>
                             <SessionProvider session={context.session}>
-                                <ThemeVariablesProvider variables={themeVariables}>
-                                    <ThemeProvider theme={theme}>
-                                        <I18nProvider
-                                            defaultMessages={context.defaultI18n}
-                                            messages={preparedOptions.i18n}
-                                            locale={context.config.language}
+                                <ThemeProvider options={customTheme}>
+                                    <I18nProvider
+                                        defaultMessages={context.defaultI18n}
+                                        messages={preparedOptions.i18n}
+                                        locale={context.config.language}
+                                    >
+                                        <WidgetContainerThemeVariables
+                                            {...widgetAttrs}
+                                            className="r5-widget"
                                         >
-                                            <WidgetContainerThemeVariables
-                                                {...widgetAttrs}
-                                                className="r5-widget"
-                                            >
-                                                <Component {...preparedOptions} />
-                                            </WidgetContainerThemeVariables>
-                                        </I18nProvider>
-                                    </ThemeProvider>
-                                </ThemeVariablesProvider>
+                                            <Component {...preparedOptions} />
+                                        </WidgetContainerThemeVariables>
+                                    </I18nProvider>
+                                </ThemeProvider>
                             </SessionProvider>
                         </ReachfiveProvider>
                     </ConfigProvider>

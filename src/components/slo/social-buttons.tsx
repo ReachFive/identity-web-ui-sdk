@@ -7,7 +7,6 @@ import { useConfig } from '@/contexts/config';
 import { useI18n } from '@/contexts/i18n';
 import { useReachfive } from '@/contexts/reachfive';
 import { useTheme } from '@/contexts/theme';
-import { composableShadow } from '@/core/themeVariables';
 import { logError } from '@/helpers/logger';
 import { cn, colorToHSL, pickByLightness, shadeColor } from '@/lib/utils';
 import { findProvider } from '@/providers/providers';
@@ -46,7 +45,7 @@ const SocialButtons = ({
 }: SocialButtonsProps & React.HTMLAttributes<HTMLDivElement>) => {
     const coreClient = useReachfive();
     const { customProviders } = useConfig();
-    const theme = useTheme();
+    const { settings: themeSettings } = useTheme();
 
     const clickHandler = async (provider: string) => {
         try {
@@ -66,7 +65,7 @@ const SocialButtons = ({
             className={cn(
                 'r5-social-buttons',
                 'flex gap-2',
-                theme.socialButton.inline
+                themeSettings.socialButton.inline
                     ? 'flex-row items-center justify-center'
                     : 'flex-col items-stretch',
                 className
@@ -103,18 +102,20 @@ const SocialButton = ({
     ...props
 }: SocialButtonProps & React.ComponentProps<typeof Button>) => {
     const i18n = useI18n();
-    const theme = useTheme();
+    const { settings: themeSettings } = useTheme();
 
     const backgroundColor =
-        theme.socialButton.background ?? provider.btnBackgroundColor ?? provider.color;
-    const hoverBackgroundColor = theme.socialButton.hoverBackground ?? shadeColor(backgroundColor);
+        themeSettings.socialButton.background ?? provider.btnBackgroundColor ?? provider.color;
+    const hoverBackgroundColor =
+        themeSettings.socialButton.hoverBackground ?? shadeColor(backgroundColor);
     const textColor =
-        theme.socialButton.color ??
+        themeSettings.socialButton.color ??
         provider.btnTextColor ??
         pickByLightness(backgroundColor, '#ffffff', '#000000');
-    const hoverTextColor = theme.socialButton.hoverColor ?? textColor;
-    const borderColor = theme.socialButton.borderColor ?? provider.btnBorderColor ?? provider.color;
-    const hoverBorderColor = theme.socialButton.hoverBorderColor ?? shadeColor(borderColor);
+    const hoverTextColor = themeSettings.socialButton.hoverColor ?? textColor;
+    const borderColor =
+        themeSettings.socialButton.borderColor ?? provider.btnBorderColor ?? provider.color;
+    const hoverBorderColor = themeSettings.socialButton.hoverBorderColor ?? shadeColor(borderColor);
     // The focus ring is keyed to the provider's brand color rather than to the widget-wide
     // `input.focusBorderColor`, so it relates to the button it sits on. `provider.color` is used
     // instead of the resolved background because the latter is white for some providers (Google),
@@ -122,7 +123,7 @@ const SocialButton = ({
     const focusRingColor = colorToHSL(provider.color);
     // The label is hidden exactly when the buttons are laid out inline: a row of labelled
     // buttons does not fit. `inline` is the single switch for both.
-    const showLabel = !theme.socialButton.inline;
+    const showLabel = !themeSettings.socialButton.inline;
 
     const label = i18n(`socialButton.${provider.key}.title`, {
         defaultValue: provider.buttonLabel ?? provider.name,
@@ -143,15 +144,16 @@ const SocialButton = ({
             )}
             style={
                 {
-                    '--r5-button-height': `${theme.socialButton.height}px`,
-                    '--r5-button-padding-x': `${theme.socialButton.paddingX}px`,
-                    '--r5-button-padding-y': `${theme.socialButton.paddingY}px`,
-                    '--r5-button-radius': `${theme.socialButton.borderRadius}px`,
-                    '--r5-button-text-size': `${theme.socialButton.fontSize}px`,
-                    '--r5-button-font-weight': theme.socialButton.fontWeight,
-                    '--r5-button-leading': theme.socialButton.lineHeight,
-                    '--r5-button-border-width': `${theme.socialButton.borderWidth}px`,
-                    '--r5-button-shadow': composableShadow(`${theme.socialButton.boxShadow}`),
+                    // Metrics come from the `--r5-social-button-*` tokens, so CSS overrides reach them.
+                    '--r5-button-height': 'var(--r5-social-button-height)',
+                    '--r5-button-padding-x': 'var(--r5-social-button-padding-x)',
+                    '--r5-button-padding-y': 'var(--r5-social-button-padding-y)',
+                    '--r5-button-radius': 'var(--r5-social-button-radius)',
+                    '--r5-button-text-size': 'var(--r5-social-button-text-size)',
+                    '--r5-button-font-weight': 'var(--r5-social-button-font-weight)',
+                    '--r5-button-leading': 'var(--r5-social-button-leading)',
+                    '--r5-button-border-width': 'var(--r5-social-button-border-width)',
+                    '--r5-button-shadow': 'var(--r5-social-button-shadow)',
                     '--r5-button-text': textColor,
                     '--r5-button-hover-text': hoverTextColor,
                     '--r5-button-bg': backgroundColor,
