@@ -68,7 +68,7 @@ const SocialButtons = ({
                 'r5-social-buttons',
                 'flex gap-2',
                 theme.socialButton.inline
-                    ? 'flex-row items-center justify-center'
+                    ? 'flex-row flex-wrap items-center justify-center'
                     : 'flex-col items-stretch',
                 className
             )}
