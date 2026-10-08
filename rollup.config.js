@@ -72,7 +72,16 @@ const plugins = [
         preferBuiltins: true,
     }),
     commonjs({ include: /node_modules/ }),
-    svg(),
+    svg({
+        // SVGO's preset-default drops a viewBox matching width/height, which breaks icons resized with CSS.
+        // A custom svgoConfig replaces SVGR's default one, hence `prefixIds` restated here.
+        svgoConfig: {
+            plugins: [
+                { name: 'preset-default', params: { overrides: { removeViewBox: false } } },
+                'prefixIds',
+            ],
+        },
+    }),
     postcss({
         extract: false,
         minimize: true,
