@@ -305,7 +305,7 @@ describe('DOM testing', () => {
             await user.click(screen.getByText('mfa.register.phoneNumber'));
 
             await user.click(
-                await screen.findByRole('button', { name: 'verificationCode.resend' })
+                await screen.findByRole('button', { name: 'verificationCode.resend.count' })
             );
 
             expect(startMfaPhoneNumberRegistration).toBeCalledTimes(2);

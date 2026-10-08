@@ -11,8 +11,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - An `otp` field type, which takes the code one digit per slot, and a predefined `verification_code` field built
   on it, whose length follows the tenant's `verificationCodeLength` (6 digits when not configured)
-- A "Resend code" link on every verification code screen, which counts the codes sent against
-  `stepUpTokenMaxUses` in the MFA step-up
+- A "Resend code" link on every verification code screen, which counts the codes sent against 5, or
+  `stepUpTokenMaxUses` in the MFA step-up, and waits a minute after each new code before sending another
 
 ### Changed
 

@@ -5,7 +5,7 @@ import React from 'react';
 
 import { afterEach, beforeEach, describe, expect, jest, test } from '@jest/globals';
 import '@testing-library/jest-dom/jest-globals';
-import { render, screen, waitFor } from '@testing-library/react';
+import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import { Form } from '@/components/form/form';
@@ -65,12 +65,14 @@ type Data = { verificationCode: string };
 function renderForm({
     code = {},
     handler = jest.fn<(data: Data) => Promise<void>>().mockResolvedValue(),
+    messages = defaultI18n,
 }: {
     code?: Partial<FieldDefinition<'otp'>>;
     handler?: (data: Data) => Promise<void>;
+    messages?: I18nMessages;
 } = {}) {
     render(
-        <WidgetContext config={defaultConfig} defaultMessages={defaultI18n}>
+        <WidgetContext config={defaultConfig} defaultMessages={messages}>
             <Form<Data>
                 fields={[
                     { key: 'givenName', required: false },
@@ -85,7 +87,7 @@ function renderForm({
 
 const codeInput = () => screen.getByLabelText('verificationCode');
 const submitButton = () => screen.getByRole('button', { name: 'send' });
-const resendButton = () => screen.getByRole('button', { name: 'verificationCode.resend' });
+const resendButton = () => screen.getByRole('button', { name: 'verificationCode.resend.count' });
 
 const slotStatuses = () =>
     Array.from(document.querySelectorAll('[data-slot="widget-otp-slot"]')).map(slot =>
@@ -211,8 +213,51 @@ describe('otp field in a form', () => {
         renderForm();
 
         expect(
-            screen.queryByRole('button', { name: 'verificationCode.resend' })
+            screen.queryByRole('button', { name: /^verificationCode\.resend/ })
         ).not.toBeInTheDocument();
+    });
+
+    test('allows five codes to be sent by default', () => {
+        renderForm({
+            code: { onResend: jest.fn<() => Promise<void>>() },
+            messages: { 'verificationCode.resend.count': 'Resend code ({sent} of {max} sent)' },
+        });
+
+        expect(screen.getByRole('button', { name: 'Resend code (1 of 5 sent)' })).toBeEnabled();
+    });
+
+    test('waits a minute after a new code is sent before another one may be', async () => {
+        jest.useFakeTimers();
+        try {
+            const user = userEvent.setup({ advanceTimers: ms => jest.advanceTimersByTime(ms) });
+            const onResend = jest.fn<() => Promise<void>>().mockResolvedValue();
+            renderForm({
+                code: { onResend },
+                messages: {
+                    'verificationCode.resend.count': 'Resend code ({sent} of {max} sent)',
+                    'verificationCode.resend.cooldown':
+                        'Resend code ({remaining} • {sent} of {max} sent)',
+                },
+            });
+
+            await user.click(screen.getByRole('button', { name: 'Resend code (1 of 5 sent)' }));
+
+            const waiting = await screen.findByRole('button', {
+                name: 'Resend code (01:00 • 2 of 5 sent)',
+            });
+            expect(waiting).toBeDisabled();
+
+            act(() => jest.advanceTimersByTime(59_000));
+            expect(
+                screen.getByRole('button', { name: 'Resend code (00:01 • 2 of 5 sent)' })
+            ).toBeDisabled();
+
+            act(() => jest.advanceTimersByTime(1_000));
+            expect(screen.getByRole('button', { name: 'Resend code (2 of 5 sent)' })).toBeEnabled();
+            expect(onResend).toBeCalledTimes(1);
+        } finally {
+            jest.useRealTimers();
+        }
     });
 
     test('sends a new code, which unlocks and clears the field', async () => {

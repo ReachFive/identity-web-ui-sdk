@@ -1534,7 +1534,7 @@ describe('DOM testing', () => {
             );
 
             await user.click(
-                await screen.findByRole('button', { name: 'verificationCode.resend' })
+                await screen.findByRole('button', { name: 'verificationCode.resend.count' })
             );
 
             expect(requestPasswordReset).toBeCalledTimes(2);
@@ -1573,7 +1573,7 @@ describe('DOM testing', () => {
 
             // the first request hid the unknown phone number: a new code must not tell it either
             await user.click(
-                await screen.findByRole('button', { name: 'verificationCode.resend' })
+                await screen.findByRole('button', { name: 'verificationCode.resend.count' })
             );
 
             expect(requestPasswordReset).toBeCalledTimes(2);

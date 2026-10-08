@@ -22,6 +22,11 @@ import { cn } from '@/lib/utils';
 
 type OtpError = { message?: string; type?: string };
 
+/** The codes that may be sent in total when the flow sets no limit of its own. */
+const DEFAULT_MAX_SENDS = 5;
+/** The time to wait after a new code is sent before another one may be. */
+const RESEND_COOLDOWN_SECONDS = 60;
+
 type OtpFieldProps = {
     label: string;
     /** The number of digits the code is made of: one slot is rendered per digit. */
@@ -36,8 +41,9 @@ type OtpFieldProps = {
     errors?: OtpError[];
     id?: string;
     /**
-     * The codes that may be sent in total, the first one included. When given, the resend link
-     * tells how many were sent, and is disabled once they all were.
+     * The codes that may be sent in total, the first one included: the resend link tells how many
+     * were sent, and is disabled once they all were.
+     * @default 5
      */
     maxSends?: number;
     /**
@@ -94,7 +100,7 @@ const OtpField = React.forwardRef<HTMLInputElement, OtpFieldProps>(function OtpF
         id,
         label,
         length,
-        maxSends,
+        maxSends = DEFAULT_MAX_SENDS,
         maxTrials,
         name,
         required,
@@ -122,7 +128,7 @@ const OtpField = React.forwardRef<HTMLInputElement, OtpFieldProps>(function OtpF
     // Whether the last form submission accepted the code
     const accepted = useFormSubmissionSucceeded();
     const exhausted = maxTrials !== undefined && refusedCodes >= maxTrials;
-    const allSent = maxSends !== undefined && sentCodes >= maxSends;
+    const allSent = sentCodes >= maxSends;
     // no code can be used any more, and no other one can be sent: the flow has to start over
     const limitReached = exhausted && (!onResend || allSent);
     // Locks the form submission if succeed or if max trials has been reached
@@ -225,9 +231,40 @@ const OtpField = React.forwardRef<HTMLInputElement, OtpFieldProps>(function OtpF
 });
 OtpField.displayName = 'OtpField';
 
+/** Counts down the seconds left once started. */
+function useCountdown() {
+    const [deadline, setDeadline] = React.useState<number>();
+    const [remaining, setRemaining] = React.useState(0);
+
+    React.useEffect(() => {
+        if (deadline === undefined) return;
+        // computed from the clock: a background tab may delay the ticks
+        const timer = setInterval(() => {
+            const left = Math.max(0, Math.ceil((deadline - Date.now()) / 1000));
+            setRemaining(left);
+            if (left === 0) setDeadline(undefined);
+        }, 1000);
+        return () => clearInterval(timer);
+    }, [deadline]);
+
+    const start = (seconds: number) => {
+        // set at once, so that no render shows the countdown over before its first tick
+        setRemaining(seconds);
+        setDeadline(Date.now() + seconds * 1000);
+    };
+
+    return [remaining, start] as const;
+}
+
+/** Formats seconds as `mm:ss`. */
+function formatDuration(seconds: number) {
+    const pad = (value: number) => String(value).padStart(2, '0');
+    return `${pad(Math.floor(seconds / 60))}:${pad(seconds % 60)}`;
+}
+
 type ResendCodeProps = {
     disabled: boolean;
-    maxSends?: number;
+    maxSends: number;
     sentCodes: number;
     onResend: (captcha: { captchaToken?: string }) => Promise<void>;
 };
@@ -237,12 +274,16 @@ function ResendCode({ disabled, maxSends, sentCodes, onResend }: ResendCodeProps
     const { Captcha, handler: captchaHandler } = useCaptcha();
     const [pending, setPending] = React.useState(false);
     const [error, setError] = React.useState<{ message: string }>();
+    const [cooldown, startCooldown] = useCountdown();
+    // no countdown on a link which stays disabled once it is over
+    const waiting = !disabled && cooldown > 0;
 
     const resend = async () => {
         setPending(true);
         setError(undefined);
         try {
             await captchaHandler({}, onResend);
+            startCooldown(RESEND_COOLDOWN_SECONDS);
         } catch (err) {
             setError({
                 message: isAppError(err)
@@ -262,13 +303,17 @@ function ResendCode({ disabled, maxSends, sentCodes, onResend }: ResendCodeProps
                 type="button"
                 variant="link"
                 className="h-auto justify-start p-0"
-                disabled={disabled || pending}
+                disabled={disabled || pending || waiting}
                 onClick={() => void resend()}
             >
                 <RefreshCwIcon className="size-4" aria-hidden="true" />
-                {maxSends !== undefined
-                    ? i18n('verificationCode.resend.count', { sent: sentCodes, max: maxSends })
-                    : i18n('verificationCode.resend')}
+                {waiting
+                    ? i18n('verificationCode.resend.cooldown', {
+                          remaining: formatDuration(cooldown),
+                          sent: sentCodes,
+                          max: maxSends,
+                      })
+                    : i18n('verificationCode.resend.count', { sent: sentCodes, max: maxSends })}
             </Button>
             {error && <FieldError errors={[error]} />}
             {Captcha && <Captcha />}

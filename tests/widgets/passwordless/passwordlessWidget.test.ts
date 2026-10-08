@@ -287,7 +287,7 @@ describe('DOM testing', () => {
             await user.click(screen.getByRole('button', { name: 'send' }));
 
             await user.click(
-                await screen.findByRole('button', { name: 'verificationCode.resend' })
+                await screen.findByRole('button', { name: 'verificationCode.resend.count' })
             );
 
             expect(startPasswordless).toBeCalledTimes(2);

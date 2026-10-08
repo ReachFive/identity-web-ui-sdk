@@ -174,8 +174,8 @@ export type FieldDefinition<
                */
               maxTrials?: number;
               /**
-               * The codes that may be sent in total, the first one included. When given, the resend
-               * link tells how many were sent, and is disabled once they all were.
+               * The codes that may be sent in total, the first one included: the resend link tells
+               * how many were sent, and is disabled once they all were. Defaults to 5.
                */
               maxSends?: number;
               /**
