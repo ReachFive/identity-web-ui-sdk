@@ -516,7 +516,7 @@ exports[`Snapshot login view inline social buttons 1`] = `
         login.title
       </div>
       <div
-        class="r5-social-buttons flex gap-2 flex-row items-center justify-center"
+        class="r5-social-buttons flex gap-2 flex-row flex-wrap items-center justify-center"
       >
         <button
           class="items-center justify-center gap-2 whitespace-nowrap rounded-[var(--r5-button-radius)] text-[length:var(--r5-button-text-size)] font-[var(--r5-button-font-weight)] leading-[var(--r5-button-leading)] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 border-[length:var(--r5-button-border-width)] border-[var(--r5-button-border-color)] bg-[var(--r5-button-bg)] text-[var(--r5-button-text)] shadow-[shadow:var(--r5-button-shadow)] hover:border-[var(--r5-button-hover-border-color)] hover:bg-[var(--r5-button-hover-bg)] hover:text-[var(--r5-button-hover-text)] size-[var(--r5-button-height)] r5-btn-social r5-btn-social-facebook flex shrink-0 [&_svg]:size-6"
@@ -2415,7 +2415,7 @@ exports[`Snapshot signup view inline social buttons 1`] = `
         signup.title
       </div>
       <div
-        class="r5-social-buttons flex gap-2 flex-row items-center justify-center"
+        class="r5-social-buttons flex gap-2 flex-row flex-wrap items-center justify-center"
       >
         <button
           class="items-center justify-center gap-2 whitespace-nowrap rounded-[var(--r5-button-radius)] text-[length:var(--r5-button-text-size)] font-[var(--r5-button-font-weight)] leading-[var(--r5-button-leading)] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 border-[length:var(--r5-button-border-width)] border-[var(--r5-button-border-color)] bg-[var(--r5-button-bg)] text-[var(--r5-button-text)] shadow-[shadow:var(--r5-button-shadow)] hover:border-[var(--r5-button-hover-border-color)] hover:bg-[var(--r5-button-hover-bg)] hover:text-[var(--r5-button-hover-text)] size-[var(--r5-button-height)] r5-btn-social r5-btn-social-facebook flex shrink-0 [&_svg]:size-6"

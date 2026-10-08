@@ -16,6 +16,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Passwordless, MFA registration, MFA step-up, phone number
   editor and password reset by SMS flows, now use the new `otp` field for code verification, instead of a single input field.
 
+### Fixed
+
+- Inline social login buttons (`theme.socialButton.inline`) wrap onto several lines again instead of
+  being squeezed onto a single row
+
 ## [2.1.0] - 2026-09-16
 
 ### Added
