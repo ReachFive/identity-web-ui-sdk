@@ -129,6 +129,13 @@ const VerificationCodeView = ({
         });
     };
 
+    // the same request as the one which sent the first code, from the main view
+    const handleResend = () =>
+        coreClient.updatePhoneNumber({ phoneNumber, accessToken }).catch((error: unknown) => {
+            onError(error);
+            throw error;
+        });
+
     return (
         <div>
             <Info>{i18n('phoneNumberEditor.verification.intro')}</Info>
@@ -136,9 +143,8 @@ const VerificationCodeView = ({
                 fields={[
                     {
                         key: 'verification_code',
-                        label: 'verificationCode',
-                        type: 'string',
                         required: true,
+                        onResend: handleResend,
                     },
                 ]}
                 handler={handleSubmit}

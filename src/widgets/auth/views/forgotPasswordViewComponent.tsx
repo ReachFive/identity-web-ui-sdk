@@ -275,9 +275,16 @@ export const ForgotPasswordCodeView = ({
     allowWebAuthnLogin = false,
     canShowPassword = false,
     showLabels = false,
+    recaptcha_enabled = false,
+    recaptcha_site_key,
+    captchaFoxEnabled = false,
+    captchaFoxMode = 'hidden',
+    captchaFoxSiteKey,
+    redirectUrl,
+    returnToAfterPasswordReset,
     onError = (() => {}) as OnError,
     onSuccess = (() => {}) as OnSuccess,
-}: ForgotPasswordViewProps) => {
+}: WithCaptchaProps<ForgotPasswordViewProps>) => {
     const coreClient = useReachfive();
     const i18n = useI18n();
     const { goTo, params } = useRouting();
@@ -293,6 +300,23 @@ export const ForgotPasswordCodeView = ({
         [coreClient, params]
     );
 
+    // the same request as the one which sent the first code, from `ForgotPasswordPhoneNumberView`
+    const handleResend = ({ captchaToken }: { captchaToken?: string }) =>
+        coreClient
+            .requestPasswordReset({
+                phoneNumber,
+                captchaToken,
+                redirectUrl,
+                returnToAfterPasswordReset,
+            })
+            .catch((error: unknown) => {
+                // the first request hid an unknown phone number the same way: a new code must not
+                // tell it either
+                if (displaySafeErrorMessage && skipError(error)) return;
+                onError(error);
+                throw error;
+            });
+
     return (
         <div>
             <Heading>{i18n('forgotPassword.title')}</Heading>
@@ -301,8 +325,17 @@ export const ForgotPasswordCodeView = ({
                 fields={[
                     {
                         key: 'verification_code',
-                        label: 'verificationCode',
-                        type: 'string',
+                        // the new password is typed after the code
+                        autoSubmit: false,
+                        onResend: handleResend,
+                        resendCaptcha: {
+                            recaptcha_enabled,
+                            recaptcha_site_key,
+                            captchaFoxEnabled,
+                            captchaFoxSiteKey,
+                            captchaFoxMode,
+                            action: 'password_reset_requested',
+                        },
                     },
                     {
                         key: 'password',

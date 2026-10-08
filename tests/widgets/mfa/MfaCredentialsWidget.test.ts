@@ -220,10 +220,6 @@ describe('DOM testing', () => {
                 expect(screen.getByText('mfa.verify.email')).toBeInTheDocument();
             });
 
-            const verificationCodeInput = screen.getByRole('textbox', { name: 'verificationCode' });
-            expect(verificationCodeInput).toBeInTheDocument();
-            await user.type(verificationCodeInput, '123456');
-
             expect(onSuccess).toHaveBeenCalledWith(
                 expect.objectContaining({
                     name: 'mfa_email_start_registration',
@@ -235,15 +231,19 @@ describe('DOM testing', () => {
 
             verifyMfaEmailRegistration.mockReset().mockRejectedValue(new Error('Invalid code'));
 
-            await user.click(screen.getByRole('button', { name: 'send' }));
+            // the last digit submits the code by itself
+            const verificationCodeInput = screen.getByRole('textbox', { name: 'verificationCode' });
+            expect(verificationCodeInput).toBeInTheDocument();
+            await user.type(verificationCodeInput, '123456');
 
-            expect(onError).toBeCalled();
+            await waitFor(() => expect(onError).toBeCalled());
 
             verifyMfaEmailRegistration.mockReset().mockResolvedValue();
             onSuccess.mockReset();
             onError.mockReset();
 
-            await user.click(screen.getByRole('button', { name: 'send' }));
+            // a corrected last digit submits the code again
+            await user.type(verificationCodeInput, '{Backspace}7');
 
             await waitFor(() => {
                 expect(onSuccess).toBeCalledWith(
@@ -281,8 +281,8 @@ describe('DOM testing', () => {
                 name: 'verificationCode',
             });
             expect(verificationCodeInput).toBeInTheDocument();
+            // the last digit submits the code by itself
             await user.type(verificationCodeInput, '123456');
-            await user.click(screen.getByRole('button', { name: 'send' }));
 
             await waitFor(() => {
                 expect(onSuccess).toBeCalledWith(
@@ -290,6 +290,32 @@ describe('DOM testing', () => {
                 );
                 expect(onError).not.toBeCalled();
             });
+        });
+
+        test('sends a new registration code to the same phone number', async () => {
+            const user = userEvent.setup();
+
+            await generateComponent(
+                { showIntro: true, action: 'mfa_registration' },
+                defaultConfig,
+                []
+            );
+
+            await user.type(screen.getByRole('textbox', { name: 'phoneNumber' }), '+33123456789');
+            await user.click(screen.getByText('mfa.register.phoneNumber'));
+
+            await user.click(
+                await screen.findByRole('button', { name: 'verificationCode.resend.count' })
+            );
+
+            expect(startMfaPhoneNumberRegistration).toBeCalledTimes(2);
+            expect(startMfaPhoneNumberRegistration).toHaveBeenLastCalledWith(
+                expect.objectContaining({
+                    accessToken: 'azerty',
+                    action: 'mfa_registration',
+                    phoneNumber: '+33123456789',
+                })
+            );
         });
 
         test('phone number field hides country select by default', async () => {

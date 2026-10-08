@@ -7,6 +7,15 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+- An `otp` field type, which takes the code one digit per slot, and a predefined `verification_code` field built on it, whose length follows the tenant's `verificationCodeLength` (6 digits when not configured).
+
+### Changed
+
+- Passwordless, MFA registration, MFA step-up, phone number
+  editor and password reset by SMS flows, now use the new `otp` field for code verification, instead of a single input field.
+
 ### Fixed
 
 - Inline social login buttons (`theme.socialButton.inline`) wrap onto several lines again instead of

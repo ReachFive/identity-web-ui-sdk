@@ -14,6 +14,7 @@ import { CheckboxField } from '@/components/form/fields/checkbox';
 import { DateField } from '@/components/form/fields/date';
 import { IdentifierField } from '@/components/form/fields/identifier';
 import { InputField } from '@/components/form/fields/input';
+import { OtpField } from '@/components/form/fields/otp';
 import { PasswordField, PasswordPolicyRules } from '@/components/form/fields/password';
 import { PhoneNumberField } from '@/components/form/fields/phone';
 import { RadioGroupField } from '@/components/form/fields/radio-group';
@@ -21,7 +22,12 @@ import { SelectField } from '@/components/form/fields/select';
 import { useConfig } from '@/contexts/config';
 import { useI18n } from '@/contexts/i18n';
 import { useReachfive } from '@/contexts/reachfive';
-import { type FieldDefinition, getFieldPath, type StaticContent } from '@/lib/form';
+import {
+    DEFAULT_VERIFICATION_CODE_LENGTH,
+    type FieldDefinition,
+    getFieldPath,
+    type StaticContent,
+} from '@/lib/form';
 
 type FormFieldsRendererProps<
     TFieldValues extends FieldValues = FieldValues,
@@ -94,12 +100,14 @@ const FormFieldsRenderer = <
                     },
                 }}
                 render={({ field, fieldState }) => {
-                    // `errorFields` only drives the mapping of the API validation errors onto the
-                    // form fields (see `resolveErrorFieldPath`), and `parent` is already consumed
-                    // by `getFieldPath` above to build the field name: dropping both here keeps
-                    // them off the DOM, whichever field component the definition is rendered with
+                    // `errorFields` and `errorMessageKeys` only drive the mapping of the API errors
+                    // onto the form fields (see `resolveErrorFieldPath` and
+                    // `resolveErrorMessageKeyField`), and `parent` is already consumed by
+                    // `getFieldPath` above to build the field name: dropping them here keeps them
+                    // off the DOM, whichever field component the definition is rendered with
                     const {
                         errorFields: _errorFields,
+                        errorMessageKeys: _errorMessageKeys,
                         parent: _parent,
                         ...definition
                     } = fieldDefinition;
@@ -289,6 +297,29 @@ function renderField<
                         allowInternational
                     }
                     defaultCountry={phoneNumberOptions?.defaultCountry ?? defaultCountry}
+                    errors={fieldState.invalid && fieldState.error ? [fieldState.error] : undefined}
+                />
+            );
+        }
+        case 'otp': {
+            const {
+                type,
+                transform,
+                validation,
+                defaultValue,
+                autoComplete: _autoComplete,
+                length = DEFAULT_VERIFICATION_CODE_LENGTH,
+                placeholder: _placeholder,
+                ...props
+            } = fieldDefinition;
+            return (
+                <OtpField
+                    {...props}
+                    length={length}
+                    showLabels={showLabels}
+                    onChange={(v: string) => onChange(transform?.output(v) ?? v)}
+                    {...(transform?.input(value) ?? { value })}
+                    {...field}
                     errors={fieldState.invalid && fieldState.error ? [fieldState.error] : undefined}
                 />
             );

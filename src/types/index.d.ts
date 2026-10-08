@@ -50,6 +50,12 @@ type CustomFields = {
  */
 export type RemoteSettings = CoreRemoteSettings & {
     customProviders?: Record<string, Provider>;
+    /** The number of digits of the verification codes the tenant sends (email, SMS). */
+    verificationCodeLength?: number;
+    /** The wrong codes a verification code accepts before it is deleted. */
+    verificationCodeMaxTrials?: number;
+    /** The codes a single step-up token can send, the first one included. */
+    stepUpTokenMaxUses?: number;
 };
 
 export type Config = CoreConfig & RemoteSettings & ConsentsVersions & CustomFields;

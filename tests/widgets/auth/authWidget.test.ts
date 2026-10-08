@@ -1498,6 +1498,8 @@ describe('DOM testing', () => {
             });
 
             await user.type(verificationCodeField, '123456');
+            // the new password is typed after the code: a complete code does not submit by itself
+            expect(updatePassword).not.toHaveBeenCalled();
             await user.type(passwordField, 'Wond3rFu11_Pa55w0rD*$');
             await user.type(passwordConfirmationField, 'Wond3rFu11_Pa55w0rD*$');
             await user.click(sendCodeButton);
@@ -1509,6 +1511,76 @@ describe('DOM testing', () => {
                     verificationCode: '123456',
                 })
             );
+        });
+
+        test('sends a new reset code to the same phone number', async () => {
+            const user = userEvent.setup();
+
+            await generateComponent(
+                {
+                    initialScreen: 'forgot-password',
+                    allowPhoneNumberResetPassword: true,
+                    redirectUrl: 'https://example.com/reset',
+                },
+                { countryCode: 'FR', sms: true }
+            );
+
+            await user.click(
+                screen.getByRole('button', { name: 'forgotPassword.usePhoneNumberButton' })
+            );
+            await user.type(screen.getByRole('textbox', { name: 'phoneNumber' }), '0123456789');
+            await user.click(
+                screen.getByRole('button', { name: 'forgotPassword.submitLabel.code' })
+            );
+
+            await user.click(
+                await screen.findByRole('button', { name: 'verificationCode.resend.count' })
+            );
+
+            expect(requestPasswordReset).toBeCalledTimes(2);
+            expect(requestPasswordReset).toHaveBeenLastCalledWith(
+                expect.objectContaining({
+                    phoneNumber: '+33123456789',
+                    redirectUrl: 'https://example.com/reset',
+                })
+            );
+        });
+
+        test('does not tell an unknown phone number when a new reset code is requested', async () => {
+            const user = userEvent.setup();
+            const unknownPhoneNumber = {
+                error: 'resource_not_found',
+                errorDescription: 'User not found',
+            };
+            requestPasswordReset.mockRejectedValue(unknownPhoneNumber);
+
+            await generateComponent(
+                {
+                    initialScreen: 'forgot-password',
+                    allowPhoneNumberResetPassword: true,
+                    displaySafeErrorMessage: true,
+                },
+                { countryCode: 'FR', sms: true }
+            );
+
+            await user.click(
+                screen.getByRole('button', { name: 'forgotPassword.usePhoneNumberButton' })
+            );
+            await user.type(screen.getByRole('textbox', { name: 'phoneNumber' }), '0123456789');
+            await user.click(
+                screen.getByRole('button', { name: 'forgotPassword.submitLabel.code' })
+            );
+
+            // the first request hid the unknown phone number: a new code must not tell it either
+            await user.click(
+                await screen.findByRole('button', { name: 'verificationCode.resend.count' })
+            );
+
+            expect(requestPasswordReset).toBeCalledTimes(2);
+            expect(screen.queryByText('User not found')).not.toBeInTheDocument();
+            expect(screen.queryByText('resource_not_found')).not.toBeInTheDocument();
+
+            requestPasswordReset.mockReset().mockResolvedValue();
         });
 
         describe('phone number view', () => {

@@ -31,7 +31,7 @@ exports[`Snapshot profile editor basic 1`] = `
         class="space-y-4"
       >
         <div
-          class="group/field data-[invalid=true]:text-destructive flex w-full gap-3 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
+          class="group/field data-[invalid=true]:text-destructive flex w-full gap-2 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
           data-invalid="false"
           data-orientation="vertical"
           data-slot="field"
@@ -65,7 +65,7 @@ exports[`Snapshot profile editor basic 1`] = `
           />
         </div>
         <div
-          class="group/field data-[invalid=true]:text-destructive flex w-full gap-3 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
+          class="group/field data-[invalid=true]:text-destructive flex w-full gap-2 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
           data-invalid="false"
           data-orientation="vertical"
           data-slot="field"
