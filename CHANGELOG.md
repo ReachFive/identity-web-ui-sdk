@@ -11,6 +11,14 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - Inline social login buttons (`theme.socialButton.inline`) wrap onto several lines again instead of
   being squeezed onto a single row
+- The passwordless widget's verification code step now verifies the code with the `auth` options the
+  flow was started with. It used to drop them, so a flow started with `responseType: 'code'` ended with
+  a token instead of an authorization code.
+
+### Changed
+
+- `@reachfive/identity-core` upgraded to 1.42.0, whose `verifyPasswordless` no longer overrides the
+  original authorization request's parameters in an orchestrated flow (hosted pages).
 
 ## [2.1.0] - 2026-09-16
 
