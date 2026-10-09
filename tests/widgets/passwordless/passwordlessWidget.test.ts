@@ -261,7 +261,8 @@ describe('DOM testing', () => {
                     authType: 'sms',
                     phoneNumber: '+33612345678',
                     verificationCode: '123456',
-                })
+                }),
+                undefined // auth
             );
 
             expect(onSuccess).toBeCalledWith(
@@ -773,7 +774,8 @@ describe('DOM testing', () => {
                         authType: 'magic_link',
                         email: 'alice@reach5.co',
                         verificationCode: '123456',
-                    })
+                    }),
+                    undefined // auth
                 );
 
                 expect(onSuccess).toBeCalledWith(
@@ -849,7 +851,8 @@ describe('DOM testing', () => {
                         authType: 'sms',
                         phoneNumber: '+33612345678',
                         verificationCode: '123456',
-                    })
+                    }),
+                    undefined // auth
                 );
 
                 expect(onSuccess).toBeCalledWith(
@@ -860,6 +863,47 @@ describe('DOM testing', () => {
                 );
                 expect(onError).not.toBeCalled();
             });
+
+            // The code is verified through a redirection whose response type the core SDK derives from
+            // the auth options it is given: verifying without them yields a token where an
+            // authorization code was asked for at start.
+            test.each([
+                { authType: 'magic_link' as const, label: 'email', value: 'alice@reach5.co' },
+                { authType: 'sms' as const, label: 'phoneNumber', value: '+33612345678' },
+            ])(
+                'verifies a $authType code with the auth options it started with',
+                async ({ authType, label, value }) => {
+                    const user = userEvent.setup();
+                    const auth = {
+                        responseType: 'code' as const,
+                        redirectUri: 'https://example.com/callback',
+                    };
+
+                    startPasswordless.mockResolvedValue({ challengeId: 'azerty' });
+                    verifyPasswordless.mockResolvedValue();
+
+                    await generateComponent({ authType, enableVerificationCode: true, auth });
+
+                    await user.type(screen.getByRole('textbox', { name: label }), value);
+                    await user.click(screen.getByRole('button', { name: 'send' }));
+
+                    expect(startPasswordless).toBeCalledWith(
+                        expect.objectContaining({ authType }),
+                        auth
+                    );
+
+                    await user.type(
+                        screen.getByRole('textbox', { name: 'verificationCode' }),
+                        '123456'
+                    );
+                    await user.click(screen.getByRole('button', { name: 'send' }));
+
+                    expect(verifyPasswordless).toBeCalledWith(
+                        expect.objectContaining({ authType, verificationCode: '123456' }),
+                        auth
+                    );
+                }
+            );
         });
 
         test('api failure', async () => {
