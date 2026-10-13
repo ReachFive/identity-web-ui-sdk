@@ -345,7 +345,7 @@ exports[`Snapshot login view inline social buttons 1`] = `
           login.title
         </div>
         <div
-          class="r5-social-buttons flex gap-2 flex-row items-center justify-center"
+          class="r5-social-buttons flex gap-2 flex-row flex-wrap items-center justify-center"
         >
           <button
             class="items-center justify-center gap-2 whitespace-nowrap rounded-button text-button-text-size font-button-font-weight leading-button transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0 border-button-border-width border-button-border-color bg-button-bg text-button-text shadow-button-shadow hover:border-button-hover-border-color hover:bg-button-hover-bg hover:text-button-hover-text size-button-height r5-btn-social r5-btn-social-facebook flex shrink-0 [&_svg]:size-6"
@@ -1878,7 +1878,7 @@ exports[`Snapshot signup view inline social buttons 1`] = `
           signup.title
         </div>
         <div
-          class="r5-social-buttons flex gap-2 flex-row items-center justify-center"
+          class="r5-social-buttons flex gap-2 flex-row flex-wrap items-center justify-center"
         >
           <button
             class="items-center justify-center gap-2 whitespace-nowrap rounded-button text-button-text-size font-button-font-weight leading-button transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0 border-button-border-width border-button-border-color bg-button-bg text-button-text shadow-button-shadow hover:border-button-hover-border-color hover:bg-button-hover-bg hover:text-button-hover-text size-button-height r5-btn-social r5-btn-social-facebook flex shrink-0 [&_svg]:size-6"

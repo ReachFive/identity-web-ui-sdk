@@ -25,6 +25,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Fixed
 
 - Markdown links (consents, user agreement) only accept `http(s)`, `mailto` and relative URLs
+- Inline social login buttons (`theme.socialButton.inline`) wrap onto several lines again instead of
+  being squeezed onto a single row
 
 ## [2.1.0] - 2026-09-16
 
