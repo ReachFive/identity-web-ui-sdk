@@ -5,7 +5,7 @@ import { TrashIcon } from 'lucide-react';
 import type { DeviceCredential } from '@reachfive/identity-core';
 
 import { Form } from '@/components/form/form';
-import { Heading, Info, MutedText, Paragraph } from '@/components/miscComponent';
+import { Alternative, Heading, Info } from '@/components/miscComponent';
 import { Button } from '@/components/ui/button';
 import {
     Item,
@@ -178,9 +178,9 @@ function WebAuthnDevices({
                 <DevicesList devices={devices} removeWebAuthnDevice={removeWebAuthnDevice} />
             )}
 
-            <Paragraph align="center">
-                <MutedText>{i18n('webauthn.registredDevices.add')}</MutedText>
-            </Paragraph>
+            <Alternative className="text-muted-foreground">
+                {i18n('webauthn.registredDevices.add')}
+            </Alternative>
 
             <Form
                 fields={['friendly_name']}

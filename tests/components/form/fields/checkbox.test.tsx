@@ -7,7 +7,6 @@ import { describe, expect, jest, test } from '@jest/globals';
 import '@testing-library/jest-dom/jest-globals';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import 'jest-styled-components';
 
 import { CheckboxField } from '../../../../src/components/form/fields/checkbox';
 import { type I18nMessages } from '../../../../src/contexts/i18n';

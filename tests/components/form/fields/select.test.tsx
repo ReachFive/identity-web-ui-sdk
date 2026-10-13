@@ -7,7 +7,6 @@ import { describe, expect, jest, test } from '@jest/globals';
 import '@testing-library/jest-dom/jest-globals';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import 'jest-styled-components';
 
 import { SelectField } from '../../../../src/components/form/fields/select';
 import { type I18nMessages } from '../../../../src/contexts/i18n';

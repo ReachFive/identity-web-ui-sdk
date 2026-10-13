@@ -63,7 +63,7 @@ function CaptchaFoxField({
             ref={instanceRef}
             mode={mode}
             onError={handleError}
-            className={cn('[&_.cf-button]:!max-w-full', className)}
+            className={cn('[&_.cf-button]:!max-w-full mb-4', className)}
         />
     );
 }

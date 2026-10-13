@@ -10,14 +10,24 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Added
 
 - An `otp` field type, which takes the code one digit per slot, and a predefined `verification_code` field built on it, whose length follows the tenant's `verificationCodeLength` (6 digits when not configured).
+- `data-slot="widget-*"` attributes on the widget content, headings, texts, separators and links, as styling hooks
+  for integrators
 
 ### Changed
 
 - Passwordless, MFA registration, MFA step-up, phone number
   editor and password reset by SMS flows, now use the new `otp` field for code verification, instead of a single input field.
+- Social button metrics and colors are exposed as `--r5-social-button-*` CSS variables, so stylesheet overrides
+  now reach social buttons too. Metrics follow the button ones and colors fall back to each provider's, unless
+  `theme.socialButton` sets them
+
+### Removed
+
+- `styled-components` is no longer a peer dependency
 
 ### Fixed
 
+- Markdown links (consents, user agreement) only accept `http(s)`, `mailto` and relative URLs
 - Inline social login buttons (`theme.socialButton.inline`) wrap onto several lines again instead of
   being squeezed onto a single row
 

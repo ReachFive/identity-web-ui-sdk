@@ -4,7 +4,7 @@ import { buildTheme } from '../src/core/theme';
 import { buildThemeVariables } from '../src/core/themeVariables';
 import { colorToHSL, shadeColor } from '../src/lib/utils';
 
-import type { ThemeOptions } from '../src/types/styled';
+import type { ThemeOptions } from '../src/types/theme';
 
 const build = (options: ThemeOptions = {}) => buildThemeVariables(options, buildTheme(options));
 
@@ -199,6 +199,140 @@ describe('buildThemeVariables', () => {
             expect(variables['--r5-input-bg']).toBe('#fff');
             expect(variables['--r5-input-text']).toBe('#495057');
         });
+    });
+
+    describe('heading', () => {
+        // The size stays a pointer over `--font-size`: `calc()` reproduces the former
+        // `fontSize * 1.2` exactly, so a `--font-size` override written in CSS still moves it.
+        test('the size points at --font-size rather than resolving to a literal', () => {
+            expect(build({ fontSize: 18 })['--r5-heading-text-size']).toBe(
+                'calc(var(--font-size) * 1.2)'
+            );
+        });
+
+        test('the color is a fixed constant, not derived from the palette', () => {
+            const variables = build({ primaryColor: '#3366ff', textColor: '#202020' });
+            expect(variables['--r5-heading-text']).toBe('#212529');
+        });
+
+        test('headingColor overrides it', () => {
+            expect(build({ headingColor: '#123456' })['--r5-heading-text']).toBe('#123456');
+        });
+
+        test('the weight is hardcoded, since no option describes it', () => {
+            expect(build()['--r5-heading-font-weight']).toBe('bold');
+        });
+    });
+
+    describe('social button', () => {
+        const metrics = [
+            'height',
+            'padding-x',
+            'padding-y',
+            'radius',
+            'border-width',
+            'text-size',
+            'font-weight',
+            'leading',
+            'shadow',
+        ];
+
+        test.each(metrics)('%s follows the button token by default', metric => {
+            expect(build()[`--r5-social-button-${metric}`]).toBe(`var(--r5-button-${metric})`);
+        });
+
+        test('keeps following the button when only the button is themed', () => {
+            const variables = build({ button: { paddingX: 30, borderRadius: 10, borderWidth: 4 } });
+            expect(variables['--r5-social-button-padding-x']).toBe('var(--r5-button-padding-x)');
+            expect(variables['--r5-button-padding-x']).toBe('30px');
+            expect(variables['--r5-social-button-height']).toBe('var(--r5-button-height)');
+        });
+
+        test('socialButton options are emitted as literals', () => {
+            const variables = build({
+                socialButton: {
+                    fontSize: 18,
+                    fontWeight: 300,
+                    lineHeight: 2,
+                    paddingX: 24,
+                    paddingY: 12,
+                    borderRadius: 8,
+                    borderWidth: 2,
+                    boxShadow: '0 1px 2px rgba(0, 0, 0, 0.5)',
+                },
+            });
+            expect(variables['--r5-social-button-padding-x']).toBe('24px');
+            expect(variables['--r5-social-button-padding-y']).toBe('12px');
+            expect(variables['--r5-social-button-radius']).toBe('8px');
+            expect(variables['--r5-social-button-border-width']).toBe('2px');
+            expect(variables['--r5-social-button-text-size']).toBe('18px');
+            expect(variables['--r5-social-button-font-weight']).toBe('300');
+            expect(variables['--r5-social-button-leading']).toBe('2');
+            expect(variables['--r5-social-button-shadow']).toBe('0 1px 2px rgba(0, 0, 0, 0.5)');
+            // fontSize × lineHeight + paddings + borders
+            expect(variables['--r5-social-button-height']).toBe('64px');
+        });
+
+        test('the height stops following the button as soon as one of its inputs is set', () => {
+            expect(build({ socialButton: { paddingX: 24 } })['--r5-social-button-height']).toBe(
+                'var(--r5-button-height)'
+            );
+            expect(build({ socialButton: { paddingY: 12 } })['--r5-social-button-height']).toBe(
+                `${buildTheme({ socialButton: { paddingY: 12 } }).socialButton.height}px`
+            );
+        });
+
+        test('emits no color by default, so each button keeps its provider colors', () => {
+            expect(
+                Object.keys(build()).filter(key =>
+                    /^--r5-social-button-.*(bg|text|color)$/.test(key)
+                )
+            ).toEqual([]);
+        });
+
+        test('a background brings its hover shade and a contrasting text color', () => {
+            const variables = build({ socialButton: { background: '#ff0000' } });
+            expect(variables['--r5-social-button-bg']).toBe('#ff0000');
+            expect(variables['--r5-social-button-hover-bg']).toBe('#cc0000');
+            expect(variables['--r5-social-button-contrast-text']).toBe('#000000'); // red reads as light
+            expect(variables['--r5-social-button-text']).toBeUndefined();
+        });
+
+        test('explicit hover colors win over the derived ones', () => {
+            const variables = build({
+                socialButton: {
+                    background: '#ff0000',
+                    hoverBackground: '#00ff00',
+                    borderColor: '#0f0f0f',
+                    hoverBorderColor: '#f0f0f0',
+                    color: '#001122',
+                    hoverColor: '#abcdef',
+                },
+            });
+            expect(variables['--r5-social-button-hover-bg']).toBe('#00ff00');
+            expect(variables['--r5-social-button-border-color']).toBe('#0f0f0f');
+            expect(variables['--r5-social-button-hover-border-color']).toBe('#f0f0f0');
+            expect(variables['--r5-social-button-text']).toBe('#001122');
+            expect(variables['--r5-social-button-hover-text']).toBe('#abcdef');
+        });
+
+        test('a border color brings its hover shade', () => {
+            expect(
+                build({ socialButton: { borderColor: '#ff0000' } })[
+                    '--r5-social-button-hover-border-color'
+                ]
+            ).toBe('#cc0000');
+        });
+
+        test('a none shadow stays composable with the focus ring', () => {
+            expect(
+                build({ socialButton: { boxShadow: 'none' } })['--r5-social-button-shadow']
+            ).toBe('0 0 #0000');
+        });
+    });
+
+    test('maxWidth sets the widget max width', () => {
+        expect(build({ maxWidth: 480 })['--r5-widget-max-width']).toBe('480px');
     });
 
     describe('foreground roles are contrast-derived', () => {

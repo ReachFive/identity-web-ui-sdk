@@ -8,7 +8,7 @@ import z from 'zod';
 import { Client, UserConsent } from '@reachfive/identity-core';
 
 import { type CaptchaConfig } from '@/components/captcha';
-import { MarkdownContent } from '@/components/miscComponent';
+import { MarkdownContent } from '@/components/markdown';
 import { VERIFICATION_CODE_REFUSED } from '@/helpers/errors';
 import { logError } from '@/helpers/logger';
 import { camelCasePath, snakeCasePath } from '@/helpers/transformObjectProperties';

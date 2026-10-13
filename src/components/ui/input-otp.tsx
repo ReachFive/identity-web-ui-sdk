@@ -46,14 +46,14 @@ const inputOTPSlotVariants = cva(
     // Reachfive: separate boxes instead of shadcn's joined group (`border-y border-r first:border-l …`)
     "relative flex items-center justify-center shadow-sm transition-all",
     // Reachfive's theme variables
-    "h-[var(--r5-input-height)] min-w-0 flex-1 rounded-lg bg-[var(--r5-input-bg)] border-[var(--r5-input-border-color)] border-[length:var(--r5-input-border-width)] text-[var(--r5-input-text)] text-[length:calc(var(--r5-input-text-size)*1.5)] shadow-[shadow:var(--r5-input-shadow)]",
+    "h-input-height min-w-0 flex-1 rounded-lg bg-input-bg border-input-border-color border-input-border-width text-input-text text-[length:calc(var(--r5-input-text-size)*1.5)] shadow-input-shadow",
   ],
   {
     variants: {
       status: {
         error: "border-destructive bg-destructive/5 text-destructive",
         success: "border-success bg-success/5 text-success",
-        disabled: "bg-[var(--r5-input-disabled-bg)] text-muted-foreground",
+        disabled: "bg-input-disabled-bg text-muted-foreground",
       },
       active: {
         true: "z-10 ring-1 ring-ring",

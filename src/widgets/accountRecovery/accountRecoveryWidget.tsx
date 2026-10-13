@@ -1,7 +1,5 @@
 import React from 'react';
 
-import styled from 'styled-components';
-
 import { Form } from '@/components/form/form.tsx';
 import { Alternative, Heading, Info, Link, Separator } from '@/components/miscComponent';
 import { createMultiViewWidget } from '@/components/widget/widget';
@@ -9,7 +7,7 @@ import { useI18n } from '@/contexts/i18n';
 import { useReachfive } from '@/contexts/reachfive';
 import { useRouting } from '@/contexts/routing';
 import { parseQueryString } from '@/helpers/queryString';
-import { ReactComponent as Passkeys } from '@/icons/passkeys.svg';
+import { ReactComponent as PasskeysIcon } from '@/icons/passkeys.svg';
 import {
     PasswordEditorForm,
     PasswordEditorFormData,
@@ -37,18 +35,6 @@ interface MainViewProps {
      */
     showLabels?: boolean;
 }
-
-const iconStyle = `
-        width: 60px;
-        height: 60px;
-        margin-left: auto;
-        margin-right: auto;
-        margin-bottom: 1em;
-        display: block;
-`;
-const PasskeysIcon = styled(Passkeys)`
-    ${iconStyle}
-`;
 
 const PasskeysExplanation = () => {
     const i18n = useI18n();
@@ -88,7 +74,7 @@ const NewPasskey = ({
     return (
         <div className="space-y-4">
             <Heading>{i18n('accountRecovery.passkeyReset.title')}</Heading>
-            <PasskeysIcon />
+            <PasskeysIcon className="block size-16 mx-auto mb-4" />
             <div className="font-bold text-center text-balance">
                 {i18n('accountRecovery.passkeyReset.intro')}
             </div>
