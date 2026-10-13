@@ -1,7 +1,5 @@
 import React from 'react';
 
-import { AuthOptions } from '@reachfive/identity-core';
-
 import { CaptchaProvider, WithCaptchaProps, type WithCaptchaToken } from '@/components/captcha';
 import { Form } from '@/components/form/form';
 import { Info } from '@/components/miscComponent';
@@ -11,10 +9,6 @@ import { useRouting } from '@/contexts/routing';
 import { OnError, OnSuccess } from '@/types';
 
 export interface VerificationCodeViewProps {
-    /**
-     * List of authentication options, the same ones the passwordless flow was started with.
-     */
-    auth?: AuthOptions;
     /**
      * Callback function called when the request has succeed.
      */
@@ -38,7 +32,6 @@ export type VerificationCodeViewState =
 export type VerificationCodeFormData = { verificationCode: string };
 
 export const VerificationCodeView = ({
-    auth,
     recaptcha_enabled = false,
     recaptcha_site_key,
     captchaFoxEnabled = false,
@@ -53,13 +46,10 @@ export const VerificationCodeView = ({
     const state = params as VerificationCodeViewState;
 
     const handleSubmit = async (data: WithCaptchaToken<VerificationCodeFormData>) => {
-        const result = await coreClient.verifyPasswordless(
-            {
-                ...state,
-                ...data,
-            },
-            auth
-        );
+        const result = await coreClient.verifyPasswordless({
+            ...state,
+            ...data,
+        });
         onSuccess({
             name: 'login',
             authResult: result ?? {},
