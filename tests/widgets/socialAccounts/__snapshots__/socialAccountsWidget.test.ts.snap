@@ -54,7 +54,7 @@ exports[`Snapshot basic 1`] = `
         class="space-y-2"
       >
         <button
-          class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[var(--r5-button-radius)] text-[length:var(--r5-button-text-size)] font-[var(--r5-button-font-weight)] leading-[var(--r5-button-leading)] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border-[length:var(--r5-button-border-width)] border-[var(--r5-button-border-color)] bg-background text-[var(--r5-button-bg)] shadow-[shadow:var(--r5-button-shadow)] hover:border-[var(--r5-button-hover-border-color)] hover:bg-[var(--r5-button-subtle-bg)] h-[var(--r5-button-height)] px-[var(--r5-button-padding-x)] py-[var(--r5-button-padding-y)] w-full"
+          class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-button text-button-text-size font-button-font-weight leading-button transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border-button-border-width border-button-border-color bg-background text-button-bg shadow-button-shadow hover:border-button-hover-border-color hover:bg-button-subtle-bg h-button-height px-button-padding-x py-button-padding-y w-full"
         >
           socialAccounts.linkNewAccount
         </button>

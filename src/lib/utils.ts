@@ -9,9 +9,51 @@ import {
     parseCSS,
     transparentize,
 } from 'colorizr';
-import { twMerge } from 'tailwind-merge';
+import { extendTailwindMerge } from 'tailwind-merge';
 
 import { logError } from '@/helpers/logger';
+
+/** Mirrors the component tokens of `tailwind.config.cjs`, which tailwind-merge cannot read. */
+const twMerge = extendTailwindMerge({
+    extend: {
+        theme: {
+            color: [
+                'button-bg',
+                'button-hover-bg',
+                'button-subtle-bg',
+                'button-text',
+                'button-hover-text',
+                'button-border-color',
+                'button-hover-border-color',
+                'input-bg',
+                'input-disabled-bg',
+                'input-text',
+                'input-placeholder-text',
+                'input-border-color',
+                'link-text',
+                'link-hover-text',
+            ],
+            text: ['button-text-size', 'input-text-size'],
+            'font-weight': ['button-font-weight'],
+            leading: ['button', 'input'],
+            radius: ['button', 'input'],
+            shadow: ['button-shadow', 'input-shadow'],
+            // tailwind-merge has a single scale behind padding, height and size.
+            spacing: [
+                'button-height',
+                'input-height',
+                'button-padding-x',
+                'button-padding-y',
+                'input-padding-x',
+                'input-padding-y',
+            ],
+        },
+        // Border width has no theme scale in tailwind-merge.
+        classGroups: {
+            'border-w': [{ border: ['button-border-width', 'input-border-width'] }],
+        },
+    },
+});
 
 export function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));

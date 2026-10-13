@@ -427,7 +427,7 @@ describe('theming', () => {
             const button = getSocialButton('Facebook');
             expect(getSocialButtonLabel(button)).toHaveTextContent('Facebook');
             // default size: padded, auto width
-            expect(button).toHaveClass('px-[var(--r5-button-padding-x)]');
+            expect(button).toHaveClass('px-button-padding-x');
         });
 
         test('inlines the buttons and hides their label when inline is enabled', () => {
@@ -445,7 +445,7 @@ describe('theming', () => {
             const button = getSocialButton('Facebook');
             expect(getSocialButtonLabel(button)).not.toBeInTheDocument();
             // icon size: square, sized on the button height
-            expect(button).toHaveClass('size-[var(--r5-button-height)]');
+            expect(button).toHaveClass('size-button-height');
             // the icon is still rendered, and the title still labels the button
             expect(getProviderIcon(button)).toBeInTheDocument();
         });
