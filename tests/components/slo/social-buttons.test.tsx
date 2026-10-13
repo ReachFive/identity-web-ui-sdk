@@ -7,7 +7,6 @@ import { beforeEach, describe, expect, jest, test } from '@jest/globals';
 import '@testing-library/jest-dom/jest-globals';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { ThemeProvider } from 'styled-components';
 
 import { type Client } from '@reachfive/identity-core';
 
@@ -15,11 +14,12 @@ import { SocialButtons } from '../../../src/components/slo/social-buttons';
 import { ConfigProvider } from '../../../src/contexts/config';
 import { I18nProvider, type I18nMessages } from '../../../src/contexts/i18n';
 import { ReachfiveProvider } from '../../../src/contexts/reachfive';
-import { buildTheme } from '../../../src/core/theme';
+import { ThemeProvider } from '../../../src/contexts/theme';
+import { resolveTheme } from '../../../src/core/resolveTheme';
 import { type Provider } from '../../../src/providers/providers';
 
 import type { Config } from '../../../src/types';
-import type { ThemeOptions } from '../../../src/types/styled';
+import type { ThemeOptions } from '../../../src/types/theme';
 
 const customProvider: Provider = {
     key: 'my-idp',
@@ -69,15 +69,19 @@ type RenderOptions = {
     theme?: ThemeOptions;
 };
 
+/** The widget variables of the last render, against which `cssVar` resolves `var()`. */
+let themeVariables: Record<string, string> = {};
+
 function renderSocialButtons(
     props: React.ComponentProps<typeof SocialButtons>,
     { config = {}, i18n = {}, theme = {} }: RenderOptions = {}
 ) {
     const mergedConfig = { ...defaultConfig, ...config };
+    themeVariables = resolveTheme(theme).variables;
     return render(
         <ConfigProvider config={mergedConfig}>
             <ReachfiveProvider client={apiClient}>
-                <ThemeProvider theme={buildTheme(theme)}>
+                <ThemeProvider options={theme}>
                     <I18nProvider defaultMessages={i18n} locale={mergedConfig.language}>
                         <SocialButtons {...props} />
                     </I18nProvider>
@@ -87,9 +91,41 @@ function renderSocialButtons(
     );
 }
 
-/** Reads a CSS custom property off the element inline style (jsdom does not resolve them). */
+/**
+ * Substitutes every `var(--name, fallback)` in `value`, as the browser would: the property if
+ * `lookup` defines it, else the fallback.
+ */
+function substituteVars(value: string, lookup: (name: string) => string | undefined): string {
+    const start = value.indexOf('var(');
+    if (start === -1) return value;
+
+    let depth = 0;
+    let comma = -1;
+    let end = start + 3;
+    for (; end < value.length; end++) {
+        const char = value[end];
+        if (char === '(') depth++;
+        else if (char === ',' && depth === 1 && comma === -1) comma = end;
+        else if (char === ')' && --depth === 0) break;
+    }
+    const name = value.slice(start + 4, comma === -1 ? end : comma).trim();
+    const fallback = comma === -1 ? '' : value.slice(comma + 1, end).trim();
+    const resolved = substituteVars(lookup(name) ?? fallback, lookup);
+
+    return value.slice(0, start) + resolved + substituteVars(value.slice(end + 1), lookup);
+}
+
+/**
+ * Reads a CSS custom property off the element inline style, resolved against the element's own
+ * declarations and the widget variables — jsdom does not resolve custom properties.
+ */
 function cssVar(element: HTMLElement, property: string): string {
-    return element.style.getPropertyValue(property);
+    // A widget variable is computed on the scope element, so its own `var()` resolve there.
+    const inScope = (name: string): string | undefined =>
+        name in themeVariables ? substituteVars(themeVariables[name], inScope) : undefined;
+    const onElement = (name: string): string | undefined =>
+        element.style.getPropertyValue(name) || inScope(name);
+    return substituteVars(element.style.getPropertyValue(property), onElement);
 }
 
 function getSocialButton(name: string): HTMLElement {

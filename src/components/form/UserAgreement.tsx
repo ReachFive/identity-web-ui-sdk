@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { marked } from '@/components/miscComponent';
+import { marked } from '@/components/markdown';
 import { cn } from '@/lib/utils';
 
 type UserAgreementProps = React.ComponentProps<'div'> & {

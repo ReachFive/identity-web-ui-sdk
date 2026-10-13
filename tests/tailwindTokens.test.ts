@@ -21,7 +21,8 @@ type Section =
     | 'size'
     | 'padding'
     | 'borderWidth'
-    | 'boxShadow';
+    | 'boxShadow'
+    | 'maxWidth';
 
 type Utility = { emits: string[]; overriddenBy: string };
 
@@ -40,6 +41,7 @@ const SECTIONS: Record<Section, Record<string, Utility>> = {
     padding: { p: { emits: ['padding'], overriddenBy: 'p-2' } },
     borderWidth: { border: { emits: ['border-width'], overriddenBy: 'border-0' } },
     boxShadow: { shadow: { emits: ['box-shadow'], overriddenBy: 'shadow-none' } },
+    maxWidth: { 'max-w': { emits: ['max-width'], overriddenBy: 'max-w-none' } },
 };
 
 /**

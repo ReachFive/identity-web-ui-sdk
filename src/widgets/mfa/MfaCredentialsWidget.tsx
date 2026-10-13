@@ -6,9 +6,9 @@ import type {
     StartMfaPhoneNumberRegistrationResponse,
 } from '@reachfive/identity-core/es/main/mfaClient';
 
-import { DestructiveButton } from '@/components/form/buttonComponent';
 import { Form, FormProps } from '@/components/form/form.tsx';
 import { Intro, Separator } from '@/components/miscComponent';
+import { Button } from '@/components/ui/button';
 import { createMultiViewWidget } from '@/components/widget/widget';
 import { useConfig } from '@/contexts/config';
 import { useI18n } from '@/contexts/i18n';
@@ -322,9 +322,14 @@ const MainView = withCredentials(
                             <Form
                                 submitLabel={'mfa.remove.email'}
                                 SubmitComponent={({ disabled, label }) => (
-                                    <DestructiveButton disabled={disabled}>
+                                    <Button
+                                        type="submit"
+                                        variant="destructive"
+                                        className="w-full"
+                                        disabled={disabled}
+                                    >
                                         {label}
-                                    </DestructiveButton>
+                                    </Button>
                                 )}
                                 handler={onEmailRemoval}
                                 onSuccess={async () => {
@@ -348,7 +353,14 @@ const MainView = withCredentials(
                             <Form
                                 submitLabel="mfa.remove.phoneNumber"
                                 SubmitComponent={({ label, ...props }) => (
-                                    <DestructiveButton {...props}>{label}</DestructiveButton>
+                                    <Button
+                                        type="submit"
+                                        variant="destructive"
+                                        className="w-full"
+                                        {...props}
+                                    >
+                                        {label}
+                                    </Button>
                                 )}
                                 handler={() =>
                                     onPhoneNumberRemoval({ ...phoneNumberCredentialRegistered })

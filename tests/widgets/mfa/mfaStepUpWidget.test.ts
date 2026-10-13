@@ -5,7 +5,6 @@ import { afterAll, beforeAll, beforeEach, describe, expect, jest, test } from '@
 import '@testing-library/jest-dom/jest-globals';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent, { UserEvent } from '@testing-library/user-event';
-import 'jest-styled-components';
 
 import { Client } from '@reachfive/identity-core';
 

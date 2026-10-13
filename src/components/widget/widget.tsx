@@ -1,7 +1,5 @@
 import React, { ComponentType } from 'react';
 
-import { StyleSheetManager, ThemeProvider } from 'styled-components';
-
 import type { Client as CoreClient, SessionInfo } from '@reachfive/identity-core';
 
 import WidgetContainer, {
@@ -12,11 +10,8 @@ import { I18nProvider, type I18nMessages } from '@/contexts/i18n';
 import { ReachfiveProvider } from '@/contexts/reachfive';
 import { RoutingProvider } from '@/contexts/routing';
 import { SessionProvider } from '@/contexts/session';
-import { ThemeVariablesProvider, useThemeVariables } from '@/contexts/themeVariables';
-import { buildTheme } from '@/core/theme';
-import { buildThemeVariables } from '@/core/themeVariables';
-import { cn } from '@/lib/utils';
-import { Theme, ThemeOptions } from '@/types/styled';
+import { ThemeProvider, ThemeVariablesContainer } from '@/contexts/theme';
+import { ThemeOptions } from '@/types/theme';
 
 import type { Config, Prettify } from '@/types';
 
@@ -25,15 +20,6 @@ export type ThemeProps = { theme?: ThemeOptions };
 
 export type PropsWithI18n<P> = Prettify<P & I18nProps>;
 export type PropsWithTheme<P> = Prettify<P & ThemeProps>;
-
-/** The widget shell, carrying the widget's CSS custom properties. */
-export const WidgetContainerThemeVariables = ({
-    className,
-    ...props
-}: React.PropsWithChildren<WidgetContainerProps>) => {
-    const { className: themeClassName } = useThemeVariables();
-    return <WidgetContainer className={cn(themeClassName, className)} {...props} />;
-};
 
 export type Context = {
     config: Config;
@@ -63,31 +49,23 @@ export function createWidget<P, U = P>({
             ({ theme: customTheme, ...preparedOptions }) => {
                 const Component = component;
 
-                const theme: Theme = buildTheme(customTheme);
-                const themeVariables = buildThemeVariables(customTheme ?? {}, theme);
-
                 return (
                     <ConfigProvider config={context.config}>
                         <ReachfiveProvider client={context.apiClient}>
                             <SessionProvider session={context.session}>
-                                <ThemeVariablesProvider variables={themeVariables}>
-                                    <StyleSheetManager>
-                                        <ThemeProvider theme={theme}>
-                                            <I18nProvider
-                                                defaultMessages={context.defaultI18n}
-                                                messages={preparedOptions.i18n}
-                                                locale={context.config.language}
-                                            >
-                                                <WidgetContainerThemeVariables
-                                                    {...widgetAttrs}
-                                                    className="r5-widget"
-                                                >
-                                                    <Component {...preparedOptions} />
-                                                </WidgetContainerThemeVariables>
-                                            </I18nProvider>
-                                        </ThemeProvider>
-                                    </StyleSheetManager>
-                                </ThemeVariablesProvider>
+                                <ThemeProvider options={customTheme}>
+                                    <I18nProvider
+                                        defaultMessages={context.defaultI18n}
+                                        messages={preparedOptions.i18n}
+                                        locale={context.config.language}
+                                    >
+                                        <ThemeVariablesContainer>
+                                            <WidgetContainer {...widgetAttrs}>
+                                                <Component {...preparedOptions} />
+                                            </WidgetContainer>
+                                        </ThemeVariablesContainer>
+                                    </I18nProvider>
+                                </ThemeProvider>
                             </SessionProvider>
                         </ReachfiveProvider>
                     </ConfigProvider>

@@ -1,5 +1,5 @@
 import { colorToHSL, fadeColor, shadeColor } from '@/lib/utils';
-import { Theme, ThemeOptions } from '@/types/styled';
+import { Theme, ThemeOptions } from '@/types/theme';
 
 import { derivedTextColor, surfaceTextColor } from './theme';
 
@@ -20,12 +20,48 @@ const px = (value: number | undefined, fallback: string): string =>
 export const composableShadow = (value: string): string => (value === 'none' ? '0 0 #0000' : value);
 
 /**
+ * Social button colors, emitted only for the options supplied: unset, each button falls back to its
+ * provider's colors (@see components/slo/social-buttons). Derived values are computed from the
+ * supplied color, as the button would from the provider's.
+ */
+function socialButtonColors(socialButton: ThemeOptions['socialButton']): ThemeVariables {
+    const { background, hoverBackground, color, hoverColor, borderColor, hoverBorderColor } =
+        socialButton ?? {};
+    const entries: [string, string | undefined][] = [
+        ['--r5-social-button-bg', background],
+        ['--r5-social-button-hover-bg', hoverBackground ?? (background && shadeColor(background))],
+        ['--r5-social-button-text', color],
+        // Ranks below the provider's own text color, hence a token of its own.
+        ['--r5-social-button-contrast-text', background && derivedTextColor(background)],
+        ['--r5-social-button-hover-text', hoverColor],
+        ['--r5-social-button-border-color', borderColor],
+        [
+            '--r5-social-button-hover-border-color',
+            hoverBorderColor ?? (borderColor && shadeColor(borderColor)),
+        ],
+    ];
+    return Object.fromEntries(
+        entries.filter((entry): entry is [string, string] => entry[1] !== undefined)
+    );
+}
+
+/**
  * Builds the widget's CSS variables: shadcn palette and scales unprefixed, component tokens `--r5-*`.
  * A component token points at the palette (`hsl(var(--primary))`) unless its option was supplied,
  * hence the raw `options` alongside the resolved `theme`, which can no longer tell the two apart.
  */
 export function buildThemeVariables(options: ThemeOptions, theme: Theme): ThemeVariables {
-    const { button, input, link, passwordStrengthValidator: passwordStrength } = options;
+    const {
+        button,
+        input,
+        link,
+        socialButton,
+        passwordStrengthValidator: passwordStrength,
+    } = options;
+    // The height is derived, so it only stops following the button when one of its inputs is set.
+    const socialHeightSet = (['fontSize', 'lineHeight', 'paddingY', 'borderWidth'] as const).some(
+        key => socialButton?.[key] !== undefined
+    );
 
     return {
         /* Palette roles. */
@@ -59,6 +95,14 @@ export function buildThemeVariables(options: ThemeOptions, theme: Theme): ThemeV
         '--border-width': `${theme.borderWidth}px`,
         '--radius': `${theme.borderRadius}px`,
 
+        /* Widget shell. */
+        '--r5-widget-max-width': `${theme.maxWidth}px`,
+
+        /* Heading. The size stays a pointer, so it follows `fontSize` like the former `fontSize * 1.2`. */
+        '--r5-heading-text': theme.headingColor,
+        '--r5-heading-text-size': 'calc(var(--font-size) * 1.2)',
+        '--r5-heading-font-weight': 'bold',
+
         /* Button. */
         '--r5-button-bg': button?.background ?? 'hsl(var(--primary))',
         '--r5-button-hover-bg': button?.hoverBackground ?? 'hsl(var(--primary-hover))',
@@ -79,6 +123,26 @@ export function buildThemeVariables(options: ThemeOptions, theme: Theme): ThemeV
         '--r5-button-font-weight': `${theme.button.fontWeight}`,
         '--r5-button-shadow': composableShadow(`${theme.button.boxShadow}`),
         '--r5-button-height': `${theme.button.height}px`,
+
+        /* Social button. Metrics follow the button unless `theme.socialButton` sets them. */
+        '--r5-social-button-height': socialHeightSet
+            ? `${theme.socialButton.height}px`
+            : 'var(--r5-button-height)',
+        '--r5-social-button-padding-x': px(socialButton?.paddingX, 'var(--r5-button-padding-x)'),
+        '--r5-social-button-padding-y': px(socialButton?.paddingY, 'var(--r5-button-padding-y)'),
+        '--r5-social-button-radius': px(socialButton?.borderRadius, 'var(--r5-button-radius)'),
+        '--r5-social-button-text-size': px(socialButton?.fontSize, 'var(--r5-button-text-size)'),
+        '--r5-social-button-font-weight': `${socialButton?.fontWeight ?? 'var(--r5-button-font-weight)'}`,
+        '--r5-social-button-leading': `${socialButton?.lineHeight ?? 'var(--r5-button-leading)'}`,
+        '--r5-social-button-border-width': px(
+            socialButton?.borderWidth,
+            'var(--r5-button-border-width)'
+        ),
+        '--r5-social-button-shadow':
+            socialButton?.boxShadow !== undefined
+                ? composableShadow(`${socialButton.boxShadow}`)
+                : 'var(--r5-button-shadow)',
+        ...socialButtonColors(socialButton),
 
         /* Input */
         '--r5-input-bg': theme.input.background,

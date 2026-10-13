@@ -1,163 +1,112 @@
-import React, { PropsWithChildren } from 'react';
+import React from 'react';
 
-import classes from 'classnames';
-import styled, { useTheme } from 'styled-components';
-
-import { Button, type ButtonProps } from '@/components/form/buttonComponent';
 import { Separator } from '@/components/miscComponent';
+import { Button } from '@/components/ui/button';
 import { useI18n } from '@/contexts/i18n';
-import { ReactComponent as FingerPrint } from '@/icons/fingerprint.svg';
-import { ReactComponent as Keyboard } from '@/icons/keyboard.svg';
+import { ReactComponent as FingerPrintIcon } from '@/icons/fingerprint.svg';
+import { ReactComponent as KeyboardIcon } from '@/icons/keyboard.svg';
+import { cn } from '@/lib/utils';
 
-const iconStyle = `
-    width: 40px;
-    height: 40px;
-`;
-
-const FingerPrintIcon = styled(FingerPrint)`
-    ${iconStyle}
-`;
-const KeyboardIcon = styled(Keyboard)`
-    ${iconStyle}
-`;
-
-const PrimaryButtonWithIcon = styled(
-    ({
-        type = 'submit',
-        disabled = false,
-        text,
-        children,
-        className,
-        ...props
-    }: PropsWithChildren<ButtonProps & { text?: string }>) => {
-        const theme = useTheme();
-        return (
-            <Button
-                type={type}
-                disabled={disabled}
-                {...props}
-                className={classes(['r5-button-with-icon'], className)}
-                $background={theme.backgroundColor}
-                $border={theme.backgroundColor}
-                $color={theme.primaryColor}
-            >
-                {children}
-                {text && <span className="r5-button-text">{text}</span>}
-            </Button>
-        );
-    }
-)`
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    .r5-button-text {
-        margin-left: 10px;
-        text-transform: uppercase;
-    }
-`;
-
-const ButtonsSeparator = styled.div`
-    text-align: center;
-    color: ${props => props.theme.mutedTextColor};
-`;
-
-export interface WebAuthnLoginViewButtonsProps {
+export interface WebAuthnLoginViewButtonsProps extends React.ComponentProps<'button'> {
     disabled?: boolean;
     enablePasswordAuthentication?: boolean;
     onPasswordClick: React.MouseEventHandler<HTMLButtonElement>;
-    className?: classes.Argument;
 }
 
-export const WebAuthnLoginViewButtons = styled(
-    ({
-        disabled,
-        enablePasswordAuthentication,
-        onPasswordClick,
-        className,
-        ...props
-    }: WebAuthnLoginViewButtonsProps) => {
-        const i18n = useI18n();
-        return (
-            <div className={classes(['r5-webauthn-login-buttons'], className)}>
-                <PrimaryButtonWithIcon
-                    type="submit"
-                    title={i18n('login.withBiometrics')}
-                    aria-label={i18n('login.withBiometrics')}
-                    disabled={disabled}
-                    {...props}
-                >
-                    <FingerPrintIcon />
-                </PrimaryButtonWithIcon>
+export const WebAuthnLoginViewButtons = ({
+    disabled,
+    enablePasswordAuthentication,
+    onPasswordClick,
+    className,
+    ...props
+}: WebAuthnLoginViewButtonsProps) => {
+    const i18n = useI18n();
+    return (
+        <div className={cn('r5-webauthn-login-buttons flex items-center gap-4', className)}>
+            <Button
+                type="submit"
+                variant="ghost"
+                size="icon-lg"
+                className="r5-button-with-icon grow text-button-bg"
+                title={i18n('login.withBiometrics')}
+                aria-label={i18n('login.withBiometrics')}
+                disabled={disabled}
+                {...props}
+            >
+                <FingerPrintIcon className="size-8" />
+            </Button>
 
-                {enablePasswordAuthentication && (
-                    <>
-                        <ButtonsSeparator>{i18n('or')}</ButtonsSeparator>
+            {enablePasswordAuthentication && (
+                <>
+                    <span className="text-muted-foreground">{i18n('or')}</span>
 
-                        <PrimaryButtonWithIcon
-                            title={i18n('login.withPassword')}
-                            aria-label={i18n('login.withPassword')}
-                            disabled={disabled}
-                            onClick={onPasswordClick}
-                        >
-                            <KeyboardIcon />
-                        </PrimaryButtonWithIcon>
-                    </>
-                )}
-            </div>
-        );
-    }
-)`
-    display: flex;
-    align-items: center;
+                    <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon-lg"
+                        className="r5-button-with-icon grow text-button-bg"
+                        title={i18n('login.withPassword')}
+                        aria-label={i18n('login.withPassword')}
+                        disabled={disabled}
+                        onClick={onPasswordClick}
+                    >
+                        <KeyboardIcon className="size-8" />
+                    </Button>
+                </>
+            )}
+        </div>
+    );
+};
 
-    & > :not(:last-child) {
-        margin-right: 20px;
-    }
-`;
-
-export interface WebAuthnSignupViewButtonsProps {
+export interface WebAuthnSignupViewButtonsProps extends React.ComponentProps<'button'> {
     enablePasswordAuthentication?: boolean;
     onBiometricClick: React.MouseEventHandler<HTMLButtonElement>;
     onPasswordClick: React.MouseEventHandler<HTMLButtonElement>;
-    className?: classes.Argument;
 }
 
-export const WebAuthnSignupViewButtons = styled(
-    ({
-        enablePasswordAuthentication,
-        onBiometricClick,
-        onPasswordClick,
-        className,
-    }: WebAuthnSignupViewButtonsProps) => {
-        const i18n = useI18n();
-        return (
-            <div className={classes(['r5-webauthn-signup-buttons'], className)}>
-                <PrimaryButtonWithIcon
-                    onClick={onBiometricClick}
-                    title={i18n('signup.withBiometrics')}
-                    aria-label={i18n('signup.withBiometrics')}
-                    text={i18n('biometrics')}
-                >
-                    <FingerPrintIcon />
-                </PrimaryButtonWithIcon>
+export const WebAuthnSignupViewButtons = ({
+    enablePasswordAuthentication,
+    onBiometricClick,
+    onPasswordClick,
+    className,
+    ...props
+}: WebAuthnSignupViewButtonsProps) => {
+    const i18n = useI18n();
+    return (
+        <div className={cn('r5-webauthn-signup-buttons flex flex-col gap-4', className)}>
+            <Button
+                type="button"
+                variant="ghost"
+                size="lg"
+                className="r5-button-with-icon w-full text-button-bg"
+                onClick={onBiometricClick}
+                title={i18n('signup.withBiometrics')}
+                aria-label={i18n('signup.withBiometrics')}
+                {...props}
+            >
+                <FingerPrintIcon className="size-8" />
+                <span className="r5-button-text uppercase">{i18n('biometrics')}</span>
+            </Button>
 
-                {enablePasswordAuthentication && (
-                    <>
-                        <Separator text={i18n('or')} />
+            {enablePasswordAuthentication && (
+                <>
+                    <Separator text={i18n('or')} />
 
-                        <PrimaryButtonWithIcon
-                            data-testid="password-button"
-                            onClick={onPasswordClick}
-                            title={i18n('signup.withPassword')}
-                            aria-label={i18n('signup.withPassword')}
-                            text={i18n('password')}
-                        >
-                            <KeyboardIcon />
-                        </PrimaryButtonWithIcon>
-                    </>
-                )}
-            </div>
-        );
-    }
-)``;
+                    <Button
+                        type="button"
+                        variant="ghost"
+                        size="lg"
+                        className="r5-button-with-icon w-full text-button-bg"
+                        data-testid="password-button"
+                        onClick={onPasswordClick}
+                        title={i18n('signup.withPassword')}
+                        aria-label={i18n('signup.withPassword')}
+                    >
+                        <KeyboardIcon className="size-8" />
+                        <span className="r5-button-text uppercase">{i18n('password')}</span>
+                    </Button>
+                </>
+            )}
+        </div>
+    );
+};

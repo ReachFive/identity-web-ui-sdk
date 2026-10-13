@@ -32,9 +32,10 @@ const twMerge = extendTailwindMerge({
                 'input-border-color',
                 'link-text',
                 'link-hover-text',
+                'heading-text',
             ],
-            text: ['button-text-size', 'input-text-size'],
-            'font-weight': ['button-font-weight'],
+            text: ['button-text-size', 'input-text-size', 'heading-text-size'],
+            'font-weight': ['button-font-weight', 'heading-font-weight'],
             leading: ['button', 'input'],
             radius: ['button', 'input'],
             shadow: ['button-shadow', 'input-shadow'],
@@ -51,6 +52,7 @@ const twMerge = extendTailwindMerge({
         // Border width has no theme scale in tailwind-merge.
         classGroups: {
             'border-w': [{ border: ['button-border-width', 'input-border-width'] }],
+            'max-w': [{ 'max-w': ['widget-max-width'] }],
         },
     },
 });

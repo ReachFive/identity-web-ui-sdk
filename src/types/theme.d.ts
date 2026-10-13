@@ -1,12 +1,6 @@
 import { CSSProperties } from 'react';
 
-import 'styled-components';
-
 import { RecursivePartial } from './index';
-
-declare module 'styled-components' {
-    export interface DefaultTheme extends Theme {}
-}
 
 /**
  * Keys `buildTheme` derives from the other tokens rather than reading from the options.
