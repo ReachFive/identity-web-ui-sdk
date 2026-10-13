@@ -116,6 +116,15 @@ module.exports = {
         "button-shadow": "var(--r5-button-shadow)",
         "input-shadow": "var(--r5-input-shadow)",
       },
+      keyframes: {
+        "caret-blink": {
+          "0%,70%,100%": { opacity: "1" },
+          "20%,50%": { opacity: "0" },
+        },
+      },
+      animation: {
+        "caret-blink": "caret-blink 1.25s ease-out infinite",
+      },
     },
   },
   plugins: [

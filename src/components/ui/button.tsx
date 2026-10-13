@@ -58,7 +58,7 @@ const buttonVariants: (props?: ButtonVariants & ClassProp) => string = cva(
         ghost: "bg-transparent hover:bg-button-subtle-bg",
         destructive:
           "bg-destructive text-destructive-foreground shadow-button-shadow hover:bg-destructive/90",
-        link: "text-link-text underline-offset-4 hover:text-link-hover-text hover:underline",
+        link: "text-link-text font-normal underline-offset-4 hover:text-link-hover-text hover:underline",
       },
       size: {
         default: "h-button-height px-button-padding-x py-button-padding-y",

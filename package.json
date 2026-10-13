@@ -54,6 +54,7 @@
         "country-flag-icons": "^1.6.15",
         "date-fns": "^4.1.0",
         "i18next": "^25.6.0",
+        "input-otp": "^1.5.0",
         "libphonenumber-js": "^1.12.9",
         "lucide-react": "^0.475.0",
         "marked": "^15.0.6",

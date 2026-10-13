@@ -33,7 +33,7 @@ exports[`Snapshot forgot password view default 1`] = `
             class="space-y-4"
           >
             <div
-              class="group/field data-[invalid=true]:text-destructive flex w-full gap-3 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
+              class="group/field data-[invalid=true]:text-destructive flex w-full gap-2 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
               data-invalid="false"
               data-orientation="vertical"
               data-slot="field"
@@ -205,7 +205,7 @@ exports[`Snapshot login view default 1`] = `
             class="space-y-4"
           >
             <div
-              class="group/field data-[invalid=true]:text-destructive flex w-full gap-3 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
+              class="group/field data-[invalid=true]:text-destructive flex w-full gap-2 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
               data-invalid="false"
               data-orientation="vertical"
               data-slot="field"
@@ -241,7 +241,7 @@ exports[`Snapshot login view default 1`] = `
               />
             </div>
             <div
-              class="group/field data-[invalid=true]:text-destructive flex w-full gap-3 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
+              class="group/field data-[invalid=true]:text-destructive flex w-full gap-2 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
               data-invalid="false"
               data-orientation="vertical"
               data-slot="field"
@@ -422,7 +422,7 @@ exports[`Snapshot login view inline social buttons 1`] = `
             class="space-y-4"
           >
             <div
-              class="group/field data-[invalid=true]:text-destructive flex w-full gap-3 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
+              class="group/field data-[invalid=true]:text-destructive flex w-full gap-2 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
               data-invalid="false"
               data-orientation="vertical"
               data-slot="field"
@@ -458,7 +458,7 @@ exports[`Snapshot login view inline social buttons 1`] = `
               />
             </div>
             <div
-              class="group/field data-[invalid=true]:text-destructive flex w-full gap-3 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
+              class="group/field data-[invalid=true]:text-destructive flex w-full gap-2 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
               data-invalid="false"
               data-orientation="vertical"
               data-slot="field"
@@ -654,7 +654,7 @@ exports[`Snapshot login view no forgot password 1`] = `
             class="space-y-4"
           >
             <div
-              class="group/field data-[invalid=true]:text-destructive flex w-full gap-3 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
+              class="group/field data-[invalid=true]:text-destructive flex w-full gap-2 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
               data-invalid="false"
               data-orientation="vertical"
               data-slot="field"
@@ -690,7 +690,7 @@ exports[`Snapshot login view no forgot password 1`] = `
               />
             </div>
             <div
-              class="group/field data-[invalid=true]:text-destructive flex w-full gap-3 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
+              class="group/field data-[invalid=true]:text-destructive flex w-full gap-2 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
               data-invalid="false"
               data-orientation="vertical"
               data-slot="field"
@@ -874,7 +874,7 @@ exports[`Snapshot login view no signup 1`] = `
             class="space-y-4"
           >
             <div
-              class="group/field data-[invalid=true]:text-destructive flex w-full gap-3 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
+              class="group/field data-[invalid=true]:text-destructive flex w-full gap-2 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
               data-invalid="false"
               data-orientation="vertical"
               data-slot="field"
@@ -910,7 +910,7 @@ exports[`Snapshot login view no signup 1`] = `
               />
             </div>
             <div
-              class="group/field data-[invalid=true]:text-destructive flex w-full gap-3 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
+              class="group/field data-[invalid=true]:text-destructive flex w-full gap-2 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
               data-invalid="false"
               data-orientation="vertical"
               data-slot="field"
@@ -1090,7 +1090,7 @@ exports[`Snapshot login view with canShowPassword 1`] = `
             class="space-y-4"
           >
             <div
-              class="group/field data-[invalid=true]:text-destructive flex w-full gap-3 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
+              class="group/field data-[invalid=true]:text-destructive flex w-full gap-2 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
               data-invalid="false"
               data-orientation="vertical"
               data-slot="field"
@@ -1126,7 +1126,7 @@ exports[`Snapshot login view with canShowPassword 1`] = `
               />
             </div>
             <div
-              class="group/field data-[invalid=true]:text-destructive flex w-full gap-3 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
+              class="group/field data-[invalid=true]:text-destructive flex w-full gap-2 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
               data-invalid="false"
               data-orientation="vertical"
               data-slot="field"
@@ -1364,7 +1364,7 @@ exports[`Snapshot login view with remember me 1`] = `
             class="space-y-4"
           >
             <div
-              class="group/field data-[invalid=true]:text-destructive flex w-full gap-3 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
+              class="group/field data-[invalid=true]:text-destructive flex w-full gap-2 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
               data-invalid="false"
               data-orientation="vertical"
               data-slot="field"
@@ -1400,7 +1400,7 @@ exports[`Snapshot login view with remember me 1`] = `
               />
             </div>
             <div
-              class="group/field data-[invalid=true]:text-destructive flex w-full gap-3 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
+              class="group/field data-[invalid=true]:text-destructive flex w-full gap-2 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
               data-invalid="false"
               data-orientation="vertical"
               data-slot="field"
@@ -1639,7 +1639,7 @@ exports[`Snapshot signup view default 1`] = `
             class="space-y-4"
           >
             <div
-              class="group/field data-[invalid=true]:text-destructive flex w-full gap-3 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
+              class="group/field data-[invalid=true]:text-destructive flex w-full gap-2 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
               data-invalid="false"
               data-orientation="vertical"
               data-slot="field"
@@ -1674,7 +1674,7 @@ exports[`Snapshot signup view default 1`] = `
               />
             </div>
             <div
-              class="group/field data-[invalid=true]:text-destructive flex w-full gap-3 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
+              class="group/field data-[invalid=true]:text-destructive flex w-full gap-2 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
               data-invalid="false"
               data-orientation="vertical"
               data-slot="field"
@@ -1709,7 +1709,7 @@ exports[`Snapshot signup view default 1`] = `
               />
             </div>
             <div
-              class="group/field data-[invalid=true]:text-destructive flex w-full gap-3 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
+              class="group/field data-[invalid=true]:text-destructive flex w-full gap-2 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
               data-invalid="false"
               data-orientation="vertical"
               data-slot="field"
@@ -1744,7 +1744,7 @@ exports[`Snapshot signup view default 1`] = `
               />
             </div>
             <div
-              class="group/field data-[invalid=true]:text-destructive flex w-full gap-3 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
+              class="group/field data-[invalid=true]:text-destructive flex w-full gap-2 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
               data-invalid="false"
               data-orientation="vertical"
               data-slot="field"
@@ -1787,7 +1787,7 @@ exports[`Snapshot signup view default 1`] = `
               </div>
             </div>
             <div
-              class="group/field data-[invalid=true]:text-destructive flex w-full gap-3 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
+              class="group/field data-[invalid=true]:text-destructive flex w-full gap-2 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
               data-invalid="false"
               data-orientation="vertical"
               data-slot="field"
@@ -1955,7 +1955,7 @@ exports[`Snapshot signup view inline social buttons 1`] = `
             class="space-y-4"
           >
             <div
-              class="group/field data-[invalid=true]:text-destructive flex w-full gap-3 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
+              class="group/field data-[invalid=true]:text-destructive flex w-full gap-2 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
               data-invalid="false"
               data-orientation="vertical"
               data-slot="field"
@@ -1990,7 +1990,7 @@ exports[`Snapshot signup view inline social buttons 1`] = `
               />
             </div>
             <div
-              class="group/field data-[invalid=true]:text-destructive flex w-full gap-3 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
+              class="group/field data-[invalid=true]:text-destructive flex w-full gap-2 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
               data-invalid="false"
               data-orientation="vertical"
               data-slot="field"
@@ -2025,7 +2025,7 @@ exports[`Snapshot signup view inline social buttons 1`] = `
               />
             </div>
             <div
-              class="group/field data-[invalid=true]:text-destructive flex w-full gap-3 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
+              class="group/field data-[invalid=true]:text-destructive flex w-full gap-2 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
               data-invalid="false"
               data-orientation="vertical"
               data-slot="field"
@@ -2060,7 +2060,7 @@ exports[`Snapshot signup view inline social buttons 1`] = `
               />
             </div>
             <div
-              class="group/field data-[invalid=true]:text-destructive flex w-full gap-3 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
+              class="group/field data-[invalid=true]:text-destructive flex w-full gap-2 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
               data-invalid="false"
               data-orientation="vertical"
               data-slot="field"
@@ -2103,7 +2103,7 @@ exports[`Snapshot signup view inline social buttons 1`] = `
               </div>
             </div>
             <div
-              class="group/field data-[invalid=true]:text-destructive flex w-full gap-3 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
+              class="group/field data-[invalid=true]:text-destructive flex w-full gap-2 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
               data-invalid="false"
               data-orientation="vertical"
               data-slot="field"
@@ -2286,7 +2286,7 @@ exports[`Snapshot signup view no login 1`] = `
             class="space-y-4"
           >
             <div
-              class="group/field data-[invalid=true]:text-destructive flex w-full gap-3 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
+              class="group/field data-[invalid=true]:text-destructive flex w-full gap-2 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
               data-invalid="false"
               data-orientation="vertical"
               data-slot="field"
@@ -2321,7 +2321,7 @@ exports[`Snapshot signup view no login 1`] = `
               />
             </div>
             <div
-              class="group/field data-[invalid=true]:text-destructive flex w-full gap-3 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
+              class="group/field data-[invalid=true]:text-destructive flex w-full gap-2 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
               data-invalid="false"
               data-orientation="vertical"
               data-slot="field"
@@ -2356,7 +2356,7 @@ exports[`Snapshot signup view no login 1`] = `
               />
             </div>
             <div
-              class="group/field data-[invalid=true]:text-destructive flex w-full gap-3 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
+              class="group/field data-[invalid=true]:text-destructive flex w-full gap-2 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
               data-invalid="false"
               data-orientation="vertical"
               data-slot="field"
@@ -2391,7 +2391,7 @@ exports[`Snapshot signup view no login 1`] = `
               />
             </div>
             <div
-              class="group/field data-[invalid=true]:text-destructive flex w-full gap-3 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
+              class="group/field data-[invalid=true]:text-destructive flex w-full gap-2 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
               data-invalid="false"
               data-orientation="vertical"
               data-slot="field"
@@ -2434,7 +2434,7 @@ exports[`Snapshot signup view no login 1`] = `
               </div>
             </div>
             <div
-              class="group/field data-[invalid=true]:text-destructive flex w-full gap-3 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
+              class="group/field data-[invalid=true]:text-destructive flex w-full gap-2 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
               data-invalid="false"
               data-orientation="vertical"
               data-slot="field"
@@ -2601,7 +2601,7 @@ exports[`Snapshot signup view show labels 1`] = `
             class="space-y-4"
           >
             <div
-              class="group/field data-[invalid=true]:text-destructive flex w-full gap-3 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
+              class="group/field data-[invalid=true]:text-destructive flex w-full gap-2 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
               data-invalid="false"
               data-orientation="vertical"
               data-slot="field"
@@ -2635,7 +2635,7 @@ exports[`Snapshot signup view show labels 1`] = `
               />
             </div>
             <div
-              class="group/field data-[invalid=true]:text-destructive flex w-full gap-3 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
+              class="group/field data-[invalid=true]:text-destructive flex w-full gap-2 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
               data-invalid="false"
               data-orientation="vertical"
               data-slot="field"
@@ -2669,7 +2669,7 @@ exports[`Snapshot signup view show labels 1`] = `
               />
             </div>
             <div
-              class="group/field data-[invalid=true]:text-destructive flex w-full gap-3 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
+              class="group/field data-[invalid=true]:text-destructive flex w-full gap-2 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
               data-invalid="false"
               data-orientation="vertical"
               data-slot="field"
@@ -2703,7 +2703,7 @@ exports[`Snapshot signup view show labels 1`] = `
               />
             </div>
             <div
-              class="group/field data-[invalid=true]:text-destructive flex w-full gap-3 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
+              class="group/field data-[invalid=true]:text-destructive flex w-full gap-2 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
               data-invalid="false"
               data-orientation="vertical"
               data-slot="field"
@@ -2745,7 +2745,7 @@ exports[`Snapshot signup view show labels 1`] = `
               </div>
             </div>
             <div
-              class="group/field data-[invalid=true]:text-destructive flex w-full gap-3 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
+              class="group/field data-[invalid=true]:text-destructive flex w-full gap-2 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
               data-invalid="false"
               data-orientation="vertical"
               data-slot="field"
@@ -2944,7 +2944,7 @@ exports[`Snapshot signup view with consents 1`] = `
             class="space-y-4"
           >
             <div
-              class="group/field data-[invalid=true]:text-destructive flex w-full gap-3 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
+              class="group/field data-[invalid=true]:text-destructive flex w-full gap-2 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
               data-invalid="false"
               data-orientation="vertical"
               data-slot="field"
@@ -2979,7 +2979,7 @@ exports[`Snapshot signup view with consents 1`] = `
               />
             </div>
             <div
-              class="group/field data-[invalid=true]:text-destructive flex w-full gap-3 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
+              class="group/field data-[invalid=true]:text-destructive flex w-full gap-2 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
               data-invalid="false"
               data-orientation="vertical"
               data-slot="field"
@@ -3220,7 +3220,7 @@ exports[`Snapshot signup view with custom fields 1`] = `
             class="space-y-4"
           >
             <div
-              class="group/field data-[invalid=true]:text-destructive flex w-full gap-3 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
+              class="group/field data-[invalid=true]:text-destructive flex w-full gap-2 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
               data-invalid="false"
               data-orientation="vertical"
               data-slot="field"
@@ -3255,7 +3255,7 @@ exports[`Snapshot signup view with custom fields 1`] = `
               />
             </div>
             <div
-              class="group/field data-[invalid=true]:text-destructive flex w-full gap-3 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
+              class="group/field data-[invalid=true]:text-destructive flex w-full gap-2 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
               data-invalid="false"
               data-orientation="vertical"
               data-slot="field"
@@ -3494,7 +3494,7 @@ exports[`Snapshot signup view with mandatory consents 1`] = `
             class="space-y-4"
           >
             <div
-              class="group/field data-[invalid=true]:text-destructive flex w-full gap-3 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
+              class="group/field data-[invalid=true]:text-destructive flex w-full gap-2 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
               data-invalid="false"
               data-orientation="vertical"
               data-slot="field"
@@ -3529,7 +3529,7 @@ exports[`Snapshot signup view with mandatory consents 1`] = `
               />
             </div>
             <div
-              class="group/field data-[invalid=true]:text-destructive flex w-full gap-3 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
+              class="group/field data-[invalid=true]:text-destructive flex w-full gap-2 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
               data-invalid="false"
               data-orientation="vertical"
               data-slot="field"
@@ -3782,7 +3782,7 @@ exports[`Snapshot signup view with user agreement 1`] = `
             class="space-y-4"
           >
             <div
-              class="group/field data-[invalid=true]:text-destructive flex w-full gap-3 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
+              class="group/field data-[invalid=true]:text-destructive flex w-full gap-2 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
               data-invalid="false"
               data-orientation="vertical"
               data-slot="field"
@@ -3817,7 +3817,7 @@ exports[`Snapshot signup view with user agreement 1`] = `
               />
             </div>
             <div
-              class="group/field data-[invalid=true]:text-destructive flex w-full gap-3 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
+              class="group/field data-[invalid=true]:text-destructive flex w-full gap-2 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
               data-invalid="false"
               data-orientation="vertical"
               data-slot="field"
@@ -3852,7 +3852,7 @@ exports[`Snapshot signup view with user agreement 1`] = `
               />
             </div>
             <div
-              class="group/field data-[invalid=true]:text-destructive flex w-full gap-3 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
+              class="group/field data-[invalid=true]:text-destructive flex w-full gap-2 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
               data-invalid="false"
               data-orientation="vertical"
               data-slot="field"
@@ -3887,7 +3887,7 @@ exports[`Snapshot signup view with user agreement 1`] = `
               />
             </div>
             <div
-              class="group/field data-[invalid=true]:text-destructive flex w-full gap-3 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
+              class="group/field data-[invalid=true]:text-destructive flex w-full gap-2 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
               data-invalid="false"
               data-orientation="vertical"
               data-slot="field"
@@ -3930,7 +3930,7 @@ exports[`Snapshot signup view with user agreement 1`] = `
               </div>
             </div>
             <div
-              class="group/field data-[invalid=true]:text-destructive flex w-full gap-3 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
+              class="group/field data-[invalid=true]:text-destructive flex w-full gap-2 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
               data-invalid="false"
               data-orientation="vertical"
               data-slot="field"
@@ -4133,7 +4133,7 @@ exports[`Snapshot with webauthn feature and without password login new view with
             class="space-y-4"
           >
             <div
-              class="group/field data-[invalid=true]:text-destructive flex w-full gap-3 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
+              class="group/field data-[invalid=true]:text-destructive flex w-full gap-2 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
               data-invalid="false"
               data-orientation="vertical"
               data-slot="field"
@@ -4169,7 +4169,7 @@ exports[`Snapshot with webauthn feature and without password login new view with
               />
             </div>
             <div
-              class="group/field data-[invalid=true]:text-destructive flex w-full gap-3 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
+              class="group/field data-[invalid=true]:text-destructive flex w-full gap-2 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
               data-invalid="false"
               data-orientation="vertical"
               data-slot="field"
@@ -4365,7 +4365,7 @@ exports[`Snapshot with webauthn feature and without password login old view with
             class="space-y-4"
           >
             <div
-              class="group/field data-[invalid=true]:text-destructive flex w-full gap-3 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
+              class="group/field data-[invalid=true]:text-destructive flex w-full gap-2 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
               data-invalid="false"
               data-orientation="vertical"
               data-slot="field"
@@ -4466,7 +4466,7 @@ exports[`Snapshot with webauthn feature and without password signup form view wi
               class="space-y-4"
             >
               <div
-                class="group/field data-[invalid=true]:text-destructive flex w-full gap-3 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
+                class="group/field data-[invalid=true]:text-destructive flex w-full gap-2 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
                 data-invalid="false"
                 data-orientation="vertical"
                 data-slot="field"
@@ -4501,7 +4501,7 @@ exports[`Snapshot with webauthn feature and without password signup form view wi
                 />
               </div>
               <div
-                class="group/field data-[invalid=true]:text-destructive flex w-full gap-3 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
+                class="group/field data-[invalid=true]:text-destructive flex w-full gap-2 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
                 data-invalid="false"
                 data-orientation="vertical"
                 data-slot="field"
@@ -4536,7 +4536,7 @@ exports[`Snapshot with webauthn feature and without password signup form view wi
                 />
               </div>
               <div
-                class="group/field data-[invalid=true]:text-destructive flex w-full gap-3 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
+                class="group/field data-[invalid=true]:text-destructive flex w-full gap-2 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
                 data-invalid="false"
                 data-orientation="vertical"
                 data-slot="field"
@@ -4571,7 +4571,7 @@ exports[`Snapshot with webauthn feature and without password signup form view wi
                 />
               </div>
               <div
-                class="group/field data-[invalid=true]:text-destructive flex w-full gap-3 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
+                class="group/field data-[invalid=true]:text-destructive flex w-full gap-2 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
                 data-invalid="false"
                 data-orientation="vertical"
                 data-slot="field"
@@ -4614,7 +4614,7 @@ exports[`Snapshot with webauthn feature and without password signup form view wi
                 </div>
               </div>
               <div
-                class="group/field data-[invalid=true]:text-destructive flex w-full gap-3 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
+                class="group/field data-[invalid=true]:text-destructive flex w-full gap-2 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
                 data-invalid="false"
                 data-orientation="vertical"
                 data-slot="field"
@@ -4710,7 +4710,7 @@ exports[`Snapshot with webauthn feature and without password signup form view wi
               class="space-y-4"
             >
               <div
-                class="group/field data-[invalid=true]:text-destructive flex w-full gap-3 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
+                class="group/field data-[invalid=true]:text-destructive flex w-full gap-2 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
                 data-invalid="false"
                 data-orientation="vertical"
                 data-slot="field"
@@ -4745,7 +4745,7 @@ exports[`Snapshot with webauthn feature and without password signup form view wi
                 />
               </div>
               <div
-                class="group/field data-[invalid=true]:text-destructive flex w-full gap-3 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
+                class="group/field data-[invalid=true]:text-destructive flex w-full gap-2 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
                 data-invalid="false"
                 data-orientation="vertical"
                 data-slot="field"
@@ -4780,7 +4780,7 @@ exports[`Snapshot with webauthn feature and without password signup form view wi
                 />
               </div>
               <div
-                class="group/field data-[invalid=true]:text-destructive flex w-full gap-3 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
+                class="group/field data-[invalid=true]:text-destructive flex w-full gap-2 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
                 data-invalid="false"
                 data-orientation="vertical"
                 data-slot="field"
@@ -4869,7 +4869,7 @@ exports[`Snapshot with webauthn feature and without password signup form view wi
               class="space-y-4"
             >
               <div
-                class="group/field data-[invalid=true]:text-destructive flex w-full gap-3 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
+                class="group/field data-[invalid=true]:text-destructive flex w-full gap-2 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
                 data-invalid="false"
                 data-orientation="vertical"
                 data-slot="field"
@@ -4904,7 +4904,7 @@ exports[`Snapshot with webauthn feature and without password signup form view wi
                 />
               </div>
               <div
-                class="group/field data-[invalid=true]:text-destructive flex w-full gap-3 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
+                class="group/field data-[invalid=true]:text-destructive flex w-full gap-2 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
                 data-invalid="false"
                 data-orientation="vertical"
                 data-slot="field"
@@ -4939,7 +4939,7 @@ exports[`Snapshot with webauthn feature and without password signup form view wi
                 />
               </div>
               <div
-                class="group/field data-[invalid=true]:text-destructive flex w-full gap-3 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
+                class="group/field data-[invalid=true]:text-destructive flex w-full gap-2 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
                 data-invalid="false"
                 data-orientation="vertical"
                 data-slot="field"
@@ -5257,7 +5257,7 @@ exports[`Snapshot with webauthn feature login new view with integrated webauthn 
             class="space-y-4"
           >
             <div
-              class="group/field data-[invalid=true]:text-destructive flex w-full gap-3 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
+              class="group/field data-[invalid=true]:text-destructive flex w-full gap-2 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
               data-invalid="false"
               data-orientation="vertical"
               data-slot="field"
@@ -5293,7 +5293,7 @@ exports[`Snapshot with webauthn feature login new view with integrated webauthn 
               />
             </div>
             <div
-              class="group/field data-[invalid=true]:text-destructive flex w-full gap-3 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
+              class="group/field data-[invalid=true]:text-destructive flex w-full gap-2 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
               data-invalid="false"
               data-orientation="vertical"
               data-slot="field"
@@ -5489,7 +5489,7 @@ exports[`Snapshot with webauthn feature login old view with webauthn or password
             class="space-y-4"
           >
             <div
-              class="group/field data-[invalid=true]:text-destructive flex w-full gap-3 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
+              class="group/field data-[invalid=true]:text-destructive flex w-full gap-2 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
               data-invalid="false"
               data-orientation="vertical"
               data-slot="field"
@@ -5605,7 +5605,7 @@ exports[`Snapshot with webauthn feature signup form view with password 1`] = `
               class="space-y-4"
             >
               <div
-                class="group/field data-[invalid=true]:text-destructive flex w-full gap-3 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
+                class="group/field data-[invalid=true]:text-destructive flex w-full gap-2 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
                 data-invalid="false"
                 data-orientation="vertical"
                 data-slot="field"
@@ -5640,7 +5640,7 @@ exports[`Snapshot with webauthn feature signup form view with password 1`] = `
                 />
               </div>
               <div
-                class="group/field data-[invalid=true]:text-destructive flex w-full gap-3 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
+                class="group/field data-[invalid=true]:text-destructive flex w-full gap-2 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
                 data-invalid="false"
                 data-orientation="vertical"
                 data-slot="field"
@@ -5675,7 +5675,7 @@ exports[`Snapshot with webauthn feature signup form view with password 1`] = `
                 />
               </div>
               <div
-                class="group/field data-[invalid=true]:text-destructive flex w-full gap-3 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
+                class="group/field data-[invalid=true]:text-destructive flex w-full gap-2 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
                 data-invalid="false"
                 data-orientation="vertical"
                 data-slot="field"
@@ -5710,7 +5710,7 @@ exports[`Snapshot with webauthn feature signup form view with password 1`] = `
                 />
               </div>
               <div
-                class="group/field data-[invalid=true]:text-destructive flex w-full gap-3 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
+                class="group/field data-[invalid=true]:text-destructive flex w-full gap-2 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
                 data-invalid="false"
                 data-orientation="vertical"
                 data-slot="field"
@@ -5753,7 +5753,7 @@ exports[`Snapshot with webauthn feature signup form view with password 1`] = `
                 </div>
               </div>
               <div
-                class="group/field data-[invalid=true]:text-destructive flex w-full gap-3 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
+                class="group/field data-[invalid=true]:text-destructive flex w-full gap-2 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
                 data-invalid="false"
                 data-orientation="vertical"
                 data-slot="field"
@@ -5849,7 +5849,7 @@ exports[`Snapshot with webauthn feature signup form view with webauthn 1`] = `
               class="space-y-4"
             >
               <div
-                class="group/field data-[invalid=true]:text-destructive flex w-full gap-3 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
+                class="group/field data-[invalid=true]:text-destructive flex w-full gap-2 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
                 data-invalid="false"
                 data-orientation="vertical"
                 data-slot="field"
@@ -5884,7 +5884,7 @@ exports[`Snapshot with webauthn feature signup form view with webauthn 1`] = `
                 />
               </div>
               <div
-                class="group/field data-[invalid=true]:text-destructive flex w-full gap-3 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
+                class="group/field data-[invalid=true]:text-destructive flex w-full gap-2 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
                 data-invalid="false"
                 data-orientation="vertical"
                 data-slot="field"
@@ -5919,7 +5919,7 @@ exports[`Snapshot with webauthn feature signup form view with webauthn 1`] = `
                 />
               </div>
               <div
-                class="group/field data-[invalid=true]:text-destructive flex w-full gap-3 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
+                class="group/field data-[invalid=true]:text-destructive flex w-full gap-2 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
                 data-invalid="false"
                 data-orientation="vertical"
                 data-slot="field"
