@@ -13,3 +13,6 @@ window.HTMLElement.prototype.releasePointerCapture = jest.fn();
 
 // Mock scrollIntoView for Radix UI components in jsdom
 window.HTMLElement.prototype.scrollIntoView = jest.fn();
+
+// Mock elementFromPoint for input-otp's password manager badge detection in jsdom
+document.elementFromPoint = jest.fn(() => null);

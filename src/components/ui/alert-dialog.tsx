@@ -4,7 +4,7 @@ import * as AlertDialogPrimitive from "@radix-ui/react-alert-dialog"
 import { type AlertDialogActionProps } from "@radix-ui/react-alert-dialog"
 import { type VariantProps } from "class-variance-authority"
 
-import { ThemeVariablesContainer } from "@/contexts/themeVariables"
+import { ThemeVariablesContainer } from "@/contexts/theme"
 import { cn } from "@/lib/utils"
 
 import { buttonVariants } from "./button"
@@ -36,7 +36,7 @@ const AlertDialogContent = React.forwardRef<
 >(({ className, ...props }, ref) => {
   return (
     <AlertDialogPortal>
-      <ThemeVariablesContainer className="r5-widget">
+      <ThemeVariablesContainer>
         <AlertDialogOverlay />
         <AlertDialogPrimitive.Content
           ref={ref}

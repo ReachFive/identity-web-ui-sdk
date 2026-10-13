@@ -1,180 +1,117 @@
-import React, {
-    AnchorHTMLAttributes,
-    ComponentType,
-    CSSProperties,
-    HTMLAttributes,
-    MouseEvent,
-} from 'react';
+import React from 'react';
 
-import { marked } from 'marked';
-import styled from 'styled-components';
-
+import { Marker, MarkerContent } from '@/components/ui/marker';
 import { useRouting } from '@/contexts/routing';
+import { cn } from '@/lib/utils';
 
-export const Heading = styled.div`
-    margin-bottom: ${props => props.theme.spacing * 1.5}px;
-    text-align: center;
-    color: ${props => props.theme.headingColor};
-    font-weight: bold;
-    font-size: ${props => props.theme.fontSize * 1.2}px;
-`; // Derive font size from base font size
-
-const TextBase = styled.div`
-    text-align: center;
-    margin-bottom: ${props => props.theme.spacing}px;
-`;
-
-export const Info = styled(TextBase)`
-    color: ${props => props.theme.textColor};
-`;
-
-export const ErrorText = styled(TextBase)`
-    color: ${props => props.theme.dangerColor};
-`;
-
-export const Paragraph = styled.p<{ align?: CSSProperties['textAlign'] }>`
-    margin-bottom: ${props => props.theme.spacing}px;
-    text-align: ${props => props.align ?? 'start'};
-`;
-
-export const MutedText = styled.span`
-    color: ${props => props.theme.mutedTextColor};
-`;
-
-export const Intro = Info;
-
-const SeparatorInner = styled.div`
-    color: ${props => props.theme.mutedTextColor};
-    display: block;
-    text-align: center;
-    overflow: hidden;
-    white-space: nowrap;
-    margin: ${props => props.theme.spacing}px 0;
-
-    & > span {
-        position: relative;
-        display: inline-block;
-    }
-
-    & > span:before,
-    & > span:after {
-        content: '';
-        position: absolute;
-        top: 50%;
-        width: 9999px;
-        height: 1px;
-        background: ${props => props.theme.borderColor};
-    }
-
-    & > span:before {
-        right: 100%;
-        margin-right: ${props => props.theme.fontSize}px;
-    }
-
-    & > span:after {
-        left: 100%;
-        margin-left: ${props => props.theme.fontSize}px;
-    }
-`;
-
-export const Separator = ({ text }: { text?: string }) => (
-    <SeparatorInner>
-        <span>{text}</span>
-    </SeparatorInner>
+export const Heading = ({
+    children,
+    className,
+    ...props
+}: React.HTMLAttributes<HTMLDivElement>) => (
+    <div
+        data-slot="widget-heading"
+        className={cn(
+            'mb-4 text-center font-heading-font-weight text-heading-text-size text-heading-text',
+            className
+        )}
+        {...props}
+    >
+        {children}
+    </div>
 );
 
-export const Alternative = styled.div`
-    text-align: center;
-    margin-top: ${props => props.theme.spacing * 1.5}px;
-    color: ${props => props.theme.textColor};
-`;
+const TextBase = ({ children, className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
+    <div className={cn('mb-2 text-center', className)} {...props}>
+        {children}
+    </div>
+);
 
-export const Link = styled(
-    ({
-        target,
-        href = '#',
-        children,
-        className,
-        controller,
-    }: { controller?: AbortController } & AnchorHTMLAttributes<HTMLAnchorElement>) => {
-        const { goTo } = useRouting();
+export const Info = ({ children, className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
+    <TextBase data-slot="widget-info" className={cn('text-foreground', className)} {...props}>
+        {children}
+    </TextBase>
+);
 
-        const onClick = target
-            ? (e: MouseEvent<HTMLAnchorElement>) => {
-                  controller?.abort(`Going to ${target}`);
-                  e.preventDefault();
-                  goTo(target);
-              }
-            : () => {};
+export const ErrorText = ({
+    children,
+    className,
+    ...props
+}: React.HTMLAttributes<HTMLDivElement>) => (
+    <TextBase
+        data-slot="widget-error-text"
+        className={cn('text-destructive-foreground', className)}
+        {...props}
+    >
+        {children}
+    </TextBase>
+);
 
-        return (
-            <a href={href} onClick={onClick} className={className}>
-                {children}
-            </a>
-        );
-    }
-)`
-    color: ${props => props.theme.link.color};
-    text-decoration: ${props => props.theme.link.decoration};
-    &:hover {
-        color: ${props => props.theme.link.hoverColor};
-        text-decoration: ${props => props.theme.link.hoverDecoration};
-    }
-`;
+export const Intro = ({ children, className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
+    <TextBase data-slot="widget-intro" className={cn('text-foreground', className)} {...props}>
+        {children}
+    </TextBase>
+);
 
-marked.use({
-    renderer: {
-        link({ href, text }) {
-            return (
-                '<a href="' +
-                href +
-                '" target="_blank" rel="nofollow noreferrer noopener">' +
-                text +
-                '</a>'
-            );
-        },
-    },
-    extensions: [
-        // specific underline markup is missed in marked module
-        // see https://marked.js.org/using_pro#extensions
-        {
-            name: 'underline',
-            level: 'inline',
-            start(src) {
-                return /\+{2}/.exec(src)?.index; // starts with ++
-            },
-            tokenizer(src) {
-                const rule = /^\+{2}([^+\n]+)\+{2}/;
-                const match = rule.exec(src);
-                if (match) {
-                    return {
-                        type: 'underline',
-                        raw: match[0],
-                        text: match[1],
-                        tokens: this.lexer.inlineTokens(match[1]),
-                    };
-                }
-            },
-            renderer(token) {
-                return `<u>${token.text}</u>`;
-            },
-        },
-    ],
-});
+export const Separator = ({
+    text,
+    className,
+    ...props
+}: React.HTMLAttributes<HTMLDivElement> & { text?: string }) => (
+    <Marker
+        data-slot="widget-separator"
+        variant="separator"
+        className={cn('my-4', className)}
+        {...props}
+    >
+        <MarkerContent data-slot="widget-separator-text">{text}</MarkerContent>
+    </Marker>
+);
 
-export { marked };
+export const Alternative = ({
+    children,
+    className,
+    ...props
+}: React.HTMLAttributes<HTMLDivElement>) => (
+    <div
+        data-slot="widget-alternative"
+        className={cn('mt-4 text-center text-foreground', className)}
+        {...props}
+    >
+        {children}
+    </div>
+);
 
-interface MarkdownContentProps<T> extends HTMLAttributes<T> {
-    root: ComponentType<HTMLAttributes<T>>;
-    source: string;
-}
+export const Link = ({
+    children,
+    className,
+    controller,
+    href = '#',
+    target,
+    ...props
+}: React.AnchorHTMLAttributes<HTMLAnchorElement> & { controller?: AbortController }) => {
+    const { goTo } = useRouting();
 
-export function MarkdownContent<T>({ root: Root, source, ...props }: MarkdownContentProps<T>) {
+    const onClick = target
+        ? (e: React.MouseEvent<HTMLAnchorElement>) => {
+              controller?.abort(`Going to ${target}`);
+              e.preventDefault();
+              goTo(target);
+          }
+        : () => {};
+
     return (
-        <Root
-            data-text="md"
-            dangerouslySetInnerHTML={{ __html: marked.parse(source) }}
+        <a
+            data-slot="widget-link"
+            href={href}
+            onClick={onClick}
+            className={cn(
+                'link-decoration mt-4 text-link-text hover:text-link-hover-text',
+                className
+            )}
             {...props}
-        />
+        >
+            {children}
+        </a>
     );
-}
+};

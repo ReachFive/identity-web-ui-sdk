@@ -3,9 +3,8 @@
  */
 import { beforeEach, describe, expect, jest, test } from '@jest/globals';
 import '@testing-library/jest-dom/jest-globals';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import 'jest-styled-components';
 
 import { type Client } from '@reachfive/identity-core';
 
@@ -253,15 +252,17 @@ describe('DOM testing', () => {
             const submitCodeBtn = screen.getByRole('button', { name: 'send' });
             expect(submitCodeBtn).toHaveTextContent('send');
 
+            // the last digit submits the code by itself
             await user.type(verificationCodeInput, '123456');
-            await user.click(submitCodeBtn);
 
-            expect(verifyPasswordless).toBeCalledWith(
-                expect.objectContaining({
-                    authType: 'sms',
-                    phoneNumber: '+33612345678',
-                    verificationCode: '123456',
-                })
+            await waitFor(() =>
+                expect(verifyPasswordless).toBeCalledWith(
+                    expect.objectContaining({
+                        authType: 'sms',
+                        phoneNumber: '+33612345678',
+                        verificationCode: '123456',
+                    })
+                )
             );
 
             expect(onSuccess).toBeCalledWith(
@@ -271,6 +272,29 @@ describe('DOM testing', () => {
                 })
             );
             expect(onError).not.toBeCalled();
+        });
+
+        test('sends a new code to the same phone number', async () => {
+            const user = userEvent.setup();
+            const auth = { redirectUri: 'https://example.com/callback' };
+
+            startPasswordless.mockResolvedValue({ challengeId: 'azerty' });
+
+            await generateComponent({ authType: 'sms', auth });
+
+            await user.type(screen.getByRole('textbox', { name: 'phoneNumber' }), '+33612345678');
+            await user.click(screen.getByRole('button', { name: 'send' }));
+
+            await user.click(
+                await screen.findByRole('button', { name: 'verificationCode.resend.count' })
+            );
+
+            expect(startPasswordless).toBeCalledTimes(2);
+            expect(startPasswordless).toHaveBeenLastCalledWith(
+                { authType: 'sms', phoneNumber: '+33612345678' },
+                auth
+            );
+            expect(onSuccess).toHaveBeenLastCalledWith({ name: 'otp_sent', authType: 'sms' });
         });
 
         test('by phone number with phoneNumberOptions.allowInternational', async () => {

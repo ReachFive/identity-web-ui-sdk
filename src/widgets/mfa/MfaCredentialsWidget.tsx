@@ -6,9 +6,9 @@ import type {
     StartMfaPhoneNumberRegistrationResponse,
 } from '@reachfive/identity-core/es/main/mfaClient';
 
-import { DestructiveButton } from '@/components/form/buttonComponent';
 import { Form, FormProps } from '@/components/form/form.tsx';
 import { Intro, Separator } from '@/components/miscComponent';
+import { Button } from '@/components/ui/button';
 import { createMultiViewWidget } from '@/components/widget/widget';
 import { useConfig } from '@/contexts/config';
 import { useI18n } from '@/contexts/i18n';
@@ -35,13 +35,16 @@ type DisplayTrustDeviceFormOptions = {
 
 const VerificationCodeForm = ({
     displayTrustDevice,
+    onResend,
     ...props
-}: DisplayTrustDeviceFormOptions & FormProps<VerificationCodeFormData>) => {
+}: DisplayTrustDeviceFormOptions & {
+    /** Sends a new code, see the `otp` field. */
+    onResend?: () => Promise<unknown>;
+} & FormProps<VerificationCodeFormData>) => {
     let fields: Field[] = [
         {
             key: 'verification_code',
-            label: 'verificationCode',
-            type: 'string',
+            onResend,
         },
     ];
 
@@ -178,7 +181,8 @@ const MainView = withCredentials(
                     if (data.trustDevice && resp.status == 'enabled') {
                         onSuccess({ name: 'mfa_trusted_device_added' });
                     }
-                    return resp;
+                    // the request is kept along the response to send a new code the same way
+                    return { ...resp, ...data };
                 })
                 .catch(error => {
                     onError(error);
@@ -198,7 +202,8 @@ const MainView = withCredentials(
                     if (data.trustDevice && resp.status == 'enabled') {
                         onSuccess({ name: 'mfa_trusted_device_added' });
                     }
-                    return resp;
+                    // the request is kept along the response to send a new code the same way
+                    return { ...resp, ...data };
                 })
                 .catch(error => {
                     onError(error);
@@ -322,9 +327,14 @@ const MainView = withCredentials(
                             <Form
                                 submitLabel={'mfa.remove.email'}
                                 SubmitComponent={({ disabled, label }) => (
-                                    <DestructiveButton disabled={disabled}>
+                                    <Button
+                                        type="submit"
+                                        variant="destructive"
+                                        className="w-full"
+                                        disabled={disabled}
+                                    >
                                         {label}
-                                    </DestructiveButton>
+                                    </Button>
                                 )}
                                 handler={onEmailRemoval}
                                 onSuccess={async () => {
@@ -348,7 +358,14 @@ const MainView = withCredentials(
                             <Form
                                 submitLabel="mfa.remove.phoneNumber"
                                 SubmitComponent={({ label, ...props }) => (
-                                    <DestructiveButton {...props}>{label}</DestructiveButton>
+                                    <Button
+                                        type="submit"
+                                        variant="destructive"
+                                        className="w-full"
+                                        {...props}
+                                    >
+                                        {label}
+                                    </Button>
                                 )}
                                 handler={() =>
                                     onPhoneNumberRemoval({ ...phoneNumberCredentialRegistered })
@@ -387,15 +404,22 @@ interface VerificationCodeViewProps {
      * Display the checkbox to trust device
      */
     allowTrustDevice?: boolean;
+    /**
+     * Action used in template, used again when a new code is sent.
+     */
+    action?: string;
 }
 
 type VerificationCodeViewState = (
-    | ({ registrationType: 'email' } & StartMfaEmailRegistrationResponse)
-    | ({ registrationType: 'sms' } & StartMfaPhoneNumberRegistrationResponse)
+    | ({ registrationType: 'email' } & StartMfaEmailRegistrationResponse &
+          Partial<EmailRegisteringCredentialFormData>)
+    | ({ registrationType: 'sms' } & StartMfaPhoneNumberRegistrationResponse &
+          Partial<PhoneNumberRegisteringCredentialFormData>)
 ) & { allowTrustDevice: boolean };
 
 const VerificationCodeView = ({
     accessToken,
+    action,
     onError = (() => {}) as OnError,
     onSuccess = (() => {}) as OnSuccess,
     showIntro = true,
@@ -405,7 +429,35 @@ const VerificationCodeView = ({
     const i18n = useI18n();
     const config = useConfig();
     const { goTo, params } = useRouting();
-    const { registrationType, status } = params as VerificationCodeViewState;
+    const state = params as VerificationCodeViewState;
+    const { registrationType, status } = state;
+
+    // the same request as the one which sent the first code, from the main view
+    const sendCode = () => {
+        if (state.registrationType === 'email') {
+            return coreClient
+                .startMfaEmailRegistration({
+                    accessToken,
+                    action,
+                    trustDevice: state.trustDevice,
+                })
+                .then(() => onSuccess({ name: 'mfa_email_start_registration' }));
+        }
+        return coreClient
+            .startMfaPhoneNumberRegistration({
+                accessToken,
+                action,
+                phoneNumber: state.phoneNumber!,
+                trustDevice: state.trustDevice,
+            })
+            .then(() => onSuccess({ name: 'mfa_phone_number_start_registration' }));
+    };
+    const onResend = () =>
+        sendCode().catch((error: unknown) => {
+            onError(error);
+            throw error;
+        });
+    const canResend = state.registrationType === 'email' || state.phoneNumber !== undefined;
 
     const onEmailCodeVerification = (data: VerificationCodeFormData) => {
         return coreClient
@@ -470,6 +522,7 @@ const VerificationCodeView = ({
                     handler={onEmailCodeVerification}
                     onSuccess={onCredentialRegistered}
                     onError={onError}
+                    onResend={onResend}
                 />
             )}
 
@@ -480,6 +533,7 @@ const VerificationCodeView = ({
                     handler={onSmsCodeVerification}
                     onSuccess={onCredentialRegistered}
                     onError={onError}
+                    onResend={canResend ? onResend : undefined}
                 />
             )}
         </div>

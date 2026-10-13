@@ -196,6 +196,7 @@ export const FaSelectionView = ({
         return (
             <VerificationCodeView
                 {...response}
+                token={token}
                 auth={auth}
                 allowTrustDevice={allowTrustDevice}
                 onError={onError}
@@ -233,8 +234,15 @@ export const FaSelectionView = ({
 
 export type VerificationCodeViewState = Prettify<StepUpHandlerResponse>;
 
+/** The default of `step-up-token.max_trials`, when the remote settings do not tell. */
+const DEFAULT_STEP_UP_TOKEN_MAX_USES = 3;
+
 export type VerificationCodeViewProps = Prettify<
     Partial<StepUpHandlerResponse> & {
+        /**
+         * The step-up token the code was sent with, used again to send a new code.
+         */
+        token?: string;
         /**
          * List of authentication options
          */
@@ -264,10 +272,12 @@ export const VerificationCodeView = ({
     const coreClient = useReachfive();
     const i18n = useI18n();
     const { params } = useRouting();
-    const { rbaEnabled } = useConfig();
+    const { rbaEnabled, stepUpTokenMaxUses } = useConfig();
     const state = params as VerificationCodeViewState;
 
-    const { auth, authType, challengeId, allowTrustDevice } = { ...props, ...state };
+    const { auth, authType, allowTrustDevice, token, ...initial } = { ...props, ...state };
+    // every code sent opens a new challenge
+    const [challengeId, setChallengeId] = useState(initial.challengeId);
     const isOrchestratedFlow = new URLSearchParams(window.location.search).has('r5_request_token');
 
     const handleSubmit = (data: VerificationCodeInputFormData) => {
@@ -289,12 +299,25 @@ export const VerificationCodeView = ({
             });
     };
 
+    // a new code can only be sent with the step-up token the first one was sent with
+    const handleResend =
+        token && authType
+            ? async () => {
+                  const resp = await coreClient
+                      .startPasswordless({ authType, stepUp: token })
+                      .catch((error: unknown) => {
+                          onError(error);
+                          throw error;
+                      });
+                  setChallengeId((resp as StepUpResponse).challengeId);
+              }
+            : undefined;
+
     let fields: Field[] = [
         {
             key: 'verification_code',
-            label: 'verificationCode',
-            type: 'string',
-            required: true,
+            maxSends: stepUpTokenMaxUses ?? DEFAULT_STEP_UP_TOKEN_MAX_USES,
+            onResend: handleResend,
         },
     ];
 
