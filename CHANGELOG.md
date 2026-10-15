@@ -30,6 +30,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Markdown links (consents, user agreement) only accept `http(s)`, `mailto` and relative URLs
 - Inline social login buttons (`theme.socialButton.inline`) wrap onto several lines again instead of
   being squeezed onto a single row
+- The injected CSS no longer styles the host page: Tailwind's `--tw-*` defaults on `*` / `::backdrop` and the
+  base rules for `a`, `b`, `strong`, `small`, `sub` and `sup` are now scoped to `.r5-widget`
 
 ## [2.1.0] - 2026-09-16
 
