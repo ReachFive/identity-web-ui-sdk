@@ -8,6 +8,7 @@ import { cn } from '@/lib/utils';
 
 import CaptchaFox, { CaptchaFoxConf } from './captchaFox';
 import ReCaptcha, { importGoogleRecaptchaScript, ReCaptchaConf } from './reCaptcha';
+import ReCaptchaEnterprise, { importGoogleRecaptchaEnterpriseScript } from './reCaptchaEnterprise';
 
 import type { CaptchaOperation } from './captchaOperation';
 
@@ -20,6 +21,15 @@ export type CaptchaOptions =
           /**
            * The SITE key from your [reCAPTCHA](https://www.google.com/recaptcha/admin/create)
            * setup, paired with the secret key configured on the ReachFive client.
+           */
+          siteKey: string;
+      }
+    | {
+          provider: 'recaptcha_enterprise';
+          /**
+           * The SITE key of the reCAPTCHA Enterprise key, from the Google Cloud console. Score-based
+           * web keys and Universal keys share this one integration; which of the two a key is only
+           * changes how the assessment is scored server side.
            */
           siteKey: string;
       }
@@ -140,8 +150,15 @@ function CaptchaProvider({ children, operation, captcha }: React.PropsWithChildr
 
     // Start the provider's script as the widget appears, so it is ready by the time the user submits.
     React.useEffect(() => {
-        if (captcha?.provider === 'recaptcha') {
-            void importGoogleRecaptchaScript(captcha.siteKey).catch(() => {
+        const load =
+            captcha?.provider === 'recaptcha'
+                ? () => importGoogleRecaptchaScript(captcha.siteKey)
+                : captcha?.provider === 'recaptcha_enterprise'
+                  ? () => importGoogleRecaptchaEnterpriseScript(captcha.siteKey)
+                  : undefined;
+
+        if (load) {
+            void load().catch(() => {
                 // Reported to the user by the handler if they go on to submit.
             });
         }
@@ -154,6 +171,17 @@ function CaptchaProvider({ children, operation, captcha }: React.PropsWithChildr
                 const settings = { siteKey: captcha.siteKey, operation };
                 return {
                     handler: (data, callback) => ReCaptcha.handle(data, settings, callback),
+                };
+            }
+
+            case 'recaptcha_enterprise': {
+                const settings = {
+                    siteKey: captcha.siteKey,
+                    operation,
+                };
+                return {
+                    handler: (data, callback) =>
+                        ReCaptchaEnterprise.handle(data, settings, callback),
                 };
             }
 
