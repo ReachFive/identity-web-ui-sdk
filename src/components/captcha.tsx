@@ -14,7 +14,10 @@ import ReCaptcha, { importGoogleRecaptchaScript, ReCaptchaConf } from './reCaptc
 import ReCaptchaEnterprise, { importGoogleRecaptchaEnterpriseScript } from './reCaptchaEnterprise';
 
 import type { CaptchaOperation } from './captchaOperation';
-import type { ReCaptchaEnterpriseMode } from './reCaptchaEnterprise';
+import type {
+    ReCaptchaEnterpriseCheckboxSettings,
+    ReCaptchaEnterpriseMode,
+} from './reCaptchaEnterprise';
 
 /**
  * Which captcha protects a widget's calls, and the settings that provider needs.
@@ -35,10 +38,11 @@ export type CaptchaOptions =
            */
           siteKey: string;
           /**
-           * What token generation is used.
+           * What token generation mode is used.
            * - unset, the token is generated in the background and sent in the request body.
            * - `autoExecute` is for a Universal key with AutoExecute enabled: the reCAPTCHA library attaches the token
            *   to the requests it intercepts, and the SDK fetches none of its own.
+           * - `checkbox` is for a Web key configured for a checkbox challenge.
            */
           mode?: ReCaptchaEnterpriseMode;
       }
@@ -104,7 +108,7 @@ export function resolveCaptchaOptions(options: CaptchaInput): CaptchaOptions | u
 
 export type CaptchaValues = {
     handler: <T, R>(data: T, callback: (data: T) => Promise<R>) => Promise<R>;
-    Captcha?: React.ComponentType<CaptchaProps>;
+    Captcha?: React.ComponentType<Pick<CaptchaProps, 'className' | 'onError'>>;
 };
 
 const defaultHandler = <T, R>(data: T, callback: (data: T) => Promise<R>) => callback(data);
@@ -159,8 +163,55 @@ function CaptchaFoxField({
     );
 }
 
+type ReCaptchaEnterpriseCheckboxProps = ReCaptchaEnterpriseCheckboxSettings & {
+    widgetIdRef: React.MutableRefObject<number | null>;
+    className?: string;
+    onError?: CaptchaProps['onError'];
+};
+
+/**
+ * The "I'm not a robot" checkbox. It is rendered once into its own element and lives as long as
+ * the form does; the id it is given is what the submit handler reads the token from.
+ */
+function ReCaptchaEnterpriseCheckbox({
+    siteKey,
+    operation,
+    widgetIdRef,
+    className,
+    onError,
+}: ReCaptchaEnterpriseCheckboxProps) {
+    const containerRef = React.useRef<HTMLDivElement>(null);
+    const renderedRef = React.useRef(false);
+
+    React.useEffect(() => {
+        const container = containerRef.current;
+        // reCAPTCHA refuses a second render into the same element, and the effect runs twice under
+        // StrictMode.
+        if (!container || renderedRef.current) return;
+
+        renderedRef.current = true;
+        void ReCaptchaEnterprise.renderCheckbox(container, { siteKey, operation })
+            .then(widgetId => {
+                widgetIdRef.current = widgetId;
+            })
+            .catch((cause: unknown) => {
+                logError(
+                    cause instanceof Error
+                        ? cause
+                        : 'reCAPTCHA Enterprise checkbox failed to render'
+                );
+                onError?.(cause instanceof Error ? cause : String(cause));
+                // Reported to the user by the handler if they go on to submit.
+                renderedRef.current = false;
+            });
+    }, [siteKey, operation, widgetIdRef, onError]);
+
+    return <div ref={containerRef} className={cn('mb-4', className)} />;
+}
+
 function CaptchaProvider({ children, operation, captcha }: React.PropsWithChildren<CaptchaConfig>) {
     const captchaFoxInstanceRef = React.useRef<CaptchaFoxInstance>(null);
+    const recaptchaWidgetIdRef = React.useRef<number | null>(null);
 
     // Start the provider's script as the widget appears, so it is ready by the time the user submits.
     React.useEffect(() => {
@@ -168,7 +219,7 @@ function CaptchaProvider({ children, operation, captcha }: React.PropsWithChildr
             captcha?.provider === 'recaptcha'
                 ? () => importGoogleRecaptchaScript(captcha.siteKey)
                 : captcha?.provider === 'recaptcha_enterprise'
-                  ? () => importGoogleRecaptchaEnterpriseScript(captcha.siteKey)
+                  ? () => importGoogleRecaptchaEnterpriseScript(captcha.siteKey, captcha.mode)
                   : undefined;
 
         if (load) {
@@ -189,6 +240,27 @@ function CaptchaProvider({ children, operation, captcha }: React.PropsWithChildr
             }
 
             case 'recaptcha_enterprise': {
+                if (captcha.mode === 'checkbox') {
+                    const { siteKey } = captcha;
+                    return {
+                        handler: (data, callback) =>
+                            ReCaptchaEnterprise.handleCheckbox(
+                                data,
+                                recaptchaWidgetIdRef.current,
+                                callback
+                            ),
+                        Captcha: ({ className, onError }) => (
+                            <ReCaptchaEnterpriseCheckbox
+                                siteKey={siteKey}
+                                operation={operation}
+                                widgetIdRef={recaptchaWidgetIdRef}
+                                className={className}
+                                onError={onError}
+                            />
+                        ),
+                    };
+                }
+
                 const settings = {
                     siteKey: captcha.siteKey,
                     mode: captcha.mode,
