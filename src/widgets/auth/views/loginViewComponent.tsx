@@ -1,11 +1,10 @@
-import React, { useLayoutEffect } from 'react';
+import React from 'react';
 
 import { AuthOptions, LoginWithPasswordParams } from '@reachfive/identity-core';
 
 import { CaptchaProvider, WithCaptchaProps, type WithCaptchaToken } from '@/components/captcha';
 import { Form, FormProps } from '@/components/form/form';
 import { Alternative, Heading, Link, Separator } from '@/components/miscComponent';
-import { importGoogleRecaptchaScript } from '@/components/reCaptcha';
 import { SocialButtons } from '@/components/slo/social-buttons';
 import { useConfig } from '@/contexts/config';
 import { useI18n } from '@/contexts/i18n';
@@ -224,11 +223,7 @@ export const LoginView = ({
     allowCustomIdentifier = false,
     showLabels = false,
     showRememberMe = false,
-    recaptcha_enabled = false,
-    recaptcha_site_key,
-    captchaFoxEnabled = false,
-    captchaFoxSiteKey,
-    captchaFoxMode = 'hidden',
+    captcha,
     allowAuthentMailPhone = true,
     allowTrustDevice,
     action,
@@ -239,10 +234,6 @@ export const LoginView = ({
     const coreClient = useReachfive();
     const { goTo } = useRouting();
     const session = useSession();
-
-    useLayoutEffect(() => {
-        importGoogleRecaptchaScript(recaptcha_site_key);
-    }, [recaptcha_site_key]);
 
     const { abort: abortConditionalWebAuthn } = useConditionalWebAuthn({
         auth,
@@ -291,14 +282,7 @@ export const LoginView = ({
                 />
             )}
             {socialProviders && socialProviders.length > 0 && <Separator text={i18n('or')} />}
-            <CaptchaProvider
-                recaptcha_enabled={recaptcha_enabled}
-                recaptcha_site_key={recaptcha_site_key}
-                captchaFoxEnabled={captchaFoxEnabled}
-                captchaFoxSiteKey={captchaFoxSiteKey}
-                captchaFoxMode={captchaFoxMode}
-                action="login"
-            >
+            <CaptchaProvider captcha={captcha} operation="login">
                 <LoginForm
                     showLabels={showLabels}
                     showRememberMe={showRememberMe}

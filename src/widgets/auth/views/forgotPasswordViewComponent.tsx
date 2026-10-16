@@ -1,9 +1,8 @@
-import React, { useCallback, useLayoutEffect } from 'react';
+import React, { useCallback } from 'react';
 
 import { CaptchaProvider, WithCaptchaProps } from '@/components/captcha.tsx';
 import { Form } from '@/components/form/form.tsx';
 import { Alternative, Heading, Info, Intro, Link } from '@/components/miscComponent';
-import { importGoogleRecaptchaScript } from '@/components/reCaptcha';
 import { Button } from '@/components/ui/button';
 import { useConfig } from '@/contexts/config.tsx';
 import { useI18n } from '@/contexts/i18n';
@@ -105,11 +104,7 @@ export const ForgotPasswordView = ({
     showLabels = false,
     allowWebAuthnLogin = false,
     initialScreen,
-    recaptcha_enabled = false,
-    recaptcha_site_key,
-    captchaFoxEnabled = false,
-    captchaFoxMode = 'hidden',
-    captchaFoxSiteKey,
+    captcha,
     origin,
     redirectUrl,
     returnToAfterPasswordReset,
@@ -129,22 +124,11 @@ export const ForgotPasswordView = ({
             returnToAfterPasswordReset,
         });
 
-    useLayoutEffect(() => {
-        importGoogleRecaptchaScript(recaptcha_site_key);
-    }, [recaptcha_site_key]);
-
     return (
         <div>
             <Heading>{i18n('forgotPassword.title')}</Heading>
             <Intro>{i18n('forgotPassword.prompt')}</Intro>
-            <CaptchaProvider
-                recaptcha_enabled={recaptcha_enabled}
-                recaptcha_site_key={recaptcha_site_key}
-                captchaFoxEnabled={captchaFoxEnabled}
-                captchaFoxSiteKey={captchaFoxSiteKey}
-                captchaFoxMode={captchaFoxMode}
-                action="password_reset_requested"
-            >
+            <CaptchaProvider captcha={captcha} operation="forgot_password">
                 <Form
                     fields={[
                         {
@@ -194,11 +178,7 @@ export const ForgotPasswordPhoneNumberView = ({
     allowWebAuthnLogin = false,
     initialScreen,
     phoneNumberOptions,
-    recaptcha_enabled = false,
-    recaptcha_site_key,
-    captchaFoxEnabled = false,
-    captchaFoxMode = 'hidden',
-    captchaFoxSiteKey,
+    captcha,
     redirectUrl,
     returnToAfterPasswordReset,
     onError = (() => {}) as OnError,
@@ -220,22 +200,11 @@ export const ForgotPasswordPhoneNumberView = ({
         goTo<PhoneNumberIdentifier>('forgot-password-code', { phoneNumber });
     };
 
-    useLayoutEffect(() => {
-        importGoogleRecaptchaScript(recaptcha_site_key);
-    }, [recaptcha_site_key]);
-
     return (
         <div>
             <Heading>{i18n('forgotPassword.title')}</Heading>
             <Intro>{i18n('forgotPassword.prompt.phoneNumber')}</Intro>
-            <CaptchaProvider
-                recaptcha_enabled={recaptcha_enabled}
-                recaptcha_site_key={recaptcha_site_key}
-                captchaFoxEnabled={captchaFoxEnabled}
-                captchaFoxSiteKey={captchaFoxSiteKey}
-                captchaFoxMode={captchaFoxMode}
-                action="password_reset_requested"
-            >
+            <CaptchaProvider captcha={captcha} operation="forgot_password">
                 <Form
                     fields={[
                         {
@@ -283,11 +252,7 @@ export const ForgotPasswordCodeView = ({
     allowWebAuthnLogin = false,
     canShowPassword = false,
     showLabels = false,
-    recaptcha_enabled = false,
-    recaptcha_site_key,
-    captchaFoxEnabled = false,
-    captchaFoxMode = 'hidden',
-    captchaFoxSiteKey,
+    captcha,
     redirectUrl,
     returnToAfterPasswordReset,
     onError = (() => {}) as OnError,
@@ -336,14 +301,7 @@ export const ForgotPasswordCodeView = ({
                         // the new password is typed after the code
                         autoSubmit: false,
                         onResend: handleResend,
-                        resendCaptcha: {
-                            recaptcha_enabled,
-                            recaptcha_site_key,
-                            captchaFoxEnabled,
-                            captchaFoxSiteKey,
-                            captchaFoxMode,
-                            action: 'password_reset_requested',
-                        },
+                        resendCaptcha: { captcha, operation: 'forgot_password' },
                     },
                     {
                         key: 'password',

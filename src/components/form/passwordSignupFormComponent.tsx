@@ -1,4 +1,4 @@
-import React, { useCallback, useLayoutEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 
 import { AuthOptions } from '@reachfive/identity-core';
 import { SignupParams } from '@reachfive/identity-core/es/main/oAuthClient';
@@ -6,7 +6,7 @@ import { SignupParams } from '@reachfive/identity-core/es/main/oAuthClient';
 import { CaptchaProvider, WithCaptchaProps, type WithCaptchaToken } from '@/components/captcha';
 import { Form } from '@/components/form/form';
 import { UserAgreement } from '@/components/form/UserAgreement';
-import { extractCaptchaTokenFromData, importGoogleRecaptchaScript } from '@/components/reCaptcha';
+import { extractCaptchaTokenFromData } from '@/components/reCaptcha';
 import { useReachfive } from '@/contexts/reachfive';
 import { snakeCaseProperties } from '@/helpers/transformObjectProperties';
 import { isEqual, isValued } from '@/helpers/utils';
@@ -73,11 +73,7 @@ export const PasswordSignupForm = ({
     beforeSignup = x => x,
     canShowPassword,
     phoneNumberOptions,
-    recaptcha_enabled = false,
-    recaptcha_site_key,
-    captchaFoxEnabled = false,
-    captchaFoxSiteKey,
-    captchaFoxMode = 'hidden',
+    captcha,
     redirectUrl,
     returnToAfterEmailConfirmation,
     showLabels,
@@ -88,10 +84,6 @@ export const PasswordSignupForm = ({
 }: WithCaptchaProps<PasswordSignupFormProps>) => {
     const coreClient = useReachfive();
     const [blacklist, setBlacklist] = useState<string[]>([]);
-
-    useLayoutEffect(() => {
-        importGoogleRecaptchaScript(recaptcha_site_key);
-    }, [recaptcha_site_key]);
 
     const callback = useCallback(
         (data: WithCaptchaToken<SignupParams['data']>) => {
@@ -154,14 +146,7 @@ export const PasswordSignupForm = ({
         : resolvedSignupFields;
 
     return (
-        <CaptchaProvider
-            recaptcha_enabled={recaptcha_enabled}
-            recaptcha_site_key={recaptcha_site_key}
-            captchaFoxEnabled={captchaFoxEnabled}
-            captchaFoxSiteKey={captchaFoxSiteKey}
-            captchaFoxMode={captchaFoxMode}
-            action="signup"
-        >
+        <CaptchaProvider captcha={captcha} operation="signup">
             <Form
                 fields={allFields}
                 showLabels={showLabels}
