@@ -15,7 +15,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - `captcha`, a single widget option naming the provider and its settings, replacing the per-provider
   flags.
 - reCAPTCHA Enterprise, as `captcha: { provider: 'recaptcha_enterprise', siteKey }`. Score-based web
-  keys and Universal keys share it
+  keys and Universal keys share it; set `mode: 'autoExecute'` when the key has AutoExecute enabled,
+  so the SDK leaves the token to the reCAPTCHA library
 
 ### Changed
 
