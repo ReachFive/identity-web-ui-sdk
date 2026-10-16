@@ -14,6 +14,7 @@ import ReCaptcha, { importGoogleRecaptchaScript, ReCaptchaConf } from './reCaptc
 import ReCaptchaEnterprise, { importGoogleRecaptchaEnterpriseScript } from './reCaptchaEnterprise';
 
 import type { CaptchaOperation } from './captchaOperation';
+import type { ReCaptchaEnterpriseMode } from './reCaptchaEnterprise';
 
 /**
  * Which captcha protects a widget's calls, and the settings that provider needs.
@@ -33,6 +34,13 @@ export type CaptchaOptions =
            * The SITE key of the reCAPTCHA Enterprise, web or universal key, from the Google Cloud console.
            */
           siteKey: string;
+          /**
+           * What token generation is used.
+           * - unset, the token is generated in the background and sent in the request body.
+           * - `autoExecute` is for a Universal key with AutoExecute enabled: the reCAPTCHA library attaches the token
+           *   to the requests it intercepts, and the SDK fetches none of its own.
+           */
+          mode?: ReCaptchaEnterpriseMode;
       }
     | {
           provider: 'captchafox';
@@ -183,6 +191,7 @@ function CaptchaProvider({ children, operation, captcha }: React.PropsWithChildr
             case 'recaptcha_enterprise': {
                 const settings = {
                     siteKey: captcha.siteKey,
+                    mode: captcha.mode,
                     operation,
                 };
                 return {
