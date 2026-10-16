@@ -5,6 +5,12 @@ import { importCaptchaScript } from './captchaScript';
 
 import type { CaptchaOperation } from './captchaOperation';
 
+/**
+ * Where the token comes from: `autoExecute` leaves the token to the reCAPTCHA library. Unset, the
+ * SDK mints one in the background.
+ */
+export type ReCaptchaEnterpriseMode = 'autoExecute';
+
 const whenReady = () =>
     new Promise<void>(resolve => window.grecaptcha.enterprise.ready(() => resolve()));
 
@@ -47,6 +53,7 @@ const actions: Record<CaptchaOperation, RecaptchaEnterpriseAction> = {
 export type ReCaptchaEnterpriseSettings = {
     siteKey: string;
     operation: CaptchaOperation;
+    mode?: ReCaptchaEnterpriseMode;
 };
 
 export default class ReCaptchaEnterprise {
@@ -57,9 +64,16 @@ export default class ReCaptchaEnterprise {
 
     static handle = async <T, R = {}>(
         data: T,
-        { siteKey, operation }: ReCaptchaEnterpriseSettings,
+        { siteKey, mode, operation }: ReCaptchaEnterpriseSettings,
         callback: (data: WithCaptchaToken<T>) => Promise<R>
     ) => {
+        // With AutoExecute the reCAPTCHA library attaches a token to the requests it has been
+        // configured to protect: we mustn't initiate fetching a token.
+        if (mode === 'autoExecute') {
+            await importGoogleRecaptchaEnterpriseScript(siteKey);
+            return callback({ ...data, captchaProvider: 'recaptcha_enterprise' });
+        }
+
         try {
             const captchaToken = await this.getToken(siteKey, actions[operation]);
             return callback({ ...data, captchaToken, captchaProvider: 'recaptcha_enterprise' });
