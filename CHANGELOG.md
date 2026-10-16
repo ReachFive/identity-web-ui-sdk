@@ -33,6 +33,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - The injected CSS no longer styles the host page: Tailwind's `--tw-*` defaults on `*` / `::backdrop` and the
   base rules for `a`, `b`, `strong`, `small`, `sub` and `sup` are now scoped to `.r5-widget`
 
+### Changed
+
+- `@reachfive/identity-core` upgraded to 1.42.0, whose `verifyPasswordless` no longer overrides the
+  original authorization request's parameters in an orchestrated flow (hosted pages).
+
 ## [2.1.0] - 2026-09-16
 
 ### Added
