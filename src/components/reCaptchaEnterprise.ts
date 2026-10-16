@@ -6,18 +6,33 @@ import { importCaptchaScript } from './captchaScript';
 import type { CaptchaOperation } from './captchaOperation';
 
 /**
- * Where the token comes from: `autoExecute` leaves the token to the reCAPTCHA library. Unset, the
- * SDK mints one in the background.
+ * Where the token comes from: `checkbox` makes the user tick a widget, `autoExecute` leaves the
+ * token to the reCAPTCHA library. Unset, the SDK mints one in the background.
  */
-export type ReCaptchaEnterpriseMode = 'autoExecute';
+export type ReCaptchaEnterpriseMode = 'checkbox' | 'autoExecute';
 
 const whenReady = () =>
     new Promise<void>(resolve => window.grecaptcha.enterprise.ready(() => resolve()));
 
 /**
  * Score-based web keys and Universal keys are loaded the same way; only the assessment differs.
+ *
+ * A checkbox key takes the other half of the library: `render=explicit` carries no site key,
+ * because the key is given to `render()` along with the element the widget goes into. Google
+ * answers the score URL with an HTML error page for a checkbox key, so the two cannot be swapped.
  */
-export function importGoogleRecaptchaEnterpriseScript(siteKey: string): Promise<void> {
+export function importGoogleRecaptchaEnterpriseScript(
+    siteKey: string,
+    mode?: ReCaptchaEnterpriseMode
+): Promise<void> {
+    if (mode === 'checkbox') {
+        return importCaptchaScript({
+            src: 'https://www.google.com/recaptcha/enterprise.js?render=explicit',
+            isLoaded: () => typeof window.grecaptcha?.enterprise?.render === 'function',
+            whenReady,
+        });
+    }
+
     return importCaptchaScript({
         src: `https://www.google.com/recaptcha/enterprise.js?render=${encodeURIComponent(siteKey)}`,
         isLoaded: () => typeof window.grecaptcha?.enterprise?.execute === 'function',
@@ -48,6 +63,11 @@ const actions: Record<CaptchaOperation, RecaptchaEnterpriseAction> = {
     verify_passwordless_magic_link: 'passwordless',
     account_recovery: 'forgot_password',
     forgot_password: 'forgot_password',
+};
+
+export type ReCaptchaEnterpriseCheckboxSettings = {
+    siteKey: string;
+    operation: CaptchaOperation;
 };
 
 export type ReCaptchaEnterpriseSettings = {
@@ -86,6 +106,62 @@ export default class ReCaptchaEnterprise {
                     errorMessageKey: 'recaptcha.error',
                 })
             );
+        }
+    };
+
+    /**
+     * Puts the tickbox in `container` and returns the id the other widget calls take.
+     */
+    static renderCheckbox = async (
+        container: HTMLElement,
+        { siteKey, operation }: ReCaptchaEnterpriseCheckboxSettings
+    ) => {
+        await importGoogleRecaptchaEnterpriseScript(siteKey, 'checkbox');
+        return window.grecaptcha.enterprise.render(container, {
+            sitekey: siteKey,
+            action: actions[operation],
+        });
+    };
+
+    static handleCheckbox = async <T, R = {}>(
+        data: T,
+        widgetId: number | null,
+        callback: (data: WithCaptchaToken<T>) => Promise<R>
+    ) => {
+        if (widgetId === null) {
+            return Promise.reject(
+                UserError.fromAppError({
+                    errorId: '',
+                    error: 'Recaptcha error',
+                    errorDescription: 'Recaptcha error',
+                    errorMessageKey: 'recaptcha.error',
+                })
+            );
+        }
+
+        const captchaToken = window.grecaptcha.enterprise.getResponse(widgetId);
+
+        if (!captchaToken) {
+            return Promise.reject(
+                UserError.fromAppError({
+                    errorId: '',
+                    error: 'Recaptcha error',
+                    errorDescription: 'Please tick the reCAPTCHA box.',
+                    errorMessageKey: 'recaptcha.checkbox.required',
+                })
+            );
+        }
+
+        try {
+            return await callback({
+                ...data,
+                captchaToken,
+                captchaProvider: 'recaptcha_enterprise',
+            });
+        } finally {
+            // A token is single use: without a reset the next attempt sends a spent one and the
+            // assessment comes back DUPE.
+            window.grecaptcha.enterprise.reset(widgetId);
         }
     };
 }

@@ -14,6 +14,13 @@ declare global {
             enterprise: {
                 ready(callback: () => void): void;
                 execute(siteKey: string, action: { action: string }): PromiseLike<string>;
+                // The explicit-render API, served by `enterprise.js?render=explicit`.
+                render(
+                    container: HTMLElement | string,
+                    parameters: { sitekey: string; action?: string }
+                ): number;
+                getResponse(widgetId: number): string;
+                reset(widgetId: number): void;
             };
         };
     }
