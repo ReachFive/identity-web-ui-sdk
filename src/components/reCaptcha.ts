@@ -99,7 +99,8 @@ export default class ReCaptcha {
 export function importGoogleRecaptchaScript(siteKey: string): Promise<void> {
     return importCaptchaScript({
         src: `https://www.google.com/recaptcha/api.js?render=${encodeURIComponent(siteKey)}`,
-        isLoaded: () => typeof window.grecaptcha?.execute === 'function',
+        // `api.js` defines `ready` on load and appends `recaptcha__en.js`, that defines `execute`.
+        isLoaded: () => typeof window.grecaptcha?.ready === 'function',
         whenReady: () => new Promise(resolve => window.grecaptcha.ready(() => resolve())),
     });
 }
