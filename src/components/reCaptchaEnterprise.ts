@@ -82,13 +82,13 @@ export type ReCaptchaEnterpriseCheckboxSettings = {
     operation: CaptchaOperation;
 };
 
+/**
+ * What {@link ReCaptchaEnterprise.handle} takes, and the only place these are read. The checkbox
+ * calls have their own {@link ReCaptchaEnterpriseCheckboxSettings}.
+ */
 export type ReCaptchaEnterpriseTokenSettings = {
     siteKey: string;
     operation: CaptchaOperation;
-    /**
-     * `checkbox` is not one of these: it has its own path, and
-     * {@link ReCaptchaEnterprise.handle} would ask for a score token from a key that has none.
-     */
     mode?: 'autoExecute';
 };
 
