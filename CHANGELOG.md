@@ -12,6 +12,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - An `otp` field type, which takes the code one digit per slot, and a predefined `verification_code` field built on it, whose length follows the tenant's `verificationCodeLength` (6 digits when not configured).
 - `data-slot="widget-*"` attributes on the widget content, headings, texts, separators and links, as styling hooks
   for integrators
+- `captcha`, a single widget option naming the provider and its settings, replacing the per-provider
+  flags.
 
 ### Changed
 
@@ -33,13 +35,17 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - The injected CSS no longer styles the host page: Tailwind's `--tw-*` defaults on `*` / `::backdrop` and the
   base rules for `a`, `b`, `strong`, `small`, `sub` and `sup` are now scoped to `.r5-widget`
 
+### Deprecated
+
+- `recaptcha_enabled`, `recaptcha_site_key`, `captchaFoxEnabled`, `captchaFoxSiteKey` and
+  `captchaFoxMode`. Use `captcha: { provider, siteKey, … }` instead; the old options are still
+  honoured and are translated internally
+
 ## [2.1.0] - 2026-09-16
 
 ### Added
 
 - Support for social providers configured outside the built-in list, with a per-provider `buttonLabel` option
-- `captcha`, a single widget option naming the provider and its settings, replacing the per-provider
-  flags.
 
 ### Changed
 
@@ -51,9 +57,6 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Deprecated
 
 - `theme.socialButton.focusBoxShadow`, now that the focus ring follows the provider's brand colour
-- `recaptcha_enabled`, `recaptcha_site_key`, `captchaFoxEnabled`, `captchaFoxSiteKey` and
-  `captchaFoxMode`. Use `captcha: { provider, siteKey, … }` instead; the old options are still
-  honoured and are translated internally
 
 ### Removed
 
