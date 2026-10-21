@@ -3,7 +3,7 @@ import * as React from "react"
 import * as DropdownMenuPrimitive from "@radix-ui/react-dropdown-menu"
 import { Check, ChevronRight, Circle } from "lucide-react"
 
-import { ThemeVariablesContainer } from "@/contexts/themeVariables"
+import { ThemeVariablesContainer } from "@/contexts/theme"
 import { cn } from "@/lib/utils"
 
 const DropdownMenu = DropdownMenuPrimitive.Root
@@ -59,7 +59,7 @@ const DropdownMenuContent = React.forwardRef<
   React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Content>
 >(({ className, sideOffset = 4, ...props }, ref) => (
   <DropdownMenuPrimitive.Portal>
-    <ThemeVariablesContainer className="r5-widget">
+    <ThemeVariablesContainer>
       <DropdownMenuPrimitive.Content
         ref={ref}
         sideOffset={sideOffset}

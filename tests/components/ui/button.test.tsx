@@ -16,9 +16,9 @@ describe('Button variants', () => {
         render(<Button>filled</Button>);
         const classes = classesOf('filled');
 
-        expect(classes).toContain('bg-[var(--r5-button-bg)]');
-        expect(classes).toContain('text-[var(--r5-button-text)]');
-        expect(classes).toContain('border-[var(--r5-button-border-color)]');
+        expect(classes).toContain('bg-button-bg');
+        expect(classes).toContain('text-button-text');
+        expect(classes).toContain('border-button-border-color');
     });
 
     describe('outline', () => {
@@ -29,8 +29,8 @@ describe('Button variants', () => {
             render(<Button variant="outline">outlined</Button>);
             const classes = classesOf('outlined');
 
-            expect(classes).toContain('text-[var(--r5-button-bg)]');
-            expect(classes).not.toContain('text-[var(--r5-button-border-color)]');
+            expect(classes).toContain('text-button-bg');
+            expect(classes).not.toContain('text-button-border-color');
         });
 
         test('hovers onto the tint rather than the disabled-field gray', () => {
@@ -39,7 +39,7 @@ describe('Button variants', () => {
             render(<Button variant="outline">outlined</Button>);
             const classes = classesOf('outlined');
 
-            expect(classes).toContain('hover:bg-[var(--r5-button-subtle-bg)]');
+            expect(classes).toContain('hover:bg-button-subtle-bg');
             expect(classes).not.toContain('hover:bg-muted');
         });
     });
@@ -51,13 +51,13 @@ describe('Button variants', () => {
             render(<Button variant="ghost">ghosted</Button>);
             const classes = classesOf('ghosted');
 
-            expect(classes).not.toContain('border-[length:var(--r5-button-border-width)]');
+            expect(classes).not.toContain('border-button-border-width');
             expect(classes).toContain('bg-transparent');
         });
 
         test('hovers onto the same surface as outline', () => {
             render(<Button variant="ghost">ghosted</Button>);
-            expect(classesOf('ghosted')).toContain('hover:bg-[var(--r5-button-subtle-bg)]');
+            expect(classesOf('ghosted')).toContain('hover:bg-button-subtle-bg');
         });
     });
 
@@ -67,16 +67,16 @@ describe('Button variants', () => {
 
         expect(classes).toContain('bg-destructive');
         expect(classes).toContain('text-destructive-foreground');
-        expect(classes).not.toContain('bg-[var(--r5-button-bg)]');
-        expect(classes).not.toContain('border-[length:var(--r5-button-border-width)]');
+        expect(classes).not.toContain('bg-button-bg');
+        expect(classes).not.toContain('border-button-border-width');
     });
 
     test('link is driven by the link theme, not by the primary color', () => {
         render(<Button variant="link">linked</Button>);
         const classes = classesOf('linked');
 
-        expect(classes).toContain('text-[var(--r5-link-text)]');
-        expect(classes).toContain('hover:text-[var(--r5-link-hover-text)]');
+        expect(classes).toContain('text-link-text');
+        expect(classes).toContain('hover:text-link-hover-text');
         expect(classes).not.toContain('text-primary');
     });
 });

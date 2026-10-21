@@ -1,4 +1,4 @@
-import { CSSProperties } from 'styled-components';
+import type { CSSProperties } from 'react';
 
 import {
     darkenColor,
@@ -16,7 +16,7 @@ import {
     SocialButtonTheme,
     Theme,
     ThemeOptions,
-} from '@/types/styled';
+} from '@/types/theme';
 
 const white = '#fff';
 // const gray100 = '#f8f9fa';

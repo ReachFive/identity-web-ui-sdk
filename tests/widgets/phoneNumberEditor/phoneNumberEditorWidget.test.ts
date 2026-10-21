@@ -5,7 +5,6 @@ import { beforeEach, describe, expect, jest, test } from '@jest/globals';
 import '@testing-library/jest-dom/jest-globals';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import 'jest-styled-components';
 
 import { type Client } from '@reachfive/identity-core';
 
@@ -135,20 +134,19 @@ describe('DOM testing', () => {
             const verificationCodeInput = screen.getByRole('textbox', { name: 'verificationCode' });
             expect(verificationCodeInput).toBeInTheDocument();
 
-            await userEvent.clear(verificationCodeInput);
-            await userEvent.type(verificationCodeInput, '123456');
+            expect(screen.getByRole('button', { name: 'send' })).toBeInTheDocument();
 
-            const submitCodeBtn = screen.getByRole('button', { name: 'send' });
-            expect(submitCodeBtn).toBeInTheDocument();
+            // the last digit submits the code by itself
+            await user.type(verificationCodeInput, '123456');
 
-            await user.click(submitCodeBtn);
-
-            expect(verifyPhoneNumber).toBeCalledWith(
-                expect.objectContaining({
-                    accessToken: 'azerty',
-                    phoneNumber: '+33123456789',
-                    verificationCode: '123456',
-                })
+            await waitFor(() =>
+                expect(verifyPhoneNumber).toBeCalledWith(
+                    expect.objectContaining({
+                        accessToken: 'azerty',
+                        phoneNumber: '+33123456789',
+                        verificationCode: '123456',
+                    })
+                )
             );
 
             expect(onSuccess).toBeCalledWith(
@@ -158,6 +156,27 @@ describe('DOM testing', () => {
                 })
             );
             expect(onError).not.toBeCalled();
+        });
+
+        test('sends a new code to the same phone number', async () => {
+            const user = userEvent.setup();
+
+            updatePhoneNumber.mockResolvedValue();
+
+            await generateComponent({});
+
+            await user.type(screen.getByRole('textbox', { name: 'phoneNumber' }), '+33123456789');
+            await user.click(screen.getByRole('button', { name: 'send' }));
+
+            await user.click(
+                await screen.findByRole('button', { name: 'verificationCode.resend.count' })
+            );
+
+            expect(updatePhoneNumber).toBeCalledTimes(2);
+            expect(updatePhoneNumber).toHaveBeenLastCalledWith({
+                accessToken: 'azerty',
+                phoneNumber: '+33123456789',
+            });
         });
 
         test('country select hidden by default', async () => {

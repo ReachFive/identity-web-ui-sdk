@@ -402,3 +402,73 @@ describe('resolveErrorFieldPath', () => {
         expect(resolveErrorFieldPath('phone_number', [field('email')])).toBeUndefined();
     });
 });
+
+describe('getFieldDefinition("verificationCode")', () => {
+    function verificationCodeField(
+        definition: Partial<FieldDefinition<'otp'>> = {},
+        config: Config = buildConfig()
+    ) {
+        const field = { key: 'verification_code', ...definition };
+        return getFieldDefinition(field as Optional<FieldDefinition, 'type'>, config, {}) as
+            | FieldDefinition<'otp'>
+            | undefined;
+    }
+
+    async function validateCode(value: string, field = verificationCodeField()) {
+        if (!field?.validation) throw new Error('expected a validation function on the code');
+
+        const schema = field.validation({
+            client: {} as Client,
+            config: buildConfig(),
+            definition: field,
+            i18n: ((key: string) => key) as unknown as TFunction,
+            watch: (() => undefined) as unknown as UseFormWatch<FieldValues>,
+        });
+        const result = await schema.safeParseAsync(value);
+        return result.success ? [] : result.error.issues.map(issue => issue.message);
+    }
+
+    it('is an otp field', () => {
+        expect(verificationCodeField()).toMatchObject({
+            key: 'verificationCode',
+            label: 'verificationCode',
+            type: 'otp',
+        });
+    });
+
+    it('takes its length from the remote settings', () => {
+        expect(verificationCodeField({}, buildConfig({ verificationCodeLength: 8 }))).toMatchObject(
+            { length: 8 }
+        );
+    });
+
+    it('falls back to 6 digits when the remote settings do not tell', () => {
+        expect(verificationCodeField()).toMatchObject({ length: 6 });
+    });
+
+    it('lets the widget impose its own length', () => {
+        expect(
+            verificationCodeField({ length: 6 }, buildConfig({ verificationCodeLength: 9 }))
+        ).toMatchObject({ length: 6 });
+    });
+
+    it('accepts a code of the expected length', async () => {
+        await expect(validateCode('123456')).resolves.toEqual([]);
+    });
+
+    it.each([
+        ['too short', '12345'],
+        ['too long', '1234567'],
+        ['not only digits', '12a456'],
+    ])('rejects a code %s', async (_, value) => {
+        await expect(validateCode(value)).resolves.toEqual(['validation.verificationCode']);
+    });
+
+    it('checks the length the field was resolved with', async () => {
+        const field = verificationCodeField({}, buildConfig({ verificationCodeLength: 8 }));
+        await expect(validateCode('12345678', field)).resolves.toEqual([]);
+        await expect(validateCode('123456', field)).resolves.toEqual([
+            'validation.verificationCode',
+        ]);
+    });
+});
