@@ -4,7 +4,7 @@ import { createRoot } from 'react-dom/client';
 import type { AuthOptions, Client as CoreClient, SessionInfo } from '@reachfive/identity-core';
 
 import {
-    type CaptchaOptions,
+    type CaptchaInput,
     type DeprecatedCaptchaConf,
     resolveCaptchaOptions,
 } from '@/components/captcha';
@@ -76,6 +76,9 @@ export interface WidgetProps {
 type WidgetOptions<P> = Prettify<P & WidgetProps & I18nProps & ThemeProps>;
 
 type Widget<P> = (props: P, ctx: Context) => Promise<React.JSX.Element>;
+
+/** Options `_showWidget` consumes itself: the widget never receives them. */
+type StrippedKeys = keyof WidgetProps | keyof DeprecatedCaptchaConf;
 
 // type WidgetOptions<W> = PropsWithWidgetProps<W extends Widget<infer P> ? P : never[0]>
 
@@ -150,8 +153,8 @@ export class UiClient {
         this._showWidget(trustedDevicesWidget, options);
     }
 
-    async _showWidget<P extends WidgetProps>(
-        widget: Widget<Omit<P, keyof WidgetProps>>,
+    async _showWidget<P extends WidgetProps & CaptchaInput>(
+        widget: Widget<Omit<P, StrippedKeys>>,
         options: P = {} as P,
         props = {}
     ) {
@@ -167,7 +170,7 @@ export class UiClient {
             captchaFoxSiteKey: _d4,
             captchaFoxMode: _d5,
             ...rest
-        } = options as P & DeprecatedCaptchaConf & { captcha?: CaptchaOptions };
+        } = options;
 
         const captcha = resolveCaptchaOptions(options);
         const widgetProps = { ...rest, ...(captcha ? { captcha } : {}) };
@@ -191,7 +194,7 @@ export class UiClient {
                 countryCode: options.countryCode ?? this.config.countryCode ?? 'FR',
             };
 
-            const WidgetComponent = await widget(widgetProps as Omit<P, keyof WidgetProps>, {
+            const WidgetComponent = await widget(widgetProps, {
                 ...props,
                 config,
                 apiClient: this.core,
@@ -214,8 +217,8 @@ export class UiClient {
         }
     }
 
-    _ssoCheck<P extends WidgetProps>(
-        widget: Widget<Omit<P, keyof WidgetProps>>,
+    _ssoCheck<P extends WidgetProps & CaptchaInput>(
+        widget: Widget<Omit<P, StrippedKeys>>,
         options: P & { auth?: AuthOptions }
     ) {
         const { auth = {} } = options;

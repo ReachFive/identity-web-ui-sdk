@@ -41,7 +41,10 @@ export type CaptchaOptions =
  */
 export type DeprecatedCaptchaConf = Partial<ReCaptchaConf & CaptchaFoxConf>;
 
-export type WithCaptchaProps<T> = T & { captcha?: CaptchaOptions } & DeprecatedCaptchaConf;
+/** Every captcha option a widget accepts, current and deprecated. */
+export type CaptchaInput = { captcha?: CaptchaOptions } & DeprecatedCaptchaConf;
+
+export type WithCaptchaProps<T> = T & CaptchaInput;
 
 export type WithCaptchaToken<T> = T & { captchaToken?: string };
 
@@ -58,9 +61,7 @@ type CaptchaProps = Omit<
  * the rest of the code. The order of the branches below is the precedence integrations already
  * rely on, and has to stay that way for as long as these options are honoured.
  */
-export function resolveCaptchaOptions(
-    options: DeprecatedCaptchaConf & { captcha?: CaptchaOptions }
-): CaptchaOptions | undefined {
+export function resolveCaptchaOptions(options: CaptchaInput): CaptchaOptions | undefined {
     if (options.captcha) return options.captcha;
 
     if (options.recaptcha_enabled && options.recaptcha_site_key) {
