@@ -32,17 +32,22 @@ export function importGoogleRecaptchaEnterpriseScript(
     siteKey: string,
     mode?: ReCaptchaEnterpriseMode
 ): Promise<void> {
+    // `enterprise.js` defines `ready` when it runs and fetches what defines `execute` and `render`
+    // separately, so `ready` is the mark of a script that has run. This is only read when a tag
+    // with the same `src` is already in the page, and `whenReady` waits for the rest.
+    const isLoaded = () => typeof window.grecaptcha?.enterprise?.ready === 'function';
+
     if (mode === 'checkbox') {
         return importCaptchaScript({
             src: 'https://www.google.com/recaptcha/enterprise.js?render=explicit',
-            isLoaded: () => typeof window.grecaptcha?.enterprise?.render === 'function',
+            isLoaded,
             whenReady,
         });
     }
 
     return importCaptchaScript({
         src: `https://www.google.com/recaptcha/enterprise.js?render=${encodeURIComponent(siteKey)}`,
-        isLoaded: () => typeof window.grecaptcha?.enterprise?.execute === 'function',
+        isLoaded,
         whenReady,
     });
 }
