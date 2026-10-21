@@ -22,6 +22,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Social button metrics and colors are exposed as `--r5-social-button-*` CSS variables, so stylesheet overrides
   now reach social buttons too. Metrics follow the button ones and colors fall back to each provider's, unless
   `theme.socialButton` sets them
+- `@reachfive/identity-core` upgraded to 1.42.0, whose `verifyPasswordless` no longer overrides the
+  original authorization request's parameters in an orchestrated flow (hosted pages).
 
 ### Removed
 
