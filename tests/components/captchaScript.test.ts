@@ -79,6 +79,41 @@ describe('importCaptchaScript', () => {
 
             expect(whenReady).toHaveBeenCalledTimes(1);
         });
+
+        test('gives up when its events are already over and no runtime appears', async () => {
+            jest.useFakeTimers();
+            const src = 'https://example.test/stale.js';
+            existingTag(src);
+
+            const loading = importCaptchaScript({
+                src,
+                isLoaded: () => false,
+                whenReady: () => Promise.resolve(),
+            });
+            const settled = expect(loading).rejects.toThrow(`Timed out waiting for ${src}`);
+
+            jest.advanceTimersByTime(10_000);
+            await settled;
+            jest.useRealTimers();
+        });
+
+        test('resolves on the last look when the runtime turned up without an event', async () => {
+            jest.useFakeTimers();
+            const src = 'https://example.test/late.js';
+            existingTag(src);
+
+            let ready = false;
+            const loading = importCaptchaScript({
+                src,
+                isLoaded: () => ready,
+                whenReady: () => Promise.resolve(),
+            });
+
+            ready = true;
+            jest.advanceTimersByTime(10_000);
+            await expect(loading).resolves.toBeUndefined();
+            jest.useRealTimers();
+        });
     });
 });
 

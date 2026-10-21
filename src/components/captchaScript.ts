@@ -13,6 +13,9 @@ type ScriptSettings = {
     whenReady: () => Promise<void>;
 };
 
+/** How long a tag this module did not inject is given to finish before the load is given up on. */
+const EXISTING_SCRIPT_TIMEOUT_MS = 10_000;
+
 function inject({ src, isLoaded }: ScriptSettings): Promise<void> {
     return new Promise((resolve, reject) => {
         const existing = document.querySelector<HTMLScriptElement>(`script[src="${src}"]`);
@@ -23,13 +26,27 @@ function inject({ src, isLoaded }: ScriptSettings): Promise<void> {
             if (isLoaded()) {
                 resolve();
             } else {
-                existing.addEventListener('load', () => resolve(), { once: true });
+                // Its events may both be over already, in which case nothing here is ever called.
+                const timeout = setTimeout(() => {
+                    if (isLoaded()) resolve();
+                    else reject(new Error(`Timed out waiting for ${src}`));
+                }, EXISTING_SCRIPT_TIMEOUT_MS);
+
+                existing.addEventListener(
+                    'load',
+                    () => {
+                        clearTimeout(timeout);
+                        resolve();
+                    },
+                    { once: true }
+                );
                 existing.addEventListener(
                     'error',
-                    () => reject(new Error(`Failed to load ${src}`)),
-                    {
-                        once: true,
-                    }
+                    () => {
+                        clearTimeout(timeout);
+                        reject(new Error(`Failed to load ${src}`));
+                    },
+                    { once: true }
                 );
             }
             return;
