@@ -3,7 +3,7 @@
  */
 import { afterEach, beforeEach, describe, expect, jest, test } from '@jest/globals';
 import '@testing-library/jest-dom/jest-globals';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import { createClient, type AuthOptions } from '@reachfive/identity-core';
@@ -148,8 +148,8 @@ describe('Orchestrated flow (Squash 05.01 - SDK-UI)', () => {
         return bodyOf(start[1]);
     };
 
-    const verifyRedirect = () => {
-        expect(assign).toHaveBeenCalledTimes(1);
+    const verifyRedirect = async () => {
+        await waitFor(() => expect(assign).toHaveBeenCalledTimes(1));
         const [path, query] = String(assign.mock.calls[0][0]).split('?');
         return { path, params: Object.fromEntries(new URLSearchParams(query)) };
     };
@@ -159,11 +159,15 @@ describe('Orchestrated flow (Squash 05.01 - SDK-UI)', () => {
         await user.click(screen.getByRole('button', { name: 'send' }));
     };
 
+    // The last digit submits the code by itself.
     const submitCode = async (user: ReturnType<typeof userEvent.setup>, code: string) => {
+        const verifications = requestsTo('/identity/v1/verify-auth-code').length;
         const input = screen.getByRole('textbox', { name: 'verificationCode' });
         await user.clear(input);
         await user.type(input, code);
-        await user.click(screen.getByRole('button', { name: 'send' }));
+        await waitFor(() =>
+            expect(requestsTo('/identity/v1/verify-auth-code')).toHaveLength(verifications + 1)
+        );
     };
 
     // 05.01.01, 05.01.02 and 05.01.03 differ only by the authorization request that opened the
@@ -197,7 +201,7 @@ describe('Orchestrated flow (Squash 05.01 - SDK-UI)', () => {
 
             expect(requestsTo('/identity/v1/verify-auth-code')).toHaveLength(1);
 
-            const redirect = verifyRedirect();
+            const redirect = await verifyRedirect();
             expect(redirect.path).toBe(`${BASE_URL}/identity/v1/passwordless/verify`);
             expect(redirect.params).toEqual({
                 auth_type: 'magic_link',
@@ -227,7 +231,7 @@ describe('Orchestrated flow (Squash 05.01 - SDK-UI)', () => {
 
         await submitCode(user, VALID_CODE);
 
-        const redirect = verifyRedirect();
+        const redirect = await verifyRedirect();
         expect(redirect.path).toBe(`${BASE_URL}/identity/v1/passwordless/verify`);
         expect(redirect.params).toEqual({
             auth_type: 'sms',
@@ -270,7 +274,7 @@ describe('Orchestrated flow (Squash 05.01 - SDK-UI)', () => {
         await submitCode(user, VALID_CODE);
 
         expect(requestsTo('/identity/v1/verify-auth-code')).toHaveLength(2);
-        expect(verifyRedirect().params).toEqual({
+        expect((await verifyRedirect()).params).toEqual({
             auth_type: 'magic_link',
             email: 'alice@reach5.co',
             verification_code: VALID_CODE,
