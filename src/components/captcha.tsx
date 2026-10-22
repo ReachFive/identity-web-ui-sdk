@@ -3,6 +3,9 @@ import React from 'react';
 import { CaptchaFoxInstance, CaptchaFox as CaptchaFoxWidget } from '@captchafox/react';
 import type { WidgetDisplayMode } from '@captchafox/types';
 
+// Aliased: present module also exports a `CaptchaProvider` component.
+import type { CaptchaProvider as ApiCaptchaProvider } from '@reachfive/identity-core';
+
 import { logError } from '@/helpers/logger';
 import { cn } from '@/lib/utils';
 
@@ -46,7 +49,10 @@ export type CaptchaInput = { captcha?: CaptchaOptions } & DeprecatedCaptchaConf;
 
 export type WithCaptchaProps<T> = T & CaptchaInput;
 
-export type WithCaptchaToken<T> = T & { captchaToken?: string };
+export type WithCaptchaToken<T> = T & {
+    captchaToken?: string;
+    captchaProvider?: ApiCaptchaProvider;
+};
 
 type CaptchaProps = Omit<
     React.ComponentPropsWithoutRef<typeof CaptchaFoxWidget>,
