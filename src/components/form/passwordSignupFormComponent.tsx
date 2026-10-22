@@ -6,7 +6,6 @@ import { SignupParams } from '@reachfive/identity-core/es/main/oAuthClient';
 import { CaptchaProvider, WithCaptchaProps, type WithCaptchaToken } from '@/components/captcha';
 import { Form } from '@/components/form/form';
 import { UserAgreement } from '@/components/form/UserAgreement';
-import { extractCaptchaTokenFromData } from '@/components/reCaptcha';
 import { useReachfive } from '@/contexts/reachfive';
 import { snakeCaseProperties } from '@/helpers/transformObjectProperties';
 import { isEqual, isValued } from '@/helpers/utils';
@@ -87,10 +86,11 @@ export const PasswordSignupForm = ({
 
     const callback = useCallback(
         (data: WithCaptchaToken<SignupParams['data']>) => {
-            const captchaToken = extractCaptchaTokenFromData(data);
+            const { captchaToken, captchaProvider, ...profile } = data;
             return coreClient.signup({
                 captchaToken,
-                data: snakeCaseProperties(data) as SignupParams['data'],
+                captchaProvider,
+                data: snakeCaseProperties(profile) as SignupParams['data'],
                 auth,
                 redirectUrl,
                 returnToAfterEmailConfirmation,

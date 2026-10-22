@@ -104,9 +104,3 @@ export function importGoogleRecaptchaScript(siteKey: string): Promise<void> {
         whenReady: () => new Promise(resolve => window.grecaptcha.ready(() => resolve())),
     });
 }
-
-export function extractCaptchaTokenFromData<T extends { captchaToken?: string }>(data: T) {
-    const token = data.captchaToken;
-    delete data.captchaToken;
-    return token;
-}
