@@ -61,13 +61,13 @@ export const VerificationCodeView = ({
     };
 
     // the same request as the one which sent the first code, `passwordlessView` included
-    const handleResend = async ({ captchaToken }: { captchaToken?: string }) => {
+    const handleResend = async ({ captchaToken, captchaProvider }: WithCaptchaToken<{}>) => {
         const identifier =
             state.authType === 'sms'
                 ? { authType: 'sms' as const, phoneNumber: state.phoneNumber }
                 : { authType: 'magic_link' as const, email: state.email };
         await coreClient
-            .startPasswordless({ ...identifier, captchaToken }, auth)
+            .startPasswordless({ ...identifier, captchaToken, captchaProvider }, auth)
             .catch((error: unknown) => {
                 onError(error);
                 throw error;

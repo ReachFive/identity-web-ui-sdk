@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 
-import { CaptchaProvider, WithCaptchaProps } from '@/components/captcha.tsx';
+import { CaptchaProvider, WithCaptchaProps, type WithCaptchaToken } from '@/components/captcha.tsx';
 import { Form } from '@/components/form/form.tsx';
 import { Alternative, Heading, Info, Intro, Link } from '@/components/miscComponent';
 import { Button } from '@/components/ui/button';
@@ -274,11 +274,12 @@ export const ForgotPasswordCodeView = ({
     );
 
     // the same request as the one which sent the first code, from `ForgotPasswordPhoneNumberView`
-    const handleResend = ({ captchaToken }: { captchaToken?: string }) =>
+    const handleResend = ({ captchaToken, captchaProvider }: WithCaptchaToken<{}>) =>
         coreClient
             .requestPasswordReset({
                 phoneNumber,
                 captchaToken,
+                captchaProvider,
                 redirectUrl,
                 returnToAfterPasswordReset,
             })
