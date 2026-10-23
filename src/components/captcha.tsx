@@ -169,7 +169,8 @@ function CaptchaFoxField({
 }
 
 type ReCaptchaEnterpriseCheckboxProps = ReCaptchaEnterpriseCheckboxSettings & {
-    widgetIdRef: React.MutableRefObject<number | null>;
+    /** Receives the widget id once rendered, and `null` once unmounted. */
+    onWidgetIdChange: (widgetId: number | null) => void;
     className?: string;
     onError?: CaptchaWidgetProps['onError'];
 };
@@ -181,7 +182,7 @@ type ReCaptchaEnterpriseCheckboxProps = ReCaptchaEnterpriseCheckboxSettings & {
 function ReCaptchaEnterpriseCheckbox({
     siteKey,
     operation,
-    widgetIdRef,
+    onWidgetIdChange,
     className,
     onError,
 }: ReCaptchaEnterpriseCheckboxProps) {
@@ -196,9 +197,7 @@ function ReCaptchaEnterpriseCheckbox({
 
         renderedRef.current = true;
         void ReCaptchaEnterprise.renderCheckbox(container, { siteKey, operation })
-            .then(widgetId => {
-                widgetIdRef.current = widgetId;
-            })
+            .then(onWidgetIdChange)
             .catch((cause: unknown) => {
                 logError(
                     cause instanceof Error
@@ -209,7 +208,7 @@ function ReCaptchaEnterpriseCheckbox({
                 // Reported to the user by the handler if they go on to submit.
                 renderedRef.current = false;
             });
-    }, [siteKey, operation, widgetIdRef, onError]);
+    }, [siteKey, operation, onWidgetIdChange, onError]);
 
     return <div ref={containerRef} className={cn('mb-4', className)} />;
 }
@@ -247,6 +246,9 @@ function CaptchaProvider({ children, operation, captcha }: React.PropsWithChildr
             case 'recaptcha_enterprise': {
                 if (captcha.mode === 'checkbox') {
                     const { siteKey } = captcha;
+                    const setWidgetId = (widgetId: number | null) => {
+                        recaptchaWidgetIdRef.current = widgetId;
+                    };
                     return {
                         handler: (data, callback) =>
                             ReCaptchaEnterprise.handleCheckbox(
@@ -258,7 +260,7 @@ function CaptchaProvider({ children, operation, captcha }: React.PropsWithChildr
                             <ReCaptchaEnterpriseCheckbox
                                 siteKey={siteKey}
                                 operation={operation}
-                                widgetIdRef={recaptchaWidgetIdRef}
+                                onWidgetIdChange={setWidgetId}
                                 className={className}
                                 onError={onError}
                             />
