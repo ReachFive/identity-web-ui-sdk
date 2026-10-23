@@ -105,9 +105,15 @@ export function resolveCaptchaOptions(options: CaptchaInput): CaptchaOptions | u
     return undefined;
 }
 
+/** What a form may pass to the widget a provider puts in it. */
+export type CaptchaWidgetProps = {
+    className?: string;
+    onError?: (cause?: string | Error) => void;
+};
+
 export type CaptchaValues = {
     handler: <T, R>(data: T, callback: (data: T) => Promise<R>) => Promise<R>;
-    Captcha?: React.ComponentType<Pick<CaptchaProps, 'className' | 'onError'>>;
+    Captcha?: React.ComponentType<CaptchaWidgetProps>;
 };
 
 const defaultHandler = <T, R>(data: T, callback: (data: T) => Promise<R>) => callback(data);
@@ -165,7 +171,7 @@ function CaptchaFoxField({
 type ReCaptchaEnterpriseCheckboxProps = ReCaptchaEnterpriseCheckboxSettings & {
     widgetIdRef: React.MutableRefObject<number | null>;
     className?: string;
-    onError?: CaptchaProps['onError'];
+    onError?: CaptchaWidgetProps['onError'];
 };
 
 /**
