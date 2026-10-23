@@ -3,6 +3,11 @@ import { createRoot } from 'react-dom/client';
 
 import type { AuthOptions, Client as CoreClient, SessionInfo } from '@reachfive/identity-core';
 
+import {
+    type CaptchaInput,
+    type DeprecatedCaptchaConf,
+    resolveCaptchaOptions,
+} from '@/components/captcha';
 import { ErrorText } from '@/components/miscComponent';
 import { type I18nMessages } from '@/contexts/i18n';
 import { UserError } from '@/helpers/errors';
@@ -71,6 +76,9 @@ export interface WidgetProps {
 type WidgetOptions<P> = Prettify<P & WidgetProps & I18nProps & ThemeProps>;
 
 type Widget<P> = (props: P, ctx: Context) => Promise<React.JSX.Element>;
+
+/** Options `_showWidget` consumes itself: the widget never receives them. */
+type StrippedKeys = keyof WidgetProps | keyof DeprecatedCaptchaConf;
 
 // type WidgetOptions<W> = PropsWithWidgetProps<W extends Widget<infer P> ? P : never[0]>
 
@@ -145,12 +153,27 @@ export class UiClient {
         this._showWidget(trustedDevicesWidget, options);
     }
 
-    async _showWidget<P extends WidgetProps>(
-        widget: Widget<Omit<P, keyof WidgetProps>>,
+    async _showWidget<P extends WidgetProps & CaptchaInput>(
+        widget: Widget<Omit<P, StrippedKeys>>,
         options: P = {} as P,
         props = {}
     ) {
-        const { container: _c1, countryCode: _c2, onReady: _c3, ...widgetProps } = options;
+        const {
+            container: _c1,
+            countryCode: _c2,
+            onReady: _c3,
+            // The deprecated per-provider options are translated once, here at the public boundary,
+            // so the deprecated fields don't leak all over.
+            recaptcha_enabled: _d1,
+            recaptcha_site_key: _d2,
+            captchaFoxEnabled: _d3,
+            captchaFoxSiteKey: _d4,
+            captchaFoxMode: _d5,
+            ...rest
+        } = options;
+
+        const captcha = resolveCaptchaOptions(options);
+        const widgetProps = { ...rest, ...(captcha ? { captcha } : {}) };
 
         const container =
             typeof options.container === 'string'
@@ -194,8 +217,8 @@ export class UiClient {
         }
     }
 
-    _ssoCheck<P extends WidgetProps>(
-        widget: Widget<Omit<P, keyof WidgetProps>>,
+    _ssoCheck<P extends WidgetProps & CaptchaInput>(
+        widget: Widget<Omit<P, StrippedKeys>>,
         options: P & { auth?: AuthOptions }
     ) {
         const { auth = {} } = options;

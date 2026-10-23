@@ -1,4 +1,4 @@
-import React, { useLayoutEffect } from 'react';
+import React from 'react';
 
 import type { AuthOptions } from '@reachfive/identity-core';
 import { LoginWithPasswordParams } from '@reachfive/identity-core/es/main/oAuthClient';
@@ -6,7 +6,6 @@ import { LoginWithPasswordParams } from '@reachfive/identity-core/es/main/oAuthC
 import { CaptchaProvider, WithCaptchaProps, WithCaptchaToken } from '@/components/captcha';
 import { Form } from '@/components/form/form';
 import { Alternative, Heading, Link } from '@/components/miscComponent';
-import { importGoogleRecaptchaScript } from '@/components/reCaptcha';
 import { useI18n } from '@/contexts/i18n';
 import { useReachfive } from '@/contexts/reachfive';
 import { useRouting } from '@/contexts/routing';
@@ -52,11 +51,7 @@ export const LoginWithPasswordView = ({
     allowAccountRecovery = false,
     auth,
     canShowPassword,
-    recaptcha_enabled = false,
-    recaptcha_site_key,
-    captchaFoxEnabled = false,
-    captchaFoxSiteKey,
-    captchaFoxMode,
+    captcha,
     showLabels,
     showRememberMe,
     allowTrustDevice,
@@ -68,10 +63,6 @@ export const LoginWithPasswordView = ({
     const coreClient = useReachfive();
     const { goTo, params } = useRouting();
     const { username } = params as LoginWithPasswordViewState;
-
-    useLayoutEffect(() => {
-        importGoogleRecaptchaScript(recaptcha_site_key);
-    }, [recaptcha_site_key]);
 
     const callback = (data: WithCaptchaToken<LoginWithPasswordFormData>) => {
         const specializedIdentifierData = specializeIdentifierData<LoginWithPasswordParams>(data);
@@ -133,14 +124,7 @@ export const LoginWithPasswordView = ({
     }
 
     return (
-        <CaptchaProvider
-            recaptcha_enabled={recaptcha_enabled}
-            recaptcha_site_key={recaptcha_site_key}
-            captchaFoxEnabled={captchaFoxEnabled}
-            captchaFoxSiteKey={captchaFoxSiteKey}
-            captchaFoxMode={captchaFoxMode}
-            action="login"
-        >
+        <CaptchaProvider captcha={captcha} operation="login">
             <Heading>{i18n('login.title')}</Heading>
             <Form
                 fields={fields}

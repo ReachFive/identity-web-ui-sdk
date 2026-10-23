@@ -12,6 +12,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - An `otp` field type, which takes the code one digit per slot, and a predefined `verification_code` field built on it, whose length follows the tenant's `verificationCodeLength` (6 digits when not configured).
 - `data-slot="widget-*"` attributes on the widget content, headings, texts, separators and links, as styling hooks
   for integrators
+- `captcha`, a single widget option naming the provider and its settings, replacing the per-provider
+  flags.
 
 ### Changed
 
@@ -20,6 +22,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Social button metrics and colors are exposed as `--r5-social-button-*` CSS variables, so stylesheet overrides
   now reach social buttons too. Metrics follow the button ones and colors fall back to each provider's, unless
   `theme.socialButton` sets them
+- `@reachfive/identity-core` upgraded to 1.42.0, whose `verifyPasswordless` no longer overrides the
+  original authorization request's parameters in an orchestrated flow (hosted pages).
 
 ### Removed
 
@@ -33,10 +37,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - The injected CSS no longer styles the host page: Tailwind's `--tw-*` defaults on `*` / `::backdrop` and the
   base rules for `a`, `b`, `strong`, `small`, `sub` and `sup` are now scoped to `.r5-widget`
 
-### Changed
+### Deprecated
 
-- `@reachfive/identity-core` upgraded to 1.42.0, whose `verifyPasswordless` no longer overrides the
-  original authorization request's parameters in an orchestrated flow (hosted pages).
+- `recaptcha_enabled`, `recaptcha_site_key`, `captchaFoxEnabled`, `captchaFoxSiteKey` and
+  `captchaFoxMode`. Use `captcha: { provider, siteKey, … }` instead; the old options are still
+  honoured and are translated internally
 
 ## [2.1.0] - 2026-09-16
 
