@@ -2,7 +2,7 @@ import React from 'react';
 
 import { AuthOptions } from '@reachfive/identity-core';
 
-import { CaptchaProvider, WithCaptchaProps, type WithCaptchaToken } from '@/components/captcha';
+import { WithCaptchaProps, type WithCaptchaToken } from '@/components/captcha';
 import { Form } from '@/components/form/form';
 import { Info } from '@/components/miscComponent';
 import { useI18n } from '@/contexts/i18n';
@@ -77,30 +77,28 @@ export const VerificationCodeView = ({
 
     return (
         <div>
-            <CaptchaProvider captcha={captcha} operation={`verify_passwordless_${state.authType}`}>
-                <Info>
-                    {state.authType === 'sms'
-                        ? i18n('passwordless.sms.verification.intro')
-                        : i18n('passwordless.email.verification.intro')}
-                </Info>
-                <Form
-                    fields={[
-                        {
-                            key: 'verification_code',
-                            onResend: handleResend,
-                            resendCaptcha: {
-                                captcha,
-                                operation:
-                                    state.authType === 'sms'
-                                        ? 'passwordless_phone'
-                                        : 'passwordless_email',
-                            },
+            <Info>
+                {state.authType === 'sms'
+                    ? i18n('passwordless.sms.verification.intro')
+                    : i18n('passwordless.email.verification.intro')}
+            </Info>
+            <Form
+                fields={[
+                    {
+                        key: 'verification_code',
+                        onResend: handleResend,
+                        resendCaptcha: {
+                            captcha,
+                            operation:
+                                state.authType === 'sms'
+                                    ? 'passwordless_phone'
+                                    : 'passwordless_email',
                         },
-                    ]}
-                    handler={handleSubmit}
-                    onError={onError}
-                />
-            </CaptchaProvider>
+                    },
+                ]}
+                handler={handleSubmit}
+                onError={onError}
+            />
         </div>
     );
 };
