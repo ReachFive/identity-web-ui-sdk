@@ -176,8 +176,8 @@ type ReCaptchaEnterpriseCheckboxProps = ReCaptchaEnterpriseCheckboxSettings & {
 };
 
 /**
- * The "I'm not a robot" checkbox. It is rendered once into its own element and lives as long as
- * the form does; the id it is given is what the submit handler reads the token from.
+ * The "I'm not a robot" checkbox. The id it reports is what the submit handler reads the token
+ * from.
  */
 function ReCaptchaEnterpriseCheckbox({
     siteKey,
@@ -187,17 +187,20 @@ function ReCaptchaEnterpriseCheckbox({
     onError,
 }: ReCaptchaEnterpriseCheckboxProps) {
     const containerRef = React.useRef<HTMLDivElement>(null);
-    const renderedRef = React.useRef(false);
 
     React.useEffect(() => {
         const container = containerRef.current;
-        // reCAPTCHA refuses a second render into the same element, and the effect runs twice under
-        // StrictMode.
-        if (!container || renderedRef.current) return;
+        if (!container) return;
 
-        renderedRef.current = true;
-        void ReCaptchaEnterprise.renderCheckbox(container, { siteKey, operation })
-            .then(onWidgetIdChange)
+        // reCAPTCHA draws into a given element once, so each run gets an element of its own.
+        const target = document.createElement('div');
+        container.appendChild(target);
+        let cancelled = false;
+
+        void ReCaptchaEnterprise.renderCheckbox(target, { siteKey, operation })
+            .then(widgetId => {
+                if (!cancelled) onWidgetIdChange(widgetId);
+            })
             .catch((cause: unknown) => {
                 logError(
                     cause instanceof Error
@@ -206,8 +209,13 @@ function ReCaptchaEnterpriseCheckbox({
                 );
                 onError?.(cause instanceof Error ? cause : String(cause));
                 // Reported to the user by the handler if they go on to submit.
-                renderedRef.current = false;
             });
+
+        return () => {
+            cancelled = true;
+            target.remove();
+            onWidgetIdChange(null);
+        };
     }, [siteKey, operation, onWidgetIdChange, onError]);
 
     return <div ref={containerRef} className={cn('mb-4', className)} />;
