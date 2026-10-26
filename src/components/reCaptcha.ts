@@ -20,8 +20,6 @@ export type RecaptchaAction =
     | 'update_email'
     | 'passwordless_email'
     | 'passwordless_phone'
-    | 'verify_passwordless_sms'
-    | 'verify_passwordless_magic_link'
     | 'account_recovery'
     | 'password_reset_requested';
 
@@ -53,8 +51,6 @@ const actions: Record<CaptchaOperation, RecaptchaAction> = {
     update_email: 'update_email',
     passwordless_email: 'passwordless_email',
     passwordless_phone: 'passwordless_phone',
-    verify_passwordless_sms: 'verify_passwordless_sms',
-    verify_passwordless_magic_link: 'verify_passwordless_magic_link',
     account_recovery: 'account_recovery',
     forgot_password: 'password_reset_requested',
 };

@@ -12,7 +12,5 @@ export type CaptchaOperation =
     | 'update_email'
     | 'passwordless_email'
     | 'passwordless_phone'
-    | 'verify_passwordless_sms'
-    | 'verify_passwordless_magic_link'
     | 'account_recovery'
     | 'forgot_password';

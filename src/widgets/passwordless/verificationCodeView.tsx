@@ -47,7 +47,7 @@ export const VerificationCodeView = ({
     const i18n = useI18n();
     const { params } = useRouting();
     const state = params as VerificationCodeViewState;
-    const handleSubmit = async (data: WithCaptchaToken<VerificationCodeFormData>) => {
+    const handleSubmit = async (data: VerificationCodeFormData) => {
         const result = await coreClient.verifyPasswordless({
             ...state,
             ...data,
