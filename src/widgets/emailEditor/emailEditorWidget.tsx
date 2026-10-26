@@ -1,9 +1,8 @@
-import React, { ComponentProps, useLayoutEffect } from 'react';
+import React, { ComponentProps } from 'react';
 
 import { CaptchaProvider, WithCaptchaProps, type WithCaptchaToken } from '@/components/captcha';
 import { Form } from '@/components/form/form';
 import { Info, Intro } from '@/components/miscComponent';
-import { importGoogleRecaptchaScript } from '@/components/reCaptcha';
 import { createMultiViewWidget } from '@/components/widget/widget';
 import { useI18n } from '@/contexts/i18n';
 import { useReachfive } from '@/contexts/reachfive';
@@ -40,11 +39,7 @@ interface MainViewProps {
 
 const MainView = ({
     accessToken,
-    recaptcha_enabled = false,
-    recaptcha_site_key,
-    captchaFoxEnabled = false,
-    captchaFoxMode = 'hidden',
-    captchaFoxSiteKey,
+    captcha,
     redirectUrl,
     showLabels = false,
     onError = (() => {}) as OnError,
@@ -53,10 +48,6 @@ const MainView = ({
     const coreClient = useReachfive();
     const i18n = useI18n();
     const { goTo } = useRouting();
-
-    useLayoutEffect(() => {
-        importGoogleRecaptchaScript(recaptcha_site_key);
-    }, [recaptcha_site_key]);
 
     const callback = (data: WithCaptchaToken<EmailFormData>) => {
         return coreClient.updateEmail({ ...data, accessToken, redirectUrl });
@@ -69,14 +60,7 @@ const MainView = ({
 
     return (
         <div>
-            <CaptchaProvider
-                recaptcha_enabled={recaptcha_enabled}
-                recaptcha_site_key={recaptcha_site_key}
-                captchaFoxEnabled={captchaFoxEnabled}
-                captchaFoxSiteKey={captchaFoxSiteKey}
-                captchaFoxMode={captchaFoxMode}
-                action="update_email"
-            >
+            <CaptchaProvider captcha={captcha} operation="update_email">
                 <Intro>{i18n('emailEditor.intro')}</Intro>
                 <Form
                     fields={['email']}

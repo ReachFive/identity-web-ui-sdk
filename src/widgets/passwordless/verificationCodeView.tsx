@@ -2,7 +2,7 @@ import React from 'react';
 
 import { AuthOptions } from '@reachfive/identity-core';
 
-import { CaptchaProvider, WithCaptchaProps, type WithCaptchaToken } from '@/components/captcha';
+import { WithCaptchaProps, type WithCaptchaToken } from '@/components/captcha';
 import { Form } from '@/components/form/form';
 import { Info } from '@/components/miscComponent';
 import { useI18n } from '@/contexts/i18n';
@@ -39,11 +39,7 @@ export type VerificationCodeFormData = { verificationCode: string };
 
 export const VerificationCodeView = ({
     auth,
-    recaptcha_enabled = false,
-    recaptcha_site_key,
-    captchaFoxEnabled = false,
-    captchaFoxMode = 'hidden',
-    captchaFoxSiteKey,
+    captcha,
     onSuccess = (() => {}) as OnSuccess,
     onError = (() => {}) as OnError,
 }: WithCaptchaProps<VerificationCodeViewProps>) => {
@@ -51,15 +47,7 @@ export const VerificationCodeView = ({
     const i18n = useI18n();
     const { params } = useRouting();
     const state = params as VerificationCodeViewState;
-    const captcha = {
-        recaptcha_enabled,
-        recaptcha_site_key,
-        captchaFoxEnabled,
-        captchaFoxSiteKey,
-        captchaFoxMode,
-    };
-
-    const handleSubmit = async (data: WithCaptchaToken<VerificationCodeFormData>) => {
+    const handleSubmit = async (data: VerificationCodeFormData) => {
         const result = await coreClient.verifyPasswordless({
             ...state,
             ...data,
@@ -73,13 +61,13 @@ export const VerificationCodeView = ({
     };
 
     // the same request as the one which sent the first code, `passwordlessView` included
-    const handleResend = async ({ captchaToken }: { captchaToken?: string }) => {
+    const handleResend = async ({ captchaToken, captchaProvider }: WithCaptchaToken<{}>) => {
         const identifier =
             state.authType === 'sms'
                 ? { authType: 'sms' as const, phoneNumber: state.phoneNumber }
                 : { authType: 'magic_link' as const, email: state.email };
         await coreClient
-            .startPasswordless({ ...identifier, captchaToken }, auth)
+            .startPasswordless({ ...identifier, captchaToken, captchaProvider }, auth)
             .catch((error: unknown) => {
                 onError(error);
                 throw error;
@@ -89,30 +77,28 @@ export const VerificationCodeView = ({
 
     return (
         <div>
-            <CaptchaProvider {...captcha} action={`verify_passwordless_${state.authType}`}>
-                <Info>
-                    {state.authType === 'sms'
-                        ? i18n('passwordless.sms.verification.intro')
-                        : i18n('passwordless.email.verification.intro')}
-                </Info>
-                <Form
-                    fields={[
-                        {
-                            key: 'verification_code',
-                            onResend: handleResend,
-                            resendCaptcha: {
-                                ...captcha,
-                                action:
-                                    state.authType === 'sms'
-                                        ? 'passwordless_phone'
-                                        : 'passwordless_email',
-                            },
+            <Info>
+                {state.authType === 'sms'
+                    ? i18n('passwordless.sms.verification.intro')
+                    : i18n('passwordless.email.verification.intro')}
+            </Info>
+            <Form
+                fields={[
+                    {
+                        key: 'verification_code',
+                        onResend: handleResend,
+                        resendCaptcha: {
+                            captcha,
+                            operation:
+                                state.authType === 'sms'
+                                    ? 'passwordless_phone'
+                                    : 'passwordless_email',
                         },
-                    ]}
-                    handler={handleSubmit}
-                    onError={onError}
-                />
-            </CaptchaProvider>
+                    },
+                ]}
+                handler={handleSubmit}
+                onError={onError}
+            />
         </div>
     );
 };
