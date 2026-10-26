@@ -188,6 +188,8 @@ function ReCaptchaEnterpriseCheckbox({
     onError,
 }: ReCaptchaEnterpriseCheckboxProps) {
     const containerRef = React.useRef<HTMLDivElement>(null);
+    const onErrorRef = React.useRef(onError);
+    onErrorRef.current = onError;
 
     React.useEffect(() => {
         const container = containerRef.current;
@@ -208,7 +210,7 @@ function ReCaptchaEnterpriseCheckbox({
                         ? cause
                         : 'reCAPTCHA Enterprise checkbox failed to render'
                 );
-                onError?.(cause instanceof Error ? cause : String(cause));
+                onErrorRef.current?.(cause instanceof Error ? cause : String(cause));
                 // Reported to the user by the handler if they go on to submit.
             });
 
@@ -217,7 +219,7 @@ function ReCaptchaEnterpriseCheckbox({
             target.remove();
             onWidgetIdChange(null);
         };
-    }, [siteKey, operation, onWidgetIdChange, onError]);
+    }, [siteKey, operation, onWidgetIdChange]);
 
     return <div ref={containerRef} className={cn('mb-4', className)} />;
 }
