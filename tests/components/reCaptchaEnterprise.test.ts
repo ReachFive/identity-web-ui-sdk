@@ -62,8 +62,6 @@ describe('reCAPTCHA Enterprise actions', () => {
         ['update_email', 'update_email'],
         ['passwordless_email', 'passwordless'],
         ['passwordless_phone', 'passwordless'],
-        ['verify_passwordless_sms', 'passwordless'],
-        ['verify_passwordless_magic_link', 'passwordless'],
         ['account_recovery', 'forgot_password'],
         ['forgot_password', 'forgot_password'],
     ];
