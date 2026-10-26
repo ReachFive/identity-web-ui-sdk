@@ -45,9 +45,10 @@ export type CaptchaOptions =
 export type DeprecatedCaptchaConf = Partial<ReCaptchaConf & CaptchaFoxConf>;
 
 /** Every captcha option a widget accepts, current and deprecated. */
+/** Every captcha option `createClient` accepts, current and deprecated. */
 export type CaptchaInput = { captcha?: CaptchaOptions } & DeprecatedCaptchaConf;
 
-export type WithCaptchaProps<T> = T & CaptchaInput;
+export type WithCaptchaProps<T> = T & { captcha?: CaptchaOptions };
 
 export type WithCaptchaToken<T> = T & {
     captchaToken?: string;

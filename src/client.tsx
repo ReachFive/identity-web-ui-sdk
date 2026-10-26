@@ -73,7 +73,12 @@ export interface WidgetProps {
 }
 
 // type PropsWithWidgetProps<P> = P & WidgetProps
-type WidgetOptions<P> = Prettify<P & WidgetProps & I18nProps & ThemeProps>;
+/** The deprecated captcha options are only accepted by widgets that take `captcha`. */
+type WithDeprecatedCaptcha<P> = 'captcha' extends keyof P ? DeprecatedCaptchaConf : unknown;
+
+type WidgetOptions<P> = Prettify<
+    P & WithDeprecatedCaptcha<P> & WidgetProps & I18nProps & ThemeProps
+>;
 
 type Widget<P> = (props: P, ctx: Context) => Promise<React.JSX.Element>;
 
