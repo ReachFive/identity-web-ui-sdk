@@ -1,4 +1,4 @@
-import React, { HTMLAttributes, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 import { LucideIcon, Mail, Smartphone, Trash2 } from 'lucide-react';
 
@@ -17,7 +17,14 @@ import {
     MfaCredentialIcon,
     MfaCredentialItem,
     MfaCredentialsEmpty,
+    inertProps,
 } from '@/widgets/mfa/mfaCredentialItem';
+import {
+    EmailOrPhoneCredential,
+    isEmailOrPhoneCredential,
+    isPasskeyCredential,
+} from '@/widgets/mfa/passkeyCredential';
+import { PasskeysRow } from '@/widgets/mfa/passkeysRow';
 import { useMfaCredentials, useRemoveMfaCredential } from '@/widgets/mfa/queries';
 
 interface CredentialDetails {
@@ -26,7 +33,7 @@ interface CredentialDetails {
     Icon: LucideIcon;
 }
 
-const credentialDetails = (credential: MFA.Credential): CredentialDetails => {
+const credentialDetails = (credential: EmailOrPhoneCredential): CredentialDetails => {
     switch (credential.type) {
         case 'email':
             return { identifier: credential.email, labelKey: 'mfaList.email', Icon: Mail };
@@ -73,21 +80,14 @@ const useCredentialsListedEvent = (credentials: MFA.Credential[], onSuccess: OnS
     }, [credentials, onSuccess]);
 };
 
-const credentialKey = (credential: MFA.Credential) =>
+const credentialKey = (credential: EmailOrPhoneCredential) =>
     `${credential.type}-${credential.friendlyName}`;
 
-const removeLabelKey = (credential: MFA.Credential) =>
+const removeLabelKey = (credential: EmailOrPhoneCredential) =>
     credential.type === 'email' ? 'mfa.remove.email' : 'mfa.remove.phoneNumber';
 
-/**
- * React 18 has no typing for `inert` and only forwards it as a string; an empty string sets it.
- * To revisit with React 19, where `inert` becomes a boolean prop.
- */
-const inertProps = (inert: boolean): HTMLAttributes<HTMLElement> =>
-    (inert ? { inert: '' } : {}) as HTMLAttributes<HTMLElement>;
-
 interface MfaCredentialRowProps {
-    credential: MFA.Credential;
+    credential: EmailOrPhoneCredential;
     removable: boolean;
     /** This row shows its removal confirmation. */
     confirming: boolean;
@@ -193,9 +193,13 @@ export const MfaList = ({
 
     useCredentialsListedEvent(credentials, onSuccess);
 
+    const emailAndPhoneCredentials = credentials.filter(isEmailOrPhoneCredential);
+    const passkeyCount = credentials.filter(isPasskeyCredential).length;
+    const confirmationOpen = confirmingKey !== null;
+
     const closeConfirmation = () => setConfirmingKey(null);
 
-    const remove = (credential: MFA.Credential) => {
+    const remove = (credential: EmailOrPhoneCredential) => {
         if (removal.isPending) return;
         // Settled covers both outcomes: on success the row is already gone from the refetched
         // list, on error it returns to normal with the factor kept.
@@ -208,7 +212,7 @@ export const MfaList = ({
 
     return (
         <ItemGroup className="gap-2">
-            {credentials.map(credential => {
+            {emailAndPhoneCredentials.map(credential => {
                 const key = credentialKey(credential);
                 return (
                     <MfaCredentialRow
@@ -216,7 +220,7 @@ export const MfaList = ({
                         credential={credential}
                         removable={showRemoveMfaCredential}
                         confirming={confirmingKey === key}
-                        dimmed={confirmingKey !== null && confirmingKey !== key}
+                        dimmed={confirmationOpen && confirmingKey !== key}
                         pending={removal.isPending}
                         onRequestRemoval={() => setConfirmingKey(key)}
                         onCancel={closeConfirmation}
@@ -224,6 +228,7 @@ export const MfaList = ({
                     />
                 );
             })}
+            {passkeyCount > 0 && <PasskeysRow count={passkeyCount} dimmed={confirmationOpen} />}
         </ItemGroup>
     );
 };

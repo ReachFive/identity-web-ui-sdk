@@ -1,4 +1,4 @@
-import React, { ComponentProps, ReactNode } from 'react';
+import React, { ComponentProps, HTMLAttributes, ReactNode } from 'react';
 
 import { Shield } from 'lucide-react';
 
@@ -7,6 +7,13 @@ import { useI18n } from '@/contexts/i18n';
 import { cn } from '@/lib/utils';
 
 const rowClassName = 'items-start gap-3 rounded px-3.5 py-3';
+
+/**
+ * Makes a row inert. React 18 has no typing for `inert` and only forwards it as a string; an
+ * empty string sets it. To revisit with React 19, where `inert` becomes a boolean prop.
+ */
+export const inertProps = (inert: boolean): HTMLAttributes<HTMLElement> =>
+    (inert ? { inert: '' } : {}) as HTMLAttributes<HTMLElement>;
 
 /**
  * One row of the MFA credentials list. Carries the public `widget-mfa-credential` slot.
