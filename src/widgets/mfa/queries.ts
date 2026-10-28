@@ -34,6 +34,19 @@ export const useMfaCredentials = (accessToken: string) => {
     });
 };
 
+/**
+ * Refetches the MFA credentials list after a change. A failed refetch keeps the cached list on
+ * screen (a suspense query only throws without data) and is reported once through `onError`.
+ */
+export const useInvalidateMfaCredentials = (onError: OnError) => {
+    const queryClient = useQueryClient();
+
+    return () =>
+        queryClient
+            .invalidateQueries({ queryKey: mfaKeys.credentials() }, { throwOnError: true })
+            .catch(onError);
+};
+
 const removeMfaCredential = (
     client: CoreClient,
     accessToken: string,
@@ -67,16 +80,14 @@ export const useRemoveMfaCredential = ({
     onError,
 }: UseRemoveMfaCredentialOptions) => {
     const client = useReachfive();
-    const queryClient = useQueryClient();
+    const invalidateCredentials = useInvalidateMfaCredentials(onError);
 
     return useMutation({
         mutationFn: (credential: EmailOrPhoneCredential) =>
             removeMfaCredential(client, accessToken, credential),
         onSuccess: event => {
             onSuccess(event);
-            return queryClient
-                .invalidateQueries({ queryKey: mfaKeys.credentials() }, { throwOnError: true })
-                .catch(onError);
+            return invalidateCredentials();
         },
         onError: error => onError(error),
     });

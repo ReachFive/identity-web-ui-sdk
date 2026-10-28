@@ -25,7 +25,9 @@ import {
     isPasskeyCredential,
 } from '@/widgets/mfa/passkeyCredential';
 import { PasskeysRow } from '@/widgets/mfa/passkeysRow';
+import { PasskeysView } from '@/widgets/mfa/passkeysView';
 import { useMfaCredentials, useRemoveMfaCredential } from '@/widgets/mfa/queries';
+import { useMfaView } from '@/widgets/mfa/useMfaView';
 
 interface CredentialDetails {
     identifier: string;
@@ -190,6 +192,7 @@ export const MfaList = ({
         data: { credentials },
     } = useMfaCredentials(accessToken);
     const removal = useRemoveMfaCredential({ accessToken, onSuccess, onError });
+    const { view, openPasskeys, backToList, passkeysRowRef } = useMfaView();
 
     useCredentialsListedEvent(credentials, onSuccess);
 
@@ -205,6 +208,17 @@ export const MfaList = ({
         // list, on error it returns to normal with the factor kept.
         removal.mutate(credential, { onSettled: closeConfirmation });
     };
+
+    if (view === 'passkeys') {
+        return (
+            <PasskeysView
+                accessToken={accessToken}
+                onBack={backToList}
+                onSuccess={onSuccess}
+                onError={onError}
+            />
+        );
+    }
 
     if (credentials.length === 0) {
         return <MfaCredentialsEmpty />;
@@ -228,7 +242,14 @@ export const MfaList = ({
                     />
                 );
             })}
-            {passkeyCount > 0 && <PasskeysRow count={passkeyCount} dimmed={confirmationOpen} />}
+            {passkeyCount > 0 && (
+                <PasskeysRow
+                    ref={passkeysRowRef}
+                    count={passkeyCount}
+                    dimmed={confirmationOpen}
+                    onOpen={openPasskeys}
+                />
+            )}
         </ItemGroup>
     );
 };

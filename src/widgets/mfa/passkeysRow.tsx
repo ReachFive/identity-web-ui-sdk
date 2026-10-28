@@ -1,4 +1,4 @@
-import React, { useId } from 'react';
+import React, { forwardRef, useId } from 'react';
 
 import { ChevronRight, Fingerprint } from 'lucide-react';
 
@@ -23,7 +23,10 @@ interface PasskeysRowProps {
  * The single row grouping the user's passkeys. It opens the Passkeys view, so it is a button
  * (inside a list item, since a button cannot be one) and has no remove action.
  */
-export function PasskeysRow({ count, onOpen, dimmed = false }: PasskeysRowProps) {
+export const PasskeysRow = forwardRef<HTMLButtonElement, PasskeysRowProps>(function PasskeysRow(
+    { count, onOpen, dimmed = false },
+    ref
+) {
     const i18n = useI18n();
     const descriptionId = useId();
 
@@ -35,6 +38,7 @@ export function PasskeysRow({ count, onOpen, dimmed = false }: PasskeysRowProps)
                 className="w-full items-center text-left hover:bg-accent"
             >
                 <button
+                    ref={ref}
                     type="button"
                     aria-label={i18n('mfaList.managePasskeys')}
                     aria-describedby={descriptionId}
@@ -59,4 +63,4 @@ export function PasskeysRow({ count, onOpen, dimmed = false }: PasskeysRowProps)
             </MfaCredentialItem>
         </div>
     );
-}
+});
