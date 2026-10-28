@@ -3,11 +3,12 @@
  */
 import { beforeEach, describe, expect, jest, test } from '@jest/globals';
 import '@testing-library/jest-dom/jest-globals';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 
 import type { Client, MFA } from '@reachfive/identity-core';
 
-import { AppError } from '../../../src/helpers/errors';
+import { AppError, UserError } from '../../../src/helpers/errors';
 import mfaListWidget from '../../../src/widgets/mfa/mfaListWidget';
 
 import type { I18nMessages } from '../../../src/contexts/i18n';
@@ -45,153 +46,121 @@ const defaultConfig: Config = {
 
 const defaultI18n: I18nMessages = {};
 
-describe('Snapshot', () => {
-    const generateSnapshot =
-        (
-            options: Partial<Parameters<typeof mfaListWidget>[0]>,
-            config: Partial<Config> = {},
-            credentials: (MFA.EmailCredential | MFA.PhoneCredential)[]
-        ) =>
-        async () => {
-            // @ts-expect-error partial Client
-            const apiClient: Client = {
-                listMfaCredentials: jest
-                    .fn<Client['listMfaCredentials']>()
-                    .mockResolvedValue({ credentials }),
-            };
+const phoneCredential: MFA.PhoneCredential = {
+    type: 'sms',
+    phoneNumber: '33612345678',
+    friendlyName: '33612345678',
+    createdAt: '2022-09-21',
+};
 
-            const widget = await mfaListWidget(
-                { accessToken: 'azerty', ...options },
-                { apiClient, config: { ...defaultConfig, ...config }, defaultI18n }
-            );
+const emailCredential: MFA.EmailCredential = {
+    type: 'email',
+    email: 'root@reach5.co',
+    friendlyName: 'identifier',
+    createdAt: '2022-09-21',
+};
 
-            const { container, rerender } = render(widget);
+const listMfaCredentials = jest.fn<Client['listMfaCredentials']>();
+const removeMfaEmail = jest.fn<Client['removeMfaEmail']>();
+const removeMfaPhoneNumber = jest.fn<Client['removeMfaPhoneNumber']>();
 
-            await waitFor(() => expect(apiClient.listMfaCredentials).toHaveBeenCalled());
+const onError = jest.fn<OnError>();
+const onSuccess = jest.fn<OnSuccess>();
 
-            rerender(widget);
+// @ts-expect-error partial Client
+const apiClient: Client = { listMfaCredentials, removeMfaEmail, removeMfaPhoneNumber };
 
-            expect(container).toMatchSnapshot();
-        };
-
-    test('empty', generateSnapshot({}, undefined, []));
-
-    test(
-        'basic',
-        generateSnapshot({}, undefined, [
-            {
-                type: 'sms',
-                phoneNumber: '33612345678',
-                friendlyName: '33612345678',
-                createdAt: '2022-09-21',
-            },
-            {
-                type: 'email',
-                email: 'root@reach5.co',
-                friendlyName: 'identifier',
-                createdAt: '2022-09-21',
-            },
-        ])
+const renderWidget = async (options: Partial<Parameters<typeof mfaListWidget>[0]> = {}) => {
+    const widget = await mfaListWidget(
+        { accessToken: 'azerty', onError, onSuccess, ...options },
+        { apiClient, config: defaultConfig, defaultI18n }
     );
+    return render(widget);
+};
+
+const successEvents = (name: string) =>
+    onSuccess.mock.calls.filter(([event]) => event.name === name);
+
+beforeEach(() => {
+    jest.resetAllMocks();
+});
+
+describe('Snapshot', () => {
+    test('empty', async () => {
+        listMfaCredentials.mockResolvedValue({ credentials: [] });
+        const { container } = await renderWidget();
+
+        await screen.findByText('mfaList.noCredentials');
+
+        expect(container).toMatchSnapshot();
+    });
+
+    test('basic', async () => {
+        listMfaCredentials.mockResolvedValue({ credentials: [phoneCredential, emailCredential] });
+        const { container } = await renderWidget();
+
+        await screen.findByText('root@reach5.co');
+
+        expect(container).toMatchSnapshot();
+    });
 });
 
 describe('DOM testing', () => {
-    const listMfaCredentials = jest.fn<Client['listMfaCredentials']>();
-
-    const onError = jest.fn<OnError>();
-    const onSuccess = jest.fn<OnSuccess>();
-
-    beforeEach(() => {
-        onError.mockClear();
-        onSuccess.mockClear();
-        listMfaCredentials.mockClear();
-    });
-
-    const generateComponent = async (
-        options: Partial<Parameters<typeof mfaListWidget>[0]>,
-        config: Partial<Config> = {}
-    ) => {
-        // @ts-expect-error partial Client
-        const apiClient: Client = {
-            listMfaCredentials,
-        };
-        const result = await mfaListWidget(
-            { accessToken: 'azerty', onError, onSuccess, ...options },
-            { apiClient, config: { ...defaultConfig, ...config }, defaultI18n }
-        );
-        const view = render(result);
-        // Flush any state update triggered by a useEffect-initiated async call on
-        // mount (e.g. listMfaCredentials), so it lands inside this act() boundary
-        // instead of racing with the test's first await on this function.
-        await waitFor(() => {});
-        return view;
-    };
-
     describe('mfaCredentials', () => {
+        test('loads the credentials only once the widget is rendered', async () => {
+            listMfaCredentials.mockResolvedValue({ credentials: [] });
+            const widget = await mfaListWidget(
+                { accessToken: 'azerty', onError, onSuccess },
+                { apiClient, config: defaultConfig, defaultI18n }
+            );
+
+            expect(listMfaCredentials).not.toHaveBeenCalled();
+
+            render(widget);
+
+            await screen.findByText('mfaList.noCredentials');
+            expect(listMfaCredentials).toHaveBeenCalledWith('azerty');
+        });
+
         test('no credentials', async () => {
             listMfaCredentials.mockResolvedValue({ credentials: [] });
-            await generateComponent({}, defaultConfig);
+            await renderWidget();
 
-            const noCredentials = screen.queryByText('mfaList.noCredentials');
-            expect(noCredentials).toBeInTheDocument();
+            expect(await screen.findByText('mfaList.noCredentials')).toBeInTheDocument();
+            expect(screen.queryAllByTestId('credential')).toHaveLength(0);
 
-            const credential = screen.queryAllByTestId('credential');
-            expect(credential).toHaveLength(0);
-
-            expect(onSuccess).toBeCalledWith(
-                expect.objectContaining({
-                    credentials: expect.arrayContaining([]),
-                    name: 'mfa_credentials_listed',
-                })
-            );
-            expect(onError).not.toBeCalled();
+            expect(onSuccess).toHaveBeenCalledTimes(1);
+            expect(onSuccess).toHaveBeenCalledWith({
+                name: 'mfa_credentials_listed',
+                credentials: [],
+            });
+            expect(onError).not.toHaveBeenCalled();
         });
 
         test('with credentials', async () => {
             listMfaCredentials.mockResolvedValue({
-                credentials: [
-                    {
-                        type: 'sms',
-                        phoneNumber: '33612345678',
-                        friendlyName: '33612345678',
-                        createdAt: '2022-09-21',
-                    } as MFA.PhoneCredential,
-                    {
-                        type: 'email',
-                        email: 'root@reach5.co',
-                        friendlyName: 'identifier',
-                        createdAt: '2022-09-21',
-                    } as MFA.EmailCredential,
-                ],
+                credentials: [phoneCredential, emailCredential],
             });
-            await generateComponent({}, defaultConfig);
+            await renderWidget();
 
-            const noCredentials = screen.queryByText('mfaList.noCredentials');
-            expect(noCredentials).not.toBeInTheDocument();
+            await screen.findByText('root@reach5.co');
+            expect(screen.queryByText('mfaList.noCredentials')).not.toBeInTheDocument();
+            expect(screen.queryAllByTestId('credential')).toHaveLength(2);
 
-            const credential = screen.queryAllByTestId('credential');
-            expect(credential).toHaveLength(2);
+            expect(onSuccess).toHaveBeenCalledTimes(1);
+            expect(onSuccess).toHaveBeenCalledWith({
+                name: 'mfa_credentials_listed',
+                credentials: [phoneCredential, emailCredential],
+            });
+            expect(onError).not.toHaveBeenCalled();
+        });
 
-            expect(onSuccess).toBeCalledWith(
-                expect.objectContaining({
-                    credentials: expect.arrayContaining([
-                        {
-                            type: 'sms',
-                            phoneNumber: '33612345678',
-                            friendlyName: '33612345678',
-                            createdAt: '2022-09-21',
-                        },
-                        {
-                            type: 'email',
-                            email: 'root@reach5.co',
-                            friendlyName: 'identifier',
-                            createdAt: '2022-09-21',
-                        },
-                    ]),
-                    name: 'mfa_credentials_listed',
-                })
-            );
-            expect(onError).not.toBeCalled();
+        test('shows a spinner while the credentials are loading', async () => {
+            listMfaCredentials.mockReturnValue(new Promise(() => {}));
+            const { container } = await renderWidget();
+
+            expect(container.querySelector('.animate-spin')).toBeInTheDocument();
+            expect(screen.queryByText('mfaList.noCredentials')).not.toBeInTheDocument();
         });
 
         test('api error', async () => {
@@ -201,9 +170,137 @@ describe('DOM testing', () => {
                 errorDescription: 'Unexpected error',
             };
             listMfaCredentials.mockRejectedValue(error);
-            await expect(generateComponent({}, defaultConfig)).rejects.toEqual(error);
-            expect(onSuccess).not.toBeCalled();
-            expect(onError).toBeCalledWith(error);
+            await renderWidget();
+
+            expect(await screen.findByText('Unexpected error')).toBeInTheDocument();
+            expect(onError).toHaveBeenCalledTimes(1);
+            expect(onError).toHaveBeenCalledWith(error);
+            expect(onSuccess).not.toHaveBeenCalled();
+        });
+
+        test('api error shows the user error message', async () => {
+            listMfaCredentials.mockRejectedValue(new UserError('Access denied'));
+            await renderWidget();
+
+            expect(await screen.findByText('Access denied')).toBeInTheDocument();
+            expect(onError).toHaveBeenCalledTimes(1);
+        });
+    });
+
+    describe('removal', () => {
+        test('no remove button unless enabled', async () => {
+            listMfaCredentials.mockResolvedValue({ credentials: [emailCredential] });
+            await renderWidget();
+
+            await screen.findByText('root@reach5.co');
+            expect(
+                screen.queryByRole('button', { name: 'mfa.remove.email' })
+            ).not.toBeInTheDocument();
+        });
+
+        test('removes the email after confirmation', async () => {
+            const user = userEvent.setup();
+            listMfaCredentials
+                .mockResolvedValueOnce({ credentials: [emailCredential] })
+                .mockResolvedValueOnce({ credentials: [] });
+            removeMfaEmail.mockResolvedValue(undefined);
+            await renderWidget({ showRemoveMfaCredential: true });
+
+            await user.click(await screen.findByRole('button', { name: 'mfa.remove.email' }));
+            const dialog = await screen.findByRole('alertdialog');
+            expect(within(dialog).getByText('mfa.remove.email')).toBeInTheDocument();
+            await user.click(within(dialog).getByRole('button', { name: 'confirmation.yes' }));
+
+            await waitFor(() =>
+                expect(screen.queryByText('root@reach5.co')).not.toBeInTheDocument()
+            );
+            expect(await screen.findByText('mfaList.noCredentials')).toBeInTheDocument();
+            expect(removeMfaEmail).toHaveBeenCalledWith({ accessToken: 'azerty' });
+            expect(successEvents('mfa_email_deleted')).toHaveLength(1);
+            expect(successEvents('mfa_credentials_listed')).toHaveLength(1);
+            expect(onError).not.toHaveBeenCalled();
+        });
+
+        test('removes the phone number after confirmation', async () => {
+            const user = userEvent.setup();
+            listMfaCredentials
+                .mockResolvedValueOnce({ credentials: [phoneCredential] })
+                .mockResolvedValueOnce({ credentials: [] });
+            removeMfaPhoneNumber.mockResolvedValue(undefined);
+            await renderWidget({ showRemoveMfaCredential: true });
+
+            await user.click(await screen.findByRole('button', { name: 'mfa.remove.phoneNumber' }));
+            const dialog = await screen.findByRole('alertdialog');
+            await user.click(within(dialog).getByRole('button', { name: 'confirmation.yes' }));
+
+            await waitFor(() => expect(screen.queryAllByText('33612345678')).toHaveLength(0));
+            expect(await screen.findByText('mfaList.noCredentials')).toBeInTheDocument();
+            expect(removeMfaPhoneNumber).toHaveBeenCalledWith({
+                accessToken: 'azerty',
+                phoneNumber: '33612345678',
+            });
+            expect(successEvents('mfa_phone_number_deleted')).toHaveLength(1);
+            expect(successEvents('mfa_credentials_listed')).toHaveLength(1);
+            expect(onError).not.toHaveBeenCalled();
+        });
+
+        test('cancelling keeps the credential', async () => {
+            const user = userEvent.setup();
+            listMfaCredentials.mockResolvedValue({ credentials: [emailCredential] });
+            await renderWidget({ showRemoveMfaCredential: true });
+
+            await user.click(await screen.findByRole('button', { name: 'mfa.remove.email' }));
+            const dialog = await screen.findByRole('alertdialog');
+            await user.click(within(dialog).getByRole('button', { name: 'confirmation.cancel' }));
+
+            await waitFor(() => expect(screen.queryByRole('alertdialog')).not.toBeInTheDocument());
+            expect(removeMfaEmail).not.toHaveBeenCalled();
+            expect(screen.getByText('root@reach5.co')).toBeInTheDocument();
+        });
+
+        test('a failed removal keeps the credential and calls onError once', async () => {
+            const user = userEvent.setup();
+            const error: AppError = {
+                errorId: '1',
+                error: 'forbidden',
+                errorDescription: 'Forbidden',
+            };
+            listMfaCredentials.mockResolvedValue({ credentials: [emailCredential] });
+            removeMfaEmail.mockRejectedValue(error);
+            await renderWidget({ showRemoveMfaCredential: true });
+
+            await user.click(await screen.findByRole('button', { name: 'mfa.remove.email' }));
+            const dialog = await screen.findByRole('alertdialog');
+            await user.click(within(dialog).getByRole('button', { name: 'confirmation.yes' }));
+
+            await waitFor(() => expect(onError).toHaveBeenCalledTimes(1));
+            expect(onError).toHaveBeenCalledWith(error);
+            expect(successEvents('mfa_email_deleted')).toHaveLength(0);
+            expect(listMfaCredentials).toHaveBeenCalledTimes(1);
+            expect(await screen.findByText('root@reach5.co')).toBeInTheDocument();
+        });
+
+        test('a failed refresh after removal keeps the list and calls onError once', async () => {
+            const user = userEvent.setup();
+            const error: AppError = {
+                errorId: '2',
+                error: 'unexpected_error',
+                errorDescription: 'Unexpected error',
+            };
+            listMfaCredentials
+                .mockResolvedValueOnce({ credentials: [emailCredential] })
+                .mockRejectedValueOnce(error);
+            removeMfaEmail.mockResolvedValue(undefined);
+            await renderWidget({ showRemoveMfaCredential: true });
+
+            await user.click(await screen.findByRole('button', { name: 'mfa.remove.email' }));
+            const dialog = await screen.findByRole('alertdialog');
+            await user.click(within(dialog).getByRole('button', { name: 'confirmation.yes' }));
+
+            await waitFor(() => expect(onError).toHaveBeenCalledTimes(1));
+            expect(onError).toHaveBeenCalledWith(error);
+            expect(successEvents('mfa_email_deleted')).toHaveLength(1);
+            expect(await screen.findByText('root@reach5.co')).toBeInTheDocument();
         });
     });
 });

@@ -43,3 +43,11 @@ export class UserError extends Error {
         return new UserError(appError.errorUserMsg ?? appError.errorDescription ?? appError.error);
     }
 }
+
+/**
+ * The message shown in place of a widget that cannot be displayed. An `Error` (a `UserError`
+ * included) speaks for itself; anything else, an API error object included, stays generic.
+ */
+export function widgetErrorMessage(error: unknown): string {
+    return error instanceof Error ? error.message : 'Unexpected error';
+}
