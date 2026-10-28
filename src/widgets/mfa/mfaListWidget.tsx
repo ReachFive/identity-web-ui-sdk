@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 
-import { LoaderCircle, Mail, MessageSquareMore, X } from 'lucide-react';
+import { Mail, MessageSquareMore, X } from 'lucide-react';
 
 import { MFA } from '@reachfive/identity-core';
 
@@ -25,17 +25,12 @@ import {
     ItemMedia,
     ItemTitle,
 } from '@/components/ui/item.tsx';
-import { createWidget } from '@/components/widget/widget';
+import { createQueryWidget, WidgetSpinner } from '@/components/widget/queryWidget';
 import { useConfig } from '@/contexts/config';
 import { useI18n } from '@/contexts/i18n';
-import { useReachfive } from '@/contexts/reachfive.tsx';
 import { dateFormat } from '@/helpers/utils.ts';
 import { OnError, OnSuccess } from '@/types';
-import {
-    type CredentialsProviderProps,
-    useCredentials,
-    withCredentials,
-} from '@/widgets/mfa/contexts/credentials.tsx';
+import { useMfaCredentials, useRemoveMfaCredential } from '@/widgets/mfa/queries';
 
 type CredentialIconProps = {
     type: MFA.CredentialsResponse['credentials'][number]['type'];
@@ -128,116 +123,95 @@ const DeleteButton = ({
     );
 };
 
-export const MfaList = withCredentials(
-    ({
-        accessToken,
-        showRemoveMfaCredential,
-        onError = (() => {}) as OnError,
-        onSuccess = (() => {}) as OnSuccess,
-    }: MfaListProps) => {
-        const [isOpen, setIsOpen] = React.useState(false);
-        const [loading, setLoading] = React.useState(false);
-        const [deleteConfirmationTitle, setDeleteConfirmationTitle] = React.useState('');
-        const i18n = useI18n();
-        const config = useConfig();
-        const client = useReachfive();
-        const { credentials, refresh } = useCredentials();
+const noop = () => {};
 
-        const refreshCredentials = async () => {
-            setLoading(true);
-            try {
-                await refresh();
-            } catch (error) {
-                onError(error);
-            } finally {
-                setLoading(false);
-            }
-        };
+/**
+ * Fires `mfa_credentials_listed` once, on the first successful load, and not on later refetches.
+ */
+const useCredentialsListedEvent = (credentials: MFA.Credential[], onSuccess: OnSuccess) => {
+    const listed = useRef(false);
 
-        const onDelete = (credential: MFA.Credential) => {
-            switch (credential.type) {
-                case 'sms':
-                    client
-                        .removeMfaPhoneNumber({
-                            accessToken,
-                            phoneNumber: credential.phoneNumber,
-                        })
-                        .then(() => {
-                            refreshCredentials();
-                            onSuccess({ name: 'mfa_phone_number_deleted' });
-                        })
-                        .catch(onError);
-                    break;
-                case 'email':
-                    client
-                        .removeMfaEmail({ accessToken })
-                        .then(() => {
-                            refreshCredentials();
-                            onSuccess({ name: 'mfa_email_deleted' });
-                        })
-                        .catch(onError);
-                    break;
-            }
-        };
+    useEffect(() => {
+        if (listed.current) return;
+        listed.current = true;
+        onSuccess({ name: 'mfa_credentials_listed', credentials });
+    }, [credentials, onSuccess]);
+};
 
-        if (loading) {
-            return <LoaderCircle className="animate-spin" />;
-        }
+export const MfaList = ({
+    accessToken,
+    showRemoveMfaCredential,
+    onError = noop as OnError,
+    onSuccess = noop as OnSuccess,
+}: MfaListProps) => {
+    const [isOpen, setIsOpen] = React.useState(false);
+    const [deleteConfirmationTitle, setDeleteConfirmationTitle] = React.useState('');
+    const i18n = useI18n();
+    const config = useConfig();
+    const {
+        data: { credentials },
+    } = useMfaCredentials(accessToken);
+    const removal = useRemoveMfaCredential({ accessToken, onSuccess, onError });
 
-        return (
-            <ItemGroup>
-                {credentials.length === 0 && (
-                    <Item>
-                        <ItemContent>
-                            <ItemTitle>{i18n('mfaList.noCredentials')}</ItemTitle>
-                        </ItemContent>
-                    </Item>
-                )}
-                {credentials.map((credential, _) => (
-                    <Item
-                        variant="outline"
-                        id={`credential-${credential.friendlyName}`}
-                        data-testid="credential"
-                        key={`credential-${credential.friendlyName}`}
-                        className={`${isOpen ? 'opacity-15' : ''}`}
-                    >
-                        <ItemMedia className="!self-center" variant="image">
-                            <CredentialIcon type={credential.type} />
-                        </ItemMedia>
-                        <ItemContent>
-                            <ItemTitle>{credential.friendlyName}</ItemTitle>
-                            <ItemDescription>
-                                {MFA.isEmailCredential(credential)
-                                    ? credential.email
-                                    : MFA.isPhoneCredential(credential)
-                                      ? credential.phoneNumber
-                                      : 'N/A'}
-                            </ItemDescription>
-                            <ItemDescription>
-                                <span>{i18n('mfaList.createdAt')}&nbsp;: </span>
-                                <time dateTime={credential.createdAt}>
-                                    {dateFormat(credential.createdAt, config.language)}
-                                </time>
-                            </ItemDescription>
-                        </ItemContent>
-                        {showRemoveMfaCredential && (
-                            <ItemActions>
-                                <DeleteButton
-                                    isOpen={isOpen}
-                                    setIsOpen={setIsOpen}
-                                    onDeleteCallback={onDelete}
-                                    deleteConfirmationTitle={deleteConfirmationTitle}
-                                    setDeleteConfirmationTitle={setDeleteConfirmationTitle}
-                                    credential={credential}
-                                />
-                            </ItemActions>
-                        )}
-                    </Item>
-                ))}
-            </ItemGroup>
-        );
+    useCredentialsListedEvent(credentials, onSuccess);
+
+    if (removal.isPending) {
+        return <WidgetSpinner />;
     }
-);
+
+    return (
+        <ItemGroup>
+            {credentials.length === 0 && (
+                <Item>
+                    <ItemContent>
+                        <ItemTitle>{i18n('mfaList.noCredentials')}</ItemTitle>
+                    </ItemContent>
+                </Item>
+            )}
+            {credentials.map((credential, _) => (
+                <Item
+                    variant="outline"
+                    id={`credential-${credential.friendlyName}`}
+                    data-testid="credential"
+                    key={`credential-${credential.friendlyName}`}
+                    className={`${isOpen ? 'opacity-15' : ''}`}
+                >
+                    <ItemMedia className="!self-center" variant="image">
+                        <CredentialIcon type={credential.type} />
+                    </ItemMedia>
+                    <ItemContent>
+                        <ItemTitle>{credential.friendlyName}</ItemTitle>
+                        <ItemDescription>
+                            {MFA.isEmailCredential(credential)
+                                ? credential.email
+                                : MFA.isPhoneCredential(credential)
+                                  ? credential.phoneNumber
+                                  : 'N/A'}
+                        </ItemDescription>
+                        <ItemDescription>
+                            <span>{i18n('mfaList.createdAt')}&nbsp;: </span>
+                            <time dateTime={credential.createdAt}>
+                                {dateFormat(credential.createdAt, config.language)}
+                            </time>
+                        </ItemDescription>
+                    </ItemContent>
+                    {showRemoveMfaCredential && (
+                        <ItemActions>
+                            <DeleteButton
+                                isOpen={isOpen}
+                                setIsOpen={setIsOpen}
+                                onDeleteCallback={removal.mutate}
+                                deleteConfirmationTitle={deleteConfirmationTitle}
+                                setDeleteConfirmationTitle={setDeleteConfirmationTitle}
+                                credential={credential}
+                            />
+                        </ItemActions>
+                    )}
+                </Item>
+            ))}
+        </ItemGroup>
+    );
+};
 
 export type MfaListWidgetProps = {
     /**
@@ -258,22 +232,6 @@ export type MfaListWidgetProps = {
     showRemoveMfaCredential?: boolean;
 };
 
-export default createWidget<MfaListWidgetProps, MfaListProps & CredentialsProviderProps>({
+export default createQueryWidget<MfaListWidgetProps>({
     component: MfaList,
-    prepare: async (options, { apiClient }) => {
-        try {
-            const { credentials } = await apiClient.listMfaCredentials(options.accessToken);
-            options.onSuccess?.({
-                name: 'mfa_credentials_listed',
-                credentials,
-            });
-            return {
-                ...options,
-                credentials,
-            };
-        } catch (error) {
-            options.onError?.(error);
-            throw error;
-        }
-    },
 });

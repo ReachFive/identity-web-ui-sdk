@@ -5,7 +5,7 @@ import type { AuthOptions, Client as CoreClient, SessionInfo } from '@reachfive/
 
 import { ErrorText } from '@/components/miscComponent';
 import { type I18nMessages } from '@/contexts/i18n';
-import { UserError } from '@/helpers/errors';
+import { UserError, widgetErrorMessage } from '@/helpers/errors';
 import { logError } from '@/helpers/logger';
 import { Config, Prettify } from '@/types';
 import accountRecoveryWidget, {
@@ -235,11 +235,7 @@ export class UiClient {
     }
 
     adaptError(error: unknown): string {
-        return error instanceof UserError
-            ? error.message
-            : error instanceof Error
-              ? error.message
-              : 'Unexpected error';
+        return widgetErrorMessage(error);
     }
 
     handleError(error: unknown): void {
