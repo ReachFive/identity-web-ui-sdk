@@ -5,12 +5,13 @@ import {
     type QueryKey,
 } from '@tanstack/react-query';
 
-import type { Client as CoreClient, MFA } from '@reachfive/identity-core';
+import type { Client as CoreClient } from '@reachfive/identity-core';
 
 import { useReachfive } from '@/contexts/reachfive';
 
 import type { OnError, OnSuccess } from '@/types';
 import type { SuccessEvent } from '@/types/events';
+import type { EmailOrPhoneCredential } from '@/widgets/mfa/passkeyCredential';
 
 /**
  * Query keys of the MFA resources, namespaced so they never collide with another widget's.
@@ -36,7 +37,7 @@ export const useMfaCredentials = (accessToken: string) => {
 const removeMfaCredential = (
     client: CoreClient,
     accessToken: string,
-    credential: MFA.Credential
+    credential: EmailOrPhoneCredential
 ): Promise<SuccessEvent> => {
     switch (credential.type) {
         case 'email':
@@ -69,7 +70,7 @@ export const useRemoveMfaCredential = ({
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: (credential: MFA.Credential) =>
+        mutationFn: (credential: EmailOrPhoneCredential) =>
             removeMfaCredential(client, accessToken, credential),
         onSuccess: event => {
             onSuccess(event);

@@ -13,6 +13,7 @@ import mfaListWidget from '../../../src/widgets/mfa/mfaListWidget';
 
 import type { I18nMessages } from '../../../src/contexts/i18n';
 import type { Config, OnError, OnSuccess } from '../../../src/types';
+import type { MfaCredential, PasskeyCredential } from '../../../src/widgets/mfa/passkeyCredential';
 
 const defaultConfig: Config = {
     clientId: 'local',
@@ -68,12 +69,18 @@ const emailCredential: MFA.EmailCredential = {
 const listMfaCredentials = jest.fn<Client['listMfaCredentials']>();
 const removeMfaEmail = jest.fn<Client['removeMfaEmail']>();
 const removeMfaPhoneNumber = jest.fn<Client['removeMfaPhoneNumber']>();
+const listWebAuthnDevices = jest.fn<Client['listWebAuthnDevices']>();
 
 const onError = jest.fn<OnError>();
 const onSuccess = jest.fn<OnSuccess>();
 
 // @ts-expect-error partial Client
-const apiClient: Client = { listMfaCredentials, removeMfaEmail, removeMfaPhoneNumber };
+const apiClient: Client = {
+    listMfaCredentials,
+    removeMfaEmail,
+    removeMfaPhoneNumber,
+    listWebAuthnDevices,
+};
 
 const renderWidget = async (options: Partial<Parameters<typeof mfaListWidget>[0]> = {}) => {
     const widget = await mfaListWidget(
@@ -424,4 +431,154 @@ describe('DOM testing', () => {
             expect(await screen.findByText('root@reach5.co')).toBeInTheDocument();
         });
     });
+});
+
+const passkeyCredential = (id: string): PasskeyCredential => ({
+    type: 'webauthn',
+    id,
+    friendlyName: `Passkey ${id}`,
+    createdAt: '2024-01-15',
+});
+
+/** Core 1.42.0 does not declare the `webauthn` credential yet (see passkeyCredential.ts). */
+const credentialsList = (...credentials: MfaCredential[]) =>
+    ({ credentials }) as Awaited<ReturnType<Client['listMfaCredentials']>>;
+
+const passkeyI18n: I18nMessages = {
+    ...defaultI18n,
+    'mfaList.passkeys': 'Passkeys',
+    'mfaList.passkeyCount_one': '{count} passkey',
+    'mfaList.passkeyCount_other': '{count} passkeys',
+    'mfaList.alsoUsedToLogIn': 'Also used to log in',
+    'mfaList.managePasskeys': 'Manage passkeys',
+};
+
+const renderWithMessages = async (messages: I18nMessages, language = defaultConfig.language) => {
+    const widget = await mfaListWidget(
+        { accessToken: 'azerty', onError, onSuccess },
+        { apiClient, config: { ...defaultConfig, language }, defaultI18n: messages }
+    );
+    return render(widget);
+};
+
+describe('i18n: the passkey count uses native plurals from the default messages', () => {
+    test('1 passkey uses the "_one" form', async () => {
+        listMfaCredentials.mockResolvedValue(credentialsList(passkeyCredential('a')));
+        await renderWithMessages(passkeyI18n);
+
+        expect(await screen.findByText('1 passkey · Also used to log in')).toBeInTheDocument();
+    });
+
+    test('2 passkeys use the "_other" form', async () => {
+        listMfaCredentials.mockResolvedValue(
+            credentialsList(passkeyCredential('a'), passkeyCredential('b'))
+        );
+        await renderWithMessages(passkeyI18n);
+
+        expect(await screen.findByText('2 passkeys · Also used to log in')).toBeInTheDocument();
+    });
+
+    test('the plural form follows the configured language, not the browser one', async () => {
+        listMfaCredentials.mockResolvedValue(
+            credentialsList(...['a', 'b', 'c', 'd', 'e'].map(passkeyCredential))
+        );
+        await renderWithMessages(
+            {
+                ...passkeyI18n,
+                'mfaList.passkeyCount_one': '{count} ключ',
+                'mfaList.passkeyCount_few': '{count} ключа',
+                'mfaList.passkeyCount_many': '{count} ключей',
+                'mfaList.passkeyCount_other': '{count} ключа (other)',
+            },
+            'ru'
+        );
+
+        expect(await screen.findByText('5 ключей · Also used to log in')).toBeInTheDocument();
+    });
+});
+
+describe('Criterion 1: a Passkeys row is shown if and only if the user has a passkey', () => {
+    test('with passkeys, a single Passkeys row comes after the email and phone number rows', async () => {
+        listMfaCredentials.mockResolvedValue(
+            credentialsList(
+                passkeyCredential('a'),
+                emailCredential,
+                passkeyCredential('b'),
+                phoneCredential
+            )
+        );
+        await renderWithMessages(passkeyI18n);
+
+        await screen.findByText('Passkeys');
+        const rows = screen.getAllByRole('listitem');
+        expect(rows).toHaveLength(3);
+        expect(within(rows[0]).getByText('root@reach5.co')).toBeInTheDocument();
+        expect(within(rows[1]).getByText('33612345678')).toBeInTheDocument();
+        expect(within(rows[2]).getByText('Passkeys')).toBeInTheDocument();
+        expect(within(rows[2]).getByText('2 passkeys · Also used to log in')).toBeInTheDocument();
+    });
+
+    test('without passkey, there is no Passkeys row', async () => {
+        listMfaCredentials.mockResolvedValue(credentialsList(emailCredential, phoneCredential));
+        await renderWithMessages(passkeyI18n);
+
+        await screen.findByText('root@reach5.co');
+        expect(screen.queryByText('Passkeys')).not.toBeInTheDocument();
+        expect(screen.queryByRole('button', { name: 'Manage passkeys' })).not.toBeInTheDocument();
+    });
+
+    test('with only passkeys, the Passkeys row is shown instead of the empty state', async () => {
+        listMfaCredentials.mockResolvedValue(credentialsList(passkeyCredential('a')));
+        await renderWithMessages(passkeyI18n);
+
+        expect(await screen.findAllByRole('listitem')).toHaveLength(1);
+        expect(screen.queryByText('No second factor yet')).not.toBeInTheDocument();
+    });
+
+    test('the count comes from the MFA credentials list, with no device call', async () => {
+        listMfaCredentials.mockResolvedValue(
+            credentialsList(passkeyCredential('a'), passkeyCredential('b'))
+        );
+        await renderWithMessages(passkeyI18n);
+
+        await screen.findByText('2 passkeys · Also used to log in');
+        expect(listMfaCredentials).toHaveBeenCalledTimes(1);
+        expect(listWebAuthnDevices).not.toHaveBeenCalled();
+    });
+
+    test('the row is a button announced as opening the passkeys view, with the count as description', async () => {
+        listMfaCredentials.mockResolvedValue(credentialsList(passkeyCredential('a')));
+        await renderWithMessages(passkeyI18n);
+
+        const button = await screen.findByRole('button', { name: 'Manage passkeys' });
+        expect(button).toHaveAccessibleDescription('1 passkey · Also used to log in');
+        expect(button).toHaveAttribute('data-slot', 'widget-mfa-credential');
+    });
+
+    test('the row shows the fingerprint icon in the success colour and a chevron, but no remove button', async () => {
+        listMfaCredentials.mockResolvedValue(credentialsList(passkeyCredential('a')));
+        const widget = await mfaListWidget(
+            { accessToken: 'azerty', onError, onSuccess, showRemoveMfaCredential: true },
+            { apiClient, config: defaultConfig, defaultI18n: passkeyI18n }
+        );
+        render(widget);
+
+        const button = await screen.findByRole('button', { name: 'Manage passkeys' });
+        const icons = button.querySelectorAll('svg');
+        expect(icons[0]).toHaveClass('lucide-fingerprint');
+        expect(icons[0].parentElement).toHaveClass('text-success', 'bg-success/10');
+        expect(icons[icons.length - 1]).toHaveClass('lucide-chevron-right');
+        expect(screen.getAllByRole('button')).toEqual([button]);
+    });
+});
+
+test('Snapshot: with passkeys', async () => {
+    listMfaCredentials.mockResolvedValue(
+        credentialsList(emailCredential, passkeyCredential('a'), passkeyCredential('b'))
+    );
+    const { container } = await renderWithMessages(passkeyI18n);
+
+    await screen.findByText('Passkeys');
+
+    expect(container).toMatchSnapshot();
 });

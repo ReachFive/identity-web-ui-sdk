@@ -28,6 +28,12 @@ import {
     MfaCredentialItem,
     MfaCredentialsEmpty,
 } from '@/widgets/mfa/mfaCredentialItem';
+import {
+    EmailOrPhoneCredential,
+    isEmailOrPhoneCredential,
+    isPasskeyCredential,
+} from '@/widgets/mfa/passkeyCredential';
+import { PasskeysRow } from '@/widgets/mfa/passkeysRow';
 import { useMfaCredentials, useRemoveMfaCredential } from '@/widgets/mfa/queries';
 
 interface CredentialDetails {
@@ -36,7 +42,7 @@ interface CredentialDetails {
     Icon: LucideIcon;
 }
 
-const credentialDetails = (credential: MFA.Credential): CredentialDetails => {
+const credentialDetails = (credential: EmailOrPhoneCredential): CredentialDetails => {
     switch (credential.type) {
         case 'email':
             return { identifier: credential.email, labelKey: 'mfaList.email', Icon: Mail };
@@ -69,10 +75,10 @@ export interface MfaListProps {
 }
 
 interface DeleteButtonProps {
-    credential: MFA.Credential;
+    credential: EmailOrPhoneCredential;
     isOpen: boolean;
     setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
-    onDeleteCallback: (credential: MFA.Credential) => void;
+    onDeleteCallback: (credential: EmailOrPhoneCredential) => void;
     deleteConfirmationTitle: string;
     setDeleteConfirmationTitle: React.Dispatch<React.SetStateAction<string>>;
 }
@@ -159,6 +165,9 @@ export const MfaList = ({
 
     useCredentialsListedEvent(credentials, onSuccess);
 
+    const emailAndPhoneCredentials = credentials.filter(isEmailOrPhoneCredential);
+    const passkeyCount = credentials.filter(isPasskeyCredential).length;
+
     if (removal.isPending) {
         return <WidgetSpinner />;
     }
@@ -169,7 +178,7 @@ export const MfaList = ({
 
     return (
         <ItemGroup className="gap-2">
-            {credentials.map(credential => {
+            {emailAndPhoneCredentials.map(credential => {
                 const { identifier, labelKey, Icon } = credentialDetails(credential);
                 return (
                     <MfaCredentialItem
@@ -204,6 +213,7 @@ export const MfaList = ({
                     </MfaCredentialItem>
                 );
             })}
+            {passkeyCount > 0 && <PasskeysRow count={passkeyCount} />}
         </ItemGroup>
     );
 };
