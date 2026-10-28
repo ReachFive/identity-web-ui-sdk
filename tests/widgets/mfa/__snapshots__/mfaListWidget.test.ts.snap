@@ -231,16 +231,13 @@ exports[`Snapshot client theme 1`] = `
             data-slot="item-actions"
           >
             <button
-              aria-controls="radix-:r0:"
-              aria-expanded="false"
-              aria-haspopup="dialog"
               aria-label="mfa.remove.email"
-              class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-button text-button-text-size font-button-font-weight leading-button transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0 bg-destructive text-destructive-foreground shadow-button-shadow hover:bg-destructive/90 size-button-height ml-1"
-              data-state="closed"
+              class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-button text-button-text-size font-button-font-weight leading-button transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0 bg-transparent size-8 text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
               type="button"
             >
               <svg
-                class="lucide lucide-x"
+                aria-hidden="true"
+                class="lucide lucide-trash2"
                 fill="none"
                 height="24"
                 stroke="currentColor"
@@ -252,10 +249,25 @@ exports[`Snapshot client theme 1`] = `
                 xmlns="http://www.w3.org/2000/svg"
               >
                 <path
-                  d="M18 6 6 18"
+                  d="M3 6h18"
                 />
                 <path
-                  d="m6 6 12 12"
+                  d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"
+                />
+                <path
+                  d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"
+                />
+                <line
+                  x1="10"
+                  x2="10"
+                  y1="11"
+                  y2="17"
+                />
+                <line
+                  x1="14"
+                  x2="14"
+                  y1="11"
+                  y2="17"
                 />
               </svg>
             </button>
@@ -328,16 +340,13 @@ exports[`Snapshot client theme 1`] = `
             data-slot="item-actions"
           >
             <button
-              aria-controls="radix-:r3:"
-              aria-expanded="false"
-              aria-haspopup="dialog"
               aria-label="mfa.remove.phoneNumber"
-              class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-button text-button-text-size font-button-font-weight leading-button transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0 bg-destructive text-destructive-foreground shadow-button-shadow hover:bg-destructive/90 size-button-height ml-1"
-              data-state="closed"
+              class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-button text-button-text-size font-button-font-weight leading-button transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0 bg-transparent size-8 text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
               type="button"
             >
               <svg
-                class="lucide lucide-x"
+                aria-hidden="true"
+                class="lucide lucide-trash2"
                 fill="none"
                 height="24"
                 stroke="currentColor"
@@ -349,10 +358,25 @@ exports[`Snapshot client theme 1`] = `
                 xmlns="http://www.w3.org/2000/svg"
               >
                 <path
-                  d="M18 6 6 18"
+                  d="M3 6h18"
                 />
                 <path
-                  d="m6 6 12 12"
+                  d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"
+                />
+                <path
+                  d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"
+                />
+                <line
+                  x1="10"
+                  x2="10"
+                  y1="11"
+                  y2="17"
+                />
+                <line
+                  x1="14"
+                  x2="14"
+                  y1="11"
+                  y2="17"
                 />
               </svg>
             </button>
@@ -414,6 +438,210 @@ exports[`Snapshot empty 1`] = `
             data-slot="item-title"
           >
             No second factor yet
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Snapshot removal confirmation 1`] = `
+<div>
+  <style>
+    :where(.r5-theme-1bkmqrd){--background:0 0% 100%;--foreground:210 8.75% 31.37%;--primary:145.71 63.64% 36.67%;--primary-foreground:0 0% 100%;--primary-hover:145.81 63.24% 26.67%;--destructive:5.03 68.89% 55.88%;--destructive-foreground:0 0% 100%;--warning:45 100% 51.37%;--warning-foreground:0 0% 0%;--success:145.71 63.64% 36.67%;--success-foreground:0 0% 100%;--popover:0 0% 100%;--popover-foreground:210 8.75% 31.37%;--accent:145.71 63.64% 36.67%;--accent-foreground:210 8.75% 31.37%;--muted:210 15.79% 92.55%;--muted-foreground:210 10.81% 70.98%;--border:210 13.95% 83.14%;--input:210 13.95% 83.14%;--ring:145.65 63.27% 61.57%;--spacing:10px;--padding-x:12px;--padding-y:9px;--font-size:14px;--leading:1.428571429;--border-width:1px;--radius:3px;--r5-widget-max-width:400px;--r5-heading-text:#212529;--r5-heading-text-size:calc(var(--font-size) * 1.2);--r5-heading-font-weight:bold;--r5-button-bg:hsl(var(--primary));--r5-button-hover-bg:hsl(var(--primary-hover));--r5-button-border-color:hsl(var(--primary));--r5-button-hover-border-color:hsl(var(--primary));--r5-button-text:hsl(var(--primary-foreground));--r5-button-hover-text:hsl(var(--primary-foreground));--r5-button-subtle-bg:hsl(var(--primary) / 0.08);--r5-button-text-size:var(--font-size);--r5-button-leading:var(--leading);--r5-button-padding-x:var(--padding-x);--r5-button-padding-y:var(--padding-y);--r5-button-radius:var(--radius);--r5-button-border-width:var(--border-width);--r5-button-font-weight:bold;--r5-button-shadow:0 0 #0000;--r5-button-height:40px;--r5-social-button-height:var(--r5-button-height);--r5-social-button-padding-x:var(--r5-button-padding-x);--r5-social-button-padding-y:var(--r5-button-padding-y);--r5-social-button-radius:var(--r5-button-radius);--r5-social-button-text-size:var(--r5-button-text-size);--r5-social-button-font-weight:var(--r5-button-font-weight);--r5-social-button-leading:var(--r5-button-leading);--r5-social-button-border-width:var(--r5-button-border-width);--r5-social-button-shadow:var(--r5-button-shadow);--r5-input-bg:#fff;--r5-input-text:#495057;--r5-input-placeholder-text:#868e96;--r5-input-disabled-bg:#e9ecef;--r5-input-border-color:hsl(var(--border));--r5-input-border-width:var(--border-width);--r5-input-radius:var(--radius);--r5-input-text-size:var(--font-size);--r5-input-leading:var(--leading);--r5-input-padding-x:var(--padding-x);--r5-input-padding-y:var(--padding-y);--r5-input-shadow:0 0 #0000;--r5-input-height:40px;--r5-link-text:hsl(var(--primary));--r5-link-hover-text:#145a32;--r5-link-decoration:none;--r5-link-hover-decoration:none;--r5-password-strength-bg-0:hsl(var(--destructive));--r5-password-strength-bg-1:hsl(var(--destructive));--r5-password-strength-bg-2:hsl(var(--warning));--r5-password-strength-bg-3:color-mix(in oklch, hsl(var(--warning)), hsl(var(--success)));--r5-password-strength-bg-4:hsl(var(--success))}
+  </style>
+  <div
+    class="r5-theme-1bkmqrd r5-widget"
+  >
+    <div
+      class="text-[length:var(--font-size)] transition-[transform,opacity] duration-[400ms] ease-[ease] opacity-0 mx-auto max-w-widget-max-width rounded bg-background p-[calc(var(--spacing)*2)]"
+      data-slot="widget-content"
+    >
+      <div
+        class="group/item-group flex w-full flex-col has-data-[size=sm]:gap-2.5 has-data-[size=xs]:gap-2 gap-2"
+        data-slot="item-group"
+        role="list"
+      >
+        <div
+          class="group/item [a]:hover:bg-accent/50 focus-visible:border-ring focus-visible:ring-ring/50 [a]:transition-colors flex flex-wrap border text-sm outline-none transition-colors duration-100 focus-visible:ring-[3px] border-border items-start gap-3 rounded px-3.5 py-3 opacity-45"
+          data-size="default"
+          data-slot="widget-mfa-credential"
+          data-variant="outline"
+          id="credential-identifier"
+          inert=""
+          role="listitem"
+        >
+          <div
+            aria-hidden="true"
+            class="flex shrink-0 items-center justify-center gap-2 group-has-[[data-slot=item-description]]/item:translate-y-0.5 group-has-[[data-slot=item-description]]/item:self-start [&_svg]:pointer-events-none size-8 rounded [&_svg]:size-4 bg-success/10 text-success"
+            data-slot="item-media"
+            data-variant="default"
+          >
+            <svg
+              class="lucide lucide-mail"
+              fill="none"
+              height="24"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <rect
+                height="16"
+                rx="2"
+                width="20"
+                x="2"
+                y="4"
+              />
+              <path
+                d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"
+              />
+            </svg>
+          </div>
+          <div
+            class="flex flex-1 flex-col [&+[data-slot=item-content]]:flex-none min-w-0 gap-0.5"
+            data-slot="item-content"
+          >
+            <div
+              class="flex items-center gap-2 text-sm leading-snug w-auto font-semibold text-foreground [overflow-wrap:anywhere]"
+              data-slot="item-title"
+            >
+              root@reach5.co
+            </div>
+            <p
+              class="m-0 text-muted-foreground line-clamp-2 text-balance text-sm font-normal leading-normal [&>a:hover]:text-primary [&>a]:underline [&>a]:underline-offset-4"
+              data-slot="item-description"
+            >
+              Email
+            </p>
+            <p
+              class="m-0 text-muted-foreground line-clamp-2 text-balance text-sm font-normal leading-normal [&>a:hover]:text-primary [&>a]:underline [&>a]:underline-offset-4"
+              data-slot="item-description"
+            >
+              Created on 21/09/2022
+            </p>
+          </div>
+          <div
+            class="flex items-center gap-2"
+            data-slot="item-actions"
+          >
+            <button
+              aria-label="mfa.remove.email"
+              class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-button text-button-text-size font-button-font-weight leading-button transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0 bg-transparent size-8 text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+              type="button"
+            >
+              <svg
+                aria-hidden="true"
+                class="lucide lucide-trash2"
+                fill="none"
+                height="24"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M3 6h18"
+                />
+                <path
+                  d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"
+                />
+                <path
+                  d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"
+                />
+                <line
+                  x1="10"
+                  x2="10"
+                  y1="11"
+                  y2="17"
+                />
+                <line
+                  x1="14"
+                  x2="14"
+                  y1="11"
+                  y2="17"
+                />
+              </svg>
+            </button>
+          </div>
+        </div>
+        <div
+          class="group/item [a]:hover:bg-accent/50 focus-visible:border-ring focus-visible:ring-ring/50 [a]:transition-colors flex flex-wrap text-sm outline-none transition-colors duration-100 focus-visible:ring-[3px] border-border items-start gap-3 rounded border-0 p-0"
+          data-size="default"
+          data-slot="widget-mfa-credential"
+          data-variant="outline"
+          id="credential-33612345678"
+          role="listitem"
+        >
+          <div
+            aria-labelledby=":r0:"
+            class="flex w-full flex-col gap-3 rounded border border-destructive/40 bg-destructive/10 px-3.5 pb-3.5 pt-3"
+            data-slot="widget-mfa-credential-confirm"
+            role="group"
+          >
+            <div
+              class="flex items-center gap-3"
+            >
+              <span
+                aria-hidden="true"
+                class="flex size-8 shrink-0 items-center justify-center rounded bg-background text-destructive [&_svg]:size-4"
+              >
+                <svg
+                  class="lucide lucide-smartphone"
+                  fill="none"
+                  height="24"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                  width="24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <rect
+                    height="20"
+                    rx="2"
+                    ry="2"
+                    width="14"
+                    x="5"
+                    y="2"
+                  />
+                  <path
+                    d="M12 18h.01"
+                  />
+                </svg>
+              </span>
+              <span
+                class="min-w-0 flex-1 font-semibold text-foreground [overflow-wrap:anywhere]"
+                id=":r0:"
+              >
+                Remove 33612345678?
+              </span>
+            </div>
+            <div
+              class="flex justify-end gap-2"
+            >
+              <button
+                class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-button text-button-text-size font-button-font-weight leading-button transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0 border-button-border-width border-button-border-color bg-background shadow-button-shadow hover:border-button-hover-border-color hover:bg-button-subtle-bg py-button-padding-y h-8 px-3.5 text-foreground"
+                type="button"
+              >
+                Cancel
+              </button>
+              <button
+                aria-busy="false"
+                class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-button text-button-text-size font-button-font-weight leading-button transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0 bg-destructive text-destructive-foreground shadow-button-shadow hover:bg-destructive/90 py-button-padding-y h-8 px-3.5"
+                type="button"
+              >
+                Remove
+              </button>
+            </div>
           </div>
         </div>
       </div>

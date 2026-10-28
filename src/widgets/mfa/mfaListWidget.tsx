@@ -1,27 +1,17 @@
-import React, { useEffect, useRef } from 'react';
+import React, { HTMLAttributes, useEffect, useRef, useState } from 'react';
 
-import { LucideIcon, Mail, Smartphone, X } from 'lucide-react';
+import { LucideIcon, Mail, Smartphone, Trash2 } from 'lucide-react';
 
 import { MFA } from '@reachfive/identity-core';
 
-import {
-    AlertDialog,
-    AlertDialogAction,
-    AlertDialogCancel,
-    AlertDialogContent,
-    AlertDialogDescription,
-    AlertDialogFooter,
-    AlertDialogHeader,
-    AlertDialogTitle,
-    AlertDialogTrigger,
-} from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
 import { ItemActions, ItemGroup } from '@/components/ui/item.tsx';
-import { createQueryWidget, WidgetSpinner } from '@/components/widget/queryWidget';
+import { createQueryWidget } from '@/components/widget/queryWidget';
 import { useConfig } from '@/contexts/config';
 import { useI18n } from '@/contexts/i18n';
 import { dateFormat } from '@/helpers/utils.ts';
 import { OnError, OnSuccess } from '@/types';
+import { MfaCredentialConfirmation } from '@/widgets/mfa/mfaCredentialConfirmation';
 import {
     MfaCredentialContent,
     MfaCredentialIcon,
@@ -68,65 +58,6 @@ export interface MfaListProps {
     showRemoveMfaCredential?: boolean;
 }
 
-interface DeleteButtonProps {
-    credential: MFA.Credential;
-    isOpen: boolean;
-    setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
-    onDeleteCallback: (credential: MFA.Credential) => void;
-    deleteConfirmationTitle: string;
-    setDeleteConfirmationTitle: React.Dispatch<React.SetStateAction<string>>;
-}
-
-const DeleteButton = ({
-    credential,
-    isOpen,
-    setIsOpen,
-    onDeleteCallback,
-    deleteConfirmationTitle,
-    setDeleteConfirmationTitle,
-}: DeleteButtonProps) => {
-    const i18n = useI18n();
-
-    return (
-        <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
-            <AlertDialogTrigger asChild>
-                <Button
-                    variant="destructive"
-                    size="icon"
-                    className="ml-1"
-                    onClick={_ =>
-                        setDeleteConfirmationTitle(
-                            credential.type === 'email'
-                                ? 'mfa.remove.email'
-                                : 'mfa.remove.phoneNumber'
-                        )
-                    }
-                    aria-label={
-                        credential.type === 'email' ? 'mfa.remove.email' : 'mfa.remove.phoneNumber'
-                    }
-                >
-                    <X />
-                </Button>
-            </AlertDialogTrigger>
-            <AlertDialogContent>
-                <AlertDialogHeader>
-                    <AlertDialogTitle>{i18n(deleteConfirmationTitle)}</AlertDialogTitle>
-                    <AlertDialogDescription />
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                    <AlertDialogCancel>{i18n('confirmation.cancel')}</AlertDialogCancel>
-                    <AlertDialogAction
-                        variant="destructive"
-                        onClick={_ => onDeleteCallback(credential)}
-                    >
-                        {i18n('confirmation.yes')}
-                    </AlertDialogAction>
-                </AlertDialogFooter>
-            </AlertDialogContent>
-        </AlertDialog>
-    );
-};
-
 const noop = () => {};
 
 /**
@@ -142,16 +73,119 @@ const useCredentialsListedEvent = (credentials: MFA.Credential[], onSuccess: OnS
     }, [credentials, onSuccess]);
 };
 
+const credentialKey = (credential: MFA.Credential) =>
+    `${credential.type}-${credential.friendlyName}`;
+
+const removeLabelKey = (credential: MFA.Credential) =>
+    credential.type === 'email' ? 'mfa.remove.email' : 'mfa.remove.phoneNumber';
+
+/**
+ * React 18 has no typing for `inert` and only forwards it as a string; an empty string sets it.
+ * To revisit with React 19, where `inert` becomes a boolean prop.
+ */
+const inertProps = (inert: boolean): HTMLAttributes<HTMLElement> =>
+    (inert ? { inert: '' } : {}) as HTMLAttributes<HTMLElement>;
+
+interface MfaCredentialRowProps {
+    credential: MFA.Credential;
+    removable: boolean;
+    /** This row shows its removal confirmation. */
+    confirming: boolean;
+    /** Another row shows its removal confirmation: this one is dimmed and inert. */
+    dimmed: boolean;
+    pending: boolean;
+    onRequestRemoval: () => void;
+    onCancel: () => void;
+    onConfirm: () => void;
+}
+
+/**
+ * One email or phone number row. Its trash button turns it in place into a confirmation; when
+ * the confirmation closes without removing the factor, focus goes back to the trash button.
+ */
+const MfaCredentialRow = ({
+    credential,
+    removable,
+    confirming,
+    dimmed,
+    pending,
+    onRequestRemoval,
+    onCancel,
+    onConfirm,
+}: MfaCredentialRowProps) => {
+    const i18n = useI18n();
+    const config = useConfig();
+    const trashButton = useRef<HTMLButtonElement>(null);
+    const wasConfirming = useRef(confirming);
+    const { identifier, labelKey, Icon } = credentialDetails(credential);
+
+    useEffect(() => {
+        if (wasConfirming.current && !confirming) trashButton.current?.focus();
+        wasConfirming.current = confirming;
+    }, [confirming]);
+
+    if (confirming) {
+        return (
+            <MfaCredentialItem
+                id={`credential-${credential.friendlyName}`}
+                className="border-0 p-0"
+            >
+                <MfaCredentialConfirmation
+                    question={i18n('mfaList.removeConfirmation', { identifier })}
+                    icon={<Icon />}
+                    pending={pending}
+                    onCancel={onCancel}
+                    onConfirm={onConfirm}
+                />
+            </MfaCredentialItem>
+        );
+    }
+
+    return (
+        <MfaCredentialItem
+            id={`credential-${credential.friendlyName}`}
+            className={dimmed ? 'opacity-45' : undefined}
+            {...inertProps(dimmed)}
+        >
+            <MfaCredentialIcon>
+                <Icon />
+            </MfaCredentialIcon>
+            <MfaCredentialContent
+                title={identifier}
+                descriptions={[
+                    i18n(labelKey),
+                    i18n('mfaList.createdOn', {
+                        date: dateFormat(credential.createdAt, config.language),
+                    }),
+                ]}
+            />
+            {removable && (
+                <ItemActions>
+                    <Button
+                        ref={trashButton}
+                        type="button"
+                        variant="ghost"
+                        size="icon-sm"
+                        className="text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+                        aria-label={removeLabelKey(credential)}
+                        onClick={onRequestRemoval}
+                    >
+                        <Trash2 aria-hidden="true" />
+                    </Button>
+                </ItemActions>
+            )}
+        </MfaCredentialItem>
+    );
+};
+
 export const MfaList = ({
     accessToken,
-    showRemoveMfaCredential,
+    showRemoveMfaCredential = false,
     onError = noop as OnError,
     onSuccess = noop as OnSuccess,
 }: MfaListProps) => {
-    const [isOpen, setIsOpen] = React.useState(false);
-    const [deleteConfirmationTitle, setDeleteConfirmationTitle] = React.useState('');
-    const i18n = useI18n();
-    const config = useConfig();
+    /** Key of the row showing its removal confirmation; only one at a time. */
+    const [confirmingKey, setConfirmingKey] = useState<string | null>(null);
     const {
         data: { credentials },
     } = useMfaCredentials(accessToken);
@@ -159,9 +193,14 @@ export const MfaList = ({
 
     useCredentialsListedEvent(credentials, onSuccess);
 
-    if (removal.isPending) {
-        return <WidgetSpinner />;
-    }
+    const closeConfirmation = () => setConfirmingKey(null);
+
+    const remove = (credential: MFA.Credential) => {
+        if (removal.isPending) return;
+        // Settled covers both outcomes: on success the row is already gone from the refetched
+        // list, on error it returns to normal with the factor kept.
+        removal.mutate(credential, { onSettled: closeConfirmation });
+    };
 
     if (credentials.length === 0) {
         return <MfaCredentialsEmpty />;
@@ -170,38 +209,19 @@ export const MfaList = ({
     return (
         <ItemGroup className="gap-2">
             {credentials.map(credential => {
-                const { identifier, labelKey, Icon } = credentialDetails(credential);
+                const key = credentialKey(credential);
                 return (
-                    <MfaCredentialItem
-                        id={`credential-${credential.friendlyName}`}
-                        key={`credential-${credential.friendlyName}`}
-                        className={isOpen ? 'opacity-15' : undefined}
-                    >
-                        <MfaCredentialIcon>
-                            <Icon />
-                        </MfaCredentialIcon>
-                        <MfaCredentialContent
-                            title={identifier}
-                            descriptions={[
-                                i18n(labelKey),
-                                i18n('mfaList.createdOn', {
-                                    date: dateFormat(credential.createdAt, config.language),
-                                }),
-                            ]}
-                        />
-                        {showRemoveMfaCredential && (
-                            <ItemActions>
-                                <DeleteButton
-                                    isOpen={isOpen}
-                                    setIsOpen={setIsOpen}
-                                    onDeleteCallback={removal.mutate}
-                                    deleteConfirmationTitle={deleteConfirmationTitle}
-                                    setDeleteConfirmationTitle={setDeleteConfirmationTitle}
-                                    credential={credential}
-                                />
-                            </ItemActions>
-                        )}
-                    </MfaCredentialItem>
+                    <MfaCredentialRow
+                        key={key}
+                        credential={credential}
+                        removable={showRemoveMfaCredential}
+                        confirming={confirmingKey === key}
+                        dimmed={confirmingKey !== null && confirmingKey !== key}
+                        pending={removal.isPending}
+                        onRequestRemoval={() => setConfirmingKey(key)}
+                        onCancel={closeConfirmation}
+                        onConfirm={() => remove(credential)}
+                    />
                 );
             })}
         </ItemGroup>
