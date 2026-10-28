@@ -44,7 +44,12 @@ const defaultConfig: Config = {
     isImplicitFlowForbidden: false,
 };
 
-const defaultI18n: I18nMessages = {};
+const defaultI18n: I18nMessages = {
+    'mfaList.email': 'Email',
+    'mfaList.phoneNumber': 'Phone number',
+    'mfaList.createdOn': 'Created on {date}',
+    'mfaList.empty': 'No second factor yet',
+};
 
 const phoneCredential: MFA.PhoneCredential = {
     type: 'sms',
@@ -90,7 +95,7 @@ describe('Snapshot', () => {
         listMfaCredentials.mockResolvedValue({ credentials: [] });
         const { container } = await renderWidget();
 
-        await screen.findByText('mfaList.noCredentials');
+        await screen.findByText('No second factor yet');
 
         expect(container).toMatchSnapshot();
     });
@@ -102,6 +107,122 @@ describe('Snapshot', () => {
         await screen.findByText('root@reach5.co');
 
         expect(container).toMatchSnapshot();
+    });
+
+    test('client theme', async () => {
+        listMfaCredentials.mockResolvedValue({ credentials: [emailCredential, phoneCredential] });
+        const { container } = await renderWidget({
+            showRemoveMfaCredential: true,
+            theme: {
+                primaryColor: '#274890',
+                successColor: '#274890',
+                textColor: '#2b2f36',
+                borderColor: '#d9dde3',
+                borderRadius: 6,
+            },
+        });
+
+        await screen.findByText('root@reach5.co');
+
+        expect(container).toMatchSnapshot();
+    });
+});
+
+describe('Criterion 2: email and phone number rows show their creation date', () => {
+    test('the email row shows the address, the "Email" label and the creation date', async () => {
+        listMfaCredentials.mockResolvedValue({ credentials: [emailCredential] });
+        await renderWidget();
+
+        const row = await screen.findByRole('listitem');
+        expect(within(row).getByText('root@reach5.co')).toBeInTheDocument();
+        expect(within(row).getByText('Email')).toBeInTheDocument();
+        expect(within(row).getByText('Created on 21/09/2022')).toBeInTheDocument();
+    });
+
+    test('the phone number row shows the number, the "Phone number" label and the creation date', async () => {
+        listMfaCredentials.mockResolvedValue({ credentials: [phoneCredential] });
+        await renderWidget();
+
+        const row = await screen.findByRole('listitem');
+        expect(within(row).getByText('33612345678')).toBeInTheDocument();
+        expect(within(row).getByText('Phone number')).toBeInTheDocument();
+        expect(within(row).getByText('Created on 21/09/2022')).toBeInTheDocument();
+    });
+
+    test('the creation date follows the configured language', async () => {
+        listMfaCredentials.mockResolvedValue({ credentials: [emailCredential] });
+        const widget = await mfaListWidget(
+            { accessToken: 'azerty', onError, onSuccess },
+            { apiClient, config: { ...defaultConfig, language: 'en-US' }, defaultI18n }
+        );
+        render(widget);
+
+        expect(await screen.findByText('Created on 9/21/2022')).toBeInTheDocument();
+    });
+
+    test('email and phone number rows are listed in the order returned', async () => {
+        listMfaCredentials.mockResolvedValue({ credentials: [emailCredential, phoneCredential] });
+        await renderWidget();
+
+        await screen.findByText('root@reach5.co');
+        const rows = screen.getAllByRole('listitem');
+        expect(rows).toHaveLength(2);
+        expect(within(rows[0]).getByText('Email')).toBeInTheDocument();
+        expect(within(rows[1]).getByText('Phone number')).toBeInTheDocument();
+    });
+});
+
+describe('Criterion 6: an empty state is shown without any MFA credential', () => {
+    test('"No second factor yet" is shown and no row is listed', async () => {
+        listMfaCredentials.mockResolvedValue({ credentials: [] });
+        await renderWidget();
+
+        expect(await screen.findByText('No second factor yet')).toBeInTheDocument();
+        expect(screen.queryAllByRole('listitem')).toHaveLength(0);
+    });
+});
+
+describe('Criterion 7: theme attributes are respected and every new label is translatable', () => {
+    test('every new label can be overridden through the i18n option', async () => {
+        listMfaCredentials.mockResolvedValue({ credentials: [emailCredential, phoneCredential] });
+        await renderWidget({
+            i18n: {
+                'mfaList.email': 'Courriel',
+                'mfaList.phoneNumber': 'Téléphone',
+                'mfaList.createdOn': 'Ajouté le {date}',
+            },
+        });
+
+        await screen.findByText('Courriel');
+        expect(screen.getByText('Téléphone')).toBeInTheDocument();
+        expect(screen.getAllByText('Ajouté le 21/09/2022')).toHaveLength(2);
+    });
+
+    test('the empty state label can be overridden through the i18n option', async () => {
+        listMfaCredentials.mockResolvedValue({ credentials: [] });
+        await renderWidget({ i18n: { 'mfaList.empty': 'Aucun second facteur' } });
+
+        expect(await screen.findByText('Aucun second facteur')).toBeInTheDocument();
+    });
+
+    test('factor icons use the theme success colour, overridable via successColor', async () => {
+        listMfaCredentials.mockResolvedValue({ credentials: [emailCredential] });
+        const { container } = await renderWidget({ theme: { successColor: '#274890' } });
+
+        const row = await screen.findByRole('listitem');
+        const tile = row.querySelector('svg')?.parentElement;
+        expect(tile).toHaveClass('text-success', 'bg-success/10');
+        expect(container.querySelector('style')?.textContent).toContain(
+            '--success:221.14 57.38% 35.88%'
+        );
+    });
+
+    test('each row exposes the public widget-mfa-credential slot', async () => {
+        listMfaCredentials.mockResolvedValue({ credentials: [emailCredential, phoneCredential] });
+        await renderWidget();
+
+        const rows = await screen.findAllByRole('listitem');
+        rows.forEach(row => expect(row).toHaveAttribute('data-slot', 'widget-mfa-credential'));
     });
 });
 
@@ -118,7 +239,7 @@ describe('DOM testing', () => {
 
             render(widget);
 
-            await screen.findByText('mfaList.noCredentials');
+            await screen.findByText('No second factor yet');
             expect(listMfaCredentials).toHaveBeenCalledWith('azerty');
         });
 
@@ -126,8 +247,8 @@ describe('DOM testing', () => {
             listMfaCredentials.mockResolvedValue({ credentials: [] });
             await renderWidget();
 
-            expect(await screen.findByText('mfaList.noCredentials')).toBeInTheDocument();
-            expect(screen.queryAllByTestId('credential')).toHaveLength(0);
+            expect(await screen.findByText('No second factor yet')).toBeInTheDocument();
+            expect(screen.queryAllByRole('listitem')).toHaveLength(0);
 
             expect(onSuccess).toHaveBeenCalledTimes(1);
             expect(onSuccess).toHaveBeenCalledWith({
@@ -144,8 +265,8 @@ describe('DOM testing', () => {
             await renderWidget();
 
             await screen.findByText('root@reach5.co');
-            expect(screen.queryByText('mfaList.noCredentials')).not.toBeInTheDocument();
-            expect(screen.queryAllByTestId('credential')).toHaveLength(2);
+            expect(screen.queryByText('No second factor yet')).not.toBeInTheDocument();
+            expect(screen.queryAllByRole('listitem')).toHaveLength(2);
 
             expect(onSuccess).toHaveBeenCalledTimes(1);
             expect(onSuccess).toHaveBeenCalledWith({
@@ -160,7 +281,7 @@ describe('DOM testing', () => {
             const { container } = await renderWidget();
 
             expect(container.querySelector('.animate-spin')).toBeInTheDocument();
-            expect(screen.queryByText('mfaList.noCredentials')).not.toBeInTheDocument();
+            expect(screen.queryByText('No second factor yet')).not.toBeInTheDocument();
         });
 
         test('api error', async () => {
@@ -214,7 +335,7 @@ describe('DOM testing', () => {
             await waitFor(() =>
                 expect(screen.queryByText('root@reach5.co')).not.toBeInTheDocument()
             );
-            expect(await screen.findByText('mfaList.noCredentials')).toBeInTheDocument();
+            expect(await screen.findByText('No second factor yet')).toBeInTheDocument();
             expect(removeMfaEmail).toHaveBeenCalledWith({ accessToken: 'azerty' });
             expect(successEvents('mfa_email_deleted')).toHaveLength(1);
             expect(successEvents('mfa_credentials_listed')).toHaveLength(1);
@@ -234,7 +355,7 @@ describe('DOM testing', () => {
             await user.click(within(dialog).getByRole('button', { name: 'confirmation.yes' }));
 
             await waitFor(() => expect(screen.queryAllByText('33612345678')).toHaveLength(0));
-            expect(await screen.findByText('mfaList.noCredentials')).toBeInTheDocument();
+            expect(await screen.findByText('No second factor yet')).toBeInTheDocument();
             expect(removeMfaPhoneNumber).toHaveBeenCalledWith({
                 accessToken: 'azerty',
                 phoneNumber: '33612345678',

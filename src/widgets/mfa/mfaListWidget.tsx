@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 
-import { Mail, MessageSquareMore, X } from 'lucide-react';
+import { LucideIcon, Mail, Smartphone, X } from 'lucide-react';
 
 import { MFA } from '@reachfive/identity-core';
 
@@ -16,32 +16,36 @@ import {
     AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
-import {
-    Item,
-    ItemActions,
-    ItemContent,
-    ItemDescription,
-    ItemGroup,
-    ItemMedia,
-    ItemTitle,
-} from '@/components/ui/item.tsx';
+import { ItemActions, ItemGroup } from '@/components/ui/item.tsx';
 import { createQueryWidget, WidgetSpinner } from '@/components/widget/queryWidget';
 import { useConfig } from '@/contexts/config';
 import { useI18n } from '@/contexts/i18n';
 import { dateFormat } from '@/helpers/utils.ts';
 import { OnError, OnSuccess } from '@/types';
+import {
+    MfaCredentialContent,
+    MfaCredentialIcon,
+    MfaCredentialItem,
+    MfaCredentialsEmpty,
+} from '@/widgets/mfa/mfaCredentialItem';
 import { useMfaCredentials, useRemoveMfaCredential } from '@/widgets/mfa/queries';
 
-type CredentialIconProps = {
-    type: MFA.CredentialsResponse['credentials'][number]['type'];
-};
+interface CredentialDetails {
+    identifier: string;
+    labelKey: string;
+    Icon: LucideIcon;
+}
 
-const CredentialIcon = ({ type }: CredentialIconProps) => {
-    switch (type) {
+const credentialDetails = (credential: MFA.Credential): CredentialDetails => {
+    switch (credential.type) {
         case 'email':
-            return <Mail className="bg-background w-icon h-icon stroke-textColor" />;
+            return { identifier: credential.email, labelKey: 'mfaList.email', Icon: Mail };
         case 'sms':
-            return <MessageSquareMore className="bg-background w-icon h-icon stroke-textColor" />;
+            return {
+                identifier: credential.phoneNumber,
+                labelKey: 'mfaList.phoneNumber',
+                Icon: Smartphone,
+            };
     }
 };
 
@@ -159,56 +163,47 @@ export const MfaList = ({
         return <WidgetSpinner />;
     }
 
+    if (credentials.length === 0) {
+        return <MfaCredentialsEmpty />;
+    }
+
     return (
-        <ItemGroup>
-            {credentials.length === 0 && (
-                <Item>
-                    <ItemContent>
-                        <ItemTitle>{i18n('mfaList.noCredentials')}</ItemTitle>
-                    </ItemContent>
-                </Item>
-            )}
-            {credentials.map((credential, _) => (
-                <Item
-                    variant="outline"
-                    id={`credential-${credential.friendlyName}`}
-                    data-testid="credential"
-                    key={`credential-${credential.friendlyName}`}
-                    className={`${isOpen ? 'opacity-15' : ''}`}
-                >
-                    <ItemMedia className="!self-center" variant="image">
-                        <CredentialIcon type={credential.type} />
-                    </ItemMedia>
-                    <ItemContent>
-                        <ItemTitle>{credential.friendlyName}</ItemTitle>
-                        <ItemDescription>
-                            {MFA.isEmailCredential(credential)
-                                ? credential.email
-                                : MFA.isPhoneCredential(credential)
-                                  ? credential.phoneNumber
-                                  : 'N/A'}
-                        </ItemDescription>
-                        <ItemDescription>
-                            <span>{i18n('mfaList.createdAt')}&nbsp;: </span>
-                            <time dateTime={credential.createdAt}>
-                                {dateFormat(credential.createdAt, config.language)}
-                            </time>
-                        </ItemDescription>
-                    </ItemContent>
-                    {showRemoveMfaCredential && (
-                        <ItemActions>
-                            <DeleteButton
-                                isOpen={isOpen}
-                                setIsOpen={setIsOpen}
-                                onDeleteCallback={removal.mutate}
-                                deleteConfirmationTitle={deleteConfirmationTitle}
-                                setDeleteConfirmationTitle={setDeleteConfirmationTitle}
-                                credential={credential}
-                            />
-                        </ItemActions>
-                    )}
-                </Item>
-            ))}
+        <ItemGroup className="gap-2">
+            {credentials.map(credential => {
+                const { identifier, labelKey, Icon } = credentialDetails(credential);
+                return (
+                    <MfaCredentialItem
+                        id={`credential-${credential.friendlyName}`}
+                        key={`credential-${credential.friendlyName}`}
+                        className={isOpen ? 'opacity-15' : undefined}
+                    >
+                        <MfaCredentialIcon>
+                            <Icon />
+                        </MfaCredentialIcon>
+                        <MfaCredentialContent
+                            title={identifier}
+                            descriptions={[
+                                i18n(labelKey),
+                                i18n('mfaList.createdOn', {
+                                    date: dateFormat(credential.createdAt, config.language),
+                                }),
+                            ]}
+                        />
+                        {showRemoveMfaCredential && (
+                            <ItemActions>
+                                <DeleteButton
+                                    isOpen={isOpen}
+                                    setIsOpen={setIsOpen}
+                                    onDeleteCallback={removal.mutate}
+                                    deleteConfirmationTitle={deleteConfirmationTitle}
+                                    setDeleteConfirmationTitle={setDeleteConfirmationTitle}
+                                    credential={credential}
+                                />
+                            </ItemActions>
+                        )}
+                    </MfaCredentialItem>
+                );
+            })}
         </ItemGroup>
     );
 };
