@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
 
-import { format } from 'date-fns';
 import {
     CircleHelpIcon,
     LoaderCircle,
@@ -34,8 +33,10 @@ import {
     ItemTitle,
 } from '@/components/ui/item';
 import { createWidget } from '@/components/widget/widget.tsx';
+import { useConfig } from '@/contexts/config';
 import { useI18n } from '@/contexts/i18n.tsx';
 import { useReachfive } from '@/contexts/reachfive.tsx';
+import { dateFormat } from '@/helpers/utils';
 import { OnError, OnSuccess } from '@/types';
 
 export type TrustedDeviceWidgetProps = {
@@ -137,6 +138,7 @@ export const TrustedDeviceList = ({
     const [loading, setLoading] = React.useState(true);
 
     const i18n = useI18n();
+    const config = useConfig();
     const client = useReachfive();
 
     const fetchTrustedDevices = () => {
@@ -199,7 +201,9 @@ export const TrustedDeviceList = ({
                             <ItemDescription>
                                 <span>{i18n('mfaList.createdAt')}&nbsp;: </span>
                                 <time dateTime={trustedDevice.createdAt}>
-                                    {format(trustedDevice.createdAt, 'PP')}
+                                    {dateFormat(trustedDevice.createdAt, config.language, {
+                                        dateStyle: 'medium',
+                                    })}
                                 </time>
                             </ItemDescription>
                         </ItemContent>
