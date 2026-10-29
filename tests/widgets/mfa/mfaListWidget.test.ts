@@ -930,9 +930,7 @@ test('Snapshot: with passkeys', async () => {
     // consumed: pin them so the snapshot does not change with the test order or the tests run.
     const button = screen.getByRole('button', { name: 'Passkeys' });
     const pinId = (attribute: string, id: string) => {
-        container
-            .querySelector(`[id="${button.getAttribute(attribute)}"]`)
-            ?.setAttribute('id', id);
+        container.querySelector(`[id="${button.getAttribute(attribute)}"]`)?.setAttribute('id', id);
         button.setAttribute(attribute, id);
     };
     pinId('aria-labelledby', 'passkeys-title');

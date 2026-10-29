@@ -226,9 +226,9 @@ describe('Adding or removing a passkey refreshes the list of factors', () => {
         await waitFor(() => expect(listMfaCredentials).toHaveBeenCalledTimes(2));
 
         await user.click(back);
-        expect(
-            await screen.findByRole('button', { name: 'Passkeys' })
-        ).toHaveAccessibleDescription('1 passkey · Also used to log in');
+        expect(await screen.findByRole('button', { name: 'Passkeys' })).toHaveAccessibleDescription(
+            '1 passkey · Also used to log in'
+        );
     });
 
     test('adding a passkey emits webauthn_credential_created and the count is fresh on return', async () => {
@@ -255,9 +255,9 @@ describe('Adding or removing a passkey refreshes the list of factors', () => {
         await waitFor(() => expect(listMfaCredentials).toHaveBeenCalledTimes(2));
 
         await user.click(back);
-        expect(
-            await screen.findByRole('button', { name: 'Passkeys' })
-        ).toHaveAccessibleDescription('2 passkeys · Also used to log in');
+        expect(await screen.findByRole('button', { name: 'Passkeys' })).toHaveAccessibleDescription(
+            '2 passkeys · Also used to log in'
+        );
     });
 
     test('after removing the last passkey, going back shows no Passkeys row', async () => {
@@ -318,9 +318,9 @@ describe('Adding or removing a passkey refreshes the list of factors', () => {
         expect(onError).toHaveBeenCalledTimes(1);
 
         await user.click(back);
-        expect(
-            await screen.findByRole('button', { name: 'Passkeys' })
-        ).toHaveAccessibleDescription('2 passkeys · Also used to log in');
+        expect(await screen.findByRole('button', { name: 'Passkeys' })).toHaveAccessibleDescription(
+            '2 passkeys · Also used to log in'
+        );
     });
 });
 
