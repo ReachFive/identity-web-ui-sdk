@@ -3,7 +3,7 @@
  */
 import { afterEach, beforeEach, describe, expect, jest, test } from '@jest/globals';
 import '@testing-library/jest-dom/jest-globals';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import type { Client, DeviceCredential, MFA } from '@reachfive/identity-core';
@@ -112,6 +112,13 @@ const openPasskeysView = async (user: ReturnType<typeof userEvent.setup>) => {
     return screen.findByRole('button', { name: 'Back' });
 };
 
+/** Presses the remove button of the device at `index`, then confirms in the dialog. */
+const removeDevice = async (user: ReturnType<typeof userEvent.setup>, index: number) => {
+    await user.click(screen.getAllByRole('button', { name: 'Remove' })[index]);
+    const dialog = await screen.findByRole('alertdialog');
+    await user.click(within(dialog).getByRole('button', { name: 'Remove' }));
+};
+
 beforeEach(() => {
     jest.resetAllMocks();
 });
@@ -197,7 +204,9 @@ describe('A failed device load shows the widget error output under the back arro
 
 describe('Adding or removing a passkey refreshes the list of factors', () => {
     beforeEach(() => {
-        jest.spyOn(window, 'confirm').mockReturnValue(true);
+        jest.spyOn(window, 'confirm').mockImplementation(() => {
+            throw new Error('window.confirm must not be used');
+        });
     });
 
     test('removing a passkey emits webauthn_credential_deleted and the count is fresh on return', async () => {
@@ -215,7 +224,7 @@ describe('Adding or removing a passkey refreshes the list of factors', () => {
         const user = userEvent.setup();
         const back = await openPasskeysView(user);
         await screen.findByText('Device a');
-        await user.click(screen.getAllByRole('button', { name: 'Remove' })[0]);
+        await removeDevice(user, 0);
 
         await waitFor(() => expect(screen.queryByText('Device a')).not.toBeInTheDocument());
         expect(removeWebAuthnDevice).toHaveBeenCalledWith('azerty', 'a');
@@ -271,7 +280,7 @@ describe('Adding or removing a passkey refreshes the list of factors', () => {
         const user = userEvent.setup();
         const back = await openPasskeysView(user);
         await screen.findByText('Device a');
-        await user.click(screen.getByRole('button', { name: 'Remove' }));
+        await removeDevice(user, 0);
         await screen.findByText('No registered device');
         await waitFor(() => expect(listMfaCredentials).toHaveBeenCalledTimes(2));
 
@@ -291,7 +300,7 @@ describe('Adding or removing a passkey refreshes the list of factors', () => {
         const user = userEvent.setup();
         const back = await openPasskeysView(user);
         await screen.findByText('Device a');
-        await user.click(screen.getByRole('button', { name: 'Remove' }));
+        await removeDevice(user, 0);
         await waitFor(() => expect(listMfaCredentials).toHaveBeenCalledTimes(2));
 
         await user.click(back);
@@ -312,7 +321,7 @@ describe('Adding or removing a passkey refreshes the list of factors', () => {
         const user = userEvent.setup();
         const back = await openPasskeysView(user);
         await screen.findByText('Device a');
-        await user.click(screen.getAllByRole('button', { name: 'Remove' })[0]);
+        await removeDevice(user, 0);
 
         await waitFor(() => expect(onError).toHaveBeenCalledWith(error));
         expect(onError).toHaveBeenCalledTimes(1);

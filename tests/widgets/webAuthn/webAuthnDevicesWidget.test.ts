@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { afterAll, beforeEach, describe, expect, jest, test } from '@jest/globals';
+import { beforeEach, describe, expect, jest, test } from '@jest/globals';
 import '@testing-library/jest-dom/jest-globals';
 import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -49,8 +49,6 @@ const defaultI18n: I18nMessages = {};
 const accessToken = 'azerty';
 
 describe('DOM testing', () => {
-    const confirmMock = jest.spyOn(window, 'confirm').mockImplementation(() => true);
-
     const listWebAuthnDevices = jest.fn<Client['listWebAuthnDevices']>();
     const addNewWebAuthnDevice = jest.fn<Client['addNewWebAuthnDevice']>();
     const removeWebAuthnDevice = jest.fn<Client['removeWebAuthnDevice']>();
@@ -59,16 +57,11 @@ describe('DOM testing', () => {
     const onSuccess = jest.fn<OnSuccess>();
 
     beforeEach(() => {
-        confirmMock.mockClear();
         listWebAuthnDevices.mockClear();
         addNewWebAuthnDevice.mockClear();
         removeWebAuthnDevice.mockClear();
         onError.mockClear();
         onSuccess.mockClear();
-    });
-
-    afterAll(() => {
-        confirmMock.mockRestore();
     });
 
     const generateComponent = async (
@@ -176,8 +169,11 @@ describe('DOM testing', () => {
             expect(removeOldDevice).toBeInTheDocument();
 
             await user.click(removeOldDevice);
-
-            expect(confirmMock).toBeCalled();
+            await user.click(
+                within(await screen.findByRole('alertdialog')).getByRole('button', {
+                    name: 'remove',
+                })
+            );
 
             expect(removeWebAuthnDevice).toBeCalledWith(accessToken, 'myOldDevice');
 
@@ -245,8 +241,11 @@ describe('DOM testing', () => {
             expect(removeOldDevice).toBeInTheDocument();
 
             await user.click(removeOldDevice);
-
-            expect(confirmMock).toBeCalled();
+            await user.click(
+                within(await screen.findByRole('alertdialog')).getByRole('button', {
+                    name: 'remove',
+                })
+            );
 
             expect(removeWebAuthnDevice).toBeCalled();
 

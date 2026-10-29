@@ -3,9 +3,9 @@
  */
 import React from 'react';
 
-import { afterAll, beforeEach, describe, expect, jest, test } from '@jest/globals';
+import { beforeEach, describe, expect, jest, test } from '@jest/globals';
 import '@testing-library/jest-dom/jest-globals';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import { type Client, type DeviceCredential } from '@reachfive/identity-core';
@@ -48,8 +48,6 @@ const device = (id: string): DeviceCredential => ({
 });
 
 describe('WebAuthnDevices', () => {
-    const confirmMock = jest.spyOn(window, 'confirm').mockImplementation(() => true);
-
     const listWebAuthnDevices = jest.fn<Client['listWebAuthnDevices']>();
     const addNewWebAuthnDevice = jest.fn<Client['addNewWebAuthnDevice']>();
     const removeWebAuthnDevice = jest.fn<Client['removeWebAuthnDevice']>();
@@ -58,10 +56,6 @@ describe('WebAuthnDevices', () => {
 
     beforeEach(() => {
         jest.clearAllMocks();
-    });
-
-    afterAll(() => {
-        confirmMock.mockRestore();
     });
 
     const mount = () => {
@@ -109,22 +103,67 @@ describe('WebAuthnDevices', () => {
         expect(screen.queryByTestId('device')).not.toBeInTheDocument();
     });
 
-    test('removing a device emits webauthn_credential_deleted and refreshes the list', async () => {
+    const removeButtonOf = async (name: string) => {
+        const row = (await screen.findAllByTestId('device')).find(
+            el => within(el).getByTestId('device-name').textContent === name
+        );
+        return within(row!).getByTestId('device-remove');
+    };
+
+    test('removing a device asks for confirmation in a dialog first', async () => {
+        const user = userEvent.setup();
+        const confirmSpy = jest.spyOn(window, 'confirm');
+        listWebAuthnDevices.mockResolvedValue([device('myOldDevice')]);
+
+        mount();
+
+        await user.click(await removeButtonOf('myOldDevice'));
+
+        const dialog = await screen.findByRole('alertdialog', {
+            name: 'webauthn.registredDevices.confirm.removal',
+        });
+        expect(within(dialog).getByRole('button', { name: 'confirmation.cancel' })).toBeVisible();
+        expect(within(dialog).getByRole('button', { name: 'remove' })).toBeVisible();
+        expect(removeWebAuthnDevice).not.toHaveBeenCalled();
+        expect(confirmSpy).not.toHaveBeenCalled();
+        confirmSpy.mockRestore();
+    });
+
+    test('cancelling the dialog keeps the device and gives focus back to its remove button', async () => {
+        const user = userEvent.setup();
+        listWebAuthnDevices.mockResolvedValue([device('myOldDevice')]);
+
+        mount();
+
+        const removeButton = await removeButtonOf('myOldDevice');
+        await user.click(removeButton);
+        await user.click(await screen.findByRole('button', { name: 'confirmation.cancel' }));
+
+        await waitFor(() => expect(screen.queryByRole('alertdialog')).not.toBeInTheDocument());
+        expect(removeWebAuthnDevice).not.toHaveBeenCalled();
+        expect(screen.getAllByTestId('device')).toHaveLength(1);
+        expect(removeButton).toHaveFocus();
+    });
+
+    test('confirming removes the device whose button was pressed and refreshes the list', async () => {
         const user = userEvent.setup();
         listWebAuthnDevices
-            .mockResolvedValueOnce([device('myOldDevice')])
-            .mockResolvedValueOnce([]);
+            .mockResolvedValueOnce([device('first'), device('second')])
+            .mockResolvedValueOnce([device('first')]);
         removeWebAuthnDevice.mockResolvedValue();
 
         mount();
 
-        await user.click(await screen.findByTestId('device-remove'));
+        await user.click(await removeButtonOf('second'));
+        await user.click(await screen.findByRole('button', { name: 'remove' }));
 
-        expect(removeWebAuthnDevice).toHaveBeenCalledWith(accessToken, 'myOldDevice');
+        expect(removeWebAuthnDevice).toHaveBeenCalledTimes(1);
+        expect(removeWebAuthnDevice).toHaveBeenCalledWith(accessToken, 'second');
         expect(onSuccess).toHaveBeenCalledWith({
             name: 'webauthn_credential_deleted',
-            deviceId: 'myOldDevice',
+            deviceId: 'second',
         });
-        await waitFor(() => expect(screen.queryByTestId('device')).not.toBeInTheDocument());
+        await waitFor(() => expect(screen.getAllByTestId('device')).toHaveLength(1));
+        expect(screen.getByTestId('device-name')).toHaveTextContent('first');
     });
 });
