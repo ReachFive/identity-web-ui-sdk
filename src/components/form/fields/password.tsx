@@ -16,6 +16,7 @@ import { ItemDescription, ItemTitle } from '@/components/ui/item';
 import { useConfig } from '@/contexts/config';
 import { useI18n } from '@/contexts/i18n';
 import { useReachfive } from '@/contexts/reachfive';
+import { getPasswordStrength } from '@/helpers/passwordStrength';
 import { cn } from '@/lib/utils';
 
 const PasswordInputContext = React.createContext<{ password: string } | null>(null);
@@ -130,26 +131,31 @@ const PasswordPolicyRules = function PasswordPolicyRules(_props: PasswordPolicyR
     const { passwordPolicy } = useConfig();
     const i18n = useI18n();
     const { password } = usePasswordInput();
-    const deferredPassword = React.useDeferredValue(password);
 
     const [error, setError] = React.useState(false);
     const [strength, setStrength] = React.useState<PasswordStrength>({ score: 0 });
 
     React.useEffect(() => {
-        if (deferredPassword.length === 0) {
+        if (password.length === 0) {
             setStrength({ score: 0 } satisfies PasswordStrength);
             return;
         }
 
+        // ignore the result of a password the user has typed past
+        let ignore = false;
         // eslint-disable-next-line @typescript-eslint/no-floating-promises
         (async () => {
             try {
-                setStrength(await client.getPasswordStrength(deferredPassword));
+                const result = await getPasswordStrength(client, password);
+                if (!ignore) setStrength(result);
             } catch (_e) {
-                setError(true);
+                if (!ignore) setError(true);
             }
         })();
-    }, [client, deferredPassword]);
+        return () => {
+            ignore = true;
+        };
+    }, [client, password]);
 
     if (error) return null;
 

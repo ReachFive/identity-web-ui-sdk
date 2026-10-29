@@ -10,6 +10,12 @@ import { passwordValidation } from '@/lib/validation';
 import type { FieldDefinition } from '@/lib/form';
 import type { Config } from '@/types';
 
+// the debounce of the strength check is covered by tests/helpers/passwordStrength.test.ts:
+// call the API right away here
+jest.mock('@/helpers/passwordStrength', () => ({
+    getPasswordStrength: (client: Client, password: string) => client.getPasswordStrength(password),
+}));
+
 type PasswordPolicyOverrides = Partial<Config['passwordPolicy']>;
 
 function buildArgs(

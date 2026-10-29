@@ -1,5 +1,7 @@
 import z from 'zod';
 
+import { getPasswordStrength } from '@/helpers/passwordStrength';
+
 import type { Validation } from '@/lib/form';
 
 export function passwordValidation({
@@ -56,7 +58,7 @@ export function passwordValidation({
             }
 
             try {
-                const strength = await client.getPasswordStrength(value);
+                const strength = await getPasswordStrength(client, value);
                 if (strength.score < passwordPolicy.minStrength) {
                     ctx.addIssue({
                         code: 'custom',

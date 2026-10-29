@@ -5,7 +5,7 @@ import React from 'react';
 
 import { afterEach, beforeEach, describe, expect, jest, test } from '@jest/globals';
 import '@testing-library/jest-dom/jest-globals';
-import { render, screen, waitFor, within } from '@testing-library/react';
+import { act, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import { PasswordStrengthScore, type Client } from '@reachfive/identity-core';
@@ -15,6 +15,7 @@ import {
     PasswordPolicyRules,
 } from '../../../../src/components/form/fields/password';
 import { type I18nMessages } from '../../../../src/contexts/i18n';
+import { PASSWORD_STRENGTH_DEBOUNCE_DELAY } from '../../../../src/helpers/passwordStrength';
 import { WidgetContext } from '../WidgetContext';
 
 import type { Config } from '../../../../src/types';
@@ -90,11 +91,17 @@ describe('DOM testing', () => {
         return Promise.resolve({ score: score as PasswordStrengthScore });
     });
 
-    // @ts-expect-error partial Client
-    const apiClient: Client = { getPasswordStrength };
+    // a new client per test, so the strength checked last is not shared between tests
+    let apiClient: Client;
+
+    // the strength is only asked once the user has stopped typing
+    const waitForStrengthDebounce = () =>
+        act(() => jest.advanceTimersByTimeAsync(PASSWORD_STRENGTH_DEBOUNCE_DELAY));
 
     beforeEach(() => {
         getPasswordStrength.mockClear();
+        // @ts-expect-error partial Client
+        apiClient = { getPasswordStrength };
         jest.useFakeTimers();
     });
 
@@ -270,6 +277,7 @@ describe('DOM testing', () => {
         await waitFor(() => expect(onChange).toHaveBeenCalled());
         expect(input).toHaveValue(strongPassword);
 
+        await waitForStrengthDebounce();
         expect(getPasswordStrength).toBeCalledWith(strongPassword);
 
         let meter = screen.getByRole('meter');
@@ -282,6 +290,7 @@ describe('DOM testing', () => {
         await user.clear(input);
         await user.type(input, weakPassword);
 
+        await waitForStrengthDebounce();
         expect(getPasswordStrength).toBeCalledWith(weakPassword);
 
         meter = screen.getByRole('meter');
@@ -301,6 +310,7 @@ describe('DOM testing', () => {
         await user.clear(input);
         await user.type(input, strongPassword);
 
+        await waitForStrengthDebounce();
         expect(getPasswordStrength).toBeCalledWith(strongPassword);
 
         meter = screen.getByRole('meter');
@@ -422,6 +432,29 @@ describe('DOM testing', () => {
             )
         );
     });
+    test('with PasswordPolicyRules — asks the strength once the user has stopped typing', async () => {
+        const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTimeAsync.bind(this) });
+
+        render(
+            <WidgetContext client={apiClient} config={defaultConfig} defaultMessages={defaultI18n}>
+                <ControlledPasswordField label="Password" initialValue="" showLabels={true}>
+                    <PasswordPolicyRules />
+                </ControlledPasswordField>
+            </WidgetContext>
+        );
+
+        const password = 'Wond3rFu11_Pa55w0rD';
+        await user.type(screen.getByLabelText('Password'), password);
+        expect(getPasswordStrength).not.toHaveBeenCalled();
+
+        await waitForStrengthDebounce();
+
+        // the endpoint is rate limited: one call for the whole password, not one per keystroke
+        expect(getPasswordStrength).toHaveBeenCalledTimes(1);
+        expect(getPasswordStrength).toHaveBeenCalledWith(password);
+        expect(screen.getByRole('meter')).toHaveAttribute('aria-valuenow', '4');
+    });
+
     // one bar per score (0-4), so that score 0 fills a single bar and every
     // passwordStrengthValidator color — color0 included — is reachable
     test.each([0, 1, 2, 3, 4] as const)(
