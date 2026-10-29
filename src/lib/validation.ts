@@ -53,8 +53,5 @@ export function passwordValidation({
                     path: ['password'],
                 });
             }
-
-            // the strength is shown by `PasswordPolicyRules` and checked by the server on submit:
-            // asking for it here would call the rate-limited endpoint again on every keystroke
         });
 }
