@@ -3,7 +3,6 @@ import z from 'zod';
 import type { Validation } from '@/lib/form';
 
 export function passwordValidation({
-    client,
     config: { passwordPolicy },
     definition,
     i18n,
@@ -16,7 +15,7 @@ export function passwordValidation({
         .max(255, {
             error: i18n('validation.password.maxLength', { max: 255 }),
         })
-        .superRefine(async (value, ctx) => {
+        .superRefine((value, ctx) => {
             if (String(value).length === 0) return;
             if (!definition.withPolicyRules) return;
 
@@ -53,19 +52,6 @@ export function passwordValidation({
                     message: i18n('validation.password.specials.characters'),
                     path: ['password'],
                 });
-            }
-
-            try {
-                const strength = await client.getPasswordStrength(value);
-                if (strength.score < passwordPolicy.minStrength) {
-                    ctx.addIssue({
-                        code: 'custom',
-                        message: i18n('validation.password.minStrength'),
-                        path: ['password'],
-                    });
-                }
-            } catch (_e) {
-                // ignore error
             }
         });
 }

@@ -16,7 +16,11 @@ import { ItemDescription, ItemTitle } from '@/components/ui/item';
 import { useConfig } from '@/contexts/config';
 import { useI18n } from '@/contexts/i18n';
 import { useReachfive } from '@/contexts/reachfive';
+import { useDebounce } from '@/helpers/useDebounce';
 import { cn } from '@/lib/utils';
+
+// the password strength endpoint is rate limited: wait for the user to stop typing
+export const PASSWORD_STRENGTH_DEBOUNCE_DELAY = 1000;
 
 const PasswordInputContext = React.createContext<{ password: string } | null>(null);
 
@@ -130,13 +134,13 @@ const PasswordPolicyRules = function PasswordPolicyRules(_props: PasswordPolicyR
     const { passwordPolicy } = useConfig();
     const i18n = useI18n();
     const { password } = usePasswordInput();
-    const deferredPassword = React.useDeferredValue(password);
+    const debouncedPassword = useDebounce(password, PASSWORD_STRENGTH_DEBOUNCE_DELAY);
 
     const [error, setError] = React.useState(false);
     const [strength, setStrength] = React.useState<PasswordStrength>({ score: 0 });
 
     React.useEffect(() => {
-        if (deferredPassword.length === 0) {
+        if (debouncedPassword.length === 0) {
             setStrength({ score: 0 } satisfies PasswordStrength);
             return;
         }
@@ -144,12 +148,12 @@ const PasswordPolicyRules = function PasswordPolicyRules(_props: PasswordPolicyR
         // eslint-disable-next-line @typescript-eslint/no-floating-promises
         (async () => {
             try {
-                setStrength(await client.getPasswordStrength(deferredPassword));
+                setStrength(await client.getPasswordStrength(debouncedPassword));
             } catch (_e) {
                 setError(true);
             }
         })();
-    }, [client, deferredPassword]);
+    }, [client, debouncedPassword]);
 
     if (error) return null;
 
