@@ -29,7 +29,7 @@ import { isPasskeyCredential, type MfaCredential } from '@/widgets/mfa/passkeyCr
 import { PasskeysRow } from '@/widgets/mfa/passkeysRow';
 import { PasskeysView } from '@/widgets/mfa/passkeysView';
 import { useMfaCredentials, useRemoveMfaCredential } from '@/widgets/mfa/queries';
-import { useMfaView } from '@/widgets/mfa/useMfaView';
+import { type MfaNavigation, useMfaView } from '@/widgets/mfa/useMfaView';
 import { PASSKEYS_ROW_KEY, useRowFocus } from '@/widgets/mfa/useRowFocus';
 
 export interface MfaListProps {
@@ -274,6 +274,19 @@ const MfaCredentialsList = ({
     );
 };
 
+/**
+ * The entering view slides in from the side the user is heading to; the first view shows
+ * without animation. Only the entering view animates: animating the leaving one would mean
+ * keeping both mounted.
+ */
+const VIEW_ANIMATIONS: Record<NonNullable<MfaNavigation>, string> = {
+    forward: 'animate-mfa-view-forward motion-reduce:animate-none',
+    back: 'animate-mfa-view-back motion-reduce:animate-none',
+};
+
+const viewAnimation = (navigation: MfaNavigation) =>
+    navigation === null ? undefined : VIEW_ANIMATIONS[navigation];
+
 export const MfaList = ({
     accessToken,
     showRemoveMfaCredential = false,
@@ -283,33 +296,33 @@ export const MfaList = ({
     const {
         data: { credentials },
     } = useMfaCredentials(accessToken);
-    const { view, openPasskeys, backToList, passkeysRowRef } = useMfaView();
+    const { view, navigation, openPasskeys, backToList, passkeysRowRef } = useMfaView();
 
     useCredentialsListedEvent(credentials, onSuccess);
 
     // The credentials query stays mounted in both views, so a passkey change made in the
     // Passkeys view refetches the list in the background.
-    if (view === 'passkeys') {
-        return (
-            <PasskeysView
-                accessToken={accessToken}
-                onBack={backToList}
-                onSuccess={onSuccess}
-                onError={onError}
-            />
-        );
-    }
-
     return (
-        <MfaCredentialsList
-            accessToken={accessToken}
-            credentials={credentials}
-            removable={showRemoveMfaCredential}
-            passkeysRowRef={passkeysRowRef}
-            onOpenPasskeys={openPasskeys}
-            onSuccess={onSuccess}
-            onError={onError}
-        />
+        <div key={view} className={viewAnimation(navigation)}>
+            {view === 'passkeys' ? (
+                <PasskeysView
+                    accessToken={accessToken}
+                    onBack={backToList}
+                    onSuccess={onSuccess}
+                    onError={onError}
+                />
+            ) : (
+                <MfaCredentialsList
+                    accessToken={accessToken}
+                    credentials={credentials}
+                    removable={showRemoveMfaCredential}
+                    passkeysRowRef={passkeysRowRef}
+                    onOpenPasskeys={openPasskeys}
+                    onSuccess={onSuccess}
+                    onError={onError}
+                />
+            )}
+        </div>
     );
 };
 

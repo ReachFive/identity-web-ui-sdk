@@ -156,6 +156,46 @@ describe('Criterion 3: the Passkeys row opens the passkey management view, with 
     });
 });
 
+describe('Switching views animates the view that enters', () => {
+    // jsdom runs no animation: these tests pin the classes that carry it.
+    const animationOf = (element: HTMLElement) =>
+        // eslint-disable-next-line testing-library/no-node-access
+        element.closest<HTMLElement>('[class*="animate-mfa-view-"]')?.className.split(/\s+/) ?? [];
+
+    beforeEach(() => {
+        listMfaCredentials.mockResolvedValue(
+            credentialsList(emailCredential, passkeyCredential('a'))
+        );
+        listWebAuthnDevices.mockResolvedValue([device('a')]);
+    });
+
+    test('the list does not animate when the widget first shows', async () => {
+        await renderWidget();
+
+        expect(animationOf(await screen.findByRole('button', { name: 'Passkeys' }))).toEqual([]);
+    });
+
+    test('the Passkeys view slides in forward, unless the user asks for reduced motion', async () => {
+        await renderWidget();
+
+        const back = await openPasskeysView(userEvent.setup());
+
+        expect(animationOf(back)).toContain('animate-mfa-view-forward');
+        expect(animationOf(back)).toContain('motion-reduce:animate-none');
+    });
+
+    test('going back slides the list in backward', async () => {
+        await renderWidget();
+        const user = userEvent.setup();
+
+        await user.click(await openPasskeysView(user));
+
+        const row = await screen.findByRole('button', { name: 'Passkeys' });
+        expect(animationOf(row)).toContain('animate-mfa-view-back');
+        expect(animationOf(row)).toContain('motion-reduce:animate-none');
+    });
+});
+
 describe('A failed device load shows the widget error output under the back arrow', () => {
     beforeEach(() => {
         jest.spyOn(console, 'error').mockImplementation(() => {});
