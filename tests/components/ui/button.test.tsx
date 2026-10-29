@@ -71,6 +71,18 @@ describe('Button variants', () => {
         expect(classes).not.toContain('border-button-border-width');
     });
 
+    test.each(['default', 'sm', 'lg', 'icon', 'icon-xs', 'icon-sm', 'icon-lg'] as const)(
+        'the %s size keeps the theme radius',
+        size => {
+            // A size carrying its own `rounded-*` overrides `rounded-button`, so a tenant's
+            // `button.borderRadius` silently stops applying to buttons of that size.
+            render(<Button size={size}>sized</Button>);
+            const radii = classesOf('sized').filter(name => name.startsWith('rounded-'));
+
+            expect(radii).toEqual(['rounded-button']);
+        }
+    );
+
     test('link is driven by the link theme, not by the primary color', () => {
         render(<Button variant="link">linked</Button>);
         const classes = classesOf('linked');
