@@ -40,7 +40,7 @@ export const ErrorText = ({
 }: React.HTMLAttributes<HTMLDivElement>) => (
     <TextBase
         data-slot="widget-error-text"
-        className={cn('text-destructive-foreground', className)}
+        className={cn('text-destructive', className)}
         {...props}
     >
         {children}
