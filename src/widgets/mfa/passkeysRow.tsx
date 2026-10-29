@@ -34,7 +34,10 @@ export const PasskeysRow = forwardRef<HTMLButtonElement, PasskeysRowProps>(funct
             <Item
                 asChild
                 variant="outline"
-                className={cn(rowClassName, 'w-full items-center text-left hover:bg-accent')}
+                className={cn(
+                    rowClassName,
+                    'w-full items-center text-left hover:bg-button-subtle-bg'
+                )}
             >
                 <button
                     ref={ref}

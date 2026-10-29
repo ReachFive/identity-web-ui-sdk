@@ -767,7 +767,7 @@ exports[`Snapshot: with passkeys 1`] = `
           <button
             aria-describedby="passkey-count"
             aria-labelledby="passkeys-title"
-            class="group/item [a]:hover:bg-accent/50 focus-visible:border-ring focus-visible:ring-ring/50 [a]:transition-colors flex flex-wrap border text-sm outline-none transition-colors duration-100 focus-visible:ring-[3px] border-border gap-3 rounded px-3.5 py-3 w-full items-center text-left hover:bg-accent"
+            class="group/item [a]:hover:bg-accent/50 focus-visible:border-ring focus-visible:ring-ring/50 [a]:transition-colors flex flex-wrap border text-sm outline-none transition-colors duration-100 focus-visible:ring-[3px] border-border gap-3 rounded px-3.5 py-3 w-full items-center text-left hover:bg-button-subtle-bg"
             data-size="default"
             data-slot="item"
             data-variant="outline"
