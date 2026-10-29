@@ -9,7 +9,7 @@ import { ItemActions, ItemGroup } from '@/components/ui/item';
 import { createQueryWidget } from '@/components/widget/queryWidget';
 import { useConfig } from '@/contexts/config';
 import { useI18n } from '@/contexts/i18n';
-import { dateFormat, noop } from '@/helpers/utils';
+import { dateFormat } from '@/helpers/utils';
 import { OnError, OnSuccess } from '@/types';
 import {
     credentialDetails,
@@ -294,8 +294,8 @@ const viewAnimation = (navigation: MfaNavigation) =>
 export const MfaList = ({
     accessToken,
     showRemoveMfaCredential = false,
-    onError = noop,
-    onSuccess = noop,
+    onError = () => {},
+    onSuccess = () => {},
 }: MfaListProps) => {
     const {
         data: { credentials },

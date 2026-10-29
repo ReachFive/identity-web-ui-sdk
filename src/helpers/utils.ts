@@ -66,8 +66,15 @@ export function formatISO8601Date(
     return null;
 }
 
-export function dateFormat(dateString: string, locales: string) {
-    return intlFormat(new Date(dateString), { timeZone: 'UTC' }, { locale: locales });
+/**
+ * A date in the configured language, read in UTC so it doesn't shift with the browser's time zone.
+ */
+export function dateFormat(
+    dateString: string,
+    locale: string,
+    options: Intl.DateTimeFormatOptions = {}
+): string {
+    return intlFormat(new Date(dateString), { ...options, timeZone: 'UTC' }, { locale });
 }
 
 export type Identifier = { identifier: string };
@@ -207,6 +214,3 @@ export function debounce<T extends unknown[]>(
         timerId = setTimeout(() => func(...args), delay);
     };
 }
-
-/** Does nothing: the default of an optional callback. */
-export const noop = (): void => {};

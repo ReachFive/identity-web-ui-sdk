@@ -31,7 +31,7 @@ import { WidgetSpinner } from '@/components/widget/widgetSpinner';
 import { useConfig } from '@/contexts/config';
 import { useI18n } from '@/contexts/i18n';
 import { useReachfive } from '@/contexts/reachfive';
-import { noop } from '@/helpers/utils';
+import { dateFormat } from '@/helpers/utils';
 
 import { getProviderData } from './providerData';
 
@@ -46,15 +46,14 @@ interface DevicesListProps {
     removeWebAuthnDevice: (id: string) => Promise<void>;
 }
 
-const dateFormat = (dateString: string, locales?: Intl.LocalesArgument) =>
-    new Date(dateString).toLocaleDateString(locales, {
-        timeZone: 'UTC',
-        year: 'numeric',
-        month: 'short',
-        day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit',
-    });
+/** Short month, day and time: devices can be added and used several times a day. */
+const DEVICE_DATE_FORMAT: Intl.DateTimeFormatOptions = {
+    year: 'numeric',
+    month: 'short',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+};
 
 interface DeviceItemProps {
     device: DeviceCredential;
@@ -115,13 +114,17 @@ const DeviceItem = ({ device, removeWebAuthnDevice }: DeviceItemProps) => {
                 {createdAt && (
                     <ItemDescription data-testid="device-created-at">
                         {i18n('webauthn.registredDevices.createdAt')}:&nbsp;
-                        <time dateTime={createdAt}>{dateFormat(createdAt, config.language)}</time>
+                        <time dateTime={createdAt}>
+                            {dateFormat(createdAt, config.language, DEVICE_DATE_FORMAT)}
+                        </time>
                     </ItemDescription>
                 )}
                 {lastUsedAt && (
                     <ItemDescription data-testid="device-last-used-at">
                         {i18n('webauthn.registredDevices.lastUsedAt')}:&nbsp;
-                        <time dateTime={lastUsedAt}>{dateFormat(lastUsedAt, config.language)}</time>
+                        <time dateTime={lastUsedAt}>
+                            {dateFormat(lastUsedAt, config.language, DEVICE_DATE_FORMAT)}
+                        </time>
                     </ItemDescription>
                 )}
             </ItemContent>
@@ -271,8 +274,8 @@ export function WebAuthnDevices({
     accessToken,
     devices: initialDevices,
     showLabels = false,
-    onError = noop,
-    onSuccess = noop,
+    onError = () => {},
+    onSuccess = () => {},
 }: WebAuthnDevicesProps) {
     const i18n = useI18n();
     const [state, setDevices] = useWebAuthnDevices(accessToken, initialDevices, onError);
