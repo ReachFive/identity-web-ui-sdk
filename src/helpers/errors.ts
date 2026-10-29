@@ -1,3 +1,5 @@
+import { logError } from '@/helpers/logger';
+
 export interface AppError {
     errorId: string;
     errorDescription: string;
@@ -50,4 +52,17 @@ export class UserError extends Error {
  */
 export function widgetErrorMessage(error: unknown): string {
     return error instanceof Error ? error.message : 'Unexpected error';
+}
+
+/**
+ * Logs a widget that cannot be displayed, whether it failed before rendering (`_showWidget`) or
+ * while loading its data (the query widget's error boundary). Anything but an `Error` or a string,
+ * an API error object included, is reported through `onError` only.
+ */
+export function logWidgetError(error: unknown): void {
+    if (error instanceof UserError) {
+        logError(`ReachFive widget display fails: ${widgetErrorMessage(error)}`);
+    } else if (error instanceof Error || typeof error === 'string') {
+        logError(error);
+    }
 }

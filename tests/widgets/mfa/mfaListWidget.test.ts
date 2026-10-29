@@ -157,7 +157,7 @@ describe('Criterion 2: email and phone number rows show their creation date', ()
         const row = await screen.findByRole('listitem');
         expect(within(row).getByText('root@reach5.co')).toBeInTheDocument();
         expect(within(row).getByText('Email')).toBeInTheDocument();
-        expect(within(row).getByText('Created on 21/09/2022')).toBeInTheDocument();
+        expect(row).toHaveTextContent('Created on 21/09/2022');
     });
 
     test('the phone number row shows the number, the "Phone number" label and the creation date', async () => {
@@ -167,7 +167,7 @@ describe('Criterion 2: email and phone number rows show their creation date', ()
         const row = await screen.findByRole('listitem');
         expect(within(row).getByText('33612345678')).toBeInTheDocument();
         expect(within(row).getByText('Phone number')).toBeInTheDocument();
-        expect(within(row).getByText('Created on 21/09/2022')).toBeInTheDocument();
+        expect(row).toHaveTextContent('Created on 21/09/2022');
     });
 
     test('the creation date follows the configured language', async () => {
@@ -178,7 +178,18 @@ describe('Criterion 2: email and phone number rows show their creation date', ()
         );
         render(widget);
 
-        expect(await screen.findByText('Created on 9/21/2022')).toBeInTheDocument();
+        expect(await screen.findByRole('listitem')).toHaveTextContent('Created on 9/21/2022');
+    });
+
+    test('the creation date is a machine-readable <time> element inside the translated label', async () => {
+        listMfaCredentials.mockResolvedValue({ credentials: [emailCredential] });
+        await renderWidget({ i18n: { 'mfaList.createdOn': 'Ajouté le {date} (UTC)' } });
+
+        const row = await screen.findByRole('listitem');
+        const time = row.querySelector('time');
+        expect(time).toHaveAttribute('dateTime', '2022-09-21');
+        expect(time).toHaveTextContent(/^21\/09\/2022$/);
+        expect(time?.parentElement).toHaveTextContent(/^Ajouté le 21\/09\/2022 \(UTC\)$/);
     });
 
     test('email and phone number rows are listed in the order returned', async () => {
@@ -216,7 +227,25 @@ describe('Criterion 7: theme attributes are respected and every new label is tra
 
         await screen.findByText('Courriel');
         expect(screen.getByText('Téléphone')).toBeInTheDocument();
-        expect(screen.getAllByText('Ajouté le 21/09/2022')).toHaveLength(2);
+        screen
+            .getAllByRole('listitem')
+            .forEach(row => expect(row).toHaveTextContent('Ajouté le 21/09/2022'));
+    });
+
+    test('the remove buttons are named through i18n', async () => {
+        listMfaCredentials.mockResolvedValue({ credentials: [emailCredential, phoneCredential] });
+        await renderWidget({
+            showRemoveMfaCredential: true,
+            i18n: {
+                'mfa.remove.email': 'Supprimer l’email',
+                'mfa.remove.phoneNumber': 'Supprimer le téléphone',
+            },
+        });
+
+        expect(
+            await screen.findByRole('button', { name: 'Supprimer l’email' })
+        ).toBeInTheDocument();
+        expect(screen.getByRole('button', { name: 'Supprimer le téléphone' })).toBeInTheDocument();
     });
 
     test('the empty state label can be overridden through the i18n option', async () => {
@@ -326,6 +355,33 @@ describe('DOM testing', () => {
 
             expect(await screen.findByText('Access denied')).toBeInTheDocument();
             expect(onError).toHaveBeenCalledTimes(1);
+        });
+
+        test('a failed first load is logged like any widget display failure', async () => {
+            const consoleError = jest.spyOn(console, 'error').mockImplementation(() => {});
+            listMfaCredentials.mockRejectedValue(new UserError('Access denied'));
+            await renderWidget();
+
+            await screen.findByText('Access denied');
+            expect(consoleError).toHaveBeenCalledWith(
+                'ReachFive widget display fails: Access denied'
+            );
+            consoleError.mockRestore();
+        });
+
+        test('coming back to the page does not refetch the credentials', async () => {
+            listMfaCredentials.mockResolvedValue({ credentials: [emailCredential] });
+            await renderWidget();
+
+            await screen.findByText('root@reach5.co');
+            // Suspense queries stay fresh for 1s: move past it so the data is stale.
+            const now = Date.now();
+            const dateNow = jest.spyOn(Date, 'now').mockReturnValue(now + 60_000);
+            window.dispatchEvent(new Event('visibilitychange'));
+            await new Promise(resolve => setTimeout(resolve, 0));
+            dateNow.mockRestore();
+
+            expect(listMfaCredentials).toHaveBeenCalledTimes(1);
         });
     });
 });
@@ -528,11 +584,16 @@ describe('Criterion 5: removal goes through an inline confirmation', () => {
         const remove = within(confirmation).getByRole('button', { name: 'Remove' });
         await user.click(remove);
 
-        expect(remove).toBeDisabled();
+        // aria-disabled, not disabled: a disabled button would drop the focus to <body>.
+        expect(remove).toHaveFocus();
+        expect(remove).toHaveAttribute('aria-disabled', 'true');
         expect(remove).toHaveAttribute('aria-busy', 'true');
-        expect(within(confirmation).getByRole('button', { name: 'Cancel' })).toBeDisabled();
+        const cancel = within(confirmation).getByRole('button', { name: 'Cancel' });
+        expect(cancel).toHaveAttribute('aria-disabled', 'true');
         await user.click(remove);
         expect(removeMfaEmail).toHaveBeenCalledTimes(1);
+        await user.click(cancel);
+        expect(screen.getByRole('group', { name: /^Remove / })).toBeInTheDocument();
 
         resolveRemoval();
         expect(await screen.findByText('No second factor yet')).toBeInTheDocument();
@@ -585,6 +646,53 @@ describe('Criterion 5: removal goes through an inline confirmation', () => {
         expect(await screen.findByText('root@reach5.co')).toBeInTheDocument();
     });
 
+    test('after removing a row, focus moves to the trash button of the next row', async () => {
+        listMfaCredentials
+            .mockResolvedValueOnce({ credentials: [emailCredential, phoneCredential] })
+            .mockResolvedValueOnce({ credentials: [phoneCredential] });
+        removeMfaEmail.mockResolvedValue(undefined);
+        await renderWidget({ showRemoveMfaCredential: true });
+
+        const { user, confirmation } = await openConfirmation('mfa.remove.email');
+        await user.click(within(confirmation).getByRole('button', { name: 'Remove' }));
+
+        await waitFor(() =>
+            expect(screen.getByRole('button', { name: 'mfa.remove.phoneNumber' })).toHaveFocus()
+        );
+    });
+
+    test('after removing the last row, focus moves to the trash button of the previous row', async () => {
+        listMfaCredentials
+            .mockResolvedValueOnce({ credentials: [emailCredential, phoneCredential] })
+            .mockResolvedValueOnce({ credentials: [emailCredential] });
+        removeMfaPhoneNumber.mockResolvedValue(undefined);
+        await renderWidget({ showRemoveMfaCredential: true });
+
+        const { user, confirmation } = await openConfirmation('mfa.remove.phoneNumber');
+        await user.click(within(confirmation).getByRole('button', { name: 'Remove' }));
+
+        await waitFor(() =>
+            expect(screen.getByRole('button', { name: 'mfa.remove.email' })).toHaveFocus()
+        );
+    });
+
+    test('after removing the only factor, focus moves to the empty state', async () => {
+        listMfaCredentials
+            .mockResolvedValueOnce({ credentials: [emailCredential] })
+            .mockResolvedValueOnce({ credentials: [] });
+        removeMfaEmail.mockResolvedValue(undefined);
+        await renderWidget({ showRemoveMfaCredential: true });
+
+        const { user, confirmation } = await openConfirmation('mfa.remove.email');
+        await user.click(within(confirmation).getByRole('button', { name: 'Remove' }));
+
+        const empty = await screen.findByText('No second factor yet');
+        await waitFor(() => {
+            expect(document.activeElement).not.toBe(document.body);
+            expect(document.activeElement).toContainElement(empty);
+        });
+    });
+
     test('the confirmation labels can be overridden through the i18n option', async () => {
         listMfaCredentials.mockResolvedValue({ credentials: [emailCredential] });
         await renderWidget({
@@ -622,7 +730,6 @@ const passkeyI18n: I18nMessages = {
     'mfaList.passkeyCount_one': '{count} passkey',
     'mfaList.passkeyCount_other': '{count} passkeys',
     'mfaList.alsoUsedToLogIn': 'Also used to log in',
-    'mfaList.managePasskeys': 'Manage passkeys',
 };
 
 const renderWithMessages = async (messages: I18nMessages, language = defaultConfig.language) => {
@@ -696,7 +803,7 @@ describe('Criterion 1: a Passkeys row is shown if and only if the user has a pas
 
         await screen.findByText('root@reach5.co');
         expect(screen.queryByText('Passkeys')).not.toBeInTheDocument();
-        expect(screen.queryByRole('button', { name: 'Manage passkeys' })).not.toBeInTheDocument();
+        expect(screen.queryByRole('button', { name: 'Passkeys' })).not.toBeInTheDocument();
     });
 
     test('with only passkeys, the Passkeys row is shown instead of the empty state', async () => {
@@ -722,9 +829,50 @@ describe('Criterion 1: a Passkeys row is shown if and only if the user has a pas
         listMfaCredentials.mockResolvedValue(credentialsList(passkeyCredential('a')));
         await renderWithMessages(passkeyI18n);
 
-        const button = await screen.findByRole('button', { name: 'Manage passkeys' });
+        const button = await screen.findByRole('button', { name: 'Passkeys' });
         expect(button).toHaveAccessibleDescription('1 passkey · Also used to log in');
-        expect(button).toHaveAttribute('data-slot', 'widget-mfa-credential');
+        // The visible label is the name: no aria-label overriding it.
+        expect(button).not.toHaveAttribute('aria-label');
+        // Phrasing content only: a <button> cannot hold <div> or <p>.
+        expect(button.querySelector('div, p')).toBeNull();
+    });
+
+    test('the public widget-mfa-credential slot is on the list item in every row shape', async () => {
+        listMfaCredentials.mockResolvedValue(
+            credentialsList(emailCredential, phoneCredential, passkeyCredential('a'))
+        );
+        const widget = await mfaListWidget(
+            { accessToken: 'azerty', onError, onSuccess, showRemoveMfaCredential: true },
+            { apiClient, config: defaultConfig, defaultI18n: passkeyI18n }
+        );
+        render(widget);
+
+        const user = userEvent.setup();
+        await user.click(await screen.findByRole('button', { name: 'mfa.remove.email' }));
+        await screen.findByRole('group', { name: /^Remove / });
+
+        const rows = screen.getAllByRole('listitem');
+        expect(rows).toHaveLength(3);
+        rows.forEach(row => expect(row).toHaveAttribute('data-slot', 'widget-mfa-credential'));
+        expect(document.querySelectorAll('[data-slot="widget-mfa-credential"]')).toHaveLength(3);
+    });
+
+    test('after removing the factor above it, focus moves to the Passkeys row', async () => {
+        listMfaCredentials
+            .mockResolvedValueOnce(credentialsList(emailCredential, passkeyCredential('a')))
+            .mockResolvedValueOnce(credentialsList(passkeyCredential('a')));
+        removeMfaEmail.mockResolvedValue(undefined);
+        const widget = await mfaListWidget(
+            { accessToken: 'azerty', onError, onSuccess, showRemoveMfaCredential: true },
+            { apiClient, config: defaultConfig, defaultI18n: passkeyI18n }
+        );
+        render(widget);
+
+        const user = userEvent.setup();
+        await user.click(await screen.findByRole('button', { name: 'mfa.remove.email' }));
+        await user.click(await screen.findByRole('button', { name: 'Remove' }));
+
+        await waitFor(() => expect(screen.getByRole('button', { name: 'Passkeys' })).toHaveFocus());
     });
 
     test('the row shows the fingerprint icon in the success colour and a chevron, but no remove button', async () => {
@@ -735,7 +883,7 @@ describe('Criterion 1: a Passkeys row is shown if and only if the user has a pas
         );
         render(widget);
 
-        const button = await screen.findByRole('button', { name: 'Manage passkeys' });
+        const button = await screen.findByRole('button', { name: 'Passkeys' });
         const icons = button.querySelectorAll('svg');
         expect(icons[0]).toHaveClass('lucide-fingerprint');
         expect(icons[0].parentElement).toHaveClass('text-success', 'bg-success/10');
@@ -778,14 +926,17 @@ test('Snapshot: with passkeys', async () => {
     const { container } = await renderWithMessages(passkeyI18n);
 
     await screen.findByText('Passkeys');
-    // The count's id comes from useId, whose value depends on the ids earlier tests consumed:
-    // pin it so the snapshot does not change with the test order or the set of tests run.
-    const button = screen.getByRole('button', { name: 'Manage passkeys' });
-    const description = container.querySelector(
-        `[id="${button.getAttribute('aria-describedby')}"]`
-    );
-    description?.setAttribute('id', 'passkey-count');
-    button.setAttribute('aria-describedby', 'passkey-count');
+    // The title and count ids come from useId, whose values depend on the ids earlier tests
+    // consumed: pin them so the snapshot does not change with the test order or the tests run.
+    const button = screen.getByRole('button', { name: 'Passkeys' });
+    const pinId = (attribute: string, id: string) => {
+        container
+            .querySelector(`[id="${button.getAttribute(attribute)}"]`)
+            ?.setAttribute('id', id);
+        button.setAttribute(attribute, id);
+    };
+    pinId('aria-labelledby', 'passkeys-title');
+    pinId('aria-describedby', 'passkey-count');
 
     expect(container).toMatchSnapshot();
 });

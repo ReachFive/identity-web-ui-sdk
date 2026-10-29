@@ -1,3 +1,5 @@
+import { useEffect } from 'react';
+
 import {
     useMutation,
     useQueryClient,
@@ -11,14 +13,17 @@ import { useReachfive } from '@/contexts/reachfive';
 
 import type { OnError, OnSuccess } from '@/types';
 import type { SuccessEvent } from '@/types/events';
-import type { EmailOrPhoneCredential } from '@/widgets/mfa/passkeyCredential';
+import type { EmailOrPhoneCredential } from '@/widgets/mfa/credentials';
 
 /**
  * Query keys of the MFA resources, namespaced so they never collide with another widget's.
  */
-export const mfaKeys = {
-    all: ['mfa'] as const,
-    credentials: () => [...mfaKeys.all, 'credentials'] as const satisfies QueryKey,
+const mfaKeys = {
+    credentials: () => ['mfa', 'credentials'] as const satisfies QueryKey,
+};
+
+const webAuthnKeys = {
+    devices: () => ['webauthn', 'devices'] as const satisfies QueryKey,
 };
 
 /**
@@ -64,7 +69,7 @@ const removeMfaCredential = (
     }
 };
 
-export type UseRemoveMfaCredentialOptions = {
+type UseRemoveMfaCredentialOptions = {
     accessToken: string;
     onSuccess: OnSuccess;
     onError: OnError;
@@ -91,4 +96,31 @@ export const useRemoveMfaCredential = ({
         },
         onError: error => onError(error),
     });
+};
+
+/**
+ * The user's passkey devices, read through suspense for the Passkeys view: a failed load is
+ * thrown to the view's error boundary.
+ */
+export const usePasskeyDevices = (accessToken: string) => {
+    const client = useReachfive();
+
+    return useSuspenseQuery({
+        queryKey: webAuthnKeys.devices(),
+        queryFn: () => client.listWebAuthnDevices(accessToken),
+    });
+};
+
+/**
+ * Drops the passkey devices when the Passkeys view closes. The device list then lives in
+ * `WebAuthnDevices`' own state, so a cached copy would be stale, and a cached error would be
+ * thrown again without a retry: reopening the view always loads afresh.
+ */
+export const useForgetPasskeyDevicesOnLeave = () => {
+    const queryClient = useQueryClient();
+
+    useEffect(
+        () => () => queryClient.removeQueries({ queryKey: webAuthnKeys.devices() }),
+        [queryClient]
+    );
 };

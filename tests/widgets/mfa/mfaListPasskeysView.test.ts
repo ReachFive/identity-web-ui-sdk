@@ -1,13 +1,14 @@
 /**
  * @jest-environment jsdom
  */
-import { beforeEach, describe, expect, jest, test } from '@jest/globals';
+import { afterEach, beforeEach, describe, expect, jest, test } from '@jest/globals';
 import '@testing-library/jest-dom/jest-globals';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import type { Client, DeviceCredential, MFA } from '@reachfive/identity-core';
 
+import { AppError, UserError } from '../../../src/helpers/errors';
 import mfaListWidget from '../../../src/widgets/mfa/mfaListWidget';
 
 import type { I18nMessages } from '../../../src/contexts/i18n';
@@ -52,7 +53,6 @@ const messages: I18nMessages = {
     'mfaList.passkeyCount_one': '{count} passkey',
     'mfaList.passkeyCount_other': '{count} passkeys',
     'mfaList.alsoUsedToLogIn': 'Also used to log in',
-    'mfaList.managePasskeys': 'Manage passkeys',
     'mfaList.back': 'Back',
     'webauthn.registredDevices.list': 'Registered devices',
     'webauthn.registredDevices.no.list': 'No registered device',
@@ -108,7 +108,7 @@ const renderWidget = async () => {
 };
 
 const openPasskeysView = async (user: ReturnType<typeof userEvent.setup>) => {
-    await user.click(await screen.findByRole('button', { name: 'Manage passkeys' }));
+    await user.click(await screen.findByRole('button', { name: 'Passkeys' }));
     return screen.findByRole('button', { name: 'Back' });
 };
 
@@ -149,6 +149,52 @@ describe('Criterion 3: the Passkeys row opens the passkey management view, with 
     });
 });
 
+describe('A failed device load shows the widget error output under the back arrow', () => {
+    beforeEach(() => {
+        jest.spyOn(console, 'error').mockImplementation(() => {});
+    });
+
+    afterEach(() => {
+        jest.restoreAllMocks();
+    });
+
+    test('a user error shows its message, calls onError once and the back arrow still works', async () => {
+        const error = new UserError('Devices unavailable');
+        listMfaCredentials.mockResolvedValue(
+            credentialsList(emailCredential, passkeyCredential('a'))
+        );
+        listWebAuthnDevices.mockRejectedValue(error);
+        await renderWidget();
+
+        const user = userEvent.setup();
+        const back = await openPasskeysView(user);
+
+        expect(await screen.findByText('Devices unavailable')).toBeInTheDocument();
+        expect(onError).toHaveBeenCalledTimes(1);
+        expect(onError).toHaveBeenCalledWith(error);
+
+        await user.click(back);
+        expect(await screen.findByText('root@reach5.co')).toBeInTheDocument();
+    });
+
+    test('an API error shows the generic message', async () => {
+        const error: AppError = {
+            errorId: '0',
+            error: 'unexpected_error',
+            errorDescription: 'Boom',
+        };
+        listMfaCredentials.mockResolvedValue(credentialsList(passkeyCredential('a')));
+        listWebAuthnDevices.mockRejectedValue(error);
+        await renderWidget();
+
+        await openPasskeysView(userEvent.setup());
+
+        expect(await screen.findByText('Unexpected error')).toBeInTheDocument();
+        expect(screen.getByRole('button', { name: 'Back' })).toBeInTheDocument();
+        expect(onError).toHaveBeenCalledTimes(1);
+    });
+});
+
 describe('Adding or removing a passkey refreshes the list of factors', () => {
     beforeEach(() => {
         jest.spyOn(window, 'confirm').mockReturnValue(true);
@@ -181,7 +227,7 @@ describe('Adding or removing a passkey refreshes the list of factors', () => {
 
         await user.click(back);
         expect(
-            await screen.findByRole('button', { name: 'Manage passkeys' })
+            await screen.findByRole('button', { name: 'Passkeys' })
         ).toHaveAccessibleDescription('1 passkey · Also used to log in');
     });
 
@@ -210,7 +256,7 @@ describe('Adding or removing a passkey refreshes the list of factors', () => {
 
         await user.click(back);
         expect(
-            await screen.findByRole('button', { name: 'Manage passkeys' })
+            await screen.findByRole('button', { name: 'Passkeys' })
         ).toHaveAccessibleDescription('2 passkeys · Also used to log in');
     });
 
@@ -231,7 +277,7 @@ describe('Adding or removing a passkey refreshes the list of factors', () => {
 
         await user.click(back);
         expect(await screen.findByText('root@reach5.co')).toBeInTheDocument();
-        expect(screen.queryByRole('button', { name: 'Manage passkeys' })).not.toBeInTheDocument();
+        expect(screen.queryByRole('button', { name: 'Passkeys' })).not.toBeInTheDocument();
     });
 
     test('after removing the only factor, going back shows the empty state', async () => {
@@ -273,7 +319,7 @@ describe('Adding or removing a passkey refreshes the list of factors', () => {
 
         await user.click(back);
         expect(
-            await screen.findByRole('button', { name: 'Manage passkeys' })
+            await screen.findByRole('button', { name: 'Passkeys' })
         ).toHaveAccessibleDescription('2 passkeys · Also used to log in');
     });
 });
@@ -300,13 +346,13 @@ describe('Focus follows the view change', () => {
         const user = userEvent.setup();
         await user.click(await openPasskeysView(user));
 
-        expect(await screen.findByRole('button', { name: 'Manage passkeys' })).toHaveFocus();
+        expect(await screen.findByRole('button', { name: 'Passkeys' })).toHaveFocus();
     });
 
     test('the Passkeys row does not take focus on the first display of the list', async () => {
         listMfaCredentials.mockResolvedValue(credentialsList(passkeyCredential('a')));
         await renderWidget();
 
-        expect(await screen.findByRole('button', { name: 'Manage passkeys' })).not.toHaveFocus();
+        expect(await screen.findByRole('button', { name: 'Passkeys' })).not.toHaveFocus();
     });
 });
