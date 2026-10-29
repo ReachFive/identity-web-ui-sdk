@@ -17,13 +17,6 @@ import { Config } from '@/types';
 
 import { WidgetContext } from './WidgetContext';
 
-// the debounce of the strength check is covered by tests/helpers/passwordStrength.test.ts:
-// call the API right away here
-jest.mock('@/helpers/passwordStrength', () => ({
-    debouncedPasswordStrength: (client: Client, password: string) =>
-        client.getPasswordStrength(password),
-}));
-
 describe('DOM testing', () => {
     // @ts-expect-error partial Client
     const apiClient: Client = {};

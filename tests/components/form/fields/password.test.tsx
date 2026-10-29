@@ -11,11 +11,11 @@ import userEvent from '@testing-library/user-event';
 import { PasswordStrengthScore, type Client } from '@reachfive/identity-core';
 
 import {
+    PASSWORD_STRENGTH_DEBOUNCE_DELAY,
     PasswordField,
     PasswordPolicyRules,
 } from '../../../../src/components/form/fields/password';
 import { type I18nMessages } from '../../../../src/contexts/i18n';
-import { PASSWORD_STRENGTH_DEBOUNCE_DELAY } from '../../../../src/helpers/passwordStrength';
 import { WidgetContext } from '../WidgetContext';
 
 import type { Config } from '../../../../src/types';

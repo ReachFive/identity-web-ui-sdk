@@ -1,11 +1,8 @@
 import z from 'zod';
 
-import { debouncedPasswordStrength } from '@/helpers/passwordStrength';
-
 import type { Validation } from '@/lib/form';
 
 export function passwordValidation({
-    client,
     config: { passwordPolicy },
     definition,
     i18n,
@@ -18,7 +15,7 @@ export function passwordValidation({
         .max(255, {
             error: i18n('validation.password.maxLength', { max: 255 }),
         })
-        .superRefine(async (value, ctx) => {
+        .superRefine((value, ctx) => {
             if (String(value).length === 0) return;
             if (!definition.withPolicyRules) return;
 
@@ -57,17 +54,7 @@ export function passwordValidation({
                 });
             }
 
-            try {
-                const strength = await debouncedPasswordStrength(client, value);
-                if (strength && strength.score < passwordPolicy.minStrength) {
-                    ctx.addIssue({
-                        code: 'custom',
-                        message: i18n('validation.password.minStrength'),
-                        path: ['password'],
-                    });
-                }
-            } catch (_e) {
-                // ignore error
-            }
+            // the strength is shown by `PasswordPolicyRules` and checked by the server on submit:
+            // asking for it here would call the rate-limited endpoint again on every keystroke
         });
 }

@@ -20,13 +20,6 @@ import authWidget from '../../../src/widgets/auth/authWidget';
 
 import type { Config } from '../../../src/types';
 
-// the debounce of the strength check is covered by tests/helpers/passwordStrength.test.ts:
-// call the API right away here
-jest.mock('@/helpers/passwordStrength', () => ({
-    debouncedPasswordStrength: (client: Client, password: string) =>
-        client.getPasswordStrength(password),
-}));
-
 const customProvider: Provider = {
     key: 'my-idp',
     name: 'My IdP',

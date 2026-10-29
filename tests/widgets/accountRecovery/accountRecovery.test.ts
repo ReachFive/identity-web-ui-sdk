@@ -14,13 +14,6 @@ import accountRecoveryWidget from '../../../src/widgets/accountRecovery/accountR
 
 import type { Config, OnError, OnSuccess } from '../../../src/types';
 
-// the debounce of the strength check is covered by tests/helpers/passwordStrength.test.ts:
-// call the API right away here
-jest.mock('@/helpers/passwordStrength', () => ({
-    debouncedPasswordStrength: (client: Client, password: string) =>
-        client.getPasswordStrength(password),
-}));
-
 const defaultConfig: Config = {
     clientId: 'local',
     domain: 'local.reach5.net',

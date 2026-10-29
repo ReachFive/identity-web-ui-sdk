@@ -16,9 +16,11 @@ import { ItemDescription, ItemTitle } from '@/components/ui/item';
 import { useConfig } from '@/contexts/config';
 import { useI18n } from '@/contexts/i18n';
 import { useReachfive } from '@/contexts/reachfive';
-import { PASSWORD_STRENGTH_DEBOUNCE_DELAY } from '@/helpers/passwordStrength';
 import { useDebounce } from '@/helpers/useDebounce';
 import { cn } from '@/lib/utils';
+
+// the password strength endpoint is rate limited: wait for the user to stop typing
+export const PASSWORD_STRENGTH_DEBOUNCE_DELAY = 1000;
 
 const PasswordInputContext = React.createContext<{ password: string } | null>(null);
 
