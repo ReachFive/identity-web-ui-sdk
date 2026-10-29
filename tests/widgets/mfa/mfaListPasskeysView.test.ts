@@ -200,6 +200,26 @@ describe('A failed device load shows the widget error output under the back arro
         expect(screen.getByRole('button', { name: 'Back' })).toBeInTheDocument();
         expect(onError).toHaveBeenCalledTimes(1);
     });
+
+    test('an API error with a message for the user shows that message', async () => {
+        const error: AppError = {
+            errorId: '0',
+            error: 'insufficient_authentication',
+            errorDescription: 'The access token is not fresh enough',
+            errorUserMsg: "Le jeton d'accès n'est pas assez récent.",
+        };
+        listMfaCredentials.mockResolvedValue(credentialsList(passkeyCredential('a')));
+        listWebAuthnDevices.mockRejectedValue(error);
+        await renderWidget();
+
+        await openPasskeysView(userEvent.setup());
+
+        expect(
+            await screen.findByText("Le jeton d'accès n'est pas assez récent.")
+        ).toBeInTheDocument();
+        expect(screen.queryByText('Unexpected error')).not.toBeInTheDocument();
+        expect(screen.queryByText('The access token is not fresh enough')).not.toBeInTheDocument();
+    });
 });
 
 describe('Adding or removing a passkey refreshes the list of factors', () => {
