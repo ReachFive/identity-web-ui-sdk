@@ -67,14 +67,15 @@ export function formatISO8601Date(
 }
 
 /**
- * A date in the configured language, read in UTC so it doesn't shift with the browser's time zone.
+ * A date in the configured language and the user's time zone. The API returns ISO 8601 instants in
+ * UTC (`…Z`), which `new Date` reads as such.
  */
 export function dateFormat(
     dateString: string,
     locale: string,
     options: Intl.DateTimeFormatOptions = {}
 ): string {
-    return intlFormat(new Date(dateString), { ...options, timeZone: 'UTC' }, { locale });
+    return intlFormat(new Date(dateString), options, { locale });
 }
 
 export type Identifier = { identifier: string };

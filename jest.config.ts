@@ -1,5 +1,9 @@
 import type { JestConfigWithTsJest } from 'ts-jest';
 
+// Dates are shown in the user's time zone: pin one, away from UTC, so tests give the same result on
+// every machine and catch a date read or shown in the wrong zone. Workers inherit it.
+process.env.TZ = 'Europe/Paris';
+
 const config: JestConfigWithTsJest = {
     preset: 'ts-jest',
     testEnvironment: 'jsdom',

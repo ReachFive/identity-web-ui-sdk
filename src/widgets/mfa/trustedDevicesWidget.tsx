@@ -203,6 +203,7 @@ export const TrustedDeviceList = ({
                                 <time dateTime={trustedDevice.createdAt}>
                                     {dateFormat(trustedDevice.createdAt, config.language, {
                                         dateStyle: 'medium',
+                                        timeStyle: 'short',
                                     })}
                                 </time>
                             </ItemDescription>

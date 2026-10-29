@@ -46,15 +46,6 @@ interface DevicesListProps {
     removeWebAuthnDevice: (id: string) => Promise<void>;
 }
 
-/** Short month, day and time: devices can be added and used several times a day. */
-const DEVICE_DATE_FORMAT: Intl.DateTimeFormatOptions = {
-    year: 'numeric',
-    month: 'short',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
-};
-
 interface DeviceItemProps {
     device: DeviceCredential;
     removeWebAuthnDevice: (id: string) => Promise<void>;
@@ -115,7 +106,10 @@ const DeviceItem = ({ device, removeWebAuthnDevice }: DeviceItemProps) => {
                     <ItemDescription data-testid="device-created-at">
                         {i18n('webauthn.registredDevices.createdAt')}:&nbsp;
                         <time dateTime={createdAt}>
-                            {dateFormat(createdAt, config.language, DEVICE_DATE_FORMAT)}
+                            {dateFormat(createdAt, config.language, {
+                                dateStyle: 'medium',
+                                timeStyle: 'short',
+                            })}
                         </time>
                     </ItemDescription>
                 )}
@@ -123,7 +117,10 @@ const DeviceItem = ({ device, removeWebAuthnDevice }: DeviceItemProps) => {
                     <ItemDescription data-testid="device-last-used-at">
                         {i18n('webauthn.registredDevices.lastUsedAt')}:&nbsp;
                         <time dateTime={lastUsedAt}>
-                            {dateFormat(lastUsedAt, config.language, DEVICE_DATE_FORMAT)}
+                            {dateFormat(lastUsedAt, config.language, {
+                                dateStyle: 'medium',
+                                timeStyle: 'short',
+                            })}
                         </time>
                     </ItemDescription>
                 )}
