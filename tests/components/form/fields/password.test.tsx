@@ -91,8 +91,8 @@ describe('DOM testing', () => {
         return Promise.resolve({ score: score as PasswordStrengthScore });
     });
 
-    // a new client per test, so the strength checked last is not shared between tests
-    let apiClient: Client;
+    // @ts-expect-error partial Client
+    const apiClient: Client = { getPasswordStrength };
 
     // the strength is only asked once the user has stopped typing
     const waitForStrengthDebounce = () =>
@@ -100,8 +100,6 @@ describe('DOM testing', () => {
 
     beforeEach(() => {
         getPasswordStrength.mockClear();
-        // @ts-expect-error partial Client
-        apiClient = { getPasswordStrength };
         jest.useFakeTimers();
     });
 

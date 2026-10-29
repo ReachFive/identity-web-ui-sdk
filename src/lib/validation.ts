@@ -1,6 +1,6 @@
 import z from 'zod';
 
-import { getPasswordStrength } from '@/helpers/passwordStrength';
+import { debouncedPasswordStrength } from '@/helpers/passwordStrength';
 
 import type { Validation } from '@/lib/form';
 
@@ -58,8 +58,8 @@ export function passwordValidation({
             }
 
             try {
-                const strength = await getPasswordStrength(client, value);
-                if (strength.score < passwordPolicy.minStrength) {
+                const strength = await debouncedPasswordStrength(client, value);
+                if (strength && strength.score < passwordPolicy.minStrength) {
                     ctx.addIssue({
                         code: 'custom',
                         message: i18n('validation.password.minStrength'),

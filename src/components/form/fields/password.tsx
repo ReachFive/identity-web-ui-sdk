@@ -16,7 +16,8 @@ import { ItemDescription, ItemTitle } from '@/components/ui/item';
 import { useConfig } from '@/contexts/config';
 import { useI18n } from '@/contexts/i18n';
 import { useReachfive } from '@/contexts/reachfive';
-import { getPasswordStrength } from '@/helpers/passwordStrength';
+import { PASSWORD_STRENGTH_DEBOUNCE_DELAY } from '@/helpers/passwordStrength';
+import { useDebounce } from '@/helpers/useDebounce';
 import { cn } from '@/lib/utils';
 
 const PasswordInputContext = React.createContext<{ password: string } | null>(null);
@@ -131,31 +132,26 @@ const PasswordPolicyRules = function PasswordPolicyRules(_props: PasswordPolicyR
     const { passwordPolicy } = useConfig();
     const i18n = useI18n();
     const { password } = usePasswordInput();
+    const debouncedPassword = useDebounce(password, PASSWORD_STRENGTH_DEBOUNCE_DELAY);
 
     const [error, setError] = React.useState(false);
     const [strength, setStrength] = React.useState<PasswordStrength>({ score: 0 });
 
     React.useEffect(() => {
-        if (password.length === 0) {
+        if (debouncedPassword.length === 0) {
             setStrength({ score: 0 } satisfies PasswordStrength);
             return;
         }
 
-        // ignore the result of a password the user has typed past
-        let ignore = false;
         // eslint-disable-next-line @typescript-eslint/no-floating-promises
         (async () => {
             try {
-                const result = await getPasswordStrength(client, password);
-                if (!ignore) setStrength(result);
+                setStrength(await client.getPasswordStrength(debouncedPassword));
             } catch (_e) {
-                if (!ignore) setError(true);
+                setError(true);
             }
         })();
-        return () => {
-            ignore = true;
-        };
-    }, [client, password]);
+    }, [client, debouncedPassword]);
 
     if (error) return null;
 

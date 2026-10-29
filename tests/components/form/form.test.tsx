@@ -20,7 +20,8 @@ import { WidgetContext } from './WidgetContext';
 // the debounce of the strength check is covered by tests/helpers/passwordStrength.test.ts:
 // call the API right away here
 jest.mock('@/helpers/passwordStrength', () => ({
-    getPasswordStrength: (client: Client, password: string) => client.getPasswordStrength(password),
+    debouncedPasswordStrength: (client: Client, password: string) =>
+        client.getPasswordStrength(password),
 }));
 
 describe('DOM testing', () => {

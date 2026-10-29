@@ -32,8 +32,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   being squeezed onto a single row
 - The injected CSS no longer styles the host page: Tailwind's `--tw-*` defaults on `*` / `::backdrop` and the
   base rules for `a`, `b`, `strong`, `small`, `sub` and `sup` are now scoped to `.r5-widget`
-- The password field waits again for the user to stop typing for 1 second before checking the password strength,
-  and the strength indicator and the form validation share the result. The endpoint is rate limited.
+- The password strength indicator and the password validation wait again for the user to stop typing for 1 second
+  before checking the password strength, since the endpoint is rate limited
 
 ### Changed
 
