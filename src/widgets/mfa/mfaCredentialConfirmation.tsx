@@ -80,7 +80,8 @@ export function MfaCredentialConfirmation({
                     ref={cancelRef}
                     type="button"
                     variant="outline"
-                    className={cn('h-8 px-3.5 text-foreground', pendingClassName)}
+                    size="sm"
+                    className={cn('text-foreground', pendingClassName)}
                     aria-disabled={pending || undefined}
                     onClick={unlessPending(onCancel)}
                 >
@@ -89,7 +90,8 @@ export function MfaCredentialConfirmation({
                 <Button
                     type="button"
                     variant="destructive"
-                    className={cn('h-8 px-3.5', pendingClassName)}
+                    size="sm"
+                    className={pendingClassName}
                     aria-disabled={pending || undefined}
                     aria-busy={pending}
                     onClick={unlessPending(onConfirm)}

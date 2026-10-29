@@ -655,14 +655,14 @@ exports[`Snapshot removal confirmation 1`] = `
               class="flex justify-end gap-2"
             >
               <button
-                class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-button text-button-text-size font-button-font-weight leading-button transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0 border-button-border-width border-button-border-color bg-background shadow-button-shadow hover:border-button-hover-border-color hover:bg-button-subtle-bg py-button-padding-y h-8 px-3.5 text-foreground aria-disabled:cursor-not-allowed aria-disabled:opacity-50"
+                class="inline-flex items-center justify-center gap-2 whitespace-nowrap font-button-font-weight transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0 border-button-border-width border-button-border-color bg-background shadow-button-shadow hover:border-button-hover-border-color hover:bg-button-subtle-bg h-8 rounded-md px-3 text-xs text-foreground aria-disabled:cursor-not-allowed aria-disabled:opacity-50"
                 type="button"
               >
                 Cancel
               </button>
               <button
                 aria-busy="false"
-                class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-button text-button-text-size font-button-font-weight leading-button transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0 bg-destructive text-destructive-foreground shadow-button-shadow hover:bg-destructive/90 py-button-padding-y h-8 px-3.5 aria-disabled:cursor-not-allowed aria-disabled:opacity-50"
+                class="inline-flex items-center justify-center gap-2 whitespace-nowrap font-button-font-weight transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0 bg-destructive text-destructive-foreground shadow-button-shadow hover:bg-destructive/90 h-8 rounded-md px-3 text-xs aria-disabled:cursor-not-allowed aria-disabled:opacity-50"
                 type="button"
               >
                 Remove
