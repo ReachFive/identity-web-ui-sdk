@@ -17,6 +17,9 @@ const config: JestConfigWithTsJest = {
         'lucide-react': '<rootDir>/node_modules/lucide-react/dist/cjs/lucide-react.js',
     },
     setupFiles: ['<rootDir>/jest.setup.js'],
+    // Agent worktrees hold full copies of the repository: never collect their tests or modules.
+    testPathIgnorePatterns: ['/node_modules/', '<rootDir>/.claude/'],
+    modulePathIgnorePatterns: ['<rootDir>/.claude/'],
 };
 
 export default config;

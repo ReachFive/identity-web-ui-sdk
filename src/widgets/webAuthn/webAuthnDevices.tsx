@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-import { LoaderCircle, TrashIcon } from 'lucide-react';
+import { TrashIcon } from 'lucide-react';
 
 import type { DeviceCredential } from '@reachfive/identity-core';
 
@@ -16,9 +16,11 @@ import {
     ItemMedia,
     ItemTitle,
 } from '@/components/ui/item';
+import { WidgetSpinner } from '@/components/widget/widgetSpinner';
 import { useConfig } from '@/contexts/config';
 import { useI18n } from '@/contexts/i18n';
 import { useReachfive } from '@/contexts/reachfive';
+import { noop } from '@/helpers/utils';
 
 import { getProviderData } from './providerData';
 
@@ -33,8 +35,6 @@ interface DevicesListProps {
     removeWebAuthnDevice: (id: string) => Promise<void>;
 }
 
-const noop = () => {};
-
 const dateFormat = (dateString: string, locales?: Intl.LocalesArgument) =>
     new Date(dateString).toLocaleDateString(locales, {
         timeZone: 'UTC',
@@ -45,67 +45,75 @@ const dateFormat = (dateString: string, locales?: Intl.LocalesArgument) =>
         minute: '2-digit',
     });
 
-const DevicesList = ({ devices, removeWebAuthnDevice }: DevicesListProps) => {
+interface DeviceItemProps {
+    device: DeviceCredential;
+    removeWebAuthnDevice: (id: string) => Promise<void>;
+}
+
+const DeviceItem = ({ device, removeWebAuthnDevice }: DeviceItemProps) => {
     const i18n = useI18n();
     const config = useConfig();
+    const { id, friendlyName, createdAt, lastUsedAt, aaguid } = device;
+    const [provider, Icon] = getProviderData(aaguid ?? '');
+
+    return (
+        <Item data-testid="device" variant="outline">
+            <ItemMedia
+                variant="icon"
+                className="group-has-[[data-slot=item-description]]/item:self-center"
+            >
+                <Icon className="size-8" />
+            </ItemMedia>
+            <ItemContent>
+                <ItemTitle data-testid="device-name">{friendlyName}</ItemTitle>
+                {provider && (
+                    <ItemDescription data-testid="device-provider">{provider}</ItemDescription>
+                )}
+                {createdAt && (
+                    <ItemDescription data-testid="device-created-at">
+                        {i18n('webauthn.registredDevices.createdAt')}:&nbsp;
+                        <time dateTime={createdAt}>{dateFormat(createdAt, config.language)}</time>
+                    </ItemDescription>
+                )}
+                {lastUsedAt && (
+                    <ItemDescription data-testid="device-last-used-at">
+                        {i18n('webauthn.registredDevices.lastUsedAt')}:&nbsp;
+                        <time dateTime={lastUsedAt}>{dateFormat(lastUsedAt, config.language)}</time>
+                    </ItemDescription>
+                )}
+            </ItemContent>
+            <ItemActions>
+                <Button
+                    size="icon-sm"
+                    variant="destructive"
+                    className="rounded-full"
+                    aria-label={i18n('remove')}
+                    title={i18n('remove')}
+                    onClick={() => void removeWebAuthnDevice(id)}
+                    data-testid="device-remove"
+                >
+                    <TrashIcon />
+                </Button>
+            </ItemActions>
+        </Item>
+    );
+};
+
+const DevicesList = ({ devices, removeWebAuthnDevice }: DevicesListProps) => {
+    const i18n = useI18n();
 
     return (
         <div className="space-y-4">
             <Heading>{i18n('webauthn.registredDevices.list')}</Heading>
 
             <ItemGroup>
-                {devices.map(device => {
-                    const { id, friendlyName, createdAt, lastUsedAt, aaguid } = device;
-                    const [provider, Icon] = getProviderData(aaguid ?? '');
-
-                    return (
-                        <Item key={id} data-testid="device" variant="outline">
-                            <ItemMedia
-                                variant="icon"
-                                className="group-has-[[data-slot=item-description]]/item:self-center"
-                            >
-                                <Icon className="size-8" />
-                            </ItemMedia>
-                            <ItemContent>
-                                <ItemTitle data-testid="device-name">{friendlyName}</ItemTitle>
-                                {provider && (
-                                    <ItemDescription data-testid="device-provider">
-                                        {provider}
-                                    </ItemDescription>
-                                )}
-                                {createdAt && (
-                                    <ItemDescription data-testid="device-created-at">
-                                        {i18n('webauthn.registredDevices.createdAt')}:&nbsp;
-                                        <time dateTime={createdAt}>
-                                            {dateFormat(createdAt, config.language)}
-                                        </time>
-                                    </ItemDescription>
-                                )}
-                                {lastUsedAt && (
-                                    <ItemDescription data-testid="device-last-used-at">
-                                        {i18n('webauthn.registredDevices.lastUsedAt')}:&nbsp;
-                                        <time dateTime={lastUsedAt}>
-                                            {dateFormat(lastUsedAt, config.language)}
-                                        </time>
-                                    </ItemDescription>
-                                )}
-                            </ItemContent>
-                            <ItemActions>
-                                <Button
-                                    size="icon-sm"
-                                    variant="destructive"
-                                    className="rounded-full"
-                                    aria-label={i18n('remove')}
-                                    title={i18n('remove')}
-                                    onClick={() => void removeWebAuthnDevice(id)}
-                                    data-testid="device-remove"
-                                >
-                                    <TrashIcon />
-                                </Button>
-                            </ItemActions>
-                        </Item>
-                    );
-                })}
+                {devices.map(device => (
+                    <DeviceItem
+                        key={device.id}
+                        device={device}
+                        removeWebAuthnDevice={removeWebAuthnDevice}
+                    />
+                ))}
             </ItemGroup>
         </div>
     );
@@ -177,21 +185,17 @@ function useWebAuthnDevices(
     return [state, setDevices] as const;
 }
 
-/**
- * Lists, adds and removes the passkey (FIDO2) devices of the user identified by the access token.
- * Mountable in any widget providing the config, i18n and ReachFive client contexts.
- */
-export function WebAuthnDevices({
-    accessToken,
-    devices: initialDevices,
-    showLabels = false,
-    onError = noop as OnError,
-    onSuccess = noop as OnSuccess,
-}: WebAuthnDevicesProps) {
+interface DeviceActionsOptions {
+    accessToken: string;
+    setDevices: (devices: DeviceCredential[]) => void;
+    onSuccess: OnSuccess;
+    onError: OnError;
+}
+
+/** Removes or adds a device, then reloads the list. */
+function useDeviceActions({ accessToken, setDevices, onSuccess, onError }: DeviceActionsOptions) {
     const coreClient = useReachfive();
     const i18n = useI18n();
-
-    const [state, setDevices] = useWebAuthnDevices(accessToken, initialDevices, onError);
 
     const removeWebAuthnDevice = async (deviceId: string) => {
         if (!confirm(i18n('webauthn.registredDevices.confirm.removal'))) return;
@@ -215,8 +219,31 @@ export function WebAuthnDevices({
         });
     };
 
+    return { removeWebAuthnDevice, addNewWebAuthnDevice };
+}
+
+/**
+ * Lists, adds and removes the passkey (FIDO2) devices of the user identified by the access token.
+ * Mountable in any widget providing the config, i18n and ReachFive client contexts.
+ */
+export function WebAuthnDevices({
+    accessToken,
+    devices: initialDevices,
+    showLabels = false,
+    onError = noop,
+    onSuccess = noop,
+}: WebAuthnDevicesProps) {
+    const i18n = useI18n();
+    const [state, setDevices] = useWebAuthnDevices(accessToken, initialDevices, onError);
+    const { removeWebAuthnDevice, addNewWebAuthnDevice } = useDeviceActions({
+        accessToken,
+        setDevices,
+        onSuccess,
+        onError,
+    });
+
     if (state.status === 'loading') {
-        return <LoaderCircle className="animate-spin" />;
+        return <WidgetSpinner />;
     }
 
     if (state.status === 'error') {

@@ -18,10 +18,3 @@ export type MfaCredential = MFA.Credential | PasskeyCredential;
 
 export const isPasskeyCredential = (credential: MfaCredential): credential is PasskeyCredential =>
     credential.type === 'webauthn';
-
-/** An email or phone number credential: the factors listed one row each, and removable. */
-export type EmailOrPhoneCredential = Exclude<MfaCredential, PasskeyCredential>;
-
-export const isEmailOrPhoneCredential = (
-    credential: MfaCredential
-): credential is EmailOrPhoneCredential => !isPasskeyCredential(credential);

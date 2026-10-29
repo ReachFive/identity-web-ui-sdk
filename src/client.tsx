@@ -5,12 +5,12 @@ import type { AuthOptions, Client as CoreClient, SessionInfo } from '@reachfive/
 
 import { ErrorText } from '@/components/miscComponent';
 import { type I18nMessages } from '@/contexts/i18n';
-import { UserError, widgetErrorMessage } from '@/helpers/errors';
+import { logWidgetError, widgetErrorMessage } from '@/helpers/errors';
 import { logError } from '@/helpers/logger';
 import { Config, Prettify } from '@/types';
 import accountRecoveryWidget, {
     type AccountRecoveryWidgetProps,
-} from '@/widgets/accountRecovery/accountRecoveryWidget.tsx';
+} from '@/widgets/accountRecovery/accountRecoveryWidget';
 import authWidget, { type AuthWidgetProps } from '@/widgets/auth/authWidget';
 import emailEditorWidget, {
     type EmailEditorWidgetProps,
@@ -21,7 +21,7 @@ import mfaCredentialsWidget, {
 import mfaListWidget, { type MfaListWidgetProps } from '@/widgets/mfa/mfaListWidget';
 import trustedDevicesWidget, {
     type TrustedDeviceWidgetProps,
-} from '@/widgets/mfa/trustedDevicesWidget.tsx';
+} from '@/widgets/mfa/trustedDevicesWidget';
 import passwordEditorWidget, {
     type PasswordEditorWidgetProps,
 } from '@/widgets/passwordEditor/passwordEditorWidget';
@@ -239,11 +239,6 @@ export class UiClient {
     }
 
     handleError(error: unknown): void {
-        if (error instanceof UserError) {
-            const message = this.adaptError(error);
-            logError(`ReachFive widget display fails: ${message}`);
-        } else if (error instanceof Error || typeof error === 'string') {
-            logError(error);
-        }
+        logWidgetError(error);
     }
 }

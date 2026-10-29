@@ -207,3 +207,6 @@ export function debounce<T extends unknown[]>(
         timerId = setTimeout(() => func(...args), delay);
     };
 }
+
+/** Does nothing: the default of an optional callback. */
+export const noop = (): void => {};
