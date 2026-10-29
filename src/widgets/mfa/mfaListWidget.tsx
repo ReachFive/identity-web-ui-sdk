@@ -220,6 +220,8 @@ interface MfaCredentialsListProps extends Required<Omit<MfaListProps, 'showRemov
     removable: boolean;
     passkeysRowRef: RefObject<HTMLButtonElement>;
     onOpenPasskeys: () => void;
+    /** The Passkeys view is loading its devices. */
+    openingPasskeys: boolean;
 }
 
 /** The rows of the list, or the empty state without any factor. */
@@ -228,6 +230,7 @@ const MfaCredentialsList = ({
     removable,
     passkeysRowRef,
     onOpenPasskeys,
+    openingPasskeys,
     ...callbacks
 }: MfaCredentialsListProps) => {
     const emailAndPhoneCredentials = credentials.filter(isEmailOrPhoneCredential);
@@ -268,6 +271,7 @@ const MfaCredentialsList = ({
                     count={passkeyCount}
                     dimmed={removal.confirmingKey !== null}
                     onOpen={onOpenPasskeys}
+                    pending={openingPasskeys}
                 />
             )}
         </ItemGroup>
@@ -296,7 +300,8 @@ export const MfaList = ({
     const {
         data: { credentials },
     } = useMfaCredentials(accessToken);
-    const { view, navigation, openPasskeys, backToList, passkeysRowRef } = useMfaView();
+    const { view, navigation, openingPasskeys, openPasskeys, backToList, passkeysRowRef } =
+        useMfaView();
 
     useCredentialsListedEvent(credentials, onSuccess);
 
@@ -318,6 +323,7 @@ export const MfaList = ({
                     removable={showRemoveMfaCredential}
                     passkeysRowRef={passkeysRowRef}
                     onOpenPasskeys={openPasskeys}
+                    openingPasskeys={openingPasskeys}
                     onSuccess={onSuccess}
                     onError={onError}
                 />

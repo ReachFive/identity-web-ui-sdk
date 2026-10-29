@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type RefObject } from 'react';
+import { useEffect, useRef, useState, useTransition, type RefObject } from 'react';
 
 /**
  * The views of the MFA list widget. Each maps one-to-one to a future route; two views without
@@ -12,6 +12,8 @@ export type MfaNavigation = 'forward' | 'back' | null;
 export interface MfaViewState {
     view: MfaView;
     navigation: MfaNavigation;
+    /** The Passkeys view is loading its devices; the list stays on screen meanwhile. */
+    openingPasskeys: boolean;
     openPasskeys: () => void;
     backToList: () => void;
     /** Attach to the Passkeys row: it gets focus back when the user returns to the list. */
@@ -27,6 +29,7 @@ export function useMfaView(): MfaViewState {
     const [{ view, navigation }, setState] = useState<{ view: MfaView; navigation: MfaNavigation }>(
         { view: 'list', navigation: null }
     );
+    const [openingPasskeys, startTransition] = useTransition();
     const passkeysRowRef = useRef<HTMLButtonElement>(null);
     const returningToList = useRef(false);
 
@@ -39,7 +42,10 @@ export function useMfaView(): MfaViewState {
     return {
         view,
         navigation,
-        openPasskeys: () => setState({ view: 'passkeys', navigation: 'forward' }),
+        openingPasskeys,
+        // A transition, so the list stays on screen while the Passkeys view loads its devices.
+        openPasskeys: () =>
+            startTransition(() => setState({ view: 'passkeys', navigation: 'forward' })),
         backToList: () => {
             returningToList.current = true;
             setState({ view: 'list', navigation: 'back' });

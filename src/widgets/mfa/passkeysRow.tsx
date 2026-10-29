@@ -1,6 +1,6 @@
 import React, { forwardRef, useId } from 'react';
 
-import { ChevronRight, Fingerprint } from 'lucide-react';
+import { ChevronRight, Fingerprint, LoaderCircle } from 'lucide-react';
 
 import { Item } from '@/components/ui/item';
 import { useI18n } from '@/contexts/i18n';
@@ -14,6 +14,8 @@ interface PasskeysRowProps {
     onOpen: () => void;
     /** A removal confirmation is open in the list: the row is dimmed and inert. */
     dimmed?: boolean;
+    /** The Passkeys view is loading: the row is busy and shows a spinner in place of its chevron. */
+    pending?: boolean;
 }
 
 /**
@@ -22,7 +24,7 @@ interface PasskeysRowProps {
  * count. A button only holds phrasing content, hence spans throughout. No remove action.
  */
 export const PasskeysRow = forwardRef<HTMLButtonElement, PasskeysRowProps>(function PasskeysRow(
-    { count, onOpen, dimmed = false },
+    { count, onOpen, dimmed = false, pending = false },
     ref
 ) {
     const i18n = useI18n();
@@ -44,7 +46,8 @@ export const PasskeysRow = forwardRef<HTMLButtonElement, PasskeysRowProps>(funct
                     type="button"
                     aria-labelledby={titleId}
                     aria-describedby={descriptionId}
-                    onClick={onOpen}
+                    aria-busy={pending || undefined}
+                    onClick={pending ? undefined : onOpen}
                 >
                     <span
                         aria-hidden="true"
@@ -69,10 +72,17 @@ export const PasskeysRow = forwardRef<HTMLButtonElement, PasskeysRowProps>(funct
                             {`${i18n('mfaList.passkeyCount', { count })} · ${i18n('mfaList.alsoUsedToLogIn')}`}
                         </span>
                     </span>
-                    <ChevronRight
-                        aria-hidden="true"
-                        className="size-4 shrink-0 text-muted-foreground"
-                    />
+                    {pending ? (
+                        <LoaderCircle
+                            aria-hidden="true"
+                            className="size-4 shrink-0 animate-spin text-muted-foreground"
+                        />
+                    ) : (
+                        <ChevronRight
+                            aria-hidden="true"
+                            className="size-4 shrink-0 text-muted-foreground"
+                        />
+                    )}
                 </button>
             </Item>
         </div>

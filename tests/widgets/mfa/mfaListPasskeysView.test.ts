@@ -156,6 +156,49 @@ describe('Criterion 3: the Passkeys row opens the passkey management view, with 
     });
 });
 
+describe('The Passkeys view shows only once its devices are loaded', () => {
+    test('the list stays in place, with the Passkeys row busy, until the devices arrive', async () => {
+        let resolveDevices: (devices: DeviceCredential[]) => void = () => {};
+        listMfaCredentials.mockResolvedValue(
+            credentialsList(emailCredential, passkeyCredential('a'))
+        );
+        listWebAuthnDevices.mockReturnValue(
+            new Promise<DeviceCredential[]>(resolve => {
+                resolveDevices = resolve;
+            })
+        );
+        await renderWidget();
+        const user = userEvent.setup();
+
+        await user.click(await screen.findByRole('button', { name: 'Passkeys' }));
+
+        // No intermediate state: neither an empty Passkeys view nor a spinner in place of the list.
+        expect(screen.getByText('root@reach5.co')).toBeInTheDocument();
+        expect(screen.queryByRole('button', { name: 'Back' })).not.toBeInTheDocument();
+        expect(screen.getByRole('button', { name: 'Passkeys' })).toHaveAttribute(
+            'aria-busy',
+            'true'
+        );
+
+        resolveDevices([device('a')]);
+
+        expect(await screen.findByText('Device a')).toBeInTheDocument();
+        expect(screen.getByRole('button', { name: 'Back' })).toBeInTheDocument();
+        expect(screen.queryByText('root@reach5.co')).not.toBeInTheDocument();
+    });
+
+    test('the Passkeys row is not busy before it is activated', async () => {
+        listMfaCredentials.mockResolvedValue(
+            credentialsList(emailCredential, passkeyCredential('a'))
+        );
+        await renderWidget();
+
+        expect(await screen.findByRole('button', { name: 'Passkeys' })).not.toHaveAttribute(
+            'aria-busy'
+        );
+    });
+});
+
 describe('Switching views animates the view that enters', () => {
     // jsdom runs no animation: these tests pin the classes that carry it.
     const animationOf = (element: HTMLElement) =>

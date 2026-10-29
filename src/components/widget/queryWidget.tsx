@@ -45,13 +45,12 @@ interface WidgetBoundaryProps {
 }
 
 /**
- * The boundaries around content read through suspense queries:
- *
- * - suspense boundary: the spinner while the first read is pending;
- * - error boundary: the widget error output in place of the content, logged like any widget
- *   display failure, and the single `onError` call.
+ * The error boundary around content read through suspense queries: the widget error output in
+ * place of the content, logged like any widget display failure, and the single `onError` call.
+ * Without a suspense boundary of its own, a pending read suspends up to an enclosing one: inside
+ * a transition, React then keeps the current content on screen until the read completes.
  */
-export function WidgetBoundary({ onError, onReset, children }: WidgetBoundaryProps) {
+export function WidgetErrorBoundary({ onError, onReset, children }: WidgetBoundaryProps) {
     const handleError = (error: unknown) => {
         logWidgetError(error);
         onError?.(error);
@@ -63,8 +62,21 @@ export function WidgetBoundary({ onError, onReset, children }: WidgetBoundaryPro
             onError={handleError}
             FallbackComponent={WidgetErrorFallback}
         >
-            <Suspense fallback={<WidgetSpinner />}>{children}</Suspense>
+            {children}
         </ErrorBoundary>
+    );
+}
+
+/**
+ * The boundaries around content read through suspense queries: the error boundary of
+ * `WidgetErrorBoundary`, and a suspense boundary showing the spinner while the first read is
+ * pending.
+ */
+export function WidgetBoundary({ onError, onReset, children }: WidgetBoundaryProps) {
+    return (
+        <WidgetErrorBoundary onReset={onReset} onError={onError}>
+            <Suspense fallback={<WidgetSpinner />}>{children}</Suspense>
+        </WidgetErrorBoundary>
     );
 }
 
