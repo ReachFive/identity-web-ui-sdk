@@ -28,7 +28,6 @@ export function I18nProvider({
     locale,
 }: PropsWithChildren<Props>): JSX.Element | null {
     const instance = i18n.createInstance();
-    // `messages` is either keyed by language or holds the messages of `locale` directly.
     const translations = (locale in messages ? messages : { [locale]: messages }) as Record<
         string,
         I18nMessages
@@ -42,8 +41,6 @@ export function I18nProvider({
                 suffix: '}',
             },
             fallbackLng: 'dev',
-            // Default messages live in their own namespace under the configured language (not
-            // under a pseudo-language), so plural forms follow that language's rules.
             ns: [TRANSLATION_NS, DEFAULT_NS],
             defaultNS: TRANSLATION_NS,
             fallbackNS: DEFAULT_NS,
