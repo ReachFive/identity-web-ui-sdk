@@ -4,7 +4,7 @@ import { ErrorBoundary, type FallbackProps } from 'react-error-boundary';
 import { QueryClient, QueryClientProvider, QueryErrorResetBoundary } from '@tanstack/react-query';
 import { LoaderCircle } from 'lucide-react';
 
-import { ErrorText } from '@/components/miscComponent';
+import { Alert, AlertTitle } from '@/components/ui/alert';
 import { createWidget, type PrepareFn } from '@/components/widget/widget';
 import { WidgetContainerProps } from '@/components/widget/widgetContainerComponent';
 import { useI18n } from '@/contexts/i18n';
@@ -38,7 +38,11 @@ const createWidgetQueryClient = () =>
 // Rendered under the widget's I18nProvider: the message key of an API error can be translated.
 const WidgetErrorFallback = ({ error }: FallbackProps) => {
     const i18n = useI18n();
-    return <ErrorText>{widgetErrorMessage(error, i18n)}</ErrorText>;
+    return (
+        <Alert variant="destructive">
+            <AlertTitle className="mb-0">{widgetErrorMessage(error, i18n)}</AlertTitle>
+        </Alert>
+    );
 };
 
 interface WidgetBoundaryProps {
