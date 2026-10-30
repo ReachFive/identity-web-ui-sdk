@@ -203,7 +203,7 @@ describe('Switching views animates the view that enters', () => {
     // jsdom runs no animation: these tests pin the classes that carry it.
     const animationOf = (element: HTMLElement) =>
         // eslint-disable-next-line testing-library/no-node-access
-        element.closest<HTMLElement>('[class*="animate-mfa-view-"]')?.className.split(/\s+/) ?? [];
+        element.closest<HTMLElement>('[class*="animate-view-"]')?.className.split(/\s+/) ?? [];
 
     beforeEach(() => {
         listMfaCredentials.mockResolvedValue(
@@ -223,7 +223,7 @@ describe('Switching views animates the view that enters', () => {
 
         const back = await openPasskeysView(userEvent.setup());
 
-        expect(animationOf(back)).toContain('animate-mfa-view-forward');
+        expect(animationOf(back)).toContain('animate-view-forward');
         expect(animationOf(back)).toContain('motion-reduce:animate-none');
     });
 
@@ -234,7 +234,7 @@ describe('Switching views animates the view that enters', () => {
         await user.click(await openPasskeysView(user));
 
         const row = await screen.findByRole('button', { name: 'Passkeys' });
-        expect(animationOf(row)).toContain('animate-mfa-view-back');
+        expect(animationOf(row)).toContain('animate-view-back');
         expect(animationOf(row)).toContain('motion-reduce:animate-none');
     });
 });

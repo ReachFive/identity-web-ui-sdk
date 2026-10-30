@@ -4,6 +4,7 @@ import { MFA } from '@reachfive/identity-core';
 
 import { ItemGroup } from '@/components/ui/item';
 import { createQueryWidget } from '@/components/widget/queryWidget';
+import { useViewNavigation, viewAnimation } from '@/components/widget/useViewNavigation';
 import { OnError, OnSuccess } from '@/types';
 import {
     credentialKey,
@@ -16,7 +17,6 @@ import { isPasskeyCredential, type MfaCredential } from '@/widgets/mfa/passkeyCr
 import { PasskeysRow } from '@/widgets/mfa/passkeysRow';
 import { PasskeysView } from '@/widgets/mfa/passkeysView';
 import { useMfaCredentials, useRemoveMfaCredential } from '@/widgets/mfa/queries';
-import { type MfaNavigation, useMfaView } from '@/widgets/mfa/useMfaView';
 import { PASSKEYS_ROW_KEY, useRowFocus } from '@/widgets/mfa/useRowFocus';
 
 export interface MfaListProps {
@@ -153,19 +153,6 @@ const MfaCredentialsList = ({
     );
 };
 
-/**
- * The entering view slides in from the side the user is heading to; the first view shows
- * without animation. Only the entering view animates: animating the leaving one would mean
- * keeping both mounted.
- */
-const VIEW_ANIMATIONS: Record<NonNullable<MfaNavigation>, string> = {
-    forward: 'animate-mfa-view-forward motion-reduce:animate-none',
-    back: 'animate-mfa-view-back motion-reduce:animate-none',
-};
-
-const viewAnimation = (navigation: MfaNavigation) =>
-    navigation === null ? undefined : VIEW_ANIMATIONS[navigation];
-
 export const MfaList = ({
     accessToken,
     showRemoveMfaCredential = false,
@@ -175,19 +162,19 @@ export const MfaList = ({
     const {
         data: { credentials },
     } = useMfaCredentials(accessToken);
-    const { view, navigation, openingPasskeys, openPasskeys, backToList, passkeysRowRef } =
-        useMfaView();
+    const { view, direction, pending, goTo, back } = useViewNavigation<'list' | 'passkeys'>('list');
+    const passkeysRowRef = useRef<HTMLButtonElement>(null);
 
     useCredentialsListedEvent(credentials, onSuccess);
 
     // The credentials query stays mounted in both views, so a passkey change made in the
     // Passkeys view refetches the list in the background.
     return (
-        <div key={view} className={viewAnimation(navigation)}>
+        <div key={view} className={viewAnimation(direction)}>
             {view === 'passkeys' ? (
                 <PasskeysView
                     accessToken={accessToken}
-                    onBack={backToList}
+                    onBack={back}
                     onSuccess={onSuccess}
                     onError={onError}
                 />
@@ -197,8 +184,8 @@ export const MfaList = ({
                     credentials={credentials}
                     removable={showRemoveMfaCredential}
                     passkeysRowRef={passkeysRowRef}
-                    onOpenPasskeys={openPasskeys}
-                    openingPasskeys={openingPasskeys}
+                    onOpenPasskeys={() => goTo('passkeys', { returnFocus: passkeysRowRef })}
+                    openingPasskeys={pending}
                     onSuccess={onSuccess}
                     onError={onError}
                 />
