@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-import { TrashIcon } from 'lucide-react';
+import { LoaderCircle, TrashIcon } from 'lucide-react';
 
 import type { DeviceCredential } from '@reachfive/identity-core';
 
@@ -27,7 +27,6 @@ import {
     ItemMedia,
     ItemTitle,
 } from '@/components/ui/item';
-import { WidgetSpinner } from '@/components/widget/widgetSpinner';
 import { useConfig } from '@/contexts/config';
 import { useI18n } from '@/contexts/i18n';
 import { useReachfive } from '@/contexts/reachfive';
@@ -284,7 +283,7 @@ export function WebAuthnDevices({
     });
 
     if (state.status === 'loading') {
-        return <WidgetSpinner />;
+        return <LoaderCircle className="animate-spin" />;
     }
 
     if (state.status === 'error') {

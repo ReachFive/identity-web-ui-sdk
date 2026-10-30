@@ -2,11 +2,11 @@ import React, { ComponentType, ReactNode, Suspense, useState } from 'react';
 import { ErrorBoundary, type FallbackProps } from 'react-error-boundary';
 
 import { QueryClient, QueryClientProvider, QueryErrorResetBoundary } from '@tanstack/react-query';
+import { LoaderCircle } from 'lucide-react';
 
 import { ErrorText } from '@/components/miscComponent';
 import { createWidget } from '@/components/widget/widget';
 import { WidgetContainerProps } from '@/components/widget/widgetContainerComponent';
-import { WidgetSpinner } from '@/components/widget/widgetSpinner';
 import { logWidgetError, widgetErrorMessage } from '@/helpers/errors';
 
 import type { OnError } from '@/types';
@@ -75,7 +75,7 @@ export function WidgetErrorBoundary({ onError, onReset, children }: WidgetBounda
 export function WidgetBoundary({ onError, onReset, children }: WidgetBoundaryProps) {
     return (
         <WidgetErrorBoundary onReset={onReset} onError={onError}>
-            <Suspense fallback={<WidgetSpinner />}>{children}</Suspense>
+            <Suspense fallback={<LoaderCircle className="animate-spin" />}>{children}</Suspense>
         </WidgetErrorBoundary>
     );
 }
