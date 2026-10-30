@@ -7,6 +7,7 @@ import { LoaderCircle } from 'lucide-react';
 import { ErrorText } from '@/components/miscComponent';
 import { createWidget, type PrepareFn } from '@/components/widget/widget';
 import { WidgetContainerProps } from '@/components/widget/widgetContainerComponent';
+import { useI18n } from '@/contexts/i18n';
 import { widgetErrorMessage } from '@/helpers/errors';
 import { logError } from '@/helpers/logger';
 
@@ -34,9 +35,11 @@ const createWidgetQueryClient = () =>
         },
     });
 
-const WidgetErrorFallback = ({ error }: FallbackProps) => (
-    <ErrorText>{widgetErrorMessage(error)}</ErrorText>
-);
+// Rendered under the widget's I18nProvider: the message key of an API error can be translated.
+const WidgetErrorFallback = ({ error }: FallbackProps) => {
+    const i18n = useI18n();
+    return <ErrorText>{widgetErrorMessage(error, i18n)}</ErrorText>;
+};
 
 interface WidgetBoundaryProps {
     /** Called once with the error that replaced the content. */

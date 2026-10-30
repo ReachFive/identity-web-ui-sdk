@@ -1,3 +1,5 @@
+import type { TFunction } from 'i18next';
+
 export interface AppError {
     errorId: string;
     errorDescription: string;
@@ -31,6 +33,19 @@ export function isAppError(err: unknown): err is AppError {
  */
 export const VERIFICATION_CODE_REFUSED = 'error.invalidVerificationCode';
 
+/**
+ * The message of an API error: the user message the API localised, else the translation of its
+ * message key, else its description, else its code. Without translations, the key is skipped.
+ */
+const appErrorMessage = (error: AppError, i18n?: TFunction): string => {
+    const fallback = error.errorDescription ?? error.error;
+    if (error.errorUserMsg) return error.errorUserMsg;
+    if (error.errorMessageKey && i18n) {
+        return i18n(error.errorMessageKey, { defaultValue: fallback });
+    }
+    return fallback;
+};
+
 export class UserError extends Error {
     isUserError = true;
 
@@ -39,17 +54,18 @@ export class UserError extends Error {
         Object.setPrototypeOf(this, UserError.prototype);
     }
 
-    static fromAppError(appError: AppError) {
-        return new UserError(appError.errorUserMsg ?? appError.errorDescription ?? appError.error);
+    /** A `UserError` with the message of an API error, read by `appErrorMessage`. */
+    static fromAppError(appError: AppError, i18n?: TFunction) {
+        return new UserError(appErrorMessage(appError, i18n));
     }
 }
 
 /**
  * The message shown in place of a widget that cannot be displayed. An `Error` (a `UserError`
- * included) speaks for itself, and an API error reads like a `UserError` made from it.
+ * included) speaks for itself; an API error reads like a `UserError` made from it.
  */
-export function widgetErrorMessage(error: unknown): string {
+export function widgetErrorMessage(error: unknown, i18n?: TFunction): string {
     if (error instanceof Error) return error.message;
-    if (isAppError(error)) return UserError.fromAppError(error).message;
+    if (isAppError(error)) return UserError.fromAppError(error, i18n).message;
     return 'Unexpected error';
 }
