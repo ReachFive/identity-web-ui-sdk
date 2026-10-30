@@ -3,13 +3,16 @@ import React, { KeyboardEvent, ReactNode, useEffect, useId, useRef } from 'react
 import { LoaderCircle } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
-import { useI18n } from '@/contexts/i18n';
 
-interface MfaCredentialConfirmationProps {
+interface RemovalConfirmationProps {
+    /** The public styling slot of the confirmation, named by the widget (see the data-slot rule). */
+    'data-slot': `widget-${string}`;
     /** The question that labels the block, e.g. "Remove +33 6 12 34 56 78?". */
     question: string;
-    /** The factor icon, shown on a light tile in the danger colour. */
+    /** The icon of the row, shown on a light tile in the danger colour. */
     icon: ReactNode;
+    cancelLabel: string;
+    removeLabel: string;
     /**
      * True while the removal request is running: both buttons are `aria-disabled` (not `disabled`,
      * which would drop the focus to the page) and ignore activation, and Remove spins.
@@ -22,16 +25,18 @@ interface MfaCredentialConfirmationProps {
 /**
  * The danger-styled block a row turns into when its trash button is pressed. It is a group
  * labelled by its question, not an alert dialog, since nothing around it is modal. Focus moves to
- * Cancel on open, and Escape cancels. Carries the public `widget-mfa-credential-confirm` slot.
+ * Cancel on open, and Escape cancels.
  */
-export function MfaCredentialConfirmation({
+export function RemovalConfirmation({
+    'data-slot': slot,
     question,
     icon,
+    cancelLabel,
+    removeLabel,
     pending,
     onCancel,
     onConfirm,
-}: MfaCredentialConfirmationProps) {
-    const i18n = useI18n();
+}: RemovalConfirmationProps) {
     const questionId = useId();
     const cancelRef = useRef<HTMLButtonElement>(null);
 
@@ -51,7 +56,7 @@ export function MfaCredentialConfirmation({
 
     return (
         <div
-            data-slot="widget-mfa-credential-confirm"
+            data-slot={slot}
             role="group"
             aria-labelledby={questionId}
             onKeyDown={handleKeyDown}
@@ -81,7 +86,7 @@ export function MfaCredentialConfirmation({
                     aria-disabled={pending || undefined}
                     onClick={unlessPending(onCancel)}
                 >
-                    {i18n('mfaList.cancel')}
+                    {cancelLabel}
                 </Button>
                 <Button
                     type="button"
@@ -93,7 +98,7 @@ export function MfaCredentialConfirmation({
                     onClick={unlessPending(onConfirm)}
                 >
                     {pending && <LoaderCircle aria-hidden="true" className="animate-spin" />}
-                    {i18n('mfaList.remove')}
+                    {removeLabel}
                 </Button>
             </div>
         </div>

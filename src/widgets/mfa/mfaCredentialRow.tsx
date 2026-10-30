@@ -2,19 +2,19 @@ import React, { type RefCallback } from 'react';
 
 import { Trash2 } from 'lucide-react';
 
+import {
+    dimmedRowProps,
+    ListItem,
+    ListItemContent,
+    ListItemIcon,
+} from '@/components/list/listItem';
+import { RemovalConfirmation } from '@/components/list/removalConfirmation';
 import { Button } from '@/components/ui/button';
 import { ItemActions } from '@/components/ui/item';
 import { useConfig } from '@/contexts/config';
 import { useI18n } from '@/contexts/i18n';
 import { dateFormat } from '@/helpers/utils';
 import { credentialDetails, type MfaCredential } from '@/widgets/mfa/credentials';
-import { MfaCredentialConfirmation } from '@/widgets/mfa/mfaCredentialConfirmation';
-import {
-    MfaListItemContent,
-    MfaListItemIcon,
-    MfaListItem,
-    dimmedRowProps,
-} from '@/widgets/mfa/mfaListItem';
 
 /** Placeholder the translated label is split around, to put the date in a `<time>` element. */
 const DATE_PLACEHOLDER = '\u0000';
@@ -55,10 +55,10 @@ const CredentialSummary = ({
 
     return (
         <>
-            <MfaListItemIcon>
+            <ListItemIcon>
                 <Icon />
-            </MfaListItemIcon>
-            <MfaListItemContent
+            </ListItemIcon>
+            <ListItemContent
                 title={identifier}
                 descriptions={[
                     i18n(labelKey),
@@ -109,14 +109,18 @@ export const MfaCredentialRow = ({
     const { identifier, Icon } = credentialDetails(summary.credential);
 
     return (
-        <MfaListItem
+        <ListItem
+            data-slot="widget-mfa-credential"
             id={`credential-${summary.credential.friendlyName}`}
             {...dimmedRowProps(dimmed, confirming ? 'border-0 p-0' : undefined)}
         >
             {confirming ? (
-                <MfaCredentialConfirmation
+                <RemovalConfirmation
+                    data-slot="widget-mfa-credential-confirm"
                     question={i18n('mfaList.removeConfirmation', { identifier })}
                     icon={<Icon />}
+                    cancelLabel={i18n('mfaList.cancel')}
+                    removeLabel={i18n('mfaList.remove')}
                     pending={pending}
                     onCancel={onCancel}
                     onConfirm={onConfirm}
@@ -124,6 +128,6 @@ export const MfaCredentialRow = ({
             ) : (
                 <CredentialSummary {...summary} />
             )}
-        </MfaListItem>
+        </ListItem>
     );
 };

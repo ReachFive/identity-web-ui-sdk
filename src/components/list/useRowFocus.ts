@@ -1,8 +1,5 @@
 import { useEffect, useRef, type RefCallback, type RefObject } from 'react';
 
-/** Key of the Passkeys row among the rows of the list. */
-export const PASSKEYS_ROW_KEY = 'passkeys';
-
 interface FocusRequest {
     key: string;
     index: number;
@@ -23,17 +20,20 @@ export interface RowFocus {
 
 /**
  * Keeps the focus in the list when a row turns into a confirmation and back, or disappears:
- * never on `<body>`. `rowKeys` lists the rows in display order, the Passkeys row included.
+ * never on `<body>`. `rowKeys` lists the rows in display order. A row whose control is not
+ * attached through `controlRef` (one without a trash button) passes it in `fixedControls`.
  */
-export function useRowFocus(rowKeys: string[], passkeysRowRef: RefObject<HTMLElement>): RowFocus {
+export function useRowFocus(
+    rowKeys: string[],
+    fixedControls: Readonly<Record<string, RefObject<HTMLElement>>> = {}
+): RowFocus {
     const controls = useRef(new Map<string, HTMLElement>());
     const emptyStateRef = useRef<HTMLDivElement>(null);
     const request = useRef<FocusRequest | null>(null);
 
     const controlOf = (key: string | undefined) => {
         if (key === undefined) return emptyStateRef.current;
-        if (key === PASSKEYS_ROW_KEY) return passkeysRowRef.current;
-        return controls.current.get(key) ?? null;
+        return fixedControls[key]?.current ?? controls.current.get(key) ?? null;
     };
 
     // After every commit: a row's control only comes back once its confirmation has closed.

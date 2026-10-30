@@ -1,53 +1,21 @@
-import React, { useState, type RefObject } from 'react';
+import React, { type RefObject } from 'react';
 
+import { Shield } from 'lucide-react';
+
+import { ListEmpty } from '@/components/list/listItem';
+import { useRowFocus } from '@/components/list/useRowFocus';
+import { useRowRemoval } from '@/components/list/useRowRemoval';
 import { ItemGroup } from '@/components/ui/item';
+import { useI18n } from '@/contexts/i18n';
 import { OnError, OnSuccess } from '@/types';
-import { credentialKey, isMfaCredential, type MfaCredential } from '@/widgets/mfa/credentials';
+import { credentialKey, isMfaCredential } from '@/widgets/mfa/credentials';
 import { MfaCredentialRow } from '@/widgets/mfa/mfaCredentialRow';
-import { MfaCredentialsEmpty } from '@/widgets/mfa/mfaListItem';
 import { isPasskeyCredential, type ListedCredential } from '@/widgets/mfa/passkeyCredential';
 import { PasskeysRow } from '@/widgets/mfa/passkeysRow';
 import { useRemoveMfaCredential } from '@/widgets/mfa/queries';
-import { PASSKEYS_ROW_KEY, useRowFocus } from '@/widgets/mfa/useRowFocus';
 
-interface UseCredentialRemovalOptions {
-    accessToken: string;
-    onSuccess: OnSuccess;
-    onError: OnError;
-    /** Called with the row key when its confirmation opens. */
-    onOpen: (key: string) => void;
-}
-
-/**
- * The removal flow of the list: one confirmation open at a time, then the removal request.
- */
-const useCredentialRemoval = ({
-    accessToken,
-    onSuccess,
-    onError,
-    onOpen,
-}: UseCredentialRemovalOptions) => {
-    /** Key of the row showing its removal confirmation. */
-    const [confirmingKey, setConfirmingKey] = useState<string | null>(null);
-    const removal = useRemoveMfaCredential({ accessToken, onSuccess, onError });
-    const close = () => setConfirmingKey(null);
-
-    return {
-        confirmingKey,
-        pending: removal.isPending,
-        open: (key: string) => {
-            onOpen(key);
-            setConfirmingKey(key);
-        },
-        cancel: close,
-        confirm: (credential: MfaCredential) => {
-            if (removal.isPending) return;
-            // Settled covers both outcomes: on success the row is already gone from the
-            // refetched list, on error it returns to normal with the factor kept.
-            removal.mutate(credential, { onSettled: close });
-        },
-    };
-};
+/** Key of the Passkeys row among the rows of the list. */
+const PASSKEYS_ROW_KEY = 'passkeys';
 
 interface MfaCredentialsListProps {
     accessToken: string;
@@ -68,19 +36,27 @@ export const MfaCredentialsList = ({
     passkeysRowRef,
     onOpenPasskeys,
     openingPasskeys,
-    ...callbacks
+    accessToken,
+    onSuccess,
+    onError,
 }: MfaCredentialsListProps) => {
+    const i18n = useI18n();
     const mfaCredentials = credentials.filter(isMfaCredential);
     const passkeyCount = credentials.filter(isPasskeyCredential).length;
     const rowKeys = [
         ...mfaCredentials.map(credentialKey),
         ...(passkeyCount > 0 ? [PASSKEYS_ROW_KEY] : []),
     ];
-    const focus = useRowFocus(rowKeys, passkeysRowRef);
-    const removal = useCredentialRemoval({ ...callbacks, onOpen: focus.watch });
+    const focus = useRowFocus(rowKeys, { [PASSKEYS_ROW_KEY]: passkeysRowRef });
+    const removal = useRowRemoval({
+        removal: useRemoveMfaCredential({ accessToken, onSuccess, onError }),
+        onOpen: focus.watch,
+    });
 
     if (credentials.length === 0) {
-        return <MfaCredentialsEmpty ref={focus.emptyStateRef} />;
+        return (
+            <ListEmpty ref={focus.emptyStateRef} icon={<Shield />} title={i18n('mfaList.empty')} />
+        );
     }
 
     return (

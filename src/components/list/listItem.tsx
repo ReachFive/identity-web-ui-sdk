@@ -1,9 +1,6 @@
 import React, { ComponentProps, forwardRef, HTMLAttributes, ReactNode } from 'react';
 
-import { Shield } from 'lucide-react';
-
 import { Item, ItemContent, ItemDescription, ItemMedia, ItemTitle } from '@/components/ui/item';
-import { useI18n } from '@/contexts/i18n';
 import { cn } from '@/lib/utils';
 
 /**
@@ -17,14 +14,15 @@ export const dimmedRowProps = (dimmed: boolean, className?: string): HTMLAttribu
         ...(dimmed ? { inert: '' } : {}),
     }) as HTMLAttributes<HTMLElement>;
 
-/**
- * The outlined box of one row of the MFA credentials list. Carries the public
- * `widget-mfa-credential` slot.
- */
-export function MfaListItem({ className, ...props }: ComponentProps<typeof Item>) {
+interface ListItemProps extends ComponentProps<typeof Item> {
+    /** The public styling slot of the row, named by the widget (see the data-slot rule). */
+    'data-slot': `widget-${string}`;
+}
+
+/** The outlined box of one row of a list the user manages (MFA credentials, devices, …). */
+export function ListItem({ className, ...props }: ListItemProps) {
     return (
         <Item
-            data-slot="widget-mfa-credential"
             role="listitem"
             variant="outline"
             className={cn('items-start gap-3 rounded px-3.5 py-3', className)}
@@ -33,14 +31,12 @@ export function MfaListItem({ className, ...props }: ComponentProps<typeof Item>
     );
 }
 
-interface MfaListItemIconProps extends ComponentProps<typeof ItemMedia> {
+interface ListItemIconProps extends ComponentProps<typeof ItemMedia> {
     tone?: 'success' | 'muted';
 }
 
-/**
- * The factor icon on a light tile, in the theme success colour for an active factor.
- */
-export function MfaListItemIcon({ tone = 'success', className, ...props }: MfaListItemIconProps) {
+/** The icon of a row on a light tile, in the theme success colour for an active element. */
+export function ListItemIcon({ tone = 'success', className, ...props }: ListItemIconProps) {
     return (
         <ItemMedia
             aria-hidden="true"
@@ -56,15 +52,13 @@ export function MfaListItemIcon({ tone = 'success', className, ...props }: MfaLi
     );
 }
 
-interface MfaListItemContentProps {
+interface ListItemContentProps {
     title: ReactNode;
     descriptions?: ReactNode[];
 }
 
-/**
- * The identifier of the factor, then one muted line per description (type, creation date, …).
- */
-export function MfaListItemContent({ title, descriptions = [] }: MfaListItemContentProps) {
+/** The name of the element, then one muted line per description (type, creation date, …). */
+export function ListItemContent({ title, descriptions = [] }: ListItemContentProps) {
     return (
         <ItemContent className="min-w-0 gap-0.5">
             <ItemTitle className="w-auto font-semibold text-foreground [overflow-wrap:anywhere]">
@@ -77,29 +71,30 @@ export function MfaListItemContent({ title, descriptions = [] }: MfaListItemCont
     );
 }
 
-/**
- * Shown in place of the list when the user has no second factor: the box of a row, dashed, but
- * neither a list item nor a factor. Focusable by script only, to take the focus when the last
- * factor is removed.
- */
-export const MfaCredentialsEmpty = forwardRef<HTMLDivElement>(
-    function MfaCredentialsEmpty(_props, ref) {
-        const i18n = useI18n();
+interface ListEmptyProps {
+    icon: ReactNode;
+    title: ReactNode;
+}
 
-        return (
-            <Item
-                asChild
-                variant="outline"
-                tabIndex={-1}
-                className="items-center gap-3 rounded border-dashed px-3.5 py-4"
-            >
-                <div ref={ref}>
-                    <MfaListItemIcon tone="muted">
-                        <Shield />
-                    </MfaListItemIcon>
-                    <MfaListItemContent title={i18n('mfaList.empty')} />
-                </div>
-            </Item>
-        );
-    }
-);
+/**
+ * Shown in place of an empty list: the box of a row, dashed, but not a list item. Focusable by
+ * script only, to take the focus when the last row is removed.
+ */
+export const ListEmpty = forwardRef<HTMLDivElement, ListEmptyProps>(function ListEmpty(
+    { icon, title },
+    ref
+) {
+    return (
+        <Item
+            asChild
+            variant="outline"
+            tabIndex={-1}
+            className="items-center gap-3 rounded border-dashed px-3.5 py-4"
+        >
+            <div ref={ref}>
+                <ListItemIcon tone="muted">{icon}</ListItemIcon>
+                <ListItemContent title={title} />
+            </div>
+        </Item>
+    );
+});
