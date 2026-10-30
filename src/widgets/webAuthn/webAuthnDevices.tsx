@@ -19,14 +19,15 @@ type DeviceInputFormData = {
 interface DevicesListProps {
     devices: DeviceCredential[];
     removeWebAuthnDevice: (id: string) => void;
+    showIntro?: boolean;
 }
 
-const DevicesList = ({ devices, removeWebAuthnDevice }: DevicesListProps) => {
+const DevicesList = ({ devices, removeWebAuthnDevice, showIntro }: DevicesListProps) => {
     const i18n = useI18n();
 
     return (
         <div className="space-y-4">
-            <Heading>{i18n('webauthn.registredDevices.list')}</Heading>
+            {showIntro && <Heading>{i18n('webauthn.registredDevices.list')}</Heading>}
 
             <ItemGroup>
                 {devices.map(device => (
@@ -46,6 +47,12 @@ export interface WebAuthnDevicesProps {
      * The authorization credential JSON Web Token (JWT) used to access the ReachFive API, less than five minutes old.
      */
     accessToken: string;
+    /**
+     * Show the introduction text.
+     *
+     * @default true
+     */
+    showIntro?: boolean;
     /**
      * Whether the form fields's labels are displayed on the login view.
      *
@@ -68,6 +75,7 @@ export interface WebAuthnDevicesProps {
  */
 export function WebAuthnDevices({
     accessToken,
+    showIntro = true,
     showLabels = false,
     onError = () => {},
     onSuccess = () => {},
@@ -82,7 +90,11 @@ export function WebAuthnDevices({
             {devices.length === 0 ? (
                 <Info>{i18n('webauthn.registredDevices.no.list')}</Info>
             ) : (
-                <DevicesList devices={devices} removeWebAuthnDevice={id => removal.mutate(id)} />
+                <DevicesList
+                    devices={devices}
+                    removeWebAuthnDevice={id => removal.mutate(id)}
+                    showIntro={showIntro}
+                />
             )}
 
             <Alternative className="text-muted-foreground">

@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from 'react';
 
 import { ArrowLeft } from 'lucide-react';
 
+import { Heading } from '@/components/miscComponent';
 import { Button } from '@/components/ui/button';
 import { WidgetErrorBoundary } from '@/components/widget/queryWidget';
 import { useI18n } from '@/contexts/i18n';
@@ -47,7 +48,7 @@ export function PasskeysView({ accessToken, onBack, onSuccess, onError }: Passke
 
     return (
         <div className="space-y-2">
-            <div className="-ml-1.5 flex items-center">
+            <div className="grid grid-cols-[2rem_1fr_2rem] items-center">
                 <Button
                     ref={backButton}
                     type="button"
@@ -58,12 +59,14 @@ export function PasskeysView({ accessToken, onBack, onSuccess, onError }: Passke
                 >
                     <ArrowLeft aria-hidden="true" />
                 </Button>
+                <Heading className="mb-0">{i18n('webauthn.registredDevices.list')}</Heading>
             </div>
             <WidgetErrorBoundary onError={onError}>
                 <WebAuthnDevices
                     accessToken={accessToken}
                     onSuccess={handleSuccess}
                     onError={onError}
+                    showIntro={false}
                 />
             </WidgetErrorBoundary>
         </div>
