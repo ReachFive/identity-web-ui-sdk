@@ -2,19 +2,22 @@ import { Mail, Smartphone, type LucideIcon } from 'lucide-react';
 
 import {
     isPasskeyCredential,
-    type MfaCredential,
+    type ListedCredential,
     type PasskeyCredential,
 } from '@/widgets/mfa/passkeyCredential';
 
-/** An email or phone number credential: the factors listed one row each, and removable. */
-export type EmailOrPhoneCredential = Exclude<MfaCredential, PasskeyCredential>;
+/**
+ * An MFA credential (email, phone number, …): a second factor only, listed one row each and
+ * removable. Passkeys are left out: an authentication method first, they are managed in their own
+ * view.
+ */
+export type MfaCredential = Exclude<ListedCredential, PasskeyCredential>;
 
-export const isEmailOrPhoneCredential = (
-    credential: MfaCredential
-): credential is EmailOrPhoneCredential => !isPasskeyCredential(credential);
+export const isMfaCredential = (credential: ListedCredential): credential is MfaCredential =>
+    !isPasskeyCredential(credential);
 
-/** Identifies a row of the list; unique across email and phone number credentials. */
-export const credentialKey = (credential: EmailOrPhoneCredential) =>
+/** Identifies a row of the list; unique across MFA credentials. */
+export const credentialKey = (credential: MfaCredential) =>
     `${credential.type}-${credential.friendlyName}`;
 
 interface CredentialDetails {
@@ -26,8 +29,8 @@ interface CredentialDetails {
     Icon: LucideIcon;
 }
 
-/** What a row shows for each type of email or phone number credential. */
-export const credentialDetails = (credential: EmailOrPhoneCredential): CredentialDetails => {
+/** What a row shows for each type of MFA credential. */
+export const credentialDetails = (credential: MfaCredential): CredentialDetails => {
     switch (credential.type) {
         case 'email':
             return {

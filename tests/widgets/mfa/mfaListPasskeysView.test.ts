@@ -13,7 +13,10 @@ import mfaListWidget from '../../../src/widgets/mfa/mfaListWidget';
 
 import type { I18nMessages } from '../../../src/contexts/i18n';
 import type { Config, OnError, OnSuccess } from '../../../src/types';
-import type { MfaCredential, PasskeyCredential } from '../../../src/widgets/mfa/passkeyCredential';
+import type {
+    ListedCredential,
+    PasskeyCredential,
+} from '../../../src/widgets/mfa/passkeyCredential';
 
 const config: Config = {
     clientId: 'local',
@@ -75,7 +78,7 @@ const passkeyCredential = (id: string): PasskeyCredential => ({
 });
 
 /** Core 1.42.0 does not declare the `webauthn` credential yet (see passkeyCredential.ts). */
-const credentialsList = (...credentials: MfaCredential[]) =>
+const credentialsList = (...credentials: ListedCredential[]) =>
     ({ credentials }) as Awaited<ReturnType<Client['listMfaCredentials']>>;
 
 const device = (id: string): DeviceCredential => ({

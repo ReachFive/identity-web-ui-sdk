@@ -2,14 +2,10 @@ import React, { useState, type RefObject } from 'react';
 
 import { ItemGroup } from '@/components/ui/item';
 import { OnError, OnSuccess } from '@/types';
-import {
-    credentialKey,
-    isEmailOrPhoneCredential,
-    type EmailOrPhoneCredential,
-} from '@/widgets/mfa/credentials';
-import { MfaCredentialsEmpty } from '@/widgets/mfa/mfaCredentialItem';
+import { credentialKey, isMfaCredential, type MfaCredential } from '@/widgets/mfa/credentials';
 import { MfaCredentialRow } from '@/widgets/mfa/mfaCredentialRow';
-import { isPasskeyCredential, type MfaCredential } from '@/widgets/mfa/passkeyCredential';
+import { MfaCredentialsEmpty } from '@/widgets/mfa/mfaListItem';
+import { isPasskeyCredential, type ListedCredential } from '@/widgets/mfa/passkeyCredential';
 import { PasskeysRow } from '@/widgets/mfa/passkeysRow';
 import { useRemoveMfaCredential } from '@/widgets/mfa/queries';
 import { PASSKEYS_ROW_KEY, useRowFocus } from '@/widgets/mfa/useRowFocus';
@@ -44,7 +40,7 @@ const useCredentialRemoval = ({
             setConfirmingKey(key);
         },
         cancel: close,
-        confirm: (credential: EmailOrPhoneCredential) => {
+        confirm: (credential: MfaCredential) => {
             if (removal.isPending) return;
             // Settled covers both outcomes: on success the row is already gone from the
             // refetched list, on error it returns to normal with the factor kept.
@@ -55,7 +51,7 @@ const useCredentialRemoval = ({
 
 interface MfaCredentialsListProps {
     accessToken: string;
-    credentials: MfaCredential[];
+    credentials: ListedCredential[];
     removable: boolean;
     passkeysRowRef: RefObject<HTMLButtonElement>;
     onOpenPasskeys: () => void;
@@ -74,10 +70,10 @@ export const MfaCredentialsList = ({
     openingPasskeys,
     ...callbacks
 }: MfaCredentialsListProps) => {
-    const emailAndPhoneCredentials = credentials.filter(isEmailOrPhoneCredential);
+    const mfaCredentials = credentials.filter(isMfaCredential);
     const passkeyCount = credentials.filter(isPasskeyCredential).length;
     const rowKeys = [
-        ...emailAndPhoneCredentials.map(credentialKey),
+        ...mfaCredentials.map(credentialKey),
         ...(passkeyCount > 0 ? [PASSKEYS_ROW_KEY] : []),
     ];
     const focus = useRowFocus(rowKeys, passkeysRowRef);
@@ -89,7 +85,7 @@ export const MfaCredentialsList = ({
 
     return (
         <ItemGroup className="gap-2">
-            {emailAndPhoneCredentials.map(credential => {
+            {mfaCredentials.map(credential => {
                 const key = credentialKey(credential);
                 return (
                     <MfaCredentialRow

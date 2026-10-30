@@ -17,10 +17,15 @@ export const dimmedRowProps = (dimmed: boolean, className?: string): HTMLAttribu
         ...(dimmed ? { inert: '' } : {}),
     }) as HTMLAttributes<HTMLElement>;
 
-/** The outlined box shared by every row of the list and by its empty state. */
-export function MfaItem({ className, ...props }: ComponentProps<typeof Item>) {
+/**
+ * The outlined box of one row of the MFA credentials list. Carries the public
+ * `widget-mfa-credential` slot.
+ */
+export function MfaListItem({ className, ...props }: ComponentProps<typeof Item>) {
     return (
         <Item
+            data-slot="widget-mfa-credential"
+            role="listitem"
             variant="outline"
             className={cn('items-start gap-3 rounded px-3.5 py-3', className)}
             {...props}
@@ -28,25 +33,14 @@ export function MfaItem({ className, ...props }: ComponentProps<typeof Item>) {
     );
 }
 
-/**
- * One row of the MFA credentials list. Carries the public `widget-mfa-credential` slot.
- */
-export function MfaCredentialItem(props: ComponentProps<typeof Item>) {
-    return <MfaItem data-slot="widget-mfa-credential" role="listitem" {...props} />;
-}
-
-interface MfaCredentialIconProps extends ComponentProps<typeof ItemMedia> {
+interface MfaListItemIconProps extends ComponentProps<typeof ItemMedia> {
     tone?: 'success' | 'muted';
 }
 
 /**
  * The factor icon on a light tile, in the theme success colour for an active factor.
  */
-export function MfaCredentialIcon({
-    tone = 'success',
-    className,
-    ...props
-}: MfaCredentialIconProps) {
+export function MfaListItemIcon({ tone = 'success', className, ...props }: MfaListItemIconProps) {
     return (
         <ItemMedia
             aria-hidden="true"
@@ -62,7 +56,7 @@ export function MfaCredentialIcon({
     );
 }
 
-interface MfaCredentialContentProps {
+interface MfaListItemContentProps {
     title: ReactNode;
     descriptions?: ReactNode[];
 }
@@ -70,7 +64,7 @@ interface MfaCredentialContentProps {
 /**
  * The identifier of the factor, then one muted line per description (type, creation date, …).
  */
-export function MfaCredentialContent({ title, descriptions = [] }: MfaCredentialContentProps) {
+export function MfaListItemContent({ title, descriptions = [] }: MfaListItemContentProps) {
     return (
         <ItemContent className="min-w-0 gap-0.5">
             <ItemTitle className="w-auto font-semibold text-foreground [overflow-wrap:anywhere]">
@@ -84,22 +78,28 @@ export function MfaCredentialContent({ title, descriptions = [] }: MfaCredential
 }
 
 /**
- * Shown in place of the list when the user has no second factor. Focusable by script only, to
- * take the focus when the last factor is removed.
+ * Shown in place of the list when the user has no second factor: the box of a row, dashed, but
+ * neither a list item nor a factor. Focusable by script only, to take the focus when the last
+ * factor is removed.
  */
 export const MfaCredentialsEmpty = forwardRef<HTMLDivElement>(
     function MfaCredentialsEmpty(_props, ref) {
         const i18n = useI18n();
 
         return (
-            <MfaItem asChild tabIndex={-1} className="items-center border-dashed py-4">
+            <Item
+                asChild
+                variant="outline"
+                tabIndex={-1}
+                className="items-center gap-3 rounded border-dashed px-3.5 py-4"
+            >
                 <div ref={ref}>
-                    <MfaCredentialIcon tone="muted">
+                    <MfaListItemIcon tone="muted">
                         <Shield />
-                    </MfaCredentialIcon>
-                    <MfaCredentialContent title={i18n('mfaList.empty')} />
+                    </MfaListItemIcon>
+                    <MfaListItemContent title={i18n('mfaList.empty')} />
                 </div>
-            </MfaItem>
+            </Item>
         );
     }
 );

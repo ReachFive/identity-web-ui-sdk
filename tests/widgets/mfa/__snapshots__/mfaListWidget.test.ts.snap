@@ -426,7 +426,7 @@ exports[`Snapshot empty 1`] = `
     >
       <div>
         <div
-          class="group/item [a]:hover:bg-accent/50 focus-visible:border-ring focus-visible:ring-ring/50 [a]:transition-colors flex flex-wrap border text-sm outline-none transition-colors duration-100 focus-visible:ring-[3px] border-border gap-3 rounded px-3.5 items-center border-dashed py-4"
+          class="group/item [a]:hover:bg-accent/50 focus-visible:border-ring focus-visible:ring-ring/50 [a]:transition-colors flex flex-wrap border text-sm outline-none transition-colors duration-100 focus-visible:ring-[3px] border-border items-center gap-3 rounded border-dashed px-3.5 py-4"
           data-size="default"
           data-slot="item"
           data-variant="outline"

@@ -4,11 +4,7 @@ import { ChevronRight, Fingerprint, LoaderCircle } from 'lucide-react';
 
 import { ItemActions, ItemContent, ItemDescription, ItemTitle } from '@/components/ui/item';
 import { useI18n } from '@/contexts/i18n';
-import {
-    dimmedRowProps,
-    MfaCredentialIcon,
-    MfaCredentialItem,
-} from '@/widgets/mfa/mfaCredentialItem';
+import { dimmedRowProps, MfaListItemIcon, MfaListItem } from '@/widgets/mfa/mfaListItem';
 
 interface PasskeysRowProps {
     /** Number of passkeys, taken from the MFA credentials list. */
@@ -34,15 +30,15 @@ export const PasskeysRow = forwardRef<HTMLButtonElement, PasskeysRowProps>(funct
     const descriptionId = useId();
 
     return (
-        <MfaCredentialItem
+        <MfaListItem
             {...dimmedRowProps(
                 dimmed,
                 'relative items-center has-[button:hover]:bg-button-subtle-bg has-[button:focus-visible]:border-ring has-[button:focus-visible]:ring-[3px] has-[button:focus-visible]:ring-ring/50'
             )}
         >
-            <MfaCredentialIcon className="group-has-[[data-slot=item-description]]/item:translate-y-0 group-has-[[data-slot=item-description]]/item:self-center">
+            <MfaListItemIcon className="group-has-[[data-slot=item-description]]/item:translate-y-0 group-has-[[data-slot=item-description]]/item:self-center">
                 <Fingerprint />
-            </MfaCredentialIcon>
+            </MfaListItemIcon>
             <ItemContent className="min-w-0 gap-0.5">
                 <ItemTitle className="w-auto font-semibold text-foreground [overflow-wrap:anywhere]">
                     <button
@@ -63,6 +59,6 @@ export const PasskeysRow = forwardRef<HTMLButtonElement, PasskeysRowProps>(funct
             <ItemActions aria-hidden="true" className="text-muted-foreground [&_svg]:size-4">
                 {pending ? <LoaderCircle className="animate-spin" /> : <ChevronRight />}
             </ItemActions>
-        </MfaCredentialItem>
+        </MfaListItem>
     );
 });

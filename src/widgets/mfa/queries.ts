@@ -14,7 +14,7 @@ import { webAuthnKeys } from '@/widgets/webAuthn/queries';
 
 import type { OnError, OnSuccess } from '@/types';
 import type { SuccessEvent } from '@/types/events';
-import type { EmailOrPhoneCredential } from '@/widgets/mfa/credentials';
+import type { MfaCredential } from '@/widgets/mfa/credentials';
 
 /**
  * Query keys of the MFA resources, namespaced so they never collide with another widget's.
@@ -52,7 +52,7 @@ export const useInvalidateMfaCredentials = (onError: OnError) => {
 const removeMfaCredential = (
     client: CoreClient,
     accessToken: string,
-    credential: EmailOrPhoneCredential
+    credential: MfaCredential
 ): Promise<SuccessEvent> => {
     switch (credential.type) {
         case 'email':
@@ -73,7 +73,7 @@ type UseRemoveMfaCredentialOptions = {
 };
 
 /**
- * Removes an email or phone number credential. No optimistic update: on success the deletion
+ * Removes an MFA credential. No optimistic update: on success the deletion
  * event fires and the credentials list is refetched; on failure the list is left untouched.
  */
 export const useRemoveMfaCredential = ({
@@ -85,7 +85,7 @@ export const useRemoveMfaCredential = ({
     const invalidateCredentials = useInvalidateMfaCredentials(onError);
 
     return useMutation({
-        mutationFn: (credential: EmailOrPhoneCredential) =>
+        mutationFn: (credential: MfaCredential) =>
             removeMfaCredential(client, accessToken, credential),
         onSuccess: event => {
             onSuccess(event);

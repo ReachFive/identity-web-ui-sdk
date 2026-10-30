@@ -13,8 +13,12 @@ export type PasskeyCredential = {
     createdAt: string;
 };
 
-/** An MFA credential, including the passkey variant Core 1.42.0 does not declare yet. */
-export type MfaCredential = MFA.Credential | PasskeyCredential;
+/**
+ * A credential returned by the MFA credentials list: an MFA credential or a passkey, the passkey
+ * variant being one Core 1.42.0 does not declare yet.
+ */
+export type ListedCredential = MFA.Credential | PasskeyCredential;
 
-export const isPasskeyCredential = (credential: MfaCredential): credential is PasskeyCredential =>
-    credential.type === 'webauthn';
+export const isPasskeyCredential = (
+    credential: ListedCredential
+): credential is PasskeyCredential => credential.type === 'webauthn';

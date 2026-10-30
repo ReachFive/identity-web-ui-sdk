@@ -7,14 +7,14 @@ import { ItemActions } from '@/components/ui/item';
 import { useConfig } from '@/contexts/config';
 import { useI18n } from '@/contexts/i18n';
 import { dateFormat } from '@/helpers/utils';
-import { credentialDetails, type EmailOrPhoneCredential } from '@/widgets/mfa/credentials';
+import { credentialDetails, type MfaCredential } from '@/widgets/mfa/credentials';
 import { MfaCredentialConfirmation } from '@/widgets/mfa/mfaCredentialConfirmation';
 import {
-    MfaCredentialContent,
-    MfaCredentialIcon,
-    MfaCredentialItem,
+    MfaListItemContent,
+    MfaListItemIcon,
+    MfaListItem,
     dimmedRowProps,
-} from '@/widgets/mfa/mfaCredentialItem';
+} from '@/widgets/mfa/mfaListItem';
 
 /** Placeholder the translated label is split around, to put the date in a `<time>` element. */
 const DATE_PLACEHOLDER = '\u0000';
@@ -37,7 +37,7 @@ const CreatedOn = ({ createdAt }: { createdAt: string }) => {
 };
 
 interface CredentialSummaryProps {
-    credential: EmailOrPhoneCredential;
+    credential: MfaCredential;
     removable: boolean;
     trashRef: RefCallback<HTMLElement>;
     onRequestRemoval: () => void;
@@ -55,10 +55,10 @@ const CredentialSummary = ({
 
     return (
         <>
-            <MfaCredentialIcon>
+            <MfaListItemIcon>
                 <Icon />
-            </MfaCredentialIcon>
-            <MfaCredentialContent
+            </MfaListItemIcon>
+            <MfaListItemContent
                 title={identifier}
                 descriptions={[
                     i18n(labelKey),
@@ -95,7 +95,7 @@ interface MfaCredentialRowProps extends CredentialSummaryProps {
 }
 
 /**
- * One email or phone number row. Its trash button turns it in place into a confirmation.
+ * One MFA credential row (email, phone number, …). Its trash button turns it in place into a confirmation.
  */
 export const MfaCredentialRow = ({
     confirming,
@@ -109,7 +109,7 @@ export const MfaCredentialRow = ({
     const { identifier, Icon } = credentialDetails(summary.credential);
 
     return (
-        <MfaCredentialItem
+        <MfaListItem
             id={`credential-${summary.credential.friendlyName}`}
             {...dimmedRowProps(dimmed, confirming ? 'border-0 p-0' : undefined)}
         >
@@ -124,6 +124,6 @@ export const MfaCredentialRow = ({
             ) : (
                 <CredentialSummary {...summary} />
             )}
-        </MfaCredentialItem>
+        </MfaListItem>
     );
 };
