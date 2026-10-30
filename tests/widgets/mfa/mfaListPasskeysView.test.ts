@@ -267,7 +267,7 @@ describe('A failed device load shows the widget error output under the back arro
         expect(await screen.findByText('root@reach5.co')).toBeInTheDocument();
     });
 
-    test('an API error shows the generic message', async () => {
+    test('an API error without a message for the user shows its description', async () => {
         const error: AppError = {
             errorId: '0',
             error: 'unexpected_error',
@@ -279,7 +279,7 @@ describe('A failed device load shows the widget error output under the back arro
 
         await openPasskeysView(userEvent.setup());
 
-        expect(await screen.findByText('Unexpected error')).toBeInTheDocument();
+        expect(await screen.findByText('Boom')).toBeInTheDocument();
         expect(screen.getByRole('button', { name: 'Back' })).toBeInTheDocument();
         expect(onError).toHaveBeenCalledTimes(1);
     });
