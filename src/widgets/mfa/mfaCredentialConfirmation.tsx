@@ -4,10 +4,6 @@ import { LoaderCircle } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { useI18n } from '@/contexts/i18n';
-import { cn } from '@/lib/utils';
-
-/** The look of a disabled button, kept focusable. */
-const pendingClassName = 'aria-disabled:cursor-not-allowed aria-disabled:opacity-50';
 
 interface MfaCredentialConfirmationProps {
     /** The question that labels the block, e.g. "Remove +33 6 12 34 56 78?". */
@@ -81,7 +77,7 @@ export function MfaCredentialConfirmation({
                     type="button"
                     variant="outline"
                     size="sm"
-                    className={cn('text-foreground', pendingClassName)}
+                    className="text-foreground aria-disabled:cursor-not-allowed aria-disabled:opacity-50"
                     aria-disabled={pending || undefined}
                     onClick={unlessPending(onCancel)}
                 >
@@ -91,7 +87,7 @@ export function MfaCredentialConfirmation({
                     type="button"
                     variant="destructive"
                     size="sm"
-                    className={pendingClassName}
+                    className="aria-disabled:cursor-not-allowed aria-disabled:opacity-50"
                     aria-disabled={pending || undefined}
                     aria-busy={pending}
                     onClick={unlessPending(onConfirm)}
