@@ -1,5 +1,5 @@
 import React from 'react';
-import { createRoot } from 'react-dom/client';
+import { createRoot, type Root } from 'react-dom/client';
 
 import type { AuthOptions, Client as CoreClient, SessionInfo } from '@reachfive/identity-core';
 
@@ -73,6 +73,29 @@ type WidgetOptions<P> = Prettify<P & WidgetProps & I18nProps & ThemeProps>;
 type Widget<P> = (props: P, ctx: Context) => Promise<React.JSX.Element>;
 
 // type WidgetOptions<W> = PropsWithWidgetProps<W extends Widget<infer P> ? P : never[0]>
+
+/** The React root currently rendering a widget in each container: one live widget per container. */
+const mountedRoots = new WeakMap<Element, Root>();
+
+/** Unmounts the widget already shown in `container`, if any, and claims it with a new root. */
+function replaceRoot(container: Element): Root {
+    mountedRoots.get(container)?.unmount();
+    const root = createRoot(container);
+    mountedRoots.set(container, root);
+    return root;
+}
+
+/** Whether `root` still owns `container`, i.e. no later widget has replaced it. */
+function ownsContainer(container: Element, root: Root): boolean {
+    return mountedRoots.get(container) === root;
+}
+
+/** Unmounts `root`, and releases `container` unless a later widget already took it over. */
+function releaseRoot(container: Element, root: Root): void {
+    if (!ownsContainer(container, root)) return;
+    root.unmount();
+    mountedRoots.delete(container);
+}
 
 export class UiClient {
     config: Config;
@@ -163,7 +186,8 @@ export class UiClient {
             throw new Error(`Container '#${containerName}' not found.`);
         }
 
-        const root = createRoot(container);
+        // Synchronous, before any `await`: a call fired right after this one replaces it.
+        const root = replaceRoot(container);
 
         try {
             const config = {
@@ -178,18 +202,23 @@ export class UiClient {
                 defaultI18n: this.defaultI18n,
             });
 
+            // A later call has replaced this widget while it was loading.
+            if (!ownsContainer(container, root)) return;
+
             root.render(WidgetComponent);
 
             if (options.onReady && typeof options.onReady === 'function') {
                 options.onReady({
                     destroy() {
-                        root.unmount();
+                        releaseRoot(container, root);
                     },
                 });
             }
         } catch (error) {
-            const message = this.adaptError(error);
-            root.render(<ErrorText>{message}</ErrorText>);
+            if (ownsContainer(container, root)) {
+                const message = this.adaptError(error);
+                root.render(<ErrorText>{message}</ErrorText>);
+            }
             this.handleError(error);
         }
     }
