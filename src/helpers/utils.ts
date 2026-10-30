@@ -66,8 +66,16 @@ export function formatISO8601Date(
     return null;
 }
 
-export function dateFormat(dateString: string, locales: string) {
-    return intlFormat(new Date(dateString), { timeZone: 'UTC' }, { locale: locales });
+/**
+ * A date in the configured language and the user's time zone. The API returns ISO 8601 instants in
+ * UTC (`…Z`), which `new Date` reads as such.
+ */
+export function dateFormat(
+    dateString: string,
+    locale: string,
+    options: Intl.DateTimeFormatOptions = {}
+): string {
+    return intlFormat(new Date(dateString), options, { locale });
 }
 
 export type Identifier = { identifier: string };

@@ -28,7 +28,7 @@ export type Context = {
     session?: SessionInfo;
 };
 
-type PrepareFn<P, U> = (
+export type PrepareFn<P, U> = (
     options: PropsWithI18n<PropsWithTheme<P>>,
     context: Context
 ) => PropsWithI18n<PropsWithTheme<U>> | PromiseLike<PropsWithI18n<PropsWithTheme<U>>>;

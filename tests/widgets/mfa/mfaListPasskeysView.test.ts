@@ -1,0 +1,567 @@
+/**
+ * @jest-environment jsdom
+ */
+import { afterEach, beforeEach, describe, expect, jest, test } from '@jest/globals';
+import '@testing-library/jest-dom/jest-globals';
+import { render, screen, waitFor, within } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+
+import type { Client, DeviceCredential, MFA } from '@reachfive/identity-core';
+
+import { AppError, UserError } from '../../../src/helpers/errors';
+import mfaListWidget from '../../../src/widgets/mfa/mfaListWidget';
+
+import type { I18nMessages } from '../../../src/contexts/i18n';
+import type { Config, OnError, OnSuccess } from '../../../src/types';
+import type {
+    ListedCredential,
+    PasskeyCredential,
+} from '../../../src/widgets/mfa/passkeyCredential';
+
+/*
+ * The tests referring to a Squash test case (SDK > SDK UI > 01.13 - MFA > 01.13.03 -
+ * ShowMfaCredentials Passkeys) replay its steps on the widget, with the API mocked.
+ */
+
+const config: Config = {
+    clientId: 'local',
+    domain: 'local.reach5.net',
+    sso: false,
+    sms: false,
+    webAuthn: true,
+    language: 'en',
+    pkceEnforced: false,
+    isPublic: true,
+    socialProviders: [],
+    customProviders: {},
+    customFields: [],
+    resourceBaseUrl: 'http://localhost',
+    mfaSmsEnabled: true,
+    mfaEmailEnabled: true,
+    rbaEnabled: false,
+    consentsVersions: {},
+    passwordPolicy: {
+        minLength: 8,
+        minStrength: 2,
+        allowUpdateWithAccessTokenOnly: true,
+    },
+    loginTypeAllowed: {
+        email: true,
+        phoneNumber: true,
+        customIdentifier: true,
+    },
+    isImplicitFlowForbidden: false,
+};
+
+const messages: I18nMessages = {
+    'mfaList.email': 'Email',
+    'mfaList.createdOn': 'Created on {date}',
+    'mfaList.empty': 'No second factor yet',
+    'mfaList.passkeys': 'Passkeys',
+    'mfaList.passkeyCount_one': '{count} passkey',
+    'mfaList.passkeyCount_other': '{count} passkeys',
+    'mfaList.alsoUsedToLogIn': 'Also used to log in',
+    'mfaList.back': 'Back',
+    'webauthn.registredDevices.list': 'Registered devices',
+    'webauthn.registredDevices.no.list': 'No registered device',
+    'webauthn.registredDevices.confirm.removal': 'Remove this device?',
+    'confirmation.cancel': 'Cancel',
+    remove: 'Remove',
+    add: 'Add',
+};
+
+const emailCredential: MFA.EmailCredential = {
+    type: 'email',
+    email: 'root@reach5.co',
+    friendlyName: 'identifier',
+    createdAt: '2022-09-21',
+};
+
+const passkeyCredential = (id: string): PasskeyCredential => ({
+    type: 'webauthn',
+    id,
+    friendlyName: `Passkey ${id}`,
+    createdAt: '2024-01-15',
+});
+
+/** Core 1.42.0 does not declare the `webauthn` credential yet (see passkeyCredential.ts). */
+const credentialsList = (...credentials: ListedCredential[]) =>
+    ({ credentials }) as Awaited<ReturnType<Client['listMfaCredentials']>>;
+
+const device = (id: string): DeviceCredential => ({
+    id,
+    friendlyName: `Device ${id}`,
+});
+
+const listMfaCredentials = jest.fn<Client['listMfaCredentials']>();
+const listWebAuthnDevices = jest.fn<Client['listWebAuthnDevices']>();
+const addNewWebAuthnDevice = jest.fn<Client['addNewWebAuthnDevice']>();
+const removeWebAuthnDevice = jest.fn<Client['removeWebAuthnDevice']>();
+
+const onError = jest.fn<OnError>();
+const onSuccess = jest.fn<OnSuccess>();
+
+// @ts-expect-error partial Client
+const apiClient: Client = {
+    listMfaCredentials,
+    listWebAuthnDevices,
+    addNewWebAuthnDevice,
+    removeWebAuthnDevice,
+};
+
+const renderWidget = async () => {
+    const widget = await mfaListWidget(
+        { accessToken: 'azerty', onError, onSuccess },
+        { apiClient, config, defaultI18n: messages }
+    );
+    return render(widget);
+};
+
+const openPasskeysView = async (user: ReturnType<typeof userEvent.setup>) => {
+    await user.click(await screen.findByRole('button', { name: 'Passkeys' }));
+    return screen.findByRole('button', { name: 'Back' });
+};
+
+/** Presses the remove button of the device at `index`, then confirms in the dialog. */
+const removeDevice = async (user: ReturnType<typeof userEvent.setup>, index: number) => {
+    await user.click(screen.getAllByRole('button', { name: 'Remove' })[index]);
+    const dialog = await screen.findByRole('alertdialog');
+    await user.click(within(dialog).getByRole('button', { name: 'Remove' }));
+};
+
+const successEvents = (name: string) =>
+    onSuccess.mock.calls.filter(([event]) => event.name === name);
+
+beforeEach(() => {
+    jest.resetAllMocks();
+});
+
+/**
+ * Squash: 01.13.03.03
+ */
+describe('01.13.03.03 - The Passkeys row opens the passkey management view, with a way back', () => {
+    beforeEach(() => {
+        listMfaCredentials.mockResolvedValue(
+            credentialsList(emailCredential, passkeyCredential('a'), passkeyCredential('b'))
+        );
+        listWebAuthnDevices.mockResolvedValue([device('a'), device('b')]);
+    });
+
+    test('the Passkeys row opens the view listing each device, under a back arrow', async () => {
+        await renderWidget();
+
+        const back = await openPasskeysView(userEvent.setup());
+
+        expect(back).toBeInTheDocument();
+        expect(await screen.findByText('Device a')).toBeInTheDocument();
+        expect(screen.getByText('Device b')).toBeInTheDocument();
+        expect(screen.getByText('Registered devices')).toBeInTheDocument();
+        expect(screen.queryByText('root@reach5.co')).not.toBeInTheDocument();
+        expect(listWebAuthnDevices).toHaveBeenCalledWith('azerty');
+    });
+
+    test('the back arrow returns to the list of factors', async () => {
+        await renderWidget();
+
+        const user = userEvent.setup();
+        await user.click(await openPasskeysView(user));
+
+        expect(await screen.findByText('root@reach5.co')).toBeInTheDocument();
+        expect(screen.getByRole('button', { name: 'Passkeys' })).toBeInTheDocument();
+        expect(screen.queryByText('Registered devices')).not.toBeInTheDocument();
+    });
+
+    test('removing a device asks for confirmation, and Cancel keeps it without any removal call', async () => {
+        await renderWidget();
+
+        const user = userEvent.setup();
+        await openPasskeysView(user);
+        await screen.findByText('Device a');
+        await user.click(screen.getAllByRole('button', { name: 'Remove' })[0]);
+
+        const dialog = await screen.findByRole('alertdialog');
+        expect(within(dialog).getByText('Remove this device?')).toBeInTheDocument();
+        await user.click(within(dialog).getByRole('button', { name: 'Cancel' }));
+
+        expect(screen.queryByRole('alertdialog')).not.toBeInTheDocument();
+        expect(screen.getByText('Device a')).toBeInTheDocument();
+        expect(removeWebAuthnDevice).not.toHaveBeenCalled();
+    });
+});
+
+/**
+ * Squash: 01.13.03.04
+ */
+describe('01.13.03.04 - A passkey removed from the Passkeys view is reflected in the list of factors', () => {
+    test('the device is removed by its id, the others stay, webauthn_credential_deleted fires and the count is fresh on return', async () => {
+        listMfaCredentials
+            .mockResolvedValueOnce(
+                credentialsList(emailCredential, passkeyCredential('a'), passkeyCredential('b'))
+            )
+            .mockResolvedValue(credentialsList(emailCredential, passkeyCredential('b')));
+        listWebAuthnDevices
+            .mockResolvedValueOnce([device('a'), device('b')])
+            .mockResolvedValue([device('b')]);
+        removeWebAuthnDevice.mockResolvedValue();
+        await renderWidget();
+
+        const user = userEvent.setup();
+        const back = await openPasskeysView(user);
+        await screen.findByText('Device a');
+        await removeDevice(user, 0);
+
+        await waitFor(() => expect(screen.queryByText('Device a')).not.toBeInTheDocument());
+        expect(screen.getByText('Device b')).toBeInTheDocument();
+        expect(removeWebAuthnDevice).toHaveBeenCalledWith('azerty', 'a');
+        expect(onSuccess).toHaveBeenCalledWith({
+            name: 'webauthn_credential_deleted',
+            deviceId: 'a',
+        });
+        await waitFor(() => expect(listMfaCredentials).toHaveBeenCalledTimes(2));
+
+        await user.click(back);
+        expect(await screen.findByRole('button', { name: 'Passkeys' })).toHaveAccessibleDescription(
+            '1 passkey · Also used to log in'
+        );
+    });
+
+    test('after removing the last passkey, going back shows no Passkeys row', async () => {
+        listMfaCredentials
+            .mockResolvedValueOnce(credentialsList(emailCredential, passkeyCredential('a')))
+            .mockResolvedValue(credentialsList(emailCredential));
+        listWebAuthnDevices.mockResolvedValueOnce([device('a')]).mockResolvedValue([]);
+        removeWebAuthnDevice.mockResolvedValue();
+        await renderWidget();
+
+        const user = userEvent.setup();
+        const back = await openPasskeysView(user);
+        await screen.findByText('Device a');
+        await removeDevice(user, 0);
+        await screen.findByText('No registered device');
+        await waitFor(() => expect(listMfaCredentials).toHaveBeenCalledTimes(2));
+
+        await user.click(back);
+        expect(await screen.findByText('root@reach5.co')).toBeInTheDocument();
+        expect(screen.queryByRole('button', { name: 'Passkeys' })).not.toBeInTheDocument();
+    });
+});
+
+/**
+ * Squash: 01.13.03.05
+ */
+describe('01.13.03.05 - A failed passkey removal keeps the passkey and is reported to onError', () => {
+    const refusedRemoval = async (error: unknown) => {
+        listMfaCredentials.mockResolvedValue(
+            credentialsList(emailCredential, passkeyCredential('a'), passkeyCredential('b'))
+        );
+        listWebAuthnDevices.mockResolvedValue([device('a'), device('b')]);
+        removeWebAuthnDevice.mockRejectedValue(error);
+        await renderWidget();
+
+        const user = userEvent.setup();
+        const back = await openPasskeysView(user);
+        await screen.findByText('Device a');
+        await removeDevice(user, 0);
+        await waitFor(() => expect(onError).toHaveBeenCalledTimes(1));
+
+        return { user, back };
+    };
+
+    test('a removal refused for lack of a recent MFA keeps the passkey, without any step-up', async () => {
+        const error: AppError = {
+            errorId: '0',
+            error: 'insufficient_authentication',
+            errorDescription: 'The access token must contain the mfa authentication method',
+        };
+        const { user, back } = await refusedRemoval(error);
+
+        expect(removeWebAuthnDevice).toHaveBeenCalledWith('azerty', 'a');
+        expect(onError).toHaveBeenCalledWith(error);
+        expect(successEvents('webauthn_credential_deleted')).toHaveLength(0);
+        // The widget stays on the device list: no step-up view takes its place.
+        expect(screen.getByText('Device a')).toBeInTheDocument();
+        expect(screen.getByText('Device b')).toBeInTheDocument();
+        expect(screen.queryByRole('alertdialog')).not.toBeInTheDocument();
+
+        await user.click(back);
+        expect(await screen.findByRole('button', { name: 'Passkeys' })).toHaveAccessibleDescription(
+            '2 passkeys · Also used to log in'
+        );
+        expect(listMfaCredentials).toHaveBeenCalledTimes(1);
+    });
+
+    test('a server error keeps the passkey and is passed to onError', async () => {
+        const error: AppError = {
+            errorId: '0',
+            error: 'unexpected_error',
+            errorDescription: 'Internal server error',
+        };
+        await refusedRemoval(error);
+
+        expect(onError).toHaveBeenCalledWith(error);
+        expect(screen.getByText('Device a')).toBeInTheDocument();
+        expect(screen.getByText('Device b')).toBeInTheDocument();
+    });
+});
+
+describe('The Passkeys view shows only once its devices are loaded', () => {
+    test('the list stays in place, with the Passkeys row busy, until the devices arrive', async () => {
+        let resolveDevices: (devices: DeviceCredential[]) => void = () => {};
+        listMfaCredentials.mockResolvedValue(
+            credentialsList(emailCredential, passkeyCredential('a'))
+        );
+        listWebAuthnDevices.mockReturnValue(
+            new Promise<DeviceCredential[]>(resolve => {
+                resolveDevices = resolve;
+            })
+        );
+        await renderWidget();
+        const user = userEvent.setup();
+
+        await user.click(await screen.findByRole('button', { name: 'Passkeys' }));
+
+        // No intermediate state: neither an empty Passkeys view nor a spinner in place of the list.
+        expect(screen.getByText('root@reach5.co')).toBeInTheDocument();
+        expect(screen.queryByRole('button', { name: 'Back' })).not.toBeInTheDocument();
+        expect(screen.getByRole('button', { name: 'Passkeys' })).toHaveAttribute(
+            'aria-busy',
+            'true'
+        );
+
+        resolveDevices([device('a')]);
+
+        expect(await screen.findByText('Device a')).toBeInTheDocument();
+        expect(screen.getByRole('button', { name: 'Back' })).toBeInTheDocument();
+        expect(screen.queryByText('root@reach5.co')).not.toBeInTheDocument();
+    });
+
+    test('the Passkeys row is not busy before it is activated', async () => {
+        listMfaCredentials.mockResolvedValue(
+            credentialsList(emailCredential, passkeyCredential('a'))
+        );
+        await renderWidget();
+
+        expect(await screen.findByRole('button', { name: 'Passkeys' })).not.toHaveAttribute(
+            'aria-busy'
+        );
+    });
+});
+
+describe('Switching views animates the view that enters', () => {
+    // jsdom runs no animation: these tests pin the classes that carry it.
+    const animationOf = (element: HTMLElement) =>
+        // eslint-disable-next-line testing-library/no-node-access
+        element.closest<HTMLElement>('[class*="animate-view-"]')?.className.split(/\s+/) ?? [];
+
+    beforeEach(() => {
+        listMfaCredentials.mockResolvedValue(
+            credentialsList(emailCredential, passkeyCredential('a'))
+        );
+        listWebAuthnDevices.mockResolvedValue([device('a')]);
+    });
+
+    test('the list does not animate when the widget first shows', async () => {
+        await renderWidget();
+
+        expect(animationOf(await screen.findByRole('button', { name: 'Passkeys' }))).toEqual([]);
+    });
+
+    test('the Passkeys view slides in forward, unless the user asks for reduced motion', async () => {
+        await renderWidget();
+
+        const back = await openPasskeysView(userEvent.setup());
+
+        expect(animationOf(back)).toContain('animate-view-forward');
+        expect(animationOf(back)).toContain('motion-reduce:animate-none');
+    });
+
+    test('going back slides the list in backward', async () => {
+        await renderWidget();
+        const user = userEvent.setup();
+
+        await user.click(await openPasskeysView(user));
+
+        const row = await screen.findByRole('button', { name: 'Passkeys' });
+        expect(animationOf(row)).toContain('animate-view-back');
+        expect(animationOf(row)).toContain('motion-reduce:animate-none');
+    });
+});
+
+describe('A failed device load shows the widget error output under the back arrow', () => {
+    beforeEach(() => {
+        jest.spyOn(console, 'error').mockImplementation(() => {});
+    });
+
+    afterEach(() => {
+        jest.restoreAllMocks();
+    });
+
+    test('a user error shows its message, calls onError once and the back arrow still works', async () => {
+        const error = new UserError('Devices unavailable');
+        listMfaCredentials.mockResolvedValue(
+            credentialsList(emailCredential, passkeyCredential('a'))
+        );
+        listWebAuthnDevices.mockRejectedValue(error);
+        await renderWidget();
+
+        const user = userEvent.setup();
+        const back = await openPasskeysView(user);
+
+        expect(await screen.findByText('Devices unavailable')).toBeInTheDocument();
+        expect(onError).toHaveBeenCalledTimes(1);
+        expect(onError).toHaveBeenCalledWith(error);
+
+        await user.click(back);
+        expect(await screen.findByText('root@reach5.co')).toBeInTheDocument();
+    });
+
+    test('an API error without a message for the user shows its description', async () => {
+        const error: AppError = {
+            errorId: '0',
+            error: 'unexpected_error',
+            errorDescription: 'Boom',
+        };
+        listMfaCredentials.mockResolvedValue(credentialsList(passkeyCredential('a')));
+        listWebAuthnDevices.mockRejectedValue(error);
+        await renderWidget();
+
+        await openPasskeysView(userEvent.setup());
+
+        expect(await screen.findByText('Boom')).toBeInTheDocument();
+        expect(screen.getByRole('button', { name: 'Back' })).toBeInTheDocument();
+        expect(onError).toHaveBeenCalledTimes(1);
+    });
+
+    test('an API error with a message for the user shows that message', async () => {
+        const error: AppError = {
+            errorId: '0',
+            error: 'insufficient_authentication',
+            errorDescription: 'The access token is not fresh enough',
+            errorUserMsg: "Le jeton d'accès n'est pas assez récent.",
+        };
+        listMfaCredentials.mockResolvedValue(credentialsList(passkeyCredential('a')));
+        listWebAuthnDevices.mockRejectedValue(error);
+        await renderWidget();
+
+        await openPasskeysView(userEvent.setup());
+
+        expect(
+            await screen.findByText("Le jeton d'accès n'est pas assez récent.")
+        ).toBeInTheDocument();
+        expect(screen.queryByText('Unexpected error')).not.toBeInTheDocument();
+        expect(screen.queryByText('The access token is not fresh enough')).not.toBeInTheDocument();
+    });
+});
+
+describe('Adding a passkey or removing the only factor refreshes the list of factors', () => {
+    beforeEach(() => {
+        jest.spyOn(window, 'confirm').mockImplementation(() => {
+            throw new Error('window.confirm must not be used');
+        });
+    });
+
+    test('adding a passkey emits webauthn_credential_created and the count is fresh on return', async () => {
+        listMfaCredentials
+            .mockResolvedValueOnce(credentialsList(passkeyCredential('a')))
+            .mockResolvedValue(credentialsList(passkeyCredential('a'), passkeyCredential('b')));
+        listWebAuthnDevices
+            .mockResolvedValueOnce([device('a')])
+            .mockResolvedValue([device('a'), device('b')]);
+        addNewWebAuthnDevice.mockResolvedValue();
+        await renderWidget();
+
+        const user = userEvent.setup();
+        const back = await openPasskeysView(user);
+        await screen.findByText('Device a');
+        await user.type(screen.getByRole('textbox'), 'Device b');
+        await user.click(screen.getByRole('button', { name: 'Add' }));
+
+        expect(await screen.findByText('Device b')).toBeInTheDocument();
+        expect(onSuccess).toHaveBeenCalledWith({
+            name: 'webauthn_credential_created',
+            friendlyName: 'Device b',
+        });
+        await waitFor(() => expect(listMfaCredentials).toHaveBeenCalledTimes(2));
+
+        await user.click(back);
+        expect(await screen.findByRole('button', { name: 'Passkeys' })).toHaveAccessibleDescription(
+            '2 passkeys · Also used to log in'
+        );
+    });
+
+    test('after removing the only factor, going back shows the empty state', async () => {
+        listMfaCredentials
+            .mockResolvedValueOnce(credentialsList(passkeyCredential('a')))
+            .mockResolvedValue(credentialsList());
+        listWebAuthnDevices.mockResolvedValueOnce([device('a')]).mockResolvedValue([]);
+        removeWebAuthnDevice.mockResolvedValue();
+        await renderWidget();
+
+        const user = userEvent.setup();
+        const back = await openPasskeysView(user);
+        await screen.findByText('Device a');
+        await removeDevice(user, 0);
+        await waitFor(() => expect(listMfaCredentials).toHaveBeenCalledTimes(2));
+
+        await user.click(back);
+        expect(await screen.findByText('No second factor yet')).toBeInTheDocument();
+    });
+
+    test('a failed refresh of the list keeps the previous count and calls onError once', async () => {
+        const error = new Error('Refresh failed');
+        listMfaCredentials
+            .mockResolvedValueOnce(credentialsList(passkeyCredential('a'), passkeyCredential('b')))
+            .mockRejectedValue(error);
+        listWebAuthnDevices
+            .mockResolvedValueOnce([device('a'), device('b')])
+            .mockResolvedValue([device('b')]);
+        removeWebAuthnDevice.mockResolvedValue();
+        await renderWidget();
+
+        const user = userEvent.setup();
+        const back = await openPasskeysView(user);
+        await screen.findByText('Device a');
+        await removeDevice(user, 0);
+
+        await waitFor(() => expect(onError).toHaveBeenCalledWith(error));
+        expect(onError).toHaveBeenCalledTimes(1);
+
+        await user.click(back);
+        expect(await screen.findByRole('button', { name: 'Passkeys' })).toHaveAccessibleDescription(
+            '2 passkeys · Also used to log in'
+        );
+    });
+});
+
+describe('Focus follows the view change', () => {
+    test('opening the Passkeys view moves focus to the back arrow', async () => {
+        listMfaCredentials.mockResolvedValue(credentialsList(passkeyCredential('a')));
+        listWebAuthnDevices.mockResolvedValue([device('a')]);
+        await renderWidget();
+
+        const user = userEvent.setup();
+        const back = await openPasskeysView(user);
+
+        expect(back).toHaveFocus();
+    });
+
+    test('coming back moves focus to the Passkeys row', async () => {
+        listMfaCredentials.mockResolvedValue(
+            credentialsList(emailCredential, passkeyCredential('a'))
+        );
+        listWebAuthnDevices.mockResolvedValue([device('a')]);
+        await renderWidget();
+
+        const user = userEvent.setup();
+        await user.click(await openPasskeysView(user));
+
+        expect(await screen.findByRole('button', { name: 'Passkeys' })).toHaveFocus();
+    });
+
+    test('the Passkeys row does not take focus on the first display of the list', async () => {
+        listMfaCredentials.mockResolvedValue(credentialsList(passkeyCredential('a')));
+        await renderWidget();
+
+        expect(await screen.findByRole('button', { name: 'Passkeys' })).not.toHaveFocus();
+    });
+});

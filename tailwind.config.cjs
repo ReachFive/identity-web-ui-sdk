@@ -121,9 +121,17 @@ module.exports = {
           "0%,70%,100%": { opacity: "1" },
           "20%,50%": { opacity: "0" },
         },
+        "view-forward": {
+          from: { opacity: "0", transform: "translateX(0.75rem)" },
+        },
+        "view-back": {
+          from: { opacity: "0", transform: "translateX(-0.75rem)" },
+        },
       },
       animation: {
         "caret-blink": "caret-blink 1.25s ease-out infinite",
+        "view-forward": "view-forward 200ms ease-out",
+        "view-back": "view-back 200ms ease-out",
       },
     },
   },

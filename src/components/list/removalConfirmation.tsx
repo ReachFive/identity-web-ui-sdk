@@ -1,0 +1,106 @@
+import React, { KeyboardEvent, ReactNode, useEffect, useId, useRef } from 'react';
+
+import { LoaderCircle } from 'lucide-react';
+
+import { Button } from '@/components/ui/button';
+
+interface RemovalConfirmationProps {
+    /** The public styling slot of the confirmation, named by the widget (see the data-slot rule). */
+    'data-slot': `widget-${string}`;
+    /** The question that labels the block, e.g. "Remove +33 6 12 34 56 78?". */
+    question: string;
+    /** The icon of the row, shown on a light tile in the danger colour. */
+    icon: ReactNode;
+    cancelLabel: string;
+    removeLabel: string;
+    /**
+     * True while the removal request is running: both buttons are `aria-disabled` (not `disabled`,
+     * which would drop the focus to the page) and ignore activation, and Remove spins.
+     */
+    pending: boolean;
+    onCancel: () => void;
+    onConfirm: () => void;
+}
+
+/**
+ * The danger-styled block a row turns into when its trash button is pressed. It is a group
+ * labelled by its question, not an alert dialog, since nothing around it is modal. Focus moves to
+ * Cancel on open, and Escape cancels.
+ */
+export function RemovalConfirmation({
+    'data-slot': slot,
+    question,
+    icon,
+    cancelLabel,
+    removeLabel,
+    pending,
+    onCancel,
+    onConfirm,
+}: RemovalConfirmationProps) {
+    const questionId = useId();
+    const cancelRef = useRef<HTMLButtonElement>(null);
+
+    useEffect(() => {
+        cancelRef.current?.focus();
+    }, []);
+
+    const unlessPending = (action: () => void) => () => {
+        if (!pending) action();
+    };
+
+    const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+        if (event.key !== 'Escape' || pending) return;
+        event.stopPropagation();
+        onCancel();
+    };
+
+    return (
+        <div
+            data-slot={slot}
+            role="group"
+            aria-labelledby={questionId}
+            onKeyDown={handleKeyDown}
+            className="flex w-full flex-col gap-3 rounded border border-destructive/40 bg-destructive/10 px-3.5 pb-3.5 pt-3"
+        >
+            <div className="flex items-center gap-3">
+                <span
+                    aria-hidden="true"
+                    className="flex size-8 shrink-0 items-center justify-center rounded bg-background text-destructive [&_svg]:size-4"
+                >
+                    {icon}
+                </span>
+                <span
+                    id={questionId}
+                    className="min-w-0 flex-1 font-semibold text-foreground [overflow-wrap:anywhere]"
+                >
+                    {question}
+                </span>
+            </div>
+            <div className="flex justify-end gap-2">
+                <Button
+                    ref={cancelRef}
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    className="text-foreground aria-disabled:cursor-not-allowed aria-disabled:opacity-50"
+                    aria-disabled={pending || undefined}
+                    onClick={unlessPending(onCancel)}
+                >
+                    {cancelLabel}
+                </Button>
+                <Button
+                    type="button"
+                    variant="destructive"
+                    size="sm"
+                    className="aria-disabled:cursor-not-allowed aria-disabled:opacity-50"
+                    aria-disabled={pending || undefined}
+                    aria-busy={pending}
+                    onClick={unlessPending(onConfirm)}
+                >
+                    {pending && <LoaderCircle aria-hidden="true" className="animate-spin" />}
+                    {removeLabel}
+                </Button>
+            </div>
+        </div>
+    );
+}

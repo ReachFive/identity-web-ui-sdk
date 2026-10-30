@@ -5109,7 +5109,7 @@ exports[`Snapshot with webauthn feature and without password signup view with we
         >
           <button
             aria-label="signup.withBiometrics"
-            class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-button-text-size font-button-font-weight leading-button transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0 bg-transparent hover:bg-button-subtle-bg h-10 rounded-md px-8 r5-button-with-icon w-full text-button-bg"
+            class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-button text-button-text-size font-button-font-weight leading-button transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0 bg-transparent hover:bg-button-subtle-bg h-10 px-8 r5-button-with-icon w-full text-button-bg"
             title="signup.withBiometrics"
             type="button"
           >
@@ -6089,7 +6089,7 @@ exports[`Snapshot with webauthn feature signup view with webauthn or password 1`
         >
           <button
             aria-label="signup.withBiometrics"
-            class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-button-text-size font-button-font-weight leading-button transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0 bg-transparent hover:bg-button-subtle-bg h-10 rounded-md px-8 r5-button-with-icon w-full text-button-bg"
+            class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-button text-button-text-size font-button-font-weight leading-button transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0 bg-transparent hover:bg-button-subtle-bg h-10 px-8 r5-button-with-icon w-full text-button-bg"
             title="signup.withBiometrics"
             type="button"
           >
@@ -6116,7 +6116,7 @@ exports[`Snapshot with webauthn feature signup view with webauthn or password 1`
           </div>
           <button
             aria-label="signup.withPassword"
-            class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-button-text-size font-button-font-weight leading-button transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0 bg-transparent hover:bg-button-subtle-bg h-10 rounded-md px-8 r5-button-with-icon w-full text-button-bg"
+            class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-button text-button-text-size font-button-font-weight leading-button transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0 bg-transparent hover:bg-button-subtle-bg h-10 px-8 r5-button-with-icon w-full text-button-bg"
             data-testid="password-button"
             title="signup.withPassword"
             type="button"
