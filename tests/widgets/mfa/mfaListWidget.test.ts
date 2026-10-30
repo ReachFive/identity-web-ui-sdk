@@ -364,7 +364,8 @@ describe('DOM testing', () => {
 
             await screen.findByText('Access denied');
             expect(consoleError).toHaveBeenCalledWith(
-                'ReachFive widget display fails: Access denied'
+                'ReachFive widget display fails:',
+                new UserError('Access denied')
             );
             consoleError.mockRestore();
         });

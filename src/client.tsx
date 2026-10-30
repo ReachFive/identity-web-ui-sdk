@@ -5,7 +5,7 @@ import type { AuthOptions, Client as CoreClient, SessionInfo } from '@reachfive/
 
 import { ErrorText } from '@/components/miscComponent';
 import { type I18nMessages } from '@/contexts/i18n';
-import { logWidgetError, widgetErrorMessage } from '@/helpers/errors';
+import { widgetErrorMessage } from '@/helpers/errors';
 import { logError } from '@/helpers/logger';
 import { Config, Prettify } from '@/types';
 import accountRecoveryWidget, {
@@ -239,6 +239,6 @@ export class UiClient {
     }
 
     handleError(error: unknown): void {
-        logWidgetError(error);
+        logError('ReachFive widget display fails:', error);
     }
 }

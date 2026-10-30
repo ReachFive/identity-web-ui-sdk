@@ -7,7 +7,8 @@ import { LoaderCircle } from 'lucide-react';
 import { ErrorText } from '@/components/miscComponent';
 import { createWidget } from '@/components/widget/widget';
 import { WidgetContainerProps } from '@/components/widget/widgetContainerComponent';
-import { logWidgetError, widgetErrorMessage } from '@/helpers/errors';
+import { widgetErrorMessage } from '@/helpers/errors';
+import { logError } from '@/helpers/logger';
 
 import type { OnError } from '@/types';
 
@@ -52,7 +53,7 @@ interface WidgetBoundaryProps {
  */
 export function WidgetErrorBoundary({ onError, onReset, children }: WidgetBoundaryProps) {
     const handleError = (error: unknown) => {
-        logWidgetError(error);
+        logError('ReachFive widget display fails:', error);
         onError?.(error);
     };
 
