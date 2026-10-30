@@ -5,11 +5,7 @@ import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { WidgetErrorBoundary } from '@/components/widget/queryWidget';
 import { useI18n } from '@/contexts/i18n';
-import {
-    useForgetPasskeyDevicesOnLeave,
-    useInvalidateMfaCredentials,
-    usePasskeyDevices,
-} from '@/widgets/mfa/queries';
+import { useForgetPasskeyDevicesOnLeave, useInvalidateMfaCredentials } from '@/widgets/mfa/queries';
 import { WebAuthnDevices } from '@/widgets/webAuthn/webAuthnDevices';
 
 import type { OnError, OnSuccess } from '@/types';
@@ -20,26 +16,6 @@ const passkeyChanges: ReadonlySet<SuccessEvent['name']> = new Set([
     'webauthn_credential_created',
     'webauthn_credential_deleted',
 ]);
-
-interface PasskeyDevicesProps {
-    accessToken: string;
-    onSuccess: OnSuccess;
-    onError: OnError;
-}
-
-/** `WebAuthnDevices`, unchanged, fed with the devices loaded through suspense. */
-function PasskeyDevices({ accessToken, onSuccess, onError }: PasskeyDevicesProps) {
-    const { data: devices } = usePasskeyDevices(accessToken);
-
-    return (
-        <WebAuthnDevices
-            accessToken={accessToken}
-            devices={devices}
-            onSuccess={onSuccess}
-            onError={onError}
-        />
-    );
-}
 
 interface PasskeysViewProps {
     accessToken: string;
@@ -84,7 +60,7 @@ export function PasskeysView({ accessToken, onBack, onSuccess, onError }: Passke
                 </Button>
             </div>
             <WidgetErrorBoundary onError={onError}>
-                <PasskeyDevices
+                <WebAuthnDevices
                     accessToken={accessToken}
                     onSuccess={handleSuccess}
                     onError={onError}

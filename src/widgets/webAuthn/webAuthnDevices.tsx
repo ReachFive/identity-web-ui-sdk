@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 
-import { LoaderCircle, TrashIcon } from 'lucide-react';
+import { TrashIcon } from 'lucide-react';
 
 import type { DeviceCredential } from '@reachfive/identity-core';
 
@@ -29,10 +29,10 @@ import {
 } from '@/components/ui/item';
 import { useConfig } from '@/contexts/config';
 import { useI18n } from '@/contexts/i18n';
-import { useReachfive } from '@/contexts/reachfive';
 import { dateFormat } from '@/helpers/utils';
 
 import { getProviderData } from './providerData';
+import { useAddWebAuthnDevice, useRemoveWebAuthnDevice, useWebAuthnDevices } from './queries';
 
 import type { OnError, OnSuccess } from '@/types';
 
@@ -42,12 +42,12 @@ type DeviceInputFormData = {
 
 interface DevicesListProps {
     devices: DeviceCredential[];
-    removeWebAuthnDevice: (id: string) => Promise<void>;
+    removeWebAuthnDevice: (id: string) => void;
 }
 
 interface DeviceItemProps {
     device: DeviceCredential;
-    removeWebAuthnDevice: (id: string) => Promise<void>;
+    removeWebAuthnDevice: (id: string) => void;
 }
 
 interface RemoveDeviceDialogProps {
@@ -125,7 +125,7 @@ const DeviceItem = ({ device, removeWebAuthnDevice }: DeviceItemProps) => {
                 )}
             </ItemContent>
             <ItemActions>
-                <RemoveDeviceDialog onConfirm={() => void removeWebAuthnDevice(id)}>
+                <RemoveDeviceDialog onConfirm={() => removeWebAuthnDevice(id)}>
                     <Button
                         size="icon-sm"
                         variant="destructive"
@@ -168,11 +168,6 @@ export interface WebAuthnDevicesProps {
      */
     accessToken: string;
     /**
-     * Registred FIDO2 devices, already loaded by the caller.
-     * When omitted, the component loads them itself from the access token.
-     */
-    devices?: DeviceCredential[];
-    /**
      * Whether the form fields's labels are displayed on the login view.
      *
      * @default false
@@ -188,116 +183,27 @@ export interface WebAuthnDevicesProps {
     onError?: OnError;
 }
 
-type LoadState =
-    | { status: 'loading' }
-    | { status: 'error' }
-    | { status: 'ready'; devices: DeviceCredential[] };
-
-function useWebAuthnDevices(
-    accessToken: string,
-    initialDevices: DeviceCredential[] | undefined,
-    onError: OnError
-) {
-    const coreClient = useReachfive();
-    const [state, setState] = useState<LoadState>(
-        initialDevices ? { status: 'ready', devices: initialDevices } : { status: 'loading' }
-    );
-    const shouldLoad = initialDevices === undefined;
-
-    useEffect(() => {
-        if (!shouldLoad) return;
-        let cancelled = false;
-        coreClient
-            .listWebAuthnDevices(accessToken)
-            .then(devices => {
-                if (!cancelled) setState({ status: 'ready', devices });
-            })
-            .catch((error: unknown) => {
-                if (cancelled) return;
-                setState({ status: 'error' });
-                onError(error);
-            });
-        return () => {
-            cancelled = true;
-        };
-        // Load once per access token; callbacks are not reload triggers.
-    }, [accessToken, coreClient, shouldLoad]);
-
-    const setDevices = (devices: DeviceCredential[]) => setState({ status: 'ready', devices });
-
-    return [state, setDevices] as const;
-}
-
-interface DeviceActionsOptions {
-    accessToken: string;
-    setDevices: (devices: DeviceCredential[]) => void;
-    onSuccess: OnSuccess;
-    onError: OnError;
-}
-
-/** Removes or adds a device, then reloads the list. */
-function useDeviceActions({ accessToken, setDevices, onSuccess, onError }: DeviceActionsOptions) {
-    const coreClient = useReachfive();
-
-    const removeWebAuthnDevice = async (deviceId: string) => {
-        try {
-            await coreClient.removeWebAuthnDevice(accessToken, deviceId);
-            onSuccess({ name: 'webauthn_credential_deleted', deviceId });
-            const newDevices = await coreClient.listWebAuthnDevices(accessToken);
-            setDevices(newDevices);
-        } catch (error) {
-            onError(error);
-        }
-    };
-
-    const addNewWebAuthnDevice = ({ friendlyName }: DeviceInputFormData) => {
-        return coreClient.addNewWebAuthnDevice(accessToken, friendlyName).then(() => {
-            onSuccess({ name: 'webauthn_credential_created', friendlyName });
-            return coreClient
-                .listWebAuthnDevices(accessToken)
-                .then(newDevices => setDevices(newDevices));
-        });
-    };
-
-    return { removeWebAuthnDevice, addNewWebAuthnDevice };
-}
-
 /**
  * Lists, adds and removes the passkey (FIDO2) devices of the user identified by the access token.
- * Mountable in any widget providing the config, i18n and ReachFive client contexts.
+ * Reads them through suspense queries: mount it under a query client and the widget boundaries.
  */
 export function WebAuthnDevices({
     accessToken,
-    devices: initialDevices,
     showLabels = false,
     onError = () => {},
     onSuccess = () => {},
 }: WebAuthnDevicesProps) {
     const i18n = useI18n();
-    const [state, setDevices] = useWebAuthnDevices(accessToken, initialDevices, onError);
-    const { removeWebAuthnDevice, addNewWebAuthnDevice } = useDeviceActions({
-        accessToken,
-        setDevices,
-        onSuccess,
-        onError,
-    });
-
-    if (state.status === 'loading') {
-        return <LoaderCircle className="animate-spin" />;
-    }
-
-    if (state.status === 'error') {
-        return null;
-    }
-
-    const { devices } = state;
+    const { data: devices } = useWebAuthnDevices(accessToken);
+    const removal = useRemoveWebAuthnDevice({ accessToken, onSuccess, onError });
+    const addition = useAddWebAuthnDevice({ accessToken, onSuccess, onError });
 
     return (
         <div className="space-y-4">
             {devices.length === 0 ? (
                 <Info>{i18n('webauthn.registredDevices.no.list')}</Info>
             ) : (
-                <DevicesList devices={devices} removeWebAuthnDevice={removeWebAuthnDevice} />
+                <DevicesList devices={devices} removeWebAuthnDevice={id => removal.mutate(id)} />
             )}
 
             <Alternative className="text-muted-foreground">
@@ -310,7 +216,9 @@ export function WebAuthnDevices({
                 supportMultipleSubmits
                 resetAfterSuccess
                 showLabels={showLabels}
-                handler={addNewWebAuthnDevice}
+                handler={({ friendlyName }: DeviceInputFormData) =>
+                    addition.mutateAsync(friendlyName)
+                }
                 onError={onError}
             />
         </div>

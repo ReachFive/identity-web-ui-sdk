@@ -10,6 +10,7 @@ import {
 import type { Client as CoreClient } from '@reachfive/identity-core';
 
 import { useReachfive } from '@/contexts/reachfive';
+import { webAuthnKeys } from '@/widgets/webAuthn/queries';
 
 import type { OnError, OnSuccess } from '@/types';
 import type { SuccessEvent } from '@/types/events';
@@ -20,10 +21,6 @@ import type { EmailOrPhoneCredential } from '@/widgets/mfa/credentials';
  */
 const mfaKeys = {
     credentials: () => ['mfa', 'credentials'] as const satisfies QueryKey,
-};
-
-const webAuthnKeys = {
-    devices: () => ['webauthn', 'devices'] as const satisfies QueryKey,
 };
 
 /**
@@ -99,22 +96,8 @@ export const useRemoveMfaCredential = ({
 };
 
 /**
- * The user's passkey devices, read through suspense for the Passkeys view: a failed load is
- * thrown to the view's error boundary.
- */
-export const usePasskeyDevices = (accessToken: string) => {
-    const client = useReachfive();
-
-    return useSuspenseQuery({
-        queryKey: webAuthnKeys.devices(),
-        queryFn: () => client.listWebAuthnDevices(accessToken),
-    });
-};
-
-/**
- * Drops the passkey devices when the Passkeys view closes. The device list then lives in
- * `WebAuthnDevices`' own state, so a cached copy would be stale, and a cached error would be
- * thrown again without a retry: reopening the view always loads afresh.
+ * Drops the passkey devices when the Passkeys view closes: a cached error would be thrown again
+ * without a retry, so reopening the view always loads afresh.
  */
 export const useForgetPasskeyDevicesOnLeave = () => {
     const queryClient = useQueryClient();

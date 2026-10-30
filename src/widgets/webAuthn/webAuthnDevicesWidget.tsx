@@ -1,37 +1,26 @@
-import { createWidget } from '@/components/widget/widget';
+import { createQueryWidget } from '@/components/widget/queryWidget';
 import { UserError } from '@/helpers/errors';
 
 import { WebAuthnDevices, type WebAuthnDevicesProps } from './webAuthnDevices';
 
-export type WebAuthnWidgetProps = Omit<WebAuthnDevicesProps, 'devices'>;
+export type WebAuthnWidgetProps = WebAuthnDevicesProps;
 
-export default createWidget<WebAuthnWidgetProps, WebAuthnDevicesProps>({
+export default createQueryWidget<WebAuthnWidgetProps>({
     name: 'webauthn-devices',
     component: WebAuthnDevices,
-    prepare: (options, { apiClient, config }) => {
-        const { accessToken } = options;
-
+    prepare: (options, { config }) => {
         if (!config.webAuthn) {
             const error = new UserError('The WebAuthn feature is not available on your account.');
             options.onError?.(error);
             throw error;
         }
 
-        if (!accessToken) {
+        if (!options.accessToken) {
             const error = new UserError('You must be logged in to manage the FIDO2 devices.');
             options.onError?.(error);
             throw error;
         }
 
-        return apiClient
-            .listWebAuthnDevices(accessToken)
-            .then(devices => ({
-                ...options,
-                devices,
-            }))
-            .catch(err => {
-                options.onError?.(err);
-                throw err;
-            });
+        return options;
     },
 });

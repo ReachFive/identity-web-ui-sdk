@@ -5,7 +5,7 @@ import { QueryClient, QueryClientProvider, QueryErrorResetBoundary } from '@tans
 import { LoaderCircle } from 'lucide-react';
 
 import { ErrorText } from '@/components/miscComponent';
-import { createWidget } from '@/components/widget/widget';
+import { createWidget, type PrepareFn } from '@/components/widget/widget';
 import { WidgetContainerProps } from '@/components/widget/widgetContainerComponent';
 import { widgetErrorMessage } from '@/helpers/errors';
 import { logError } from '@/helpers/logger';
@@ -89,8 +89,13 @@ export function WidgetBoundary({ onError, onReset, children }: WidgetBoundaryPro
  */
 export function createQueryWidget<P extends QueryWidgetProps>({
     component: Component,
+    prepare,
     ...widgetAttrs
-}: { component: ComponentType<Omit<P, 'theme'>> } & WidgetContainerProps) {
+}: {
+    component: ComponentType<Omit<P, 'theme'>>;
+    /** Checks the options before rendering, like `createWidget`'s; data is loaded by the component. */
+    prepare?: PrepareFn<P, P>;
+} & WidgetContainerProps) {
     const QueryWidget = (props: Omit<P, 'theme'>) => {
         const [queryClient] = useState(createWidgetQueryClient);
         const { onError } = props as QueryWidgetProps;
@@ -110,5 +115,5 @@ export function createQueryWidget<P extends QueryWidgetProps>({
 
     QueryWidget.displayName = `QueryWidget(${Component.displayName ?? Component.name ?? 'Component'})`;
 
-    return createWidget<P>({ component: QueryWidget, ...widgetAttrs });
+    return createWidget<P>({ component: QueryWidget, prepare, ...widgetAttrs });
 }
