@@ -2,10 +2,13 @@ import React, { forwardRef, useId } from 'react';
 
 import { ChevronRight, Fingerprint, LoaderCircle } from 'lucide-react';
 
-import { Item } from '@/components/ui/item';
+import { ItemActions, ItemContent, ItemDescription, ItemTitle } from '@/components/ui/item';
 import { useI18n } from '@/contexts/i18n';
-import { cn } from '@/lib/utils';
-import { dimmedRowProps, iconTileClassName, rowClassName } from '@/widgets/mfa/mfaCredentialItem';
+import {
+    dimmedRowProps,
+    MfaCredentialIcon,
+    MfaCredentialItem,
+} from '@/widgets/mfa/mfaCredentialItem';
 
 interface PasskeysRowProps {
     /** Number of passkeys, taken from the MFA credentials list. */
@@ -19,72 +22,47 @@ interface PasskeysRowProps {
 }
 
 /**
- * The single row grouping the user's passkeys. It opens the Passkeys view, so it is a button
- * inside the list item (a button cannot be one), named by its visible title and described by the
- * count. A button only holds phrasing content, hence spans throughout. No remove action.
+ * The single row grouping the user's passkeys. Its title is a button stretched over the whole
+ * row, so the row opens the Passkeys view from anywhere while keeping the `Item` layout (a button
+ * only holds phrasing content). The button is described by the count. No remove action.
  */
 export const PasskeysRow = forwardRef<HTMLButtonElement, PasskeysRowProps>(function PasskeysRow(
     { count, onOpen, dimmed = false, pending = false },
     ref
 ) {
     const i18n = useI18n();
-    const titleId = useId();
     const descriptionId = useId();
 
     return (
-        <div data-slot="widget-mfa-credential" role="listitem" {...dimmedRowProps(dimmed)}>
-            <Item
-                asChild
-                variant="outline"
-                className={cn(
-                    rowClassName,
-                    'w-full items-center text-left hover:bg-button-subtle-bg'
-                )}
-            >
-                <button
-                    ref={ref}
-                    type="button"
-                    aria-labelledby={titleId}
-                    aria-describedby={descriptionId}
-                    aria-busy={pending || undefined}
-                    onClick={pending ? undefined : onOpen}
-                >
-                    <span
-                        aria-hidden="true"
-                        className={cn(
-                            'flex shrink-0 items-center justify-center',
-                            iconTileClassName()
-                        )}
+        <MfaCredentialItem
+            {...dimmedRowProps(
+                dimmed,
+                'relative items-center has-[button:hover]:bg-button-subtle-bg has-[button:focus-visible]:border-ring has-[button:focus-visible]:ring-[3px] has-[button:focus-visible]:ring-ring/50'
+            )}
+        >
+            <MfaCredentialIcon className="group-has-[[data-slot=item-description]]/item:translate-y-0 group-has-[[data-slot=item-description]]/item:self-center">
+                <Fingerprint />
+            </MfaCredentialIcon>
+            <ItemContent className="min-w-0 gap-0.5">
+                <ItemTitle className="w-auto font-semibold text-foreground [overflow-wrap:anywhere]">
+                    <button
+                        ref={ref}
+                        type="button"
+                        className="text-left outline-none after:absolute after:inset-0 after:rounded"
+                        aria-describedby={descriptionId}
+                        aria-busy={pending || undefined}
+                        onClick={pending ? undefined : onOpen}
                     >
-                        <Fingerprint />
-                    </span>
-                    <span className="flex min-w-0 flex-1 flex-col gap-0.5">
-                        <span
-                            id={titleId}
-                            className="text-sm font-semibold leading-snug text-foreground [overflow-wrap:anywhere]"
-                        >
-                            {i18n('mfaList.passkeys')}
-                        </span>
-                        <span
-                            id={descriptionId}
-                            className="text-balance text-sm font-normal leading-normal text-muted-foreground"
-                        >
-                            {`${i18n('mfaList.passkeyCount', { count })} · ${i18n('mfaList.alsoUsedToLogIn')}`}
-                        </span>
-                    </span>
-                    {pending ? (
-                        <LoaderCircle
-                            aria-hidden="true"
-                            className="size-4 shrink-0 animate-spin text-muted-foreground"
-                        />
-                    ) : (
-                        <ChevronRight
-                            aria-hidden="true"
-                            className="size-4 shrink-0 text-muted-foreground"
-                        />
-                    )}
-                </button>
-            </Item>
-        </div>
+                        {i18n('mfaList.passkeys')}
+                    </button>
+                </ItemTitle>
+                <ItemDescription id={descriptionId}>
+                    {`${i18n('mfaList.passkeyCount', { count })} · ${i18n('mfaList.alsoUsedToLogIn')}`}
+                </ItemDescription>
+            </ItemContent>
+            <ItemActions aria-hidden="true" className="text-muted-foreground [&_svg]:size-4">
+                {pending ? <LoaderCircle className="animate-spin" /> : <ChevronRight />}
+            </ItemActions>
+        </MfaCredentialItem>
     );
 });

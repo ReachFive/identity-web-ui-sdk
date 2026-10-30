@@ -770,82 +770,90 @@ exports[`Snapshot: with passkeys 1`] = `
             </div>
           </div>
           <div
+            class="group/item [a]:hover:bg-accent/50 focus-visible:border-ring focus-visible:ring-ring/50 [a]:transition-colors flex flex-wrap border text-sm outline-none transition-colors duration-100 focus-visible:ring-[3px] border-border gap-3 rounded px-3.5 py-3 relative items-center has-[button:hover]:bg-button-subtle-bg has-[button:focus-visible]:border-ring has-[button:focus-visible]:ring-[3px] has-[button:focus-visible]:ring-ring/50"
+            data-size="default"
             data-slot="widget-mfa-credential"
+            data-variant="outline"
             role="listitem"
           >
-            <button
-              aria-describedby="passkey-count"
-              aria-labelledby="passkeys-title"
-              class="group/item [a]:hover:bg-accent/50 focus-visible:border-ring focus-visible:ring-ring/50 [a]:transition-colors flex flex-wrap border text-sm outline-none transition-colors duration-100 focus-visible:ring-[3px] border-border gap-3 rounded px-3.5 py-3 w-full items-center text-left hover:bg-button-subtle-bg"
-              data-size="default"
-              data-slot="item"
-              data-variant="outline"
-              type="button"
+            <div
+              aria-hidden="true"
+              class="flex shrink-0 items-center justify-center gap-2 [&_svg]:pointer-events-none size-8 rounded [&_svg]:size-4 bg-success/10 text-success group-has-[[data-slot=item-description]]/item:translate-y-0 group-has-[[data-slot=item-description]]/item:self-center"
+              data-slot="item-media"
+              data-variant="default"
             >
-              <span
-                aria-hidden="true"
-                class="flex shrink-0 items-center justify-center size-8 rounded [&_svg]:size-4 bg-success/10 text-success"
+              <svg
+                class="lucide lucide-fingerprint"
+                fill="none"
+                height="24"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
               >
-                <svg
-                  class="lucide lucide-fingerprint"
-                  fill="none"
-                  height="24"
-                  stroke="currentColor"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  viewBox="0 0 24 24"
-                  width="24"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M12 10a2 2 0 0 0-2 2c0 1.02-.1 2.51-.26 4"
-                  />
-                  <path
-                    d="M14 13.12c0 2.38 0 6.38-1 8.88"
-                  />
-                  <path
-                    d="M17.29 21.02c.12-.6.43-2.3.5-3.02"
-                  />
-                  <path
-                    d="M2 12a10 10 0 0 1 18-6"
-                  />
-                  <path
-                    d="M2 16h.01"
-                  />
-                  <path
-                    d="M21.8 16c.2-2 .131-5.354 0-6"
-                  />
-                  <path
-                    d="M5 19.5C5.5 18 6 15 6 12a6 6 0 0 1 .34-2"
-                  />
-                  <path
-                    d="M8.65 22c.21-.66.45-1.32.57-2"
-                  />
-                  <path
-                    d="M9 6.8a6 6 0 0 1 9 5.2v2"
-                  />
-                </svg>
-              </span>
-              <span
-                class="flex min-w-0 flex-1 flex-col gap-0.5"
+                <path
+                  d="M12 10a2 2 0 0 0-2 2c0 1.02-.1 2.51-.26 4"
+                />
+                <path
+                  d="M14 13.12c0 2.38 0 6.38-1 8.88"
+                />
+                <path
+                  d="M17.29 21.02c.12-.6.43-2.3.5-3.02"
+                />
+                <path
+                  d="M2 12a10 10 0 0 1 18-6"
+                />
+                <path
+                  d="M2 16h.01"
+                />
+                <path
+                  d="M21.8 16c.2-2 .131-5.354 0-6"
+                />
+                <path
+                  d="M5 19.5C5.5 18 6 15 6 12a6 6 0 0 1 .34-2"
+                />
+                <path
+                  d="M8.65 22c.21-.66.45-1.32.57-2"
+                />
+                <path
+                  d="M9 6.8a6 6 0 0 1 9 5.2v2"
+                />
+              </svg>
+            </div>
+            <div
+              class="flex flex-1 flex-col [&+[data-slot=item-content]]:flex-none min-w-0 gap-0.5"
+              data-slot="item-content"
+            >
+              <div
+                class="flex items-center gap-2 text-sm leading-snug w-auto font-semibold text-foreground [overflow-wrap:anywhere]"
+                data-slot="item-title"
               >
-                <span
-                  class="text-sm font-semibold leading-snug text-foreground [overflow-wrap:anywhere]"
-                  id="passkeys-title"
+                <button
+                  aria-describedby="passkey-count"
+                  class="text-left outline-none after:absolute after:inset-0 after:rounded"
+                  type="button"
                 >
                   Passkeys
-                </span>
-                <span
-                  class="text-balance text-sm font-normal leading-normal text-muted-foreground"
-                  id="passkey-count"
-                >
-                  2 passkeys · Also used to log in
-                </span>
-              </span>
+                </button>
+              </div>
+              <p
+                class="m-0 text-muted-foreground line-clamp-2 text-balance text-sm font-normal leading-normal [&>a:hover]:text-primary [&>a]:underline [&>a]:underline-offset-4"
+                data-slot="item-description"
+                id="passkey-count"
+              >
+                2 passkeys · Also used to log in
+              </p>
+            </div>
+            <div
+              aria-hidden="true"
+              class="flex items-center gap-2 text-muted-foreground [&_svg]:size-4"
+              data-slot="item-actions"
+            >
               <svg
-                aria-hidden="true"
-                class="lucide lucide-chevron-right size-4 shrink-0 text-muted-foreground"
+                class="lucide lucide-chevron-right"
                 fill="none"
                 height="24"
                 stroke="currentColor"
@@ -860,7 +868,7 @@ exports[`Snapshot: with passkeys 1`] = `
                   d="m9 18 6-6-6-6"
                 />
               </svg>
-            </button>
+            </div>
           </div>
         </div>
       </div>

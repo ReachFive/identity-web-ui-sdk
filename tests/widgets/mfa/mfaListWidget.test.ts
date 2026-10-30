@@ -885,7 +885,7 @@ describe('Criterion 1: a Passkeys row is shown if and only if the user has a pas
         render(widget);
 
         const button = await screen.findByRole('button', { name: 'Passkeys' });
-        const icons = button.querySelectorAll('svg');
+        const icons = screen.getByRole('listitem').querySelectorAll('svg');
         expect(icons[0]).toHaveClass('lucide-fingerprint');
         expect(icons[0].parentElement).toHaveClass('text-success', 'bg-success/10');
         expect(icons[icons.length - 1]).toHaveClass('lucide-chevron-right');
@@ -927,15 +927,13 @@ test('Snapshot: with passkeys', async () => {
     const { container } = await renderWithMessages(passkeyI18n);
 
     await screen.findByText('Passkeys');
-    // The title and count ids come from useId, whose values depend on the ids earlier tests
-    // consumed: pin them so the snapshot does not change with the test order or the tests run.
+    // The count id comes from useId, whose value depends on the ids earlier tests consumed: pin
+    // it so the snapshot does not change with the test order or the tests run.
     const button = screen.getByRole('button', { name: 'Passkeys' });
-    const pinId = (attribute: string, id: string) => {
-        container.querySelector(`[id="${button.getAttribute(attribute)}"]`)?.setAttribute('id', id);
-        button.setAttribute(attribute, id);
-    };
-    pinId('aria-labelledby', 'passkeys-title');
-    pinId('aria-describedby', 'passkey-count');
+    container
+        .querySelector(`[id="${button.getAttribute('aria-describedby')}"]`)
+        ?.setAttribute('id', 'passkey-count');
+    button.setAttribute('aria-describedby', 'passkey-count');
 
     expect(container).toMatchSnapshot();
 });

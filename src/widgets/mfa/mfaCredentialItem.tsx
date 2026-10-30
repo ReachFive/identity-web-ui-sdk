@@ -6,8 +6,6 @@ import { Item, ItemContent, ItemDescription, ItemMedia, ItemTitle } from '@/comp
 import { useI18n } from '@/contexts/i18n';
 import { cn } from '@/lib/utils';
 
-export const rowClassName = 'items-start gap-3 rounded px-3.5 py-3';
-
 /**
  * The props of a row while another row shows its removal confirmation: dimmed and inert, so it
  * can be neither read nor reached. React 18 has no typing for `inert` and only forwards it as a
@@ -19,40 +17,46 @@ export const dimmedRowProps = (dimmed: boolean, className?: string): HTMLAttribu
         ...(dimmed ? { inert: '' } : {}),
     }) as HTMLAttributes<HTMLElement>;
 
-/**
- * One row of the MFA credentials list. Carries the public `widget-mfa-credential` slot.
- */
-export function MfaCredentialItem({ className, ...props }: ComponentProps<typeof Item>) {
+/** The outlined box shared by every row of the list and by its empty state. */
+export function MfaItem({ className, ...props }: ComponentProps<typeof Item>) {
     return (
         <Item
-            data-slot="widget-mfa-credential"
-            role="listitem"
             variant="outline"
-            className={cn(rowClassName, className)}
+            className={cn('items-start gap-3 rounded px-3.5 py-3', className)}
             {...props}
         />
     );
+}
+
+/**
+ * One row of the MFA credentials list. Carries the public `widget-mfa-credential` slot.
+ */
+export function MfaCredentialItem(props: ComponentProps<typeof Item>) {
+    return <MfaItem data-slot="widget-mfa-credential" role="listitem" {...props} />;
 }
 
 interface MfaCredentialIconProps extends ComponentProps<typeof ItemMedia> {
     tone?: 'success' | 'muted';
 }
 
-/** The light tile under a factor icon, in the theme success colour for an active factor. */
-export const iconTileClassName = (tone: 'success' | 'muted' = 'success') =>
-    cn(
-        'size-8 rounded [&_svg]:size-4',
-        tone === 'success' ? 'bg-success/10 text-success' : 'bg-muted text-muted-foreground'
-    );
-
 /**
  * The factor icon on a light tile, in the theme success colour for an active factor.
  */
-export function MfaCredentialIcon({ tone, className, ...props }: MfaCredentialIconProps) {
+export function MfaCredentialIcon({
+    tone = 'success',
+    className,
+    ...props
+}: MfaCredentialIconProps) {
     return (
         <ItemMedia
             aria-hidden="true"
-            className={cn(iconTileClassName(tone), className)}
+            className={cn(
+                'size-8 rounded [&_svg]:size-4',
+                tone === 'success'
+                    ? 'bg-success/10 text-success'
+                    : 'bg-muted text-muted-foreground',
+                className
+            )}
             {...props}
         />
     );
@@ -88,19 +92,14 @@ export const MfaCredentialsEmpty = forwardRef<HTMLDivElement>(
         const i18n = useI18n();
 
         return (
-            <Item
-                asChild
-                tabIndex={-1}
-                variant="outline"
-                className={cn(rowClassName, 'items-center border-dashed py-4')}
-            >
+            <MfaItem asChild tabIndex={-1} className="items-center border-dashed py-4">
                 <div ref={ref}>
                     <MfaCredentialIcon tone="muted">
                         <Shield />
                     </MfaCredentialIcon>
                     <MfaCredentialContent title={i18n('mfaList.empty')} />
                 </div>
-            </Item>
+            </MfaItem>
         );
     }
 );
