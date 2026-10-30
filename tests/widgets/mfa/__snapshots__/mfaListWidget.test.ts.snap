@@ -614,7 +614,7 @@ exports[`Snapshot removal confirmation 1`] = `
             role="listitem"
           >
             <div
-              aria-labelledby=":r0:"
+              aria-labelledby="confirmation-question"
               class="flex w-full flex-col gap-3 rounded border border-destructive/40 bg-destructive/10 px-3.5 pb-3.5 pt-3"
               data-slot="widget-mfa-credential-confirm"
               role="group"
@@ -653,7 +653,7 @@ exports[`Snapshot removal confirmation 1`] = `
                 </span>
                 <span
                   class="min-w-0 flex-1 font-semibold text-foreground [overflow-wrap:anywhere]"
-                  id=":r0:"
+                  id="confirmation-question"
                 >
                   Remove 33612345678?
                 </span>
