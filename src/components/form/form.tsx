@@ -168,7 +168,7 @@ function Form<TFieldValues extends FieldValues = FieldValues, R = void>({
             }
 
             if (resetAfterError) {
-                reset();
+                reset(undefined, { keepErrors: true });
             }
 
             return error;

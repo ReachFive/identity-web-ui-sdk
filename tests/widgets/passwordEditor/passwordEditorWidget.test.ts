@@ -234,5 +234,33 @@ describe('DOM testing', () => {
             expect(onSuccess).not.toBeCalled();
             expect(onError).toBeCalledWith('Unexpected error');
         });
+
+        test('api rejects a password too weak', async () => {
+            const user = userEvent.setup();
+
+            updatePassword.mockRejectedValue({
+                error: 'invalid_request',
+                errorDescription: 'Password requirements not met',
+                errorUserMsg: 'Password requirements not met',
+                errorDetails: [
+                    { field: 'password', message: 'Password too weak', code: 'invalid' },
+                ],
+                errorMessageKey: 'error.password.policy',
+            });
+
+            await generateComponent({});
+
+            await userEvent.type(screen.getByLabelText('newPassword'), 'Password123!');
+            await userEvent.type(screen.getByLabelText('passwordConfirmation'), 'Password123!');
+
+            await user.click(screen.getByRole('button', { name: 'send' }));
+
+            // the form is reset after the error, but its messages stay
+            await waitFor(() => {
+                expect(screen.getByText('Password requirements not met')).toBeInTheDocument();
+            });
+            expect(screen.getByText('Password too weak')).toBeInTheDocument();
+            expect(screen.getByLabelText('newPassword')).toHaveValue('');
+        });
     });
 });
