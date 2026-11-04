@@ -14,6 +14,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   for integrators
 - `captcha`, a single widget option naming the provider and its settings, replacing the per-provider
   flags.
+- reCAPTCHA Enterprise, as `captcha: { provider: 'recaptcha_enterprise', siteKey }`. Score-based web
+  keys and Universal keys share it; set `mode: 'autoExecute'` when the key has AutoExecute enabled,
+  so the SDK leaves the token to the reCAPTCHA library, and `mode: 'checkbox'` for a checkbox key,
+  which puts an "I'm not a robot" box in the form for the user to tick
 
 ### Changed
 

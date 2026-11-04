@@ -1,18 +1,37 @@
-import { UserError } from '@/helpers/errors';
-
 import { WithCaptchaToken } from './captcha';
+import { captchaUnavailable } from './captchaError';
 import { importCaptchaScript } from './captchaScript';
 
 import type { CaptchaOperation } from './captchaOperation';
 
 declare global {
     interface Window {
-        grecaptcha: {
+        // Defined by the script, so absent until it has loaded.
+        grecaptcha?: {
             ready(callback: () => void): void;
             execute(siteKey: string, action: { action: string }): PromiseLike<string>;
+            // Only present once `enterprise.js` has loaded; `api.js` does not define it.
+            enterprise?: {
+                ready(callback: () => void): void;
+                execute(siteKey: string, action: { action: string }): PromiseLike<string>;
+                // The explicit-render API, served by `enterprise.js?render=explicit`.
+                render(
+                    container: HTMLElement | string,
+                    parameters: { sitekey: string; action?: string }
+                ): number;
+                getResponse(widgetId: number): string;
+                reset(widgetId: number): void;
+            };
         };
     }
 }
+
+/** The runtime, once `api.js` has defined it. Callers run inside a `try`. */
+const api = () => {
+    const grecaptcha = window.grecaptcha;
+    if (!grecaptcha) throw new Error('reCAPTCHA is not loaded');
+    return grecaptcha;
+};
 
 export type RecaptchaAction =
     | 'signup'
@@ -67,7 +86,7 @@ export type ReCaptchaSettings = {
 
 export default class ReCaptcha {
     static getRecaptchaToken = async (siteKey: string, action: RecaptchaAction) => {
-        return await window.grecaptcha.execute(siteKey, { action: action });
+        return await api().execute(siteKey, { action: action });
     };
 
     static handle = async <T, R = {}>(
@@ -80,14 +99,7 @@ export default class ReCaptcha {
             const captchaToken = await this.getRecaptchaToken(siteKey, actions[operation]);
             return callback({ ...data, captchaToken, captchaProvider: 'recaptcha' });
         } catch (_error) {
-            return Promise.reject(
-                UserError.fromAppError({
-                    errorId: '',
-                    error: 'Recaptcha error',
-                    errorDescription: 'Recaptcha error',
-                    errorMessageKey: 'recaptcha.error',
-                })
-            );
+            return Promise.reject(captchaUnavailable());
         }
     };
 }
@@ -97,6 +109,6 @@ export function importGoogleRecaptchaScript(siteKey: string): Promise<void> {
         src: `https://www.google.com/recaptcha/api.js?render=${encodeURIComponent(siteKey)}`,
         // `api.js` defines `ready` on load and appends `recaptcha__en.js`, that defines `execute`.
         isLoaded: () => typeof window.grecaptcha?.ready === 'function',
-        whenReady: () => new Promise(resolve => window.grecaptcha.ready(() => resolve())),
+        whenReady: () => new Promise(resolve => api().ready(() => resolve())),
     });
 }
