@@ -8,15 +8,22 @@ import { WithCaptchaToken } from './captcha';
 export interface CaptchaFoxConf {
     /**
      * Boolean that specifies whether CaptchaFox is enabled or not.
+     *
+     * @deprecated Use `captcha: { provider: 'captchafox', siteKey }` instead. Selecting the provider
+     * by name rules out enabling two captchas on the same widget.
      */
     captchaFoxEnabled: boolean;
     /**
      * The SITE key that comes from your [CaptchaFox](https://docs.captchafox.com/getting-started#get-your-captchafox-keys) setup.
      * This must be paired with the appropriate secret key that you received when setting up CaptchaFox.
+     *
+     * @deprecated Use `captcha: { provider: 'captchafox', siteKey }` instead.
      */
     captchaFoxSiteKey: string;
     /**
      * Define how CaptchaFox is displayed (hidden|inline|popup)/ Default to hidden.
+     *
+     * @deprecated Use `captcha: { provider: 'captchafox', mode }` instead.
      */
     captchaFoxMode?: WidgetDisplayMode;
 }

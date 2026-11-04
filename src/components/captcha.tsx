@@ -1,21 +1,90 @@
 import React from 'react';
 
 import { CaptchaFoxInstance, CaptchaFox as CaptchaFoxWidget } from '@captchafox/react';
+import type { WidgetDisplayMode } from '@captchafox/types';
+
+// Aliased: present module also exports a `CaptchaProvider` component.
+import type { CaptchaProvider as ApiCaptchaProvider } from '@reachfive/identity-core';
 
 import { logError } from '@/helpers/logger';
 import { cn } from '@/lib/utils';
 
 import CaptchaFox, { CaptchaFoxConf } from './captchaFox';
-import ReCaptcha, { RecaptchaAction, ReCaptchaConf } from './reCaptcha';
+import ReCaptcha, { importGoogleRecaptchaScript, ReCaptchaConf } from './reCaptcha';
 
-export type WithCaptchaProps<T> = T & Partial<ReCaptchaConf & CaptchaFoxConf>;
+import type { CaptchaOperation } from './captchaOperation';
 
-export type WithCaptchaToken<T> = T & { captchaToken?: string };
+/**
+ * Which captcha protects a widget's calls, and the settings that provider needs.
+ */
+export type CaptchaOptions =
+    | {
+          provider: 'recaptcha';
+          /**
+           * The SITE key from your [reCAPTCHA](https://www.google.com/recaptcha/admin/create)
+           * setup, paired with the secret key configured on the ReachFive client.
+           */
+          siteKey: string;
+      }
+    | {
+          provider: 'captchafox';
+          /**
+           * The SITE key from your
+           * [CaptchaFox](https://docs.captchafox.com/getting-started#get-your-captchafox-keys)
+           * setup, paired with the secret key configured on the ReachFive client.
+           */
+          siteKey: string;
+          /** How the widget is displayed. Defaults to `hidden`. */
+          mode?: WidgetDisplayMode;
+      };
+
+/**
+ * The per-provider options that predate {@link CaptchaOptions}. Kept to delay breaking change;
+ * {@link resolveCaptchaOptions} is the only thing that reads them.
+ */
+export type DeprecatedCaptchaConf = Partial<ReCaptchaConf & CaptchaFoxConf>;
+
+/** Every captcha option a widget accepts, current and deprecated. */
+/** Every captcha option `createClient` accepts, current and deprecated. */
+export type CaptchaInput = { captcha?: CaptchaOptions } & DeprecatedCaptchaConf;
+
+export type WithCaptchaProps<T> = T & { captcha?: CaptchaOptions };
+
+export type WithCaptchaToken<T> = T & {
+    captchaToken?: string;
+    captchaProvider?: ApiCaptchaProvider;
+};
 
 type CaptchaProps = Omit<
     React.ComponentPropsWithoutRef<typeof CaptchaFoxWidget>,
     'sitekey' | 'mode'
 >;
+
+/**
+ * Narrows widget options down to the captcha that should run.
+ *
+ * The deprecated options let several providers be enabled at once and a provider be enabled with no
+ * site key, neither of which means anything; resolving them here keeps those cases from reaching
+ * the rest of the code. The order of the branches below is the precedence integrations already
+ * rely on, and has to stay that way for as long as these options are honoured.
+ */
+export function resolveCaptchaOptions(options: CaptchaInput): CaptchaOptions | undefined {
+    if (options.captcha) return options.captcha;
+
+    if (options.recaptcha_enabled && options.recaptcha_site_key) {
+        return { provider: 'recaptcha', siteKey: options.recaptcha_site_key };
+    }
+
+    if (options.captchaFoxEnabled && options.captchaFoxSiteKey) {
+        return {
+            provider: 'captchafox',
+            siteKey: options.captchaFoxSiteKey,
+            mode: options.captchaFoxMode,
+        };
+    }
+
+    return undefined;
+}
 
 export type CaptchaValues = {
     handler: <T, R>(data: T, callback: (data: T) => Promise<R>) => Promise<R>;
@@ -32,9 +101,15 @@ function useCaptcha() {
     return React.useContext(CaptchaContext);
 }
 
-export type CaptchaConfig = WithCaptchaProps<{
-    action: RecaptchaAction;
-}>;
+export type CaptchaConfig = {
+    /**
+     * What the surrounding widget is about to do. Fixed by each widget rather than exposed as an
+     * option, and folded into the settings of the providers that have a use for it — each of which
+     * translates it into its own action vocabulary.
+     */
+    operation: CaptchaOperation;
+    captcha?: CaptchaOptions;
+};
 
 type CaptchaFoxFieldProps = CaptchaProps & {
     instanceRef: React.Ref<CaptchaFoxInstance>;
@@ -68,44 +143,49 @@ function CaptchaFoxField({
     );
 }
 
-function CaptchaProvider({ children, action, ...options }: React.PropsWithChildren<CaptchaConfig>) {
+function CaptchaProvider({ children, operation, captcha }: React.PropsWithChildren<CaptchaConfig>) {
     const captchaFoxInstanceRef = React.useRef<CaptchaFoxInstance>(null);
 
-    const recaptchaSiteKey = options.recaptcha_enabled ? options.recaptcha_site_key : undefined;
-    const captchaFoxSiteKey = options.captchaFoxEnabled ? options.captchaFoxSiteKey : undefined;
-    const captchaFoxMode = options.captchaFoxMode ?? 'hidden';
+    // Start the provider's script as the widget appears, so it is ready by the time the user submits.
+    React.useEffect(() => {
+        if (captcha?.provider === 'recaptcha') {
+            void importGoogleRecaptchaScript(captcha.siteKey).catch(() => {
+                // Reported to the user by the handler if they go on to submit.
+            });
+        }
+    }, [captcha]);
 
     // memoized to keeps its identity across renders
     const value = React.useMemo<CaptchaValues>(() => {
-        if (recaptchaSiteKey) {
-            return {
-                handler: (data, callback) =>
-                    ReCaptcha.handle(
-                        data,
-                        { recaptcha_enabled: true, recaptcha_site_key: recaptchaSiteKey },
-                        callback,
-                        action
+        switch (captcha?.provider) {
+            case 'recaptcha': {
+                const settings = { siteKey: captcha.siteKey, operation };
+                return {
+                    handler: (data, callback) => ReCaptcha.handle(data, settings, callback),
+                };
+            }
+
+            // No operation: CaptchaFox challenges the user rather than scoring what they are doing.
+            case 'captchafox': {
+                const { siteKey, mode } = captcha;
+                return {
+                    handler: (data, callback) =>
+                        CaptchaFox.handle(data, captchaFoxInstanceRef.current, callback),
+                    Captcha: props => (
+                        <CaptchaFoxField
+                            {...props}
+                            instanceRef={captchaFoxInstanceRef}
+                            mode={mode ?? 'hidden'}
+                            sitekey={siteKey}
+                        />
                     ),
-            };
-        }
+                };
+            }
 
-        if (captchaFoxSiteKey) {
-            return {
-                handler: (data, callback) =>
-                    CaptchaFox.handle(data, captchaFoxInstanceRef.current, callback),
-                Captcha: props => (
-                    <CaptchaFoxField
-                        {...props}
-                        instanceRef={captchaFoxInstanceRef}
-                        mode={captchaFoxMode}
-                        sitekey={captchaFoxSiteKey}
-                    />
-                ),
-            };
+            default:
+                return { handler: defaultHandler };
         }
-
-        return { handler: defaultHandler };
-    }, [action, captchaFoxMode, captchaFoxSiteKey, recaptchaSiteKey]);
+    }, [captcha, operation]);
 
     return <CaptchaContext.Provider value={value}>{children}</CaptchaContext.Provider>;
 }
