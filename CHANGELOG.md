@@ -15,6 +15,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
+- The password field validation no longer checks the password strength. The strength indicator shows it while the
+  user types, and the server checks it on submit.
 - Passwordless, MFA registration, MFA step-up, phone number
   editor and password reset by SMS flows, now use the new `otp` field for code verification, instead of a single input field.
 - Social button metrics and colors are exposed as `--r5-social-button-*` CSS variables, so stylesheet overrides
@@ -32,6 +34,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   being squeezed onto a single row
 - The injected CSS no longer styles the host page: Tailwind's `--tw-*` defaults on `*` / `::backdrop` and the
   base rules for `a`, `b`, `strong`, `small`, `sub` and `sup` are now scoped to `.r5-widget`
+- The password strength indicator waits again for the user to stop typing for 1 second before checking the password
+  strength, since the endpoint is rate limited
 
 ### Changed
 
