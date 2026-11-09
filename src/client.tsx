@@ -15,10 +15,8 @@ import authWidget, { type AuthWidgetProps } from '@/widgets/auth/authWidget';
 import emailEditorWidget, {
     type EmailEditorWidgetProps,
 } from '@/widgets/emailEditor/emailEditorWidget';
-import mfaCredentialsWidget, {
-    type MfaCredentialsWidgetProps,
-} from '@/widgets/mfa/MfaCredentialsWidget';
 import mfaListWidget, { type MfaListWidgetProps } from '@/widgets/mfa/mfaListWidget';
+import mfaCredentialsWidget, { type MfaCredentialsWidgetProps } from '@/widgets/mfa/mfaWidget';
 import trustedDevicesWidget, {
     type TrustedDeviceWidgetProps,
 } from '@/widgets/mfa/trustedDevicesWidget';
