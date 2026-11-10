@@ -15,12 +15,14 @@ import { webAuthnKeys } from '@/widgets/webAuthn/queries';
 import type { OnError, OnSuccess } from '@/types';
 import type { SuccessEvent } from '@/types/events';
 import type { MfaCredential } from '@/widgets/mfa/credentials';
+import type { MfaProfile } from '@/widgets/mfa/factors';
 
 /**
  * Query keys of the MFA resources, namespaced so they never collide with another widget's.
  */
 const mfaKeys = {
     credentials: () => ['mfa', 'credentials'] as const satisfies QueryKey,
+    profile: () => ['mfa', 'profile'] as const satisfies QueryKey,
 };
 
 /**
@@ -33,6 +35,22 @@ export const useMfaCredentials = (accessToken: string) => {
     return useSuspenseQuery({
         queryKey: mfaKeys.credentials(),
         queryFn: () => client.listMfaCredentials(accessToken),
+    });
+};
+
+/**
+ * The profile identifiers the factor rules read, through suspense like the credentials.
+ */
+export const useMfaProfile = (accessToken: string) => {
+    const client = useReachfive();
+
+    return useSuspenseQuery({
+        queryKey: mfaKeys.profile(),
+        queryFn: async (): Promise<MfaProfile> =>
+            client.getUser({
+                accessToken,
+                fields: 'email,email_verified,phone_number,phone_number_verified',
+            }),
     });
 };
 
