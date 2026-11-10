@@ -5,6 +5,7 @@ import { useViewNavigation, viewAnimation } from '@/components/widget/useViewNav
 import { useConfig } from '@/contexts/config';
 import { useI18n } from '@/contexts/i18n';
 import { type PhoneNumberOptions } from '@/lib/form';
+import { CodeView } from '@/widgets/mfa/codeView';
 import { factorChoices } from '@/widgets/mfa/factors';
 import { FactorsView, type FactorRowRefs } from '@/widgets/mfa/factorsView';
 import { IdentifierEnrollmentView } from '@/widgets/mfa/identifierEnrollmentView';
@@ -88,16 +89,9 @@ const FACTOR_ADDED_TITLES: Record<Enrollment['factor'], string> = {
     sms: 'mfa.factorAdded.phoneNumber',
 };
 
-/** Placeholder of the code and confirmation screens: their title only. */
-const StepPlaceholder = ({
-    step,
-    enrollment,
-}: {
-    step: 'code' | 'done';
-    enrollment: Enrollment | null;
-}) => {
+/** Placeholder of the confirmation screen: its title only. */
+const StepPlaceholder = ({ enrollment }: { enrollment: Enrollment | null }) => {
     const i18n = useI18n();
-    if (step === 'code') return <>{i18n('mfa.code.title')}</>;
     return enrollment && <>{i18n(FACTOR_ADDED_TITLES[enrollment.factor])}</>;
 };
 
@@ -176,8 +170,16 @@ const Mfa = ({
             case 'sms':
                 return <IdentifierEnrollmentView factor={view} {...enrollmentProps} />;
             case 'code':
+                return enrollment && enrollment.factor !== 'passkey' ? (
+                    <CodeView
+                        {...viewProps}
+                        enrollment={enrollment}
+                        onBack={back}
+                        onVerified={() => goTo('done')}
+                    />
+                ) : null;
             case 'done':
-                return <StepPlaceholder step={view} enrollment={enrollment} />;
+                return <StepPlaceholder enrollment={enrollment} />;
         }
     };
 

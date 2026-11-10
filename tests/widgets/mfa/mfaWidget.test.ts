@@ -61,6 +61,7 @@ const defaultI18n: I18nMessages = {
     'mfaList.cancel': 'Cancel',
     'mfaList.passkeyCount_one': '{count} passkey',
     'mfaList.passkeyCount_other': '{count} passkeys',
+    'mfa.code.sentTo': 'Code sent to {identifier}',
 };
 
 const profile = {
@@ -103,6 +104,8 @@ const listWebAuthnDevices = jest.fn<Client['listWebAuthnDevices']>();
 const addNewWebAuthnDevice = jest.fn<Client['addNewWebAuthnDevice']>();
 const startMfaEmailRegistration = jest.fn<Client['startMfaEmailRegistration']>();
 const startMfaPhoneNumberRegistration = jest.fn<Client['startMfaPhoneNumberRegistration']>();
+const verifyMfaEmailRegistration = jest.fn<Client['verifyMfaEmailRegistration']>();
+const verifyMfaPhoneNumberRegistration = jest.fn<Client['verifyMfaPhoneNumberRegistration']>();
 
 const onError = jest.fn<OnError>();
 const onSuccess = jest.fn<OnSuccess>();
@@ -117,6 +120,8 @@ const apiClient: Client = {
     addNewWebAuthnDevice,
     startMfaEmailRegistration,
     startMfaPhoneNumberRegistration,
+    verifyMfaEmailRegistration,
+    verifyMfaPhoneNumberRegistration,
 };
 
 const renderWidget = async (
@@ -612,5 +617,143 @@ describe('Phone number enrollment', () => {
         await user.click(await screen.findByRole('button', { name: 'add' }));
 
         expect(await screen.findByText('mfa.code.title')).toBeInTheDocument();
+    });
+});
+
+describe('Code screen', () => {
+    const openCodeScreen = async (
+        factor: 'email' | 'sms',
+        options: Partial<Parameters<typeof mfaWidget>[0]> = {},
+        config: Partial<Config> = {}
+    ) => {
+        listMfaCredentials.mockResolvedValue(credentialsList());
+        // @ts-expect-error partial Profile
+        getUser.mockResolvedValue({ ...profile, emailVerified: false });
+        startMfaEmailRegistration.mockResolvedValue({ status: 'email_sent' });
+        startMfaPhoneNumberRegistration.mockResolvedValue({ status: 'sms_sent' });
+        await renderWidget({ action: 'mfa_registration', ...options }, config);
+        const user = userEvent.setup();
+        if (factor === 'email') {
+            await user.click(await screen.findByRole('button', { name: 'Email' }));
+        } else {
+            await user.click(await screen.findByRole('button', { name: 'Phone number' }));
+            await user.type(
+                await screen.findByRole('textbox', { name: 'phoneNumber' }),
+                '+33123456778'
+            );
+        }
+        await user.click(await screen.findByRole('button', { name: 'mfa.sendCode' }));
+        await screen.findByText('mfa.code.title');
+        return user;
+    };
+
+    test('shows where the code was sent', async () => {
+        await openCodeScreen('sms');
+        expect(screen.getByText('Code sent to ••78')).toBeInTheDocument();
+        expect(screen.getByRole('button', { name: 'mfa.verify' })).toBeInTheDocument();
+    });
+
+    test('shows the full email address', async () => {
+        await openCodeScreen('email');
+        expect(screen.getByText('Code sent to root@reach5.co')).toBeInTheDocument();
+    });
+
+    test('verifies the code', async () => {
+        verifyMfaPhoneNumberRegistration.mockResolvedValue();
+        const user = await openCodeScreen('sms');
+
+        // the last digit submits the code
+        await user.type(screen.getByRole('textbox', { name: 'verificationCode' }), '123456');
+
+        expect(await screen.findByText('mfa.factorAdded.phoneNumber')).toBeInTheDocument();
+        expect(verifyMfaPhoneNumberRegistration).toHaveBeenCalledTimes(1);
+        expect(verifyMfaPhoneNumberRegistration.mock.calls[0][0]).toStrictEqual({
+            accessToken: 'azerty',
+            verificationCode: '123456',
+            trustDevice: false,
+        });
+        expect(successEvents('mfa_phone_number_verify_registration')).toHaveLength(1);
+        expect(successEvents('mfa_trusted_device_added')).toHaveLength(0);
+    });
+
+    test('verifies an email code', async () => {
+        verifyMfaEmailRegistration.mockResolvedValue();
+        const user = await openCodeScreen('email');
+
+        // the last digit submits the code
+        await user.type(screen.getByRole('textbox', { name: 'verificationCode' }), '123456');
+
+        expect(await screen.findByText('mfa.factorAdded.email')).toBeInTheDocument();
+        expect(successEvents('mfa_email_verify_registration')).toHaveLength(1);
+    });
+
+    test('offers trust device when allowTrustDevice and rbaEnabled', async () => {
+        verifyMfaPhoneNumberRegistration.mockResolvedValue();
+        const user = await openCodeScreen('sms', { allowTrustDevice: true }, { rbaEnabled: true });
+
+        await user.click(screen.getByRole('checkbox', { name: 'mfa.stepUp.trustDevice' }));
+        // the last digit submits the code
+        await user.type(screen.getByRole('textbox', { name: 'verificationCode' }), '123456');
+
+        expect(await screen.findByText('mfa.factorAdded.phoneNumber')).toBeInTheDocument();
+        expect(verifyMfaPhoneNumberRegistration.mock.calls[0][0]).toStrictEqual({
+            accessToken: 'azerty',
+            verificationCode: '123456',
+            trustDevice: true,
+        });
+        expect(successEvents('mfa_trusted_device_added')).toHaveLength(1);
+    });
+
+    test.each([
+        ['allowTrustDevice is off', {}, { rbaEnabled: true }],
+        ['rbaEnabled is off', { allowTrustDevice: true }, { rbaEnabled: false }],
+    ])('hides trust device when %s', async (_, options, config) => {
+        await openCodeScreen('sms', options, config);
+        expect(screen.queryByRole('checkbox')).not.toBeInTheDocument();
+    });
+
+    test('resends the code with the same request', async () => {
+        const user = await openCodeScreen('sms');
+
+        await user.click(
+            await screen.findByRole('button', { name: 'verificationCode.resend.count' })
+        );
+
+        await waitFor(() => expect(startMfaPhoneNumberRegistration).toHaveBeenCalledTimes(2));
+        expect(startMfaPhoneNumberRegistration.mock.calls[1][0]).toStrictEqual({
+            accessToken: 'azerty',
+            action: 'mfa_registration',
+            phoneNumber: '+33123456778',
+            trustDevice: false,
+        });
+        expect(successEvents('mfa_phone_number_start_registration')).toHaveLength(2);
+    });
+
+    test('a refused code shows under the slots and goes to onError', async () => {
+        const error: AppError = {
+            error: 'invalid_grant',
+            errorId: '1',
+            errorDescription: 'Invalid code',
+            errorUserMsg: 'Invalid code',
+            errorMessageKey: 'error.invalidCode',
+        };
+        verifyMfaPhoneNumberRegistration.mockRejectedValue(error);
+        const user = await openCodeScreen('sms');
+
+        // the last digit submits the code
+        await user.type(screen.getByRole('textbox', { name: 'verificationCode' }), '123456');
+
+        await waitFor(() => expect(onError).toHaveBeenCalledTimes(1));
+        expect(onError).toHaveBeenCalledWith(error);
+        expect(await screen.findByText('Invalid code')).toBeInTheDocument();
+        expect(screen.queryByText('mfa.factorAdded.phoneNumber')).not.toBeInTheDocument();
+    });
+
+    test('back returns to the enrollment screen', async () => {
+        const user = await openCodeScreen('sms');
+
+        await user.click(screen.getByRole('button', { name: 'mfaList.back' }));
+
+        expect(await screen.findByRole('textbox', { name: 'phoneNumber' })).toBeInTheDocument();
     });
 });
