@@ -3,15 +3,19 @@ import React, { useRef, useState } from 'react';
 import { createQueryWidget } from '@/components/widget/queryWidget';
 import { useViewNavigation, viewAnimation } from '@/components/widget/useViewNavigation';
 import { useConfig } from '@/contexts/config';
-import { useI18n } from '@/contexts/i18n';
 import { type PhoneNumberOptions } from '@/lib/form';
 import { CodeView } from '@/widgets/mfa/codeView';
+import { ConfirmationView } from '@/widgets/mfa/confirmationView';
 import { factorChoices } from '@/widgets/mfa/factors';
 import { FactorsView, type FactorRowRefs } from '@/widgets/mfa/factorsView';
 import { IdentifierEnrollmentView } from '@/widgets/mfa/identifierEnrollmentView';
 import { PasskeyEnrollmentView } from '@/widgets/mfa/passkeyEnrollmentView';
 import { PasskeysView } from '@/widgets/mfa/passkeysView';
-import { useMfaCredentials, useMfaProfile } from '@/widgets/mfa/queries';
+import {
+    useInvalidateMfaCredentials,
+    useMfaCredentials,
+    useMfaProfile,
+} from '@/widgets/mfa/queries';
 
 import type { OnError, OnSuccess } from '@/types';
 
@@ -82,19 +86,6 @@ export type MfaCredentialsWidgetProps = {
     requireMfaRegistration?: boolean;
 };
 
-/** i18n keys of the confirmation titles. */
-const FACTOR_ADDED_TITLES: Record<Enrollment['factor'], string> = {
-    passkey: 'mfa.factorAdded.passkey',
-    email: 'mfa.factorAdded.email',
-    sms: 'mfa.factorAdded.phoneNumber',
-};
-
-/** Placeholder of the confirmation screen: its title only. */
-const StepPlaceholder = ({ enrollment }: { enrollment: Enrollment | null }) => {
-    const i18n = useI18n();
-    return enrollment && <>{i18n(FACTOR_ADDED_TITLES[enrollment.factor])}</>;
-};
-
 const useFactorRowRefs = (): FactorRowRefs => ({
     passkeys: useRef<HTMLButtonElement>(null),
     add: {
@@ -118,7 +109,8 @@ const Mfa = ({
         data: { credentials },
     } = useMfaCredentials(accessToken);
     const { data: profile } = useMfaProfile(accessToken);
-    const { view, direction, pending, goTo, back } = useViewNavigation<MfaView>('factors');
+    const { view, direction, pending, goTo, back, restart } = useViewNavigation<MfaView>('factors');
+    const invalidateCredentials = useInvalidateMfaCredentials(onError);
     const [enrollment, setEnrollment] = useState<Enrollment | null>(null);
     const rowRefs = useFactorRowRefs();
 
@@ -179,7 +171,12 @@ const Mfa = ({
                     />
                 ) : null;
             case 'done':
-                return <StepPlaceholder enrollment={enrollment} />;
+                return enrollment ? (
+                    <ConfirmationView
+                        enrollment={enrollment}
+                        onAddAnother={() => void invalidateCredentials().then(restart)}
+                    />
+                ) : null;
         }
     };
 

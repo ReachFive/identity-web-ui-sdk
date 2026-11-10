@@ -18,6 +18,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   keys and Universal keys share it; set `mode: 'autoExecute'` when the key has AutoExecute enabled,
   so the SDK leaves the token to the reCAPTCHA library, and `mode: 'checkbox'` for a checkbox key,
   which puts an "I'm not a robot" box in the form for the user to tick
+- `data-slot="widget-mfa-confirmation"` on the confirmation screen of `showMfa`.
 
 ### Changed
 

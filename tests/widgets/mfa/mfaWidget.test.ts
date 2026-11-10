@@ -62,6 +62,7 @@ const defaultI18n: I18nMessages = {
     'mfaList.passkeyCount_one': '{count} passkey',
     'mfaList.passkeyCount_other': '{count} passkeys',
     'mfa.code.sentTo': 'Code sent to {identifier}',
+    'mfa.factorAdded.description': 'You can now use {identifier}',
 };
 
 const profile = {
@@ -379,9 +380,10 @@ describe('Passkey enrollment', () => {
                 [{ name: 'webauthn_credential_created', friendlyName: 'iPhone de Marie' }],
             ])
         );
-        await waitFor(() =>
-            expect(screen.queryByText('mfa.passkey.deviceName')).not.toBeInTheDocument()
-        );
+        expect(
+            await screen.findByRole('heading', { name: 'mfa.factorAdded.passkey' })
+        ).toBeInTheDocument();
+        expect(screen.queryByText('mfa.passkey.deviceName')).not.toBeInTheDocument();
     });
 
     test('has no trust device checkbox', async () => {
@@ -782,5 +784,75 @@ describe('Code screen', () => {
         await user.click(screen.getByRole('button', { name: 'mfaList.back' }));
 
         expect(await screen.findByRole('textbox', { name: 'phoneNumber' })).toBeInTheDocument();
+    });
+});
+
+describe('Confirmation screen', () => {
+    const enrollPasskey = async () => {
+        addNewWebAuthnDevice.mockResolvedValue(undefined as never);
+        const user = userEvent.setup();
+        await user.click(await screen.findByRole('button', { name: /^mfa\.passkey/ }));
+        await user.type(await screen.findByLabelText('mfa.passkey.deviceName'), 'iPhone de Marie');
+        await user.click(screen.getByRole('button', { name: 'mfa.passkey.create' }));
+        return user;
+    };
+
+    test('confirms a passkey', async () => {
+        listMfaCredentials.mockResolvedValue(credentialsList());
+        await renderWidget();
+        await enrollPasskey();
+
+        const heading = await screen.findByText('mfa.factorAdded.passkey');
+        expect(heading).toHaveFocus();
+        expect(screen.getByText('You can now use “iPhone de Marie”')).toBeInTheDocument();
+        expect(screen.queryByRole('button', { name: 'mfaList.back' })).not.toBeInTheDocument();
+    });
+
+    test('confirms a phone number with its full number', async () => {
+        listMfaCredentials.mockResolvedValue(credentialsList());
+        startMfaPhoneNumberRegistration.mockResolvedValue({ status: 'sms_sent' });
+        verifyMfaPhoneNumberRegistration.mockResolvedValue();
+        await renderWidget({ action: 'mfa_registration' });
+        const user = userEvent.setup();
+        await user.click(await screen.findByRole('button', { name: 'Phone number' }));
+        await user.type(
+            await screen.findByRole('textbox', { name: 'phoneNumber' }),
+            '+33123456778'
+        );
+        await user.click(await screen.findByRole('button', { name: 'mfa.sendCode' }));
+        await screen.findByText('mfa.code.title');
+        await user.type(screen.getByRole('textbox', { name: 'verificationCode' }), '123456');
+
+        expect(await screen.findByText('mfa.factorAdded.phoneNumber')).toBeInTheDocument();
+        expect(screen.getByText('You can now use +33123456778')).toBeInTheDocument();
+    });
+
+    test('adds another factor', async () => {
+        listMfaCredentials.mockResolvedValueOnce(credentialsList());
+        listMfaCredentials.mockResolvedValue(credentialsList(passkeyCredential('a')));
+        await renderWidget();
+        const user = await enrollPasskey();
+
+        await user.click(await screen.findByRole('button', { name: 'mfa.addAnotherFactor' }));
+
+        const enabled = await enabledGroup();
+        expect(
+            within(enabled).getByRole('button', { name: 'mfaList.passkeys' })
+        ).toBeInTheDocument();
+        expect(listMfaCredentials.mock.calls.length).toBeGreaterThanOrEqual(2);
+    });
+
+    test('after the last addable factor, the choice screen has no "Add a factor" group', async () => {
+        listMfaCredentials.mockResolvedValueOnce(credentialsList(emailCredential, phoneCredential));
+        listMfaCredentials.mockResolvedValue(
+            credentialsList(emailCredential, phoneCredential, passkeyCredential('a'))
+        );
+        await renderWidget();
+        const user = await enrollPasskey();
+
+        await user.click(await screen.findByRole('button', { name: 'mfa.addAnotherFactor' }));
+
+        await enabledGroup();
+        expect(screen.queryByText('mfa.factors.add')).not.toBeInTheDocument();
     });
 });
