@@ -3,16 +3,13 @@ import React, { type RefObject } from 'react';
 import { Shield } from 'lucide-react';
 
 import { ListEmpty } from '@/components/list/listItem';
-import { useRowFocus } from '@/components/list/useRowFocus';
-import { useRowRemoval } from '@/components/list/useRowRemoval';
 import { ItemGroup } from '@/components/ui/item';
 import { useI18n } from '@/contexts/i18n';
 import { OnError, OnSuccess } from '@/types';
 import { credentialKey, isMfaCredential } from '@/widgets/mfa/credentials';
-import { MfaCredentialRow } from '@/widgets/mfa/mfaCredentialRow';
+import { MfaCredentialRows, useMfaCredentialRemoval } from '@/widgets/mfa/mfaCredentialRows';
 import { isPasskeyCredential, type ListedCredential } from '@/widgets/mfa/passkeyCredential';
 import { PasskeysRow } from '@/widgets/mfa/passkeysRow';
-import { useRemoveMfaCredential } from '@/widgets/mfa/queries';
 
 /** Key of the Passkeys row among the rows of the list. */
 const PASSKEYS_ROW_KEY = 'passkeys';
@@ -47,10 +44,12 @@ export const MfaCredentialsList = ({
         ...mfaCredentials.map(credentialKey),
         ...(passkeyCount > 0 ? [PASSKEYS_ROW_KEY] : []),
     ];
-    const focus = useRowFocus(rowKeys, { [PASSKEYS_ROW_KEY]: passkeysRowRef });
-    const removal = useRowRemoval({
-        removal: useRemoveMfaCredential({ accessToken, onSuccess, onError }),
-        onOpen: focus.watch,
+    const { focus, removal } = useMfaCredentialRemoval({
+        accessToken,
+        rowKeys,
+        fixedControls: { [PASSKEYS_ROW_KEY]: passkeysRowRef },
+        onSuccess,
+        onError,
     });
 
     if (credentials.length === 0) {
@@ -61,23 +60,12 @@ export const MfaCredentialsList = ({
 
     return (
         <ItemGroup className="gap-2">
-            {mfaCredentials.map(credential => {
-                const key = credentialKey(credential);
-                return (
-                    <MfaCredentialRow
-                        key={key}
-                        credential={credential}
-                        removable={removable}
-                        trashRef={focus.controlRef(key)}
-                        confirming={removal.confirmingKey === key}
-                        dimmed={removal.confirmingKey !== null && removal.confirmingKey !== key}
-                        pending={removal.pending}
-                        onRequestRemoval={() => removal.open(key)}
-                        onCancel={removal.cancel}
-                        onConfirm={() => removal.confirm(credential)}
-                    />
-                );
-            })}
+            <MfaCredentialRows
+                credentials={mfaCredentials}
+                removable={removable}
+                focus={focus}
+                removal={removal}
+            />
             {passkeyCount > 0 && (
                 <PasskeysRow
                     ref={passkeysRowRef}
