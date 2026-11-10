@@ -71,7 +71,8 @@ export function CodeView({
 
     const fields = useMemo(
         () => [
-            { key: 'verification_code', onResend: resend },
+            // with the checkbox below, the last digit must not submit before it can be ticked
+            { key: 'verification_code', onResend: resend, autoSubmit: !showTrustDevice },
             ...(showTrustDevice ? [TRUST_DEVICE_FIELD] : []),
         ],
         [showTrustDevice, accessToken, action, factor, identifier, enrolledTrustDevice]

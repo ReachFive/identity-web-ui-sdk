@@ -692,8 +692,8 @@ describe('Code screen', () => {
         const user = await openCodeScreen('sms', { allowTrustDevice: true }, { rbaEnabled: true });
 
         await user.click(screen.getByRole('checkbox', { name: 'mfa.stepUp.trustDevice' }));
-        // the last digit submits the code
         await user.type(screen.getByRole('textbox', { name: 'verificationCode' }), '123456');
+        await user.click(screen.getByRole('button', { name: 'mfa.verify' }));
 
         expect(await screen.findByText('mfa.factorAdded.phoneNumber')).toBeInTheDocument();
         expect(verifyMfaPhoneNumberRegistration.mock.calls[0][0]).toStrictEqual({
@@ -702,6 +702,33 @@ describe('Code screen', () => {
             trustDevice: true,
         });
         expect(successEvents('mfa_trusted_device_added')).toHaveLength(1);
+    });
+
+    test('waits for "mfa.verify" when trust device is shown, so it can be ticked after the code', async () => {
+        verifyMfaPhoneNumberRegistration.mockResolvedValue();
+        const user = await openCodeScreen('sms', { allowTrustDevice: true }, { rbaEnabled: true });
+
+        await user.type(screen.getByRole('textbox', { name: 'verificationCode' }), '123456');
+        expect(verifyMfaPhoneNumberRegistration).not.toHaveBeenCalled();
+        await user.click(screen.getByRole('checkbox', { name: 'mfa.stepUp.trustDevice' }));
+        await user.click(screen.getByRole('button', { name: 'mfa.verify' }));
+
+        expect(await screen.findByText('mfa.factorAdded.phoneNumber')).toBeInTheDocument();
+        expect(verifyMfaPhoneNumberRegistration.mock.calls[0][0]).toStrictEqual({
+            accessToken: 'azerty',
+            verificationCode: '123456',
+            trustDevice: true,
+        });
+        expect(successEvents('mfa_trusted_device_added')).toHaveLength(1);
+    });
+
+    test('submits on the last digit when trust device is hidden', async () => {
+        verifyMfaPhoneNumberRegistration.mockResolvedValue();
+        const user = await openCodeScreen('sms');
+
+        await user.type(screen.getByRole('textbox', { name: 'verificationCode' }), '123456');
+
+        await waitFor(() => expect(verifyMfaPhoneNumberRegistration).toHaveBeenCalledTimes(1));
     });
 
     test.each([
