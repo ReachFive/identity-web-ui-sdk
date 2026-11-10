@@ -1,9 +1,8 @@
-import React, { forwardRef, useId } from 'react';
+import React, { forwardRef } from 'react';
 
-import { ChevronRight, Fingerprint, LoaderCircle } from 'lucide-react';
+import { Fingerprint } from 'lucide-react';
 
-import { dimmedRowProps, ListItem, ListItemIcon } from '@/components/list/listItem';
-import { ItemActions, ItemContent, ItemDescription, ItemTitle } from '@/components/ui/item';
+import { NavigationRow } from '@/components/list/navigationRow';
 import { useI18n } from '@/contexts/i18n';
 
 interface PasskeysRowProps {
@@ -17,49 +16,23 @@ interface PasskeysRowProps {
     pending?: boolean;
 }
 
-/**
- * The single row grouping the user's passkeys. Its title is a button stretched over the whole
- * row, so the row opens the Passkeys view from anywhere while keeping the `Item` layout (a button
- * only holds phrasing content). The button is described by the count. No remove action.
- */
+/** The single row grouping the user's passkeys, described by their count. No remove action. */
 export const PasskeysRow = forwardRef<HTMLButtonElement, PasskeysRowProps>(function PasskeysRow(
-    { count, onOpen, dimmed = false, pending = false },
+    { count, onOpen, dimmed, pending },
     ref
 ) {
     const i18n = useI18n();
-    const descriptionId = useId();
 
     return (
-        <ListItem
+        <NavigationRow
+            ref={ref}
             data-slot="widget-mfa-credential"
-            {...dimmedRowProps(
-                dimmed,
-                'relative items-center has-[button:hover]:bg-button-subtle-bg has-[button:focus-visible]:border-ring has-[button:focus-visible]:ring-[3px] has-[button:focus-visible]:ring-ring/50'
-            )}
-        >
-            <ListItemIcon className="group-has-[[data-slot=item-description]]/item:translate-y-0 group-has-[[data-slot=item-description]]/item:self-center">
-                <Fingerprint />
-            </ListItemIcon>
-            <ItemContent className="min-w-0 gap-0.5">
-                <ItemTitle className="w-auto font-semibold text-foreground [overflow-wrap:anywhere]">
-                    <button
-                        ref={ref}
-                        type="button"
-                        className="text-left outline-none after:absolute after:inset-0 after:rounded"
-                        aria-describedby={descriptionId}
-                        aria-busy={pending || undefined}
-                        onClick={pending ? undefined : onOpen}
-                    >
-                        {i18n('mfaList.passkeys')}
-                    </button>
-                </ItemTitle>
-                <ItemDescription id={descriptionId}>
-                    {`${i18n('mfaList.passkeyCount', { count })} · ${i18n('mfaList.alsoUsedToLogIn')}`}
-                </ItemDescription>
-            </ItemContent>
-            <ItemActions aria-hidden="true" className="text-muted-foreground [&_svg]:size-4">
-                {pending ? <LoaderCircle className="animate-spin" /> : <ChevronRight />}
-            </ItemActions>
-        </ListItem>
+            icon={<Fingerprint />}
+            title={i18n('mfaList.passkeys')}
+            description={`${i18n('mfaList.passkeyCount', { count })} · ${i18n('mfaList.alsoUsedToLogIn')}`}
+            onOpen={onOpen}
+            dimmed={dimmed}
+            pending={pending}
+        />
     );
 });
