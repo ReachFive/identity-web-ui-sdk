@@ -30,6 +30,8 @@ export interface ViewNavigation<V extends string> {
     canGoBack: boolean;
     goTo: (view: V, options?: GoToOptions) => void;
     back: () => void;
+    /** Back to the initial view from any depth, in one move and with no focus given back. */
+    restart: () => void;
 }
 
 /**
@@ -46,6 +48,7 @@ export function useViewNavigation<V extends string>(initialView: V): ViewNavigat
         direction: null,
     });
     const [pending, startTransition] = useTransition();
+    const firstView = useRef(initialView);
     const focusOnReturn = useRef<RefObject<HTMLElement> | null>(null);
     const current = history[history.length - 1];
 
@@ -69,6 +72,10 @@ export function useViewNavigation<V extends string>(initialView: V): ViewNavigat
             if (history.length < 2) return;
             focusOnReturn.current = current.returnFocus ?? null;
             setState({ history: history.slice(0, -1), direction: 'back' });
+        },
+        restart: () => {
+            focusOnReturn.current = null;
+            setState({ history: [{ view: firstView.current }], direction: 'back' });
         },
     };
 }

@@ -1,10 +1,7 @@
-import React, { useEffect, useRef } from 'react';
+import React from 'react';
 
-import { ArrowLeft } from 'lucide-react';
-
-import { Heading } from '@/components/miscComponent';
-import { Button } from '@/components/ui/button';
 import { WidgetErrorBoundary } from '@/components/widget/queryWidget';
+import { ViewHeader } from '@/components/widget/viewHeader';
 import { useI18n } from '@/contexts/i18n';
 import { useForgetPasskeyDevicesOnLeave, useInvalidateMfaCredentials } from '@/widgets/mfa/queries';
 import { WebAuthnDevices } from '@/widgets/webAuthn/webAuthnDevices';
@@ -35,11 +32,7 @@ interface PasskeysViewProps {
 export function PasskeysView({ accessToken, onBack, onSuccess, onError }: PasskeysViewProps) {
     const i18n = useI18n();
     const invalidateCredentials = useInvalidateMfaCredentials(onError);
-    const backButton = useRef<HTMLButtonElement>(null);
     useForgetPasskeyDevicesOnLeave();
-
-    // The Passkeys row that opened this view is gone: keep focus inside the widget.
-    useEffect(() => backButton.current?.focus(), []);
 
     const handleSuccess: OnSuccess = event => {
         onSuccess(event);
@@ -48,19 +41,11 @@ export function PasskeysView({ accessToken, onBack, onSuccess, onError }: Passke
 
     return (
         <div className="space-y-2">
-            <div className="grid grid-cols-[2rem_1fr_2rem] items-center">
-                <Button
-                    ref={backButton}
-                    type="button"
-                    variant="ghost"
-                    size="icon-sm"
-                    aria-label={i18n('mfaList.back')}
-                    onClick={onBack}
-                >
-                    <ArrowLeft aria-hidden="true" />
-                </Button>
-                <Heading className="mb-0">{i18n('webauthn.registredDevices.list')}</Heading>
-            </div>
+            <ViewHeader
+                title={i18n('webauthn.registredDevices.list')}
+                backLabel={i18n('mfaList.back')}
+                onBack={onBack}
+            />
             <WidgetErrorBoundary onError={onError}>
                 <WebAuthnDevices
                     accessToken={accessToken}

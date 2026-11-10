@@ -45,6 +45,18 @@ describe('useViewNavigation', () => {
         expect(result.current.direction).toBeNull();
     });
 
+    test('restart goes back to the initial view from any depth', () => {
+        const { result } = renderHook(() => useViewNavigation<View>('list'));
+
+        act(() => result.current.goTo('detail'));
+        act(() => result.current.goTo('edit'));
+        act(() => result.current.restart());
+
+        expect(result.current.view).toBe('list');
+        expect(result.current.canGoBack).toBe(false);
+        expect(result.current.direction).toBe('back');
+    });
+
     function Views({ removeOpener = false }: { removeOpener?: boolean }) {
         const { view, goTo, back } = useViewNavigation<View>('list');
         const openerRef = useRef<HTMLButtonElement>(null);
