@@ -155,7 +155,9 @@ describe('01.13.03.03 - The Passkeys row opens the passkey management view, with
         expect(back).toBeInTheDocument();
         expect(await screen.findByText('Device a')).toBeInTheDocument();
         expect(screen.getByText('Device b')).toBeInTheDocument();
-        expect(screen.getByText('Registered devices')).toBeInTheDocument();
+        expect(
+            screen.getByRole('heading', { level: 2, name: 'Registered devices' })
+        ).toBeInTheDocument();
         expect(screen.queryByText('root@reach5.co')).not.toBeInTheDocument();
         expect(listWebAuthnDevices).toHaveBeenCalledWith('azerty');
     });

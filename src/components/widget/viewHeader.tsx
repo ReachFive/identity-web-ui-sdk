@@ -33,7 +33,9 @@ export function ViewHeader({ title, backLabel, onBack, autoFocus = true }: ViewH
             >
                 <ArrowLeft aria-hidden="true" />
             </Button>
-            <Heading className="mb-0">{title}</Heading>
+            <Heading role="heading" aria-level={2} className="mb-0">
+                {title}
+            </Heading>
         </div>
     );
 }
