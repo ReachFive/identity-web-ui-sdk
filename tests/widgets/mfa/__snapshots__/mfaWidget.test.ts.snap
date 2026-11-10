@@ -1,0 +1,855 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Snapshots the choice screen 1`] = `
+<div>
+  <style>
+    :where(.r5-theme-1bkmqrd){--background:0 0% 100%;--foreground:210 8.75% 31.37%;--primary:145.71 63.64% 36.67%;--primary-foreground:0 0% 100%;--primary-hover:145.81 63.24% 26.67%;--destructive:5.03 68.89% 55.88%;--destructive-foreground:0 0% 100%;--warning:45 100% 51.37%;--warning-foreground:0 0% 0%;--success:145.71 63.64% 36.67%;--success-foreground:0 0% 100%;--popover:0 0% 100%;--popover-foreground:210 8.75% 31.37%;--accent:145.71 63.64% 36.67%;--accent-foreground:210 8.75% 31.37%;--muted:210 15.79% 92.55%;--muted-foreground:210 10.81% 70.98%;--border:210 13.95% 83.14%;--input:210 13.95% 83.14%;--ring:145.65 63.27% 61.57%;--spacing:10px;--padding-x:12px;--padding-y:9px;--font-size:14px;--leading:1.428571429;--border-width:1px;--radius:3px;--r5-widget-max-width:400px;--r5-heading-text:#212529;--r5-heading-text-size:calc(var(--font-size) * 1.2);--r5-heading-font-weight:bold;--r5-button-bg:hsl(var(--primary));--r5-button-hover-bg:hsl(var(--primary-hover));--r5-button-border-color:hsl(var(--primary));--r5-button-hover-border-color:hsl(var(--primary));--r5-button-text:hsl(var(--primary-foreground));--r5-button-hover-text:hsl(var(--primary-foreground));--r5-button-subtle-bg:hsl(var(--primary) / 0.08);--r5-button-text-size:var(--font-size);--r5-button-leading:var(--leading);--r5-button-padding-x:var(--padding-x);--r5-button-padding-y:var(--padding-y);--r5-button-radius:var(--radius);--r5-button-border-width:var(--border-width);--r5-button-font-weight:bold;--r5-button-shadow:0 0 #0000;--r5-button-height:40px;--r5-social-button-height:var(--r5-button-height);--r5-social-button-padding-x:var(--r5-button-padding-x);--r5-social-button-padding-y:var(--r5-button-padding-y);--r5-social-button-radius:var(--r5-button-radius);--r5-social-button-text-size:var(--r5-button-text-size);--r5-social-button-font-weight:var(--r5-button-font-weight);--r5-social-button-leading:var(--r5-button-leading);--r5-social-button-border-width:var(--r5-button-border-width);--r5-social-button-shadow:var(--r5-button-shadow);--r5-input-bg:#fff;--r5-input-text:#495057;--r5-input-placeholder-text:#868e96;--r5-input-disabled-bg:#e9ecef;--r5-input-border-color:hsl(var(--border));--r5-input-border-width:var(--border-width);--r5-input-radius:var(--radius);--r5-input-text-size:var(--font-size);--r5-input-leading:var(--leading);--r5-input-padding-x:var(--padding-x);--r5-input-padding-y:var(--padding-y);--r5-input-shadow:0 0 #0000;--r5-input-height:40px;--r5-link-text:hsl(var(--primary));--r5-link-hover-text:#145a32;--r5-link-decoration:none;--r5-link-hover-decoration:none;--r5-password-strength-bg-0:hsl(var(--destructive));--r5-password-strength-bg-1:hsl(var(--destructive));--r5-password-strength-bg-2:hsl(var(--warning));--r5-password-strength-bg-3:color-mix(in oklch, hsl(var(--warning)), hsl(var(--success)));--r5-password-strength-bg-4:hsl(var(--success))}
+  </style>
+  <div
+    class="r5-theme-1bkmqrd r5-widget"
+  >
+    <div
+      class="text-[length:var(--font-size)] transition-[transform,opacity] duration-[400ms] ease-[ease] opacity-0 mx-auto max-w-widget-max-width rounded bg-background p-[calc(var(--spacing)*2)]"
+      data-slot="widget-content"
+    >
+      <div>
+        <div
+          class="space-y-4"
+        >
+          <div
+            class="text-center font-heading-font-weight text-heading-text-size text-heading-text mb-0"
+            data-slot="widget-heading"
+          >
+            mfa.manageFactors.title
+          </div>
+          <div
+            class="space-y-2"
+          >
+            <div
+              class="text-xs font-semibold uppercase tracking-wide text-muted-foreground"
+              id=":r9j:"
+            >
+              mfa.factors.enabled
+            </div>
+            <div
+              aria-labelledby=":r9j:"
+              class="group/item-group flex w-full flex-col has-data-[size=sm]:gap-2.5 has-data-[size=xs]:gap-2 gap-2"
+              data-slot="item-group"
+              role="list"
+            >
+              <div
+                class="group/item [a]:hover:bg-accent/50 focus-visible:border-ring focus-visible:ring-ring/50 [a]:transition-colors flex flex-wrap border text-sm outline-none transition-colors duration-100 focus-visible:ring-[3px] border-border items-start gap-3 rounded px-3.5 py-3"
+                data-size="default"
+                data-slot="widget-mfa-credential"
+                data-variant="outline"
+                id="credential-identifier"
+                role="listitem"
+              >
+                <div
+                  aria-hidden="true"
+                  class="flex shrink-0 items-center justify-center gap-2 group-has-[[data-slot=item-description]]/item:translate-y-0.5 group-has-[[data-slot=item-description]]/item:self-start [&_svg]:pointer-events-none size-8 rounded [&_svg]:size-4 bg-success/10 text-success"
+                  data-slot="item-media"
+                  data-variant="default"
+                >
+                  <svg
+                    class="lucide lucide-mail"
+                    fill="none"
+                    height="24"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    viewBox="0 0 24 24"
+                    width="24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <rect
+                      height="16"
+                      rx="2"
+                      width="20"
+                      x="2"
+                      y="4"
+                    />
+                    <path
+                      d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"
+                    />
+                  </svg>
+                </div>
+                <div
+                  class="flex flex-1 flex-col [&+[data-slot=item-content]]:flex-none min-w-0 gap-0.5"
+                  data-slot="item-content"
+                >
+                  <div
+                    class="flex items-center gap-2 text-sm leading-snug w-auto font-semibold text-foreground [overflow-wrap:anywhere]"
+                    data-slot="item-title"
+                  >
+                    root@reach5.co
+                  </div>
+                  <p
+                    class="m-0 text-muted-foreground line-clamp-2 text-balance text-sm font-normal leading-normal [&>a:hover]:text-primary [&>a]:underline [&>a]:underline-offset-4"
+                    data-slot="item-description"
+                  >
+                    Email
+                  </p>
+                  <p
+                    class="m-0 text-muted-foreground line-clamp-2 text-balance text-sm font-normal leading-normal [&>a:hover]:text-primary [&>a]:underline [&>a]:underline-offset-4"
+                    data-slot="item-description"
+                  >
+                    mfaList.createdOn
+                    <time
+                      datetime="2022-09-21"
+                    >
+                      21/09/2022
+                    </time>
+                  </p>
+                </div>
+                <div
+                  class="flex items-center gap-2"
+                  data-slot="item-actions"
+                >
+                  <button
+                    aria-label="mfa.remove.email"
+                    class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-button text-button-text-size font-button-font-weight leading-button transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0 bg-transparent size-8 text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+                    type="button"
+                  >
+                    <svg
+                      aria-hidden="true"
+                      class="lucide lucide-trash2"
+                      fill="none"
+                      height="24"
+                      stroke="currentColor"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      viewBox="0 0 24 24"
+                      width="24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M3 6h18"
+                      />
+                      <path
+                        d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"
+                      />
+                      <path
+                        d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"
+                      />
+                      <line
+                        x1="10"
+                        x2="10"
+                        y1="11"
+                        y2="17"
+                      />
+                      <line
+                        x1="14"
+                        x2="14"
+                        y1="11"
+                        y2="17"
+                      />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="space-y-2"
+          >
+            <div
+              class="text-xs font-semibold uppercase tracking-wide text-muted-foreground"
+              id=":r9k:"
+            >
+              mfa.factors.add
+            </div>
+            <div
+              aria-labelledby=":r9k:"
+              class="group/item-group flex w-full flex-col has-data-[size=sm]:gap-2.5 has-data-[size=xs]:gap-2 gap-2"
+              data-slot="item-group"
+              role="list"
+            >
+              <div
+                class="group/item [a]:hover:bg-accent/50 focus-visible:border-ring focus-visible:ring-ring/50 [a]:transition-colors flex flex-wrap border text-sm outline-none transition-colors duration-100 focus-visible:ring-[3px] border-border gap-3 rounded px-3.5 py-3 relative items-center has-[button:hover]:bg-button-subtle-bg has-[button:focus-visible]:border-ring has-[button:focus-visible]:ring-[3px] has-[button:focus-visible]:ring-ring/50"
+                data-size="default"
+                data-slot="widget-mfa-add-factor"
+                data-variant="outline"
+                role="listitem"
+              >
+                <div
+                  aria-hidden="true"
+                  class="flex shrink-0 items-center justify-center gap-2 [&_svg]:pointer-events-none size-8 rounded [&_svg]:size-4 bg-muted text-muted-foreground group-has-[[data-slot=item-description]]/item:translate-y-0 group-has-[[data-slot=item-description]]/item:self-center"
+                  data-slot="item-media"
+                  data-variant="default"
+                >
+                  <svg
+                    class="lucide lucide-fingerprint"
+                    fill="none"
+                    height="24"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    viewBox="0 0 24 24"
+                    width="24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M12 10a2 2 0 0 0-2 2c0 1.02-.1 2.51-.26 4"
+                    />
+                    <path
+                      d="M14 13.12c0 2.38 0 6.38-1 8.88"
+                    />
+                    <path
+                      d="M17.29 21.02c.12-.6.43-2.3.5-3.02"
+                    />
+                    <path
+                      d="M2 12a10 10 0 0 1 18-6"
+                    />
+                    <path
+                      d="M2 16h.01"
+                    />
+                    <path
+                      d="M21.8 16c.2-2 .131-5.354 0-6"
+                    />
+                    <path
+                      d="M5 19.5C5.5 18 6 15 6 12a6 6 0 0 1 .34-2"
+                    />
+                    <path
+                      d="M8.65 22c.21-.66.45-1.32.57-2"
+                    />
+                    <path
+                      d="M9 6.8a6 6 0 0 1 9 5.2v2"
+                    />
+                  </svg>
+                </div>
+                <div
+                  class="flex flex-1 flex-col [&+[data-slot=item-content]]:flex-none min-w-0 gap-0.5"
+                  data-slot="item-content"
+                >
+                  <div
+                    class="flex items-center gap-2 text-sm leading-snug w-auto font-semibold text-foreground [overflow-wrap:anywhere]"
+                    data-slot="item-title"
+                  >
+                    <button
+                      aria-describedby=":r9l:"
+                      class="text-left outline-none after:absolute after:inset-0 after:rounded"
+                      type="button"
+                    >
+                      mfa.passkey
+                       
+                      <span
+                        class="rounded bg-success/10 px-1.5 py-0.5 text-xs font-medium text-success"
+                      >
+                        mfa.factors.recommended
+                      </span>
+                    </button>
+                  </div>
+                  <p
+                    class="m-0 text-muted-foreground line-clamp-2 text-balance text-sm font-normal leading-normal [&>a:hover]:text-primary [&>a]:underline [&>a]:underline-offset-4"
+                    data-slot="item-description"
+                    id=":r9l:"
+                  >
+                    mfa.passkey.description
+                  </p>
+                </div>
+                <div
+                  aria-hidden="true"
+                  class="flex items-center gap-2 text-muted-foreground [&_svg]:size-4"
+                  data-slot="item-actions"
+                >
+                  <svg
+                    class="lucide lucide-chevron-right"
+                    fill="none"
+                    height="24"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    viewBox="0 0 24 24"
+                    width="24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="m9 18 6-6-6-6"
+                    />
+                  </svg>
+                </div>
+              </div>
+              <div
+                class="group/item [a]:hover:bg-accent/50 focus-visible:border-ring focus-visible:ring-ring/50 [a]:transition-colors flex flex-wrap border text-sm outline-none transition-colors duration-100 focus-visible:ring-[3px] border-border gap-3 rounded px-3.5 py-3 relative items-center has-[button:hover]:bg-button-subtle-bg has-[button:focus-visible]:border-ring has-[button:focus-visible]:ring-[3px] has-[button:focus-visible]:ring-ring/50"
+                data-size="default"
+                data-slot="widget-mfa-add-factor"
+                data-variant="outline"
+                role="listitem"
+              >
+                <div
+                  aria-hidden="true"
+                  class="flex shrink-0 items-center justify-center gap-2 [&_svg]:pointer-events-none size-8 rounded [&_svg]:size-4 bg-muted text-muted-foreground group-has-[[data-slot=item-description]]/item:translate-y-0 group-has-[[data-slot=item-description]]/item:self-center"
+                  data-slot="item-media"
+                  data-variant="default"
+                >
+                  <svg
+                    class="lucide lucide-smartphone"
+                    fill="none"
+                    height="24"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    viewBox="0 0 24 24"
+                    width="24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <rect
+                      height="20"
+                      rx="2"
+                      ry="2"
+                      width="14"
+                      x="5"
+                      y="2"
+                    />
+                    <path
+                      d="M12 18h.01"
+                    />
+                  </svg>
+                </div>
+                <div
+                  class="flex flex-1 flex-col [&+[data-slot=item-content]]:flex-none min-w-0 gap-0.5"
+                  data-slot="item-content"
+                >
+                  <div
+                    class="flex items-center gap-2 text-sm leading-snug w-auto font-semibold text-foreground [overflow-wrap:anywhere]"
+                    data-slot="item-title"
+                  >
+                    <button
+                      aria-describedby=":r9m:"
+                      class="text-left outline-none after:absolute after:inset-0 after:rounded"
+                      type="button"
+                    >
+                      Phone number
+                    </button>
+                  </div>
+                  <p
+                    class="m-0 text-muted-foreground line-clamp-2 text-balance text-sm font-normal leading-normal [&>a:hover]:text-primary [&>a]:underline [&>a]:underline-offset-4"
+                    data-slot="item-description"
+                    id=":r9m:"
+                  >
+                    mfa.phoneNumber.description
+                  </p>
+                </div>
+                <div
+                  aria-hidden="true"
+                  class="flex items-center gap-2 text-muted-foreground [&_svg]:size-4"
+                  data-slot="item-actions"
+                >
+                  <svg
+                    class="lucide lucide-chevron-right"
+                    fill="none"
+                    height="24"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    viewBox="0 0 24 24"
+                    width="24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="m9 18 6-6-6-6"
+                    />
+                  </svg>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Snapshots the code screen 1`] = `
+<div>
+  <style>
+    :where(.r5-theme-1bkmqrd){--background:0 0% 100%;--foreground:210 8.75% 31.37%;--primary:145.71 63.64% 36.67%;--primary-foreground:0 0% 100%;--primary-hover:145.81 63.24% 26.67%;--destructive:5.03 68.89% 55.88%;--destructive-foreground:0 0% 100%;--warning:45 100% 51.37%;--warning-foreground:0 0% 0%;--success:145.71 63.64% 36.67%;--success-foreground:0 0% 100%;--popover:0 0% 100%;--popover-foreground:210 8.75% 31.37%;--accent:145.71 63.64% 36.67%;--accent-foreground:210 8.75% 31.37%;--muted:210 15.79% 92.55%;--muted-foreground:210 10.81% 70.98%;--border:210 13.95% 83.14%;--input:210 13.95% 83.14%;--ring:145.65 63.27% 61.57%;--spacing:10px;--padding-x:12px;--padding-y:9px;--font-size:14px;--leading:1.428571429;--border-width:1px;--radius:3px;--r5-widget-max-width:400px;--r5-heading-text:#212529;--r5-heading-text-size:calc(var(--font-size) * 1.2);--r5-heading-font-weight:bold;--r5-button-bg:hsl(var(--primary));--r5-button-hover-bg:hsl(var(--primary-hover));--r5-button-border-color:hsl(var(--primary));--r5-button-hover-border-color:hsl(var(--primary));--r5-button-text:hsl(var(--primary-foreground));--r5-button-hover-text:hsl(var(--primary-foreground));--r5-button-subtle-bg:hsl(var(--primary) / 0.08);--r5-button-text-size:var(--font-size);--r5-button-leading:var(--leading);--r5-button-padding-x:var(--padding-x);--r5-button-padding-y:var(--padding-y);--r5-button-radius:var(--radius);--r5-button-border-width:var(--border-width);--r5-button-font-weight:bold;--r5-button-shadow:0 0 #0000;--r5-button-height:40px;--r5-social-button-height:var(--r5-button-height);--r5-social-button-padding-x:var(--r5-button-padding-x);--r5-social-button-padding-y:var(--r5-button-padding-y);--r5-social-button-radius:var(--r5-button-radius);--r5-social-button-text-size:var(--r5-button-text-size);--r5-social-button-font-weight:var(--r5-button-font-weight);--r5-social-button-leading:var(--r5-button-leading);--r5-social-button-border-width:var(--r5-button-border-width);--r5-social-button-shadow:var(--r5-button-shadow);--r5-input-bg:#fff;--r5-input-text:#495057;--r5-input-placeholder-text:#868e96;--r5-input-disabled-bg:#e9ecef;--r5-input-border-color:hsl(var(--border));--r5-input-border-width:var(--border-width);--r5-input-radius:var(--radius);--r5-input-text-size:var(--font-size);--r5-input-leading:var(--leading);--r5-input-padding-x:var(--padding-x);--r5-input-padding-y:var(--padding-y);--r5-input-shadow:0 0 #0000;--r5-input-height:40px;--r5-link-text:hsl(var(--primary));--r5-link-hover-text:#145a32;--r5-link-decoration:none;--r5-link-hover-decoration:none;--r5-password-strength-bg-0:hsl(var(--destructive));--r5-password-strength-bg-1:hsl(var(--destructive));--r5-password-strength-bg-2:hsl(var(--warning));--r5-password-strength-bg-3:color-mix(in oklch, hsl(var(--warning)), hsl(var(--success)));--r5-password-strength-bg-4:hsl(var(--success))}
+  </style>
+  <div
+    class="r5-theme-1bkmqrd r5-widget"
+  >
+    <div
+      class="text-[length:var(--font-size)] transition-[transform,opacity] duration-[400ms] ease-[ease] opacity-0 mx-auto max-w-widget-max-width rounded bg-background p-[calc(var(--spacing)*2)]"
+      data-slot="widget-content"
+    >
+      <div
+        class="animate-view-forward motion-reduce:animate-none"
+      >
+        <div
+          class="space-y-4"
+        >
+          <div
+            class="grid grid-cols-[2rem_1fr_2rem] items-center"
+          >
+            <button
+              aria-label="mfaList.back"
+              class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-button text-button-text-size font-button-font-weight leading-button transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0 bg-transparent hover:bg-button-subtle-bg size-8"
+              type="button"
+            >
+              <svg
+                aria-hidden="true"
+                class="lucide lucide-arrow-left"
+                fill="none"
+                height="24"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="m12 19-7-7 7-7"
+                />
+                <path
+                  d="M19 12H5"
+                />
+              </svg>
+            </button>
+            <div
+              class="text-center font-heading-font-weight text-heading-text-size text-heading-text mb-0"
+              data-slot="widget-heading"
+            >
+              mfa.code.title
+            </div>
+          </div>
+          <div
+            class="mb-2 text-center text-foreground"
+            data-slot="widget-intro"
+          >
+            Code sent to ••78
+          </div>
+          <form
+            aria-busy="false"
+            novalidate=""
+          >
+            <div
+              class="space-y-4"
+            >
+              <div
+                class="group/field data-[invalid=true]:text-destructive flex w-full gap-2 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
+                data-invalid="false"
+                data-orientation="vertical"
+                data-slot="field"
+                role="group"
+              >
+                <label
+                  class="text-sm font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70 group/field-label peer/field-label flex w-fit gap-2 leading-snug group-data-[disabled=true]/field:opacity-50 has-[>[data-slot=field]]:w-full has-[>[data-slot=field]]:flex-col has-[>[data-slot=field]]:rounded-md has-[>[data-slot=field]]:border [&>[data-slot=field]]:p-4 has-data-[state=checked]:bg-primary/5 has-data-[state=checked]:border-primary dark:has-data-[state=checked]:bg-primary/10 sr-only"
+                  data-slot="field-label"
+                  for=":ra6:"
+                >
+                  verificationCode
+                  <svg
+                    class="inline-block size-2 leading-4 fill-destructive"
+                    focusable="false"
+                    viewBox="0 0 128 128"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M110.1,16.4L75.8,56.8l0.3,1l50.6-10.2v32.2l-50.9-8.9l-0.3,1l34.7,39.1l-28.3,16.5L63.7,78.2L63,78.5l-18.5,49L17.2,111l34.1-39.8v-0.6l-50,9.2V47.6l49.3,9.9l0.3-0.6L17.2,16.7L45.5,0.5l17.8,48.7H64L82.1,0.5L110.1,16.4z"
+                    />
+                  </svg>
+                </label>
+                <noscript />
+                <div
+                  class="flex items-center gap-2 w-full has-[:disabled]:opacity-100"
+                  data-input-otp-container="true"
+                  style="position: relative; cursor: text; user-select: none; pointer-events: none; --root-height: 0px;"
+                  translate="no"
+                >
+                  <div
+                    class="flex items-center w-full gap-[var(--spacing)]"
+                    data-slot="widget-otp"
+                  >
+                    <div
+                      class="relative flex items-center justify-center transition-all h-input-height min-w-0 flex-1 rounded-lg bg-input-bg border-input-border-color border-input-border-width text-input-text text-[length:calc(var(--r5-input-text-size)*1.5)] shadow-input-shadow"
+                      data-active="false"
+                      data-slot="widget-otp-slot"
+                    />
+                    <div
+                      class="relative flex items-center justify-center transition-all h-input-height min-w-0 flex-1 rounded-lg bg-input-bg border-input-border-color border-input-border-width text-input-text text-[length:calc(var(--r5-input-text-size)*1.5)] shadow-input-shadow"
+                      data-active="false"
+                      data-slot="widget-otp-slot"
+                    />
+                    <div
+                      class="relative flex items-center justify-center transition-all h-input-height min-w-0 flex-1 rounded-lg bg-input-bg border-input-border-color border-input-border-width text-input-text text-[length:calc(var(--r5-input-text-size)*1.5)] shadow-input-shadow"
+                      data-active="false"
+                      data-slot="widget-otp-slot"
+                    />
+                    <div
+                      class="relative flex items-center justify-center transition-all h-input-height min-w-0 flex-1 rounded-lg bg-input-bg border-input-border-color border-input-border-width text-input-text text-[length:calc(var(--r5-input-text-size)*1.5)] shadow-input-shadow"
+                      data-active="false"
+                      data-slot="widget-otp-slot"
+                    />
+                    <div
+                      class="relative flex items-center justify-center transition-all h-input-height min-w-0 flex-1 rounded-lg bg-input-bg border-input-border-color border-input-border-width text-input-text text-[length:calc(var(--r5-input-text-size)*1.5)] shadow-input-shadow"
+                      data-active="false"
+                      data-slot="widget-otp-slot"
+                    />
+                    <div
+                      class="relative flex items-center justify-center transition-all h-input-height min-w-0 flex-1 rounded-lg bg-input-bg border-input-border-color border-input-border-width text-input-text text-[length:calc(var(--r5-input-text-size)*1.5)] shadow-input-shadow"
+                      data-active="false"
+                      data-slot="widget-otp-slot"
+                    />
+                  </div>
+                  <div
+                    style="position: absolute; inset: 0; pointer-events: none;"
+                  >
+                    <input
+                      autocomplete="one-time-code"
+                      class="disabled:cursor-not-allowed"
+                      data-input-otp="true"
+                      data-input-otp-placeholder-shown="true"
+                      id=":ra6:"
+                      inputmode="numeric"
+                      maxlength="6"
+                      name="verificationCode"
+                      pattern="^\\d+$"
+                      required=""
+                      spellcheck="false"
+                      style="position: absolute; inset: 0; width: 100%; height: 100%; display: flex; text-align: left; opacity: 1; color: transparent; pointer-events: all; background: transparent; caret-color: transparent; border: 0px solid transparent; outline: 0 solid transparent; box-shadow: none; line-height: 1; letter-spacing: -.5em; font-family: monospace; font-variant-numeric: tabular-nums;"
+                      value=""
+                    />
+                  </div>
+                </div>
+                <div
+                  class="flex flex-col gap-2"
+                  data-slot="widget-otp-resend"
+                >
+                  <button
+                    class="inline-flex items-center gap-2 whitespace-nowrap rounded-button text-button-text-size leading-button transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0 text-link-text font-normal underline-offset-4 hover:text-link-hover-text hover:underline h-auto justify-start p-0"
+                    type="button"
+                  >
+                    <svg
+                      aria-hidden="true"
+                      class="lucide lucide-refresh-cw size-4"
+                      fill="none"
+                      height="24"
+                      stroke="currentColor"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      viewBox="0 0 24 24"
+                      width="24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"
+                      />
+                      <path
+                        d="M21 3v5h-5"
+                      />
+                      <path
+                        d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"
+                      />
+                      <path
+                        d="M8 16H3v5"
+                      />
+                    </svg>
+                    verificationCode.resend.count
+                  </button>
+                </div>
+              </div>
+              <button
+                class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-button text-button-text-size font-button-font-weight leading-button transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0 border-button-border-width border-button-border-color bg-button-bg text-button-text shadow-button-shadow hover:border-button-hover-border-color hover:bg-button-hover-bg hover:text-button-hover-text h-button-height px-button-padding-x py-button-padding-y w-full"
+                type="submit"
+              >
+                mfa.verify
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Snapshots the confirmation screen 1`] = `
+<div>
+  <style>
+    :where(.r5-theme-1bkmqrd){--background:0 0% 100%;--foreground:210 8.75% 31.37%;--primary:145.71 63.64% 36.67%;--primary-foreground:0 0% 100%;--primary-hover:145.81 63.24% 26.67%;--destructive:5.03 68.89% 55.88%;--destructive-foreground:0 0% 100%;--warning:45 100% 51.37%;--warning-foreground:0 0% 0%;--success:145.71 63.64% 36.67%;--success-foreground:0 0% 100%;--popover:0 0% 100%;--popover-foreground:210 8.75% 31.37%;--accent:145.71 63.64% 36.67%;--accent-foreground:210 8.75% 31.37%;--muted:210 15.79% 92.55%;--muted-foreground:210 10.81% 70.98%;--border:210 13.95% 83.14%;--input:210 13.95% 83.14%;--ring:145.65 63.27% 61.57%;--spacing:10px;--padding-x:12px;--padding-y:9px;--font-size:14px;--leading:1.428571429;--border-width:1px;--radius:3px;--r5-widget-max-width:400px;--r5-heading-text:#212529;--r5-heading-text-size:calc(var(--font-size) * 1.2);--r5-heading-font-weight:bold;--r5-button-bg:hsl(var(--primary));--r5-button-hover-bg:hsl(var(--primary-hover));--r5-button-border-color:hsl(var(--primary));--r5-button-hover-border-color:hsl(var(--primary));--r5-button-text:hsl(var(--primary-foreground));--r5-button-hover-text:hsl(var(--primary-foreground));--r5-button-subtle-bg:hsl(var(--primary) / 0.08);--r5-button-text-size:var(--font-size);--r5-button-leading:var(--leading);--r5-button-padding-x:var(--padding-x);--r5-button-padding-y:var(--padding-y);--r5-button-radius:var(--radius);--r5-button-border-width:var(--border-width);--r5-button-font-weight:bold;--r5-button-shadow:0 0 #0000;--r5-button-height:40px;--r5-social-button-height:var(--r5-button-height);--r5-social-button-padding-x:var(--r5-button-padding-x);--r5-social-button-padding-y:var(--r5-button-padding-y);--r5-social-button-radius:var(--r5-button-radius);--r5-social-button-text-size:var(--r5-button-text-size);--r5-social-button-font-weight:var(--r5-button-font-weight);--r5-social-button-leading:var(--r5-button-leading);--r5-social-button-border-width:var(--r5-button-border-width);--r5-social-button-shadow:var(--r5-button-shadow);--r5-input-bg:#fff;--r5-input-text:#495057;--r5-input-placeholder-text:#868e96;--r5-input-disabled-bg:#e9ecef;--r5-input-border-color:hsl(var(--border));--r5-input-border-width:var(--border-width);--r5-input-radius:var(--radius);--r5-input-text-size:var(--font-size);--r5-input-leading:var(--leading);--r5-input-padding-x:var(--padding-x);--r5-input-padding-y:var(--padding-y);--r5-input-shadow:0 0 #0000;--r5-input-height:40px;--r5-link-text:hsl(var(--primary));--r5-link-hover-text:#145a32;--r5-link-decoration:none;--r5-link-hover-decoration:none;--r5-password-strength-bg-0:hsl(var(--destructive));--r5-password-strength-bg-1:hsl(var(--destructive));--r5-password-strength-bg-2:hsl(var(--warning));--r5-password-strength-bg-3:color-mix(in oklch, hsl(var(--warning)), hsl(var(--success)));--r5-password-strength-bg-4:hsl(var(--success))}
+  </style>
+  <div
+    class="r5-theme-1bkmqrd r5-widget"
+  >
+    <div
+      class="text-[length:var(--font-size)] transition-[transform,opacity] duration-[400ms] ease-[ease] opacity-0 mx-auto max-w-widget-max-width rounded bg-background p-[calc(var(--spacing)*2)]"
+      data-slot="widget-content"
+    >
+      <div
+        class="animate-view-forward motion-reduce:animate-none"
+      >
+        <div
+          class="flex flex-col items-center gap-4"
+          data-slot="widget-mfa-confirmation"
+        >
+          <div
+            aria-hidden="true"
+            class="flex size-12 items-center justify-center rounded-full bg-success/10 text-success"
+          >
+            <svg
+              class="lucide lucide-check size-6"
+              fill="none"
+              height="24"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M20 6 9 17l-5-5"
+              />
+            </svg>
+          </div>
+          <div
+            class="space-y-2 text-center"
+          >
+            <div
+              aria-level="2"
+              class="text-center font-heading-font-weight text-heading-text-size text-heading-text mb-0 outline-none"
+              data-slot="widget-heading"
+              role="heading"
+              tabindex="-1"
+            >
+              mfa.factorAdded.passkey
+            </div>
+            <p
+              class="text-muted-foreground"
+            >
+              You can now use “iPhone”
+            </p>
+          </div>
+          <button
+            class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-button text-button-text-size font-button-font-weight leading-button transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0 border-button-border-width border-button-border-color bg-background text-button-bg shadow-button-shadow hover:border-button-hover-border-color hover:bg-button-subtle-bg h-button-height px-button-padding-x py-button-padding-y"
+            type="button"
+          >
+            mfa.addAnotherFactor
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Snapshots the email screen 1`] = `
+<div>
+  <style>
+    :where(.r5-theme-1bkmqrd){--background:0 0% 100%;--foreground:210 8.75% 31.37%;--primary:145.71 63.64% 36.67%;--primary-foreground:0 0% 100%;--primary-hover:145.81 63.24% 26.67%;--destructive:5.03 68.89% 55.88%;--destructive-foreground:0 0% 100%;--warning:45 100% 51.37%;--warning-foreground:0 0% 0%;--success:145.71 63.64% 36.67%;--success-foreground:0 0% 100%;--popover:0 0% 100%;--popover-foreground:210 8.75% 31.37%;--accent:145.71 63.64% 36.67%;--accent-foreground:210 8.75% 31.37%;--muted:210 15.79% 92.55%;--muted-foreground:210 10.81% 70.98%;--border:210 13.95% 83.14%;--input:210 13.95% 83.14%;--ring:145.65 63.27% 61.57%;--spacing:10px;--padding-x:12px;--padding-y:9px;--font-size:14px;--leading:1.428571429;--border-width:1px;--radius:3px;--r5-widget-max-width:400px;--r5-heading-text:#212529;--r5-heading-text-size:calc(var(--font-size) * 1.2);--r5-heading-font-weight:bold;--r5-button-bg:hsl(var(--primary));--r5-button-hover-bg:hsl(var(--primary-hover));--r5-button-border-color:hsl(var(--primary));--r5-button-hover-border-color:hsl(var(--primary));--r5-button-text:hsl(var(--primary-foreground));--r5-button-hover-text:hsl(var(--primary-foreground));--r5-button-subtle-bg:hsl(var(--primary) / 0.08);--r5-button-text-size:var(--font-size);--r5-button-leading:var(--leading);--r5-button-padding-x:var(--padding-x);--r5-button-padding-y:var(--padding-y);--r5-button-radius:var(--radius);--r5-button-border-width:var(--border-width);--r5-button-font-weight:bold;--r5-button-shadow:0 0 #0000;--r5-button-height:40px;--r5-social-button-height:var(--r5-button-height);--r5-social-button-padding-x:var(--r5-button-padding-x);--r5-social-button-padding-y:var(--r5-button-padding-y);--r5-social-button-radius:var(--r5-button-radius);--r5-social-button-text-size:var(--r5-button-text-size);--r5-social-button-font-weight:var(--r5-button-font-weight);--r5-social-button-leading:var(--r5-button-leading);--r5-social-button-border-width:var(--r5-button-border-width);--r5-social-button-shadow:var(--r5-button-shadow);--r5-input-bg:#fff;--r5-input-text:#495057;--r5-input-placeholder-text:#868e96;--r5-input-disabled-bg:#e9ecef;--r5-input-border-color:hsl(var(--border));--r5-input-border-width:var(--border-width);--r5-input-radius:var(--radius);--r5-input-text-size:var(--font-size);--r5-input-leading:var(--leading);--r5-input-padding-x:var(--padding-x);--r5-input-padding-y:var(--padding-y);--r5-input-shadow:0 0 #0000;--r5-input-height:40px;--r5-link-text:hsl(var(--primary));--r5-link-hover-text:#145a32;--r5-link-decoration:none;--r5-link-hover-decoration:none;--r5-password-strength-bg-0:hsl(var(--destructive));--r5-password-strength-bg-1:hsl(var(--destructive));--r5-password-strength-bg-2:hsl(var(--warning));--r5-password-strength-bg-3:color-mix(in oklch, hsl(var(--warning)), hsl(var(--success)));--r5-password-strength-bg-4:hsl(var(--success))}
+  </style>
+  <div
+    class="r5-theme-1bkmqrd r5-widget"
+  >
+    <div
+      class="text-[length:var(--font-size)] transition-[transform,opacity] duration-[400ms] ease-[ease] opacity-0 mx-auto max-w-widget-max-width rounded bg-background p-[calc(var(--spacing)*2)]"
+      data-slot="widget-content"
+    >
+      <div
+        class="animate-view-forward motion-reduce:animate-none"
+      >
+        <div
+          class="space-y-4"
+        >
+          <div
+            class="grid grid-cols-[2rem_1fr_2rem] items-center"
+          >
+            <button
+              aria-label="mfaList.back"
+              class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-button text-button-text-size font-button-font-weight leading-button transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0 bg-transparent hover:bg-button-subtle-bg size-8"
+              type="button"
+            >
+              <svg
+                aria-hidden="true"
+                class="lucide lucide-arrow-left"
+                fill="none"
+                height="24"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="m12 19-7-7 7-7"
+                />
+                <path
+                  d="M19 12H5"
+                />
+              </svg>
+            </button>
+            <div
+              class="text-center font-heading-font-weight text-heading-text-size text-heading-text mb-0"
+              data-slot="widget-heading"
+            >
+              Email
+            </div>
+          </div>
+          <div
+            class="mb-2 text-center text-foreground"
+            data-slot="widget-intro"
+          >
+            mfa.email.intro
+          </div>
+          <form
+            aria-busy="false"
+            novalidate=""
+          >
+            <div
+              class="space-y-4"
+            >
+              <button
+                class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-button text-button-text-size font-button-font-weight leading-button transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0 border-button-border-width border-button-border-color bg-button-bg text-button-text shadow-button-shadow hover:border-button-hover-border-color hover:bg-button-hover-bg hover:text-button-hover-text h-button-height px-button-padding-x py-button-padding-y w-full"
+                type="submit"
+              >
+                mfa.sendCode
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Snapshots the passkey screen 1`] = `
+<div>
+  <style>
+    :where(.r5-theme-1bkmqrd){--background:0 0% 100%;--foreground:210 8.75% 31.37%;--primary:145.71 63.64% 36.67%;--primary-foreground:0 0% 100%;--primary-hover:145.81 63.24% 26.67%;--destructive:5.03 68.89% 55.88%;--destructive-foreground:0 0% 100%;--warning:45 100% 51.37%;--warning-foreground:0 0% 0%;--success:145.71 63.64% 36.67%;--success-foreground:0 0% 100%;--popover:0 0% 100%;--popover-foreground:210 8.75% 31.37%;--accent:145.71 63.64% 36.67%;--accent-foreground:210 8.75% 31.37%;--muted:210 15.79% 92.55%;--muted-foreground:210 10.81% 70.98%;--border:210 13.95% 83.14%;--input:210 13.95% 83.14%;--ring:145.65 63.27% 61.57%;--spacing:10px;--padding-x:12px;--padding-y:9px;--font-size:14px;--leading:1.428571429;--border-width:1px;--radius:3px;--r5-widget-max-width:400px;--r5-heading-text:#212529;--r5-heading-text-size:calc(var(--font-size) * 1.2);--r5-heading-font-weight:bold;--r5-button-bg:hsl(var(--primary));--r5-button-hover-bg:hsl(var(--primary-hover));--r5-button-border-color:hsl(var(--primary));--r5-button-hover-border-color:hsl(var(--primary));--r5-button-text:hsl(var(--primary-foreground));--r5-button-hover-text:hsl(var(--primary-foreground));--r5-button-subtle-bg:hsl(var(--primary) / 0.08);--r5-button-text-size:var(--font-size);--r5-button-leading:var(--leading);--r5-button-padding-x:var(--padding-x);--r5-button-padding-y:var(--padding-y);--r5-button-radius:var(--radius);--r5-button-border-width:var(--border-width);--r5-button-font-weight:bold;--r5-button-shadow:0 0 #0000;--r5-button-height:40px;--r5-social-button-height:var(--r5-button-height);--r5-social-button-padding-x:var(--r5-button-padding-x);--r5-social-button-padding-y:var(--r5-button-padding-y);--r5-social-button-radius:var(--r5-button-radius);--r5-social-button-text-size:var(--r5-button-text-size);--r5-social-button-font-weight:var(--r5-button-font-weight);--r5-social-button-leading:var(--r5-button-leading);--r5-social-button-border-width:var(--r5-button-border-width);--r5-social-button-shadow:var(--r5-button-shadow);--r5-input-bg:#fff;--r5-input-text:#495057;--r5-input-placeholder-text:#868e96;--r5-input-disabled-bg:#e9ecef;--r5-input-border-color:hsl(var(--border));--r5-input-border-width:var(--border-width);--r5-input-radius:var(--radius);--r5-input-text-size:var(--font-size);--r5-input-leading:var(--leading);--r5-input-padding-x:var(--padding-x);--r5-input-padding-y:var(--padding-y);--r5-input-shadow:0 0 #0000;--r5-input-height:40px;--r5-link-text:hsl(var(--primary));--r5-link-hover-text:#145a32;--r5-link-decoration:none;--r5-link-hover-decoration:none;--r5-password-strength-bg-0:hsl(var(--destructive));--r5-password-strength-bg-1:hsl(var(--destructive));--r5-password-strength-bg-2:hsl(var(--warning));--r5-password-strength-bg-3:color-mix(in oklch, hsl(var(--warning)), hsl(var(--success)));--r5-password-strength-bg-4:hsl(var(--success))}
+  </style>
+  <div
+    class="r5-theme-1bkmqrd r5-widget"
+  >
+    <div
+      class="text-[length:var(--font-size)] transition-[transform,opacity] duration-[400ms] ease-[ease] opacity-0 mx-auto max-w-widget-max-width rounded bg-background p-[calc(var(--spacing)*2)]"
+      data-slot="widget-content"
+    >
+      <div
+        class="animate-view-forward motion-reduce:animate-none"
+      >
+        <div
+          class="space-y-4"
+        >
+          <div
+            class="grid grid-cols-[2rem_1fr_2rem] items-center"
+          >
+            <button
+              aria-label="mfaList.back"
+              class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-button text-button-text-size font-button-font-weight leading-button transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0 bg-transparent hover:bg-button-subtle-bg size-8"
+              type="button"
+            >
+              <svg
+                aria-hidden="true"
+                class="lucide lucide-arrow-left"
+                fill="none"
+                height="24"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="m12 19-7-7 7-7"
+                />
+                <path
+                  d="M19 12H5"
+                />
+              </svg>
+            </button>
+            <div
+              class="text-center font-heading-font-weight text-heading-text-size text-heading-text mb-0"
+              data-slot="widget-heading"
+            >
+              mfa.passkey
+            </div>
+          </div>
+          <form
+            aria-busy="false"
+            novalidate=""
+          >
+            <div
+              class="space-y-4"
+            >
+              <div
+                class="group/field data-[invalid=true]:text-destructive flex w-full gap-2 flex-col [&>*]:w-full [&>.sr-only]:w-auto"
+                data-invalid="false"
+                data-orientation="vertical"
+                data-slot="field"
+                role="group"
+              >
+                <label
+                  class="text-sm font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70 group/field-label peer/field-label flex w-fit gap-2 leading-snug group-data-[disabled=true]/field:opacity-50 has-[>[data-slot=field]]:w-full has-[>[data-slot=field]]:flex-col has-[>[data-slot=field]]:rounded-md has-[>[data-slot=field]]:border [&>[data-slot=field]]:p-4 has-data-[state=checked]:bg-primary/5 has-data-[state=checked]:border-primary dark:has-data-[state=checked]:bg-primary/10"
+                  data-slot="field-label"
+                  for=":r9r:"
+                >
+                  mfa.passkey.deviceName
+                  <svg
+                    class="inline-block size-2 leading-4 fill-destructive"
+                    focusable="false"
+                    viewBox="0 0 128 128"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M110.1,16.4L75.8,56.8l0.3,1l50.6-10.2v32.2l-50.9-8.9l-0.3,1l34.7,39.1l-28.3,16.5L63.7,78.2L63,78.5l-18.5,49L17.2,111l34.1-39.8v-0.6l-50,9.2V47.6l49.3,9.9l0.3-0.6L17.2,16.7L45.5,0.5l17.8,48.7H64L82.1,0.5L110.1,16.4z"
+                    />
+                  </svg>
+                </label>
+                <input
+                  aria-label="mfa.passkey.deviceName"
+                  class="flex w-full dark:bg-input/30 shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm h-input-height px-input-padding-x py-input-padding-y text-input-text text-input-text-size leading-input rounded-input bg-input-bg border-input-border-color border-input-border-width placeholder:text-input-placeholder-text disabled:bg-input-disabled-bg"
+                  id=":r9r:"
+                  name="friendlyName"
+                  required=""
+                  type="text"
+                  value=""
+                />
+              </div>
+              <button
+                class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-button text-button-text-size font-button-font-weight leading-button transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0 border-button-border-width border-button-border-color bg-button-bg text-button-text shadow-button-shadow hover:border-button-hover-border-color hover:bg-button-hover-bg hover:text-button-hover-text h-button-height px-button-padding-x py-button-padding-y w-full"
+                type="submit"
+              >
+                mfa.passkey.create
+              </button>
+              <p
+                aria-hidden="true"
+                class="flex w-full leading-snug justify-center gap-2 text-sm text-muted-foreground"
+              >
+                <svg
+                  class="inline-block size-2 leading-4 fill-destructive"
+                  focusable="false"
+                  viewBox="0 0 128 128"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M110.1,16.4L75.8,56.8l0.3,1l50.6-10.2v32.2l-50.9-8.9l-0.3,1l34.7,39.1l-28.3,16.5L63.7,78.2L63,78.5l-18.5,49L17.2,111l34.1-39.8v-0.6l-50,9.2V47.6l49.3,9.9l0.3-0.6L17.2,16.7L45.5,0.5l17.8,48.7H64L82.1,0.5L110.1,16.4z"
+                  />
+                </svg>
+                 
+                form.required.fields
+              </p>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;

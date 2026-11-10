@@ -18,10 +18,21 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   keys and Universal keys share it; set `mode: 'autoExecute'` when the key has AutoExecute enabled,
   so the SDK leaves the token to the reCAPTCHA library, and `mode: 'checkbox'` for a checkbox key,
   which puts an "I'm not a robot" box in the form for the user to tick
+- `showMfa` adds a second factor step by step: a choice screen, then one screen per factor (passkey, email or
+  phone number), a code screen when needed, and a confirmation. Passkeys can be enrolled from `showMfa`; the
+  Passkey option needs the `mfaWebauthnEnabled` remote setting, which the backend must provide.
+- `data-slot="widget-mfa-add-factor"` on the rows of the factors that can be added in `showMfa`.
 - `data-slot="widget-mfa-confirmation"` on the confirmation screen of `showMfa`.
+- New i18n keys for `showMfa`: `mfa.manageFactors.title`, `mfa.factors.*`, `mfa.passkey*`, `mfa.email.*`,
+  `mfa.phoneNumber.*`, `mfa.identifierVerified`, `mfa.sendCode`, `mfa.code.*`, `mfa.verify`,
+  `mfa.factorAdded.*` and `mfa.addAnotherFactor`.
 
 ### Changed
 
+- Impact for integrators: the single-screen layout of `showMfa` is replaced by the step-by-step flow, so
+  stylesheets that target its previous markup must be reviewed.
+- The `showIntro` and `requireMfaRegistration` options of `showMfa` are deprecated: they are still accepted
+  and have no effect.
 - The password field validation no longer checks the password strength. The strength indicator shows it while the
   user types, and the server checks it on submit.
 - Passwordless, MFA registration, MFA step-up, phone number

@@ -9,6 +9,7 @@ import userEvent from '@testing-library/user-event';
 import type { Client, MFA } from '@reachfive/identity-core';
 
 import { AppError } from '../../../src/helpers/errors';
+import { colorToHSL } from '../../../src/lib/utils';
 import mfaWidget from '../../../src/widgets/mfa/mfaWidget';
 
 import type { I18nMessages } from '../../../src/contexts/i18n';
@@ -127,11 +128,12 @@ const apiClient: Client = {
 
 const renderWidget = async (
     options: Partial<Parameters<typeof mfaWidget>[0]> = {},
-    config: Partial<Config> = {}
+    config: Partial<Config> = {},
+    messages: I18nMessages = defaultI18n
 ) => {
     const widget = await mfaWidget(
         { accessToken: 'azerty', onError, onSuccess, ...options },
-        { apiClient, config: { ...defaultConfig, ...config }, defaultI18n }
+        { apiClient, config: { ...defaultConfig, ...config }, defaultI18n: messages }
     );
     return render(widget);
 };
@@ -854,5 +856,265 @@ describe('Confirmation screen', () => {
 
         await enabledGroup();
         expect(screen.queryByText('mfa.factors.add')).not.toBeInTheDocument();
+    });
+});
+
+describe('Theme', () => {
+    const styleOf = (container: HTMLElement) => container.querySelector('style')?.textContent ?? '';
+
+    test('enabled factor icons use the success colour of the theme, green by default', async () => {
+        listMfaCredentials.mockResolvedValue(credentialsList(emailCredential));
+        const { container } = await renderWidget();
+
+        const row = within(await enabledGroup()).getByRole('listitem');
+        // The icon tile carries the tone; Testing Library has no query for it.
+        // eslint-disable-next-line testing-library/no-node-access
+        expect(row.querySelector('svg')?.parentElement).toHaveClass(
+            'text-success',
+            'bg-success/10'
+        );
+        expect(styleOf(container)).toContain(`--success:${colorToHSL('#229955')}`);
+    });
+
+    test('a custom success colour applies to the enabled factor icons, not the primary colour', async () => {
+        listMfaCredentials.mockResolvedValue(credentialsList(emailCredential));
+        const { container } = await renderWidget({
+            theme: { primaryColor: '#d0021b', successColor: '#274890' },
+        });
+
+        await enabledGroup();
+        expect(styleOf(container)).toContain(`--success:${colorToHSL('#274890')}`);
+        expect(styleOf(container)).toContain(`--primary:${colorToHSL('#d0021b')}`);
+    });
+});
+
+describe('Labels', () => {
+    /** English text of every new key, as in the mockup. */
+    const ENGLISH: Record<string, string> = {
+        'mfa.manageFactors.title': 'Manage second factors',
+        'mfa.factors.enabled': 'Enabled',
+        'mfa.factors.add': 'Add a factor',
+        'mfa.factors.recommended': 'Recommended',
+        'mfa.passkey': 'Passkey',
+        'mfa.passkey.description': 'Fingerprint, face or screen lock',
+        'mfa.email.description': 'Receive a code by email',
+        'mfa.phoneNumber.description': 'Receive a code by SMS',
+        'mfa.passkey.deviceName': 'Device name',
+        'mfa.passkey.create': 'Create passkey',
+        'mfa.email.intro': 'We will send you a verification code by email.',
+        'mfa.phoneNumber.intro': 'We will send you a verification code by SMS.',
+        'mfa.identifierVerified': '{identifier} is already verified.',
+        'mfa.sendCode': 'Send code',
+        'mfa.code.title': 'Enter the code',
+        'mfa.code.sentTo': 'Enter the code sent to {identifier}.',
+        'mfa.verify': 'Verify',
+        'mfa.factorAdded.passkey': 'Passkey added',
+        'mfa.factorAdded.email': 'Email added',
+        'mfa.factorAdded.phoneNumber': 'Phone number added',
+        'mfa.factorAdded.description': '{identifier} can now be used as a second factor.',
+        'mfa.addAnotherFactor': 'Add another factor',
+    };
+    const marked = (text: string) => `«${text}»`;
+    const messages: I18nMessages = {
+        ...defaultI18n,
+        ...Object.fromEntries(Object.entries(ENGLISH).map(([key, text]) => [key, marked(text)])),
+    };
+
+    const escapeRegExp = (text: string) => text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+    /** The text on screen, without the injected stylesheet. */
+    const visibleText = () => {
+        const body = document.body.cloneNode(true) as HTMLElement;
+        body.querySelectorAll('style').forEach(style => style.remove());
+        return body.textContent ?? '';
+    };
+
+    /** Every key is shown translated, and the English text appears nowhere unmarked. */
+    const expectTranslated = (keys: string[]) => {
+        const text = visibleText();
+        keys.forEach(key => {
+            const pattern = ENGLISH[key].split('{identifier}').map(escapeRegExp).join('[^»]*');
+            expect(text).toMatch(new RegExp(`«${pattern}»`));
+        });
+        const unmarked = text.replace(/«[^»]*»/g, '');
+        Object.values(ENGLISH).forEach(english => {
+            english
+                .split('{identifier}')
+                .map(part => part.trim())
+                .filter(part => part.length > 1)
+                .forEach(part => expect(unmarked).not.toContain(part));
+        });
+    };
+
+    const open = async (name: string | RegExp) => {
+        const user = userEvent.setup();
+        await user.click(await screen.findByRole('button', { name }));
+        return user;
+    };
+
+    test('the choice screen', async () => {
+        listMfaCredentials.mockResolvedValue(credentialsList(emailCredential));
+        await renderWidget({}, {}, messages);
+        await screen.findByRole('list', { name: '«Add a factor»' });
+
+        expectTranslated([
+            'mfa.manageFactors.title',
+            'mfa.factors.enabled',
+            'mfa.factors.add',
+            'mfa.factors.recommended',
+            'mfa.passkey',
+            'mfa.passkey.description',
+            'mfa.phoneNumber.description',
+        ]);
+    });
+
+    test('the email row description', async () => {
+        listMfaCredentials.mockResolvedValue(credentialsList());
+        await renderWidget({}, {}, messages);
+        await screen.findByRole('list', { name: '«Add a factor»' });
+
+        expectTranslated(['mfa.email.description']);
+    });
+
+    test('the passkey screen', async () => {
+        listMfaCredentials.mockResolvedValue(credentialsList());
+        await renderWidget({}, {}, messages);
+        await open(/^«Passkey»/);
+        await screen.findByLabelText('«Device name»');
+
+        expectTranslated(['mfa.passkey', 'mfa.passkey.deviceName', 'mfa.passkey.create']);
+    });
+
+    test('the email screens', async () => {
+        listMfaCredentials.mockResolvedValue(credentialsList());
+        // @ts-expect-error partial Profile
+        getUser.mockResolvedValue({ ...profile, emailVerified: false });
+        await renderWidget({}, {}, messages);
+        await open('Email');
+        await screen.findByText(/«We will send/);
+        expectTranslated(['mfa.email.intro', 'mfa.sendCode']);
+    });
+
+    test('the already verified identifier', async () => {
+        listMfaCredentials.mockResolvedValue(credentialsList());
+        await renderWidget({}, {}, messages);
+        await open('Email');
+        await screen.findByText(/is already verified/);
+
+        expectTranslated(['mfa.identifierVerified']);
+    });
+
+    test('the phone number screen', async () => {
+        listMfaCredentials.mockResolvedValue(credentialsList());
+        await renderWidget({}, {}, messages);
+        await open('Phone number');
+        await screen.findByRole('textbox', { name: 'phoneNumber' });
+
+        expectTranslated(['mfa.phoneNumber.intro', 'mfa.sendCode']);
+    });
+
+    test('the code screen', async () => {
+        listMfaCredentials.mockResolvedValue(credentialsList());
+        startMfaPhoneNumberRegistration.mockResolvedValue({ status: 'sms_sent' });
+        await renderWidget({ action: 'mfa_registration' }, {}, messages);
+        const user = await open('Phone number');
+        await user.type(
+            await screen.findByRole('textbox', { name: 'phoneNumber' }),
+            '+33123456778'
+        );
+        await user.click(screen.getByRole('button', { name: '«Send code»' }));
+        await screen.findByText(/«Enter the code»/);
+
+        expectTranslated(['mfa.code.title', 'mfa.code.sentTo', 'mfa.verify']);
+    });
+
+    test('the confirmation screens', async () => {
+        listMfaCredentials.mockResolvedValue(credentialsList());
+        startMfaEmailRegistration.mockResolvedValue({
+            status: 'enabled',
+            credential: emailCredential,
+        });
+        await renderWidget({}, {}, messages);
+        await open('Email');
+        const user = userEvent.setup();
+        await user.click(await screen.findByRole('button', { name: 'add' }));
+        await screen.findByText('«Email added»');
+        expectTranslated([
+            'mfa.factorAdded.email',
+            'mfa.factorAdded.description',
+            'mfa.addAnotherFactor',
+        ]);
+    });
+
+    test('the passkey and phone number confirmation titles', async () => {
+        listMfaCredentials.mockResolvedValue(credentialsList());
+        addNewWebAuthnDevice.mockResolvedValue(undefined as never);
+        await renderWidget({}, {}, messages);
+        const user = await open(/^«Passkey»/);
+        await user.type(await screen.findByLabelText('«Device name»'), 'iPhone');
+        await user.click(screen.getByRole('button', { name: '«Create passkey»' }));
+        await screen.findByText('«Passkey added»');
+        expectTranslated(['mfa.factorAdded.passkey']);
+    });
+});
+
+describe('Snapshots', () => {
+    test('the choice screen', async () => {
+        listMfaCredentials.mockResolvedValue(credentialsList(emailCredential));
+        const { container } = await renderWidget();
+        await enabledGroup();
+
+        expect(container).toMatchSnapshot();
+    });
+
+    test('the passkey screen', async () => {
+        listMfaCredentials.mockResolvedValue(credentialsList());
+        const { container } = await renderWidget();
+        const user = userEvent.setup();
+        await user.click(await screen.findByRole('button', { name: /^mfa\.passkey/ }));
+        await screen.findByLabelText('mfa.passkey.deviceName');
+
+        expect(container).toMatchSnapshot();
+    });
+
+    test('the email screen', async () => {
+        listMfaCredentials.mockResolvedValue(credentialsList());
+        // @ts-expect-error partial Profile
+        getUser.mockResolvedValue({ ...profile, emailVerified: false });
+        const { container } = await renderWidget();
+        const user = userEvent.setup();
+        await user.click(await screen.findByRole('button', { name: 'Email' }));
+        await screen.findByText('mfa.email.intro');
+
+        expect(container).toMatchSnapshot();
+    });
+
+    test('the code screen', async () => {
+        listMfaCredentials.mockResolvedValue(credentialsList());
+        startMfaPhoneNumberRegistration.mockResolvedValue({ status: 'sms_sent' });
+        const { container } = await renderWidget({ action: 'mfa_registration' });
+        const user = userEvent.setup();
+        await user.click(await screen.findByRole('button', { name: 'Phone number' }));
+        await user.type(
+            await screen.findByRole('textbox', { name: 'phoneNumber' }),
+            '+33123456778'
+        );
+        await user.click(screen.getByRole('button', { name: 'mfa.sendCode' }));
+        await screen.findByText('mfa.code.title');
+
+        expect(container).toMatchSnapshot();
+    });
+
+    test('the confirmation screen', async () => {
+        listMfaCredentials.mockResolvedValue(credentialsList());
+        addNewWebAuthnDevice.mockResolvedValue(undefined as never);
+        const { container } = await renderWidget();
+        const user = userEvent.setup();
+        await user.click(await screen.findByRole('button', { name: /^mfa\.passkey/ }));
+        await user.type(await screen.findByLabelText('mfa.passkey.deviceName'), 'iPhone');
+        await user.click(screen.getByRole('button', { name: 'mfa.passkey.create' }));
+        await screen.findByText('mfa.factorAdded.passkey');
+
+        expect(container).toMatchSnapshot();
     });
 });
