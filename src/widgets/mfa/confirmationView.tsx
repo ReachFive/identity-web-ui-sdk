@@ -10,6 +10,8 @@ import type { Enrollment } from '@/widgets/mfa/mfaWidget';
 
 interface ConfirmationViewProps {
     enrollment: Enrollment;
+    /** The factors are reloading before the choice screen shows again. */
+    addingAnother: boolean;
     onAddAnother: () => void;
 }
 
@@ -30,7 +32,11 @@ const identifierOf = (enrollment: Enrollment): string =>
  * way on is to add another one. Its heading takes focus, so keyboard and screen-reader users land
  * on the confirmation.
  */
-export function ConfirmationView({ enrollment, onAddAnother }: ConfirmationViewProps) {
+export function ConfirmationView({
+    enrollment,
+    addingAnother,
+    onAddAnother,
+}: ConfirmationViewProps) {
     const i18n = useI18n();
     const heading = useRef<HTMLDivElement>(null);
 
@@ -60,7 +66,13 @@ export function ConfirmationView({ enrollment, onAddAnother }: ConfirmationViewP
                     {i18n('mfa.factorAdded.description', { identifier: identifierOf(enrollment) })}
                 </p>
             </div>
-            <Button type="button" variant="outline" onClick={onAddAnother}>
+            <Button
+                type="button"
+                variant="outline"
+                disabled={addingAnother}
+                aria-busy={addingAnother}
+                onClick={onAddAnother}
+            >
                 {i18n('mfa.addAnotherFactor')}
             </Button>
         </div>

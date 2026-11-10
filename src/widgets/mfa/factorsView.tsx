@@ -53,6 +53,8 @@ interface FactorsViewProps {
     accessToken: string;
     choices: FactorChoices;
     removable: boolean;
+    /** The title, focused by the widget when it comes back to this screen with no row to focus. */
+    titleRef: RefObject<HTMLDivElement>;
     rowRefs: FactorRowRefs;
     onOpenPasskeys: () => void;
     /** The Passkeys view is loading its devices. */
@@ -70,6 +72,7 @@ export function FactorsView({
     accessToken,
     choices: { enabled, passkeyCount, addable },
     removable,
+    titleRef,
     rowRefs,
     onOpenPasskeys,
     openingPasskeys,
@@ -98,7 +101,15 @@ export function FactorsView({
 
     return (
         <div className="space-y-4">
-            <Heading className="mb-0">{i18n('mfa.manageFactors.title')}</Heading>
+            <Heading
+                ref={titleRef}
+                role="heading"
+                aria-level={2}
+                tabIndex={-1}
+                className="mb-0 outline-none"
+            >
+                {i18n('mfa.manageFactors.title')}
+            </Heading>
             {hasEnabled && (
                 <FactorGroup title={i18n('mfa.factors.enabled')}>
                     <MfaCredentialRows

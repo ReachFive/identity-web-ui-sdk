@@ -58,13 +58,16 @@ describe('useViewNavigation', () => {
     });
 
     function Views({ removeOpener = false }: { removeOpener?: boolean }) {
-        const { view, goTo, back } = useViewNavigation<View>('list');
+        const { view, goTo, back, restart } = useViewNavigation<View>('list');
         const openerRef = useRef<HTMLButtonElement>(null);
+        const firstRef = useRef<HTMLButtonElement>(null);
 
         // Keyed by view, like a widget's views: nothing is reused from one view to the next.
         return view === 'list' ? (
             <div key="list">
-                <button type="button">First</button>
+                <button ref={firstRef} type="button">
+                    First
+                </button>
                 {!removeOpener && (
                     <button
                         ref={openerRef}
@@ -79,6 +82,9 @@ describe('useViewNavigation', () => {
             <div key="detail">
                 <button type="button" onClick={back}>
                     Back
+                </button>
+                <button type="button" onClick={() => restart({ focus: firstRef })}>
+                    Restart
                 </button>
             </div>
         );
@@ -103,6 +109,16 @@ describe('useViewNavigation', () => {
         await user.click(screen.getByRole('button', { name: 'Back' }));
 
         expect(screen.getByRole('button', { name: 'First' })).not.toHaveFocus();
+    });
+
+    test('restart gives focus to the element given as focus, once rendered again', async () => {
+        const user = userEvent.setup();
+        render(<Views />);
+
+        await user.click(screen.getByRole('button', { name: 'Open' }));
+        await user.click(screen.getByRole('button', { name: 'Restart' }));
+
+        expect(screen.getByRole('button', { name: 'First' })).toHaveFocus();
     });
 });
 

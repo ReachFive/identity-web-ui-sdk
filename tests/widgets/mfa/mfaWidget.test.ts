@@ -155,7 +155,9 @@ describe('Factor choice screen', () => {
         listMfaCredentials.mockResolvedValue(credentialsList());
         await renderWidget();
 
-        expect(await screen.findByText('mfa.manageFactors.title')).toBeInTheDocument();
+        const title = await screen.findByRole('heading', { name: 'mfa.manageFactors.title' });
+        expect(title).toHaveAttribute('aria-level', '2');
+        expect(title).not.toHaveFocus();
         expect(listMfaCredentials).toHaveBeenCalledWith('azerty');
         expect(getUser).toHaveBeenCalledWith({
             accessToken: 'azerty',
@@ -256,13 +258,17 @@ describe('Navigation', () => {
         const user = userEvent.setup();
         await user.click(await screen.findByRole('button', { name: 'mfaList.passkeys' }));
         const back = await screen.findByRole('button', { name: 'mfaList.back' });
-        expect(screen.getByText('webauthn.registredDevices.list')).toBeInTheDocument();
+        expect(
+            screen.getByRole('heading', { name: 'webauthn.registredDevices.list' })
+        ).toHaveAttribute('aria-level', '2');
 
         await user.click(back);
 
         const passkeys = await screen.findByRole('button', { name: 'mfaList.passkeys' });
         await waitFor(() => expect(passkeys).toHaveFocus());
-        expect(screen.getByText('mfa.manageFactors.title')).toBeInTheDocument();
+        expect(
+            screen.getByRole('heading', { name: 'mfa.manageFactors.title' })
+        ).toBeInTheDocument();
     });
 
     test('opens the enrollment screen of the selected factor', async () => {
@@ -272,8 +278,13 @@ describe('Navigation', () => {
         const user = userEvent.setup();
         await user.click(await screen.findByRole('button', { name: 'Phone number' }));
 
-        expect(await screen.findByText('Phone number')).toBeInTheDocument();
-        expect(screen.queryByText('mfa.manageFactors.title')).not.toBeInTheDocument();
+        expect(await screen.findByRole('heading', { name: 'Phone number' })).toHaveAttribute(
+            'aria-level',
+            '2'
+        );
+        expect(
+            screen.queryByRole('heading', { name: 'mfa.manageFactors.title' })
+        ).not.toBeInTheDocument();
         const back = screen.getByRole('button', { name: 'mfaList.back' });
         await waitFor(() => expect(back).toHaveFocus());
 
@@ -453,7 +464,7 @@ describe('Email enrollment', () => {
         expect(screen.queryByRole('checkbox')).not.toBeInTheDocument();
         await user.click(screen.getByRole('button', { name: 'mfa.sendCode' }));
 
-        expect(await screen.findByText('mfa.code.title')).toBeInTheDocument();
+        expect(await screen.findByRole('heading', { name: 'mfa.code.title' })).toBeInTheDocument();
         expect(startMfaEmailRegistration).toHaveBeenCalledTimes(1);
         expect(startMfaEmailRegistration.mock.calls[0][0]).toStrictEqual({
             accessToken: 'azerty',
@@ -474,7 +485,9 @@ describe('Email enrollment', () => {
         await user.click(screen.getByRole('checkbox', { name: 'mfa.stepUp.trustDevice' }));
         await user.click(screen.getByRole('button', { name: 'add' }));
 
-        expect(await screen.findByText('mfa.factorAdded.email')).toBeInTheDocument();
+        expect(
+            await screen.findByRole('heading', { name: 'mfa.factorAdded.email' })
+        ).toBeInTheDocument();
         expect(startMfaEmailRegistration).toHaveBeenCalledWith({
             accessToken: 'azerty',
             trustDevice: true,
@@ -502,7 +515,9 @@ describe('Email enrollment', () => {
 
         await user.click(screen.getByRole('button', { name: 'mfa.sendCode' }));
 
-        expect(await screen.findByText('mfa.factorAdded.email')).toBeInTheDocument();
+        expect(
+            await screen.findByRole('heading', { name: 'mfa.factorAdded.email' })
+        ).toBeInTheDocument();
     });
 
     test('a failed start stays on the screen and calls onError once', async () => {
@@ -528,7 +543,9 @@ describe('Email enrollment', () => {
 
         await user.click(screen.getByRole('button', { name: 'mfaList.back' }));
 
-        expect(await screen.findByText('mfa.manageFactors.title')).toBeInTheDocument();
+        expect(
+            await screen.findByRole('heading', { name: 'mfa.manageFactors.title' })
+        ).toBeInTheDocument();
     });
 });
 
@@ -559,7 +576,7 @@ describe('Phone number enrollment', () => {
         expect(screen.queryByRole('checkbox')).not.toBeInTheDocument();
         await user.click(screen.getByRole('button', { name: 'mfa.sendCode' }));
 
-        expect(await screen.findByText('mfa.code.title')).toBeInTheDocument();
+        expect(await screen.findByRole('heading', { name: 'mfa.code.title' })).toBeInTheDocument();
         expect(startMfaPhoneNumberRegistration).toHaveBeenCalledTimes(1);
         expect(startMfaPhoneNumberRegistration.mock.calls[0][0]).toStrictEqual({
             accessToken: 'azerty',
@@ -620,7 +637,7 @@ describe('Phone number enrollment', () => {
         await user.type(screen.getByRole('textbox', { name: 'phoneNumber' }), '+33612345678');
         await user.click(await screen.findByRole('button', { name: 'add' }));
 
-        expect(await screen.findByText('mfa.code.title')).toBeInTheDocument();
+        expect(await screen.findByRole('heading', { name: 'mfa.code.title' })).toBeInTheDocument();
     });
 });
 
@@ -647,7 +664,7 @@ describe('Code screen', () => {
             );
         }
         await user.click(await screen.findByRole('button', { name: 'mfa.sendCode' }));
-        await screen.findByText('mfa.code.title');
+        await screen.findByRole('heading', { name: 'mfa.code.title' });
         return user;
     };
 
@@ -669,7 +686,9 @@ describe('Code screen', () => {
         // the last digit submits the code
         await user.type(screen.getByRole('textbox', { name: 'verificationCode' }), '123456');
 
-        expect(await screen.findByText('mfa.factorAdded.phoneNumber')).toBeInTheDocument();
+        expect(
+            await screen.findByRole('heading', { name: 'mfa.factorAdded.phoneNumber' })
+        ).toBeInTheDocument();
         expect(verifyMfaPhoneNumberRegistration).toHaveBeenCalledTimes(1);
         expect(verifyMfaPhoneNumberRegistration.mock.calls[0][0]).toStrictEqual({
             accessToken: 'azerty',
@@ -687,7 +706,9 @@ describe('Code screen', () => {
         // the last digit submits the code
         await user.type(screen.getByRole('textbox', { name: 'verificationCode' }), '123456');
 
-        expect(await screen.findByText('mfa.factorAdded.email')).toBeInTheDocument();
+        expect(
+            await screen.findByRole('heading', { name: 'mfa.factorAdded.email' })
+        ).toBeInTheDocument();
         expect(successEvents('mfa_email_verify_registration')).toHaveLength(1);
     });
 
@@ -699,7 +720,9 @@ describe('Code screen', () => {
         await user.type(screen.getByRole('textbox', { name: 'verificationCode' }), '123456');
         await user.click(screen.getByRole('button', { name: 'mfa.verify' }));
 
-        expect(await screen.findByText('mfa.factorAdded.phoneNumber')).toBeInTheDocument();
+        expect(
+            await screen.findByRole('heading', { name: 'mfa.factorAdded.phoneNumber' })
+        ).toBeInTheDocument();
         expect(verifyMfaPhoneNumberRegistration.mock.calls[0][0]).toStrictEqual({
             accessToken: 'azerty',
             verificationCode: '123456',
@@ -717,7 +740,9 @@ describe('Code screen', () => {
         await user.click(screen.getByRole('checkbox', { name: 'mfa.stepUp.trustDevice' }));
         await user.click(screen.getByRole('button', { name: 'mfa.verify' }));
 
-        expect(await screen.findByText('mfa.factorAdded.phoneNumber')).toBeInTheDocument();
+        expect(
+            await screen.findByRole('heading', { name: 'mfa.factorAdded.phoneNumber' })
+        ).toBeInTheDocument();
         expect(verifyMfaPhoneNumberRegistration.mock.calls[0][0]).toStrictEqual({
             accessToken: 'azerty',
             verificationCode: '123456',
@@ -804,7 +829,7 @@ describe('Confirmation screen', () => {
         await renderWidget();
         await enrollPasskey();
 
-        const heading = await screen.findByText('mfa.factorAdded.passkey');
+        const heading = await screen.findByRole('heading', { name: 'mfa.factorAdded.passkey' });
         expect(heading).toHaveFocus();
         expect(screen.getByText('You can now use “iPhone de Marie”')).toBeInTheDocument();
         expect(screen.queryByRole('button', { name: 'mfaList.back' })).not.toBeInTheDocument();
@@ -822,10 +847,12 @@ describe('Confirmation screen', () => {
             '+33123456778'
         );
         await user.click(await screen.findByRole('button', { name: 'mfa.sendCode' }));
-        await screen.findByText('mfa.code.title');
+        await screen.findByRole('heading', { name: 'mfa.code.title' });
         await user.type(screen.getByRole('textbox', { name: 'verificationCode' }), '123456');
 
-        expect(await screen.findByText('mfa.factorAdded.phoneNumber')).toBeInTheDocument();
+        expect(
+            await screen.findByRole('heading', { name: 'mfa.factorAdded.phoneNumber' })
+        ).toBeInTheDocument();
         expect(screen.getByText('You can now use +33123456778')).toBeInTheDocument();
     });
 
@@ -842,6 +869,44 @@ describe('Confirmation screen', () => {
             within(enabled).getByRole('button', { name: 'mfaList.passkeys' })
         ).toBeInTheDocument();
         expect(listMfaCredentials.mock.calls.length).toBeGreaterThanOrEqual(2);
+        await waitFor(() =>
+            expect(screen.getByRole('heading', { name: 'mfa.manageFactors.title' })).toHaveFocus()
+        );
+    });
+
+    test('refetches the profile, so the next factor sees the identifiers verified meanwhile', async () => {
+        listMfaCredentials.mockResolvedValue(credentialsList());
+        await renderWidget();
+        const user = await enrollPasskey();
+        expect(getUser).toHaveBeenCalledTimes(1);
+
+        await user.click(await screen.findByRole('button', { name: 'mfa.addAnotherFactor' }));
+
+        await screen.findByRole('heading', { name: 'mfa.manageFactors.title' });
+        expect(getUser).toHaveBeenCalledTimes(2);
+    });
+
+    test('"mfa.addAnotherFactor" is busy while the factors reload, so a second click does nothing', async () => {
+        listMfaCredentials.mockResolvedValue(credentialsList());
+        await renderWidget();
+        const user = await enrollPasskey();
+        const addAnother = await screen.findByRole('button', { name: 'mfa.addAnotherFactor' });
+        const loadsBefore = listMfaCredentials.mock.calls.length;
+        let reload: (list: Awaited<ReturnType<Client['listMfaCredentials']>>) => void = () => {};
+        listMfaCredentials.mockReturnValueOnce(
+            new Promise(resolve => {
+                reload = resolve;
+            })
+        );
+
+        await user.click(addAnother);
+        expect(addAnother).toBeDisabled();
+        expect(addAnother).toHaveAttribute('aria-busy', 'true');
+        await user.click(addAnother);
+        reload(credentialsList(passkeyCredential('a')));
+
+        await enabledGroup();
+        expect(listMfaCredentials).toHaveBeenCalledTimes(loadsBefore + 1);
     });
 
     test('after the last addable factor, the choice screen has no "Add a factor" group', async () => {
@@ -1023,7 +1088,7 @@ describe('Labels', () => {
             '+33123456778'
         );
         await user.click(screen.getByRole('button', { name: '«Send code»' }));
-        await screen.findByText(/«Enter the code»/);
+        await screen.findByRole('heading', { name: '«Enter the code»' });
 
         expectTranslated(['mfa.code.title', 'mfa.code.sentTo', 'mfa.verify']);
     });
@@ -1038,7 +1103,7 @@ describe('Labels', () => {
         await open('Email');
         const user = userEvent.setup();
         await user.click(await screen.findByRole('button', { name: 'add' }));
-        await screen.findByText('«Email added»');
+        await screen.findByRole('heading', { name: '«Email added»' });
         expectTranslated([
             'mfa.factorAdded.email',
             'mfa.factorAdded.description',
@@ -1046,15 +1111,33 @@ describe('Labels', () => {
         ]);
     });
 
-    test('the passkey and phone number confirmation titles', async () => {
+    test('the passkey confirmation title', async () => {
         listMfaCredentials.mockResolvedValue(credentialsList());
         addNewWebAuthnDevice.mockResolvedValue(undefined as never);
         await renderWidget({}, {}, messages);
         const user = await open(/^«Passkey»/);
         await user.type(await screen.findByLabelText('«Device name»'), 'iPhone');
         await user.click(screen.getByRole('button', { name: '«Create passkey»' }));
-        await screen.findByText('«Passkey added»');
+        await screen.findByRole('heading', { name: '«Passkey added»' });
         expectTranslated(['mfa.factorAdded.passkey']);
+    });
+
+    test('the phone number confirmation title', async () => {
+        listMfaCredentials.mockResolvedValue(credentialsList());
+        startMfaPhoneNumberRegistration.mockResolvedValue({ status: 'sms_sent' });
+        verifyMfaPhoneNumberRegistration.mockResolvedValue();
+        await renderWidget({ action: 'mfa_registration' }, {}, messages);
+        const user = await open('Phone number');
+        await user.type(
+            await screen.findByRole('textbox', { name: 'phoneNumber' }),
+            '+33123456778'
+        );
+        await user.click(screen.getByRole('button', { name: '«Send code»' }));
+        await screen.findByRole('heading', { name: '«Enter the code»' });
+        await user.type(screen.getByRole('textbox', { name: 'verificationCode' }), '123456');
+        await screen.findByRole('heading', { name: '«Phone number added»' });
+
+        expectTranslated(['mfa.factorAdded.phoneNumber']);
     });
 });
 
@@ -1100,7 +1183,7 @@ describe('Snapshots', () => {
             '+33123456778'
         );
         await user.click(screen.getByRole('button', { name: 'mfa.sendCode' }));
-        await screen.findByText('mfa.code.title');
+        await screen.findByRole('heading', { name: 'mfa.code.title' });
 
         expect(container).toMatchSnapshot();
     });
@@ -1113,7 +1196,7 @@ describe('Snapshots', () => {
         await user.click(await screen.findByRole('button', { name: /^mfa\.passkey/ }));
         await user.type(await screen.findByLabelText('mfa.passkey.deviceName'), 'iPhone');
         await user.click(screen.getByRole('button', { name: 'mfa.passkey.create' }));
-        await screen.findByText('mfa.factorAdded.passkey');
+        await screen.findByRole('heading', { name: 'mfa.factorAdded.passkey' });
 
         expect(container).toMatchSnapshot();
     });

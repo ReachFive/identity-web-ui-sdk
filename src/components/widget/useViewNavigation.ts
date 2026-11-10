@@ -12,6 +12,14 @@ export interface GoToOptions {
     returnFocus?: RefObject<HTMLElement>;
 }
 
+export interface RestartOptions {
+    /**
+     * The element to focus once the initial view is rendered again, since the control that
+     * restarted is gone. A ref, not an element, for the same reason as `returnFocus`.
+     */
+    focus?: RefObject<HTMLElement>;
+}
+
 interface Entry<V extends string> {
     view: V;
     returnFocus?: RefObject<HTMLElement>;
@@ -30,8 +38,11 @@ export interface ViewNavigation<V extends string> {
     canGoBack: boolean;
     goTo: (view: V, options?: GoToOptions) => void;
     back: () => void;
-    /** Back to the initial view from any depth, in one move and with no focus given back. */
-    restart: () => void;
+    /**
+     * Back to the initial view from any depth, in one move. No focus is given back to an opener;
+     * `focus` names the element to focus instead.
+     */
+    restart: (options?: RestartOptions) => void;
 }
 
 /**
@@ -73,8 +84,8 @@ export function useViewNavigation<V extends string>(initialView: V): ViewNavigat
             focusOnReturn.current = current.returnFocus ?? null;
             setState({ history: history.slice(0, -1), direction: 'back' });
         },
-        restart: () => {
-            focusOnReturn.current = null;
+        restart: ({ focus } = {}) => {
+            focusOnReturn.current = focus ?? null;
             setState({ history: [{ view: firstView.current }], direction: 'back' });
         },
     };

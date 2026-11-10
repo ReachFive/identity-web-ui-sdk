@@ -11,11 +11,7 @@ import { FactorsView, type FactorRowRefs } from '@/widgets/mfa/factorsView';
 import { IdentifierEnrollmentView } from '@/widgets/mfa/identifierEnrollmentView';
 import { PasskeyEnrollmentView } from '@/widgets/mfa/passkeyEnrollmentView';
 import { PasskeysView } from '@/widgets/mfa/passkeysView';
-import {
-    useInvalidateMfaCredentials,
-    useMfaCredentials,
-    useMfaProfile,
-} from '@/widgets/mfa/queries';
+import { useMfaCredentialsAndProfile, useRefreshMfaFactors } from '@/widgets/mfa/queries';
 
 import type { OnError, OnSuccess } from '@/types';
 
@@ -105,14 +101,23 @@ const Mfa = ({
     onError = () => {},
 }: MfaCredentialsWidgetProps) => {
     const config = useConfig();
-    const {
-        data: { credentials },
-    } = useMfaCredentials(accessToken);
-    const { data: profile } = useMfaProfile(accessToken);
+    const { credentials, profile } = useMfaCredentialsAndProfile(accessToken);
     const { view, direction, pending, goTo, back, restart } = useViewNavigation<MfaView>('factors');
-    const invalidateCredentials = useInvalidateMfaCredentials(onError);
+    const refreshFactors = useRefreshMfaFactors(onError);
     const [enrollment, setEnrollment] = useState<Enrollment | null>(null);
+    const [addingAnother, setAddingAnother] = useState(false);
     const rowRefs = useFactorRowRefs();
+    const factorsTitle = useRef<HTMLDivElement>(null);
+
+    // The button that restarts is gone with its view: the focus goes to the choice screen title.
+    const addAnother = () => {
+        if (addingAnother) return;
+        setAddingAnother(true);
+        void refreshFactors().then(() => {
+            setAddingAnother(false);
+            restart({ focus: factorsTitle });
+        });
+    };
 
     const viewProps: MfaViewProps = {
         accessToken,
@@ -139,6 +144,7 @@ const Mfa = ({
                         accessToken={accessToken}
                         choices={factorChoices(config, credentials, profile)}
                         removable={showRemoveMfaCredentials}
+                        titleRef={factorsTitle}
                         rowRefs={rowRefs}
                         onOpenPasskeys={() => goTo('passkeys', { returnFocus: rowRefs.passkeys })}
                         openingPasskeys={pending}
@@ -174,7 +180,8 @@ const Mfa = ({
                 return enrollment ? (
                     <ConfirmationView
                         enrollment={enrollment}
-                        onAddAnother={() => void invalidateCredentials().then(restart)}
+                        addingAnother={addingAnother}
+                        onAddAnother={addAnother}
                     />
                 ) : null;
         }

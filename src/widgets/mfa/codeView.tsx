@@ -75,7 +75,18 @@ export function CodeView({
             { key: 'verification_code', onResend: resend, autoSubmit: !showTrustDevice },
             ...(showTrustDevice ? [TRUST_DEVICE_FIELD] : []),
         ],
-        [showTrustDevice, accessToken, action, factor, identifier, enrolledTrustDevice]
+        // every value `resend` reads, so the field never calls a stale one
+        [
+            showTrustDevice,
+            client,
+            accessToken,
+            action,
+            factor,
+            identifier,
+            enrolledTrustDevice,
+            onSuccess,
+            onError,
+        ]
     );
 
     const verify = async ({ verificationCode, trustDevice: checked }: CodeFormData) => {

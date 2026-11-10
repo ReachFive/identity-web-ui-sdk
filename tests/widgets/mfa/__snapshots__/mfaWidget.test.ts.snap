@@ -17,8 +17,11 @@ exports[`Snapshots the choice screen 1`] = `
           class="space-y-4"
         >
           <div
-            class="text-center font-heading-font-weight text-heading-text-size text-heading-text mb-0"
+            aria-level="2"
+            class="text-center font-heading-font-weight text-heading-text-size text-heading-text mb-0 outline-none"
             data-slot="widget-heading"
+            role="heading"
+            tabindex="-1"
           >
             mfa.manageFactors.title
           </div>
@@ -27,12 +30,12 @@ exports[`Snapshots the choice screen 1`] = `
           >
             <div
               class="text-xs font-semibold uppercase tracking-wide text-muted-foreground"
-              id=":r9j:"
+              id=":rad:"
             >
               mfa.factors.enabled
             </div>
             <div
-              aria-labelledby=":r9j:"
+              aria-labelledby=":rad:"
               class="group/item-group flex w-full flex-col has-data-[size=sm]:gap-2.5 has-data-[size=xs]:gap-2 gap-2"
               data-slot="item-group"
               role="list"
@@ -157,12 +160,12 @@ exports[`Snapshots the choice screen 1`] = `
           >
             <div
               class="text-xs font-semibold uppercase tracking-wide text-muted-foreground"
-              id=":r9k:"
+              id=":rae:"
             >
               mfa.factors.add
             </div>
             <div
-              aria-labelledby=":r9k:"
+              aria-labelledby=":rae:"
               class="group/item-group flex w-full flex-col has-data-[size=sm]:gap-2.5 has-data-[size=xs]:gap-2 gap-2"
               data-slot="item-group"
               role="list"
@@ -230,7 +233,7 @@ exports[`Snapshots the choice screen 1`] = `
                     data-slot="item-title"
                   >
                     <button
-                      aria-describedby=":r9l:"
+                      aria-describedby=":raf:"
                       class="text-left outline-none after:absolute after:inset-0 after:rounded"
                       type="button"
                     >
@@ -246,7 +249,7 @@ exports[`Snapshots the choice screen 1`] = `
                   <p
                     class="m-0 text-muted-foreground line-clamp-2 text-balance text-sm font-normal leading-normal [&>a:hover]:text-primary [&>a]:underline [&>a]:underline-offset-4"
                     data-slot="item-description"
-                    id=":r9l:"
+                    id=":raf:"
                   >
                     mfa.passkey.description
                   </p>
@@ -321,7 +324,7 @@ exports[`Snapshots the choice screen 1`] = `
                     data-slot="item-title"
                   >
                     <button
-                      aria-describedby=":r9m:"
+                      aria-describedby=":rag:"
                       class="text-left outline-none after:absolute after:inset-0 after:rounded"
                       type="button"
                     >
@@ -331,7 +334,7 @@ exports[`Snapshots the choice screen 1`] = `
                   <p
                     class="m-0 text-muted-foreground line-clamp-2 text-balance text-sm font-normal leading-normal [&>a:hover]:text-primary [&>a]:underline [&>a]:underline-offset-4"
                     data-slot="item-description"
-                    id=":r9m:"
+                    id=":rag:"
                   >
                     mfa.phoneNumber.description
                   </p>
@@ -416,8 +419,10 @@ exports[`Snapshots the code screen 1`] = `
               </svg>
             </button>
             <div
+              aria-level="2"
               class="text-center font-heading-font-weight text-heading-text-size text-heading-text mb-0"
               data-slot="widget-heading"
+              role="heading"
             >
               mfa.code.title
             </div>
@@ -445,7 +450,7 @@ exports[`Snapshots the code screen 1`] = `
                 <label
                   class="text-sm font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70 group/field-label peer/field-label flex w-fit gap-2 leading-snug group-data-[disabled=true]/field:opacity-50 has-[>[data-slot=field]]:w-full has-[>[data-slot=field]]:flex-col has-[>[data-slot=field]]:rounded-md has-[>[data-slot=field]]:border [&>[data-slot=field]]:p-4 has-data-[state=checked]:bg-primary/5 has-data-[state=checked]:border-primary dark:has-data-[state=checked]:bg-primary/10 sr-only"
                   data-slot="field-label"
-                  for=":ra6:"
+                  for=":rb0:"
                 >
                   verificationCode
                   <svg
@@ -509,7 +514,7 @@ exports[`Snapshots the code screen 1`] = `
                       class="disabled:cursor-not-allowed"
                       data-input-otp="true"
                       data-input-otp-placeholder-shown="true"
-                      id=":ra6:"
+                      id=":rb0:"
                       inputmode="numeric"
                       maxlength="6"
                       name="verificationCode"
@@ -633,6 +638,7 @@ exports[`Snapshots the confirmation screen 1`] = `
             </p>
           </div>
           <button
+            aria-busy="false"
             class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-button text-button-text-size font-button-font-weight leading-button transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0 border-button-border-width border-button-border-color bg-background text-button-bg shadow-button-shadow hover:border-button-hover-border-color hover:bg-button-subtle-bg h-button-height px-button-padding-x py-button-padding-y"
             type="button"
           >
@@ -693,8 +699,10 @@ exports[`Snapshots the email screen 1`] = `
               </svg>
             </button>
             <div
+              aria-level="2"
               class="text-center font-heading-font-weight text-heading-text-size text-heading-text mb-0"
               data-slot="widget-heading"
+              role="heading"
             >
               Email
             </div>
@@ -775,8 +783,10 @@ exports[`Snapshots the passkey screen 1`] = `
               </svg>
             </button>
             <div
+              aria-level="2"
               class="text-center font-heading-font-weight text-heading-text-size text-heading-text mb-0"
               data-slot="widget-heading"
+              role="heading"
             >
               mfa.passkey
             </div>
@@ -798,7 +808,7 @@ exports[`Snapshots the passkey screen 1`] = `
                 <label
                   class="text-sm font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70 group/field-label peer/field-label flex w-fit gap-2 leading-snug group-data-[disabled=true]/field:opacity-50 has-[>[data-slot=field]]:w-full has-[>[data-slot=field]]:flex-col has-[>[data-slot=field]]:rounded-md has-[>[data-slot=field]]:border [&>[data-slot=field]]:p-4 has-data-[state=checked]:bg-primary/5 has-data-[state=checked]:border-primary dark:has-data-[state=checked]:bg-primary/10"
                   data-slot="field-label"
-                  for=":r9r:"
+                  for=":ral:"
                 >
                   mfa.passkey.deviceName
                   <svg
@@ -815,7 +825,7 @@ exports[`Snapshots the passkey screen 1`] = `
                 <input
                   aria-label="mfa.passkey.deviceName"
                   class="flex w-full dark:bg-input/30 shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm h-input-height px-input-padding-x py-input-padding-y text-input-text text-input-text-size leading-input rounded-input bg-input-bg border-input-border-color border-input-border-width placeholder:text-input-placeholder-text disabled:bg-input-disabled-bg"
-                  id=":r9r:"
+                  id=":ral:"
                   name="friendlyName"
                   required=""
                   type="text"
