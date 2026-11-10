@@ -101,6 +101,8 @@ const removeMfaEmail = jest.fn<Client['removeMfaEmail']>();
 const removeMfaPhoneNumber = jest.fn<Client['removeMfaPhoneNumber']>();
 const listWebAuthnDevices = jest.fn<Client['listWebAuthnDevices']>();
 const addNewWebAuthnDevice = jest.fn<Client['addNewWebAuthnDevice']>();
+const startMfaEmailRegistration = jest.fn<Client['startMfaEmailRegistration']>();
+const startMfaPhoneNumberRegistration = jest.fn<Client['startMfaPhoneNumberRegistration']>();
 
 const onError = jest.fn<OnError>();
 const onSuccess = jest.fn<OnSuccess>();
@@ -113,6 +115,8 @@ const apiClient: Client = {
     removeMfaPhoneNumber,
     listWebAuthnDevices,
     addNewWebAuthnDevice,
+    startMfaEmailRegistration,
+    startMfaPhoneNumberRegistration,
 };
 
 const renderWidget = async (
@@ -410,5 +414,203 @@ describe('Passkey enrollment', () => {
         expect(onError).toHaveBeenCalledTimes(1);
         expect(screen.getByText('mfa.passkey')).toBeInTheDocument();
         expect(successEvents('webauthn_credential_created')).toHaveLength(0);
+    });
+});
+
+describe('Email enrollment', () => {
+    const openEmailScreen = async (
+        options: Partial<Parameters<typeof mfaWidget>[0]> = {},
+        config: Partial<Config> = {}
+    ) => {
+        listMfaCredentials.mockResolvedValue(credentialsList());
+        await renderWidget(options, config);
+        const user = userEvent.setup();
+        await user.click(await screen.findByRole('button', { name: 'Email' }));
+        await screen.findByRole('button', { name: 'mfaList.back' });
+        return user;
+    };
+
+    test('sends a code to the profile email', async () => {
+        // @ts-expect-error partial Profile
+        getUser.mockResolvedValue({ ...profile, emailVerified: false });
+        startMfaEmailRegistration.mockResolvedValue({ status: 'email_sent' });
+        const user = await openEmailScreen(
+            { action: 'mfa_registration', allowTrustDevice: true },
+            { rbaEnabled: true }
+        );
+
+        expect(screen.getByText('mfa.email.intro')).toBeInTheDocument();
+        expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
+        expect(screen.queryByRole('checkbox')).not.toBeInTheDocument();
+        await user.click(screen.getByRole('button', { name: 'mfa.sendCode' }));
+
+        expect(await screen.findByText('mfa.code.title')).toBeInTheDocument();
+        expect(startMfaEmailRegistration).toHaveBeenCalledTimes(1);
+        expect(startMfaEmailRegistration.mock.calls[0][0]).toStrictEqual({
+            accessToken: 'azerty',
+            action: 'mfa_registration',
+        });
+        expect(successEvents('mfa_email_start_registration')).toHaveLength(1);
+        expect(successEvents('mfa_trusted_device_added')).toHaveLength(0);
+    });
+
+    test('adds a verified email without a code', async () => {
+        startMfaEmailRegistration.mockResolvedValue({
+            status: 'enabled',
+            credential: emailCredential,
+        });
+        const user = await openEmailScreen({ allowTrustDevice: true }, { rbaEnabled: true });
+
+        expect(screen.getByText('mfa.identifierVerified')).toBeInTheDocument();
+        await user.click(screen.getByRole('checkbox', { name: 'mfa.stepUp.trustDevice' }));
+        await user.click(screen.getByRole('button', { name: 'add' }));
+
+        expect(await screen.findByText('mfa.factorAdded.email')).toBeInTheDocument();
+        expect(startMfaEmailRegistration).toHaveBeenCalledWith({
+            accessToken: 'azerty',
+            trustDevice: true,
+        });
+        expect(successEvents('mfa_email_start_registration')).toHaveLength(1);
+        expect(successEvents('mfa_trusted_device_added')).toHaveLength(1);
+    });
+
+    test('shows no trust device checkbox without allowTrustDevice and rbaEnabled', async () => {
+        await openEmailScreen({ allowTrustDevice: true });
+
+        expect(screen.getByText('mfa.identifierVerified')).toBeInTheDocument();
+        expect(screen.getByRole('button', { name: 'add' })).toBeInTheDocument();
+        expect(screen.queryByRole('checkbox')).not.toBeInTheDocument();
+    });
+
+    test('the response wins over a predicted code', async () => {
+        // @ts-expect-error partial Profile
+        getUser.mockResolvedValue({ ...profile, emailVerified: false });
+        startMfaEmailRegistration.mockResolvedValue({
+            status: 'enabled',
+            credential: emailCredential,
+        });
+        const user = await openEmailScreen();
+
+        await user.click(screen.getByRole('button', { name: 'mfa.sendCode' }));
+
+        expect(await screen.findByText('mfa.factorAdded.email')).toBeInTheDocument();
+    });
+
+    test('a failed start stays on the screen and calls onError once', async () => {
+        const error: AppError = {
+            errorId: '2',
+            error: 'unexpected_error',
+            errorDescription: 'Start refused',
+        };
+        startMfaEmailRegistration.mockRejectedValue(error);
+        const user = await openEmailScreen();
+
+        await user.click(screen.getByRole('button', { name: 'add' }));
+
+        expect(await screen.findByText('Start refused')).toBeInTheDocument();
+        expect(onError).toHaveBeenCalledTimes(1);
+        expect(onError).toHaveBeenCalledWith(error);
+        expect(screen.getByText('Email')).toBeInTheDocument();
+        expect(successEvents('mfa_email_start_registration')).toHaveLength(0);
+    });
+
+    test('back returns to the choice screen', async () => {
+        const user = await openEmailScreen();
+
+        await user.click(screen.getByRole('button', { name: 'mfaList.back' }));
+
+        expect(await screen.findByText('mfa.manageFactors.title')).toBeInTheDocument();
+    });
+});
+
+describe('Phone number enrollment', () => {
+    const verifiedProfile = { ...profile, phoneNumber: '+33612345678', phoneNumberVerified: true };
+
+    const openPhoneScreen = async (
+        options: Partial<Parameters<typeof mfaWidget>[0]> = {},
+        config: Partial<Config> = {}
+    ) => {
+        listMfaCredentials.mockResolvedValue(credentialsList());
+        await renderWidget(options, config);
+        const user = userEvent.setup();
+        await user.click(await screen.findByRole('button', { name: 'Phone number' }));
+        await screen.findByRole('textbox', { name: 'phoneNumber' });
+        return user;
+    };
+
+    test('sends a code to the typed number', async () => {
+        startMfaPhoneNumberRegistration.mockResolvedValue({ status: 'sms_sent' });
+        const user = await openPhoneScreen(
+            { action: 'mfa_registration', allowTrustDevice: true },
+            { rbaEnabled: true }
+        );
+
+        expect(screen.getByText('mfa.phoneNumber.intro')).toBeInTheDocument();
+        await user.type(screen.getByRole('textbox', { name: 'phoneNumber' }), '+33123456789');
+        expect(screen.queryByRole('checkbox')).not.toBeInTheDocument();
+        await user.click(screen.getByRole('button', { name: 'mfa.sendCode' }));
+
+        expect(await screen.findByText('mfa.code.title')).toBeInTheDocument();
+        expect(startMfaPhoneNumberRegistration).toHaveBeenCalledTimes(1);
+        expect(startMfaPhoneNumberRegistration.mock.calls[0][0]).toStrictEqual({
+            accessToken: 'azerty',
+            action: 'mfa_registration',
+            phoneNumber: '+33123456789',
+        });
+        expect(successEvents('mfa_phone_number_start_registration')).toHaveLength(1);
+    });
+
+    test('hides the country select by default', async () => {
+        await openPhoneScreen();
+
+        expect(screen.queryByRole('button', { name: 'address.country' })).not.toBeInTheDocument();
+    });
+
+    test('shows the country select with withCountrySelect: true', async () => {
+        await openPhoneScreen({ phoneNumberOptions: { withCountrySelect: true } });
+
+        expect(screen.getByRole('button', { name: 'address.country' })).toBeInTheDocument();
+    });
+
+    test('follows the number as it is typed', async () => {
+        // @ts-expect-error partial Profile
+        getUser.mockResolvedValue(verifiedProfile);
+        startMfaPhoneNumberRegistration.mockResolvedValue({ status: 'sms_sent' });
+        const user = await openPhoneScreen({ allowTrustDevice: true }, { rbaEnabled: true });
+        const input = screen.getByRole('textbox', { name: 'phoneNumber' });
+
+        await user.type(input, '+33612345678');
+        expect(
+            await screen.findByRole('checkbox', { name: 'mfa.stepUp.trustDevice' })
+        ).toBeInTheDocument();
+        expect(screen.getByText('mfa.identifierVerified')).toBeInTheDocument();
+        expect(screen.getByRole('button', { name: 'add' })).toBeInTheDocument();
+        await user.click(screen.getByRole('checkbox', { name: 'mfa.stepUp.trustDevice' }));
+
+        await user.type(input, '{Backspace}9');
+        await waitFor(() => expect(screen.queryByRole('checkbox')).not.toBeInTheDocument());
+        expect(screen.getByText('mfa.phoneNumber.intro')).toBeInTheDocument();
+        await user.click(screen.getByRole('button', { name: 'mfa.sendCode' }));
+
+        // the box checked before the number changed is not sent
+        await waitFor(() =>
+            expect(startMfaPhoneNumberRegistration.mock.calls[0]?.[0]).toStrictEqual({
+                accessToken: 'azerty',
+                action: undefined,
+                phoneNumber: '+33612345679',
+            })
+        );
+    });
+
+    test('the response wins over a predicted no-code', async () => {
+        // @ts-expect-error partial Profile
+        getUser.mockResolvedValue(verifiedProfile);
+        startMfaPhoneNumberRegistration.mockResolvedValue({ status: 'sms_sent' });
+        const user = await openPhoneScreen();
+
+        await user.type(screen.getByRole('textbox', { name: 'phoneNumber' }), '+33612345678');
+        await user.click(await screen.findByRole('button', { name: 'add' }));
+
+        expect(await screen.findByText('mfa.code.title')).toBeInTheDocument();
     });
 });

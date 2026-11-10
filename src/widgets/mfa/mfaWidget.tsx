@@ -2,12 +2,12 @@ import React, { useRef, useState } from 'react';
 
 import { createQueryWidget } from '@/components/widget/queryWidget';
 import { useViewNavigation, viewAnimation } from '@/components/widget/useViewNavigation';
-import { ViewHeader } from '@/components/widget/viewHeader';
 import { useConfig } from '@/contexts/config';
 import { useI18n } from '@/contexts/i18n';
 import { type PhoneNumberOptions } from '@/lib/form';
-import { factorChoices, type AddableFactor } from '@/widgets/mfa/factors';
+import { factorChoices } from '@/widgets/mfa/factors';
 import { FactorsView, type FactorRowRefs } from '@/widgets/mfa/factorsView';
+import { IdentifierEnrollmentView } from '@/widgets/mfa/identifierEnrollmentView';
 import { PasskeyEnrollmentView } from '@/widgets/mfa/passkeyEnrollmentView';
 import { PasskeysView } from '@/widgets/mfa/passkeysView';
 import { useMfaCredentials, useMfaProfile } from '@/widgets/mfa/queries';
@@ -81,29 +81,25 @@ export type MfaCredentialsWidgetProps = {
     requireMfaRegistration?: boolean;
 };
 
-/** i18n keys of the enrollment screen titles. */
-const ENROLLMENT_TITLES: Record<Exclude<AddableFactor, 'passkey'>, string> = {
-    email: 'mfaList.email',
-    sms: 'mfaList.phoneNumber',
+/** i18n keys of the confirmation titles. */
+const FACTOR_ADDED_TITLES: Record<Enrollment['factor'], string> = {
+    passkey: 'mfa.factorAdded.passkey',
+    email: 'mfa.factorAdded.email',
+    sms: 'mfa.factorAdded.phoneNumber',
 };
 
-/** Placeholder of an enrollment screen: its title under the back arrow. */
-const EnrollmentPlaceholder = ({
-    factor,
-    onBack,
-}: EnrollmentViewProps & { factor: Exclude<AddableFactor, 'passkey'> }) => {
+/** Placeholder of the code and confirmation screens: their title only. */
+const StepPlaceholder = ({
+    step,
+    enrollment,
+}: {
+    step: 'code' | 'done';
+    enrollment: Enrollment | null;
+}) => {
     const i18n = useI18n();
-    return (
-        <ViewHeader
-            title={i18n(ENROLLMENT_TITLES[factor])}
-            backLabel={i18n('mfaList.back')}
-            onBack={onBack}
-        />
-    );
+    if (step === 'code') return <>{i18n('mfa.code.title')}</>;
+    return enrollment && <>{i18n(FACTOR_ADDED_TITLES[enrollment.factor])}</>;
 };
-
-/** Placeholder of the code and confirmation screens. */
-const StepPlaceholder = (_props: { enrollment: Enrollment | null }) => null;
 
 const useFactorRowRefs = (): FactorRowRefs => ({
     passkeys: useRef<HTMLButtonElement>(null),
@@ -178,10 +174,10 @@ const Mfa = ({
                 return <PasskeyEnrollmentView {...enrollmentProps} />;
             case 'email':
             case 'sms':
-                return <EnrollmentPlaceholder factor={view} {...enrollmentProps} />;
+                return <IdentifierEnrollmentView factor={view} {...enrollmentProps} />;
             case 'code':
             case 'done':
-                return <StepPlaceholder enrollment={enrollment} />;
+                return <StepPlaceholder step={view} enrollment={enrollment} />;
         }
     };
 
