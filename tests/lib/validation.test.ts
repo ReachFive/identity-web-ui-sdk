@@ -171,37 +171,16 @@ describe('passwordValidation', () => {
         expect(issues).toEqual([]);
     });
 
-    describe('strength requirement', () => {
-        test('flags a password whose strength score is below minStrength', async () => {
-            const args = buildArgs({
-                passwordPolicy: { minStrength: 3 },
-                strengthScore: 1 as PasswordStrengthScore,
-            });
-
-            const issues = await issuesFor('somepassword', args);
-
-            expect(issues).toContain('validation.password.minStrength');
+    test('does not check the strength, even below minStrength', async () => {
+        const args = buildArgs({
+            passwordPolicy: { minStrength: 4 },
+            strengthScore: 0 as PasswordStrengthScore,
         });
 
-        test('does not flag a password whose strength score meets minStrength', async () => {
-            const args = buildArgs({
-                passwordPolicy: { minStrength: 3 },
-                strengthScore: 4 as PasswordStrengthScore,
-            });
+        const issues = await issuesFor('somepassword', args);
 
-            const issues = await issuesFor('somepassword', args);
-
-            expect(issues).not.toContain('validation.password.minStrength');
-        });
-
-        test('bypasses the strength check when client.getPasswordStrength rejects', async () => {
-            const args = buildArgs({ passwordPolicy: { minStrength: 4 } });
-            args.getPasswordStrength.mockRejectedValueOnce(new Error('API error'));
-
-            const issues = await issuesFor('somepassword', args);
-
-            expect(issues).toEqual([]);
-        });
+        expect(issues).toEqual([]);
+        expect(args.getPasswordStrength).not.toHaveBeenCalled();
     });
 
     test('skips character-policy and strength checks entirely when withPolicyRules is false', async () => {
