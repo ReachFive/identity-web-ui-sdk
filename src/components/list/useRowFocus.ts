@@ -43,7 +43,9 @@ export function useRowFocus(
         const target = rowKeys.includes(key)
             ? controlOf(key)
             : controlOf(rowKeys[Math.min(index, rowKeys.length - 1)]);
-        if (!target) return;
+        // A browser ignores `focus()` inside an inert subtree: the rows stay dimmed until the
+        // confirmation closes, which may be committed after the list is refetched.
+        if (!target || target.closest('[inert]')) return;
         request.current = null;
         target.focus();
     });

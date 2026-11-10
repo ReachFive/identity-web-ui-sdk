@@ -12,7 +12,7 @@ import { useRowFocus } from '../../../src/components/list/useRowFocus';
  * passed through `fixedControls`. Pressing a remove button only asks to watch the row: the test
  * then renders the list as it is once the removal settled.
  */
-function Rows({ keys, fixed }: { keys: string[]; fixed?: string }) {
+function Rows({ keys, fixed, inert = false }: { keys: string[]; fixed?: string; inert?: boolean }) {
     const fixedRef = useRef<HTMLButtonElement>(null);
     const focus = useRowFocus(keys, fixed ? { [fixed]: fixedRef } : {});
 
@@ -25,7 +25,8 @@ function Rows({ keys, fixed }: { keys: string[]; fixed?: string }) {
     }
 
     return (
-        <ul>
+        // React 18 only forwards `inert` as a string; an empty string sets it.
+        <ul {...(inert ? ({ inert: '' } as React.HTMLAttributes<HTMLUListElement>) : {})}>
             {keys.map(key => (
                 <li key={key}>
                     {key === fixed ? (
@@ -97,6 +98,18 @@ describe('useRowFocus', () => {
         rerender(<Rows keys={[]} />);
 
         expect(screen.getByText('Empty')).toHaveFocus();
+    });
+
+    test('the focus waits for the target row to be no longer inert', async () => {
+        const { rerender } = render(<Rows keys={['a', 'b']} />);
+
+        // The refetched list shows before the confirmation closes, its rows still dimmed.
+        await watch('a');
+        rerender(<Rows keys={['b']} inert />);
+        expect(screen.getByRole('button', { name: 'Remove b', hidden: true })).not.toHaveFocus();
+
+        rerender(<Rows keys={['b']} />);
+        expect(screen.getByRole('button', { name: 'Remove b' })).toHaveFocus();
     });
 
     test('nothing takes the focus while no row is watched', () => {
