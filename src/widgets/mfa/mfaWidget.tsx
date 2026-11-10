@@ -8,6 +8,7 @@ import { useI18n } from '@/contexts/i18n';
 import { type PhoneNumberOptions } from '@/lib/form';
 import { factorChoices, type AddableFactor } from '@/widgets/mfa/factors';
 import { FactorsView, type FactorRowRefs } from '@/widgets/mfa/factorsView';
+import { PasskeyEnrollmentView } from '@/widgets/mfa/passkeyEnrollmentView';
 import { PasskeysView } from '@/widgets/mfa/passkeysView';
 import { useMfaCredentials, useMfaProfile } from '@/widgets/mfa/queries';
 
@@ -81,8 +82,7 @@ export type MfaCredentialsWidgetProps = {
 };
 
 /** i18n keys of the enrollment screen titles. */
-const ENROLLMENT_TITLES: Record<AddableFactor, string> = {
-    passkey: 'mfa.passkey',
+const ENROLLMENT_TITLES: Record<Exclude<AddableFactor, 'passkey'>, string> = {
     email: 'mfaList.email',
     sms: 'mfaList.phoneNumber',
 };
@@ -91,7 +91,7 @@ const ENROLLMENT_TITLES: Record<AddableFactor, string> = {
 const EnrollmentPlaceholder = ({
     factor,
     onBack,
-}: EnrollmentViewProps & { factor: AddableFactor }) => {
+}: EnrollmentViewProps & { factor: Exclude<AddableFactor, 'passkey'> }) => {
     const i18n = useI18n();
     return (
         <ViewHeader
@@ -143,9 +143,9 @@ const Mfa = ({
     const enrollmentProps: EnrollmentViewProps = {
         ...viewProps,
         onBack: back,
-        onEnrolled: (next, nextView) => {
-            setEnrollment(next);
-            goTo(nextView);
+        onEnrolled: (enrolled, next) => {
+            setEnrollment(enrolled);
+            goTo(next);
         },
     };
 
@@ -175,6 +175,7 @@ const Mfa = ({
                     />
                 );
             case 'passkey':
+                return <PasskeyEnrollmentView {...enrollmentProps} />;
             case 'email':
             case 'sms':
                 return <EnrollmentPlaceholder factor={view} {...enrollmentProps} />;

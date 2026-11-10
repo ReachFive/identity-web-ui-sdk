@@ -100,6 +100,7 @@ const getUser = jest.fn<Client['getUser']>();
 const removeMfaEmail = jest.fn<Client['removeMfaEmail']>();
 const removeMfaPhoneNumber = jest.fn<Client['removeMfaPhoneNumber']>();
 const listWebAuthnDevices = jest.fn<Client['listWebAuthnDevices']>();
+const addNewWebAuthnDevice = jest.fn<Client['addNewWebAuthnDevice']>();
 
 const onError = jest.fn<OnError>();
 const onSuccess = jest.fn<OnSuccess>();
@@ -111,6 +112,7 @@ const apiClient: Client = {
     removeMfaEmail,
     removeMfaPhoneNumber,
     listWebAuthnDevices,
+    addNewWebAuthnDevice,
 };
 
 const renderWidget = async (
@@ -340,5 +342,73 @@ describe('Errors', () => {
         expect(await screen.findByText('Unexpected error')).toBeInTheDocument();
         expect(onError).toHaveBeenCalledTimes(1);
         expect(onError).toHaveBeenCalledWith(error);
+    });
+});
+
+describe('Passkey enrollment', () => {
+    const openPasskeyScreen = async () => {
+        listMfaCredentials.mockResolvedValue(credentialsList());
+        await renderWidget();
+        const user = userEvent.setup();
+        await user.click(await screen.findByRole('button', { name: /^mfa\.passkey/ }));
+        await screen.findByText('mfa.passkey.deviceName');
+        return user;
+    };
+
+    test('creates a passkey with the device name', async () => {
+        addNewWebAuthnDevice.mockResolvedValue(undefined as never);
+        const user = await openPasskeyScreen();
+
+        await user.type(screen.getByLabelText('mfa.passkey.deviceName'), 'iPhone de Marie');
+        await user.click(screen.getByRole('button', { name: 'mfa.passkey.create' }));
+
+        await waitFor(() =>
+            expect(addNewWebAuthnDevice).toHaveBeenCalledWith('azerty', 'iPhone de Marie')
+        );
+        await waitFor(() =>
+            expect(successEvents('webauthn_credential_created')).toEqual([
+                [{ name: 'webauthn_credential_created', friendlyName: 'iPhone de Marie' }],
+            ])
+        );
+        await waitFor(() =>
+            expect(screen.queryByText('mfa.passkey.deviceName')).not.toBeInTheDocument()
+        );
+    });
+
+    test('has no trust device checkbox', async () => {
+        listMfaCredentials.mockResolvedValue(credentialsList());
+        await renderWidget({ allowTrustDevice: true });
+        const user = userEvent.setup();
+        await user.click(await screen.findByRole('button', { name: /^mfa\.passkey/ }));
+        await screen.findByText('mfa.passkey.deviceName');
+
+        expect(screen.queryByRole('checkbox')).not.toBeInTheDocument();
+    });
+
+    test('requires a device name', async () => {
+        const user = await openPasskeyScreen();
+
+        await user.click(screen.getByRole('button', { name: 'mfa.passkey.create' }));
+
+        expect(await screen.findByText('validation.required')).toBeInTheDocument();
+        expect(addNewWebAuthnDevice).not.toHaveBeenCalled();
+    });
+
+    test('stays on the screen and reports a refused creation', async () => {
+        const error: AppError = {
+            errorId: '1',
+            error: 'unexpected_error',
+            errorDescription: 'Creation refused',
+        };
+        addNewWebAuthnDevice.mockRejectedValue(error);
+        const user = await openPasskeyScreen();
+
+        await user.type(screen.getByLabelText('mfa.passkey.deviceName'), 'iPhone de Marie');
+        await user.click(screen.getByRole('button', { name: 'mfa.passkey.create' }));
+
+        expect(await screen.findByText('Creation refused')).toBeInTheDocument();
+        expect(onError).toHaveBeenCalledTimes(1);
+        expect(screen.getByText('mfa.passkey')).toBeInTheDocument();
+        expect(successEvents('webauthn_credential_created')).toHaveLength(0);
     });
 });
