@@ -27,28 +27,43 @@ jobs:
       - name: Build
         run: npm run build
 
+      # npm authenticates with trusted publishing (OIDC, through the
+      # `id-token: write` permission): the repository stores no npm token.
+      # `npm dist-tag` with OIDC needs npm 11.21.0 or later, newer than the npm
+      # bundled with Node 24.
+      - name: Update npm
+        run: npm install -g npm@11.21.1
+
       - name: Publish to NPM
         run: npm publish --provenance --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
 
       # The published tarball is large (~6 MB packed, ~30 MB unpacked), so npm
       # processes it asynchronously: `npm publish` returns before the version is
       # queryable, and any dist-tag write against it fails with a 403 until the
-      # registry catches up (observed: ~5 minutes for v2.1.0). Retry until the
-      # version lands rather than failing the release on that race.
+      # registry catches up (observed: ~5 minutes for v2.1.0). Wait for the
+      # registry to serve the version, then retry the write for one minute at
+      # most, so that a refused permission fails the job without a long wait.
       - name: Point next tag at the release
         run: |
           version=$(node -p "require('./package.json').version")
           for attempt in $(seq 1 60); do
+            if [ "$(npm view "@reachfive/identity-ui@$version" version 2>/dev/null)" = "$version" ]; then
+              break
+            fi
+            if [ "$attempt" -eq 60 ]; then
+              echo "::error::Timed out after 10 minutes waiting for the registry to serve $version."
+              exit 1
+            fi
+            echo "Attempt $attempt: the registry does not serve $version yet. Retrying in 10s..."
+            sleep 10
+          done
+          for attempt in $(seq 1 6); do
             if npm dist-tag add "@reachfive/identity-ui@$version" next; then
               echo "next now points at $version"
               exit 0
             fi
-            echo "Attempt $attempt failed; the registry may still be processing the publish. Retrying in 10s..."
+            echo "Attempt $attempt to point next at $version failed. Retrying in 10s..."
             sleep 10
           done
-          echo "::error::Timed out after 10 minutes pointing the next dist-tag at $version."
+          echo "::error::Could not point the next dist-tag at $version."
           exit 1
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
