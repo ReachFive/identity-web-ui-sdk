@@ -883,7 +883,7 @@ describe('The Passkeys row, for assistive technology users', () => {
 });
 
 describe('Public styling slots', () => {
-    test('every row shape carries widget-mfa-credential on its list item', async () => {
+    test('credential rows carry widget-mfa-credential, the Passkeys row widget-mfa-passkeys', async () => {
         listMfaCredentials.mockResolvedValue(
             credentialsList(emailCredential, phoneCredential, passkeyCredential('a'))
         );
@@ -891,10 +891,11 @@ describe('Public styling slots', () => {
 
         await openConfirmation('mfa.remove.email');
 
-        const rows = screen.getAllByRole('listitem');
-        expect(rows).toHaveLength(3);
-        rows.forEach(row => expect(row).toHaveAttribute('data-slot', 'widget-mfa-credential'));
-        expect(document.querySelectorAll('[data-slot="widget-mfa-credential"]')).toHaveLength(3);
+        const [email, phone, passkeys] = screen.getAllByRole('listitem');
+        expect(email).toHaveAttribute('data-slot', 'widget-mfa-credential');
+        expect(phone).toHaveAttribute('data-slot', 'widget-mfa-credential');
+        expect(passkeys).toHaveAttribute('data-slot', 'widget-mfa-passkeys');
+        expect(document.querySelectorAll('[data-slot="widget-mfa-credential"]')).toHaveLength(2);
     });
 
     test('the confirmation carries widget-mfa-credential-confirm', async () => {

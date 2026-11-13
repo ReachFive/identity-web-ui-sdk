@@ -112,6 +112,42 @@ describe('useRowFocus', () => {
         expect(screen.getByRole('button', { name: 'Remove b' })).toHaveFocus();
     });
 
+    test('the focus is left alone, for good, once the user has moved it elsewhere', async () => {
+        const { rerender } = render(
+            <>
+                <input aria-label="Elsewhere" />
+                <Rows keys={['a', 'b']} />
+            </>
+        );
+
+        await watch('a');
+        rerender(
+            <>
+                <input aria-label="Elsewhere" />
+                <Rows keys={['b']} inert />
+            </>
+        );
+        const elsewhere = screen.getByRole('textbox', { name: 'Elsewhere' });
+        act(() => elsewhere.focus());
+        rerender(
+            <>
+                <input aria-label="Elsewhere" />
+                <Rows keys={['b']} />
+            </>
+        );
+        expect(elsewhere).toHaveFocus();
+
+        // a later commit, such as a background refetch, does not take it either
+        act(() => elsewhere.blur());
+        rerender(
+            <>
+                <input aria-label="Elsewhere" />
+                <Rows keys={['b', 'c']} />
+            </>
+        );
+        expect(document.body).toHaveFocus();
+    });
+
     test('nothing takes the focus while no row is watched', () => {
         const { rerender } = render(<Rows keys={['a', 'b']} />);
 

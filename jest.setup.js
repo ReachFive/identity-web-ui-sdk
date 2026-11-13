@@ -1,8 +1,9 @@
-const ResizeObserverMock = jest.fn().mockImplementation(() => ({
-    disconnect: jest.fn(),
-    observe: jest.fn(),
-    unobserve: jest.fn(),
-}));
+// A plain class, not a jest.fn: `jest.resetAllMocks()` in a test file would wipe its implementation.
+class ResizeObserverMock {
+    disconnect() {}
+    observe() {}
+    unobserve() {}
+}
 
 Object.defineProperty(window, 'ResizeObserver', { value: ResizeObserverMock });
 

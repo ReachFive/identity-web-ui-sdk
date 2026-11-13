@@ -241,6 +241,8 @@ describe('01.13.03.04 - A passkey removed from the Passkeys view is reflected in
         await user.click(back);
         expect(await screen.findByText('root@reach5.co')).toBeInTheDocument();
         expect(screen.queryByRole('button', { name: 'Passkeys' })).not.toBeInTheDocument();
+        // the Passkeys row that opened the view is gone: the focus stays on the list
+        await waitFor(() => expect(document.body).not.toHaveFocus());
     });
 });
 

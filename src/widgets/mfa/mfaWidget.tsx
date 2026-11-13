@@ -1,107 +1,48 @@
-import React, { useCallback, useState } from 'react';
+import React, { useRef, useState } from 'react';
 
-import { MFA, Profile } from '@reachfive/identity-core';
-import type {
-    StartMfaEmailRegistrationResponse,
-    StartMfaPhoneNumberRegistrationResponse,
-} from '@reachfive/identity-core/es/main/mfaClient';
-
-import { Form, FormProps } from '@/components/form/form.tsx';
-import { Intro, Separator } from '@/components/miscComponent';
-import { Button } from '@/components/ui/button';
-import { createMultiViewWidget } from '@/components/widget/widget';
+import { createQueryWidget } from '@/components/widget/queryWidget';
+import { useViewNavigation, viewAnimation } from '@/components/widget/useViewNavigation';
 import { useConfig } from '@/contexts/config';
-import { useI18n } from '@/contexts/i18n';
-import { useReachfive } from '@/contexts/reachfive';
-import { useRouting } from '@/contexts/routing';
-import { isAppError, UserError } from '@/helpers/errors';
+import { noop } from '@/helpers/utils';
 import { type PhoneNumberOptions } from '@/lib/form';
-import { Field } from '@/lib/form.tsx';
-import {
-    useCredentials,
-    withCredentials,
-    type CredentialsProviderProps,
-} from '@/widgets/mfa/contexts/credentials';
+import { CodeView } from '@/widgets/mfa/codeView';
+import { ConfirmationView } from '@/widgets/mfa/confirmationView';
+import { factorChoices } from '@/widgets/mfa/factors';
+import { FactorsView, type FactorRowRefs } from '@/widgets/mfa/factorsView';
+import { IdentifierEnrollmentView } from '@/widgets/mfa/identifierEnrollmentView';
+import { PasskeyEnrollmentView } from '@/widgets/mfa/passkeyEnrollmentView';
+import { PasskeysView } from '@/widgets/mfa/passkeysView';
+import { useMfaCredentialsAndProfile, useRefreshMfaFactors } from '@/widgets/mfa/queries';
 
-import type { OnError, OnSuccess, Prettify } from '@/types';
+import type { OnError, OnSuccess } from '@/types';
 
-type EmailRegisteringCredentialFormData = { trustDevice: boolean };
+/** The screens of the widget: the choice, the Passkeys view, one per enrollment step. */
+export type MfaView = 'factors' | 'passkeys' | 'passkey' | 'email' | 'sms' | 'code' | 'done';
 
-type VerificationCodeFormData = { verificationCode: string; trustDevice: boolean };
+/** What the user is enrolling, kept from the enrollment screen to the code and confirmation. */
+export type Enrollment =
+    | { factor: 'passkey'; friendlyName: string }
+    | { factor: 'email'; identifier: string; trustDevice: boolean }
+    | { factor: 'sms'; identifier: string; trustDevice: boolean };
 
-type DisplayTrustDeviceFormOptions = {
-    displayTrustDevice: boolean;
+/** The widget options every enrollment view reads. */
+export interface MfaViewProps {
+    accessToken: string;
+    action?: string;
+    allowTrustDevice: boolean;
+    phoneNumberOptions?: PhoneNumberOptions;
+    onSuccess: OnSuccess;
+    onError: OnError;
+}
+
+/** The props of an enrollment view (passkey, email, phone number). */
+export type EnrollmentViewProps = MfaViewProps & {
+    onBack: () => void;
+    /** The factor is enrolled, or a code was sent (`next: 'code'`) to finish it. */
+    onEnrolled: (enrollment: Enrollment, next: 'code' | 'done') => void;
 };
 
-const VerificationCodeForm = ({
-    displayTrustDevice,
-    onResend,
-    ...props
-}: DisplayTrustDeviceFormOptions & {
-    /** Sends a new code, see the `otp` field. */
-    onResend?: () => Promise<unknown>;
-} & FormProps<VerificationCodeFormData>) => {
-    let fields: Field[] = [
-        {
-            key: 'verification_code',
-            onResend,
-        },
-    ];
-
-    if (displayTrustDevice) {
-        fields = [
-            ...fields,
-            {
-                type: 'checkbox',
-                key: 'trust_device',
-                label: 'mfa.stepUp.trustDevice',
-                defaultChecked: false,
-                required: false,
-            },
-        ];
-    }
-
-    return <Form fields={fields} {...props} />;
-};
-
-type PhoneNumberRegisteringCredentialFormData = { phoneNumber: string; trustDevice: boolean };
-
-const PhoneNumberRegisteringCredentialForm = ({
-    displayTrustDevice,
-    phoneNumberOptions,
-    ...props
-}: DisplayTrustDeviceFormOptions &
-    FormProps<
-        PhoneNumberRegisteringCredentialFormData,
-        StartMfaPhoneNumberRegistrationResponse
-    >) => {
-    let fields: Field[] = [
-        {
-            key: 'phoneNumber',
-            type: 'phone',
-            allowInternational: phoneNumberOptions?.allowInternational ?? false,
-            defaultCountry: phoneNumberOptions?.defaultCountry,
-            phoneNumberOptions,
-        },
-    ];
-
-    if (displayTrustDevice) {
-        fields = [
-            ...fields,
-            {
-                key: 'trust_device',
-                type: 'checkbox',
-                label: 'mfa.stepUp.trustDevice',
-                required: false,
-                defaultChecked: false,
-            },
-        ];
-    }
-
-    return <Form fields={fields} submitLabel={'mfa.register.phoneNumber'} {...props} />;
-};
-
-interface MainViewProps {
+export type MfaCredentialsWidgetProps = {
     /**
      * The authorization credential JSON Web Token (JWT) used to access the ReachFive API, less than five minutes old.
      */
@@ -109,289 +50,21 @@ interface MainViewProps {
     /**
      * Boolean to enable (`true`) or disable (`false`) whether the option to remove MFA credentials are displayed.
      *
-     * @default false
-     */
-    requireMfaRegistration?: boolean;
-    /**
-     * Show the introduction text.
-     *
-     * @default true
-     */
-    showIntro?: boolean;
-    /**
-     * Boolean to enable (true) or disable (false) whether the option to remove MFA credentials are displayed.
-     *
      * @default true
      */
     showRemoveMfaCredentials?: boolean;
-    /**
-     * Phone number field options.
-     */
-    phoneNumberOptions?: PhoneNumberOptions;
-    /**
-     * Callback function called when the request has succeed.
-     */
-    onSuccess?: OnSuccess;
-    /**
-     * Callback function called when the request has failed.
-     */
-    onError?: OnError;
-
-    profileIdentifiers?: Pick<Profile, 'emailVerified' | 'phoneNumber' | 'phoneNumberVerified'>;
     /**
      * Allow to trust device during enrollment
      */
     allowTrustDevice?: boolean;
     /**
+     * Phone number field options.
+     */
+    phoneNumberOptions?: PhoneNumberOptions;
+    /**
      * Action used in template
      */
     action?: string;
-}
-
-const MainView = withCredentials(
-    ({
-        accessToken,
-        onError = (() => {}) as OnError,
-        onSuccess = (() => {}) as OnSuccess,
-        phoneNumberOptions,
-        requireMfaRegistration = false,
-        showIntro = true,
-        showRemoveMfaCredentials = true,
-        allowTrustDevice = false,
-        profileIdentifiers = {},
-        action,
-    }: MainViewProps) => {
-        const coreClient = useReachfive();
-        const config = useConfig();
-        const i18n = useI18n();
-        const { goTo } = useRouting();
-        const { credentials, refresh } = useCredentials();
-        const [displayTrustDevicePhoneNumber, setDisplayTrustDevicePhoneNumber] =
-            useState<boolean>(false);
-
-        const onEmailRegistering = (data: EmailRegisteringCredentialFormData) => {
-            return coreClient
-                .startMfaEmailRegistration({
-                    accessToken,
-                    action,
-                    ...data,
-                })
-                .then(resp => {
-                    onSuccess({ name: 'mfa_email_start_registration' });
-                    if (data.trustDevice && resp.status == 'enabled') {
-                        onSuccess({ name: 'mfa_trusted_device_added' });
-                    }
-                    // the request is kept along the response to send a new code the same way
-                    return { ...resp, ...data };
-                })
-                .catch(error => {
-                    onError(error);
-                    throw error;
-                });
-        };
-
-        const onPhoneNumberRegistering = (data: PhoneNumberRegisteringCredentialFormData) => {
-            return coreClient
-                .startMfaPhoneNumberRegistration({
-                    accessToken,
-                    action,
-                    ...data,
-                })
-                .then(resp => {
-                    onSuccess({ name: 'mfa_phone_number_start_registration' });
-                    if (data.trustDevice && resp.status == 'enabled') {
-                        onSuccess({ name: 'mfa_trusted_device_added' });
-                    }
-                    // the request is kept along the response to send a new code the same way
-                    return { ...resp, ...data };
-                })
-                .catch(error => {
-                    onError(error);
-                    throw error;
-                });
-        };
-
-        const onEmailRemoval = () => {
-            return coreClient.removeMfaEmail({
-                accessToken,
-            });
-        };
-
-        const onPhoneNumberRemoval = ({ phoneNumber }: MFA.PhoneCredential) => {
-            return coreClient.removeMfaPhoneNumber({
-                accessToken,
-                phoneNumber,
-            });
-        };
-
-        const onPhoneNumberChange = useCallback(
-            (data: PhoneNumberRegisteringCredentialFormData) => {
-                const { phoneNumber } = data;
-                setDisplayTrustDevicePhoneNumber(
-                    profileIdentifiers.phoneNumber != undefined &&
-                        profileIdentifiers.phoneNumber === phoneNumber &&
-                        config.rbaEnabled &&
-                        allowTrustDevice &&
-                        profileIdentifiers.phoneNumberVerified != undefined &&
-                        profileIdentifiers.phoneNumberVerified
-                );
-            },
-            [displayTrustDevicePhoneNumber]
-        );
-
-        const phoneNumberCredentialRegistered = credentials.find<MFA.PhoneCredential>(
-            (credential): credential is MFA.PhoneCredential => MFA.isPhoneCredential(credential)
-        );
-        const isEmailCredentialRegistered = credentials.some(credential =>
-            MFA.isEmailCredential(credential)
-        );
-        const isPhoneCredentialRegistered = credentials.some(credential =>
-            MFA.isPhoneCredential(credential)
-        );
-
-        const displayTrustDevice =
-            profileIdentifiers.emailVerified != undefined &&
-            profileIdentifiers.emailVerified &&
-            allowTrustDevice &&
-            config.rbaEnabled;
-
-        const fields: Field[] = displayTrustDevice
-            ? [
-                  {
-                      key: 'trust_device',
-                      type: 'checkbox',
-                      label: 'mfa.stepUp.trustDevice',
-                      defaultChecked: false,
-                      required: false,
-                  },
-              ]
-            : [];
-
-        return (
-            <div className="flex flex-col gap-4">
-                {config.mfaEmailEnabled && !isEmailCredentialRegistered && (
-                    <div id="email-registering-credential">
-                        {showIntro && (
-                            <Intro>
-                                {requireMfaRegistration
-                                    ? i18n('mfa.email.explain.required')
-                                    : i18n('mfa.email.explain')}
-                            </Intro>
-                        )}
-                        <Form
-                            fields={fields}
-                            submitLabel={'mfa.register.email'}
-                            handler={onEmailRegistering}
-                            onSuccess={(data: StartMfaEmailRegistrationResponse) =>
-                                goTo<VerificationCodeViewState>('verification-code', {
-                                    ...data,
-                                    registrationType: 'email',
-                                    allowTrustDevice,
-                                })
-                            }
-                            onError={onError}
-                        />
-                    </div>
-                )}
-
-                {config.mfaEmailEnabled &&
-                    !isEmailCredentialRegistered &&
-                    config.mfaSmsEnabled &&
-                    !isPhoneCredentialRegistered && <Separator text={i18n('or')} />}
-
-                {config.mfaSmsEnabled && !isPhoneCredentialRegistered && (
-                    <div id="phone-number-registering-credential">
-                        {showIntro && <Intro>{i18n('mfa.phoneNumber.explain')}</Intro>}
-                        <PhoneNumberRegisteringCredentialForm
-                            handler={onPhoneNumberRegistering}
-                            displayTrustDevice={displayTrustDevicePhoneNumber}
-                            onFieldChange={onPhoneNumberChange}
-                            onSuccess={(data: StartMfaPhoneNumberRegistrationResponse) =>
-                                goTo<VerificationCodeViewState>('verification-code', {
-                                    ...data,
-                                    registrationType: 'sms',
-                                    allowTrustDevice,
-                                })
-                            }
-                            onError={onError}
-                            phoneNumberOptions={phoneNumberOptions}
-                        />
-                    </div>
-                )}
-
-                {showRemoveMfaCredentials &&
-                    config.mfaEmailEnabled &&
-                    isEmailCredentialRegistered && (
-                        <div>
-                            {showIntro && <Intro>{i18n('mfa.email.remove.explain')}</Intro>}
-                            <Form
-                                submitLabel={'mfa.remove.email'}
-                                SubmitComponent={({ disabled, label }) => (
-                                    <Button
-                                        type="submit"
-                                        variant="destructive"
-                                        className="w-full"
-                                        disabled={disabled}
-                                    >
-                                        {label}
-                                    </Button>
-                                )}
-                                handler={onEmailRemoval}
-                                onSuccess={async () => {
-                                    onSuccess({ name: 'mfa_email_deleted' });
-                                    await refresh();
-                                }}
-                                onError={onError}
-                            />
-                        </div>
-                    )}
-                {showRemoveMfaCredentials &&
-                    config.mfaEmailEnabled &&
-                    config.mfaSmsEnabled &&
-                    phoneNumberCredentialRegistered &&
-                    isEmailCredentialRegistered && <Separator text={i18n('or')} />}
-                {showRemoveMfaCredentials &&
-                    config.mfaSmsEnabled &&
-                    phoneNumberCredentialRegistered && (
-                        <div>
-                            {showIntro && <Intro>{i18n('mfa.phoneNumber.remove.explain')}</Intro>}
-                            <Form
-                                submitLabel="mfa.remove.phoneNumber"
-                                SubmitComponent={({ label, ...props }) => (
-                                    <Button
-                                        type="submit"
-                                        variant="destructive"
-                                        className="w-full"
-                                        {...props}
-                                    >
-                                        {label}
-                                    </Button>
-                                )}
-                                handler={() =>
-                                    onPhoneNumberRemoval({ ...phoneNumberCredentialRegistered })
-                                }
-                                onSuccess={async () => {
-                                    onSuccess({ name: 'mfa_phone_number_deleted' });
-                                    await refresh();
-                                }}
-                                onError={onError}
-                            />
-                        </div>
-                    )}
-            </div>
-        );
-    }
-);
-
-interface VerificationCodeViewProps {
-    /**
-     * The authorization credential JSON Web Token (JWT) used to access the ReachFive API, less than five minutes old.
-     */
-    accessToken: string;
-    /**
-     * Show the introduction text.
-     */
-    showIntro?: boolean;
     /**
      * Callback function called when the request has succeed.
      */
@@ -401,185 +74,135 @@ interface VerificationCodeViewProps {
      */
     onError?: OnError;
     /**
-     * Display the checkbox to trust device
+     * @deprecated No effect: the widget has no introduction text anymore.
      */
-    allowTrustDevice?: boolean;
+    showIntro?: boolean;
     /**
-     * Action used in template, used again when a new code is sent.
+     * @deprecated No effect: the widget has no introduction text anymore.
      */
-    action?: string;
-}
+    requireMfaRegistration?: boolean;
+};
 
-type VerificationCodeViewState = (
-    | ({ registrationType: 'email' } & StartMfaEmailRegistrationResponse &
-          Partial<EmailRegisteringCredentialFormData>)
-    | ({ registrationType: 'sms' } & StartMfaPhoneNumberRegistrationResponse &
-          Partial<PhoneNumberRegisteringCredentialFormData>)
-) & { allowTrustDevice: boolean };
+const useFactorRowRefs = (): FactorRowRefs => ({
+    passkeys: useRef<HTMLButtonElement>(null),
+    add: {
+        passkey: useRef<HTMLButtonElement>(null),
+        email: useRef<HTMLButtonElement>(null),
+        sms: useRef<HTMLButtonElement>(null),
+    },
+});
 
-const VerificationCodeView = ({
+const Mfa = ({
     accessToken,
-    action,
-    onError = (() => {}) as OnError,
-    onSuccess = (() => {}) as OnSuccess,
-    showIntro = true,
+    showRemoveMfaCredentials = true,
     allowTrustDevice = false,
-}: VerificationCodeViewProps) => {
-    const coreClient = useReachfive();
-    const i18n = useI18n();
+    phoneNumberOptions,
+    action,
+    onSuccess = noop,
+    onError = noop,
+}: MfaCredentialsWidgetProps) => {
     const config = useConfig();
-    const { goTo, params } = useRouting();
-    const state = params as VerificationCodeViewState;
-    const { registrationType, status } = state;
+    const { credentials, profile } = useMfaCredentialsAndProfile(accessToken);
+    const { view, direction, pending, goTo, back, restart } = useViewNavigation<MfaView>('factors');
+    const refreshFactors = useRefreshMfaFactors(onError);
+    const [enrollment, setEnrollment] = useState<Enrollment | null>(null);
+    const [addingAnother, setAddingAnother] = useState(false);
+    const rowRefs = useFactorRowRefs();
+    const factorsTitle = useRef<HTMLDivElement>(null);
 
-    // the same request as the one which sent the first code, from the main view
-    const sendCode = () => {
-        if (state.registrationType === 'email') {
-            return coreClient
-                .startMfaEmailRegistration({
-                    accessToken,
-                    action,
-                    trustDevice: state.trustDevice,
-                })
-                .then(() => onSuccess({ name: 'mfa_email_start_registration' }));
-        }
-        return coreClient
-            .startMfaPhoneNumberRegistration({
-                accessToken,
-                action,
-                phoneNumber: state.phoneNumber!,
-                trustDevice: state.trustDevice,
-            })
-            .then(() => onSuccess({ name: 'mfa_phone_number_start_registration' }));
-    };
-    const onResend = () =>
-        sendCode().catch((error: unknown) => {
-            onError(error);
-            throw error;
+    // The button that restarts is gone with its view: the focus goes to the choice screen title.
+    const addAnother = () => {
+        if (addingAnother) return;
+        setAddingAnother(true);
+        void refreshFactors().then(() => {
+            setAddingAnother(false);
+            restart({ focus: factorsTitle });
         });
-    const canResend = state.registrationType === 'email' || state.phoneNumber !== undefined;
-
-    const onEmailCodeVerification = (data: VerificationCodeFormData) => {
-        return coreClient
-            .verifyMfaEmailRegistration({
-                ...data,
-                accessToken,
-            })
-            .then(resp => {
-                if (data.trustDevice) {
-                    onSuccess({ name: 'mfa_trusted_device_added' });
-                }
-                return resp;
-            })
-            .catch(error => {
-                onError(error);
-                throw error;
-            });
     };
 
-    const onSmsCodeVerification = (data: VerificationCodeFormData) => {
-        return coreClient
-            .verifyMfaPhoneNumberRegistration({
-                ...data,
-                accessToken,
-            })
-            .then(resp => {
-                if (data.trustDevice) {
-                    onSuccess({ name: 'mfa_trusted_device_added' });
-                }
-                return resp;
-            })
-            .catch(error => {
-                onError(error);
-                throw error;
-            });
+    const viewProps: MfaViewProps = {
+        accessToken,
+        action,
+        allowTrustDevice,
+        phoneNumberOptions,
+        onSuccess,
+        onError,
+    };
+    const enrollmentProps: EnrollmentViewProps = {
+        ...viewProps,
+        onBack: back,
+        onEnrolled: (enrolled, next) => {
+            setEnrollment(enrolled);
+            goTo(next);
+        },
     };
 
-    const onCredentialRegistered = () => {
-        switch (registrationType) {
+    const renderView = () => {
+        switch (view) {
+            case 'factors':
+                return (
+                    <FactorsView
+                        accessToken={accessToken}
+                        choices={factorChoices(config, credentials, profile)}
+                        removable={showRemoveMfaCredentials}
+                        titleRef={factorsTitle}
+                        rowRefs={rowRefs}
+                        onOpenPasskeys={() =>
+                            goTo('passkeys', {
+                                returnFocus: rowRefs.passkeys,
+                                // the row is gone when its last passkey was removed
+                                fallbackFocus: factorsTitle,
+                            })
+                        }
+                        openingPasskeys={pending}
+                        onAdd={factor => goTo(factor, { returnFocus: rowRefs.add[factor] })}
+                        onSuccess={onSuccess}
+                        onError={onError}
+                    />
+                );
+            case 'passkeys':
+                return (
+                    <PasskeysView
+                        accessToken={accessToken}
+                        onBack={back}
+                        onSuccess={onSuccess}
+                        onError={onError}
+                    />
+                );
+            case 'passkey':
+                return <PasskeyEnrollmentView {...enrollmentProps} />;
             case 'email':
-                onSuccess({ name: 'mfa_email_verify_registration' });
-                break;
             case 'sms':
-                onSuccess({ name: 'mfa_phone_number_verify_registration' });
-                break;
+                return <IdentifierEnrollmentView factor={view} {...enrollmentProps} />;
+            case 'code':
+                return enrollment && enrollment.factor !== 'passkey' ? (
+                    <CodeView
+                        {...viewProps}
+                        enrollment={enrollment}
+                        onBack={back}
+                        onVerified={() => goTo('done')}
+                    />
+                ) : null;
+            case 'done':
+                return enrollment ? (
+                    <ConfirmationView
+                        enrollment={enrollment}
+                        addingAnother={addingAnother}
+                        onAddAnother={addAnother}
+                    />
+                ) : null;
         }
-        goTo('main');
     };
 
-    React.useEffect(() => {
-        if (status === 'enabled') {
-            onCredentialRegistered();
-        }
-    }, [showIntro, status]);
-
+    // The credentials and profile queries stay mounted in every view, so a change made in
+    // another view refetches them in the background.
     return (
-        <div>
-            {showIntro && status === 'email_sent' && <Intro>{i18n('mfa.verify.email')}</Intro>}
-            {status === 'email_sent' && (
-                <VerificationCodeForm
-                    displayTrustDevice={allowTrustDevice && config.rbaEnabled}
-                    handler={onEmailCodeVerification}
-                    onSuccess={onCredentialRegistered}
-                    onError={onError}
-                    onResend={onResend}
-                />
-            )}
-
-            {showIntro && status === 'sms_sent' && <Intro>{i18n('mfa.verify.sms')}</Intro>}
-            {status === 'sms_sent' && (
-                <VerificationCodeForm
-                    displayTrustDevice={allowTrustDevice && config.rbaEnabled}
-                    handler={onSmsCodeVerification}
-                    onSuccess={onCredentialRegistered}
-                    onError={onError}
-                    onResend={canResend ? onResend : undefined}
-                />
-            )}
+        <div key={view} className={viewAnimation(direction)}>
+            {renderView()}
         </div>
     );
 };
 
-type MfaCredentialsProps = Prettify<
-    MainViewProps & VerificationCodeViewProps & CredentialsProviderProps
->;
-
-export type MfaCredentialsWidgetProps = Prettify<
-    Omit<MfaCredentialsProps, 'credentials' | 'profileIdentifiers'>
->;
-
-export default createMultiViewWidget<MfaCredentialsWidgetProps, MfaCredentialsProps>({
-    initialView: 'main',
-    views: {
-        main: MainView,
-        'verification-code': VerificationCodeView,
-    },
-    prepare: (options, { apiClient }) => {
-        return Promise.all([
-            apiClient.listMfaCredentials(options.accessToken),
-            apiClient.getUser({
-                accessToken: options.accessToken,
-                fields: 'email_verified,phone_number,phone_number_verified',
-            }),
-        ])
-            .then(([{ credentials }, profile]) => {
-                const profileIdentifiers = profile as Pick<
-                    Profile,
-                    'emailVerified' | 'phoneNumber' | 'phoneNumberVerified'
-                >;
-                return {
-                    ...options,
-                    credentials,
-                    profileIdentifiers,
-                };
-            })
-            .catch((error: unknown) => {
-                options.onError?.(error);
-                if (isAppError(error)) {
-                    throw UserError.fromAppError(error);
-                } else {
-                    throw error;
-                }
-            });
-    },
+export default createQueryWidget<MfaCredentialsWidgetProps>({
+    component: Mfa,
 });

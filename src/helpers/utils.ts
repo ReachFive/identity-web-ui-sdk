@@ -215,3 +215,9 @@ export function debounce<T extends unknown[]>(
         timerId = setTimeout(() => func(...args), delay);
     };
 }
+
+/**
+ * Does nothing. A default for optional callbacks: one shared function, so a default does not
+ * change on every render and break the memos and effects that depend on it.
+ */
+export const noop = (): void => {};

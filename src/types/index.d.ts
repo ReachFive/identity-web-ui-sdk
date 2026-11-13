@@ -62,7 +62,12 @@ export type RemoteSettings = Omit<CoreRemoteSettings, 'customProviders'> & {
     stepUpTokenMaxUses?: number;
 };
 
-export type Config = CoreConfig & RemoteSettings & ConsentsVersions & CustomFields;
+export type Config = CoreConfig &
+    RemoteSettings &
+    ConsentsVersions &
+    CustomFields &
+    // TODO(CA-6896): remove once Core's RemoteSettings declares it
+    { mfaWebauthnEnabled?: boolean };
 
 export type OnSuccess = (event: SuccessEvent) => void;
 
