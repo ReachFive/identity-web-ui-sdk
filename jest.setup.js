@@ -16,3 +16,10 @@ window.HTMLElement.prototype.scrollIntoView = jest.fn();
 
 // Mock elementFromPoint for input-otp's password manager badge detection in jsdom
 document.elementFromPoint = jest.fn(() => null);
+
+// Web platform globals jsdom leaves out, which `@reachfive/identity-core` needs: it encodes with
+// `TextEncoder` and requests with `fetch`. Up to 1.42.0 the core bundled the fetch polyfill itself.
+const { TextDecoder, TextEncoder } = require('node:util');
+Object.defineProperty(global, 'TextEncoder', { value: TextEncoder });
+Object.defineProperty(global, 'TextDecoder', { value: TextDecoder });
+require('whatwg-fetch');

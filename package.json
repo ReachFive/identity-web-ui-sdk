@@ -44,7 +44,7 @@
         "@radix-ui/react-select": "^2.2.6",
         "@radix-ui/react-separator": "^1.1.10",
         "@radix-ui/react-slot": "^1.2.4",
-        "@reachfive/identity-core": "^1.42.0",
+        "@reachfive/identity-core": "^1.43.0",
         "buffer": "^6.0.3",
         "char-info": "0.3.2",
         "class-variance-authority": "^0.7.1",
@@ -128,7 +128,8 @@
         "ts-jest": "^29.1.1",
         "ts-node": "^10.9.1",
         "typescript": "^5.2.2",
-        "typescript-eslint": "^8.50.0"
+        "typescript-eslint": "^8.50.0",
+        "whatwg-fetch": "^3.6.20"
     },
     "files": [
         "cjs",
