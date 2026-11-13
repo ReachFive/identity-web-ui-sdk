@@ -46,9 +46,10 @@ type CustomFields = {
 };
 
 /**
- * Extends the core remote settings with fields not yet released in `@reachfive/identity-core`.
+ * Extends the core remote settings with fields not yet released in `@reachfive/identity-core`,
+ * and narrows `customProviders` to the provider shape the widgets read.
  */
-export type RemoteSettings = CoreRemoteSettings & {
+export type RemoteSettings = Omit<CoreRemoteSettings, 'customProviders'> & {
     customProviders?: Record<string, Provider>;
     /** The number of digits of the verification codes the tenant sends (email, SMS). */
     verificationCodeLength?: number;
