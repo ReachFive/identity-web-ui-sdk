@@ -189,7 +189,10 @@ describe('UiClient widget lifecycle', () => {
         mockedWidget.mockRejectedValueOnce(new Error('Boom'));
         await show({ container: 'widget' });
         await screen.findByText('Boom');
-        expect(consoleError).toHaveBeenCalledWith(new Error('Boom'));
+        expect(consoleError).toHaveBeenCalledWith(
+            'ReachFive widget display fails:',
+            new Error('Boom')
+        );
         consoleError.mockRestore();
         expect(unmounted).toEqual(['first']);
 
