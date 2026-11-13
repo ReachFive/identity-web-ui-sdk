@@ -13,7 +13,8 @@ export interface RowFocus {
     /**
      * Call when a row opens its removal confirmation. Once the confirmation closes, focus goes
      * back to the row's control if the row is still there (cancelled or failed removal), or to
-     * the row that took its place, else the previous one, else the empty state.
+     * the row that took its place, else the previous one, else the empty state. Dropped if the
+     * user has focused something else by then.
      */
     watch: (key: string) => void;
 }
@@ -47,6 +48,10 @@ export function useRowFocus(
         // confirmation closes, which may be committed after the list is refetched.
         if (!target || target.closest('[inert]')) return;
         request.current = null;
+        // The closed confirmation took the focus with it, down to <body>. Focus elsewhere means
+        // the user moved on meanwhile: taking it back would interrupt them.
+        const { activeElement } = target.ownerDocument;
+        if (activeElement && activeElement !== target.ownerDocument.body) return;
         target.focus();
     });
 

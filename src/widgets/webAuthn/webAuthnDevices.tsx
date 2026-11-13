@@ -6,6 +6,7 @@ import { Form } from '@/components/form/form';
 import { Alternative, Heading, Info } from '@/components/miscComponent';
 import { ItemGroup } from '@/components/ui/item';
 import { useI18n } from '@/contexts/i18n';
+import { noop } from '@/helpers/utils';
 
 import { DeviceItem } from './deviceItem';
 import { useAddWebAuthnDevice, useRemoveWebAuthnDevice, useWebAuthnDevices } from './queries';
@@ -77,8 +78,8 @@ export function WebAuthnDevices({
     accessToken,
     showIntro = true,
     showLabels = false,
-    onError = () => {},
-    onSuccess = () => {},
+    onError = noop,
+    onSuccess = noop,
 }: WebAuthnDevicesProps) {
     const i18n = useI18n();
     const { data: devices } = useWebAuthnDevices(accessToken);

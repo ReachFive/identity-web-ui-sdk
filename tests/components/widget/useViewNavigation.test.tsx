@@ -72,7 +72,9 @@ describe('useViewNavigation', () => {
                     <button
                         ref={openerRef}
                         type="button"
-                        onClick={() => goTo('detail', { returnFocus: openerRef })}
+                        onClick={() =>
+                            goTo('detail', { returnFocus: openerRef, fallbackFocus: firstRef })
+                        }
                     >
                         Open
                     </button>
@@ -100,7 +102,7 @@ describe('useViewNavigation', () => {
         expect(screen.getByRole('button', { name: 'Open' })).toHaveFocus();
     });
 
-    test('back leaves the focus alone when that element is gone', async () => {
+    test('back gives focus to fallbackFocus when that element is gone', async () => {
         const user = userEvent.setup();
         const { rerender } = render(<Views />);
 
@@ -108,7 +110,7 @@ describe('useViewNavigation', () => {
         rerender(<Views removeOpener />);
         await user.click(screen.getByRole('button', { name: 'Back' }));
 
-        expect(screen.getByRole('button', { name: 'First' })).not.toHaveFocus();
+        expect(screen.getByRole('button', { name: 'First' })).toHaveFocus();
     });
 
     test('restart gives focus to the element given as focus, once rendered again', async () => {

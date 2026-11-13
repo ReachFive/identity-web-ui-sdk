@@ -61,6 +61,16 @@ describe('widgetErrorMessage', () => {
         ).toBe('invalid_grant');
     });
 
+    test('an API error with an untranslated key and no text stays generic, never shows the key', () => {
+        expect(widgetErrorMessage({ error: '', errorMessageKey: 'error.unknown' }, t)).toBe(
+            'Unexpected error'
+        );
+    });
+
+    test('an API error with empty texts and no key stays generic', () => {
+        expect(widgetErrorMessage({ error: '', errorDescription: '' }, t)).toBe('Unexpected error');
+    });
+
     test('without translations, the message key is skipped', () => {
         expect(
             widgetErrorMessage({

@@ -33,12 +33,16 @@ export function isAppError(err: unknown): err is AppError {
  */
 export const VERIFICATION_CODE_REFUSED = 'error.invalidVerificationCode';
 
+/** Shown when nothing better is known about an error. */
+const UNEXPECTED_ERROR = 'Unexpected error';
+
 /**
  * The message of an API error: the user message the API localised, else the translation of its
- * message key, else its description, else its code. Without translations, the key is skipped.
+ * message key, else its description, else its code, else a generic message. Without translations,
+ * the key is skipped. Empty texts count as missing.
  */
 const appErrorMessage = (error: AppError, i18n?: TFunction): string => {
-    const fallback = error.errorDescription ?? error.error;
+    const fallback = error.errorDescription || error.error || UNEXPECTED_ERROR;
     if (error.errorUserMsg) return error.errorUserMsg;
     if (error.errorMessageKey && i18n) {
         return i18n(error.errorMessageKey, { defaultValue: fallback });
@@ -67,5 +71,5 @@ export class UserError extends Error {
 export function widgetErrorMessage(error: unknown, i18n?: TFunction): string {
     if (error instanceof Error) return error.message;
     if (isAppError(error)) return UserError.fromAppError(error, i18n).message;
-    return 'Unexpected error';
+    return UNEXPECTED_ERROR;
 }

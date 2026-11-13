@@ -9,6 +9,7 @@ import { useReachfive } from '@/contexts/reachfive';
 import { type Field, type PhoneNumberOptions } from '@/lib/form';
 import { sendsNoCode } from '@/widgets/mfa/factors';
 import { useMfaProfile } from '@/widgets/mfa/queries';
+import { TRUST_DEVICE_FIELD } from '@/widgets/mfa/trustDeviceField';
 
 import type { EnrollmentViewProps } from '@/widgets/mfa/mfaWidget';
 
@@ -29,14 +30,6 @@ const TITLES: Record<IdentifierFactor, string> = {
 const CODE_INTROS: Record<IdentifierFactor, string> = {
     email: 'mfa.email.intro',
     sms: 'mfa.phoneNumber.intro',
-};
-
-const TRUST_DEVICE_FIELD: Field = {
-    key: 'trust_device',
-    type: 'checkbox',
-    label: 'mfa.stepUp.trustDevice',
-    defaultChecked: false,
-    required: false,
 };
 
 const phoneNumberField = (phoneNumberOptions?: PhoneNumberOptions): Field => ({
@@ -93,18 +86,28 @@ export function IdentifierEnrollmentView({
                       phoneNumber: phoneNumber ?? '',
                   });
 
+        const enabled = status === 'enabled';
         onSuccess({
             name:
                 factor === 'email'
                     ? 'mfa_email_start_registration'
                     : 'mfa_phone_number_start_registration',
         });
-        if (trustDevice && status === 'enabled') onSuccess({ name: 'mfa_trusted_device_added' });
+        // no code to verify: the factor is registered now, as after a verified code
+        if (enabled) {
+            onSuccess({
+                name:
+                    factor === 'email'
+                        ? 'mfa_email_verify_registration'
+                        : 'mfa_phone_number_verify_registration',
+            });
+        }
+        if (trustDevice && enabled) onSuccess({ name: 'mfa_trusted_device_added' });
 
         const enrolledIdentifier = factor === 'email' ? identifier : (phoneNumber ?? '');
         onEnrolled(
             { factor, identifier: enrolledIdentifier, trustDevice },
-            status === 'enabled' ? 'done' : 'code'
+            enabled ? 'done' : 'code'
         );
     };
 

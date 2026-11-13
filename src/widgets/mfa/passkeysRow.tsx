@@ -5,6 +5,9 @@ import { Fingerprint } from 'lucide-react';
 import { NavigationRow } from '@/components/list/navigationRow';
 import { useI18n } from '@/contexts/i18n';
 
+/** Key of the Passkeys row among the rows of a screen. */
+export const PASSKEYS_ROW_KEY = 'passkeys';
+
 interface PasskeysRowProps {
     /** Number of passkeys, taken from the MFA credentials list. */
     count: number;
@@ -26,7 +29,7 @@ export const PasskeysRow = forwardRef<HTMLButtonElement, PasskeysRowProps>(funct
     return (
         <NavigationRow
             ref={ref}
-            data-slot="widget-mfa-credential"
+            data-slot="widget-mfa-passkeys"
             icon={<Fingerprint />}
             title={i18n('mfaList.passkeys')}
             description={`${i18n('mfaList.passkeyCount', { count })} · ${i18n('mfaList.alsoUsedToLogIn')}`}

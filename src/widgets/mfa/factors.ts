@@ -21,17 +21,27 @@ export interface FactorChoices {
     addable: AddableFactor[];
 }
 
+export type CredentialGroups = Pick<FactorChoices, 'enabled' | 'passkeyCount'>;
+
+/** The listed credentials as the screens show them: one row per MFA credential, passkeys counted. */
+export function groupCredentials(credentials: ListedCredential[]): CredentialGroups {
+    return {
+        enabled: credentials.filter(isMfaCredential),
+        passkeyCount: credentials.filter(isPasskeyCredential).length,
+    };
+}
+
 export function factorChoices(
-    config: Pick<Config, 'mfaEmailEnabled' | 'mfaSmsEnabled' | 'mfaWebauthnEnabled'>,
+    config: Pick<Config, 'webAuthn' | 'mfaEmailEnabled' | 'mfaSmsEnabled' | 'mfaWebauthnEnabled'>,
     credentials: ListedCredential[],
     profile: MfaProfile
 ): FactorChoices {
-    const enabled = credentials.filter(isMfaCredential);
-    const passkeyCount = credentials.filter(isPasskeyCredential).length;
+    const { enabled, passkeyCount } = groupCredentials(credentials);
     const has = (type: MfaCredential['type']) => enabled.some(c => c.type === type);
 
     const addable: AddableFactor[] = [];
-    if (config.mfaWebauthnEnabled && passkeyCount === 0) addable.push('passkey');
+    // a passkey also needs the WebAuthn feature of the account, as showWebAuthnDevices does
+    if (config.webAuthn && config.mfaWebauthnEnabled && passkeyCount === 0) addable.push('passkey');
     if (config.mfaEmailEnabled && !has('email') && profile.email) addable.push('email');
     if (config.mfaSmsEnabled && !has('sms')) addable.push('sms');
 

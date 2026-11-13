@@ -8,7 +8,12 @@ import type {
     PasskeyCredential,
 } from '../../../src/widgets/mfa/passkeyCredential';
 
-const allOn = { mfaEmailEnabled: true, mfaSmsEnabled: true, mfaWebauthnEnabled: true };
+const allOn = {
+    webAuthn: true,
+    mfaEmailEnabled: true,
+    mfaSmsEnabled: true,
+    mfaWebauthnEnabled: true,
+};
 const profile: MfaProfile = { email: 'alice@example.com' };
 
 const passkey: PasskeyCredential = {
@@ -33,6 +38,11 @@ describe('factorChoices', () => {
         const choices = factorChoices(allOn, [passkey], profile);
         expect(choices.passkeyCount).toBe(1);
         expect(choices.addable).not.toContain('passkey');
+    });
+
+    test('passkey is not addable when the WebAuthn feature is off', () => {
+        const choices = factorChoices({ ...allOn, webAuthn: false }, [], profile);
+        expect(choices.addable).toEqual(['email', 'sms']);
     });
 
     test.each([false, undefined])(

@@ -9,13 +9,10 @@ import { useI18n } from '@/contexts/i18n';
 import { AddFactorRow } from '@/widgets/mfa/addFactorRow';
 import { credentialKey } from '@/widgets/mfa/credentials';
 import { MfaCredentialRows, useMfaCredentialRemoval } from '@/widgets/mfa/mfaCredentialRows';
-import { PasskeysRow } from '@/widgets/mfa/passkeysRow';
+import { PASSKEYS_ROW_KEY, PasskeysRow } from '@/widgets/mfa/passkeysRow';
 
 import type { OnError, OnSuccess } from '@/types';
 import type { AddableFactor, FactorChoices } from '@/widgets/mfa/factors';
-
-/** Key of the Passkeys row among the rows of the screen. */
-const PASSKEYS_ROW_KEY = 'passkeys';
 
 const addRowKey = (factor: AddableFactor) => `add-${factor}`;
 

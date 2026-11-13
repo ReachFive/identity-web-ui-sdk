@@ -104,6 +104,7 @@ const removeMfaEmail = jest.fn<Client['removeMfaEmail']>();
 const removeMfaPhoneNumber = jest.fn<Client['removeMfaPhoneNumber']>();
 const listWebAuthnDevices = jest.fn<Client['listWebAuthnDevices']>();
 const addNewWebAuthnDevice = jest.fn<Client['addNewWebAuthnDevice']>();
+const removeWebAuthnDevice = jest.fn<Client['removeWebAuthnDevice']>();
 const startMfaEmailRegistration = jest.fn<Client['startMfaEmailRegistration']>();
 const startMfaPhoneNumberRegistration = jest.fn<Client['startMfaPhoneNumberRegistration']>();
 const verifyMfaEmailRegistration = jest.fn<Client['verifyMfaEmailRegistration']>();
@@ -120,6 +121,7 @@ const apiClient: Client = {
     removeMfaPhoneNumber,
     listWebAuthnDevices,
     addNewWebAuthnDevice,
+    removeWebAuthnDevice,
     startMfaEmailRegistration,
     startMfaPhoneNumberRegistration,
     verifyMfaEmailRegistration,
@@ -229,6 +231,17 @@ describe('Factor choice screen', () => {
         ]);
     });
 
+    test('hides the Passkey option when the WebAuthn feature is off', async () => {
+        listMfaCredentials.mockResolvedValue(credentialsList());
+        await renderWidget({}, { webAuthn: false });
+
+        const addRows = within(await addGroup()).getAllByRole('listitem');
+        expect(addRows.map(row => within(row).getByRole('button').textContent)).toEqual([
+            'Email',
+            'Phone number',
+        ]);
+    });
+
     test('hides a group without rows', async () => {
         listMfaCredentials.mockResolvedValue(credentialsList());
         await renderWidget();
@@ -269,6 +282,31 @@ describe('Navigation', () => {
         expect(
             screen.getByRole('heading', { name: 'mfa.manageFactors.title' })
         ).toBeInTheDocument();
+    });
+
+    test('focuses the title on return when the last passkey was removed', async () => {
+        listMfaCredentials
+            .mockResolvedValueOnce(credentialsList(emailCredential, passkeyCredential('a')))
+            .mockResolvedValue(credentialsList(emailCredential));
+        listWebAuthnDevices
+            .mockResolvedValueOnce([{ id: 'a', friendlyName: 'Device a' }])
+            .mockResolvedValue([]);
+        removeWebAuthnDevice.mockResolvedValue();
+        await renderWidget();
+
+        const user = userEvent.setup();
+        await user.click(await screen.findByRole('button', { name: 'mfaList.passkeys' }));
+        const back = await screen.findByRole('button', { name: 'mfaList.back' });
+        await user.click(await screen.findByRole('button', { name: 'remove' }));
+        const dialog = await screen.findByRole('alertdialog');
+        await user.click(within(dialog).getByRole('button', { name: 'remove' }));
+        await waitFor(() => expect(listMfaCredentials).toHaveBeenCalledTimes(2));
+
+        await user.click(back);
+
+        const title = await screen.findByRole('heading', { name: 'mfa.manageFactors.title' });
+        await waitFor(() => expect(title).toHaveFocus());
+        expect(screen.queryByRole('button', { name: 'mfaList.passkeys' })).not.toBeInTheDocument();
     });
 
     test('opens the enrollment screen of the selected factor', async () => {
@@ -493,6 +531,8 @@ describe('Email enrollment', () => {
             trustDevice: true,
         });
         expect(successEvents('mfa_email_start_registration')).toHaveLength(1);
+        // no code to verify: the factor is registered all the same
+        expect(successEvents('mfa_email_verify_registration')).toHaveLength(1);
         expect(successEvents('mfa_trusted_device_added')).toHaveLength(1);
     });
 
@@ -831,7 +871,7 @@ describe('Confirmation screen', () => {
 
         const heading = await screen.findByRole('heading', { name: 'mfa.factorAdded.passkey' });
         expect(heading).toHaveFocus();
-        expect(screen.getByText('You can now use “iPhone de Marie”')).toBeInTheDocument();
+        expect(screen.getByText('You can now use iPhone de Marie')).toBeInTheDocument();
         expect(screen.queryByRole('button', { name: 'mfaList.back' })).not.toBeInTheDocument();
     });
 
@@ -900,8 +940,10 @@ describe('Confirmation screen', () => {
         );
 
         await user.click(addAnother);
-        expect(addAnother).toBeDisabled();
+        // aria-disabled, not disabled: the button keeps the focus while the factors reload
+        expect(addAnother).toHaveAttribute('aria-disabled', 'true');
         expect(addAnother).toHaveAttribute('aria-busy', 'true');
+        expect(addAnother).toHaveFocus();
         await user.click(addAnother);
         reload(credentialsList(passkeyCredential('a')));
 

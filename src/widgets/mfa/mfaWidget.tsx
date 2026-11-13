@@ -3,6 +3,7 @@ import React, { useRef, useState } from 'react';
 import { createQueryWidget } from '@/components/widget/queryWidget';
 import { useViewNavigation, viewAnimation } from '@/components/widget/useViewNavigation';
 import { useConfig } from '@/contexts/config';
+import { noop } from '@/helpers/utils';
 import { type PhoneNumberOptions } from '@/lib/form';
 import { CodeView } from '@/widgets/mfa/codeView';
 import { ConfirmationView } from '@/widgets/mfa/confirmationView';
@@ -97,8 +98,8 @@ const Mfa = ({
     allowTrustDevice = false,
     phoneNumberOptions,
     action,
-    onSuccess = () => {},
-    onError = () => {},
+    onSuccess = noop,
+    onError = noop,
 }: MfaCredentialsWidgetProps) => {
     const config = useConfig();
     const { credentials, profile } = useMfaCredentialsAndProfile(accessToken);
@@ -146,7 +147,13 @@ const Mfa = ({
                         removable={showRemoveMfaCredentials}
                         titleRef={factorsTitle}
                         rowRefs={rowRefs}
-                        onOpenPasskeys={() => goTo('passkeys', { returnFocus: rowRefs.passkeys })}
+                        onOpenPasskeys={() =>
+                            goTo('passkeys', {
+                                returnFocus: rowRefs.passkeys,
+                                // the row is gone when its last passkey was removed
+                                fallbackFocus: factorsTitle,
+                            })
+                        }
                         openingPasskeys={pending}
                         onAdd={factor => goTo(factor, { returnFocus: rowRefs.add[factor] })}
                         onSuccess={onSuccess}

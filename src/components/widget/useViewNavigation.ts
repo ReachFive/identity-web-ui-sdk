@@ -6,10 +6,14 @@ export type ViewDirection = 'forward' | 'back' | null;
 export interface GoToOptions {
     /**
      * The element to focus when the user comes back from the opened view, typically the control
-     * that opened it. A ref, not an element: the view is rendered anew on return. Nothing is
-     * focused if it is gone by then.
+     * that opened it. A ref, not an element: the view is rendered anew on return.
      */
     returnFocus?: RefObject<HTMLElement>;
+    /**
+     * The element to focus on return when `returnFocus` is gone by then, such as a row removed in
+     * the opened view. Nothing is focused if both are gone.
+     */
+    fallbackFocus?: RefObject<HTMLElement>;
 }
 
 export interface RestartOptions {
@@ -20,9 +24,11 @@ export interface RestartOptions {
     focus?: RefObject<HTMLElement>;
 }
 
+type FocusTargets = RefObject<HTMLElement>[];
+
 interface Entry<V extends string> {
     view: V;
-    returnFocus?: RefObject<HTMLElement>;
+    returnFocus: FocusTargets;
 }
 
 interface NavigationState<V extends string> {
@@ -55,19 +61,19 @@ export interface ViewNavigation<V extends string> {
  */
 export function useViewNavigation<V extends string>(initialView: V): ViewNavigation<V> {
     const [{ history, direction }, setState] = useState<NavigationState<V>>({
-        history: [{ view: initialView }],
+        history: [{ view: initialView, returnFocus: [] }],
         direction: null,
     });
     const [pending, startTransition] = useTransition();
     const firstView = useRef(initialView);
-    const focusOnReturn = useRef<RefObject<HTMLElement> | null>(null);
+    // the first target still rendered takes the focus once the view is committed
+    const focusOnReturn = useRef<FocusTargets>([]);
     const current = history[history.length - 1];
 
     useEffect(() => {
-        const target = focusOnReturn.current;
-        if (!target) return;
-        focusOnReturn.current = null;
-        target.current?.focus();
+        const targets = focusOnReturn.current;
+        focusOnReturn.current = [];
+        targets.find(target => target.current)?.current?.focus();
     }, [current]);
 
     return {
@@ -75,18 +81,28 @@ export function useViewNavigation<V extends string>(initialView: V): ViewNavigat
         direction,
         pending,
         canGoBack: history.length > 1,
-        goTo: (view, { returnFocus } = {}) =>
+        goTo: (view, { returnFocus, fallbackFocus } = {}) => {
+            const targets = [returnFocus, fallbackFocus].filter(
+                (target): target is RefObject<HTMLElement> => target !== undefined
+            );
             startTransition(() =>
-                setState({ history: [...history, { view, returnFocus }], direction: 'forward' })
-            ),
+                setState({
+                    history: [...history, { view, returnFocus: targets }],
+                    direction: 'forward',
+                })
+            );
+        },
         back: () => {
             if (history.length < 2) return;
-            focusOnReturn.current = current.returnFocus ?? null;
+            focusOnReturn.current = current.returnFocus;
             setState({ history: history.slice(0, -1), direction: 'back' });
         },
         restart: ({ focus } = {}) => {
-            focusOnReturn.current = focus ?? null;
-            setState({ history: [{ view: firstView.current }], direction: 'back' });
+            focusOnReturn.current = focus ? [focus] : [];
+            setState({
+                history: [{ view: firstView.current, returnFocus: [] }],
+                direction: 'back',
+            });
         },
     };
 }

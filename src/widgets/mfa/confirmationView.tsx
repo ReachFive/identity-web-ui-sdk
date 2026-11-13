@@ -10,7 +10,11 @@ import type { Enrollment } from '@/widgets/mfa/mfaWidget';
 
 interface ConfirmationViewProps {
     enrollment: Enrollment;
-    /** The factors are reloading before the choice screen shows again. */
+    /**
+     * The factors are reloading before the choice screen shows again: the button is
+     * `aria-disabled` (not `disabled`, which would drop the focus to the page) and the widget
+     * ignores a second click.
+     */
     addingAnother: boolean;
     onAddAnother: () => void;
 }
@@ -22,10 +26,10 @@ const FACTOR_ADDED_TITLES: Record<Enrollment['factor'], string> = {
     sms: 'mfa.factorAdded.phoneNumber',
 };
 
+// No quotes around a passkey name: their shape depends on the language, which the code cannot
+// know, and the translations would have to carry them.
 const identifierOf = (enrollment: Enrollment): string =>
-    enrollment.factor === 'passkey'
-        ? `\u201c${enrollment.friendlyName}\u201d`
-        : enrollment.identifier;
+    enrollment.factor === 'passkey' ? enrollment.friendlyName : enrollment.identifier;
 
 /**
  * The screen shown once a factor is enrolled. It has no back arrow: the factor exists, so the only
@@ -69,7 +73,8 @@ export function ConfirmationView({
             <Button
                 type="button"
                 variant="outline"
-                disabled={addingAnother}
+                className="aria-disabled:cursor-not-allowed aria-disabled:opacity-50"
+                aria-disabled={addingAnother || undefined}
                 aria-busy={addingAnother}
                 onClick={onAddAnother}
             >
