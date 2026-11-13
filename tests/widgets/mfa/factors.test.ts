@@ -1,12 +1,10 @@
 import { describe, expect, test } from '@jest/globals';
 
+import type { MFA } from '@reachfive/identity-core';
+
 import { factorChoices, maskPhoneNumber, sendsNoCode } from '../../../src/widgets/mfa/factors';
 
 import type { MfaProfile } from '../../../src/widgets/mfa/factors';
-import type {
-    ListedCredential,
-    PasskeyCredential,
-} from '../../../src/widgets/mfa/passkeyCredential';
 
 const allOn = {
     webAuthn: true,
@@ -16,13 +14,13 @@ const allOn = {
 };
 const profile: MfaProfile = { email: 'alice@example.com' };
 
-const passkey: PasskeyCredential = {
+const passkey: MFA.PasskeyCredential = {
     type: 'webauthn',
     id: 'pk-1',
     friendlyName: 'MacBook',
     createdAt: '2025-01-01',
 };
-const emailCredential: ListedCredential = {
+const emailCredential: MFA.Credential = {
     type: 'email',
     email: 'alice@example.com',
     friendlyName: 'alice@example.com',

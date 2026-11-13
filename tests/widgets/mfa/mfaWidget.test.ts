@@ -14,10 +14,6 @@ import mfaWidget from '../../../src/widgets/mfa/mfaWidget';
 
 import type { I18nMessages } from '../../../src/contexts/i18n';
 import type { Config, OnError, OnSuccess } from '../../../src/types';
-import type {
-    ListedCredential,
-    PasskeyCredential,
-} from '../../../src/widgets/mfa/passkeyCredential';
 
 /*
  * No Squash case exists yet for the showMfa factor choice: the tests are grouped by behaviour.
@@ -87,16 +83,16 @@ const emailCredential: MFA.EmailCredential = {
     createdAt: '2022-09-21',
 };
 
-const passkeyCredential = (id: string): PasskeyCredential => ({
+const passkeyCredential = (id: string): MFA.PasskeyCredential => ({
     type: 'webauthn',
     id,
     friendlyName: `Passkey ${id}`,
     createdAt: '2024-01-15',
 });
 
-/** Core 1.42.0 does not declare the `webauthn` credential yet (see passkeyCredential.ts). */
-const credentialsList = (...credentials: ListedCredential[]) =>
-    ({ credentials }) as Awaited<ReturnType<Client['listMfaCredentials']>>;
+const credentialsList = (...credentials: MFA.Credential[]): MFA.CredentialsResponse => ({
+    credentials,
+});
 
 const listMfaCredentials = jest.fn<Client['listMfaCredentials']>();
 const getUser = jest.fn<Client['getUser']>();

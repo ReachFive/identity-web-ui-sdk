@@ -1,5 +1,6 @@
+import { MFA } from '@reachfive/identity-core';
+
 import { isMfaCredential, type MfaCredential } from '@/widgets/mfa/credentials';
-import { isPasskeyCredential, type ListedCredential } from '@/widgets/mfa/passkeyCredential';
 
 import type { Config } from '@/types';
 
@@ -24,16 +25,16 @@ export interface FactorChoices {
 export type CredentialGroups = Pick<FactorChoices, 'enabled' | 'passkeyCount'>;
 
 /** The listed credentials as the screens show them: one row per MFA credential, passkeys counted. */
-export function groupCredentials(credentials: ListedCredential[]): CredentialGroups {
+export function groupCredentials(credentials: MFA.Credential[]): CredentialGroups {
     return {
         enabled: credentials.filter(isMfaCredential),
-        passkeyCount: credentials.filter(isPasskeyCredential).length,
+        passkeyCount: credentials.filter(MFA.isPasskeyCredential).length,
     };
 }
 
 export function factorChoices(
     config: Pick<Config, 'webAuthn' | 'mfaEmailEnabled' | 'mfaSmsEnabled' | 'mfaWebauthnEnabled'>,
-    credentials: ListedCredential[],
+    credentials: MFA.Credential[],
     profile: MfaProfile
 ): FactorChoices {
     const { enabled, passkeyCount } = groupCredentials(credentials);
