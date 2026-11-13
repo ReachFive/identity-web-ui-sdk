@@ -148,7 +148,7 @@ const getSocialButtonLabel = (button: HTMLElement) => button.querySelector('.r5-
 
 beforeEach(() => {
     loginWithSocialProvider.mockClear();
-    loginWithSocialProvider.mockResolvedValue();
+    loginWithSocialProvider.mockResolvedValue(undefined);
 });
 
 describe('rendering', () => {

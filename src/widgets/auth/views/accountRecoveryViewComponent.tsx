@@ -1,11 +1,10 @@
-import React, { useCallback, useLayoutEffect } from 'react';
+import React, { useCallback } from 'react';
 
 import { RequestAccountRecoveryParams } from '@reachfive/identity-core/es/main/profileClient';
 
 import { CaptchaProvider, WithCaptchaProps } from '@/components/captcha';
 import { Form } from '@/components/form/form';
 import { Alternative, Heading, Info, Intro, Link } from '@/components/miscComponent';
-import { importGoogleRecaptchaScript } from '@/components/reCaptcha';
 import { useI18n } from '@/contexts/i18n';
 import { useReachfive } from '@/contexts/reachfive';
 import { useRouting } from '@/contexts/routing';
@@ -60,11 +59,7 @@ export const AccountRecoveryView = ({
     allowLogin = true,
     displaySafeErrorMessage = false,
     showLabels = false,
-    recaptcha_enabled = false,
-    recaptcha_site_key,
-    captchaFoxEnabled = false,
-    captchaFoxSiteKey,
-    captchaFoxMode,
+    captcha,
     redirectUrl,
     returnToAfterAccountRecovery,
     onError = (() => {}) as OnError,
@@ -85,22 +80,11 @@ export const AccountRecoveryView = ({
         [coreClient, redirectUrl, returnToAfterAccountRecovery]
     );
 
-    useLayoutEffect(() => {
-        importGoogleRecaptchaScript(recaptcha_site_key);
-    }, [recaptcha_site_key]);
-
     return (
         <div>
             <Heading>{i18n('accountRecovery.title')}</Heading>
             <Intro>{i18n('accountRecovery.prompt')}</Intro>
-            <CaptchaProvider
-                recaptcha_enabled={recaptcha_enabled}
-                recaptcha_site_key={recaptcha_site_key}
-                captchaFoxEnabled={captchaFoxEnabled}
-                captchaFoxSiteKey={captchaFoxSiteKey}
-                captchaFoxMode={captchaFoxMode}
-                action="account_recovery"
-            >
+            <CaptchaProvider captcha={captcha} operation="account_recovery">
                 <Form
                     fields={[
                         {

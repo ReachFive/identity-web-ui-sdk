@@ -4,7 +4,12 @@ import { useFormContext } from 'react-hook-form';
 import { REGEXP_ONLY_DIGITS } from 'input-otp';
 import { AlertTriangleIcon, RefreshCwIcon } from 'lucide-react';
 
-import { CaptchaBoundary, useCaptcha, type CaptchaConfig } from '@/components/captcha';
+import {
+    CaptchaBoundary,
+    useCaptcha,
+    type CaptchaConfig,
+    type WithCaptchaToken,
+} from '@/components/captcha';
 import { Required } from '@/components/form/fields/required';
 import { useFormSubmissionSucceeded, useLockFormSubmit } from '@/components/form/formSubmission';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
@@ -62,7 +67,7 @@ type OtpFieldProps = {
     /** Called with the code once every slot is filled. */
     onComplete?: (value: string) => void;
     /** The function called by the resend link. */
-    onResend?: (captcha: { captchaToken?: string }) => Promise<unknown>;
+    onResend?: (captcha: WithCaptchaToken<{}>) => Promise<unknown>;
 };
 
 function resolveSlotStatus(
@@ -140,7 +145,7 @@ const OtpField = React.forwardRef<HTMLInputElement, OtpFieldProps>(function OtpF
         if (autoSubmit) inputRef.current?.form?.requestSubmit();
     };
 
-    const resend = async (captcha: { captchaToken?: string }) => {
+    const resend = async (captcha: WithCaptchaToken<{}>) => {
         await onResend?.(captcha);
         setSentCodes(count => count + 1);
         resetRefusedCodes();
@@ -266,7 +271,7 @@ type ResendCodeProps = {
     disabled: boolean;
     maxSends: number;
     sentCodes: number;
-    onResend: (captcha: { captchaToken?: string }) => Promise<void>;
+    onResend: (captcha: WithCaptchaToken<{}>) => Promise<void>;
 };
 
 function ResendCode({ disabled, maxSends, sentCodes, onResend }: ResendCodeProps) {
