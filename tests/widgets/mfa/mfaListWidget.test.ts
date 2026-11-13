@@ -14,10 +14,6 @@ import mfaListWidget from '../../../src/widgets/mfa/mfaListWidget';
 
 import type { I18nMessages } from '../../../src/contexts/i18n';
 import type { Config, OnError, OnSuccess } from '../../../src/types';
-import type {
-    ListedCredential,
-    PasskeyCredential,
-} from '../../../src/widgets/mfa/passkeyCredential';
 
 /*
  * The tests referring to a Squash test case (SDK > SDK UI > 01.13 - MFA > 01.13.03 -
@@ -83,16 +79,16 @@ const emailCredential: MFA.EmailCredential = {
     createdAt: '2022-09-21',
 };
 
-const passkeyCredential = (id: string): PasskeyCredential => ({
+const passkeyCredential = (id: string): MFA.PasskeyCredential => ({
     type: 'webauthn',
     id,
     friendlyName: `Passkey ${id}`,
     createdAt: '2024-01-15',
 });
 
-/** Core 1.42.0 does not declare the `webauthn` credential yet (see passkeyCredential.ts). */
-const credentialsList = (...credentials: ListedCredential[]) =>
-    ({ credentials }) as Awaited<ReturnType<Client['listMfaCredentials']>>;
+const credentialsList = (...credentials: MFA.Credential[]): MFA.CredentialsResponse => ({
+    credentials,
+});
 
 const listMfaCredentials = jest.fn<Client['listMfaCredentials']>();
 const removeMfaEmail = jest.fn<Client['removeMfaEmail']>();

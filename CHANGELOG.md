@@ -39,7 +39,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
-- `@reachfive/identity-core` upgraded to 1.42.0, whose `verifyPasswordless` no longer overrides the
+- `@reachfive/identity-core` upgraded to 1.43.0. Since 1.42.0, its `verifyPasswordless` no longer overrides the
   original authorization request's parameters in an orchestrated flow (hosted pages).
 
 ## [2.1.0] - 2026-09-16

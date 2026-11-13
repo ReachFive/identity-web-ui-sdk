@@ -1,20 +1,16 @@
 import { Mail, Smartphone, type LucideIcon } from 'lucide-react';
 
-import {
-    isPasskeyCredential,
-    type ListedCredential,
-    type PasskeyCredential,
-} from '@/widgets/mfa/passkeyCredential';
+import { MFA } from '@reachfive/identity-core';
 
 /**
  * An MFA credential (email, phone number, …): a second factor only, listed one row each and
  * removable. Passkeys are left out: an authentication method first, they are managed in their own
  * view.
  */
-export type MfaCredential = Exclude<ListedCredential, PasskeyCredential>;
+export type MfaCredential = Exclude<MFA.Credential, MFA.PasskeyCredential>;
 
-export const isMfaCredential = (credential: ListedCredential): credential is MfaCredential =>
-    !isPasskeyCredential(credential);
+export const isMfaCredential = (credential: MFA.Credential): credential is MfaCredential =>
+    !MFA.isPasskeyCredential(credential);
 
 /** Identifies a row of the list; unique across MFA credentials. */
 export const credentialKey = (credential: MfaCredential) =>

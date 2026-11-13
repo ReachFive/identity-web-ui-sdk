@@ -16,3 +16,7 @@ window.HTMLElement.prototype.scrollIntoView = jest.fn();
 
 // Mock elementFromPoint for input-otp's password manager badge detection in jsdom
 document.elementFromPoint = jest.fn(() => null);
+
+// jsdom has no TextEncoder/TextDecoder, which @reachfive/identity-core creates when it loads
+const { TextDecoder, TextEncoder } = require('node:util');
+Object.assign(global, { TextDecoder, TextEncoder });

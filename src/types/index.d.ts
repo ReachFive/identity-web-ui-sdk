@@ -47,8 +47,12 @@ type CustomFields = {
 
 /**
  * Extends the core remote settings with fields not yet released in `@reachfive/identity-core`.
+ *
+ * `customProviders` replaces Core's own declaration: Core 1.43.0 requires every field of a
+ * provider, but the API omits the `btn*` colors when unset and never sends `buttonLabel`
+ * (`ProviderConfig` in ciam-app). TODO(CA-7261): drop it once Core types them as the API does.
  */
-export type RemoteSettings = CoreRemoteSettings & {
+export type RemoteSettings = Omit<CoreRemoteSettings, 'customProviders'> & {
     customProviders?: Record<string, Provider>;
     /** The number of digits of the verification codes the tenant sends (email, SMS). */
     verificationCodeLength?: number;

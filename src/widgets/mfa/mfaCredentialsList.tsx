@@ -2,13 +2,14 @@ import React, { type RefObject } from 'react';
 
 import { Shield } from 'lucide-react';
 
+import { MFA } from '@reachfive/identity-core';
+
 import { ListEmpty } from '@/components/list/listItem';
 import { ItemGroup } from '@/components/ui/item';
 import { useI18n } from '@/contexts/i18n';
 import { OnError, OnSuccess } from '@/types';
 import { credentialKey, isMfaCredential } from '@/widgets/mfa/credentials';
 import { MfaCredentialRows, useMfaCredentialRemoval } from '@/widgets/mfa/mfaCredentialRows';
-import { isPasskeyCredential, type ListedCredential } from '@/widgets/mfa/passkeyCredential';
 import { PasskeysRow } from '@/widgets/mfa/passkeysRow';
 
 /** Key of the Passkeys row among the rows of the list. */
@@ -16,7 +17,7 @@ const PASSKEYS_ROW_KEY = 'passkeys';
 
 interface MfaCredentialsListProps {
     accessToken: string;
-    credentials: ListedCredential[];
+    credentials: MFA.Credential[];
     removable: boolean;
     passkeysRowRef: RefObject<HTMLButtonElement>;
     onOpenPasskeys: () => void;
@@ -39,7 +40,7 @@ export const MfaCredentialsList = ({
 }: MfaCredentialsListProps) => {
     const i18n = useI18n();
     const mfaCredentials = credentials.filter(isMfaCredential);
-    const passkeyCount = credentials.filter(isPasskeyCredential).length;
+    const passkeyCount = credentials.filter(MFA.isPasskeyCredential).length;
     const rowKeys = [
         ...mfaCredentials.map(credentialKey),
         ...(passkeyCount > 0 ? [PASSKEYS_ROW_KEY] : []),
