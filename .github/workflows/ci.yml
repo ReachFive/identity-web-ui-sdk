@@ -29,6 +29,8 @@ jobs:
     permissions:
       contents: read
       issues: write
+      # Reacting to a comment on a pull request returns a 403 with `issues: write` alone.
+      pull-requests: write
     steps:
       - name: Acknowledge the /rc command
         if: github.event_name == 'issue_comment'
