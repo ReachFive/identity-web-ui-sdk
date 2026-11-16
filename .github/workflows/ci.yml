@@ -13,6 +13,18 @@ on:
       - develop
   issue_comment:
     types: [created]
+  # Publishes a release candidate like `/rc`, started from the Actions tab.
+  workflow_dispatch:
+    inputs:
+      pr:
+        description: Number of the release pull request to publish a release candidate from
+        required: true
+        type: number
+
+env:
+  # A prerelease is built on `/rc` or on a manual run, from the head of that release pull request.
+  PRERELEASE: ${{ github.event_name == 'issue_comment' || github.event_name == 'workflow_dispatch' }}
+  PR_NUMBER: ${{ github.event.issue.number || inputs.pr }}
 
 jobs:
   test:
@@ -40,10 +52,21 @@ jobs:
           COMMENT_ID: ${{ github.event.comment.id }}
         run: gh api --method POST "repos/$REPO/issues/comments/$COMMENT_ID/reactions" -f content=rocket
 
+      - name: Check the pull request is a release
+        if: github.event_name == 'workflow_dispatch'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+        run: |
+          if ! gh pr view "$PR_NUMBER" --repo "$REPO" --json labels --jq '.labels[].name' | grep -qx release; then
+            echo "::error::Pull request #$PR_NUMBER does not carry the release label."
+            exit 1
+          fi
+
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 #v7.0.0
         with:
-          # issue_comment carries no ref: check out the head of the commented PR.
-          ref: ${{ github.event_name == 'issue_comment' && format('refs/pull/{0}/head', github.event.issue.number) || '' }}
+          # issue_comment and workflow_dispatch carry no PR ref: check out the head of the release PR.
+          ref: ${{ env.PRERELEASE == 'true' && format('refs/pull/{0}/head', env.PR_NUMBER) || '' }}
 
       - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e #v6.4.0
         with:
@@ -69,7 +92,7 @@ jobs:
         run: npm test -- --ci --reporters=default --reporters=jest-junit
 
       - name: Compute and set prerelease version
-        if: github.event_name == 'issue_comment'
+        if: env.PRERELEASE == 'true'
         run: |
           BASE=$(node -p "require('./package.json').version")
           VERSIONS=$(npm view @reachfive/identity-ui versions --json 2>/dev/null || echo '')
@@ -89,7 +112,7 @@ jobs:
           JEST_JUNIT_OUTPUT_NAME: jest-junit.xml
 
       - name: Upload npm package artifact
-        if: github.event_name == 'issue_comment'
+        if: env.PRERELEASE == 'true'
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a #v7.0.1
         with:
           name: npm-package
@@ -108,14 +131,14 @@ jobs:
   publish-prerelease:
     name: Publish Prerelease
     needs: test
-    if: github.event_name == 'issue_comment'
+    if: github.event_name == 'issue_comment' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     permissions:
       contents: read
       id-token: write
       pull-requests: write
     concurrency:
-      group: prerelease-${{ github.event.issue.number }}
+      group: prerelease-${{ github.event.issue.number || inputs.pr }}
       cancel-in-progress: false
     steps:
       - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e #v6.4.0
@@ -128,6 +151,19 @@ jobs:
           name: npm-package
           path: .
 
+      # npm matches these claims against the package's trusted publishers. Only the
+      # payload is printed: without its signature, the token cannot be used.
+      - name: Show the OIDC claims sent to npm
+        run: |
+          ID_TOKEN=$(curl -sSf -H "Authorization: Bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
+            "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=npm:registry.npmjs.org" | jq -r .value)
+          echo "::add-mask::$ID_TOKEN"
+          node -e '
+            const claims = JSON.parse(Buffer.from(process.argv[1].split(".")[1], "base64url"));
+            const keys = ["sub", "repository", "repository_owner", "workflow_ref", "job_workflow_ref", "event_name", "ref", "environment"];
+            console.log(JSON.stringify(Object.fromEntries(keys.map((key) => [key, claims[key] ?? null])), null, 2));
+          ' "$ID_TOKEN"
+
       - name: Publish prerelease to NPM (next tag)
         # `verbose` prints the registry's reason when the OIDC token exchange fails.
         run: npm publish --tag next --provenance --access public --loglevel verbose
@@ -135,7 +171,6 @@ jobs:
       - name: Comment prerelease version on PR
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PR_NUMBER: ${{ github.event.issue.number }}
           REPO: ${{ github.repository }}
         run: |
           VERSION=$(node -p "require('./package.json').version")
