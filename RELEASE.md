@@ -39,6 +39,9 @@
    > cannot reach production consumers who track `latest`. The base version in
    > `package.json` must already be bumped (step 3) or the CI job fails: an
    > `x.y.z-rc.N` prerelease has lower precedence than an existing `x.y.z`.
+   >
+   > The same build can be started by hand: Actions → Continuous Integration →
+   > Run workflow, with the release PR number.
 
 5. Once the branch is merged into `master`, create the new tag.
 
