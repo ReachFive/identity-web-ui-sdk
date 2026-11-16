@@ -129,7 +129,8 @@ jobs:
           path: .
 
       - name: Publish prerelease to NPM (next tag)
-        run: npm publish --tag next --provenance --access public
+        # `verbose` prints the registry's reason when the OIDC token exchange fails.
+        run: npm publish --tag next --provenance --access public --loglevel verbose
 
       - name: Comment prerelease version on PR
         env:
