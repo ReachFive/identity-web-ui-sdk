@@ -17,7 +17,7 @@ on:
   # https://github.blog/changelog/2026-10-02-unvalidated-npm-trusted-publishing-configurations-now-expire/
   workflow_dispatch:
     inputs:
-      pr:
+      pull_request:
         description: Number of the release pull request to publish a release candidate from
         required: true
         type: number
@@ -25,7 +25,7 @@ on:
 env:
   # A manual run builds a prerelease from the head of the given release pull request.
   PRERELEASE: ${{ github.event_name == 'workflow_dispatch' }}
-  PR_NUMBER: ${{ inputs.pr }}
+  PR_NUMBER: ${{ inputs.pull_request }}
 
 jobs:
   test:
@@ -121,7 +121,7 @@ jobs:
       id-token: write
       pull-requests: write
     concurrency:
-      group: prerelease-${{ inputs.pr }}
+      group: prerelease-${{ inputs.pull_request }}
       cancel-in-progress: false
     steps:
       - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e #v6.4.0
