@@ -50,7 +50,7 @@
     The [Deploy Release](.github/workflows/deploy-release.yml) GitHub Actions workflow automatically triggers on the
     pushed tag, builds the SDK, and publishes the new version on [npm](https://www.npmjs.com/package/@reachfive/identity-ui).
 
-    Refer to the [.github/workflows/deploy-release.yml](.github/workflows/deploy-release.yml) file to set up the integration.
+    See [npm publishing](#npm-publishing) for the setup it needs.
 
 6. Purge the cache of a @latest or version aliased URL to force users to get the new updated version. Otherwise they might wait up to 7 days.
 
@@ -78,3 +78,14 @@
 - `next` — the most recently published version, whether an official release or a prerelease. Use it to try the newest candidate: `npm install @reachfive/identity-ui@next`.
 
 Publishing an official release (tag push) moves **both** `latest` and `next` to it.
+
+## npm publishing
+
+The workflows publish with [npm trusted publishing](https://docs.npmjs.com/trusted-publishers/) (OIDC). The repository stores no npm token. In the package settings on npmjs.com, a package owner declares one trusted publisher (GitHub Actions, repository `ReachFive/identity-web-ui-sdk`) for each workflow:
+
+| Workflow | Publishes | Allowed actions |
+|---|---|---|
+| `deploy-release.yml` | official releases, then moves `next` | `npm publish` and `npm dist-tag` |
+| `ci.yml` | release candidates (`/rc`) | `npm publish` |
+
+`npm dist-tag` with OIDC needs npm 11.21.0 or later: `deploy-release.yml` installs it before publishing.
