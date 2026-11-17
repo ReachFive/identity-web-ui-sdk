@@ -128,6 +128,8 @@ module.exports = {
     },
   },
   plugins: [
+    require("tailwindcss-animate"),
+    require("@tailwindcss/container-queries"),
     ({ addUtilities }) => {
       addUtilities({
         ".link-decoration": { textDecoration: "var(--r5-link-decoration)" },

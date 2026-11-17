@@ -27,7 +27,7 @@ const WidgetContent = React.forwardRef(function WidgetContent(
             ref={ref}
             data-slot="widget-content"
             className={cn(
-                'text-[length:var(--font-size)] transition-[transform,opacity] duration-[400ms] ease-[ease]',
+                'text-[length:var(--font-size)] transition-[transform,opacity] [transition-duration:400ms] [transition-timing-function:ease]',
                 transition === 'entered' ? 'opacity-100' : 'opacity-0',
                 standalone &&
                     'mx-auto max-w-widget-max-width rounded bg-background p-[calc(var(--spacing)*2)]',
