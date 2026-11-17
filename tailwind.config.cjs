@@ -142,6 +142,7 @@ module.exports = {
           boxSizing: "border-box",
           borderStyle: "solid",
           borderWidth: 0,
+          borderColor: "hsl(var(--border))",
         },
         ".r5-widget button, .r5-widget input, .r5-widget optgroup, .r5-widget select, .r5-widget textarea": {
           fontFamily: "inherit",
