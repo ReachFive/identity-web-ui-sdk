@@ -11,47 +11,30 @@ on:
       - main
       - master
       - develop
-  issue_comment:
-    types: [created]
-  # Publishes a release candidate like `/rc`, started from the Actions tab.
+  # Publishes a release candidate, started from the Actions tab. npm rejects trusted
+  # publishing tokens from `issue_comment` and `pull_request_target` runs, so a PR
+  # comment cannot start a publish:
+  # https://github.blog/changelog/2026-10-02-unvalidated-npm-trusted-publishing-configurations-now-expire/
   workflow_dispatch:
     inputs:
-      pr:
+      pull_request:
         description: Number of the release pull request to publish a release candidate from
         required: true
         type: number
 
 env:
-  # A prerelease is built on `/rc` or on a manual run, from the head of that release pull request.
-  PRERELEASE: ${{ github.event_name == 'issue_comment' || github.event_name == 'workflow_dispatch' }}
-  PR_NUMBER: ${{ github.event.issue.number || inputs.pr }}
+  # A manual run builds a prerelease from the head of the given release pull request.
+  PRERELEASE: ${{ github.event_name == 'workflow_dispatch' }}
+  PR_NUMBER: ${{ inputs.pull_request }}
 
 jobs:
   test:
     name: Build & Test
-    # On issue_comment, only run for an `/rc` command posted by a maintainer on a
-    # release-labelled PR — every other comment in the repo is ignored.
-    if: >
-      github.event_name != 'issue_comment' ||
-      (github.event.issue.pull_request &&
-      startsWith(github.event.comment.body, '/rc') &&
-      contains(github.event.issue.labels.*.name, 'release') &&
-      contains(fromJSON('["OWNER", "MEMBER", "COLLABORATOR"]'), github.event.comment.author_association))
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      issues: write
-      # Reacting to a comment on a pull request returns a 403 with `issues: write` alone.
-      pull-requests: write
+      pull-requests: read
     steps:
-      - name: Acknowledge the /rc command
-        if: github.event_name == 'issue_comment'
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          REPO: ${{ github.repository }}
-          COMMENT_ID: ${{ github.event.comment.id }}
-        run: gh api --method POST "repos/$REPO/issues/comments/$COMMENT_ID/reactions" -f content=rocket
-
       - name: Check the pull request is a release
         if: github.event_name == 'workflow_dispatch'
         env:
@@ -65,7 +48,7 @@ jobs:
 
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 #v7.0.0
         with:
-          # issue_comment and workflow_dispatch carry no PR ref: check out the head of the release PR.
+          # workflow_dispatch runs on master: check out the head of the release PR.
           ref: ${{ env.PRERELEASE == 'true' && format('refs/pull/{0}/head', env.PR_NUMBER) || '' }}
 
       - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e #v6.4.0
@@ -131,14 +114,14 @@ jobs:
   publish-prerelease:
     name: Publish Prerelease
     needs: test
-    if: github.event_name == 'issue_comment' || github.event_name == 'workflow_dispatch'
+    if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     permissions:
       contents: read
       id-token: write
       pull-requests: write
     concurrency:
-      group: prerelease-${{ github.event.issue.number || inputs.pr }}
+      group: prerelease-${{ inputs.pull_request }}
       cancel-in-progress: false
     steps:
       - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e #v6.4.0
