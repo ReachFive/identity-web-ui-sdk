@@ -1,5 +1,5 @@
 import { describe, expect, test } from '@jest/globals';
-import postcss from 'postcss';
+import postcss, { type AtRule } from 'postcss';
 import tailwindcss from 'tailwindcss';
 import resolveConfig from 'tailwindcss/resolveConfig';
 
@@ -82,8 +82,12 @@ async function declarationsOf(className: string): Promise<string[]> {
     ]).process('@tailwind utilities;', { from: undefined });
 
     const properties = new Set<string>();
-    root.walkDecls(decl => {
-        if (!decl.prop.startsWith('--tw-')) properties.add(decl.prop);
+    root.walkRules(rule => {
+        // tailwindcss-animate emits its keyframes whatever the content.
+        if (rule.parent?.type === 'atrule' && (rule.parent as AtRule).name === 'keyframes') return;
+        rule.walkDecls(decl => {
+            if (!decl.prop.startsWith('--tw-')) properties.add(decl.prop);
+        });
     });
     return Array.from(properties).sort();
 }

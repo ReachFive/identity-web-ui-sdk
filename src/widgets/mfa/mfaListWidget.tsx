@@ -44,9 +44,9 @@ type CredentialIconProps = {
 const CredentialIcon = ({ type }: CredentialIconProps) => {
     switch (type) {
         case 'email':
-            return <Mail className="bg-background w-icon h-icon stroke-textColor" />;
+            return <Mail className="bg-background w-icon h-icon" />;
         case 'sms':
-            return <MessageSquareMore className="bg-background w-icon h-icon stroke-textColor" />;
+            return <MessageSquareMore className="bg-background w-icon h-icon" />;
     }
 };
 
