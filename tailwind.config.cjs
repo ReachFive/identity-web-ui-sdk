@@ -143,6 +143,12 @@ module.exports = {
           borderStyle: "solid",
           borderWidth: 0,
         },
+        ".r5-widget button, .r5-widget input, .r5-widget optgroup, .r5-widget select, .r5-widget textarea": {
+          fontFamily: "inherit",
+          fontFeatureSettings: "inherit",
+          fontVariationSettings: "inherit",
+          letterSpacing: "inherit",
+        },
         ".r5-widget hr": {
           height: 0,
           color: "inherit",
