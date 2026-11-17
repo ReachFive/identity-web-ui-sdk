@@ -9,16 +9,16 @@ exports[`Snapshot basic 1`] = `
     class="r5-theme-1bkmqrd r5-widget"
   >
     <div
-      class="text-[length:var(--font-size)] transition-[transform,opacity] duration-[400ms] ease-[ease] opacity-0 mx-auto max-w-widget-max-width rounded bg-background p-[calc(var(--spacing)*2)]"
+      class="text-[length:var(--font-size)] transition-[transform,opacity] [transition-duration:400ms] [transition-timing-function:ease] opacity-0 mx-auto max-w-widget-max-width rounded bg-background p-[calc(var(--spacing)*2)]"
       data-slot="widget-content"
     >
       <div
-        class="group/item-group flex w-full flex-col gap-4 has-data-[size=sm]:gap-2.5 has-data-[size=xs]:gap-2"
+        class="group/item-group flex w-full flex-col gap-4 has-[[data-size=sm]]:gap-2.5 has-[[data-size=xs]]:gap-2"
         data-slot="item-group"
         role="list"
       >
         <div
-          class="group/item [a]:hover:bg-accent/50 focus-visible:border-ring focus-visible:ring-ring/50 [a]:transition-colors flex flex-wrap items-center rounded-md border text-sm outline-none transition-colors duration-100 focus-visible:ring-[3px] border-border gap-3.5 px-4 py-3.5"
+          class="group/item [a&]:hover:bg-accent/50 focus-visible:border-ring focus-visible:ring-ring/50 [a&]:transition-colors flex flex-wrap items-center rounded-md border text-sm outline-none transition-colors duration-100 focus-visible:ring-[3px] border-border gap-3.5 px-4 py-3.5"
           data-size="default"
           data-slot="item"
           data-testid="credential"
@@ -31,7 +31,7 @@ exports[`Snapshot basic 1`] = `
             data-variant="image"
           >
             <svg
-              class="lucide lucide-message-square-more bg-background w-icon h-icon stroke-textColor"
+              class="lucide lucide-message-square-more bg-background w-icon h-icon"
               fill="none"
               height="24"
               stroke="currentColor"
@@ -89,7 +89,7 @@ exports[`Snapshot basic 1`] = `
           </div>
         </div>
         <div
-          class="group/item [a]:hover:bg-accent/50 focus-visible:border-ring focus-visible:ring-ring/50 [a]:transition-colors flex flex-wrap items-center rounded-md border text-sm outline-none transition-colors duration-100 focus-visible:ring-[3px] border-border gap-3.5 px-4 py-3.5"
+          class="group/item [a&]:hover:bg-accent/50 focus-visible:border-ring focus-visible:ring-ring/50 [a&]:transition-colors flex flex-wrap items-center rounded-md border text-sm outline-none transition-colors duration-100 focus-visible:ring-[3px] border-border gap-3.5 px-4 py-3.5"
           data-size="default"
           data-slot="item"
           data-testid="credential"
@@ -102,7 +102,7 @@ exports[`Snapshot basic 1`] = `
             data-variant="image"
           >
             <svg
-              class="lucide lucide-mail bg-background w-icon h-icon stroke-textColor"
+              class="lucide lucide-mail bg-background w-icon h-icon"
               fill="none"
               height="24"
               stroke="currentColor"
@@ -172,16 +172,16 @@ exports[`Snapshot empty 1`] = `
     class="r5-theme-1bkmqrd r5-widget"
   >
     <div
-      class="text-[length:var(--font-size)] transition-[transform,opacity] duration-[400ms] ease-[ease] opacity-0 mx-auto max-w-widget-max-width rounded bg-background p-[calc(var(--spacing)*2)]"
+      class="text-[length:var(--font-size)] transition-[transform,opacity] [transition-duration:400ms] [transition-timing-function:ease] opacity-0 mx-auto max-w-widget-max-width rounded bg-background p-[calc(var(--spacing)*2)]"
       data-slot="widget-content"
     >
       <div
-        class="group/item-group flex w-full flex-col gap-4 has-data-[size=sm]:gap-2.5 has-data-[size=xs]:gap-2"
+        class="group/item-group flex w-full flex-col gap-4 has-[[data-size=sm]]:gap-2.5 has-[[data-size=xs]]:gap-2"
         data-slot="item-group"
         role="list"
       >
         <div
-          class="group/item [a]:hover:bg-accent/50 focus-visible:border-ring focus-visible:ring-ring/50 [a]:transition-colors flex flex-wrap items-center rounded-md border border-transparent text-sm outline-none transition-colors duration-100 focus-visible:ring-[3px] bg-transparent gap-3.5 px-4 py-3.5"
+          class="group/item [a&]:hover:bg-accent/50 focus-visible:border-ring focus-visible:ring-ring/50 [a&]:transition-colors flex flex-wrap items-center rounded-md border border-transparent text-sm outline-none transition-colors duration-100 focus-visible:ring-[3px] bg-transparent gap-3.5 px-4 py-3.5"
           data-size="default"
           data-slot="item"
           data-variant="default"

@@ -48,7 +48,7 @@ const CheckboxField = React.forwardRef<
         <FieldGroup>
             <Field
                 orientation="horizontal"
-                className="gap-2 has-[>[data-slot=field-content]]:[&>[role=checkbox]]:mt-px"
+                className="gap-2 [&:has(>[data-slot=field-content])>[role=checkbox]]:mt-px"
                 data-invalid={hasError}
             >
                 <Checkbox
