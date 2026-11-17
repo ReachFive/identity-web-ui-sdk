@@ -49,6 +49,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Showing a widget in a container that already holds one unmounts the previous widget first, instead of
   leaving two widgets fighting over the same container
 - SVG icons keep their `viewBox`, so they scale when resized with CSS
+- Buttons, inputs, selects and text areas use the page's font, instead of the browser's default one
+- Borders with no color of their own, such as the confirmation dialog's or an `<hr>` in `staticContent`,
+  take the theme's border color instead of the text color
+- Dropdowns, selects and confirmation dialogs animate when they open and close
+- Inputs next to an addon (show password button, country picker) leave a narrower gap on that side
 
 ### Deprecated
 
