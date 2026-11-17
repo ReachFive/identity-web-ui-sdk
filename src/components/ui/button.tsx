@@ -58,7 +58,6 @@ const buttonVariants: (props?: ButtonVariants & ClassProp) => string = cva(
         ghost: "bg-transparent hover:bg-button-subtle-bg",
         destructive:
           "bg-destructive text-destructive-foreground shadow-button-shadow hover:bg-destructive/90",
-        // Transparent because preflight is off: a bare `<button>` keeps the browser's gray fill.
         link: "bg-transparent text-link-text font-normal underline-offset-4 hover:text-link-hover-text hover:underline",
       },
       size: {
