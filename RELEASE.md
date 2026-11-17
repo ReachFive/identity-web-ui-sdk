@@ -39,9 +39,6 @@
    > base version in `package.json` must already be bumped (step 3) or the CI
    > job fails: an `x.y.z-rc.N` prerelease has lower precedence than an existing
    > `x.y.z`.
-   >
-   > A PR comment cannot start the publish: npm rejects trusted publishing tokens
-   > from `issue_comment` runs.
 
 5. Once the branch is merged into `master`, create the new tag.
 
