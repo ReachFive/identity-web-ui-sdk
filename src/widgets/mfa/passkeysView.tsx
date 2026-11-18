@@ -10,13 +10,6 @@ import {
 import { WebAuthnDevices } from '@/widgets/webAuthn/webAuthnDevices';
 
 import type { OnError, OnSuccess } from '@/types';
-import type { SuccessEvent } from '@/types/events';
-
-/** Device events that change the passkey count shown in the list of factors. */
-const passkeyChanges: ReadonlySet<SuccessEvent['name']> = new Set([
-    'webauthn_credential_created',
-    'webauthn_credential_deleted',
-]);
 
 interface PasskeysViewProps {
     accessToken: string;
@@ -27,8 +20,8 @@ interface PasskeysViewProps {
 
 /**
  * The passkey management view of `showWebAuthnDevices`, unchanged, under a back arrow to the
- * list of factors. Adding or removing a passkey refreshes that list, so the count is up to date
- * on return. A failed device load shows the widget error output under the back arrow, which
+ * list of factors. Every event the device view emits is a passkey added or removed, so each one
+ * refreshes that list and the count is up to date on return. A failed device load shows the widget error output under the back arrow, which
  * still leads back to the list. The device load suspends up to the widget's own boundary: opened
  * in a transition, the view only replaces the list once its devices are loaded.
  */
@@ -39,7 +32,7 @@ export function PasskeysView({ accessToken, onBack, onSuccess, onError }: Passke
 
     const handleSuccess: OnSuccess = event => {
         onSuccess(event);
-        if (passkeyChanges.has(event.name)) void invalidateCredentials();
+        void invalidateCredentials();
     };
 
     return (
