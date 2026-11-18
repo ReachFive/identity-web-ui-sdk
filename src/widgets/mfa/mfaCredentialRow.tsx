@@ -16,10 +16,9 @@ import { useI18n } from '@/contexts/i18n';
 import { dateFormat } from '@/helpers/utils';
 import { credentialDetails, type MfaCredential } from '@/widgets/mfa/credentials';
 
-/** Placeholder the translated label is split around, to put the date in a `<time>` element. */
+/** The translated label is split on this placeholder, to put the date in a `<time>` element. */
 const DATE_PLACEHOLDER = '\u0000';
 
-/** "Created on {date}", with the date as a machine-readable `<time>` element. */
 const CreatedOn = ({ createdAt }: { createdAt: string }) => {
     const i18n = useI18n();
     const config = useConfig();
@@ -43,7 +42,6 @@ interface CredentialSummaryProps {
     onRequestRemoval: () => void;
 }
 
-/** The content of a row at rest: icon, identifier, type, creation date and trash button. */
 const CredentialSummary = ({
     credential,
     removable,
@@ -85,7 +83,6 @@ const CredentialSummary = ({
 };
 
 interface MfaCredentialRowProps extends CredentialSummaryProps {
-    /** This row shows its removal confirmation. */
     confirming: boolean;
     /** Another row shows its removal confirmation: this one is dimmed and inert. */
     dimmed: boolean;
@@ -94,9 +91,7 @@ interface MfaCredentialRowProps extends CredentialSummaryProps {
     onConfirm: () => void;
 }
 
-/**
- * One MFA credential row (email, phone number, …). Its trash button turns it in place into a confirmation.
- */
+/** An MFA credential row. The trash button turns the row into a removal confirmation. */
 export const MfaCredentialRow = ({
     confirming,
     dimmed,

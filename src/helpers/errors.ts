@@ -33,17 +33,25 @@ export function isAppError(err: unknown): err is AppError {
  */
 export const VERIFICATION_CODE_REFUSED = 'error.invalidVerificationCode';
 
+const UNEXPECTED_ERROR = 'Unexpected error';
+
+/** An empty text counts as missing. */
+const text = (value?: string): string | undefined => (value === '' ? undefined : value);
+
 /**
- * The message of an API error: the user message the API localised, else the translation of its
- * message key, else its description, else its code. Without translations, the key is skipped.
+ * The message of an API error, in forms and in place of a widget. The first non-empty one of:
+ * the translation of the message key (else of the error code), so an integrator's text wins;
+ * the API user message; the description; the error code; a generic message.
+ * Without `i18n`, no key is translated.
  */
-const appErrorMessage = (error: AppError, i18n?: TFunction): string => {
-    const fallback = error.errorDescription ?? error.error;
-    if (error.errorUserMsg) return error.errorUserMsg;
-    if (error.errorMessageKey && i18n) {
-        return i18n(error.errorMessageKey, { defaultValue: fallback });
-    }
-    return fallback;
+export const appErrorMessage = (error: AppError, i18n?: TFunction): string => {
+    const fallback =
+        text(error.errorUserMsg) ??
+        text(error.errorDescription) ??
+        text(error.error) ??
+        UNEXPECTED_ERROR;
+    const key = text(error.errorMessageKey) ?? text(error.error);
+    return key && i18n ? i18n(key, { defaultValue: fallback }) : fallback;
 };
 
 export class UserError extends Error {
@@ -54,18 +62,18 @@ export class UserError extends Error {
         Object.setPrototypeOf(this, UserError.prototype);
     }
 
-    /** A `UserError` with the message of an API error, read by `appErrorMessage`. */
+    /** A `UserError` with the message given by `appErrorMessage`. */
     static fromAppError(appError: AppError, i18n?: TFunction) {
         return new UserError(appErrorMessage(appError, i18n));
     }
 }
 
 /**
- * The message shown in place of a widget that cannot be displayed. An `Error` (a `UserError`
- * included) speaks for itself; an API error reads like a `UserError` made from it.
+ * The message shown in place of a widget that cannot be displayed. An `Error` shows its own
+ * message; an API error goes through `appErrorMessage`.
  */
 export function widgetErrorMessage(error: unknown, i18n?: TFunction): string {
     if (error instanceof Error) return error.message;
     if (isAppError(error)) return UserError.fromAppError(error, i18n).message;
-    return 'Unexpected error';
+    return UNEXPECTED_ERROR;
 }

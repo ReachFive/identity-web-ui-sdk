@@ -6,6 +6,7 @@ import { Form } from '@/components/form/form';
 import { Alternative, Heading, Info } from '@/components/miscComponent';
 import { ItemGroup } from '@/components/ui/item';
 import { useI18n } from '@/contexts/i18n';
+import { noop } from '@/helpers/utils';
 
 import { DeviceItem } from './deviceItem';
 import { useAddWebAuthnDevice, useRemoveWebAuthnDevice, useWebAuthnDevices } from './queries';
@@ -70,15 +71,15 @@ export interface WebAuthnDevicesProps {
 }
 
 /**
- * Lists, adds and removes the passkey (FIDO2) devices of the user identified by the access token.
- * Reads them through suspense queries: mount it under a query client and the widget boundaries.
+ * Lists, adds and removes the user's passkey (FIDO2) devices. Reads them with suspense queries:
+ * render it under a query client and the widget boundaries.
  */
 export function WebAuthnDevices({
     accessToken,
     showIntro = true,
     showLabels = false,
-    onError = () => {},
-    onSuccess = () => {},
+    onError = noop,
+    onSuccess = noop,
 }: WebAuthnDevicesProps) {
     const i18n = useI18n();
     const { data: devices } = useWebAuthnDevices(accessToken);

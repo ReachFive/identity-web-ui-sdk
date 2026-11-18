@@ -7,8 +7,9 @@ import {
     type QueryKey,
 } from '@tanstack/react-query';
 
-import type { Client as CoreClient } from '@reachfive/identity-core';
+import type { Client as CoreClient, MFA } from '@reachfive/identity-core';
 
+import { useInvalidateQueries } from '@/components/widget/useInvalidateQueries';
 import { useReachfive } from '@/contexts/reachfive';
 import { webAuthnKeys } from '@/widgets/webAuthn/queries';
 
@@ -16,16 +17,13 @@ import type { OnError, OnSuccess } from '@/types';
 import type { SuccessEvent } from '@/types/events';
 import type { MfaCredential } from '@/widgets/mfa/credentials';
 
-/**
- * Query keys of the MFA resources, namespaced so they never collide with another widget's.
- */
 const mfaKeys = {
     credentials: () => ['mfa', 'credentials'] as const satisfies QueryKey,
 };
 
 /**
- * The user's MFA credentials, read through suspense: the component renders only once they are
- * loaded, and a failed first load is thrown to the nearest error boundary.
+ * Read through suspense: the component renders once the credentials are loaded. A failed first
+ * load is thrown to the nearest error boundary.
  */
 export const useMfaCredentials = (accessToken: string) => {
     const client = useReachfive();
@@ -36,17 +34,10 @@ export const useMfaCredentials = (accessToken: string) => {
     });
 };
 
-/**
- * Refetches the MFA credentials list after a change. A failed refetch keeps the cached list on
- * screen (a suspense query only throws without data) and is reported once through `onError`.
- */
+/** A failed refetch keeps the cached list and is passed once to `onError`. */
 export const useInvalidateMfaCredentials = (onError: OnError) => {
-    const queryClient = useQueryClient();
-
-    return () =>
-        queryClient
-            .invalidateQueries({ queryKey: mfaKeys.credentials() }, { throwOnError: true })
-            .catch(onError);
+    const invalidate = useInvalidateQueries(onError);
+    return () => invalidate(mfaKeys.credentials());
 };
 
 const removeMfaCredential = (
@@ -66,6 +57,16 @@ const removeMfaCredential = (
     }
 };
 
+const withoutCredential = (
+    response: MFA.CredentialsResponse,
+    removed: MfaCredential
+): MFA.CredentialsResponse => ({
+    ...response,
+    credentials: response.credentials.filter(
+        c => c.type !== removed.type || c.friendlyName !== removed.friendlyName
+    ),
+});
+
 type UseRemoveMfaCredentialOptions = {
     accessToken: string;
     onSuccess: OnSuccess;
@@ -73,8 +74,9 @@ type UseRemoveMfaCredentialOptions = {
 };
 
 /**
- * Removes an MFA credential. No optimistic update: on success the deletion
- * event fires and the credentials list is refetched; on failure the list is left untouched.
+ * No optimistic update. On success, the credential is removed from the cached list, then the list
+ * is refetched: a failed refetch does not show the deleted row again. On failure, the list stays
+ * as it is.
  */
 export const useRemoveMfaCredential = ({
     accessToken,
@@ -82,13 +84,18 @@ export const useRemoveMfaCredential = ({
     onError,
 }: UseRemoveMfaCredentialOptions) => {
     const client = useReachfive();
+    const queryClient = useQueryClient();
     const invalidateCredentials = useInvalidateMfaCredentials(onError);
 
     return useMutation({
         mutationFn: (credential: MfaCredential) =>
             removeMfaCredential(client, accessToken, credential),
-        onSuccess: event => {
+        onSuccess: (event, removed) => {
             onSuccess(event);
+            queryClient.setQueryData<MFA.CredentialsResponse>(
+                mfaKeys.credentials(),
+                cached => cached && withoutCredential(cached, removed)
+            );
             return invalidateCredentials();
         },
         onError: error => onError(error),
@@ -96,14 +103,18 @@ export const useRemoveMfaCredential = ({
 };
 
 /**
- * Drops the passkey devices when the Passkeys view closes: a cached error would be thrown again
- * without a retry, so reopening the view always loads afresh.
+ * When the Passkeys view closes, drops a failed device load: a cached error would be thrown again
+ * without a retry. Loaded devices stay cached.
  */
-export const useForgetPasskeyDevicesOnLeave = () => {
+export const useForgetFailedPasskeyDevicesOnLeave = () => {
     const queryClient = useQueryClient();
 
     useEffect(
-        () => () => queryClient.removeQueries({ queryKey: webAuthnKeys.devices() }),
+        () => () =>
+            queryClient.removeQueries({
+                queryKey: webAuthnKeys.devices(),
+                predicate: query => query.state.status === 'error',
+            }),
         [queryClient]
     );
 };

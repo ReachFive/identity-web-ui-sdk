@@ -4,6 +4,7 @@ import { MFA } from '@reachfive/identity-core';
 
 import { createQueryWidget } from '@/components/widget/queryWidget';
 import { useViewNavigation, viewAnimation } from '@/components/widget/useViewNavigation';
+import { noop } from '@/helpers/utils';
 import { OnError, OnSuccess } from '@/types';
 import { MfaCredentialsList } from '@/widgets/mfa/mfaCredentialsList';
 import { PasskeysView } from '@/widgets/mfa/passkeysView';
@@ -28,9 +29,7 @@ export interface MfaListProps {
     showRemoveMfaCredential?: boolean;
 }
 
-/**
- * Fires `mfa_credentials_listed` once, on the first successful load, and not on later refetches.
- */
+/** Calls `onSuccess` with `mfa_credentials_listed` once, on the first successful load. */
 const useCredentialsListedEvent = (credentials: MFA.Credential[], onSuccess: OnSuccess) => {
     const listed = useRef(false);
 
@@ -44,14 +43,15 @@ const useCredentialsListedEvent = (credentials: MFA.Credential[], onSuccess: OnS
 export const MfaList = ({
     accessToken,
     showRemoveMfaCredential = false,
-    onError = () => {},
-    onSuccess = () => {},
+    onError = noop,
+    onSuccess = noop,
 }: MfaListProps) => {
     const {
         data: { credentials },
     } = useMfaCredentials(accessToken);
     const { view, direction, pending, goTo, back } = useViewNavigation<'list' | 'passkeys'>('list');
     const passkeysRowRef = useRef<HTMLButtonElement>(null);
+    const listRef = useRef<HTMLDivElement>(null);
 
     useCredentialsListedEvent(credentials, onSuccess);
 
@@ -72,7 +72,14 @@ export const MfaList = ({
                     credentials={credentials}
                     removable={showRemoveMfaCredential}
                     passkeysRowRef={passkeysRowRef}
-                    onOpenPasskeys={() => goTo('passkeys', { returnFocus: passkeysRowRef })}
+                    listRef={listRef}
+                    onOpenPasskeys={() =>
+                        goTo('passkeys', {
+                            returnFocus: passkeysRowRef,
+                            // the row is gone when its last passkey was removed
+                            fallbackFocus: listRef,
+                        })
+                    }
                     openingPasskeys={pending}
                     onSuccess={onSuccess}
                     onError={onError}

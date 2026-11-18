@@ -81,7 +81,7 @@ describe('DOM testing', () => {
         );
 
         const view = render(result);
-        // The devices load through a suspense query: wait for the spinner to give way.
+        // The devices load through a suspense query: wait until the spinner is gone.
         await waitFor(() =>
             expect(view.container.querySelector('.animate-spin')).not.toBeInTheDocument()
         );

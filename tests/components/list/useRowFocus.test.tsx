@@ -8,9 +8,9 @@ import userEvent from '@testing-library/user-event';
 import { useRowFocus } from '../../../src/components/list/useRowFocus';
 
 /**
- * A list whose rows have a remove button, except the `fixed` row, which has a control of its own
- * passed through `fixedControls`. Pressing a remove button only asks to watch the row: the test
- * then renders the list as it is once the removal settled.
+ * A list whose rows each have a remove button, except the `fixed` row, whose control is passed
+ * through `fixedControls`. Pressing a remove button only marks the row as watched. The test then
+ * renders the list as it is after the removal.
  */
 function Rows({ keys, fixed, inert = false }: { keys: string[]; fixed?: string; inert?: boolean }) {
     const fixedRef = useRef<HTMLButtonElement>(null);
@@ -110,6 +110,42 @@ describe('useRowFocus', () => {
 
         rerender(<Rows keys={['b']} />);
         expect(screen.getByRole('button', { name: 'Remove b' })).toHaveFocus();
+    });
+
+    test('the focus is left alone, for good, once the user has moved it elsewhere', async () => {
+        const { rerender } = render(
+            <>
+                <input aria-label="Elsewhere" />
+                <Rows keys={['a', 'b']} />
+            </>
+        );
+
+        await watch('a');
+        rerender(
+            <>
+                <input aria-label="Elsewhere" />
+                <Rows keys={['b']} inert />
+            </>
+        );
+        const elsewhere = screen.getByRole('textbox', { name: 'Elsewhere' });
+        act(() => elsewhere.focus());
+        rerender(
+            <>
+                <input aria-label="Elsewhere" />
+                <Rows keys={['b']} />
+            </>
+        );
+        expect(elsewhere).toHaveFocus();
+
+        // a later render, such as a background refetch, does not move the focus either
+        act(() => elsewhere.blur());
+        rerender(
+            <>
+                <input aria-label="Elsewhere" />
+                <Rows keys={['b', 'c']} />
+            </>
+        );
+        expect(document.body).toHaveFocus();
     });
 
     test('nothing takes the focus while no row is watched', () => {

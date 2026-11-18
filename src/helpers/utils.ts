@@ -67,8 +67,8 @@ export function formatISO8601Date(
 }
 
 /**
- * A date in the configured language and the user's time zone. The API returns ISO 8601 instants in
- * UTC (`…Z`), which `new Date` reads as such.
+ * A date in the configured language and the user's time zone. The API returns ISO 8601 dates in
+ * UTC (`…Z`), which `new Date` reads correctly.
  */
 export function dateFormat(
     dateString: string,
@@ -215,3 +215,9 @@ export function debounce<T extends unknown[]>(
         timerId = setTimeout(() => func(...args), delay);
     };
 }
+
+/**
+ * Does nothing. A shared default for optional callbacks: it keeps the same identity across
+ * renders, so memos and effects that depend on it do not rerun.
+ */
+export const noop = (): void => {};

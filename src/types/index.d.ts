@@ -48,9 +48,9 @@ type CustomFields = {
 /**
  * Extends the core remote settings with fields not yet released in `@reachfive/identity-core`.
  *
- * `customProviders` replaces Core's own declaration: Core 1.43.0 requires every field of a
- * provider, but the API omits the `btn*` colors when unset and never sends `buttonLabel`
- * (`ProviderConfig` in ciam-app). TODO(CA-7261): drop it once Core types them as the API does.
+ * `customProviders` replaces Core's declaration: Core 1.43.0 requires every provider field, but
+ * the API omits the `btn*` colors when unset and never sends `buttonLabel`.
+ * TODO(CA-7261): remove once Core types them as the API sends them.
  */
 export type RemoteSettings = Omit<CoreRemoteSettings, 'customProviders'> & {
     customProviders?: Record<string, Provider>;

@@ -16,9 +16,9 @@ import type { I18nMessages } from '../../../src/contexts/i18n';
 import type { Config, OnError, OnSuccess } from '../../../src/types';
 
 /*
- * The tests referring to a Squash test case (SDK > SDK UI > 01.13 - MFA > 01.13.03 -
- * ShowMfaCredentials Passkeys) replay its steps on the widget, with the API mocked. The passkey
- * management view (01.13.03.03 to 01.13.03.05) is tested in mfaListPasskeysView.test.ts.
+ * Tests that name a Squash case (SDK > SDK UI > 01.13 - MFA > 01.13.03 - ShowMfaCredentials
+ * Passkeys) replay its steps on the widget, with the API mocked. The passkey management view
+ * (01.13.03.03 to 01.13.03.05) is tested in mfaListPasskeysView.test.ts.
  */
 
 const defaultConfig: Config = {
@@ -156,6 +156,20 @@ describe('01.13.03.01 - Active MFA factors are listed, passkeys grouped in a sin
         expect(onError).not.toHaveBeenCalled();
     });
 
+    test('a credential type the SDK does not know is left out, the others are listed', async () => {
+        // the API can return a type that Core does not declare (TOTP, …)
+        const totp = { type: 'totp', friendlyName: 'Authenticator', createdAt: '2022-09-21' };
+        listMfaCredentials.mockResolvedValue(
+            credentialsList(totp as unknown as MFA.Credential, emailCredential)
+        );
+        await renderWidget();
+
+        await screen.findByText('root@reach5.co');
+        expect(screen.getAllByRole('listitem')).toHaveLength(1);
+        expect(screen.queryByText('Authenticator')).not.toBeInTheDocument();
+        expect(onError).not.toHaveBeenCalled();
+    });
+
     test('the email and phone number rows come before a single Passkeys row', async () => {
         listMfaCredentials.mockResolvedValue(
             credentialsList(
@@ -257,8 +271,7 @@ describe('01.13.03.01 - Active MFA factors are listed, passkeys grouped in a sin
  * Squash: 01.13.03.06
  */
 describe('01.13.03.06 - With the MFA/passkey option disabled, the widget keeps its former behaviour', () => {
-    // With the option disabled, the API leaves the passkeys out of the MFA credentials list: the
-    // widget only shows what it gets.
+    // With the option disabled, the API does not return passkeys in the MFA credentials list.
     test('email and phone number credentials are listed and removable, with no Passkeys row', async () => {
         listMfaCredentials.mockResolvedValue(credentialsList(emailCredential, phoneCredential));
         await renderWidget({ showRemoveMfaCredential: true }, { config: { webAuthn: false } });
@@ -742,7 +755,7 @@ describe('The removal confirmation, for keyboard and assistive technology users'
         const remove = within(confirmation).getByRole('button', { name: 'Remove' });
         await user.click(remove);
 
-        // aria-disabled, not disabled: a disabled button would drop the focus to <body>.
+        // aria-disabled, because a disabled button would move the focus to <body>.
         expect(remove).toHaveFocus();
         expect(remove).toHaveAttribute('aria-disabled', 'true');
         expect(remove).toHaveAttribute('aria-busy', 'true');
@@ -771,14 +784,14 @@ describe('The removal confirmation, for keyboard and assistive technology users'
         );
     });
 
-    test('a failed refresh after removal keeps the list and calls onError once', async () => {
+    test('a failed refresh after removal still drops the removed row and calls onError once', async () => {
         const error: AppError = {
             errorId: '2',
             error: 'unexpected_error',
             errorDescription: 'Unexpected error',
         };
         listMfaCredentials
-            .mockResolvedValueOnce(credentialsList(emailCredential))
+            .mockResolvedValueOnce(credentialsList(emailCredential, phoneCredential))
             .mockRejectedValueOnce(error);
         removeMfaEmail.mockResolvedValue(undefined);
         await renderWidget({ showRemoveMfaCredential: true });
@@ -789,7 +802,8 @@ describe('The removal confirmation, for keyboard and assistive technology users'
         await waitFor(() => expect(onError).toHaveBeenCalledTimes(1));
         expect(onError).toHaveBeenCalledWith(error);
         expect(successEvents('mfa_email_deleted')).toHaveLength(1);
-        expect(await screen.findByText('root@reach5.co')).toBeInTheDocument();
+        expect(screen.queryByText('root@reach5.co')).not.toBeInTheDocument();
+        expect(screen.getByText('33612345678')).toBeInTheDocument();
     });
 
     test('after removing a row, focus moves to the trash button of the next row', async () => {
@@ -875,7 +889,7 @@ describe('The Passkeys row, for assistive technology users', () => {
 
         const button = await screen.findByRole('button', { name: 'Passkeys' });
         expect(button).toHaveAccessibleDescription('1 passkey · Also used to log in');
-        // The visible label is the name: no aria-label overriding it.
+        // The visible label is the accessible name: no aria-label.
         expect(button).not.toHaveAttribute('aria-label');
         // Phrasing content only: a <button> cannot hold <div> or <p>.
         expect(button.querySelector('div, p')).toBeNull();
@@ -883,7 +897,7 @@ describe('The Passkeys row, for assistive technology users', () => {
 });
 
 describe('Public styling slots', () => {
-    test('every row shape carries widget-mfa-credential on its list item', async () => {
+    test('credential rows carry widget-mfa-credential, the Passkeys row widget-mfa-passkeys', async () => {
         listMfaCredentials.mockResolvedValue(
             credentialsList(emailCredential, phoneCredential, passkeyCredential('a'))
         );
@@ -891,10 +905,11 @@ describe('Public styling slots', () => {
 
         await openConfirmation('mfa.remove.email');
 
-        const rows = screen.getAllByRole('listitem');
-        expect(rows).toHaveLength(3);
-        rows.forEach(row => expect(row).toHaveAttribute('data-slot', 'widget-mfa-credential'));
-        expect(document.querySelectorAll('[data-slot="widget-mfa-credential"]')).toHaveLength(3);
+        const [email, phone, passkeys] = screen.getAllByRole('listitem');
+        expect(email).toHaveAttribute('data-slot', 'widget-mfa-credential');
+        expect(phone).toHaveAttribute('data-slot', 'widget-mfa-credential');
+        expect(passkeys).toHaveAttribute('data-slot', 'widget-mfa-passkeys');
+        expect(document.querySelectorAll('[data-slot="widget-mfa-credential"]')).toHaveLength(2);
     });
 
     test('the confirmation carries widget-mfa-credential-confirm', async () => {
@@ -949,8 +964,7 @@ describe('Snapshot', () => {
         const { container } = await renderWidget({ showRemoveMfaCredential: true });
 
         const { confirmation } = await openConfirmation('mfa.remove.phoneNumber');
-        // The question id comes from useId, whose value depends on the ids earlier tests consumed:
-        // pin it so the snapshot does not change with the test order or the tests run.
+        // useId depends on the tests run before: pin the id to keep the snapshot stable.
         container
             .querySelector(`[id="${confirmation.getAttribute('aria-labelledby')}"]`)
             ?.setAttribute('id', 'confirmation-question');
@@ -967,8 +981,7 @@ test('Snapshot: with passkeys', async () => {
     const { container } = await renderWidget();
 
     await screen.findByText('Passkeys');
-    // The count id comes from useId, whose value depends on the ids earlier tests consumed: pin
-    // it so the snapshot does not change with the test order or the tests run.
+    // useId depends on the tests run before: pin the id to keep the snapshot stable.
     const button = screen.getByRole('button', { name: 'Passkeys' });
     container
         .querySelector(`[id="${button.getAttribute('aria-describedby')}"]`)

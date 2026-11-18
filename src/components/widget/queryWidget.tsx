@@ -14,18 +14,14 @@ import { logError } from '@/helpers/logger';
 import type { OnError } from '@/types';
 
 export interface QueryWidgetProps {
-    /**
-     * Called once with the error when the widget cannot load its data.
-     */
+    /** Called once with the error when the widget cannot load its data. */
     onError?: OnError;
 }
 
 /**
- * A query client per rendered widget: a key is never shared across widgets.
- *
- * - `retry: false` so an expired or under-privileged token (401/403) is never replayed;
- * - `refetchOnWindowFocus: false` so coming back to the page never silently replays a token that
- *   may have expired in the meantime.
+ * One query client per rendered widget, so widgets never share a cache entry.
+ * No retry and no refetch on window focus: a token that is expired or lacks rights (401/403)
+ * must not be sent again.
  */
 const createWidgetQueryClient = () =>
     new QueryClient({
@@ -35,7 +31,7 @@ const createWidgetQueryClient = () =>
         },
     });
 
-// Rendered under the widget's I18nProvider: the message key of an API error can be translated.
+// Rendered under the widget's I18nProvider, so the API error message key can be translated.
 const WidgetErrorFallback = ({ error }: FallbackProps) => {
     const i18n = useI18n();
     return (
@@ -46,17 +42,15 @@ const WidgetErrorFallback = ({ error }: FallbackProps) => {
 };
 
 interface WidgetBoundaryProps {
-    /** Called once with the error that replaced the content. */
     onError?: OnError;
     onReset?: () => void;
     children: ReactNode;
 }
 
 /**
- * The error boundary around content read through suspense queries: the widget error output in
- * place of the content, logged like any widget display failure, and the single `onError` call.
- * Without a suspense boundary of its own, a pending read suspends up to an enclosing one: inside
- * a transition, React then keeps the current content on screen until the read completes.
+ * Shows the widget error output in place of the content and calls `onError` once.
+ * It has no suspense boundary: a pending read suspends up to the parent one. Inside a transition,
+ * React keeps the current content on screen until the read completes.
  */
 export function WidgetErrorBoundary({ onError, onReset, children }: WidgetBoundaryProps) {
     const handleError = (error: unknown) => {
@@ -75,11 +69,7 @@ export function WidgetErrorBoundary({ onError, onReset, children }: WidgetBounda
     );
 }
 
-/**
- * The boundaries around content read through suspense queries: the error boundary of
- * `WidgetErrorBoundary`, and a suspense boundary showing the spinner while the first read is
- * pending.
- */
+/** `WidgetErrorBoundary` plus a spinner while the first read is pending. */
 export function WidgetBoundary({ onError, onReset, children }: WidgetBoundaryProps) {
     return (
         <WidgetErrorBoundary onReset={onReset} onError={onError}>
@@ -89,10 +79,8 @@ export function WidgetBoundary({ onError, onReset, children }: WidgetBoundaryPro
 }
 
 /**
- * Plugs a self-contained component, which loads its own data with suspense queries, into the
- * `show*` widget factory. The adapter owns the query client and the boundaries; the component
- * only reads and mutates. The query error reset boundary lets a future retry button refetch the
- * failed queries.
+ * Creates a `show*` widget from a component that loads its own data with suspense queries.
+ * The query client and the boundaries are set up here.
  */
 export function createQueryWidget<P extends QueryWidgetProps>({
     component: Component,
@@ -100,7 +88,7 @@ export function createQueryWidget<P extends QueryWidgetProps>({
     ...widgetAttrs
 }: {
     component: ComponentType<Omit<P, 'theme'>>;
-    /** Checks the options before rendering, like `createWidget`'s; data is loaded by the component. */
+    /** Checks the options before rendering, as in `createWidget`. */
     prepare?: PrepareFn<P, P>;
 } & WidgetContainerProps) {
     const QueryWidget = (props: Omit<P, 'theme'>) => {

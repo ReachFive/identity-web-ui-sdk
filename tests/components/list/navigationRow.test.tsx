@@ -65,7 +65,7 @@ describe('NavigationRow', () => {
     test('muted tone uses bg-muted', () => {
         renderRow({ iconTone: 'muted' });
 
-        // The icon tile is aria-hidden and has no role: its class can only be read from the icon's parent.
+        // The icon tile is aria-hidden and has no role: read its class from the icon's parent.
         // eslint-disable-next-line testing-library/no-node-access
         expect(screen.getByTestId('icon').parentElement).toHaveClass('bg-muted');
     });

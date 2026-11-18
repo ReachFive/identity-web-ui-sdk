@@ -9,7 +9,7 @@ interface ViewHeaderProps {
     title: ReactNode;
     backLabel: string;
     onBack: () => void;
-    /** Focus the back button on mount, for a view whose opener is gone. Defaults to `true`. */
+    /** Focuses the back button on mount. Defaults to `true`. */
     autoFocus?: boolean;
 }
 
