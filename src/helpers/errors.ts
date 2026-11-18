@@ -33,17 +33,16 @@ export function isAppError(err: unknown): err is AppError {
  */
 export const VERIFICATION_CODE_REFUSED = 'error.invalidVerificationCode';
 
-/** Shown when nothing better is known about an error. */
 const UNEXPECTED_ERROR = 'Unexpected error';
 
 /** An empty text counts as missing. */
 const text = (value?: string): string | undefined => (value === '' ? undefined : value);
 
 /**
- * The message of an API error, the same in a form and in place of a widget: the translation of its
- * message key (else of its error code), so that an integrator's text wins; else the user message
- * the API localised, its description, its code, or a generic message. Without translations, no key
- * is read. Empty texts count as missing.
+ * The message of an API error, in forms and in place of a widget. The first non-empty one of:
+ * the translation of the message key (else of the error code), so an integrator's text wins;
+ * the API user message; the description; the error code; a generic message.
+ * Without `i18n`, no key is translated.
  */
 export const appErrorMessage = (error: AppError, i18n?: TFunction): string => {
     const fallback =
@@ -63,15 +62,15 @@ export class UserError extends Error {
         Object.setPrototypeOf(this, UserError.prototype);
     }
 
-    /** A `UserError` with the message of an API error, read by `appErrorMessage`. */
+    /** A `UserError` with the message given by `appErrorMessage`. */
     static fromAppError(appError: AppError, i18n?: TFunction) {
         return new UserError(appErrorMessage(appError, i18n));
     }
 }
 
 /**
- * The message shown in place of a widget that cannot be displayed. An `Error` (a `UserError`
- * included) speaks for itself; an API error reads like a `UserError` made from it.
+ * The message shown in place of a widget that cannot be displayed. An `Error` shows its own
+ * message; an API error goes through `appErrorMessage`.
  */
 export function widgetErrorMessage(error: unknown, i18n?: TFunction): string {
     if (error instanceof Error) return error.message;

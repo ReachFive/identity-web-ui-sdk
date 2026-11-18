@@ -17,7 +17,7 @@ interface RemoveDeviceDialogProps {
     onConfirm: () => void;
 }
 
-/** Asks for confirmation before removing one device; each device owns its dialog. */
+/** Asks for confirmation before removing a device. Each device has its own dialog. */
 export const RemoveDeviceDialog = ({
     children,
     onConfirm,

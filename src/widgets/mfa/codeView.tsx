@@ -21,10 +21,7 @@ interface CodeFormData {
     trustDevice?: boolean;
 }
 
-/**
- * The screen where the code sent to the email or phone number is entered. A new code is sent with
- * the same request as the first one.
- */
+/** Code entry screen. "Resend" sends the same request as the first send. */
 export function CodeView({
     enrollment,
     accessToken,
@@ -62,11 +59,11 @@ export function CodeView({
 
     const fields = useMemo(
         () => [
-            // with the checkbox below, the last digit must not submit before it can be ticked
+            // no auto-submit with the checkbox: the user must be able to tick it first
             { key: 'verification_code', onResend: resend, autoSubmit: !showTrustDevice },
             ...(showTrustDevice ? [TRUST_DEVICE_FIELD] : []),
         ],
-        // every value `resend` reads, so the field never calls a stale one
+        // every value `resend` reads, so the field never keeps an old `resend`
         [
             showTrustDevice,
             client,

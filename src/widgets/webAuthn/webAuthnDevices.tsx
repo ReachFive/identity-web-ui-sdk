@@ -71,8 +71,8 @@ export interface WebAuthnDevicesProps {
 }
 
 /**
- * Lists, adds and removes the passkey (FIDO2) devices of the user identified by the access token.
- * Reads them through suspense queries: mount it under a query client and the widget boundaries.
+ * Lists, adds and removes the user's passkey (FIDO2) devices. Reads them with suspense queries:
+ * render it under a query client and the widget boundaries.
  */
 export function WebAuthnDevices({
     accessToken,

@@ -6,27 +6,26 @@ import { dimmedRowProps, ListItem, ListItemIcon } from '@/components/list/listIt
 import { ItemActions, ItemContent, ItemDescription, ItemTitle } from '@/components/ui/item';
 
 interface NavigationRowProps {
-    /** The public styling slot of the row, named by the widget (see the data-slot rule). */
+    /** Public styling slot, set by the widget. */
     'data-slot': `widget-${string}`;
     icon: ReactNode;
     /** `success` for an enabled element, `muted` for one to add. */
     iconTone?: 'success' | 'muted';
     title: ReactNode;
-    /** Shown after the title, inside the button: part of its accessible name. */
+    /** Shown after the title, inside the button, so it is part of its accessible name. */
     badge?: ReactNode;
     /** Describes the button (`aria-describedby`). */
     description?: ReactNode;
     onOpen: () => void;
-    /** A removal confirmation is open in the list: the row is dimmed and inert. */
+    /** Dims the row and makes it inert, while a removal confirmation is open in the list. */
     dimmed?: boolean;
-    /** The target view is loading: the row is busy and shows a spinner in place of its chevron. */
+    /** The target view is loading: the row is busy and shows a spinner instead of its chevron. */
     pending?: boolean;
 }
 
 /**
- * A row that opens another view. Its title is a button stretched over the whole row, so the row
- * opens from anywhere while keeping the `Item` layout (a button only holds phrasing content).
- * The chevron stands for the navigation.
+ * A row that opens another view. The title is a button stretched over the whole row, so a click
+ * anywhere opens it. The button cannot wrap the `Item` layout: it only holds phrasing content.
  */
 export const NavigationRow = forwardRef<HTMLButtonElement, NavigationRowProps>(
     function NavigationRow(

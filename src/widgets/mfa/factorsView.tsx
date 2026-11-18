@@ -16,7 +16,7 @@ import type { AddableFactor, FactorChoices } from '@/widgets/mfa/factors';
 
 const addRowKey = (factor: AddableFactor) => `add-${factor}`;
 
-/** The navigation rows of the screen, kept by the widget to give the focus back on return. */
+/** Refs of the navigation rows, used to give the focus back on return. */
 export interface FactorRowRefs {
     passkeys: RefObject<HTMLButtonElement>;
     add: Readonly<Record<AddableFactor, RefObject<HTMLButtonElement>>>;
@@ -27,7 +27,6 @@ interface FactorGroupProps {
     children: ReactNode;
 }
 
-/** A list of rows under a small heading naming it. */
 const FactorGroup = ({ title, children }: FactorGroupProps) => {
     const headingId = useId();
 
@@ -50,7 +49,7 @@ interface FactorsViewProps {
     accessToken: string;
     choices: FactorChoices;
     removable: boolean;
-    /** The title, focused by the widget when it comes back to this screen with no row to focus. */
+    /** Focused on return when no row can take the focus. */
     titleRef: RefObject<HTMLDivElement>;
     rowRefs: FactorRowRefs;
     onOpenPasskeys: () => void;
@@ -62,8 +61,7 @@ interface FactorsViewProps {
 }
 
 /**
- * The choice screen: the factors already set up, removable in place, then the ones the user can
- * still add. A group without rows is hidden.
+ * Choice screen: the enabled factors, then the ones the user can add. An empty group is hidden.
  */
 export function FactorsView({
     accessToken,

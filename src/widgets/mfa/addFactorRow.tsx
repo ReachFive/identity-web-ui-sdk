@@ -29,13 +29,11 @@ const FACTOR_DETAILS: Record<AddableFactor, FactorDetails> = {
 
 interface AddFactorRowProps {
     factor: AddableFactor;
-    /** Opens the enrollment screen of the factor. */
     onOpen: () => void;
-    /** A removal confirmation is open on the screen: the row is dimmed and inert. */
+    /** A removal confirmation is open: the row is dimmed and inert. */
     dimmed?: boolean;
 }
 
-/** A factor the user can still add, opening its enrollment screen. */
 export const AddFactorRow = forwardRef<HTMLButtonElement, AddFactorRowProps>(function AddFactorRow(
     { factor, onOpen, dimmed },
     ref

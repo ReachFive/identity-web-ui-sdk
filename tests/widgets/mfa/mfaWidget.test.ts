@@ -16,7 +16,7 @@ import type { I18nMessages } from '../../../src/contexts/i18n';
 import type { Config, OnError, OnSuccess } from '../../../src/types';
 
 /*
- * No Squash case exists yet for the showMfa factor choice: the tests are grouped by behaviour.
+ * No Squash case covers the showMfa factor choice: the tests are grouped by behaviour.
  */
 
 const defaultConfig: Config = {
@@ -527,7 +527,7 @@ describe('Email enrollment', () => {
             trustDevice: true,
         });
         expect(successEvents('mfa_email_start_registration')).toHaveLength(1);
-        // no code to verify: the factor is registered all the same
+        // no code to verify, but the factor is registered
         expect(successEvents('mfa_email_verify_registration')).toHaveLength(1);
         expect(successEvents('mfa_trusted_device_added')).toHaveLength(1);
     });
@@ -992,7 +992,7 @@ describe('Theme', () => {
 });
 
 describe('Labels', () => {
-    /** English text of every new key, as in the mockup. */
+    /** English text of each key, as in the mockup. */
     const ENGLISH: Record<string, string> = {
         'mfa.manageFactors.title': 'Manage second factors',
         'mfa.factors.enabled': 'Enabled',

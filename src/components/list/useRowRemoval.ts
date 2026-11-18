@@ -9,11 +9,8 @@ interface UseRowRemovalOptions<T> {
     onOpen?: (key: string) => void;
 }
 
-/**
- * The removal flow of a list: one confirmation open at a time, then the removal request.
- */
+/** The removal flow of a list: one confirmation open at a time, then the removal request. */
 export function useRowRemoval<T>({ removal, onOpen }: UseRowRemovalOptions<T>) {
-    /** Key of the row showing its removal confirmation. */
     const [confirmingKey, setConfirmingKey] = useState<string | null>(null);
     const close = () => setConfirmingKey(null);
 
@@ -27,8 +24,7 @@ export function useRowRemoval<T>({ removal, onOpen }: UseRowRemovalOptions<T>) {
         cancel: close,
         confirm: (element: T) => {
             if (removal.isPending) return;
-            // Settled covers both outcomes: on success the row is already gone from the
-            // refetched list, on error it returns to normal with the element kept.
+            // Closes on both outcomes: on success the row is gone, on error it shows again.
             removal.mutate(element, { onSettled: close });
         },
     };

@@ -24,8 +24,8 @@ export type MfaCredentialRemoval = {
 };
 
 /**
- * The inline removal of MFA credential rows, with the focus kept on screen when a row closes its
- * confirmation or disappears.
+ * Inline removal of MFA credential rows. The focus stays on screen when a confirmation closes or a
+ * row disappears.
  */
 export function useMfaCredentialRemoval({
     accessToken,
@@ -47,7 +47,6 @@ interface MfaCredentialRowsProps extends MfaCredentialRemoval {
     removable: boolean;
 }
 
-/** One removable row per MFA credential. */
 export function MfaCredentialRows({
     credentials,
     removable,

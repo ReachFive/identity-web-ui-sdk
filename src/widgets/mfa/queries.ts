@@ -20,9 +20,6 @@ import type { SuccessEvent } from '@/types/events';
 import type { MfaCredential } from '@/widgets/mfa/credentials';
 import type { MfaProfile } from '@/widgets/mfa/factors';
 
-/**
- * Query keys of the MFA resources, namespaced so they never collide with another widget's.
- */
 const mfaKeys = {
     credentials: () => ['mfa', 'credentials'] as const satisfies QueryKey,
     profile: () => ['mfa', 'profile'] as const satisfies QueryKey,
@@ -45,21 +42,18 @@ const profileQuery = (client: CoreClient, accessToken: string) =>
     });
 
 /**
- * The user's MFA credentials, read through suspense: the component renders only once they are
- * loaded, and a failed first load is thrown to the nearest error boundary.
+ * Read through suspense: the component renders once the credentials are loaded. A failed first
+ * load is thrown to the nearest error boundary.
  */
 export const useMfaCredentials = (accessToken: string) =>
     useSuspenseQuery(credentialsQuery(useReachfive(), accessToken));
 
-/**
- * The profile identifiers the factor rules read, through suspense like the credentials.
- */
 export const useMfaProfile = (accessToken: string) =>
     useSuspenseQuery(profileQuery(useReachfive(), accessToken));
 
 /**
- * The credentials and the profile, loaded in parallel: two suspense queries in a row would only
- * start the second once the first is loaded. Same cache entries as the two hooks above.
+ * Loads the credentials and the profile in parallel: two suspense queries in a row would start the
+ * second only after the first. Same cache entries as the hooks above.
  */
 export const useMfaCredentialsAndProfile = (accessToken: string) => {
     const client = useReachfive();
@@ -70,18 +64,15 @@ export const useMfaCredentialsAndProfile = (accessToken: string) => {
     return { credentials: credentials.data.credentials, profile: profile.data };
 };
 
-/**
- * Refetches the MFA credentials list after a change; a failure keeps the cached list and is
- * reported once through `onError`.
- */
+/** A failed refetch keeps the cached list and is passed once to `onError`. */
 export const useInvalidateMfaCredentials = (onError: OnError) => {
     const invalidate = useInvalidateQueries(onError);
     return () => invalidate(mfaKeys.credentials());
 };
 
 /**
- * Refetches the credentials and the profile, before choosing another factor: the profile
- * identifiers may have been verified meanwhile. A failure is reported once through `onError`.
+ * Refetches the credentials and the profile: the profile identifiers may have been verified in the
+ * meantime. A failure is passed once to `onError`.
  */
 export const useRefreshMfaFactors = (onError: OnError) => {
     const invalidate = useInvalidateQueries(onError);
@@ -122,9 +113,9 @@ type UseRemoveMfaCredentialOptions = {
 };
 
 /**
- * Removes an MFA credential. No optimistic update: on success the deletion event fires, the
- * credential leaves the cached list at once and the list is refetched, so a failed refetch never
- * leaves the deleted row on screen. On failure the list is left untouched.
+ * No optimistic update. On success, the credential is removed from the cached list, then the list
+ * is refetched: a failed refetch does not show the deleted row again. On failure, the list stays
+ * as it is.
  */
 export const useRemoveMfaCredential = ({
     accessToken,
@@ -151,9 +142,8 @@ export const useRemoveMfaCredential = ({
 };
 
 /**
- * Drops a failed device load when the Passkeys view closes: a cached error would be thrown again
- * without a retry, so reopening the view loads afresh. Loaded devices are kept: the view reopens
- * at once, and refreshes them in the background once they are stale.
+ * When the Passkeys view closes, drops a failed device load: a cached error would be thrown again
+ * without a retry. Loaded devices stay cached.
  */
 export const useForgetFailedPasskeyDevicesOnLeave = () => {
     const queryClient = useQueryClient();

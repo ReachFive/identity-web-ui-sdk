@@ -16,16 +16,14 @@ import { useMfaCredentialsAndProfile, useRefreshMfaFactors } from '@/widgets/mfa
 
 import type { OnError, OnSuccess } from '@/types';
 
-/** The screens of the widget: the choice, the Passkeys view, one per enrollment step. */
 export type MfaView = 'factors' | 'passkeys' | 'passkey' | 'email' | 'sms' | 'code' | 'done';
 
-/** What the user is enrolling, kept from the enrollment screen to the code and confirmation. */
+/** The factor being enrolled, kept for the code and confirmation screens. */
 export type Enrollment =
     | { factor: 'passkey'; friendlyName: string }
     | { factor: 'email'; identifier: string; trustDevice: boolean }
     | { factor: 'sms'; identifier: string; trustDevice: boolean };
 
-/** The widget options every enrollment view reads. */
 export interface MfaViewProps {
     accessToken: string;
     action?: string;
@@ -35,7 +33,6 @@ export interface MfaViewProps {
     onError: OnError;
 }
 
-/** The props of an enrollment view (passkey, email, phone number). */
 export type EnrollmentViewProps = MfaViewProps & {
     onBack: () => void;
     /** The factor is enrolled, or a code was sent (`next: 'code'`) to finish it. */
@@ -74,11 +71,11 @@ export type MfaCredentialsWidgetProps = {
      */
     onError?: OnError;
     /**
-     * @deprecated No effect: the widget has no introduction text anymore.
+     * @deprecated Has no effect.
      */
     showIntro?: boolean;
     /**
-     * @deprecated No effect: the widget has no introduction text anymore.
+     * @deprecated Has no effect.
      */
     requireMfaRegistration?: boolean;
 };
@@ -110,7 +107,7 @@ const Mfa = ({
     const rowRefs = useFactorRowRefs();
     const factorsTitle = useRef<HTMLDivElement>(null);
 
-    // The button that restarts is gone with its view: the focus goes to the choice screen title.
+    // The button is removed with its view: move the focus to the choice screen title.
     const addAnother = () => {
         if (addingAnother) return;
         setAddingAnother(true);

@@ -5,21 +5,19 @@ import { Fingerprint } from 'lucide-react';
 import { NavigationRow } from '@/components/list/navigationRow';
 import { useI18n } from '@/contexts/i18n';
 
-/** Key of the Passkeys row among the rows of a screen. */
 export const PASSKEYS_ROW_KEY = 'passkeys';
 
 interface PasskeysRowProps {
     /** Number of passkeys, taken from the MFA credentials list. */
     count: number;
-    /** Opens the Passkeys view. */
     onOpen: () => void;
-    /** A removal confirmation is open in the list: the row is dimmed and inert. */
+    /** A removal confirmation is open: the row is dimmed and inert. */
     dimmed?: boolean;
-    /** The Passkeys view is loading: the row is busy and shows a spinner in place of its chevron. */
+    /** The Passkeys view is loading: the row is busy and shows a spinner in place of the chevron. */
     pending?: boolean;
 }
 
-/** The single row grouping the user's passkeys, described by their count. No remove action. */
+/** One row for all the user's passkeys, with their count. No remove action. */
 export const PasskeysRow = forwardRef<HTMLButtonElement, PasskeysRowProps>(function PasskeysRow(
     { count, onOpen, dimmed, pending },
     ref

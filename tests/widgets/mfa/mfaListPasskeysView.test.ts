@@ -15,8 +15,8 @@ import type { I18nMessages } from '../../../src/contexts/i18n';
 import type { Config, OnError, OnSuccess } from '../../../src/types';
 
 /*
- * The tests referring to a Squash test case (SDK > SDK UI > 01.13 - MFA > 01.13.03 -
- * ShowMfaCredentials Passkeys) replay its steps on the widget, with the API mocked.
+ * Tests that name a Squash case (SDK > SDK UI > 01.13 - MFA > 01.13.03 - ShowMfaCredentials
+ * Passkeys) replay its steps on the widget, with the API mocked.
  */
 
 const config: Config = {
@@ -278,7 +278,6 @@ describe('01.13.03.05 - A failed passkey removal keeps the passkey and is report
         expect(removeWebAuthnDevice).toHaveBeenCalledWith('azerty', 'a');
         expect(onError).toHaveBeenCalledWith(error);
         expect(successEvents('webauthn_credential_deleted')).toHaveLength(0);
-        // The widget stays on the device list: no step-up view takes its place.
         expect(screen.getByText('Device a')).toBeInTheDocument();
         expect(screen.getByText('Device b')).toBeInTheDocument();
         expect(screen.queryByRole('alertdialog')).not.toBeInTheDocument();
@@ -320,7 +319,6 @@ describe('The Passkeys view shows only once its devices are loaded', () => {
 
         await user.click(await screen.findByRole('button', { name: 'Passkeys' }));
 
-        // No intermediate state: neither an empty Passkeys view nor a spinner in place of the list.
         expect(screen.getByText('root@reach5.co')).toBeInTheDocument();
         expect(screen.queryByRole('button', { name: 'Back' })).not.toBeInTheDocument();
         expect(screen.getByRole('button', { name: 'Passkeys' })).toHaveAttribute(
@@ -385,7 +383,7 @@ describe('The Passkeys view shows only once its devices are loaded', () => {
 });
 
 describe('Switching views animates the view that enters', () => {
-    // jsdom runs no animation: these tests pin the classes that carry it.
+    // jsdom runs no animation: these tests check the animation classes.
     const animationOf = (element: HTMLElement) =>
         // eslint-disable-next-line testing-library/no-node-access
         element.closest<HTMLElement>('[class*="animate-view-"]')?.className.split(/\s+/) ?? [];

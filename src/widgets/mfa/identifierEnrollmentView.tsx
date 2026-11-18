@@ -41,9 +41,9 @@ const phoneNumberField = (phoneNumberOptions?: PhoneNumberOptions): Field => ({
 });
 
 /**
- * The email or phone number enrollment screen. When the identifier is already verified on the
- * profile, the API enables the factor without a code: the screen says so before the click, and
- * offers to trust the device. The response decides the next screen, whatever was predicted.
+ * Email or phone number enrollment screen. When the identifier is already verified on the profile,
+ * the API enables the factor without a code: the screen says so and offers to trust the device.
+ * The API response decides the next screen.
  */
 export function IdentifierEnrollmentView({
     factor,
@@ -75,7 +75,7 @@ export function IdentifierEnrollmentView({
     );
 
     const start = async ({ phoneNumber, trustDevice: checked }: IdentifierFormData) => {
-        // a box checked then hidden keeps its value in the form: it is sent only while shown
+        // a hidden box keeps its value in the form: send it only while it is shown
         const trustDevice = showTrustDevice && checked === true;
         const request = { accessToken, action, ...(showTrustDevice && { trustDevice }) };
         const { status } =
@@ -93,7 +93,7 @@ export function IdentifierEnrollmentView({
                     ? 'mfa_email_start_registration'
                     : 'mfa_phone_number_start_registration',
         });
-        // no code to verify: the factor is registered now, as after a verified code
+        // no code to verify: the factor is already enabled
         if (enabled) {
             onSuccess({
                 name:

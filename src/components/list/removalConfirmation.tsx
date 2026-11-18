@@ -5,17 +5,17 @@ import { LoaderCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 interface RemovalConfirmationProps {
-    /** The public styling slot of the confirmation, named by the widget (see the data-slot rule). */
+    /** Public styling slot, set by the widget. */
     'data-slot': `widget-${string}`;
     /** The question that labels the block, e.g. "Remove +33 6 12 34 56 78?". */
     question: string;
-    /** The icon of the row, shown on a light tile in the danger colour. */
+    /** The row icon, on a light tile in the danger colour. */
     icon: ReactNode;
     cancelLabel: string;
     removeLabel: string;
     /**
-     * True while the removal request is running: both buttons are `aria-disabled` (not `disabled`,
-     * which would drop the focus to the page) and ignore activation, and Remove spins.
+     * True while the removal request runs: both buttons ignore clicks and Remove spins. They use
+     * `aria-disabled`, because `disabled` would move the focus to the page.
      */
     pending: boolean;
     onCancel: () => void;
@@ -23,9 +23,9 @@ interface RemovalConfirmationProps {
 }
 
 /**
- * The danger-styled block a row turns into when its trash button is pressed. It is a group
- * labelled by its question, not an alert dialog, since nothing around it is modal. Focus moves to
- * Cancel on open, and Escape cancels.
+ * The block a row turns into when its trash button is pressed. A group labelled by its question,
+ * not an alert dialog, because nothing around it is modal. Focus moves to Cancel on open, and
+ * Escape cancels.
  */
 export function RemovalConfirmation({
     'data-slot': slot,

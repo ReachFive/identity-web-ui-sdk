@@ -58,7 +58,7 @@ describe('factorChoices', () => {
     });
 
     test('a credential type the SDK does not know is left out', () => {
-        // the API may return a type Core does not declare yet (TOTP, …)
+        // the API can return a type that Core does not declare (TOTP, …)
         const totp = { type: 'totp', friendlyName: 'Authenticator', createdAt: '2025-01-01' };
         const choices = factorChoices(
             allOn,

@@ -8,9 +8,9 @@ import userEvent from '@testing-library/user-event';
 import { useRowFocus } from '../../../src/components/list/useRowFocus';
 
 /**
- * A list whose rows have a remove button, except the `fixed` row, which has a control of its own
- * passed through `fixedControls`. Pressing a remove button only asks to watch the row: the test
- * then renders the list as it is once the removal settled.
+ * A list whose rows each have a remove button, except the `fixed` row, whose control is passed
+ * through `fixedControls`. Pressing a remove button only marks the row as watched. The test then
+ * renders the list as it is after the removal.
  */
 function Rows({ keys, fixed, inert = false }: { keys: string[]; fixed?: string; inert?: boolean }) {
     const fixedRef = useRef<HTMLButtonElement>(null);
@@ -137,7 +137,7 @@ describe('useRowFocus', () => {
         );
         expect(elsewhere).toHaveFocus();
 
-        // a later commit, such as a background refetch, does not take it either
+        // a later render, such as a background refetch, does not move the focus either
         act(() => elsewhere.blur());
         rerender(
             <>

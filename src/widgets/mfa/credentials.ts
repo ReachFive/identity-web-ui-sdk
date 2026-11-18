@@ -2,21 +2,16 @@ import { Mail, Smartphone, type LucideIcon } from 'lucide-react';
 
 import { MFA } from '@reachfive/identity-core';
 
-/**
- * An MFA credential (email, phone number): a second factor only, listed one row each and
- * removable. Passkeys are left out: an authentication method first, they are managed in their own
- * view.
- */
+/** An email or phone number credential. Passkeys are managed in their own view. */
 export type MfaCredential = MFA.EmailCredential | MFA.PhoneCredential;
 
 /**
- * Keeps only the types this SDK can show and remove. The API may return a type Core does not
- * declare yet (TOTP, …); such a credential is skipped rather than breaking the whole list.
+ * Keeps only the types this SDK can show and remove. The API may return a type that Core does not
+ * declare yet (TOTP, …): it is skipped.
  */
 export const isMfaCredential = (credential: MFA.Credential): credential is MfaCredential =>
     MFA.isEmailCredential(credential) || MFA.isPhoneCredential(credential);
 
-/** Identifies a row of the list; unique across MFA credentials. */
 export const credentialKey = (credential: MfaCredential) =>
     `${credential.type}-${credential.friendlyName}`;
 
@@ -24,12 +19,11 @@ interface CredentialDetails {
     identifier: string;
     /** i18n key of the factor type shown under the identifier. */
     labelKey: string;
-    /** i18n key naming the trash button. */
+    /** i18n key of the trash button label. */
     removeLabelKey: string;
     Icon: LucideIcon;
 }
 
-/** What a row shows for each type of MFA credential. */
 export const credentialDetails = (credential: MfaCredential): CredentialDetails => {
     switch (credential.type) {
         case 'email':

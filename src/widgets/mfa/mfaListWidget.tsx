@@ -29,9 +29,7 @@ export interface MfaListProps {
     showRemoveMfaCredential?: boolean;
 }
 
-/**
- * Fires `mfa_credentials_listed` once, on the first successful load, and not on later refetches.
- */
+/** Calls `onSuccess` with `mfa_credentials_listed` once, on the first successful load. */
 const useCredentialsListedEvent = (credentials: MFA.Credential[], onSuccess: OnSuccess) => {
     const listed = useRef(false);
 

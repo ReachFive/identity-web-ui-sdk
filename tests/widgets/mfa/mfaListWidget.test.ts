@@ -16,9 +16,9 @@ import type { I18nMessages } from '../../../src/contexts/i18n';
 import type { Config, OnError, OnSuccess } from '../../../src/types';
 
 /*
- * The tests referring to a Squash test case (SDK > SDK UI > 01.13 - MFA > 01.13.03 -
- * ShowMfaCredentials Passkeys) replay its steps on the widget, with the API mocked. The passkey
- * management view (01.13.03.03 to 01.13.03.05) is tested in mfaListPasskeysView.test.ts.
+ * Tests that name a Squash case (SDK > SDK UI > 01.13 - MFA > 01.13.03 - ShowMfaCredentials
+ * Passkeys) replay its steps on the widget, with the API mocked. The passkey management view
+ * (01.13.03.03 to 01.13.03.05) is tested in mfaListPasskeysView.test.ts.
  */
 
 const defaultConfig: Config = {
@@ -257,8 +257,7 @@ describe('01.13.03.01 - Active MFA factors are listed, passkeys grouped in a sin
  * Squash: 01.13.03.06
  */
 describe('01.13.03.06 - With the MFA/passkey option disabled, the widget keeps its former behaviour', () => {
-    // With the option disabled, the API leaves the passkeys out of the MFA credentials list: the
-    // widget only shows what it gets.
+    // With the option disabled, the API does not return passkeys in the MFA credentials list.
     test('email and phone number credentials are listed and removable, with no Passkeys row', async () => {
         listMfaCredentials.mockResolvedValue(credentialsList(emailCredential, phoneCredential));
         await renderWidget({ showRemoveMfaCredential: true }, { config: { webAuthn: false } });
@@ -742,7 +741,7 @@ describe('The removal confirmation, for keyboard and assistive technology users'
         const remove = within(confirmation).getByRole('button', { name: 'Remove' });
         await user.click(remove);
 
-        // aria-disabled, not disabled: a disabled button would drop the focus to <body>.
+        // aria-disabled, because a disabled button would move the focus to <body>.
         expect(remove).toHaveFocus();
         expect(remove).toHaveAttribute('aria-disabled', 'true');
         expect(remove).toHaveAttribute('aria-busy', 'true');
@@ -876,7 +875,7 @@ describe('The Passkeys row, for assistive technology users', () => {
 
         const button = await screen.findByRole('button', { name: 'Passkeys' });
         expect(button).toHaveAccessibleDescription('1 passkey · Also used to log in');
-        // The visible label is the name: no aria-label overriding it.
+        // The visible label is the accessible name: no aria-label.
         expect(button).not.toHaveAttribute('aria-label');
         // Phrasing content only: a <button> cannot hold <div> or <p>.
         expect(button.querySelector('div, p')).toBeNull();
@@ -951,8 +950,7 @@ describe('Snapshot', () => {
         const { container } = await renderWidget({ showRemoveMfaCredential: true });
 
         const { confirmation } = await openConfirmation('mfa.remove.phoneNumber');
-        // The question id comes from useId, whose value depends on the ids earlier tests consumed:
-        // pin it so the snapshot does not change with the test order or the tests run.
+        // useId depends on the tests run before: pin the id to keep the snapshot stable.
         container
             .querySelector(`[id="${confirmation.getAttribute('aria-labelledby')}"]`)
             ?.setAttribute('id', 'confirmation-question');
@@ -969,8 +967,7 @@ test('Snapshot: with passkeys', async () => {
     const { container } = await renderWidget();
 
     await screen.findByText('Passkeys');
-    // The count id comes from useId, whose value depends on the ids earlier tests consumed: pin
-    // it so the snapshot does not change with the test order or the tests run.
+    // useId depends on the tests run before: pin the id to keep the snapshot stable.
     const button = screen.getByRole('button', { name: 'Passkeys' });
     container
         .querySelector(`[id="${button.getAttribute('aria-describedby')}"]`)

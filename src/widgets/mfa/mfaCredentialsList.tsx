@@ -18,7 +18,7 @@ interface MfaCredentialsListProps {
     credentials: MFA.Credential[];
     removable: boolean;
     passkeysRowRef: RefObject<HTMLButtonElement>;
-    /** Holds the list, or the empty state in its place: focusable by script only. */
+    /** Wraps the list or the empty state. Focusable by script only. */
     listRef: RefObject<HTMLDivElement>;
     onOpenPasskeys: () => void;
     /** The Passkeys view is loading its devices. */
@@ -27,7 +27,6 @@ interface MfaCredentialsListProps {
     onError: OnError;
 }
 
-/** The rows of the list, or the empty state without any factor. */
 export const MfaCredentialsList = ({
     credentials,
     removable,

@@ -3,8 +3,8 @@ import { useQueryClient, type QueryKey } from '@tanstack/react-query';
 import type { OnError } from '@/types';
 
 /**
- * Refetches queries after a change. A failed refetch keeps the cached data on screen (a suspense
- * query only throws without data) and is reported once through `onError`.
+ * Refetches queries after a change. On failure the cached data stays on screen, because a
+ * suspense query throws only when it has no data, and the error is passed once to `onError`.
  */
 export const useInvalidateQueries = (onError: OnError) => {
     const queryClient = useQueryClient();

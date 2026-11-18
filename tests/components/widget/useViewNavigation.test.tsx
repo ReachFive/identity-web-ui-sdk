@@ -62,7 +62,7 @@ describe('useViewNavigation', () => {
         const openerRef = useRef<HTMLButtonElement>(null);
         const firstRef = useRef<HTMLButtonElement>(null);
 
-        // Keyed by view, like a widget's views: nothing is reused from one view to the next.
+        // Keyed by view, as in the widgets: no state is reused between views.
         return view === 'list' ? (
             <div key="list">
                 <button ref={firstRef} type="button">

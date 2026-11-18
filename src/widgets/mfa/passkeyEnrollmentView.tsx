@@ -18,8 +18,8 @@ interface PasskeyFormData {
 }
 
 /**
- * The passkey enrollment screen: the device name, then the browser creates the passkey. The form
- * reports a refused creation and the screen stays open, so the user can try again or go back.
+ * Passkey enrollment screen. If the browser refuses to create the passkey, the form shows the
+ * error and the screen stays open.
  */
 export function PasskeyEnrollmentView({
     accessToken,

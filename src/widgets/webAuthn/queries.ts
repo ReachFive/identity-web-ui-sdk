@@ -5,16 +5,14 @@ import { useReachfive } from '@/contexts/reachfive';
 
 import type { OnError, OnSuccess } from '@/types';
 
-/**
- * Query keys of the WebAuthn resources, namespaced so they never collide with another widget's.
- */
+/** Query keys, prefixed so they never collide with another widget's. */
 export const webAuthnKeys = {
     devices: () => ['webauthn', 'devices'] as const satisfies QueryKey,
 };
 
 /**
- * The user's passkey (FIDO2) devices, read through suspense: the component renders only once they
- * are loaded, and a failed first load is thrown to the nearest error boundary.
+ * The user's passkey devices, read with suspense. A failed first load is thrown to the nearest
+ * error boundary.
  */
 export const useWebAuthnDevices = (accessToken: string) => {
     const client = useReachfive();
@@ -25,10 +23,7 @@ export const useWebAuthnDevices = (accessToken: string) => {
     });
 };
 
-/**
- * Refetches the devices after a change. A failed refetch keeps the cached list on screen and is
- * reported through `onError`.
- */
+/** Refetches the devices after a change. */
 const useInvalidateWebAuthnDevices = (onError: OnError) => {
     const invalidate = useInvalidateQueries(onError);
     return () => invalidate(webAuthnKeys.devices());
@@ -59,10 +54,7 @@ export const useRemoveWebAuthnDevice = ({
     });
 };
 
-/**
- * Registers a new device, then refetches the list. Failures are left to the caller: the add form
- * reports them itself.
- */
+/** Registers a new device, then refetches the list. Errors are left to the caller. */
 export const useAddWebAuthnDevice = ({
     accessToken,
     onSuccess,
