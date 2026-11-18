@@ -162,14 +162,19 @@ export const useRemoveMfaCredential = ({
 };
 
 /**
- * Drops the passkey devices when the Passkeys view closes: a cached error would be thrown again
- * without a retry, so reopening the view always loads afresh.
+ * Drops a failed device load when the Passkeys view closes: a cached error would be thrown again
+ * without a retry, so reopening the view loads afresh. Loaded devices are kept: the view reopens
+ * at once, and refreshes them in the background once they are stale.
  */
-export const useForgetPasskeyDevicesOnLeave = () => {
+export const useForgetFailedPasskeyDevicesOnLeave = () => {
     const queryClient = useQueryClient();
 
     useEffect(
-        () => () => queryClient.removeQueries({ queryKey: webAuthnKeys.devices() }),
+        () => () =>
+            queryClient.removeQueries({
+                queryKey: webAuthnKeys.devices(),
+                predicate: query => query.state.status === 'error',
+            }),
         [queryClient]
     );
 };

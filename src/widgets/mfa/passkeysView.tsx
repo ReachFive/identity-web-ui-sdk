@@ -3,7 +3,10 @@ import React from 'react';
 import { WidgetErrorBoundary } from '@/components/widget/queryWidget';
 import { ViewHeader } from '@/components/widget/viewHeader';
 import { useI18n } from '@/contexts/i18n';
-import { useForgetPasskeyDevicesOnLeave, useInvalidateMfaCredentials } from '@/widgets/mfa/queries';
+import {
+    useForgetFailedPasskeyDevicesOnLeave,
+    useInvalidateMfaCredentials,
+} from '@/widgets/mfa/queries';
 import { WebAuthnDevices } from '@/widgets/webAuthn/webAuthnDevices';
 
 import type { OnError, OnSuccess } from '@/types';
@@ -32,7 +35,7 @@ interface PasskeysViewProps {
 export function PasskeysView({ accessToken, onBack, onSuccess, onError }: PasskeysViewProps) {
     const i18n = useI18n();
     const invalidateCredentials = useInvalidateMfaCredentials(onError);
-    useForgetPasskeyDevicesOnLeave();
+    useForgetFailedPasskeyDevicesOnLeave();
 
     const handleSuccess: OnSuccess = event => {
         onSuccess(event);

@@ -335,6 +335,43 @@ describe('The Passkeys view shows only once its devices are loaded', () => {
         expect(screen.queryByText('root@reach5.co')).not.toBeInTheDocument();
     });
 
+    test('reopened after a successful load, the view shows the loaded devices at once', async () => {
+        listMfaCredentials.mockResolvedValue(
+            credentialsList(emailCredential, passkeyCredential('a'))
+        );
+        listWebAuthnDevices
+            .mockResolvedValueOnce([device('a')])
+            .mockReturnValueOnce(new Promise<DeviceCredential[]>(() => {}));
+        await renderWidget();
+        const user = userEvent.setup();
+
+        await user.click(await openPasskeysView(user));
+        await openPasskeysView(user);
+
+        expect(screen.getByText('Device a')).toBeInTheDocument();
+    });
+
+    test('reopened after a failed load, the view loads the devices afresh', async () => {
+        jest.spyOn(console, 'error').mockImplementation(() => {});
+        listMfaCredentials.mockResolvedValue(
+            credentialsList(emailCredential, passkeyCredential('a'))
+        );
+        listWebAuthnDevices
+            .mockRejectedValueOnce(new UserError('Devices unavailable'))
+            .mockResolvedValueOnce([device('a')]);
+        await renderWidget();
+        const user = userEvent.setup();
+
+        const back = await openPasskeysView(user);
+        await screen.findByText('Devices unavailable');
+        await user.click(back);
+        await openPasskeysView(user);
+
+        expect(await screen.findByText('Device a')).toBeInTheDocument();
+        expect(screen.queryByText('Devices unavailable')).not.toBeInTheDocument();
+        jest.restoreAllMocks();
+    });
+
     test('the Passkeys row is not busy before it is activated', async () => {
         listMfaCredentials.mockResolvedValue(
             credentialsList(emailCredential, passkeyCredential('a'))
