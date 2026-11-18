@@ -156,6 +156,20 @@ describe('01.13.03.01 - Active MFA factors are listed, passkeys grouped in a sin
         expect(onError).not.toHaveBeenCalled();
     });
 
+    test('a credential type the SDK does not know is left out, the others are listed', async () => {
+        // the API can return a type that Core does not declare (TOTP, …)
+        const totp = { type: 'totp', friendlyName: 'Authenticator', createdAt: '2022-09-21' };
+        listMfaCredentials.mockResolvedValue(
+            credentialsList(totp as unknown as MFA.Credential, emailCredential)
+        );
+        await renderWidget();
+
+        await screen.findByText('root@reach5.co');
+        expect(screen.getAllByRole('listitem')).toHaveLength(1);
+        expect(screen.queryByText('Authenticator')).not.toBeInTheDocument();
+        expect(onError).not.toHaveBeenCalled();
+    });
+
     test('the email and phone number rows come before a single Passkeys row', async () => {
         listMfaCredentials.mockResolvedValue(
             credentialsList(
