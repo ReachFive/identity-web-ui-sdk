@@ -431,7 +431,7 @@ exports[`Snapshots the code screen 1`] = `
             class="mb-2 text-center text-foreground"
             data-slot="widget-intro"
           >
-            Code sent to ••78
+            Code sent to +33123456778
           </div>
           <form
             aria-busy="false"

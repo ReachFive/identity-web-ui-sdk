@@ -65,8 +65,3 @@ export function sendsNoCode(
         profile.phoneNumberVerified === true
     );
 }
-
-/** Hides a phone number but its last two digits: `••78`. */
-export function maskPhoneNumber(phoneNumber: string): string {
-    return `••${phoneNumber.replace(/\D/g, '').slice(-2)}`;
-}

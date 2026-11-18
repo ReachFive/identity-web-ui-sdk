@@ -2,7 +2,7 @@ import { describe, expect, test } from '@jest/globals';
 
 import type { MFA } from '@reachfive/identity-core';
 
-import { factorChoices, maskPhoneNumber, sendsNoCode } from '../../../src/widgets/mfa/factors';
+import { factorChoices, sendsNoCode } from '../../../src/widgets/mfa/factors';
 
 import type { MfaProfile } from '../../../src/widgets/mfa/factors';
 
@@ -89,12 +89,5 @@ describe('sendsNoCode', () => {
         expect(
             sendsNoCode('sms', { ...verified, phoneNumberVerified: false }, '+33612345678')
         ).toBe(false);
-    });
-});
-
-describe('maskPhoneNumber', () => {
-    test('keeps the last two digits', () => {
-        expect(maskPhoneNumber('+33 6 12 34 56 78')).toBe('••78');
-        expect(maskPhoneNumber('+1 (415) 555-0199')).toBe('••99');
     });
 });

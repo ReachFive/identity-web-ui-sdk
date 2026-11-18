@@ -6,7 +6,6 @@ import { ViewHeader } from '@/components/widget/viewHeader';
 import { useConfig } from '@/contexts/config';
 import { useI18n } from '@/contexts/i18n';
 import { useReachfive } from '@/contexts/reachfive';
-import { maskPhoneNumber } from '@/widgets/mfa/factors';
 import { TRUST_DEVICE_FIELD } from '@/widgets/mfa/trustDeviceField';
 
 import type { Enrollment, MfaViewProps } from '@/widgets/mfa/mfaWidget';
@@ -101,11 +100,7 @@ export function CodeView({
                 backLabel={i18n('mfaList.back')}
                 onBack={onBack}
             />
-            <Intro>
-                {i18n('mfa.code.sentTo', {
-                    identifier: factor === 'sms' ? maskPhoneNumber(identifier) : identifier,
-                })}
-            </Intro>
+            <Intro>{i18n('mfa.code.sentTo', { identifier })}</Intro>
             <Form
                 fields={fields}
                 submitLabel="mfa.verify"

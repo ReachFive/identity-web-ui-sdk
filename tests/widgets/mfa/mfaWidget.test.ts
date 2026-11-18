@@ -704,9 +704,9 @@ describe('Code screen', () => {
         return user;
     };
 
-    test('shows where the code was sent', async () => {
+    test('shows the full phone number', async () => {
         await openCodeScreen('sms');
-        expect(screen.getByText('Code sent to ••78')).toBeInTheDocument();
+        expect(screen.getByText('Code sent to +33123456778')).toBeInTheDocument();
         expect(screen.getByRole('button', { name: 'mfa.verify' })).toBeInTheDocument();
     });
 
