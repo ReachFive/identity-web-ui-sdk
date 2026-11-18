@@ -1,10 +1,6 @@
-import {
-    useMutation,
-    useQueryClient,
-    useSuspenseQuery,
-    type QueryKey,
-} from '@tanstack/react-query';
+import { useMutation, useSuspenseQuery, type QueryKey } from '@tanstack/react-query';
 
+import { useInvalidateQueries } from '@/components/widget/useInvalidateQueries';
 import { useReachfive } from '@/contexts/reachfive';
 
 import type { OnError, OnSuccess } from '@/types';
@@ -34,12 +30,8 @@ export const useWebAuthnDevices = (accessToken: string) => {
  * reported through `onError`.
  */
 const useInvalidateWebAuthnDevices = (onError: OnError) => {
-    const queryClient = useQueryClient();
-
-    return () =>
-        queryClient
-            .invalidateQueries({ queryKey: webAuthnKeys.devices() }, { throwOnError: true })
-            .catch(onError);
+    const invalidate = useInvalidateQueries(onError);
+    return () => invalidate(webAuthnKeys.devices());
 };
 
 interface DeviceMutationOptions {

@@ -11,6 +11,7 @@ import {
 
 import type { Client as CoreClient, MFA } from '@reachfive/identity-core';
 
+import { useInvalidateQueries } from '@/components/widget/useInvalidateQueries';
 import { useReachfive } from '@/contexts/reachfive';
 import { webAuthnKeys } from '@/widgets/webAuthn/queries';
 
@@ -70,16 +71,12 @@ export const useMfaCredentialsAndProfile = (accessToken: string) => {
 };
 
 /**
- * Refetches the MFA credentials list after a change. A failed refetch keeps the cached list on
- * screen (a suspense query only throws without data) and is reported once through `onError`.
+ * Refetches the MFA credentials list after a change; a failure keeps the cached list and is
+ * reported once through `onError`.
  */
 export const useInvalidateMfaCredentials = (onError: OnError) => {
-    const queryClient = useQueryClient();
-
-    return () =>
-        queryClient
-            .invalidateQueries({ queryKey: mfaKeys.credentials() }, { throwOnError: true })
-            .catch(onError);
+    const invalidate = useInvalidateQueries(onError);
+    return () => invalidate(mfaKeys.credentials());
 };
 
 /**
@@ -87,16 +84,8 @@ export const useInvalidateMfaCredentials = (onError: OnError) => {
  * identifiers may have been verified meanwhile. A failure is reported once through `onError`.
  */
 export const useRefreshMfaFactors = (onError: OnError) => {
-    const queryClient = useQueryClient();
-
-    return () =>
-        Promise.all(
-            [mfaKeys.credentials(), mfaKeys.profile()].map(queryKey =>
-                queryClient.invalidateQueries({ queryKey }, { throwOnError: true })
-            )
-        )
-            .then(() => undefined)
-            .catch(onError);
+    const invalidate = useInvalidateQueries(onError);
+    return () => invalidate(mfaKeys.credentials(), mfaKeys.profile());
 };
 
 const removeMfaCredential = (
