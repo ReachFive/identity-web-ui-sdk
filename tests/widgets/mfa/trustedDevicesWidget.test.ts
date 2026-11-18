@@ -131,6 +131,30 @@ describe('DOM testing', () => {
             expect(onError).not.toBeCalled();
         });
 
+        test.each([
+            ['fr', '21 sept. 2022, 16:32'],
+            ['en', 'Sep 21, 2022, 4:32 PM'],
+        ])(
+            "creation date and time in the configured language and the user's time zone (%s)",
+            async (language, expected) => {
+                listTrustedDevices.mockResolvedValue({
+                    trustedDevices: [
+                        {
+                            id: 'id1',
+                            userId: 'userid1',
+                            createdAt: '2022-09-21T14:32:05.123Z',
+                            metadata: {},
+                        },
+                    ],
+                });
+                await generateComponent({}, { language });
+
+                expect(screen.getByRole('listitem').querySelector('time')).toHaveTextContent(
+                    new RegExp(`^${expected}$`)
+                );
+            }
+        );
+
         test('api error', async () => {
             const error: AppError = {
                 errorId: '0',

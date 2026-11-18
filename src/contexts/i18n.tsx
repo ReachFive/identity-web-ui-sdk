@@ -5,6 +5,9 @@ import i18n, { ResourceKey, TFunction } from 'i18next';
 
 export type I18nMessages = Record<string, ResourceKey>;
 
+const TRANSLATION_NS = 'translation';
+const DEFAULT_NS = 'default';
+
 export interface Props {
     defaultMessages?: I18nMessages;
     messages?: I18nMessages;
@@ -25,6 +28,10 @@ export function I18nProvider({
     locale,
 }: PropsWithChildren<Props>): JSX.Element | null {
     const instance = i18n.createInstance();
+    const translations = (locale in messages ? messages : { [locale]: messages }) as Record<
+        string,
+        I18nMessages
+    >;
     instance.use(initReactI18next).init(
         {
             lng: locale,
@@ -33,19 +40,18 @@ export function I18nProvider({
                 prefix: '{',
                 suffix: '}',
             },
-            fallbackLng: ['default', 'dev'],
+            fallbackLng: 'dev',
+            ns: [TRANSLATION_NS, DEFAULT_NS],
+            defaultNS: TRANSLATION_NS,
+            fallbackNS: DEFAULT_NS,
             resources: {
-                default: {
-                    translation: defaultMessages,
-                },
-                ...(locale in messages
-                    ? Object.fromEntries(
-                          Object.entries(messages).map(([language, translation]) => [
-                              language,
-                              { translation },
-                          ])
-                      )
-                    : { [locale]: { translation: messages } }),
+                ...Object.fromEntries(
+                    Object.entries(translations).map(([language, translation]) => [
+                        language,
+                        { [TRANSLATION_NS]: translation },
+                    ])
+                ),
+                [locale]: { [TRANSLATION_NS]: translations[locale], [DEFAULT_NS]: defaultMessages },
             },
         },
         err => {

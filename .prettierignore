@@ -22,6 +22,9 @@ umd
 .circleci
 .github
 
+# Ignore agent configuration and worktrees (full copies of the repository)
+.claude
+
 # Ignore misc files
 .editorconfig
 .eslintrc.json

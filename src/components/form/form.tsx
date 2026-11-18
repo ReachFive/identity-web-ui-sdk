@@ -8,7 +8,7 @@ import { FormSubmissionProvider, useFormSubmissionState } from '@/components/for
 import { Button } from '@/components/ui/button';
 import { useConfig } from '@/contexts/config';
 import { useI18n } from '@/contexts/i18n';
-import { isAppError } from '@/helpers/errors';
+import { appErrorMessage, isAppError } from '@/helpers/errors';
 import { logError } from '@/helpers/logger';
 import {
     type Field,
@@ -146,9 +146,7 @@ function Form<TFieldValues extends FieldValues = FieldValues, R = void>({
                     }
                 });
 
-                const errorMessage = i18n(error.errorMessageKey ?? error.error, {
-                    defaultValue: error.errorUserMsg ?? error.errorDescription ?? error.error,
-                });
+                const errorMessage = appErrorMessage(error, i18n);
                 // if a field claims this error key, set the error on that field rather than form root
                 const errorField = error.errorMessageKey
                     ? resolveErrorMessageKeyField<TFieldValues>(

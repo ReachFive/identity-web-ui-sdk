@@ -9,7 +9,7 @@ import userEvent from '@testing-library/user-event';
 import { Client, MFA } from '@reachfive/identity-core';
 
 import { type I18nMessages } from '../../../src/contexts/i18n';
-import mfaCredentialsWidget from '../../../src/widgets/mfa/MfaCredentialsWidget';
+import mfaCredentialsWidget from '../../../src/widgets/mfa/mfaWidget';
 
 import type { Config, OnError, OnSuccess } from '../../../src/types';
 
