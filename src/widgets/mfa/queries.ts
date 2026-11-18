@@ -9,7 +9,7 @@ import {
     type QueryKey,
 } from '@tanstack/react-query';
 
-import type { Client as CoreClient } from '@reachfive/identity-core';
+import type { Client as CoreClient, MFA } from '@reachfive/identity-core';
 
 import { useReachfive } from '@/contexts/reachfive';
 import { webAuthnKeys } from '@/widgets/webAuthn/queries';
@@ -116,6 +116,16 @@ const removeMfaCredential = (
     }
 };
 
+const withoutCredential = (
+    response: MFA.CredentialsResponse,
+    removed: MfaCredential
+): MFA.CredentialsResponse => ({
+    ...response,
+    credentials: response.credentials.filter(
+        c => c.type !== removed.type || c.friendlyName !== removed.friendlyName
+    ),
+});
+
 type UseRemoveMfaCredentialOptions = {
     accessToken: string;
     onSuccess: OnSuccess;
@@ -123,8 +133,9 @@ type UseRemoveMfaCredentialOptions = {
 };
 
 /**
- * Removes an MFA credential. No optimistic update: on success the deletion
- * event fires and the credentials list is refetched; on failure the list is left untouched.
+ * Removes an MFA credential. No optimistic update: on success the deletion event fires, the
+ * credential leaves the cached list at once and the list is refetched, so a failed refetch never
+ * leaves the deleted row on screen. On failure the list is left untouched.
  */
 export const useRemoveMfaCredential = ({
     accessToken,
@@ -132,13 +143,18 @@ export const useRemoveMfaCredential = ({
     onError,
 }: UseRemoveMfaCredentialOptions) => {
     const client = useReachfive();
+    const queryClient = useQueryClient();
     const invalidateCredentials = useInvalidateMfaCredentials(onError);
 
     return useMutation({
         mutationFn: (credential: MfaCredential) =>
             removeMfaCredential(client, accessToken, credential),
-        onSuccess: event => {
+        onSuccess: (event, removed) => {
             onSuccess(event);
+            queryClient.setQueryData<MFA.CredentialsResponse>(
+                mfaKeys.credentials(),
+                cached => cached && withoutCredential(cached, removed)
+            );
             return invalidateCredentials();
         },
         onError: error => onError(error),

@@ -771,14 +771,14 @@ describe('The removal confirmation, for keyboard and assistive technology users'
         );
     });
 
-    test('a failed refresh after removal keeps the list and calls onError once', async () => {
+    test('a failed refresh after removal still drops the removed row and calls onError once', async () => {
         const error: AppError = {
             errorId: '2',
             error: 'unexpected_error',
             errorDescription: 'Unexpected error',
         };
         listMfaCredentials
-            .mockResolvedValueOnce(credentialsList(emailCredential))
+            .mockResolvedValueOnce(credentialsList(emailCredential, phoneCredential))
             .mockRejectedValueOnce(error);
         removeMfaEmail.mockResolvedValue(undefined);
         await renderWidget({ showRemoveMfaCredential: true });
@@ -789,7 +789,8 @@ describe('The removal confirmation, for keyboard and assistive technology users'
         await waitFor(() => expect(onError).toHaveBeenCalledTimes(1));
         expect(onError).toHaveBeenCalledWith(error);
         expect(successEvents('mfa_email_deleted')).toHaveLength(1);
-        expect(await screen.findByText('root@reach5.co')).toBeInTheDocument();
+        expect(screen.queryByText('root@reach5.co')).not.toBeInTheDocument();
+        expect(screen.getByText('33612345678')).toBeInTheDocument();
     });
 
     test('after removing a row, focus moves to the trash button of the next row', async () => {
