@@ -36,18 +36,23 @@ export const VERIFICATION_CODE_REFUSED = 'error.invalidVerificationCode';
 /** Shown when nothing better is known about an error. */
 const UNEXPECTED_ERROR = 'Unexpected error';
 
+/** An empty text counts as missing. */
+const text = (value?: string): string | undefined => (value === '' ? undefined : value);
+
 /**
- * The message of an API error: the user message the API localised, else the translation of its
- * message key, else its description, else its code, else a generic message. Without translations,
- * the key is skipped. Empty texts count as missing.
+ * The message of an API error, the same in a form and in place of a widget: the translation of its
+ * message key (else of its error code), so that an integrator's text wins; else the user message
+ * the API localised, its description, its code, or a generic message. Without translations, no key
+ * is read. Empty texts count as missing.
  */
-const appErrorMessage = (error: AppError, i18n?: TFunction): string => {
-    const fallback = error.errorDescription || error.error || UNEXPECTED_ERROR;
-    if (error.errorUserMsg) return error.errorUserMsg;
-    if (error.errorMessageKey && i18n) {
-        return i18n(error.errorMessageKey, { defaultValue: fallback });
-    }
-    return fallback;
+export const appErrorMessage = (error: AppError, i18n?: TFunction): string => {
+    const fallback =
+        text(error.errorUserMsg) ??
+        text(error.errorDescription) ??
+        text(error.error) ??
+        UNEXPECTED_ERROR;
+    const key = text(error.errorMessageKey) ?? text(error.error);
+    return key && i18n ? i18n(key, { defaultValue: fallback }) : fallback;
 };
 
 export class UserError extends Error {

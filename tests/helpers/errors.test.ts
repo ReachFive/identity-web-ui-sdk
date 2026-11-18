@@ -6,7 +6,14 @@ import { UserError, widgetErrorMessage } from '../../src/helpers/errors';
 const i18n = i18next.createInstance();
 void i18n.init({
     lng: 'en',
-    resources: { en: { translation: { 'error.invalidGrant': 'Your session has expired.' } } },
+    resources: {
+        en: {
+            translation: {
+                'error.invalidGrant': 'Your session has expired.',
+                email_already_exists: 'This email is already used.',
+            },
+        },
+    },
 });
 const t = i18n.getFixedT('en');
 
@@ -15,7 +22,7 @@ describe('widgetErrorMessage', () => {
         expect(widgetErrorMessage(new UserError('Access denied'), t)).toBe('Access denied');
     });
 
-    test('an API error shows its user message first', () => {
+    test('an API error shows its translated message key first, as forms do', () => {
         expect(
             widgetErrorMessage(
                 {
@@ -26,7 +33,30 @@ describe('widgetErrorMessage', () => {
                 },
                 t
             )
-        ).toBe("Le jeton d'accès n'est pas assez récent.");
+        ).toBe('Your session has expired.');
+    });
+
+    test('an API error whose message key is not translated shows its user message', () => {
+        expect(
+            widgetErrorMessage(
+                {
+                    error: 'unexpected_error',
+                    errorDescription: 'Boom',
+                    errorUserMsg: 'Une erreur est survenue.',
+                    errorMessageKey: 'error.unknown',
+                },
+                t
+            )
+        ).toBe('Une erreur est survenue.');
+    });
+
+    test('an API error without a message key has its error code translated', () => {
+        expect(
+            widgetErrorMessage(
+                { error: 'email_already_exists', errorDescription: 'Email already exists' },
+                t
+            )
+        ).toBe('This email is already used.');
     });
 
     test('an API error without a user message shows its translated message key', () => {
