@@ -3,14 +3,18 @@ import { Mail, Smartphone, type LucideIcon } from 'lucide-react';
 import { MFA } from '@reachfive/identity-core';
 
 /**
- * An MFA credential (email, phone number, …): a second factor only, listed one row each and
+ * An MFA credential (email, phone number): a second factor only, listed one row each and
  * removable. Passkeys are left out: an authentication method first, they are managed in their own
  * view.
  */
-export type MfaCredential = Exclude<MFA.Credential, MFA.PasskeyCredential>;
+export type MfaCredential = MFA.EmailCredential | MFA.PhoneCredential;
 
+/**
+ * Keeps only the types this SDK can show and remove. The API may return a type Core does not
+ * declare yet (TOTP, …); such a credential is skipped rather than breaking the whole list.
+ */
 export const isMfaCredential = (credential: MFA.Credential): credential is MfaCredential =>
-    !MFA.isPasskeyCredential(credential);
+    MFA.isEmailCredential(credential) || MFA.isPhoneCredential(credential);
 
 /** Identifies a row of the list; unique across MFA credentials. */
 export const credentialKey = (credential: MfaCredential) =>

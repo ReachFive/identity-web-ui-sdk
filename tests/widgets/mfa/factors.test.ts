@@ -57,6 +57,18 @@ describe('factorChoices', () => {
         expect(choices.addable).not.toContain('email');
     });
 
+    test('a credential type the SDK does not know is left out', () => {
+        // the API may return a type Core does not declare yet (TOTP, …)
+        const totp = { type: 'totp', friendlyName: 'Authenticator', createdAt: '2025-01-01' };
+        const choices = factorChoices(
+            allOn,
+            [totp as unknown as MFA.Credential, emailCredential, passkey],
+            profile
+        );
+        expect(choices.enabled).toEqual([emailCredential]);
+        expect(choices.passkeyCount).toBe(1);
+    });
+
     test('email is not addable when the profile has no email', () => {
         expect(factorChoices(allOn, [], {}).addable).toEqual(['passkey', 'sms']);
     });
