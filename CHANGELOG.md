@@ -24,6 +24,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - `showMfa` adds a factor step by step (choice, enrollment, code, confirmation) instead of a single screen;
   `showIntro` and `requireMfaRegistration` no longer have an effect
+- `showMfa`, `showMfaList`: i18n keys renamed; texts overridden through the `i18n` option must use the new keys
 - The password field validation no longer checks the password strength. The strength indicator shows it while the
   user types, and the server checks it on submit.
 - Passwordless, MFA registration, MFA step-up, phone number
