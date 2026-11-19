@@ -60,6 +60,8 @@ export type RemoteSettings = Omit<CoreRemoteSettings, 'customProviders'> & {
     verificationCodeMaxTrials?: number;
     /** The codes a single step-up token can send, the first one included. */
     stepUpTokenMaxUses?: number;
+    /** Whether a passkey can be used as a second factor. */
+    mfaWebauthnEnabled?: boolean;
 };
 
 export type Config = CoreConfig & RemoteSettings & ConsentsVersions & CustomFields;
