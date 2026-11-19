@@ -60,14 +60,11 @@ export type RemoteSettings = Omit<CoreRemoteSettings, 'customProviders'> & {
     verificationCodeMaxTrials?: number;
     /** The codes a single step-up token can send, the first one included. */
     stepUpTokenMaxUses?: number;
+    /** Whether a passkey can be used as a second factor. */
+    mfaWebauthnEnabled?: boolean;
 };
 
-export type Config = CoreConfig &
-    RemoteSettings &
-    ConsentsVersions &
-    CustomFields &
-    // TODO(CA-6896): remove once Core's RemoteSettings declares it
-    { mfaWebauthnEnabled?: boolean };
+export type Config = CoreConfig & RemoteSettings & ConsentsVersions & CustomFields;
 
 export type OnSuccess = (event: SuccessEvent) => void;
 
