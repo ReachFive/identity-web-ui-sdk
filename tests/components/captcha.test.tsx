@@ -28,16 +28,21 @@ jest.mock('@captchafox/react', () => {
     // eslint-disable-next-line @typescript-eslint/no-require-imports
     const React = require('react') as typeof import('react');
     return {
-        CaptchaFox: React.forwardRef<{ execute: () => Promise<string> }, WidgetProps>(
-            function FakeCaptchaFox(props, ref) {
-                widget.props = props;
-                React.useImperativeHandle(ref, () => ({ execute: () => Promise.resolve('token') }));
-                React.useEffect(() => {
-                    widget.mounts += 1;
-                }, []);
-                return <div data-testid="captchafox" />;
-            }
-        ),
+        CaptchaFox: React.forwardRef<
+            { getResponse: () => string; execute: () => Promise<string>; reset: () => void },
+            WidgetProps
+        >(function FakeCaptchaFox(props, ref) {
+            widget.props = props;
+            React.useImperativeHandle(ref, () => ({
+                getResponse: () => '',
+                execute: () => Promise.resolve('token'),
+                reset: () => {},
+            }));
+            React.useEffect(() => {
+                widget.mounts += 1;
+            }, []);
+            return <div data-testid="captchafox" />;
+        }),
     };
 });
 

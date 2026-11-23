@@ -2,6 +2,7 @@ import { CaptchaFoxInstance } from '@captchafox/react';
 import type { WidgetDisplayMode } from '@captchafox/types';
 
 import { UserError } from '@/helpers/errors';
+import { logError } from '@/helpers/logger';
 
 import { WithCaptchaToken } from './captcha';
 
@@ -34,9 +35,9 @@ export default class CaptchaFox {
         instance: CaptchaFoxInstance | null,
         callback: (data: WithCaptchaToken<T>) => Promise<R>
     ) => {
+        let captchaToken: string | undefined;
         try {
-            const captchaToken = await instance?.execute();
-            return callback({ ...data, captchaToken, captchaProvider: 'captchafox' });
+            captchaToken = await getToken(instance);
         } catch (_error) {
             return Promise.reject(
                 UserError.fromAppError({
@@ -47,5 +48,29 @@ export default class CaptchaFox {
                 })
             );
         }
+
+        try {
+            return await callback({ ...data, captchaToken, captchaProvider: 'captchafox' });
+        } finally {
+            // A token is accepted only once: the next submit needs a new check.
+            resetWidget(instance);
+        }
     };
+}
+
+/**
+ * In `inline` and `popup` mode the user has usually passed the check already, by ticking the
+ * widget. `execute()` would start a second one, so it only runs when the widget holds no token.
+ */
+async function getToken(instance: CaptchaFoxInstance | null): Promise<string | undefined> {
+    if (!instance) return undefined;
+    return instance.getResponse() || instance.execute();
+}
+
+function resetWidget(instance: CaptchaFoxInstance | null) {
+    try {
+        instance?.reset();
+    } catch (error) {
+        logError(error instanceof Error ? error : 'CaptchaFox reset failed');
+    }
 }
