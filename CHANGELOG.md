@@ -7,7 +7,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
-## [2.2.0] - 2026-11-16
+## [2.2.0] - 2026-11-23
 
 ### Added
 
@@ -49,6 +49,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Showing a widget in a container that already holds one unmounts the previous widget first, instead of
   leaving two widgets fighting over the same container
 - SVG icons keep their `viewBox`, so they scale when resized with CSS
+- Typing in the signup form no longer reloads the CaptchaFox widget on every
+  keystroke, which made CaptchaFox rate-limit users
+- CaptchaFox in `inline` or `popup` mode no longer asks for a second check when
+  the form is submitted
 
 ### Deprecated
 
