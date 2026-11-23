@@ -61,12 +61,12 @@ const fieldVariants = cva("group/field data-[invalid=true]:text-destructive flex
       horizontal: [
         "flex-row items-center",
         "[&>[data-slot=field-label]]:flex-auto",
-        "has-[>[data-slot=field-content]]:[&>[role=checkbox],[role=radio]]:mt-px has-[>[data-slot=field-content]]:items-start",
+        "[&:has(>[data-slot=field-content])>[role=checkbox]]:mt-px [&:has(>[data-slot=field-content])>[role=radio]]:mt-px has-[>[data-slot=field-content]]:items-start",
       ],
       responsive: [
         "@md/field-group:flex-row @md/field-group:items-center @md/field-group:[&>*]:w-auto flex-col [&>*]:w-full [&>.sr-only]:w-auto",
         "@md/field-group:[&>[data-slot=field-label]]:flex-auto",
-        "@md/field-group:has-[>[data-slot=field-content]]:items-start @md/field-group:has-[>[data-slot=field-content]]:[&>[role=checkbox],[role=radio]]:mt-px",
+        "@md/field-group:has-[>[data-slot=field-content]]:items-start @md/field-group:[&:has(>[data-slot=field-content])>[role=checkbox]]:mt-px @md/field-group:[&:has(>[data-slot=field-content])>[role=radio]]:mt-px",
       ],
     },
   },
@@ -108,7 +108,7 @@ function FieldLabel({ className, ...props }: React.ComponentProps<typeof Label>)
       className={cn(
         "group/field-label peer/field-label flex w-fit gap-2 leading-snug group-data-[disabled=true]/field:opacity-50",
         "has-[>[data-slot=field]]:w-full has-[>[data-slot=field]]:flex-col has-[>[data-slot=field]]:rounded-md has-[>[data-slot=field]]:border [&>[data-slot=field]]:p-4",
-        "has-data-[state=checked]:bg-primary/5 has-data-[state=checked]:border-primary dark:has-data-[state=checked]:bg-primary/10",
+        "has-[[data-state=checked]]:bg-primary/5 has-[[data-state=checked]]:border-primary dark:has-[[data-state=checked]]:bg-primary/10",
         className
       )}
       {...props}
@@ -135,7 +135,7 @@ function FieldDescription({ className, ...props }: React.ComponentProps<"p">) {
       data-slot="field-description"
       className={cn(
         "text-muted-foreground text-sm font-normal leading-normal group-has-[[data-orientation=horizontal]]/field:text-balance",
-        "nth-last-2:-mt-1 last:mt-0 [[data-variant=legend]+&]:-mt-1.5",
+        "[&:nth-last-child(2)]:-mt-1 last:mt-0 [[data-variant=legend]+&]:-mt-1.5",
         "[&>a:hover]:text-primary [&>a]:underline [&>a]:underline-offset-4",
         className
       )}

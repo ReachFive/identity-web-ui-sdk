@@ -61,7 +61,9 @@ export const Separator = ({
     <Marker
         data-slot="widget-separator"
         variant="separator"
-        className={cn('my-4', className)}
+        // The marker draws its lines with ::before and ::after. Tailwind v3 only declares their
+        // `content` in preflight, which we turn off, so without these classes the lines never render.
+        className={cn("my-4 before:content-[''] after:content-['']", className)}
         {...props}
     >
         <MarkerContent data-slot="widget-separator-text">{text}</MarkerContent>

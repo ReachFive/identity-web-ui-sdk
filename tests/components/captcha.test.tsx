@@ -10,6 +10,7 @@ import userEvent from '@testing-library/user-event';
 
 import { CaptchaProvider, useCaptcha } from '@/components/captcha';
 import { Form } from '@/components/form/form';
+import { PasswordSignupForm } from '@/components/form/passwordSignupFormComponent';
 import { I18nMessages } from '@/contexts/i18n';
 import { Config } from '@/types';
 
@@ -27,16 +28,21 @@ jest.mock('@captchafox/react', () => {
     // eslint-disable-next-line @typescript-eslint/no-require-imports
     const React = require('react') as typeof import('react');
     return {
-        CaptchaFox: React.forwardRef<{ execute: () => Promise<string> }, WidgetProps>(
-            function FakeCaptchaFox(props, ref) {
-                widget.props = props;
-                React.useImperativeHandle(ref, () => ({ execute: () => Promise.resolve('token') }));
-                React.useEffect(() => {
-                    widget.mounts += 1;
-                }, []);
-                return <div data-testid="captchafox" />;
-            }
-        ),
+        CaptchaFox: React.forwardRef<
+            { getResponse: () => string; execute: () => Promise<string>; reset: () => void },
+            WidgetProps
+        >(function FakeCaptchaFox(props, ref) {
+            widget.props = props;
+            React.useImperativeHandle(ref, () => ({
+                getResponse: () => '',
+                execute: () => Promise.resolve('token'),
+                reset: () => {},
+            }));
+            React.useEffect(() => {
+                widget.mounts += 1;
+            }, []);
+            return <div data-testid="captchafox" />;
+        }),
     };
 });
 
@@ -123,5 +129,37 @@ describe('CaptchaProvider with CaptchaFox', () => {
         await waitFor(() =>
             expect(handler).toBeCalledWith(expect.objectContaining({ captchaToken: 'token' }))
         );
+    });
+});
+
+/**
+ * CA-7329: the signup form renders again on every keystroke in the email and name fields, to update
+ * the words the password must not contain. Each new CaptchaFox widget asks CaptchaFox for a new
+ * challenge, which hits their rate limit.
+ */
+describe('PasswordSignupForm with CaptchaFox', () => {
+    beforeEach(() => {
+        widget.props = undefined;
+        widget.mounts = 0;
+    });
+
+    test('keeps the widget mounted while the user types', async () => {
+        const user = userEvent.setup();
+
+        render(
+            <WidgetContext config={defaultConfig} defaultMessages={defaultI18n}>
+                <PasswordSignupForm
+                    captcha={captchaFox.captcha}
+                    signupFields={['email', 'given_name', 'family_name']}
+                />
+            </WidgetContext>
+        );
+
+        await user.type(screen.getByRole('textbox', { name: /email/i }), 'jane.doe@example.com');
+        await user.type(screen.getByRole('textbox', { name: /givenName/i }), 'Jane');
+        await user.type(screen.getByRole('textbox', { name: /familyName/i }), 'Doe');
+
+        expect(screen.getByTestId('captchafox')).toBeInTheDocument();
+        expect(widget.mounts).toBe(1);
     });
 });

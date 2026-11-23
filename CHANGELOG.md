@@ -7,6 +7,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [2.2.0] - 2026-11-23
+
 ### Added
 
 - An `otp` field type, which takes the code one digit per slot, and a predefined `verification_code` field built on it, whose length follows the tenant's `verificationCodeLength` (6 digits when not configured).
@@ -44,6 +46,13 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   base rules for `a`, `b`, `strong`, `small`, `sub` and `sup` are now scoped to `.r5-widget`
 - The password strength indicator waits again for the user to stop typing for 1 second before checking the password
   strength, since the endpoint is rate limited
+- Showing a widget in a container that already holds one unmounts the previous widget first, instead of
+  leaving two widgets fighting over the same container
+- SVG icons keep their `viewBox`, so they scale when resized with CSS
+- Typing in the signup form no longer reloads the CaptchaFox widget on every
+  keystroke, which made CaptchaFox rate-limit users
+- CaptchaFox in `inline` or `popup` mode no longer asks for a second check when
+  the form is submitted
 
 ### Deprecated
 
@@ -922,7 +931,8 @@ The eye icon is now correctly displayed in the Auth widget.
 
 First version of the SDK Web UI.
 
-[Unreleased]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v2.1.0...HEAD
+[Unreleased]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v2.2.0...HEAD
+[2.2.0]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v2.1.0...v2.2.0
 [2.1.0]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v2.0.2...v2.1.0
 [2.0.2]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v2.0.1...v2.0.2
 [2.0.1]: https://github.com/ReachFive/identity-web-ui-sdk/compare/v2.0.0...v2.0.1

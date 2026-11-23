@@ -9,7 +9,7 @@ exports[`Snapshot social login basic 1`] = `
     class="r5-theme-1bkmqrd r5-widget"
   >
     <div
-      class="text-[length:var(--font-size)] transition-[transform,opacity] duration-[400ms] ease-[ease] opacity-0 r5-social-login r5-widget-active"
+      class="text-[length:var(--font-size)] transition-[transform,opacity] [transition-duration:400ms] [transition-timing-function:ease] opacity-0 r5-social-login r5-widget-active"
       data-slot="widget-content"
     >
       <div
