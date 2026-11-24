@@ -34,10 +34,6 @@ export type RecursivePartial<T> = {
  */
 export type Optional<T, K extends keyof T> = Pick<Partial<T>, K> & Omit<T, K>;
 
-export type RequiredProperty<T, K extends keyof T> = T & {
-    [P in K]-?: T[P];
-};
-
 type ConsentsVersions = { consentsVersions: Record<string, ConsentVersions> };
 
 type CustomFields = {
