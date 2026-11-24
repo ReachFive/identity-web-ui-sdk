@@ -1,3 +1,5 @@
+import { useMemo } from 'react';
+
 import { useConfig } from '@/contexts/config';
 import { useI18n } from '@/contexts/i18n';
 import { formatDays } from '@/helpers/duration';
@@ -16,11 +18,14 @@ export function useTrustDeviceLabel(): string {
 
 export function useTrustDeviceField(): Field {
     const label = useTrustDeviceLabel();
-    return {
-        key: 'trust_device',
-        type: 'checkbox',
-        label,
-        defaultChecked: false,
-        required: false,
-    };
+    return useMemo(
+        () => ({
+            key: 'trust_device',
+            type: 'checkbox',
+            label,
+            defaultChecked: false,
+            required: false,
+        }),
+        [label]
+    );
 }
