@@ -92,7 +92,8 @@ export function StepUpFlow({
     const noFactor = !passkey && codeFactors.length === 0;
     // a single factor needs no choice: its code is sent at once, unless the passkey comes first
     const onlyFactor = !passkey && codeFactors.length === 1 ? codeFactors[0] : undefined;
-    const { view, direction, goTo, back } = useViewNavigation<FlowView>('entry');
+    const navigation = useViewNavigation<FlowView>('entry');
+    const { view, direction } = navigation;
     const [challenge, setChallenge] = useState<Challenge | null>(null);
     const [sending, setSending] = useState<CodeFactor | null>(null);
     // held here so it survives a visit to the other methods
@@ -104,6 +105,15 @@ export function StepUpFlow({
     const [error, setError] = useState<unknown>(null);
     const titleId = useId();
     const otherTitleId = useId();
+    // an error belongs to the screen it happened on
+    const goTo: typeof navigation.goTo = (next, options) => {
+        setError(null);
+        navigation.goTo(next, options);
+    };
+    const back = () => {
+        setError(null);
+        navigation.back();
+    };
     const rowRefs = {
         email: useRef<HTMLButtonElement>(null),
         sms: useRef<HTMLButtonElement>(null),

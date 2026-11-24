@@ -475,6 +475,37 @@ describe('StepUpFlow', () => {
             expect(passkeyCard()).not.toHaveAttribute('aria-busy');
         });
 
+        test('leaves the passkey error behind on another screen', async () => {
+            achieveStepUpWithWebAuthn.mockRejectedValueOnce(new Error('passkey refused'));
+            const user = userEvent.setup();
+            renderFlow({ amr: passkeyAmr }, { webAuthn: true });
+
+            await user.click(passkeyCard());
+            expect(await screen.findByRole('alert')).toHaveTextContent('passkey refused');
+
+            await user.click(anotherMethodLink());
+
+            expect(
+                screen.getByRole('heading', { name: 'mfa.stepUp.chooseAnotherMethod' })
+            ).toBeInTheDocument();
+            expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+        });
+
+        test('leaves a send error behind when going back to the passkey', async () => {
+            startPasswordless.mockRejectedValueOnce(new Error('cannot send'));
+            const user = userEvent.setup();
+            renderFlow({ amr: passkeyAmr }, { webAuthn: true });
+
+            await user.click(anotherMethodLink());
+            await user.click(screen.getByRole('button', { name: 'mfaList.email' }));
+            expect(await screen.findByRole('alert')).toHaveTextContent('cannot send');
+
+            await user.click(screen.getByRole('button', { name: 'mfaList.back' }));
+
+            expect(passkeyCard()).toBeInTheDocument();
+            expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+        });
+
         test('does not open the passkey prompt again after a success', async () => {
             achieveStepUpWithWebAuthn.mockResolvedValue({ idToken: 'id-token' });
             const user = userEvent.setup();
