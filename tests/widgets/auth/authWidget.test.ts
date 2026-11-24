@@ -498,6 +498,28 @@ describe('DOM testing', () => {
             ).not.toBeInTheDocument();
         });
 
+        test('asks for a second factor after the password', async () => {
+            expect.assertions(3);
+
+            const user = userEvent.setup();
+            loginWithPassword.mockResolvedValueOnce({
+                stepUpToken: 'tkn',
+                amr: ['email', 'sms'],
+            } as AuthResult);
+
+            await generateComponent({});
+
+            await user.type(screen.getByRole('textbox', { name: 'identifier' }), 'alice@reach5.co');
+            await user.type(screen.getByLabelText('password'), 'Wond3rFu11_Pa55w0rD*$');
+            await user.click(screen.getByRole('button', { name: 'login.submitLabel' }));
+
+            expect(
+                await screen.findByRole('heading', { name: 'mfa.stepUp.title' })
+            ).toBeInTheDocument();
+            expect(screen.getByText('mfaList.email')).toBeInTheDocument();
+            expect(screen.getByText('mfaList.phoneNumber')).toBeInTheDocument();
+        });
+
         // the identifier field already reads an email, a phone number or a custom identifier (see
         // `specializeIdentifier`), so when the view adds its dedicated `customIdentifier` input the
         // two are alternatives: exactly one of them carries the identifier

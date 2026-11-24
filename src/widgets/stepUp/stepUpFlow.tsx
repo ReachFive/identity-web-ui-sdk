@@ -24,6 +24,14 @@ export interface StepUpFlowProps {
     onError: OnError;
 }
 
+/** The routing state a view passes to open the step-up screens. */
+export type StepUpViewState = {
+    token: string;
+    amr: string[];
+    allowTrustDevice?: boolean;
+    auth?: AuthOptions;
+};
+
 type StepUpView = 'entry' | 'code';
 
 interface Challenge {
