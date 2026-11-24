@@ -9,7 +9,7 @@ import { useReachfive } from '@/contexts/reachfive';
 import { type Field, type PhoneNumberOptions } from '@/lib/form';
 import { sendsNoCode } from '@/widgets/mfa/factors';
 import { useMfaProfile } from '@/widgets/mfa/queries';
-import { TRUST_DEVICE_FIELD } from '@/widgets/mfa/trustDeviceField';
+import { useTrustDeviceField } from '@/widgets/mfa/trustDeviceField';
 
 import type { EnrollmentViewProps } from '@/widgets/mfa/mfaWidget';
 
@@ -66,12 +66,13 @@ export function IdentifierEnrollmentView({
     const noCode = sendsNoCode(factor, profile, typedPhoneNumber);
     const showTrustDevice = noCode && allowTrustDevice && config.rbaEnabled;
 
+    const trustDeviceField = useTrustDeviceField();
     const fields = useMemo(
         () => [
             ...(factor === 'sms' ? [phoneNumberField(phoneNumberOptions)] : []),
-            ...(showTrustDevice ? [TRUST_DEVICE_FIELD] : []),
+            ...(showTrustDevice ? [trustDeviceField] : []),
         ],
-        [factor, phoneNumberOptions, showTrustDevice]
+        [factor, phoneNumberOptions, showTrustDevice, trustDeviceField]
     );
 
     const start = async ({ phoneNumber, trustDevice: checked }: IdentifierFormData) => {

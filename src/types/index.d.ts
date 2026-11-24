@@ -60,6 +60,8 @@ export type RemoteSettings = Omit<CoreRemoteSettings, 'customProviders'> & {
     verificationCodeMaxTrials?: number;
     /** The codes a single step-up token can send, the first one included. */
     stepUpTokenMaxUses?: number;
+    /** The days a trusted device stays trusted. */
+    trustedDeviceLifetime?: number;
     /** Whether a passkey can be used as a second factor. */
     mfaWebauthnEnabled?: boolean;
 };
