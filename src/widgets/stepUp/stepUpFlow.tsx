@@ -42,6 +42,10 @@ export type StepUpViewState = {
 
 type FlowView = 'entry' | 'other' | 'code';
 
+/** A passkey prompt the user closed or let expire: nothing to report to them. */
+const isPasskeyCancelled = (error: unknown): boolean =>
+    error instanceof DOMException && error.name === 'NotAllowedError';
+
 interface Challenge {
     authType: CodeFactor;
     challengeId: string;
@@ -85,6 +89,7 @@ export function StepUpFlow({
     const i18n = useI18n();
     const config = useConfig();
     const { passkey, codeFactors } = stepUpFactors(amr, config);
+    const noFactor = !passkey && codeFactors.length === 0;
     // a single factor needs no choice: its code is sent at once, unless the passkey comes first
     const onlyFactor = !passkey && codeFactors.length === 1 ? codeFactors[0] : undefined;
     const { view, direction, goTo, back } = useViewNavigation<FlowView>('entry');
@@ -98,6 +103,7 @@ export function StepUpFlow({
     // the last failure, shown until the next attempt
     const [error, setError] = useState<unknown>(null);
     const titleId = useId();
+    const otherTitleId = useId();
     const rowRefs = {
         email: useRef<HTMLButtonElement>(null),
         sms: useRef<HTMLButtonElement>(null),
@@ -108,17 +114,19 @@ export function StepUpFlow({
     const stepUpWithPasskey = async () => {
         if (passkeyOpen.current) return;
         passkeyOpen.current = true;
+        setError(null);
         let authResult: AuthResult;
         try {
             authResult = await client.achieveStepUpWithWebAuthn({
                 stepUpToken: token,
                 trustDevice,
             });
-        } catch (error) {
-            onError(error);
-            return;
-        } finally {
+        } catch (failure) {
+            // kept closed after a success: the page is about to leave
             passkeyOpen.current = false;
+            if (!isPasskeyCancelled(failure)) setError(failure);
+            onError(failure);
+            return;
         }
         onSuccess({ name: 'login_2nd_step', authType: 'webauthn', authResult });
         if (trustDevice) onSuccess({ name: 'mfa_trusted_device_added' });
@@ -154,6 +162,14 @@ export function StepUpFlow({
         void open(onlyFactor);
     }, []);
 
+    // reported once, even if the effect runs again
+    const reportedNoFactor = useRef(false);
+    useEffect(() => {
+        if (!noFactor || reportedNoFactor.current) return;
+        reportedNoFactor.current = true;
+        onError(new Error('No second factor of the step-up can be used'));
+    }, []);
+
     const renderView = () => {
         if (view === 'code') {
             return challenge ? (
@@ -162,6 +178,7 @@ export function StepUpFlow({
                     token={token}
                     auth={auth}
                     allowTrustDevice={allowTrustDevice}
+                    defaultTrustDevice={trustDevice}
                     onBack={onlyFactor ? undefined : back}
                     onSuccess={onSuccess}
                     onError={onError}
@@ -174,12 +191,8 @@ export function StepUpFlow({
                     <AlertTitle className="mb-0">{widgetErrorMessage(error, i18n)}</AlertTitle>
                 </Alert>
             ) : null;
-        const factorRows = (labelledBy?: string) => (
-            <ItemGroup
-                aria-labelledby={labelledBy}
-                aria-label={labelledBy ? undefined : i18n('mfa.stepUp.title')}
-                className="gap-2"
-            >
+        const factorRows = (labelledBy: string) => (
+            <ItemGroup aria-labelledby={labelledBy} className="gap-2">
                 {codeFactors.map(factor => (
                     <StepUpFactorRow
                         key={factor}
@@ -195,12 +208,23 @@ export function StepUpFlow({
             return (
                 <div className="space-y-4">
                     <ViewHeader
+                        id={otherTitleId}
                         title={i18n('mfa.stepUp.chooseAnotherMethod')}
                         backLabel={i18n('mfaList.back')}
                         onBack={back}
                     />
                     {errorAlert}
-                    {factorRows()}
+                    {factorRows(otherTitleId)}
+                </div>
+            );
+        }
+        if (noFactor) {
+            return (
+                <div className="space-y-4">
+                    <ViewHeader title={i18n('mfa.stepUp.title')} />
+                    <Alert variant="destructive">
+                        <AlertTitle className="mb-0">{i18n('unexpectedErrorOccurred')}</AlertTitle>
+                    </Alert>
                 </div>
             );
         }
@@ -216,6 +240,7 @@ export function StepUpFlow({
         return (
             <div className="space-y-4">
                 <ViewHeader id={titleId} title={i18n('mfa.stepUp.title')} />
+                {errorAlert}
                 <ItemGroup aria-labelledby={titleId}>
                     <PasskeyCard onOpen={() => void stepUpWithPasskey()} />
                 </ItemGroup>

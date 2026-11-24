@@ -16,16 +16,17 @@ export function useTrustDeviceLabel(): string {
         : i18n('mfa.stepUp.trustDevice');
 }
 
-export function useTrustDeviceField(): Field {
+/** The trust checkbox of a code form, ticked at first when `defaultChecked`. */
+export function useTrustDeviceField(defaultChecked = false): Field {
     const label = useTrustDeviceLabel();
     return useMemo(
         () => ({
             key: 'trust_device',
             type: 'checkbox',
             label,
-            defaultChecked: false,
+            defaultChecked,
             required: false,
         }),
-        [label]
+        [label, defaultChecked]
     );
 }

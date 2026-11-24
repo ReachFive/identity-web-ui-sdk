@@ -12,10 +12,15 @@ export interface StepUpFactors {
     codeFactors: CodeFactor[];
 }
 
+/** Whether this browser can use a passkey. */
+export function browserSupportsWebAuthn(): boolean {
+    return typeof window !== 'undefined' && typeof window.PublicKeyCredential !== 'undefined';
+}
+
 /** The factors of a step-up token's `amr` the screens offer. */
 export function stepUpFactors(amr: string[], config: Pick<Config, 'webAuthn'>): StepUpFactors {
     return {
-        passkey: amr.includes('webauthn') && config.webAuthn,
+        passkey: amr.includes('webauthn') && config.webAuthn && browserSupportsWebAuthn(),
         codeFactors: CODE_FACTORS.filter(factor => amr.includes(factor)),
     };
 }
