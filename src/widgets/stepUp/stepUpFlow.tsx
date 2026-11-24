@@ -1,12 +1,14 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useId, useRef, useState } from 'react';
 
 import type { AuthOptions } from '@reachfive/identity-core';
 
+import { Alert, AlertTitle } from '@/components/ui/alert';
 import { ItemGroup } from '@/components/ui/item';
 import { useViewNavigation, viewAnimation } from '@/components/widget/useViewNavigation';
 import { ViewHeader } from '@/components/widget/viewHeader';
 import { useI18n } from '@/contexts/i18n';
 import { useReachfive } from '@/contexts/reachfive';
+import { widgetErrorMessage } from '@/helpers/errors';
 import { challengeOf, StepUpCodeView } from '@/widgets/stepUp/codeView';
 import { StepUpFactorRow } from '@/widgets/stepUp/factorRow';
 import { stepUpFactors, type CodeFactor } from '@/widgets/stepUp/factors';
@@ -56,6 +58,9 @@ export function StepUpFlow({
     const { view, direction, goTo, back } = useViewNavigation<StepUpView>('entry');
     const [challenge, setChallenge] = useState<Challenge | null>(null);
     const [sending, setSending] = useState<CodeFactor | null>(null);
+    // the last failure, shown until the next attempt
+    const [error, setError] = useState<unknown>(null);
+    const titleId = useId();
     const rowRefs = {
         email: useRef<HTMLButtonElement>(null),
         sms: useRef<HTMLButtonElement>(null),
@@ -63,12 +68,14 @@ export function StepUpFlow({
 
     const send = async (authType: CodeFactor) => {
         setSending(authType);
+        setError(null);
         try {
             const response = await client.startPasswordless({ authType, stepUp: token });
             setChallenge({ authType, challengeId: challengeOf(response) });
             return true;
-        } catch (error) {
-            onError(error);
+        } catch (failure) {
+            setError(failure);
+            onError(failure);
             return false;
         } finally {
             setSending(null);
@@ -105,8 +112,13 @@ export function StepUpFlow({
         }
         return (
             <div className="space-y-4">
-                <ViewHeader title={i18n('mfa.stepUp.title')} />
-                <ItemGroup aria-label={i18n('mfa.stepUp.title')} className="gap-2">
+                <ViewHeader id={titleId} title={i18n('mfa.stepUp.title')} />
+                {error !== null && (
+                    <Alert variant="destructive">
+                        <AlertTitle className="mb-0">{widgetErrorMessage(error, i18n)}</AlertTitle>
+                    </Alert>
+                )}
+                <ItemGroup aria-labelledby={titleId} className="gap-2">
                     {codeFactors.map(factor => (
                         <StepUpFactorRow
                             key={factor}
