@@ -4,6 +4,7 @@ import { ChevronRight, LoaderCircle } from 'lucide-react';
 
 import { dimmedRowProps, ListItem, ListItemIcon } from '@/components/list/listItem';
 import { ItemActions, ItemContent, ItemDescription, ItemTitle } from '@/components/ui/item';
+import { cn } from '@/lib/utils';
 
 interface NavigationRowProps {
     /** Public styling slot, set by the widget. */
@@ -21,6 +22,8 @@ interface NavigationRowProps {
     dimmed?: boolean;
     /** The target view is loading: the row is busy and shows a spinner instead of its chevron. */
     pending?: boolean;
+    /** Outlines the row in the primary color, for the option the user should pick. */
+    emphasized?: boolean;
 }
 
 /**
@@ -39,6 +42,7 @@ export const NavigationRow = forwardRef<HTMLButtonElement, NavigationRowProps>(
             onOpen,
             dimmed = false,
             pending = false,
+            emphasized = false,
         },
         ref
     ) {
@@ -49,7 +53,10 @@ export const NavigationRow = forwardRef<HTMLButtonElement, NavigationRowProps>(
                 data-slot={dataSlot}
                 {...dimmedRowProps(
                     dimmed,
-                    'relative items-center has-[button:hover]:bg-button-subtle-bg has-[button:focus-visible]:border-ring has-[button:focus-visible]:ring-[3px] has-[button:focus-visible]:ring-ring/50'
+                    cn(
+                        'relative items-center has-[button:hover]:bg-button-subtle-bg has-[button:focus-visible]:border-ring has-[button:focus-visible]:ring-[3px] has-[button:focus-visible]:ring-ring/50',
+                        emphasized && 'border-primary'
+                    )
                 )}
             >
                 <ListItemIcon

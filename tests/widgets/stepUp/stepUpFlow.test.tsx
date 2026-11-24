@@ -47,12 +47,13 @@ const defaultConfig: Config = {
 
 const startPasswordless = jest.fn<Client['startPasswordless']>();
 const verifyMfaPasswordless = jest.fn<Client['verifyMfaPasswordless']>();
+const achieveStepUpWithWebAuthn = jest.fn<Client['achieveStepUpWithWebAuthn']>();
 const onError = jest.fn<OnError>();
 const onSuccess = jest.fn<OnSuccess>();
 const replace = jest.fn();
 
 // @ts-expect-error partial Client
-const client: Client = { startPasswordless, verifyMfaPasswordless };
+const client: Client = { startPasswordless, verifyMfaPasswordless, achieveStepUpWithWebAuthn };
 
 const renderFlow = (
     props: Partial<StepUpFlowProps> = {},
@@ -264,5 +265,164 @@ describe('StepUpFlow', () => {
                 expect.objectContaining({ challengeId: 'challenge-2' })
             )
         );
+    });
+
+    describe('with a passkey', () => {
+        const passkeyAmr = ['webauthn', 'email', 'sms'];
+        const passkeyCard = () =>
+            screen.getByRole('button', { name: 'mfa.stepUp.usePasskey mfa.factors.recommended' });
+        const anotherMethodLink = () =>
+            screen.getByRole('button', { name: 'mfa.stepUp.useAnotherMethod' });
+
+        test('shows only the passkey card with another-method link', () => {
+            renderFlow({ amr: passkeyAmr }, { webAuthn: true });
+
+            expect(passkeyCard()).toBeInTheDocument();
+            expect(screen.getByText('mfa.passkey.description')).toBeInTheDocument();
+            expect(screen.queryByRole('button', { name: 'mfaList.email' })).not.toBeInTheDocument();
+            expect(anotherMethodLink()).toBeInTheDocument();
+            expect(startPasswordless).not.toHaveBeenCalled();
+        });
+
+        test('lists the other methods with a back arrow', async () => {
+            const user = userEvent.setup();
+            renderFlow({ amr: passkeyAmr }, { webAuthn: true });
+
+            await user.click(anotherMethodLink());
+
+            expect(
+                screen.getByRole('heading', { name: 'mfa.stepUp.chooseAnotherMethod' })
+            ).toBeInTheDocument();
+            expect(screen.getByRole('button', { name: 'mfaList.email' })).toBeInTheDocument();
+            expect(screen.getByRole('button', { name: 'mfaList.phoneNumber' })).toBeInTheDocument();
+
+            await user.click(screen.getByRole('button', { name: 'mfaList.back' }));
+
+            expect(passkeyCard()).toBeInTheDocument();
+            expect(anotherMethodLink()).toHaveFocus();
+        });
+
+        test('keeps the trust box across views', async () => {
+            const user = userEvent.setup();
+            renderFlow(
+                { amr: passkeyAmr, allowTrustDevice: true },
+                { webAuthn: true, rbaEnabled: true }
+            );
+
+            await user.click(screen.getByRole('checkbox', { name: 'mfa.stepUp.trustDevice' }));
+            await user.click(anotherMethodLink());
+            await user.click(screen.getByRole('button', { name: 'mfaList.back' }));
+
+            expect(screen.getByRole('checkbox', { name: 'mfa.stepUp.trustDevice' })).toBeChecked();
+        });
+
+        test('hides the trust box without risk-based authentication', () => {
+            renderFlow({ amr: passkeyAmr, allowTrustDevice: true }, { webAuthn: true });
+
+            expect(screen.queryByRole('checkbox')).not.toBeInTheDocument();
+        });
+
+        test('steps up with the passkey', async () => {
+            achieveStepUpWithWebAuthn.mockResolvedValue({ idToken: 'id-token' });
+            const user = userEvent.setup();
+            renderFlow({ amr: passkeyAmr }, { webAuthn: true });
+
+            await user.click(passkeyCard());
+
+            expect(achieveStepUpWithWebAuthn).toHaveBeenCalledWith({
+                stepUpToken: 'tkn',
+                trustDevice: false,
+            });
+            await waitFor(() =>
+                expect(onSuccess).toHaveBeenCalledWith({
+                    name: 'login_2nd_step',
+                    authType: 'webauthn',
+                    authResult: { idToken: 'id-token' },
+                })
+            );
+            expect(onSuccess).toHaveBeenCalledTimes(1);
+            expect(replace).not.toHaveBeenCalled();
+            expect(onError).not.toHaveBeenCalled();
+        });
+
+        test('trusts the device with the passkey', async () => {
+            achieveStepUpWithWebAuthn.mockResolvedValue({ idToken: 'id-token' });
+            const user = userEvent.setup();
+            renderFlow(
+                { amr: passkeyAmr, allowTrustDevice: true },
+                { webAuthn: true, rbaEnabled: true }
+            );
+
+            await user.click(screen.getByRole('checkbox', { name: 'mfa.stepUp.trustDevice' }));
+            await user.click(passkeyCard());
+
+            expect(achieveStepUpWithWebAuthn).toHaveBeenCalledWith({
+                stepUpToken: 'tkn',
+                trustDevice: true,
+            });
+            await waitFor(() =>
+                expect(onSuccess).toHaveBeenCalledWith({ name: 'mfa_trusted_device_added' })
+            );
+        });
+
+        test('ignores a second click while the passkey prompt is open', async () => {
+            achieveStepUpWithWebAuthn.mockReturnValue(new Promise(() => {}));
+            const user = userEvent.setup();
+            renderFlow({ amr: passkeyAmr }, { webAuthn: true });
+
+            await user.click(passkeyCard());
+            await user.click(passkeyCard());
+
+            expect(achieveStepUpWithWebAuthn).toHaveBeenCalledTimes(1);
+            // no waiting state while the browser prompt is open
+            expect(passkeyCard()).not.toHaveAttribute('aria-busy');
+        });
+
+        test('stays in place when the passkey is cancelled', async () => {
+            const error = new DOMException('cancelled', 'NotAllowedError');
+            achieveStepUpWithWebAuthn.mockRejectedValueOnce(error);
+            achieveStepUpWithWebAuthn.mockResolvedValueOnce({ idToken: 'id-token' });
+            const user = userEvent.setup();
+            renderFlow({ amr: passkeyAmr }, { webAuthn: true });
+
+            await user.click(passkeyCard());
+
+            await waitFor(() => expect(onError).toHaveBeenCalledTimes(1));
+            expect(onError).toHaveBeenCalledWith(error);
+            expect(onSuccess).not.toHaveBeenCalled();
+
+            await user.click(passkeyCard());
+
+            expect(achieveStepUpWithWebAuthn).toHaveBeenCalledTimes(2);
+            await waitFor(() => expect(onSuccess).toHaveBeenCalledTimes(1));
+        });
+
+        test('does not start a passkey alone', () => {
+            renderFlow({ amr: ['webauthn'] }, { webAuthn: true }, { strict: true });
+
+            expect(passkeyCard()).toBeInTheDocument();
+            expect(
+                screen.queryByRole('button', { name: 'mfa.stepUp.useAnotherMethod' })
+            ).not.toBeInTheDocument();
+            expect(achieveStepUpWithWebAuthn).not.toHaveBeenCalled();
+        });
+
+        test('does not send the code of a single factor offered with a passkey', () => {
+            renderFlow({ amr: ['webauthn', 'email'] }, { webAuthn: true }, { strict: true });
+
+            expect(passkeyCard()).toBeInTheDocument();
+            expect(startPasswordless).not.toHaveBeenCalled();
+        });
+
+        test('hides the passkey when WebAuthn is off', () => {
+            renderFlow({ amr: passkeyAmr }, { webAuthn: false });
+
+            expect(screen.getByRole('heading', { name: 'mfa.stepUp.title' })).toBeInTheDocument();
+            expect(screen.getByRole('button', { name: 'mfaList.email' })).toBeInTheDocument();
+            expect(screen.getByRole('button', { name: 'mfaList.phoneNumber' })).toBeInTheDocument();
+            expect(
+                screen.queryByRole('button', { name: /mfa\.stepUp\.usePasskey/ })
+            ).not.toBeInTheDocument();
+        });
     });
 });

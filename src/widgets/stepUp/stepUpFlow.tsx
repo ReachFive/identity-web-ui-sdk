@@ -1,16 +1,21 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useId, useRef, useState } from 'react';
 
-import type { AuthOptions } from '@reachfive/identity-core';
+import type { AuthOptions, AuthResult } from '@reachfive/identity-core';
 
+import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
 import { ItemGroup } from '@/components/ui/item';
+import { Label } from '@/components/ui/label';
 import { useViewNavigation, viewAnimation } from '@/components/widget/useViewNavigation';
 import { ViewHeader } from '@/components/widget/viewHeader';
 import { useConfig } from '@/contexts/config';
 import { useI18n } from '@/contexts/i18n';
 import { useReachfive } from '@/contexts/reachfive';
+import { useTrustDeviceLabel } from '@/widgets/mfa/trustDeviceField';
 import { challengeOf, StepUpCodeView } from '@/widgets/stepUp/codeView';
 import { StepUpFactorRow } from '@/widgets/stepUp/factorRow';
 import { stepUpFactors, type CodeFactor } from '@/widgets/stepUp/factors';
+import { PasskeyCard } from '@/widgets/stepUp/passkeyCard';
 
 import type { OnError, OnSuccess } from '@/types';
 
@@ -33,14 +38,39 @@ export type StepUpViewState = {
     auth?: AuthOptions;
 };
 
-type StepUpView = 'entry' | 'code';
+type FlowView = 'entry' | 'other' | 'code';
 
 interface Challenge {
     authType: CodeFactor;
     challengeId: string;
 }
 
-/** The step-up screens: the choice of a factor, then the code sent to it. */
+interface TrustDeviceCheckboxProps {
+    checked: boolean;
+    onChange: (checked: boolean) => void;
+}
+
+function TrustDeviceCheckbox({ checked, onChange }: TrustDeviceCheckboxProps) {
+    const id = useId();
+    const label = useTrustDeviceLabel();
+    return (
+        <div className="flex items-center gap-2">
+            <Checkbox
+                id={id}
+                checked={checked}
+                onCheckedChange={value => onChange(value === true)}
+            />
+            <Label htmlFor={id} className="font-normal">
+                {label}
+            </Label>
+        </div>
+    );
+}
+
+/**
+ * The step-up screens: the passkey first when offered, the choice of a code factor, then the code
+ * sent to it.
+ */
 export function StepUpFlow({
     token,
     amr,
@@ -52,15 +82,41 @@ export function StepUpFlow({
     const client = useReachfive();
     const i18n = useI18n();
     const config = useConfig();
-    const { codeFactors } = stepUpFactors(amr, config);
-    // a single factor needs no choice: its code is sent at once
-    const onlyFactor = codeFactors.length === 1 ? codeFactors[0] : undefined;
-    const { view, direction, goTo, back } = useViewNavigation<StepUpView>('entry');
+    const { passkey, codeFactors } = stepUpFactors(amr, config);
+    // a single factor needs no choice: its code is sent at once, unless the passkey comes first
+    const onlyFactor = !passkey && codeFactors.length === 1 ? codeFactors[0] : undefined;
+    const { view, direction, goTo, back } = useViewNavigation<FlowView>('entry');
     const [challenge, setChallenge] = useState<Challenge | null>(null);
     const [sending, setSending] = useState<CodeFactor | null>(null);
+    // held here so it survives a visit to the other methods
+    const [trustDevice, setTrustDevice] = useState(false);
+    const showTrustDevice = allowTrustDevice === true && config.rbaEnabled === true;
+    const passkeyOpen = useRef(false);
+    const otherMethodsLink = useRef<HTMLButtonElement>(null);
     const rowRefs = {
         email: useRef<HTMLButtonElement>(null),
         sms: useRef<HTMLButtonElement>(null),
+    };
+
+    // Core sends the user on after a success: no redirect here. No waiting state either, the
+    // browser shows its own prompt.
+    const stepUpWithPasskey = async () => {
+        if (passkeyOpen.current) return;
+        passkeyOpen.current = true;
+        let authResult: AuthResult;
+        try {
+            authResult = await client.achieveStepUpWithWebAuthn({
+                stepUpToken: token,
+                trustDevice,
+            });
+        } catch (error) {
+            onError(error);
+            return;
+        } finally {
+            passkeyOpen.current = false;
+        }
+        onSuccess({ name: 'login_2nd_step', authType: 'webauthn', authResult });
+        if (trustDevice) onSuccess({ name: 'mfa_trusted_device_added' });
     };
 
     const send = async (authType: CodeFactor) => {
@@ -105,20 +161,59 @@ export function StepUpFlow({
                 />
             ) : null;
         }
+        const factorRows = (
+            <ItemGroup aria-label={i18n('mfa.stepUp.title')} className="gap-2">
+                {codeFactors.map(factor => (
+                    <StepUpFactorRow
+                        key={factor}
+                        ref={rowRefs[factor]}
+                        factor={factor}
+                        pending={sending === factor}
+                        onOpen={() => void open(factor)}
+                    />
+                ))}
+            </ItemGroup>
+        );
+        if (view === 'other') {
+            return (
+                <div className="space-y-4">
+                    <ViewHeader
+                        title={i18n('mfa.stepUp.chooseAnotherMethod')}
+                        backLabel={i18n('mfaList.back')}
+                        onBack={back}
+                    />
+                    {factorRows}
+                </div>
+            );
+        }
+        if (!passkey) {
+            return (
+                <div className="space-y-4">
+                    <ViewHeader title={i18n('mfa.stepUp.title')} />
+                    {factorRows}
+                </div>
+            );
+        }
         return (
             <div className="space-y-4">
                 <ViewHeader title={i18n('mfa.stepUp.title')} />
-                <ItemGroup aria-label={i18n('mfa.stepUp.title')} className="gap-2">
-                    {codeFactors.map(factor => (
-                        <StepUpFactorRow
-                            key={factor}
-                            ref={rowRefs[factor]}
-                            factor={factor}
-                            pending={sending === factor}
-                            onOpen={() => void open(factor)}
-                        />
-                    ))}
+                <ItemGroup aria-label={i18n('mfa.stepUp.title')}>
+                    <PasskeyCard onOpen={() => void stepUpWithPasskey()} />
                 </ItemGroup>
+                {showTrustDevice ? (
+                    <TrustDeviceCheckbox checked={trustDevice} onChange={setTrustDevice} />
+                ) : null}
+                {codeFactors.length > 0 ? (
+                    <Button
+                        ref={otherMethodsLink}
+                        type="button"
+                        variant="link"
+                        className="w-full"
+                        onClick={() => goTo('other', { returnFocus: otherMethodsLink })}
+                    >
+                        {i18n('mfa.stepUp.useAnotherMethod')}
+                    </Button>
+                ) : null}
             </div>
         );
     };
