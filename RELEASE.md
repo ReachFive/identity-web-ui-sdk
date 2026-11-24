@@ -29,19 +29,16 @@
 
 4. Create a pull request named `Release vx.y.z` (add the Github tag `release`) and submit it.
 
-   > **On-demand prereleases.** Comment `/rc` on the release PR to publish a
-   > release-candidate build to npm — `vx.y.z-rc.1`, `vx.y.z-rc.2`, … — under
-   > the `next` dist-tag. The PR must carry the `release` label and the comment
-   > must come from a repository member; CI reacts 🚀 to the comment when it
-   > picks the command up. Install a candidate with
-   > `npm install @reachfive/identity-ui@<version>` (the exact version is posted
-   > as a comment on the PR). Prereleases are **never** tagged `latest`, so they
-   > cannot reach production consumers who track `latest`. The base version in
-   > `package.json` must already be bumped (step 3) or the CI job fails: an
-   > `x.y.z-rc.N` prerelease has lower precedence than an existing `x.y.z`.
-   >
-   > The same build can be started by hand: Actions → Continuous Integration →
-   > Run workflow, with the release PR number.
+   > **On-demand prereleases.** To publish a release-candidate build to npm —
+   > `vx.y.z-rc.1`, `vx.y.z-rc.2`, … — under the `next` dist-tag, open Actions →
+   > Continuous Integration → Run workflow, keep the `master` branch and enter the
+   > release PR number. The PR must carry the `release` label. Install a
+   > candidate with `npm install @reachfive/identity-ui@<version>` (the exact
+   > version is posted as a comment on the PR). Prereleases are **never** tagged
+   > `latest`, so they cannot reach production consumers who track `latest`. The
+   > base version in `package.json` must already be bumped (step 3) or the CI
+   > job fails: an `x.y.z-rc.N` prerelease has lower precedence than an existing
+   > `x.y.z`.
 
 5. Once the branch is merged into `master`, create the new tag.
 
@@ -89,6 +86,6 @@ The workflows publish with [npm trusted publishing](https://docs.npmjs.com/trust
 | Workflow | Publishes | Allowed actions |
 |---|---|---|
 | `deploy-release.yml` | official releases, then moves `next` | `npm publish` and `npm dist-tag` |
-| `ci.yml` | release candidates (`/rc`) | `npm publish` |
+| `ci.yml` | release candidates (manual run) | `npm publish` |
 
 `npm dist-tag` with OIDC needs npm 11.21.0 or later: `deploy-release.yml` installs it before publishing.
