@@ -4,11 +4,10 @@ import { ArrowLeft } from 'lucide-react';
 
 import { Heading } from '@/components/miscComponent';
 import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
 
 type ViewHeaderProps = {
     title: ReactNode;
-    /** Focuses the back button on mount. Defaults to `true`. */
+    /** Focuses the back button on mount. Defaults to `true`. No effect without `onBack`. */
     autoFocus?: boolean;
 } & ({ backLabel: string; onBack: () => void } | { backLabel?: undefined; onBack?: undefined });
 
@@ -20,21 +19,27 @@ export function ViewHeader({ title, backLabel, onBack, autoFocus = true }: ViewH
         if (autoFocus) backButton.current?.focus();
     }, [autoFocus]);
 
+    if (!onBack) {
+        return (
+            <Heading role="heading" aria-level={2} className="mb-0">
+                {title}
+            </Heading>
+        );
+    }
+
     return (
         <div className="grid grid-cols-[2rem_1fr_2rem] items-center">
-            {onBack && (
-                <Button
-                    ref={backButton}
-                    type="button"
-                    variant="ghost"
-                    size="icon-sm"
-                    aria-label={backLabel}
-                    onClick={onBack}
-                >
-                    <ArrowLeft aria-hidden="true" />
-                </Button>
-            )}
-            <Heading role="heading" aria-level={2} className={cn('mb-0', !onBack && 'col-start-2')}>
+            <Button
+                ref={backButton}
+                type="button"
+                variant="ghost"
+                size="icon-sm"
+                aria-label={backLabel}
+                onClick={onBack}
+            >
+                <ArrowLeft aria-hidden="true" />
+            </Button>
+            <Heading role="heading" aria-level={2} className="mb-0">
                 {title}
             </Heading>
         </div>

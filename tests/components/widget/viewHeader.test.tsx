@@ -5,7 +5,7 @@ import '@testing-library/jest-dom/jest-globals';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
-import { ViewHeader } from '../../../src/components/widget/viewHeader';
+import { ViewHeader } from '@/components/widget/viewHeader';
 
 describe('ViewHeader', () => {
     test('renders only the heading without onBack', () => {
