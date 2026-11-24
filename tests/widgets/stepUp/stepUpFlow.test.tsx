@@ -54,8 +54,12 @@ const replace = jest.fn();
 // @ts-expect-error partial Client
 const client: Client = { startPasswordless, verifyMfaPasswordless };
 
-const renderFlow = (props: Partial<StepUpFlowProps> = {}, config: Partial<Config> = {}) =>
-    render(
+const renderFlow = (
+    props: Partial<StepUpFlowProps> = {},
+    config: Partial<Config> = {},
+    { strict = false } = {}
+) => {
+    const flow = (
         <WidgetContext
             client={client}
             config={{ ...defaultConfig, ...config }}
@@ -71,6 +75,8 @@ const renderFlow = (props: Partial<StepUpFlowProps> = {}, config: Partial<Config
             />
         </WidgetContext>
     );
+    return render(strict ? <React.StrictMode>{flow}</React.StrictMode> : flow);
+};
 
 const codeInput = () => screen.getByRole('textbox', { name: 'verificationCode' });
 
@@ -119,7 +125,8 @@ describe('StepUpFlow', () => {
     });
 
     test('starts the only factor directly', async () => {
-        renderFlow({ amr: ['email', 'totp'] });
+        // StrictMode runs the mount effect twice: the code must still be sent once
+        renderFlow({ amr: ['email', 'totp'] }, {}, { strict: true });
 
         expect(await screen.findByRole('heading', { name: 'mfa.code.title' })).toBeInTheDocument();
         expect(startPasswordless).toHaveBeenCalledTimes(1);
@@ -136,11 +143,58 @@ describe('StepUpFlow', () => {
 
         await user.click(screen.getByRole('button', { name: 'mfaList.email' }));
 
-        await waitFor(() => expect(onError).toHaveBeenCalledWith(error));
+        await waitFor(() => expect(onError).toHaveBeenCalledTimes(1));
+        expect(onError).toHaveBeenCalledWith(error);
         expect(screen.getByRole('heading', { name: 'mfa.stepUp.title' })).toBeInTheDocument();
         expect(screen.getByRole('button', { name: 'mfaList.email' })).not.toHaveAttribute(
             'aria-busy'
         );
+    });
+
+    test('keeps the only factor offered when its code cannot be sent', async () => {
+        const error = new Error('cannot send');
+        startPasswordless.mockRejectedValueOnce(error);
+        const user = userEvent.setup();
+        renderFlow({ amr: ['email'] });
+
+        await waitFor(() => expect(onError).toHaveBeenCalledTimes(1));
+        expect(onError).toHaveBeenCalledWith(error);
+        const row = screen.getByRole('button', { name: 'mfaList.email' });
+        expect(row).not.toHaveAttribute('aria-busy');
+
+        await user.click(row);
+
+        expect(await screen.findByRole('heading', { name: 'mfa.code.title' })).toBeInTheDocument();
+        expect(startPasswordless).toHaveBeenCalledTimes(2);
+        expect(screen.queryByRole('button', { name: 'mfaList.back' })).not.toBeInTheDocument();
+    });
+
+    test('treats a code sent without a challenge as a failure', async () => {
+        startPasswordless.mockResolvedValueOnce({});
+        const user = userEvent.setup();
+        renderFlow();
+
+        await user.click(screen.getByRole('button', { name: 'mfaList.email' }));
+
+        await waitFor(() => expect(onError).toHaveBeenCalledTimes(1));
+        expect(onError).toHaveBeenCalledWith(expect.any(Error));
+        expect(screen.getByRole('heading', { name: 'mfa.stepUp.title' })).toBeInTheDocument();
+    });
+
+    test('reports a refused code', async () => {
+        const error = new Error('invalid code');
+        verifyMfaPasswordless.mockRejectedValue(error);
+        const user = userEvent.setup();
+        renderFlow();
+
+        await user.click(screen.getByRole('button', { name: 'mfaList.email' }));
+        await screen.findByRole('heading', { name: 'mfa.code.title' });
+        await user.type(codeInput(), '123456');
+
+        await waitFor(() => expect(onError).toHaveBeenCalledTimes(1));
+        expect(onError).toHaveBeenCalledWith(error);
+        expect(onSuccess).not.toHaveBeenCalled();
+        expect(replace).not.toHaveBeenCalled();
     });
 
     test('verifies the code and redirects', async () => {

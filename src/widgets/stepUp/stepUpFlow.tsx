@@ -45,9 +45,7 @@ export function StepUpFlow({
     const { codeFactors } = stepUpFactors(amr);
     // a single factor needs no choice: its code is sent at once
     const onlyFactor = codeFactors.length === 1 ? codeFactors[0] : undefined;
-    const { view, direction, goTo, back } = useViewNavigation<StepUpView>(
-        onlyFactor ? 'code' : 'entry'
-    );
+    const { view, direction, goTo, back } = useViewNavigation<StepUpView>('entry');
     const [challenge, setChallenge] = useState<Challenge | null>(null);
     const [sending, setSending] = useState<CodeFactor | null>(null);
     const rowRefs = {
@@ -74,12 +72,13 @@ export function StepUpFlow({
         if (await send(authType)) goTo('code', { returnFocus: rowRefs[authType] });
     };
 
-    // each send uses the token once: send on mount only, even if the effect runs again
+    // Each send uses the token once: send on mount only, even if the effect runs again.
+    // Until the code is sent, the list shows the row, which stays there to retry a failed send.
     const sentOnMount = useRef(false);
     useEffect(() => {
         if (!onlyFactor || sentOnMount.current) return;
         sentOnMount.current = true;
-        void send(onlyFactor);
+        void open(onlyFactor);
     }, []);
 
     const renderView = () => {

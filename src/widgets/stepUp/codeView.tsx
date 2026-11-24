@@ -34,8 +34,11 @@ interface CodeFormData {
     trustDevice?: boolean;
 }
 
-/** A step-up request always returns a challenge. */
-export const challengeOf = (response: PasswordlessResponse): string => response.challengeId ?? '';
+/** The challenge of a code sent for a step-up. Throws when the response has none. */
+export function challengeOf(response: PasswordlessResponse): string {
+    if (!response.challengeId) throw new Error('The step-up code was sent without a challenge');
+    return response.challengeId;
+}
 
 /** Code entry screen of a step-up. */
 export function StepUpCodeView({
