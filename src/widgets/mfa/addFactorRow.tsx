@@ -3,6 +3,7 @@ import React, { forwardRef } from 'react';
 import { Fingerprint, Mail, Smartphone, type LucideIcon } from 'lucide-react';
 
 import { NavigationRow } from '@/components/list/navigationRow';
+import { RecommendedBadge } from '@/components/list/recommendedBadge';
 import { useI18n } from '@/contexts/i18n';
 
 import type { AddableFactor } from '@/widgets/mfa/factors';
@@ -48,13 +49,7 @@ export const AddFactorRow = forwardRef<HTMLButtonElement, AddFactorRowProps>(fun
             icon={<Icon />}
             iconTone="muted"
             title={i18n(titleKey)}
-            badge={
-                factor === 'passkey' ? (
-                    <span className="rounded bg-success/10 px-1.5 py-0.5 text-xs font-medium text-success">
-                        {i18n('mfa.factors.recommended')}
-                    </span>
-                ) : undefined
-            }
+            badge={factor === 'passkey' ? <RecommendedBadge /> : undefined}
             description={i18n(descriptionKey)}
             onOpen={onOpen}
             dimmed={dimmed}

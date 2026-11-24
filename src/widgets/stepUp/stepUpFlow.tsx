@@ -5,6 +5,7 @@ import type { AuthOptions } from '@reachfive/identity-core';
 import { ItemGroup } from '@/components/ui/item';
 import { useViewNavigation, viewAnimation } from '@/components/widget/useViewNavigation';
 import { ViewHeader } from '@/components/widget/viewHeader';
+import { useConfig } from '@/contexts/config';
 import { useI18n } from '@/contexts/i18n';
 import { useReachfive } from '@/contexts/reachfive';
 import { challengeOf, StepUpCodeView } from '@/widgets/stepUp/codeView';
@@ -50,7 +51,8 @@ export function StepUpFlow({
 }: StepUpFlowProps) {
     const client = useReachfive();
     const i18n = useI18n();
-    const { codeFactors } = stepUpFactors(amr);
+    const config = useConfig();
+    const { codeFactors } = stepUpFactors(amr, config);
     // a single factor needs no choice: its code is sent at once
     const onlyFactor = codeFactors.length === 1 ? codeFactors[0] : undefined;
     const { view, direction, goTo, back } = useViewNavigation<StepUpView>('entry');
