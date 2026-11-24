@@ -20,7 +20,7 @@ function TestComponent({
     params?: Record<string, unknown>;
 }) {
     const i18n = useI18n();
-    return <div data-testid="test-component">{i18n(messageKey, params)}</div>;
+    return <div data-testid="test-component">{i18n(messageKey, params ?? {})}</div>;
 }
 
 describe('I18nProvider', () => {
@@ -129,6 +129,56 @@ describe('I18nProvider', () => {
 
         render(
             <I18nProvider messages={localizedMessages} locale="fr">
+                <TestComponent messageKey="test.message" params={{ name: 'World' }} />
+            </I18nProvider>
+        );
+
+        expect(screen.getByTestId('test-component')).toHaveTextContent('Bonjour World');
+    });
+
+    it('should render an empty custom message instead of the default one', () => {
+        render(
+            <I18nProvider
+                defaultMessages={defaultMessages}
+                messages={{ 'test.simple': '' }}
+                locale="fr"
+            >
+                <TestComponent messageKey="test.simple" />
+            </I18nProvider>
+        );
+
+        expect(screen.getByTestId('test-component')).toBeEmptyDOMElement();
+    });
+
+    it.each(['FR', 'fr', 'fr-fr', 'fr-FR'])(
+        'should use custom messages whatever the locale casing (%s)',
+        locale => {
+            render(
+                <I18nProvider
+                    defaultMessages={defaultMessages}
+                    messages={customMessages}
+                    locale={locale}
+                >
+                    <TestComponent messageKey="test.new" />
+                </I18nProvider>
+            );
+
+            expect(screen.getByTestId('test-component')).toHaveTextContent('Nouveau message');
+        }
+    );
+
+    it.each([
+        ['FR', 'fr'],
+        ['fr', 'FR'],
+        ['fr-fr', 'fr-FR'],
+    ])('should match localized messages whatever the casing (locale %s, key %s)', (locale, key) => {
+        const localizedMessages: I18nMessages = {
+            [key]: { 'test.message': 'Bonjour {name}' },
+            en: { 'test.message': 'Hello {name}' },
+        };
+
+        render(
+            <I18nProvider messages={localizedMessages} locale={locale}>
                 <TestComponent messageKey="test.message" params={{ name: 'World' }} />
             </I18nProvider>
         );
