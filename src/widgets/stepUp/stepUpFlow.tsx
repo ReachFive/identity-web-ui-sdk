@@ -2,6 +2,7 @@ import React, { useEffect, useId, useRef, useState } from 'react';
 
 import type { AuthOptions, AuthResult } from '@reachfive/identity-core';
 
+import { Alert, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { ItemGroup } from '@/components/ui/item';
@@ -11,6 +12,7 @@ import { ViewHeader } from '@/components/widget/viewHeader';
 import { useConfig } from '@/contexts/config';
 import { useI18n } from '@/contexts/i18n';
 import { useReachfive } from '@/contexts/reachfive';
+import { widgetErrorMessage } from '@/helpers/errors';
 import { useTrustDeviceLabel } from '@/widgets/mfa/trustDeviceField';
 import { challengeOf, StepUpCodeView } from '@/widgets/stepUp/codeView';
 import { StepUpFactorRow } from '@/widgets/stepUp/factorRow';
@@ -93,6 +95,9 @@ export function StepUpFlow({
     const showTrustDevice = allowTrustDevice === true && config.rbaEnabled === true;
     const passkeyOpen = useRef(false);
     const otherMethodsLink = useRef<HTMLButtonElement>(null);
+    // the last failure, shown until the next attempt
+    const [error, setError] = useState<unknown>(null);
+    const titleId = useId();
     const rowRefs = {
         email: useRef<HTMLButtonElement>(null),
         sms: useRef<HTMLButtonElement>(null),
@@ -121,12 +126,14 @@ export function StepUpFlow({
 
     const send = async (authType: CodeFactor) => {
         setSending(authType);
+        setError(null);
         try {
             const response = await client.startPasswordless({ authType, stepUp: token });
             setChallenge({ authType, challengeId: challengeOf(response) });
             return true;
-        } catch (error) {
-            onError(error);
+        } catch (failure) {
+            setError(failure);
+            onError(failure);
             return false;
         } finally {
             setSending(null);
@@ -161,8 +168,18 @@ export function StepUpFlow({
                 />
             ) : null;
         }
-        const factorRows = (
-            <ItemGroup aria-label={i18n('mfa.stepUp.title')} className="gap-2">
+        const errorAlert =
+            error !== null ? (
+                <Alert variant="destructive">
+                    <AlertTitle className="mb-0">{widgetErrorMessage(error, i18n)}</AlertTitle>
+                </Alert>
+            ) : null;
+        const factorRows = (labelledBy?: string) => (
+            <ItemGroup
+                aria-labelledby={labelledBy}
+                aria-label={labelledBy ? undefined : i18n('mfa.stepUp.title')}
+                className="gap-2"
+            >
                 {codeFactors.map(factor => (
                     <StepUpFactorRow
                         key={factor}
@@ -182,22 +199,24 @@ export function StepUpFlow({
                         backLabel={i18n('mfaList.back')}
                         onBack={back}
                     />
-                    {factorRows}
+                    {errorAlert}
+                    {factorRows()}
                 </div>
             );
         }
         if (!passkey) {
             return (
                 <div className="space-y-4">
-                    <ViewHeader title={i18n('mfa.stepUp.title')} />
-                    {factorRows}
+                    <ViewHeader id={titleId} title={i18n('mfa.stepUp.title')} />
+                    {errorAlert}
+                    {factorRows(titleId)}
                 </div>
             );
         }
         return (
             <div className="space-y-4">
-                <ViewHeader title={i18n('mfa.stepUp.title')} />
-                <ItemGroup aria-label={i18n('mfa.stepUp.title')}>
+                <ViewHeader id={titleId} title={i18n('mfa.stepUp.title')} />
+                <ItemGroup aria-labelledby={titleId}>
                     <PasskeyCard onOpen={() => void stepUpWithPasskey()} />
                 </ItemGroup>
                 {showTrustDevice ? (

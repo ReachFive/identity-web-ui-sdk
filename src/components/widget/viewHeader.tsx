@@ -7,12 +7,14 @@ import { Button } from '@/components/ui/button';
 
 type ViewHeaderProps = {
     title: ReactNode;
+    /** The id of the heading, for an element it labels. */
+    id?: string;
     /** Focuses the back button on mount. Defaults to `true`. No effect without `onBack`. */
     autoFocus?: boolean;
 } & ({ backLabel: string; onBack: () => void } | { backLabel?: undefined; onBack?: undefined });
 
 /** The title of a widget view, with a back arrow to the previous one when `onBack` is given. */
-export function ViewHeader({ title, backLabel, onBack, autoFocus = true }: ViewHeaderProps) {
+export function ViewHeader({ title, id, backLabel, onBack, autoFocus = true }: ViewHeaderProps) {
     const backButton = useRef<HTMLButtonElement>(null);
 
     useEffect(() => {
@@ -21,7 +23,7 @@ export function ViewHeader({ title, backLabel, onBack, autoFocus = true }: ViewH
 
     if (!onBack) {
         return (
-            <Heading role="heading" aria-level={2} className="mb-0">
+            <Heading id={id} role="heading" aria-level={2} className="mb-0">
                 {title}
             </Heading>
         );
@@ -39,7 +41,7 @@ export function ViewHeader({ title, backLabel, onBack, autoFocus = true }: ViewH
             >
                 <ArrowLeft aria-hidden="true" />
             </Button>
-            <Heading role="heading" aria-level={2} className="mb-0">
+            <Heading id={id} role="heading" aria-level={2} className="mb-0">
                 {title}
             </Heading>
         </div>

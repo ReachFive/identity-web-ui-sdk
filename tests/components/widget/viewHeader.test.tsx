@@ -28,4 +28,16 @@ describe('ViewHeader', () => {
 
         expect(onBack).toHaveBeenCalledTimes(1);
     });
+
+    test('gives the heading its id', () => {
+        const { rerender } = render(<ViewHeader title="Passkey" id="view-title" />);
+
+        expect(screen.getByRole('heading', { level: 2 })).toHaveAttribute('id', 'view-title');
+
+        rerender(
+            <ViewHeader title="Passkey" id="view-title" backLabel="Back" onBack={jest.fn()} />
+        );
+
+        expect(screen.getByRole('heading', { level: 2 })).toHaveAttribute('id', 'view-title');
+    });
 });

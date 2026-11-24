@@ -152,6 +152,38 @@ describe('StepUpFlow', () => {
         );
     });
 
+    test('labels the list with the title', () => {
+        renderFlow();
+
+        expect(screen.getByRole('list', { name: 'mfa.stepUp.title' })).toBeInTheDocument();
+    });
+
+    test('shows why the code cannot be sent until the next attempt', async () => {
+        startPasswordless.mockRejectedValueOnce(new Error('cannot send'));
+        let sent: (response: { challengeId: string }) => void = () => undefined;
+        startPasswordless.mockReturnValueOnce(new Promise(resolve => (sent = resolve)));
+        const user = userEvent.setup();
+        renderFlow();
+
+        await user.click(screen.getByRole('button', { name: 'mfaList.email' }));
+
+        expect(await screen.findByRole('alert')).toHaveTextContent('cannot send');
+        expect(onError).toHaveBeenCalledTimes(1);
+
+        await user.click(screen.getByRole('button', { name: 'mfaList.email' }));
+
+        expect(screen.getByRole('button', { name: 'mfaList.email' })).toHaveAttribute(
+            'aria-busy',
+            'true'
+        );
+        expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+
+        sent({ challengeId: 'challenge-1' });
+
+        expect(await screen.findByRole('heading', { name: 'mfa.code.title' })).toBeInTheDocument();
+        expect(onError).toHaveBeenCalledTimes(1);
+    });
+
     test('keeps the only factor offered when its code cannot be sent', async () => {
         const error = new Error('cannot send');
         startPasswordless.mockRejectedValueOnce(error);
@@ -160,6 +192,7 @@ describe('StepUpFlow', () => {
 
         await waitFor(() => expect(onError).toHaveBeenCalledTimes(1));
         expect(onError).toHaveBeenCalledWith(error);
+        expect(screen.getByRole('alert')).toHaveTextContent('cannot send');
         const row = screen.getByRole('button', { name: 'mfaList.email' });
         expect(row).not.toHaveAttribute('aria-busy');
 
@@ -230,6 +263,8 @@ describe('StepUpFlow', () => {
         await user.click(screen.getByRole('button', { name: 'mfaList.phoneNumber' }));
         await screen.findByRole('heading', { name: 'mfa.code.title' });
         await user.type(codeInput(), '123456');
+        // an auto-submit would start on the next tick: let it run before checking it did not
+        await new Promise(resolve => setTimeout(resolve, 0));
         expect(verifyMfaPasswordless).not.toHaveBeenCalled();
 
         await user.click(screen.getByRole('checkbox', { name: 'mfa.stepUp.trustDevice' }));
