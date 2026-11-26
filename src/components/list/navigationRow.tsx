@@ -2,15 +2,20 @@ import React, { forwardRef, ReactNode, useId } from 'react';
 
 import { ChevronRight, LoaderCircle } from 'lucide-react';
 
-import { dimmedRowProps, ListItem, ListItemIcon } from '@/components/list/listItem';
+import {
+    dimmedRowProps,
+    ListItem,
+    ListItemIcon,
+    type ListItemIconTone,
+} from '@/components/list/listItem';
 import { ItemActions, ItemContent, ItemDescription, ItemTitle } from '@/components/ui/item';
 
 interface NavigationRowProps {
     /** Public styling slot, set by the widget. */
     'data-slot': `widget-${string}`;
     icon: ReactNode;
-    /** `success` for an enabled element, `muted` for one to add. */
-    iconTone?: 'success' | 'muted';
+    /** `primary` for an enabled element, `muted` for one to add. */
+    iconTone?: ListItemIconTone;
     title: ReactNode;
     /** Shown after the title, inside the button, so it is part of its accessible name. */
     badge?: ReactNode;
@@ -32,7 +37,7 @@ export const NavigationRow = forwardRef<HTMLButtonElement, NavigationRowProps>(
         {
             'data-slot': dataSlot,
             icon,
-            iconTone = 'success',
+            iconTone = 'primary',
             title,
             badge,
             description,

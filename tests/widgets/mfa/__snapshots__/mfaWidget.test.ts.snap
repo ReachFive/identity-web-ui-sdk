@@ -50,7 +50,7 @@ exports[`Snapshots the choice screen 1`] = `
               >
                 <div
                   aria-hidden="true"
-                  class="flex shrink-0 items-center justify-center gap-2 group-has-[[data-slot=item-description]]/item:translate-y-0.5 group-has-[[data-slot=item-description]]/item:self-start [&_svg]:pointer-events-none size-8 rounded [&_svg]:size-4 bg-success/10 text-success"
+                  class="flex shrink-0 items-center justify-center gap-2 group-has-[[data-slot=item-description]]/item:translate-y-0.5 group-has-[[data-slot=item-description]]/item:self-start [&_svg]:pointer-events-none rounded bg-primary/10 text-primary size-8 [&_svg]:size-4"
                   data-slot="item-media"
                   data-variant="default"
                 >
@@ -179,7 +179,7 @@ exports[`Snapshots the choice screen 1`] = `
               >
                 <div
                   aria-hidden="true"
-                  class="flex shrink-0 items-center justify-center gap-2 [&_svg]:pointer-events-none size-8 rounded [&_svg]:size-4 bg-muted text-muted-foreground group-has-[[data-slot=item-description]]/item:translate-y-0 group-has-[[data-slot=item-description]]/item:self-center"
+                  class="flex shrink-0 items-center justify-center gap-2 [&_svg]:pointer-events-none rounded bg-muted text-muted-foreground size-8 [&_svg]:size-4 group-has-[[data-slot=item-description]]/item:translate-y-0 group-has-[[data-slot=item-description]]/item:self-center"
                   data-slot="item-media"
                   data-variant="default"
                 >
@@ -240,7 +240,7 @@ exports[`Snapshots the choice screen 1`] = `
                       mfa.passkey
                        
                       <span
-                        class="rounded bg-success/10 px-1.5 py-0.5 text-xs font-medium text-success"
+                        class="rounded bg-primary/10 px-1.5 py-0.5 text-xs font-medium text-primary"
                       >
                         mfa.factors.recommended
                       </span>
@@ -286,7 +286,7 @@ exports[`Snapshots the choice screen 1`] = `
               >
                 <div
                   aria-hidden="true"
-                  class="flex shrink-0 items-center justify-center gap-2 [&_svg]:pointer-events-none size-8 rounded [&_svg]:size-4 bg-muted text-muted-foreground group-has-[[data-slot=item-description]]/item:translate-y-0 group-has-[[data-slot=item-description]]/item:self-center"
+                  class="flex shrink-0 items-center justify-center gap-2 [&_svg]:pointer-events-none rounded bg-muted text-muted-foreground size-8 [&_svg]:size-4 group-has-[[data-slot=item-description]]/item:translate-y-0 group-has-[[data-slot=item-description]]/item:self-center"
                   data-slot="item-media"
                   data-variant="default"
                 >

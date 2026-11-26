@@ -174,8 +174,8 @@ describe('Factor choice screen', () => {
         // The icon tile carries the tone; Testing Library has no query for it.
         // eslint-disable-next-line testing-library/no-node-access
         expect(enabledRows[0].querySelector('svg')?.parentElement).toHaveClass(
-            'text-success',
-            'bg-success/10'
+            'text-primary',
+            'bg-primary/10'
         );
 
         const addRows = within(await addGroup()).getAllByRole('listitem');
@@ -965,7 +965,7 @@ describe('Confirmation screen', () => {
 describe('Theme', () => {
     const styleOf = (container: HTMLElement) => container.querySelector('style')?.textContent ?? '';
 
-    test('enabled factor icons use the success colour of the theme, green by default', async () => {
+    test('enabled factor icons use the primary colour of the theme, green by default', async () => {
         listMfaCredentials.mockResolvedValue(credentialsList(emailCredential));
         const { container } = await renderWidget();
 
@@ -973,21 +973,27 @@ describe('Theme', () => {
         // The icon tile carries the tone; Testing Library has no query for it.
         // eslint-disable-next-line testing-library/no-node-access
         expect(row.querySelector('svg')?.parentElement).toHaveClass(
-            'text-success',
-            'bg-success/10'
+            'text-primary',
+            'bg-primary/10'
         );
-        expect(styleOf(container)).toContain(`--success:${colorToHSL('#229955')}`);
+        expect(styleOf(container)).toContain(`--primary:${colorToHSL('#229955')}`);
     });
 
-    test('a custom success colour applies to the enabled factor icons, not the primary colour', async () => {
+    test('a custom primary colour applies to the enabled factor icons and the recommended badge', async () => {
         listMfaCredentials.mockResolvedValue(credentialsList(emailCredential));
         const { container } = await renderWidget({
-            theme: { primaryColor: '#d0021b', successColor: '#274890' },
+            theme: { primaryColor: '#274890', successColor: '#d0021b' },
         });
 
-        await enabledGroup();
-        expect(styleOf(container)).toContain(`--success:${colorToHSL('#274890')}`);
-        expect(styleOf(container)).toContain(`--primary:${colorToHSL('#d0021b')}`);
+        const row = within(await enabledGroup()).getByRole('listitem');
+        // The icon tile carries the tone; Testing Library has no query for it.
+        // eslint-disable-next-line testing-library/no-node-access
+        expect(row.querySelector('svg')?.parentElement).not.toHaveClass('text-success');
+        expect(screen.getByText('mfa.factors.recommended')).toHaveClass(
+            'text-primary',
+            'bg-primary/10'
+        );
+        expect(styleOf(container)).toContain(`--primary:${colorToHSL('#274890')}`);
     });
 });
 
