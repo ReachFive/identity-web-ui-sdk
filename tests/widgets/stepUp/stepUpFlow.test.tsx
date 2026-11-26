@@ -373,6 +373,24 @@ describe('StepUpFlow', () => {
             expect(startPasswordless).not.toHaveBeenCalled();
         });
 
+        test('puts the passkey forward with a larger primary icon and badge', () => {
+            renderFlow({ amr: passkeyAmr }, { webAuthn: true });
+
+            const card = screen.getByRole('listitem');
+            expect(card).toHaveClass('border-primary');
+            // The icon tile carries the tone; Testing Library has no query for it.
+            // eslint-disable-next-line testing-library/no-node-access
+            expect(card.querySelector('svg')?.parentElement).toHaveClass(
+                'bg-primary/10',
+                'text-primary',
+                'size-10'
+            );
+            expect(screen.getByText('mfa.factors.recommended')).toHaveClass(
+                'bg-primary/10',
+                'text-primary'
+            );
+        });
+
         test('lists the other methods with a back arrow', async () => {
             const user = userEvent.setup();
             renderFlow({ amr: passkeyAmr }, { webAuthn: true });

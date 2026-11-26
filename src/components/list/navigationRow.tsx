@@ -27,7 +27,7 @@ interface NavigationRowProps {
     dimmed?: boolean;
     /** The target view is loading: the row is busy and shows a spinner instead of its chevron. */
     pending?: boolean;
-    /** Outlines the row in the primary color, for the option the user should pick. */
+    /** Outlines the row in the primary color and enlarges its icon, for the option the user should pick. */
     emphasized?: boolean;
 }
 
@@ -66,6 +66,7 @@ export const NavigationRow = forwardRef<HTMLButtonElement, NavigationRowProps>(
             >
                 <ListItemIcon
                     tone={iconTone}
+                    size={emphasized ? 'lg' : 'default'}
                     className="group-has-[[data-slot=item-description]]/item:translate-y-0 group-has-[[data-slot=item-description]]/item:self-center"
                 >
                     {icon}
