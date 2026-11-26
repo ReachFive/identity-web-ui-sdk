@@ -35,7 +35,7 @@ export default defineConfig(
             }
         },
         settings: {
-            polyfills: ["Promise", "fetch", "URLSearchParams"],
+            polyfills: ["Promise", "fetch", "URL", "URLSearchParams"],
             react: {
                 version: "detect"
             },

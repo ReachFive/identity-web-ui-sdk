@@ -22,15 +22,11 @@ import ReauthView from '@/widgets/auth/views/reauthViewComponent';
 import SignupView from '@/widgets/auth/views/signupViewComponent';
 import SignupWithPasswordView from '@/widgets/auth/views/signupWithPasswordViewComponent';
 import SignupWithWebAuthnView from '@/widgets/auth/views/signupWithWebAuthnViewComponent';
-import { FaSelectionView, VerificationCodeView } from '@/widgets/stepUp/mfaStepUpWidget';
+import StepUpView from '@/widgets/auth/views/stepUpViewComponent';
 
 import type { InitialScreen } from '@/../constants.ts';
 import type { PropsWithSession } from '@/contexts/session';
 import type { ProviderId } from '@/providers/providers';
-import type {
-    FaSelectionViewState,
-    VerificationCodeViewState,
-} from '@/widgets/stepUp/mfaStepUpWidget';
 
 export interface AuthWidgetProps
     extends
@@ -43,14 +39,17 @@ export interface AuthWidgetProps
         ComponentProps<typeof ForgotPasswordView>,
         ComponentProps<typeof QuickLoginView>,
         ComponentProps<typeof ReauthView>,
-        Omit<ComponentProps<typeof FaSelectionView>, keyof FaSelectionViewState>,
-        Omit<ComponentProps<typeof VerificationCodeView>, keyof VerificationCodeViewState> {
+        ComponentProps<typeof StepUpView> {
     /**
      * Boolean that specifies whether quick login is enabled.
      *
      * @default true
      */
     allowQuickLogin?: boolean;
+    /**
+     * @deprecated Has no effect.
+     */
+    showIntro?: boolean;
     /**
      * The widget’s initial screen if a value is provided, otherwise:
      * - if `quickLogin` is set to `true`, it defaults to `quick-login`.
@@ -108,8 +107,7 @@ export default createMultiViewWidget<AuthWidgetProps, PropsWithSession<AuthWidge
         'forgot-password-success': ForgotPasswordSuccessView,
         'account-recovery-success': AccountRecoverySuccessView,
         'quick-login': QuickLoginView,
-        'fa-selection': FaSelectionView,
-        'verification-code': VerificationCodeView,
+        'fa-selection': StepUpView,
         reauth: ReauthView,
     },
     prepare: (options, { config, session }) => {

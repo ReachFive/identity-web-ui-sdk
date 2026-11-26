@@ -14,9 +14,9 @@ import { useSession } from '@/contexts/session';
 import { enrichLoginEvent, specializeIdentifierData } from '@/helpers/utils';
 import { Field } from '@/lib/form';
 import { useConditionalWebAuthn } from '@/widgets/auth/hooks/useConditionalWebAuthn';
-import { FaSelectionViewState } from '@/widgets/stepUp/mfaStepUpWidget';
 
 import type { OnError, OnSuccess } from '@/types';
+import type { StepUpViewState } from '@/widgets/stepUp/stepUpFlow';
 
 export type LoginFormData =
     | {
@@ -257,7 +257,7 @@ export const LoginView = ({
             })
             .then(res => {
                 if (res?.stepUpToken) {
-                    goTo<FaSelectionViewState>('fa-selection', {
+                    goTo<StepUpViewState>('fa-selection', {
                         token: res.stepUpToken,
                         amr: res.amr ?? [],
                         allowTrustDevice,

@@ -15,3 +15,7 @@ export function logError(messageOrException: unknown, exception?: unknown) {
         }
     }
 }
+
+export function logWarn(message: string) {
+    if (window.console?.warn) window.console.warn(message);
+}

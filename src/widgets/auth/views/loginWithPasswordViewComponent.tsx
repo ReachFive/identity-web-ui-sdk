@@ -11,9 +11,9 @@ import { useReachfive } from '@/contexts/reachfive';
 import { useRouting } from '@/contexts/routing';
 import { enrichLoginEvent, specializeIdentifierData } from '@/helpers/utils';
 import { Field } from '@/lib/form';
-import { FaSelectionViewState } from '@/widgets/stepUp/mfaStepUpWidget';
 
 import type { OnError, OnSuccess } from '@/types';
+import type { StepUpViewState } from '@/widgets/stepUp/stepUpFlow';
 
 type LoginWithPasswordFormData = {
     identifier: string;
@@ -79,7 +79,7 @@ export const LoginWithPasswordView = ({
             })
             .then(res => {
                 if (res?.stepUpToken) {
-                    goTo<FaSelectionViewState>('fa-selection', {
+                    goTo<StepUpViewState>('fa-selection', {
                         token: res.stepUpToken,
                         amr: res.amr ?? [],
                         allowTrustDevice,

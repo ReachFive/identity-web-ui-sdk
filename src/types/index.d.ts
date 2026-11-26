@@ -34,10 +34,6 @@ export type RecursivePartial<T> = {
  */
 export type Optional<T, K extends keyof T> = Pick<Partial<T>, K> & Omit<T, K>;
 
-export type RequiredProperty<T, K extends keyof T> = T & {
-    [P in K]-?: T[P];
-};
-
 type ConsentsVersions = { consentsVersions: Record<string, ConsentVersions> };
 
 type CustomFields = {
@@ -60,6 +56,8 @@ export type RemoteSettings = Omit<CoreRemoteSettings, 'customProviders'> & {
     verificationCodeMaxTrials?: number;
     /** The codes a single step-up token can send, the first one included. */
     stepUpTokenMaxUses?: number;
+    /** The days a trusted device stays trusted. */
+    trustedDeviceLifetime?: number;
     /** Whether a passkey can be used as a second factor. */
     mfaWebauthnEnabled?: boolean;
 };

@@ -6,7 +6,7 @@ import { ViewHeader } from '@/components/widget/viewHeader';
 import { useConfig } from '@/contexts/config';
 import { useI18n } from '@/contexts/i18n';
 import { useReachfive } from '@/contexts/reachfive';
-import { TRUST_DEVICE_FIELD } from '@/widgets/mfa/trustDeviceField';
+import { useTrustDeviceField } from '@/widgets/mfa/trustDeviceField';
 
 import type { Enrollment, MfaViewProps } from '@/widgets/mfa/mfaWidget';
 
@@ -57,15 +57,17 @@ export function CodeView({
         }
     };
 
+    const trustDeviceField = useTrustDeviceField();
     const fields = useMemo(
         () => [
             // no auto-submit with the checkbox: the user must be able to tick it first
             { key: 'verification_code', onResend: resend, autoSubmit: !showTrustDevice },
-            ...(showTrustDevice ? [TRUST_DEVICE_FIELD] : []),
+            ...(showTrustDevice ? [trustDeviceField] : []),
         ],
         // every value `resend` reads, so the field never keeps an old `resend`
         [
             showTrustDevice,
+            trustDeviceField,
             client,
             accessToken,
             action,

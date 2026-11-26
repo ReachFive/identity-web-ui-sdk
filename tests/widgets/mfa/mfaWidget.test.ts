@@ -1245,3 +1245,44 @@ describe('Snapshots', () => {
         expect(container).toMatchSnapshot();
     });
 });
+
+describe('Trust device label', () => {
+    const openEmailScreen = async (
+        config: Partial<Config>,
+        messages: I18nMessages = defaultI18n
+    ) => {
+        listMfaCredentials.mockResolvedValue(credentialsList());
+        await renderWidget({ allowTrustDevice: true }, config, messages);
+        const user = userEvent.setup();
+        await user.click(await screen.findByRole('button', { name: 'Email' }));
+        await screen.findByRole('button', { name: 'mfaList.back' });
+        return user;
+    };
+
+    test('names the trust device checkbox after the trusted device lifetime', async () => {
+        startMfaEmailRegistration.mockResolvedValue({
+            status: 'enabled',
+            credential: emailCredential,
+        });
+        await openEmailScreen(
+            { rbaEnabled: true, trustedDeviceLifetime: 30, language: 'en' },
+            { ...defaultI18n, 'mfa.trustDevice.forDuration': 'Trust this device for {duration}' }
+        );
+
+        expect(
+            screen.getByRole('checkbox', { name: 'Trust this device for 30 days' })
+        ).toBeInTheDocument();
+    });
+
+    test('names the trust device checkbox without a duration when no lifetime is set', async () => {
+        startMfaEmailRegistration.mockResolvedValue({
+            status: 'enabled',
+            credential: emailCredential,
+        });
+        await openEmailScreen({ rbaEnabled: true });
+
+        expect(
+            screen.getByRole('checkbox', { name: 'mfa.stepUp.trustDevice' })
+        ).toBeInTheDocument();
+    });
+});

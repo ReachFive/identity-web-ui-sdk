@@ -5,21 +5,29 @@ import { ArrowLeft } from 'lucide-react';
 import { Heading } from '@/components/miscComponent';
 import { Button } from '@/components/ui/button';
 
-interface ViewHeaderProps {
+type ViewHeaderProps = {
     title: ReactNode;
-    backLabel: string;
-    onBack: () => void;
-    /** Focuses the back button on mount. Defaults to `true`. */
+    /** The id of the heading, for an element it labels. */
+    id?: string;
+    /** Focuses the back button on mount. Defaults to `true`. No effect without `onBack`. */
     autoFocus?: boolean;
-}
+} & ({ backLabel: string; onBack: () => void } | { backLabel?: undefined; onBack?: undefined });
 
-/** The title of a widget view, under a back arrow to the previous one. */
-export function ViewHeader({ title, backLabel, onBack, autoFocus = true }: ViewHeaderProps) {
+/** The title of a widget view, with a back arrow to the previous one when `onBack` is given. */
+export function ViewHeader({ title, id, backLabel, onBack, autoFocus = true }: ViewHeaderProps) {
     const backButton = useRef<HTMLButtonElement>(null);
 
     useEffect(() => {
         if (autoFocus) backButton.current?.focus();
     }, [autoFocus]);
+
+    if (!onBack) {
+        return (
+            <Heading id={id} role="heading" aria-level={2} className="mb-0">
+                {title}
+            </Heading>
+        );
+    }
 
     return (
         <div className="grid grid-cols-[2rem_1fr_2rem] items-center">
@@ -33,7 +41,7 @@ export function ViewHeader({ title, backLabel, onBack, autoFocus = true }: ViewH
             >
                 <ArrowLeft aria-hidden="true" />
             </Button>
-            <Heading role="heading" aria-level={2} className="mb-0">
+            <Heading id={id} role="heading" aria-level={2} className="mb-0">
                 {title}
             </Heading>
         </div>
