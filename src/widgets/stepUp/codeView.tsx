@@ -24,6 +24,8 @@ export interface StepUpCodeViewProps {
     challengeId: string;
     auth?: AuthOptions;
     allowTrustDevice?: boolean;
+    /** Whether the trust box starts ticked, from a choice made on a previous screen. */
+    defaultTrustDevice?: boolean;
     onBack?: () => void;
     onSuccess: OnSuccess;
     onError: OnError;
@@ -47,6 +49,7 @@ export function StepUpCodeView({
     challengeId: firstChallengeId,
     auth,
     allowTrustDevice,
+    defaultTrustDevice = false,
     onBack,
     onSuccess,
     onError,
@@ -57,7 +60,7 @@ export function StepUpCodeView({
     // every code sent opens a new challenge
     const [challengeId, setChallengeId] = useState(firstChallengeId);
     const showTrustDevice = allowTrustDevice === true && rbaEnabled === true;
-    const trustDeviceField = useTrustDeviceField();
+    const trustDeviceField = useTrustDeviceField(defaultTrustDevice);
 
     const fields = useMemo(() => {
         // a new code can only be sent with the step-up token the first one was sent with

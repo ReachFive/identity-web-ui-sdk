@@ -2,7 +2,6 @@ import {
     AuthResult,
     MFA,
     SingleFactorPasswordlessParams,
-    StepUpPasswordlessParams,
     TrustedDevice,
 } from '@reachfive/identity-core';
 
@@ -87,7 +86,7 @@ interface OtpSentEvent extends AbstractEvent {
 /** Emitted after the user has successfully logged in using the Two-factor authentication (2FA) flow. */
 interface Login2ndStepEvent extends AbstractEvent {
     readonly name: 'login_2nd_step';
-    readonly authType: StepUpPasswordlessParams['authType'];
+    readonly authType: 'email' | 'sms' | 'webauthn';
     readonly authResult: AuthResult;
 }
 
