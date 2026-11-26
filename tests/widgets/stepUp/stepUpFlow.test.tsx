@@ -109,6 +109,18 @@ describe('StepUpFlow', () => {
         expect(screen.queryByRole('button', { name: 'mfaList.back' })).not.toBeInTheDocument();
     });
 
+    test('shows the factor icons in the primary colour on a grey tile', () => {
+        renderFlow();
+
+        const rows = screen.getAllByRole('listitem');
+        expect(rows).toHaveLength(2);
+        rows.forEach(row => {
+            // The icon tile carries the tone; Testing Library has no query for it.
+            // eslint-disable-next-line testing-library/no-node-access
+            expect(row.querySelector('svg')?.parentElement).toHaveClass('bg-muted', 'text-primary');
+        });
+    });
+
     test('sends a code and opens the code screen', async () => {
         const user = userEvent.setup();
         renderFlow();
