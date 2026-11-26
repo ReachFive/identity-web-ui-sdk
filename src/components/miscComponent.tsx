@@ -4,22 +4,22 @@ import { Marker, MarkerContent } from '@/components/ui/marker';
 import { useRouting } from '@/contexts/routing';
 import { cn } from '@/lib/utils';
 
-export const Heading = ({
-    children,
-    className,
-    ...props
-}: React.HTMLAttributes<HTMLDivElement>) => (
-    <div
-        data-slot="widget-heading"
-        className={cn(
-            'mb-4 text-center font-heading-font-weight text-heading-text-size text-heading-text',
-            className
-        )}
-        {...props}
-    >
-        {children}
-    </div>
+export const Heading = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
+    ({ children, className, ...props }, ref) => (
+        <div
+            ref={ref}
+            data-slot="widget-heading"
+            className={cn(
+                'mb-4 text-center font-heading-font-weight text-heading-text-size text-heading-text',
+                className
+            )}
+            {...props}
+        >
+            {children}
+        </div>
+    )
 );
+Heading.displayName = 'Heading';
 
 const TextBase = ({ children, className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
     <div className={cn('mb-2 text-center', className)} {...props}>

@@ -1,5 +1,7 @@
 import React, { ComponentProps, forwardRef, HTMLAttributes, ReactNode } from 'react';
 
+import { cva, type VariantProps } from 'class-variance-authority';
+
 import { Item, ItemContent, ItemDescription, ItemMedia, ItemTitle } from '@/components/ui/item';
 import { cn } from '@/lib/utils';
 
@@ -31,22 +33,35 @@ export function ListItem({ className, ...props }: ListItemProps) {
     );
 }
 
-interface ListItemIconProps extends ComponentProps<typeof ItemMedia> {
-    tone?: 'success' | 'muted';
-}
+const iconVariants = cva('rounded', {
+    variants: {
+        tone: {
+            default: 'bg-muted text-primary',
+            primary: 'bg-primary/10 text-primary',
+            muted: 'bg-muted text-muted-foreground',
+        },
+        size: {
+            default: 'size-8 [&_svg]:size-4',
+            lg: 'size-10 [&_svg]:size-5',
+        },
+    },
+    defaultVariants: {
+        tone: 'default',
+        size: 'default',
+    },
+});
 
-/** The row icon on a light tile. `success` for an active element. */
-export function ListItemIcon({ tone = 'success', className, ...props }: ListItemIconProps) {
+export type ListItemIconTone = NonNullable<VariantProps<typeof iconVariants>['tone']>;
+
+interface ListItemIconProps
+    extends ComponentProps<typeof ItemMedia>, VariantProps<typeof iconVariants> {}
+
+/** The row icon on a tile: `primary` for an enabled element, `muted` for one to add. */
+export function ListItemIcon({ tone, size, className, ...props }: ListItemIconProps) {
     return (
         <ItemMedia
             aria-hidden="true"
-            className={cn(
-                'size-8 rounded [&_svg]:size-4',
-                tone === 'success'
-                    ? 'bg-success/10 text-success'
-                    : 'bg-muted text-muted-foreground',
-                className
-            )}
+            className={cn(iconVariants({ tone, size }), className)}
             {...props}
         />
     );

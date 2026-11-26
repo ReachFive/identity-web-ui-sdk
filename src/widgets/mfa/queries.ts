@@ -1,8 +1,10 @@
 import { useEffect } from 'react';
 
 import {
+    queryOptions,
     useMutation,
     useQueryClient,
+    useSuspenseQueries,
     useSuspenseQuery,
     type QueryKey,
 } from '@tanstack/react-query';
@@ -16,28 +18,65 @@ import { webAuthnKeys } from '@/widgets/webAuthn/queries';
 import type { OnError, OnSuccess } from '@/types';
 import type { SuccessEvent } from '@/types/events';
 import type { MfaCredential } from '@/widgets/mfa/credentials';
+import type { MfaProfile } from '@/widgets/mfa/factors';
 
 const mfaKeys = {
     credentials: () => ['mfa', 'credentials'] as const satisfies QueryKey,
+    profile: () => ['mfa', 'profile'] as const satisfies QueryKey,
 };
+
+const credentialsQuery = (client: CoreClient, accessToken: string) =>
+    queryOptions({
+        queryKey: mfaKeys.credentials(),
+        queryFn: () => client.listMfaCredentials(accessToken),
+    });
+
+const profileQuery = (client: CoreClient, accessToken: string) =>
+    queryOptions({
+        queryKey: mfaKeys.profile(),
+        queryFn: async (): Promise<MfaProfile> =>
+            client.getUser({
+                accessToken,
+                fields: 'email,email_verified,phone_number,phone_number_verified',
+            }),
+    });
 
 /**
  * Read through suspense: the component renders once the credentials are loaded. A failed first
  * load is thrown to the nearest error boundary.
  */
-export const useMfaCredentials = (accessToken: string) => {
-    const client = useReachfive();
+export const useMfaCredentials = (accessToken: string) =>
+    useSuspenseQuery(credentialsQuery(useReachfive(), accessToken));
 
-    return useSuspenseQuery({
-        queryKey: mfaKeys.credentials(),
-        queryFn: () => client.listMfaCredentials(accessToken),
+export const useMfaProfile = (accessToken: string) =>
+    useSuspenseQuery(profileQuery(useReachfive(), accessToken));
+
+/**
+ * Loads the credentials and the profile in parallel: two suspense queries in a row would start the
+ * second only after the first. Same cache entries as the hooks above.
+ */
+export const useMfaCredentialsAndProfile = (accessToken: string) => {
+    const client = useReachfive();
+    const [credentials, profile] = useSuspenseQueries({
+        queries: [credentialsQuery(client, accessToken), profileQuery(client, accessToken)],
     });
+
+    return { credentials: credentials.data.credentials, profile: profile.data };
 };
 
 /** A failed refetch keeps the cached list and is passed once to `onError`. */
 export const useInvalidateMfaCredentials = (onError: OnError) => {
     const invalidate = useInvalidateQueries(onError);
     return () => invalidate(mfaKeys.credentials());
+};
+
+/**
+ * Refetches the credentials and the profile: the profile identifiers may have been verified in the
+ * meantime. A failure is passed once to `onError`.
+ */
+export const useRefreshMfaFactors = (onError: OnError) => {
+    const invalidate = useInvalidateQueries(onError);
+    return () => invalidate(mfaKeys.credentials(), mfaKeys.profile());
 };
 
 const removeMfaCredential = (

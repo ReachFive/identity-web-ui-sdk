@@ -53,7 +53,7 @@ const CredentialSummary = ({
 
     return (
         <>
-            <ListItemIcon>
+            <ListItemIcon tone="primary">
                 <Icon />
             </ListItemIcon>
             <ListItemContent

@@ -1,0 +1,93 @@
+import { describe, expect, test } from '@jest/globals';
+
+import type { MFA } from '@reachfive/identity-core';
+
+import { factorChoices, sendsNoCode } from '../../../src/widgets/mfa/factors';
+
+import type { MfaProfile } from '../../../src/widgets/mfa/factors';
+
+const allOn = {
+    webAuthn: true,
+    mfaEmailEnabled: true,
+    mfaSmsEnabled: true,
+    mfaWebauthnEnabled: true,
+};
+const profile: MfaProfile = { email: 'alice@example.com' };
+
+const passkey: MFA.PasskeyCredential = {
+    type: 'webauthn',
+    id: 'pk-1',
+    friendlyName: 'MacBook',
+    createdAt: '2025-01-01',
+};
+const emailCredential: MFA.Credential = {
+    type: 'email',
+    email: 'alice@example.com',
+    friendlyName: 'alice@example.com',
+    createdAt: '2025-01-01',
+};
+
+describe('factorChoices', () => {
+    test('addable lists passkey first, then email, then sms', () => {
+        expect(factorChoices(allOn, [], profile).addable).toEqual(['passkey', 'email', 'sms']);
+    });
+
+    test('passkey is not addable once the user has one', () => {
+        const choices = factorChoices(allOn, [passkey], profile);
+        expect(choices.passkeyCount).toBe(1);
+        expect(choices.addable).not.toContain('passkey');
+    });
+
+    test('passkey is not addable when the WebAuthn feature is off', () => {
+        const choices = factorChoices({ ...allOn, webAuthn: false }, [], profile);
+        expect(choices.addable).toEqual(['email', 'sms']);
+    });
+
+    test.each([false, undefined])(
+        'passkey is not addable when mfaWebauthnEnabled is %s',
+        mfaWebauthnEnabled => {
+            const choices = factorChoices({ ...allOn, mfaWebauthnEnabled }, [], profile);
+            expect(choices.addable).toEqual(['email', 'sms']);
+        }
+    );
+
+    test('an enabled factor is not addable', () => {
+        const choices = factorChoices(allOn, [emailCredential], profile);
+        expect(choices.enabled).toEqual([emailCredential]);
+        expect(choices.addable).not.toContain('email');
+    });
+
+    test('a credential type the SDK does not know is left out', () => {
+        // the API can return a type that Core does not declare (TOTP, …)
+        const totp = { type: 'totp', friendlyName: 'Authenticator', createdAt: '2025-01-01' };
+        const choices = factorChoices(
+            allOn,
+            [totp as unknown as MFA.Credential, emailCredential, passkey],
+            profile
+        );
+        expect(choices.enabled).toEqual([emailCredential]);
+        expect(choices.passkeyCount).toBe(1);
+    });
+
+    test('email is not addable when the profile has no email', () => {
+        expect(factorChoices(allOn, [], {}).addable).toEqual(['passkey', 'sms']);
+    });
+});
+
+describe('sendsNoCode', () => {
+    test('email follows emailVerified', () => {
+        expect(sendsNoCode('email', { emailVerified: true })).toBe(true);
+        expect(sendsNoCode('email', { emailVerified: false })).toBe(false);
+        expect(sendsNoCode('email', {})).toBe(false);
+    });
+
+    test('sms is true only for the verified profile phone number', () => {
+        const verified = { phoneNumber: '+33612345678', phoneNumberVerified: true };
+        expect(sendsNoCode('sms', verified, '+33612345678')).toBe(true);
+        expect(sendsNoCode('sms', verified, '+33600000000')).toBe(false);
+        expect(sendsNoCode('sms', verified)).toBe(false);
+        expect(
+            sendsNoCode('sms', { ...verified, phoneNumberVerified: false }, '+33612345678')
+        ).toBe(false);
+    });
+});

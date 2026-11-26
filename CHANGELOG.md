@@ -18,9 +18,13 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   keys and Universal keys share it; set `mode: 'autoExecute'` when the key has AutoExecute enabled,
   so the SDK leaves the token to the reCAPTCHA library, and `mode: 'checkbox'` for a checkbox key,
   which puts an "I'm not a robot" box in the form for the user to tick
+- `showMfa` enrolls a passkey as a second factor when the account allows it
 
 ### Changed
 
+- `showMfa` adds a factor step by step (choice, enrollment, code, confirmation) instead of a single screen;
+  `showIntro` and `requireMfaRegistration` no longer have an effect
+- `showMfa`, `showMfaList`: i18n keys renamed; texts overridden through the `i18n` option must use the new keys
 - The password field validation no longer checks the password strength. The strength indicator shows it while the
   user types, and the server checks it on submit.
 - Passwordless, MFA registration, MFA step-up, phone number

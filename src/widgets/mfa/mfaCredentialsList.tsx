@@ -2,13 +2,14 @@ import React, { type RefObject } from 'react';
 
 import { Shield } from 'lucide-react';
 
-import { MFA } from '@reachfive/identity-core';
+import { type MFA } from '@reachfive/identity-core';
 
 import { ListEmpty } from '@/components/list/listItem';
 import { ItemGroup } from '@/components/ui/item';
 import { useI18n } from '@/contexts/i18n';
 import { OnError, OnSuccess } from '@/types';
-import { credentialKey, isMfaCredential } from '@/widgets/mfa/credentials';
+import { credentialKey } from '@/widgets/mfa/credentials';
+import { groupCredentials } from '@/widgets/mfa/factors';
 import { MfaCredentialRows, useMfaCredentialRemoval } from '@/widgets/mfa/mfaCredentialRows';
 import { PASSKEYS_ROW_KEY, PasskeysRow } from '@/widgets/mfa/passkeysRow';
 
@@ -38,8 +39,7 @@ export const MfaCredentialsList = ({
     onError,
 }: MfaCredentialsListProps) => {
     const i18n = useI18n();
-    const mfaCredentials = credentials.filter(isMfaCredential);
-    const passkeyCount = credentials.filter(MFA.isPasskeyCredential).length;
+    const { enabled: mfaCredentials, passkeyCount } = groupCredentials(credentials);
     const rowKeys = [
         ...mfaCredentials.map(credentialKey),
         ...(passkeyCount > 0 ? [PASSKEYS_ROW_KEY] : []),
