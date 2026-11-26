@@ -470,27 +470,27 @@ describe('01.13.03.08 - Without any active MFA factor, an empty state is shown',
 describe('01.13.03.09 - Theme attributes are respected and every new label is translatable', () => {
     const styleOf = (container: HTMLElement) => container.querySelector('style')?.textContent ?? '';
 
-    test('factor icons use the success colour of the theme, green by default', async () => {
+    test('factor icons use the primary colour of the theme, green by default', async () => {
         listMfaCredentials.mockResolvedValue(credentialsList(emailCredential));
         const { container } = await renderWidget();
 
         const row = await screen.findByRole('listitem');
         expect(row.querySelector('svg')?.parentElement).toHaveClass(
-            'text-success',
-            'bg-success/10'
+            'text-primary',
+            'bg-primary/10'
         );
-        expect(styleOf(container)).toContain(`--success:${colorToHSL('#229955')}`);
+        expect(styleOf(container)).toContain(`--primary:${colorToHSL('#229955')}`);
     });
 
-    test('a custom success colour applies to the factor icons, not the primary colour', async () => {
+    test('a custom primary colour applies to the factor icons, not the success colour', async () => {
         listMfaCredentials.mockResolvedValue(credentialsList(emailCredential));
         const { container } = await renderWidget({
-            theme: { primaryColor: '#d0021b', successColor: '#274890' },
+            theme: { primaryColor: '#274890', successColor: '#d0021b' },
         });
 
-        await screen.findByRole('listitem');
-        expect(styleOf(container)).toContain(`--success:${colorToHSL('#274890')}`);
-        expect(styleOf(container)).toContain(`--primary:${colorToHSL('#d0021b')}`);
+        const row = await screen.findByRole('listitem');
+        expect(row.querySelector('svg')?.parentElement).not.toHaveClass('text-success');
+        expect(styleOf(container)).toContain(`--primary:${colorToHSL('#274890')}`);
     });
 
     test('the creation date follows the configured language', async () => {

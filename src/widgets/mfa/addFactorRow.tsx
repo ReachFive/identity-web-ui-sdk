@@ -50,7 +50,7 @@ export const AddFactorRow = forwardRef<HTMLButtonElement, AddFactorRowProps>(fun
             title={i18n(titleKey)}
             badge={
                 factor === 'passkey' ? (
-                    <span className="rounded bg-success/10 px-1.5 py-0.5 text-xs font-medium text-success">
+                    <span className="rounded bg-primary/10 px-1.5 py-0.5 text-xs font-medium text-primary">
                         {i18n('mfa.factors.recommended')}
                     </span>
                 ) : undefined
